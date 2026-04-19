@@ -1,0 +1,200 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mondo_tools.rst:10 047a3789665d4427ba41314387c60f42
+msgid "Mondo Tools"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:12 d5b65d05e8f3441b8769ce6afebce8e4
+msgid ""
+"**Configuration File**: ``mondo_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:16 fcd5292f74f34cb7bf6fc456694af57e
+msgid ""
+"This page contains all tools defined in the ``mondo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:19 d3dfb2ed83c34793ab2ccf6351aade1b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:22 557015eeb4fe46ddac4f812fa95eb36c
+msgid "**Mondo_get_disease** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:24 adda098ad7f244fe9c4a9c4e92107f3b
+msgid ""
+"Get detailed information about a disease from the Mondo Disease Ontology "
+"by its MONDO ID. Returns..."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst 308b7ae668e9431b803ba7a310fd50e8
+msgid "Mondo_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:28 ../../tools/mondo_tools.rst:59
+#: ../../tools/mondo_tools.rst:93 b5a33d52ecff4f1493f60b3f30ff242f
+#: f3e97f51e1f34cd188701338b2c22e10 f96b05df4ec1452ebd39ec935236e883
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:30 c88e630230924b25ab28b00d0de01cf2
+msgid "**Name**: ``Mondo_get_disease``"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:31 ../../tools/mondo_tools.rst:62
+#: ../../tools/mondo_tools.rst:96 0641200b286a4a59ada2fcdd86d2bde0
+#: 3af937bc4f274dbc819dae9c8f4fd777 c1d9813a3f6e4b3bad2e5abe8438c0ab
+msgid "**Type**: ``MonarchV3Tool``"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:32 cd91136693614009b7aee3ee57ae9478
+msgid ""
+"**Description**: Get detailed information about a disease from the Mondo "
+"Disease Ontology by its MONDO ID. Returns the disease name, description, "
+"synonyms, cross-references (OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, "
+"UMLS, SNOMED-CT), hierarchy (parent diseases), subtypes count, causal "
+"genes, inheritance pattern, and association counts (phenotypes, "
+"correlated genes, etc.). Essential for understanding disease "
+"classification and finding equivalent IDs across ontologies."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:34 ../../tools/mondo_tools.rst:65
+#: ../../tools/mondo_tools.rst:99 3f80cce75fdc456b94742ba3421fd45b
+#: c6c2ab17c581435898761446ed233c1a effcd093c51c45e88193ed142111475b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:36 fad3f2c922be48ac833bc87a3db46eb1
+msgid ""
+"``disease_id`` (string) (required) Mondo disease identifier. Examples: "
+"'MONDO:0004975' (Alzheimer disease), 'MONDO:0005148' (type 2 diabetes "
+"mellitus), 'MONDO:0007254' (breast cancer), 'MONDO:0018076' (Huntington "
+"disease), 'MONDO:0009061' (cystic fibrosis)."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:39 ../../tools/mondo_tools.rst:73
+#: ../../tools/mondo_tools.rst:107 4f70748ca7004acba04ada4e90964377
+#: cd24eb3a2ecb4ff0b6d37056fd37ce7d fde8391ab1cc4539a773af00b9dd05df
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:53 f1453f991d0e4f15903da16b8372761f
+msgid "**Mondo_get_disease_phenotypes** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:55 407797232ebb45719926b7033daa8b25
+msgid ""
+"Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo "
+"disease. Returns the phenot..."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst 6f6b4de846fd47e7ac1e1d8481ec2439
+msgid "Mondo_get_disease_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:61 a12351902d4245f78ea9c1a0e02ed1a9
+msgid "**Name**: ``Mondo_get_disease_phenotypes``"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:63 8c6ac1d259aa4df19dd0ab043bd4314e
+msgid ""
+"**Description**: Get HPO (Human Phenotype Ontology) phenotypes associated"
+" with a Mondo disease. Returns the phenotype IDs (HP:xxxxxxx), names, and"
+" the specific disease subtype contributing each phenotype. Data comes "
+"from OMIM, Orphanet, and clinical annotations. Use this to understand "
+"clinical presentations and symptoms of a disease. First find the Mondo ID"
+" using Mondo\\_search\\_disease, then query phenotypes here."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:67 9f991e06d8004e6eb784dbbd9f6785ae
+msgid ""
+"``disease_id`` (string) (required) Mondo disease identifier. Examples: "
+"'MONDO:0004975' (Alzheimer disease, 95 phenotypes), 'MONDO:0005148' (type"
+" 2 diabetes, 50+ phenotypes), 'MONDO:0009061' (cystic fibrosis, 100+ "
+"phenotypes)."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:70 c418d9da57e447299b23e84bca6c6309
+msgid ""
+"``limit`` (integer) (optional) Maximum number of phenotypes to return "
+"(default: 20, max: 200)."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:87 f2120c4789ce4358b2fcfc269e25bd18
+msgid "**Mondo_search_disease** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:89 d5e3210389ce49cba181415f4cfb2328
+msgid ""
+"Search the Mondo Disease Ontology for diseases by name or keyword. Mondo "
+"unifies disease identifi..."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst 0abc385cd5f2415c9a60b11ffced5c3e
+msgid "Mondo_search_disease tool specification"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:95 4e3f134fbe254412b33a703d8666ae62
+msgid "**Name**: ``Mondo_search_disease``"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:97 39a4b234f1dd488eb6493b71b63f0de6
+msgid ""
+"**Description**: Search the Mondo Disease Ontology for diseases by name "
+"or keyword. Mondo unifies disease identifiers across OMIM, Orphanet, "
+"DOID, MeSH, ICD-10, NCIT, and other ontologies into a single MONDO ID. "
+"Returns matching disease entries with their Mondo IDs, descriptions, and "
+"cross-references. Use this to find the Mondo ID for a disease before "
+"querying Mondo\\_get\\_disease or Mondo\\_get\\_disease\\_phenotypes. "
+"Examples: 'Alzheimer' returns MONDO:0004975, 'breast cancer' returns "
+"MONDO:0007254, 'diabetes' returns MONDO:0005015."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:101 47be92c48bde41b0b80810e5c7e8b8bd
+msgid ""
+"``query`` (string) (required) Disease name or keyword to search. "
+"Examples: 'Alzheimer', 'breast cancer', 'type 2 diabetes', 'Parkinson', "
+"'cystic fibrosis', 'sickle cell'."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:104 7917ef7b10624d09b32fb3e8f1a3cc0e
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:121 4703e511225a49b9af2535883b7648d8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:123 4572924bf48341aabd3504e1e949db55
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mondo_tools.rst:124 2df5e41e0bc945d28b0124c8e80a9077
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

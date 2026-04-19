@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/interpro_tools.rst:10 4484234d5839400680495aa393eaaac0
+msgid "Interpro Tools"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:12 b3cda6e2d6da4b74a16a964bbec05f8a
+msgid ""
+"**Configuration File**: ``interpro_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:16 ab63551cc9dc45ada281caa95823acd9
+msgid ""
+"This page contains all tools defined in the ``interpro_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:19 636a66bcc28945018ff5932fd4e8f281
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:22 ab82b29e7d63414ab3e22917d44bdca8
+msgid "**InterPro_get_domain_details** (Type: InterProRESTTool)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:24 82901ea051ac4270ab07b9dba4d5d8ed
+msgid ""
+"Get detailed information about a specific InterPro domain entry including"
+" description, hierarchy,..."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst bef86c39fa0a43698807f5612ad47b4a
+msgid "InterPro_get_domain_details tool specification"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:28 ../../tools/interpro_tools.rst:59
+#: ../../tools/interpro_tools.rst:90 6ba1cf51a82e4080a36dbab7e5905bb2
+#: 73e22b986b034eb197ef9a4345c97b0c f69a05bf189e4a60b1267942519df9e4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:30 7ec2208ccbe64fd290f19383125970bb
+msgid "**Name**: ``InterPro_get_domain_details``"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:31 ../../tools/interpro_tools.rst:62
+#: ../../tools/interpro_tools.rst:93 455815e371264263a22a776f84143241
+#: 9f8085f5734c42cd96d4523198e70d6b e5639f7e78474406817319fa142b6924
+msgid "**Type**: ``InterProRESTTool``"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:32 566f0e9b48584af0ba2a11c15b261a3a
+msgid ""
+"**Description**: Get detailed information about a specific InterPro "
+"domain entry including description, hierarchy, and member databases."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:34 ../../tools/interpro_tools.rst:65
+#: ../../tools/interpro_tools.rst:96 3897599d39cf4857b306a0359e57af47
+#: 4a17f6edbc7c44f0b5f8709e53361622 5e18182960c04c49bf9b011d98328df6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:36 6afad913d83f49db8e495ea864602dec
+msgid "``accession`` (string) (required) InterPro accession ID (e.g., IPR000719)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:39 ../../tools/interpro_tools.rst:70
+#: ../../tools/interpro_tools.rst:104 27755f5bc6954d47a75d529ed42eb916
+#: 9a5967d4222c47018adac26fd52cded2 ccac25e00963422093065da18e3b8be8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:53 04cc7b9989d949008ea5f1f174c802cc
+msgid "**InterPro_get_protein_domains** (Type: InterProRESTTool)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:55 21e6e09c980b4e2faf3d5d33a0a3ece6
+msgid ""
+"Get protein domain annotations from InterPro database using UniProt "
+"protein ID. Returns domain fa..."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst 4dd43c29f220460eaccf63684ecdd86d
+msgid "InterPro_get_protein_domains tool specification"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:61 55451e2dfd954246a6ac3399d6a1dd60
+msgid "**Name**: ``InterPro_get_protein_domains``"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:63 e57947a495654ffbae2715f106d4ba55
+msgid ""
+"**Description**: Get protein domain annotations from InterPro database "
+"using UniProt protein ID. Returns domain families, signatures, and "
+"functional annotations."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:67 530fcd8359c6485d88fca172646bc1f4
+msgid ""
+"``protein_id`` (string) (required) UniProt protein ID (e.g., P05067, "
+"Q9Y6K9)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:84 d110e192798944299ba7e761a86d3634
+msgid "**InterPro_search_domains** (Type: InterProRESTTool)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:86 28ce410f91de48a2ba61cabfbf401f87
+msgid ""
+"Search InterPro database for protein domains and families by name or "
+"accession. Returns matching ..."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst a369c27e2ca04e7c981222ba78ce2700
+msgid "InterPro_search_domains tool specification"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:92 52a74563c8ff48628566601da8488b9b
+msgid "**Name**: ``InterPro_search_domains``"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:94 9e0d0db0d39741fab21437cb1c5fe59f
+msgid ""
+"**Description**: Search InterPro database for protein domains and "
+"families by name or accession. Returns matching domain entries with "
+"metadata."
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:98 4c826068fee44042b9f74389a2aa831b
+msgid ""
+"``query`` (string) (required) Domain name, accession, or search term "
+"(e.g., 'kinase', 'IPR000719')"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:101 4b6b042ce26241ef8fd87f12b3edd2ab
+msgid ""
+"``page_size`` (integer) (optional) Number of results to return per page "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:118 24194de123d14ab980a04d034db5b941
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:120 90f927cd7c9c4e8eaf2ab4329a8c963f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/interpro_tools.rst:121 af6fbf8b75214a4eb58ef68bf1751d27
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

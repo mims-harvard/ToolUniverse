@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/disprot_tools.rst:10 7622010afd4b4609822801b3a70992a9
+msgid "Disprot Tools"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:12 a6c15c84ac33472dabdc5a07d550bc98
+msgid ""
+"**Configuration File**: ``disprot_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:16 cea78356596046448b42a057ec1e2805
+msgid ""
+"This page contains all tools defined in the ``disprot_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:19 4e3f20409a3d4ce3acfdc5d60ce9dcb6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:22 593d2f66a7fa4bc28ed3677c71cdb86f
+msgid "**DisProt_get_entry** (Type: DisProtTool)"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:24 d7db8d99643d4d8594d9251375719760
+msgid ""
+"Get detailed disorder region annotations for a protein from DisProt. "
+"Accepts either a DisProt ID ..."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst 951492fe3a1848bfa7ce99ef935cb488
+msgid "DisProt_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:28 ../../tools/disprot_tools.rst:59
+#: 77ef90a45118497fb2306dae09fc3264 cd935eb0fe48437eb255190998d9ed7f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:30 faf5ce8de91540fbb9a271ead410033d
+msgid "**Name**: ``DisProt_get_entry``"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:31 ../../tools/disprot_tools.rst:62
+#: 2e04d9681360407cbd6e708ef30a0124 d5a863e29f9b4055a506f28e93d66e12
+msgid "**Type**: ``DisProtTool``"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:32 c91e4293c2b14f1b96f660aa759450a1
+#, python-format
+msgid ""
+"**Description**: Get detailed disorder region annotations for a protein "
+"from DisProt. Accepts either a DisProt ID (e.g., DP00086) or UniProt "
+"accession (e.g., P04637). Returns experimentally validated disordered "
+"regions with residue ranges, evidence codes, experimental methods, cross-"
+"references to PDB structures, and classification terms. Essential for "
+"understanding intrinsically disordered regions (IDRs) in a protein of "
+"interest. Example: P04637 (TP53) has 63 disorder regions, 37.7% disorder "
+"content, including transactivation domain regions validated by NMR and "
+"X-ray crystallography."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:34 ../../tools/disprot_tools.rst:65
+#: 4579c58a4b7d4802a032038f1c73363e abff40786fd44b98960263e1fc46fb88
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:36 0fe393f918ec4e79b4e6547c664439dd
+msgid ""
+"``accession`` (string) (required) DisProt ID (e.g., 'DP00086') or UniProt"
+" accession (e.g., 'P04637'). Both formats accepted."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:39 ../../tools/disprot_tools.rst:73
+#: b02ba3e700bd40c3b168eb1c55bd1fca ca1538fed27149d0942a9216640e62da
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:53 ae4ca1323c2d4f759d5440a16fbb94f4
+msgid "**DisProt_search** (Type: DisProtTool)"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:55 cc881b5a5e5a444ab46565be78773500
+msgid ""
+"Search DisProt for intrinsically disordered proteins by text query (gene "
+"name, protein name, orga..."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst 79cf04e9e3ce40059aa615d146ed6849
+msgid "DisProt_search tool specification"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:61 7a37f8424e204dfe851c74cdfa13fd91
+msgid "**Name**: ``DisProt_search``"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:63 4f5f5591d5244398b8ea94afc8ecd055
+#, python-format
+msgid ""
+"**Description**: Search DisProt for intrinsically disordered proteins by "
+"text query (gene name, protein name, organism, or keyword). DisProt is a "
+"manually curated database providing experimentally validated disorder "
+"annotations with evidence codes and literature references. Returns "
+"DisProt ID, UniProt accession, protein name, organism, disorder content "
+"fraction, and number of annotated regions. Useful for finding disordered "
+"proteins in a specific pathway or organism. Example: searching 'TP53' "
+"returns DP00086 (p53, 37.7% disorder, 63 regions); searching 'amyloid' "
+"returns proteins associated with amyloid formation."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:67 1b503b6b7ae8422a97772471acee5d49
+msgid ""
+"``query`` (string) (required) Search term: gene name (e.g., 'TP53'), "
+"protein name (e.g., 'kinase'), organism (e.g., 'sapiens'), or keyword "
+"(e.g., 'amyloid', 'phase separation')."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:70 0c7c265618b94049848295b2333f5bdf
+msgid ""
+"``page_size`` (integer) (optional) Number of results to return (default "
+"10, max 20)."
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:87 44a25301361f4617ab00d5e90edf7860
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:89 cd31dc2c66c1441ab526754b5b765f31
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/disprot_tools.rst:90 1f5332f2a6d249a0ac00687dfb6be9cf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

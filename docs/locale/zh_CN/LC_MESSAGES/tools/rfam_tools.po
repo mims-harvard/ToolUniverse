@@ -1,0 +1,423 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rfam_tools.rst:10 0c91c71be11044fb8caf82eedb8a84c9
+msgid "Rfam Tools"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:12 230d51129591414ebd9fbd301cd82f88
+msgid ""
+"**Configuration File**: ``rfam_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 9"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:16 657471460b4d4e9294ab77e031bcbfdb
+msgid ""
+"This page contains all tools defined in the ``rfam_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:19 e5c95842b529470ca41e625ae139ea46
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:22 209bd32e0ca7486b81b48966979f7748
+msgid "**Rfam_accession_to_id** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:24 5958239a0af7473f8b7755f2af18a87b
+msgid ""
+"Convert Rfam accession to family ID/name. Takes RF accession (e.g., "
+"RF00360) and returns human-re..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 55f274e41ab2447fb039f3e6ee4a51e6
+msgid "Rfam_accession_to_id tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:28 ../../tools/rfam_tools.rst:63
+#: ../../tools/rfam_tools.rst:104 ../../tools/rfam_tools.rst:139
+#: ../../tools/rfam_tools.rst:177 ../../tools/rfam_tools.rst:215
+#: ../../tools/rfam_tools.rst:253 ../../tools/rfam_tools.rst:288
+#: ../../tools/rfam_tools.rst:323 08486ea5d5e446169249d1ecd5e63773
+#: 1c49c875df0643c2aa8e991a77adaf85 2bf12ba681a24ec0812e63cb9c7eb3fa
+#: 322d937ec9f94374aa35579fb7863de0 96448ccf34984a9db6d9caf80ddfb8d4
+#: c93f710ce70944e2ab73cc30c6a76b04 e939bca9bcc24d3e91cc8cb0622ef989
+#: f5072f82d1124a7687b22b1d1893cb83 f617d4c1c95a4b6ab2857277a0a482a9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:30 d8c9fd39b53c4e88bc5f723a6456538e
+msgid "**Name**: ``Rfam_accession_to_id``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:31 ../../tools/rfam_tools.rst:66
+#: ../../tools/rfam_tools.rst:107 ../../tools/rfam_tools.rst:142
+#: ../../tools/rfam_tools.rst:180 ../../tools/rfam_tools.rst:218
+#: ../../tools/rfam_tools.rst:256 ../../tools/rfam_tools.rst:291
+#: ../../tools/rfam_tools.rst:326 3a64f58c71e04a71b4df0cab31fc62c5
+#: 3efab6b2d00847549d9fae87b2044b4c 492677b6b63c48c58ca21a5e82fddef0
+#: 56ef3f79ed0e49b7952b1ce6c186a36c 9043e3de22f94c44ae0fb137deb490ab
+#: ad4fc92390434d0b8fa49977f6c58960 af3326ea990c43d78877b0ea67f8439f
+#: b1812438119e4a9a8d2016215f95740f ce12de5559af4529b6bdff798230442e
+msgid "**Type**: ``RfamTool``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:32 dfb6b24815fc4e429e6e88202ae8b229
+msgid ""
+"**Description**: Convert Rfam accession to family ID/name. Takes RF "
+"accession (e.g., RF00360) and returns human-readable family name (e.g., "
+"snoZ107\\_R87). Simple ID conversion utility. Use for: displaying "
+"readable names, documentation, cross-referencing, data integration. Quick"
+" lookup with plain text response."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:34 ../../tools/rfam_tools.rst:69
+#: ../../tools/rfam_tools.rst:110 ../../tools/rfam_tools.rst:145
+#: ../../tools/rfam_tools.rst:183 ../../tools/rfam_tools.rst:221
+#: ../../tools/rfam_tools.rst:259 ../../tools/rfam_tools.rst:294
+#: ../../tools/rfam_tools.rst:329 05b9b9fa07094c17ae014d7753e35770
+#: 2d578b5c58f74144a411233dbd2e0379 44e9d5c6d31441b9b55717c5c5098593
+#: 4d5bd1cc5f98493d88d005d2e833592d c4d94f6fe1054eccb6dd4d20da3decfd
+#: c8f15553f8554ff89b4ff0f7159d6f8d cb3f86eb2b8a4ca98e6d2ebb69419a1a
+#: cd38982ce9244d4e9f4cbfee9efcd04f fcb6dabf586b492bb0ca873a4b5251b7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:36 ../../tools/rfam_tools.rst:71
+#: ../../tools/rfam_tools.rst:112 ../../tools/rfam_tools.rst:147
+#: ../../tools/rfam_tools.rst:185 ../../tools/rfam_tools.rst:223
+#: ../../tools/rfam_tools.rst:261 ../../tools/rfam_tools.rst:296
+#: ../../tools/rfam_tools.rst:331 1950ec23be6347679555aff6f8561519
+#: 4e52fe61f1314d9da2c28d299bf93c2b 9b2c50c5a8b14ae5b6176bec31aa09d0
+#: a7aabd993cd04980b7c9ab7d03f15e7b aad9cb4066664c73bd20ef350ef9a33e
+#: c488b39960524c70a1218b2bcc38777a dfc6cee75c9e4d2d84588d0bbd147458
+#: eb4ef8ef28d24060b65d167c5b96e378 eba8bd5008f448ec9bd315b5b96d075c
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:39 5065ba0a2dc9419b960c6c437499a6e3
+msgid "``accession`` (string) (required) Required: Rfam accession (e.g., RF00360)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:42 ../../tools/rfam_tools.rst:83
+#: ../../tools/rfam_tools.rst:118 ../../tools/rfam_tools.rst:156
+#: ../../tools/rfam_tools.rst:194 ../../tools/rfam_tools.rst:232
+#: ../../tools/rfam_tools.rst:267 ../../tools/rfam_tools.rst:302
+#: ../../tools/rfam_tools.rst:340 1bfa746889424fc8b0dc057c3601fc3b
+#: 29b65c7bfb4a4090ba19709ace5b818e 4f2209735ad84feda92236f769ec52f1
+#: 7caf20b45fc64e3d8d062572362c27dd 892b2bfb2e104293b0a34230bd859dfb
+#: 924b51d5c69c4c09b9b172efb3528383 9ee7aeb871e6419ba3aadfa8dd1f22ca
+#: b69913e90a2f465382a67b03c9ac4c39 b8c28464b66a460ba132f6ae62c700c1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:57 59001520b0fd485c8887e13d030b6da1
+msgid "**Rfam_get_alignment** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:59 aded8b3356744a109165d001aeeae3ac
+msgid ""
+"Get RNA family seed alignment in multiple formats. Returns curated "
+"multiple sequence alignment us..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 22d58782c1464b2fbd82074823e27936
+msgid "Rfam_get_alignment tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:65 10446008add142cf9302bb707f429468
+msgid "**Name**: ``Rfam_get_alignment``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:67 43cb967368b14f3bb0f0ea8d9e975d01
+msgid ""
+"**Description**: Get RNA family seed alignment in multiple formats. "
+"Returns curated multiple sequence alignment used to build covariance "
+"model. Formats: stockholm (default, with structure annotation), pfam "
+"(stockholm single-line), fasta (gapped), fastau (ungapped). Optional gzip"
+" compression for large alignments. Use for: sequence analysis, structure "
+"prediction, phylogenetic studies, homology detection. Alignments show "
+"conserved positions and base pairing."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:74 ../../tools/rfam_tools.rst:115
+#: ../../tools/rfam_tools.rst:188 ../../tools/rfam_tools.rst:226
+#: ../../tools/rfam_tools.rst:264 2d7cd118021f4a9a9b472a7fde25edb0
+#: b1b5500b728946f280938931d15e5eb5 cf2bf32aec0541ba99d0cd1d2e0c95b2
+#: cfb1311314334232a84c0dbc7e803d24 e02dba3719a345399404998833eb4269
+msgid "``family_id`` (string) (required) Required: Rfam accession or family name"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:77 9ac6f68d69cc404d9b6573a74219e1fe
+msgid ""
+"``format`` (string) (optional) Alignment format: stockholm (structured), "
+"pfam (single-line), fasta (gapped), fastau (ungapped)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:80 08f973030e504f5da9487a9d89cb7f29
+msgid "``gzip`` (boolean) (optional) Compress output with gzip"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:98 5a6a19affb4443049f0ad215776ca1b0
+msgid "**Rfam_get_covariance_model** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:100 8982253cf65343da884eabcfdb1ad95a
+msgid ""
+"Get Infernal covariance model (CM) for RNA family. Returns CM file in "
+"Infernal format, which capt..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 46ac88eb652f4a3d85d6521e1f4569ae
+msgid "Rfam_get_covariance_model tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:106 ab5a35047c604f65aa78d70f8bf227ff
+msgid "**Name**: ``Rfam_get_covariance_model``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:108 d922813a570945039c6f4410f0c3ab60
+msgid ""
+"**Description**: Get Infernal covariance model (CM) for RNA family. "
+"Returns CM file in Infernal format, which captures both sequence and "
+"structure conservation. Can be used with Infernal tools (cmsearch, "
+"cmalign, cmbuild) for RNA sequence analysis. Use for: homology searches, "
+"structural alignment, custom RNA annotation, sequence classification. CMs"
+" are more sensitive than profile HMMs for structured RNAs."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:133 1a790d04258c409888b51f81c3dac754
+msgid "**Rfam_get_family** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:135 3170180dd89f4f1f906db74f0e9319c7
+msgid ""
+"Get comprehensive RNA family information from Rfam database. Returns "
+"family metadata including de..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst a608a2a152bc424abf73a60816f7b39c
+msgid "Rfam_get_family tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:141 96dba3b9a8f643b884bef326244e0d1f
+msgid "**Name**: ``Rfam_get_family``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:143 81a8a8261dfb4634b4215ad468bf9092
+msgid ""
+"**Description**: Get comprehensive RNA family information from Rfam "
+"database. Returns family metadata including description, curation "
+"details, RNA type (snoRNA, miRNA, tRNA, etc.), number of sequences, "
+"species coverage, search parameters, and structure source. Rfam v15.1 "
+"contains 4,227 RNA families. Query by RF accession (e.g., RF00360) or "
+"family name (e.g., snoZ107\\_R87). Use for: RNA family discovery, "
+"understanding RNA function, checking curation quality, identifying RNA "
+"types. Available formats: json, xml."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:150 2c3b466544c241bd8b047761efb47a39
+msgid ""
+"``family_id`` (string) (required) Required: Rfam accession (e.g., "
+"RF00360) or family name (e.g., snoZ107\\_R87)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:153 ../../tools/rfam_tools.rst:191
+#: ../../tools/rfam_tools.rst:229 017b96c8e0bb429694fb85290cb5dc31
+#: 9adcb37ed3ab41bbb47186d90c2c6171 b05c8ceceb90424dbf8520d3be713f56
+msgid "``format`` (string) (optional) Output format"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:171 d5c24c4f9b4944da95a36dcd14d37f00
+msgid "**Rfam_get_sequence_regions** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:173 8f6d4a2da75d4aefb6923dc2d6f945b3
+msgid ""
+"Get list of all genomic regions containing RNA family members. Returns "
+"tab-delimited data with se..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst a7b32302fcd54a50a189405ad1cfd45d
+msgid "Rfam_get_sequence_regions tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:179 153f5d9ff38a4938bc41046eb55154e7
+msgid "**Name**: ``Rfam_get_sequence_regions``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:181 093d0a16b90b4ac4aa4a1d61424b0fba
+msgid ""
+"**Description**: Get list of all genomic regions containing RNA family "
+"members. Returns tab-delimited data with sequence IDs, coordinates, "
+"scores, and species. Shows where family is found across genomes. Warning:"
+" Some large families return 403 error due to too many regions. Use for: "
+"genome annotation, identifying RNA locations, cross-species comparisons, "
+"coverage analysis. Available formats: text (tab-delimited), json, xml."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:209 9500f7dd1d1948cfb3a70e8c1211235c
+msgid "**Rfam_get_structure_mapping** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:211 36daa8a3d9bf4cbc9dad6c922b706b2c
+msgid ""
+"Get mapping between Rfam family and 3D structures (PDB). Returns "
+"correspondence between RNA famil..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 9a573602b6a44f8fb2574938997962ac
+msgid "Rfam_get_structure_mapping tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:217 3766746aad514087b8607fff21e9d511
+msgid "**Name**: ``Rfam_get_structure_mapping``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:219 8ecd275453464fbea240fa263c8e34a5
+msgid ""
+"**Description**: Get mapping between Rfam family and 3D structures (PDB)."
+" Returns correspondence between RNA family, EMBL sequence regions, and "
+"PDB residues. Shows which structures are available for the family. Tab-"
+"delimited format includes PDB IDs, chains, residue ranges, and "
+"alignments. Use for: structure-function analysis, 3D visualization, "
+"structural annotation, integrating sequence and structure data. Links "
+"Rfam families to experimental structures."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:247 2ab5cb8c670941c1b1e1598d82b08133
+msgid "**Rfam_get_tree_data** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:249 e04b6940bf03444996be4c46f199a153
+msgid ""
+"Get phylogenetic tree for RNA family in NHX format (New Hampshire "
+"eXtended). Returns tree structu..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 4adbfc9b1fe149759d7c24fb34ad1afd
+msgid "Rfam_get_tree_data tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:255 9daaab869e4e4835a3b837db5df85f0c
+msgid "**Name**: ``Rfam_get_tree_data``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:257 0362aa7b719d4941ad9df6777408fa7a
+msgid ""
+"**Description**: Get phylogenetic tree for RNA family in NHX format (New "
+"Hampshire eXtended). Returns tree structure based on seed alignment "
+"showing evolutionary relationships. Tree includes species names and "
+"sequence information. Can be visualized with tree viewers (FigTree, iTOL,"
+" ETE). Use for: phylogenetic analysis, understanding RNA family "
+"evolution, species distribution analysis, taxonomic studies. NHX format "
+"includes extended annotations beyond standard Newick."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:282 de556d7f895d40ae86b91dffa1eb1a03
+msgid "**Rfam_id_to_accession** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:284 793c9a93ce3740f6a5a9fc6b5282746d
+msgid ""
+"Convert Rfam family ID/name to accession. Takes family name (e.g., "
+"snoZ107\\_R87) and returns RF a..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst 8311f4c9199e4df49b43d78db8dddc1a
+msgid "Rfam_id_to_accession tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:290 3514c8aa1c9e425b9e7891fb997c07d5
+msgid "**Name**: ``Rfam_id_to_accession``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:292 057dc3a6ffd44213b34f296f7191a54e
+msgid ""
+"**Description**: Convert Rfam family ID/name to accession. Takes family "
+"name (e.g., snoZ107\\_R87) and returns RF accession (e.g., RF00360). "
+"Simple ID conversion utility. Use for: getting stable identifiers, cross-"
+"referencing, data integration, creating accession-based links. Accessions"
+" are stable across Rfam versions."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:299 74515e7ce8a74d96ab6ca3b8e054e4c9
+msgid ""
+"``family_id`` (string) (required) Required: Family name (e.g., "
+"snoZ107\\_R87)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:317 8cf020cf64a14d6bbada64cc0a6131b9
+msgid "**Rfam_search_sequence** (Type: RfamTool)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:319 bd74f53935ed4fefa4dfdc48dc4d46cb
+msgid ""
+"Search RNA sequence against all Rfam families using Infernal cmscan. "
+"Submits sequence to batch se..."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst b82d331ec64846818bbbf098d96ad4bf
+msgid "Rfam_search_sequence tool specification"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:325 2d23b2b7d8a44505a1f2ae6569d280e3
+msgid "**Name**: ``Rfam_search_sequence``"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:327 665e443ed2084421a49e395aa698a88f
+msgid ""
+"**Description**: Search RNA sequence against all Rfam families using "
+"Infernal cmscan. Submits sequence to batch search server, polls for "
+"completion, and returns hits with family matches, positions, scores, and "
+"E-values. Typically completes in 4-5 seconds for short sequences. Results"
+" available for 1 week. Use for: annotating novel RNA sequences, "
+"identifying RNA family membership, finding conserved elements, structural"
+" RNA discovery. Returns family IDs, alignment details, and significance "
+"scores."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:334 93aa30634a3a49678fbeea68ad44f002
+msgid ""
+"``sequence`` (string) (required) Required: RNA sequence to search (can be"
+" multi-line, no FASTA header needed)"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:337 67e84083b8d940ec8126986478eecafe
+msgid ""
+"``max_wait_seconds`` (integer) (optional) Maximum time to wait for "
+"results (default: 120s). Job continues running if timeout reached."
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:355 9b1ea10f131c47d399d8e12c85f9ab6c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:357 8cd51d5cf27d481d915f4dfc53ece745
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rfam_tools.rst:358 ac71b179e39c4bec94ae7ac1f6a3c146
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

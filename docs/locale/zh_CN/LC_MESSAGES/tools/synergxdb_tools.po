@@ -1,0 +1,383 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/synergxdb_tools.rst:10 45dd278f23714cfb9c759ce6d323bf20
+msgid "Synergxdb Tools"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:12 6adfc64bc2254fc1a6ad5bf15083232b
+msgid ""
+"**Configuration File**: ``synergxdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:16 36d774ea0c5843b68cd66b69daf80da5
+msgid ""
+"This page contains all tools defined in the ``synergxdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:19 21013100e9504f508fc7fa63c556e6c5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:22 f162a50a56bb428bbdba67d01bd8a644
+msgid "**SYNERGxDB_get_combo_matrix** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:24 d50f58c45c294881b573a579f37bf4e4
+msgid ""
+"Get the dose-response matrix data for a specific drug combination "
+"experiment in SYNERGxDB. Return..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst 06b890688f4c460e8693195c3c1d33a8
+msgid "SYNERGxDB_get_combo_matrix tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:28 ../../tools/synergxdb_tools.rst:66
+#: ../../tools/synergxdb_tools.rst:96 ../../tools/synergxdb_tools.rst:130
+#: ../../tools/synergxdb_tools.rst:160 ../../tools/synergxdb_tools.rst:190
+#: ../../tools/synergxdb_tools.rst:226 10d3ed220174406690e3cb4cf0a982e5
+#: 2a7461d8254649b2a9a32360e0c653f2 4e99ca3ed68946fe90d7cf9207c398cf
+#: 9d261536cf1643de94c991b339d58abb a0d5066268e14201aa8e5c9b3d0294b4
+#: b39ad4f2972d44ab83cfcf4aa208f9bc cc712539a94949d5b90133a5b7f733a4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:30 e47c91a812ea4eb0870c8f6c23d52444
+msgid "**Name**: ``SYNERGxDB_get_combo_matrix``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:31 ../../tools/synergxdb_tools.rst:69
+#: ../../tools/synergxdb_tools.rst:99 ../../tools/synergxdb_tools.rst:133
+#: ../../tools/synergxdb_tools.rst:163 ../../tools/synergxdb_tools.rst:193
+#: ../../tools/synergxdb_tools.rst:229 2918aa7680354ccfb0639093ca7f3114
+#: 4039e86e9c3b4991b50e995d79c6ca67 42572f83555f4f2cb4ed25b77117f244
+#: 592097549c234fd0858c7fe19fc1b807 7911435382074b65a7166ec5b16f9e3a
+#: 7f96447ce10e4234991d62a39b11da0c f5e5242eeb1e4bc890f4dd128e2594c6
+msgid "**Type**: ``SYNERGxDBTool``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:32 a5269f46ea71408f9df8e3e3430156b8
+msgid ""
+"**Description**: Get the dose-response matrix data for a specific drug "
+"combination experiment in SYNERGxDB. Returns concentration pairs and raw "
+"viability plus synergy matrices (Bliss, Loewe, HSA, ZIP). The combo\\_id "
+"and source\\_id can be obtained from SYNERGxDB\\_search\\_combos results."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:34 ../../tools/synergxdb_tools.rst:72
+#: ../../tools/synergxdb_tools.rst:102 ../../tools/synergxdb_tools.rst:136
+#: ../../tools/synergxdb_tools.rst:166 ../../tools/synergxdb_tools.rst:196
+#: ../../tools/synergxdb_tools.rst:232 04da0fdf090f4c8498d96e860800e5b2
+#: 140c05c7b092458b89884537364c9a28 52343142dc2c4da28c3fcec6381eab28
+#: 6dd7a909c39f4640a76ffb5b98fc643f 86a926419c964efc981f8668405d4230
+#: 87f60f74cf9c4112ab5bdf65faae47c8 b9be69d3cd1d4f5b852a2b64ca914fd0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:36 ../../tools/synergxdb_tools.rst:74
+#: ../../tools/synergxdb_tools.rst:104 ../../tools/synergxdb_tools.rst:138
+#: ../../tools/synergxdb_tools.rst:168 ../../tools/synergxdb_tools.rst:198
+#: ../../tools/synergxdb_tools.rst:234 0efa148ba9d641958239f24b02edb19d
+#: 4eb90b552735490693b7743bb7372cb2 4f4e75a9b1c74ccc872264292498cde7
+#: 6f19d3b78e0d4d6f84af146344f4055d 8d0a36a75ba54138abda2c9a26f2ebfc
+#: aa11f2077e884af5b2e724bbb236bb51 c2e145730c1e4ba4bea68a5101624077
+msgid "``operation`` (string) (optional) Operation type"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:39 9bef17e00f564642b5bdc81ebeab5cba
+msgid ""
+"``combo_id`` (integer) (required) Combination design ID from "
+"search\\_combos results (comboId field)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:42 4930450cd7d94d31889432db28911c8e
+msgid ""
+"``source_id`` (integer) (required) Dataset source ID (idSource field from"
+" search\\_combos or list\\_datasets)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:45 ../../tools/synergxdb_tools.rst:77
+#: ../../tools/synergxdb_tools.rst:110 ../../tools/synergxdb_tools.rst:141
+#: ../../tools/synergxdb_tools.rst:171 ../../tools/synergxdb_tools.rst:207
+#: ../../tools/synergxdb_tools.rst:261 328fb9fc9aa34884a3750049c69783e1
+#: 558f1ad7659f4518b0dc2a3edbc015ab 65f5e46c1aab4e67a4a52c71e5e927a2
+#: 81a5e57fb19040bf9cd6efc56069a8fe a1006c508a5c486e850745197f860f0b
+#: a95f6b70b8874267bd84157c0a9d2dfc c02223d0f21d42c3803298eb8bfd2f4d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:60 6aeb557c4e7f4958b827c5b088651516
+msgid "**SYNERGxDB_get_combo_stats** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:62 0f3fb7ab066c40a5a5c6f1681fc97591
+msgid ""
+"Get per-dataset combination statistics from SYNERGxDB. Returns the number"
+" of unique drug combinat..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst ad64f7d6562840e68ac4cf9cfb584e1d
+msgid "SYNERGxDB_get_combo_stats tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:68 5e7de8d3a2554a679451cc4921f30644
+msgid "**Name**: ``SYNERGxDB_get_combo_stats``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:70 84bc397799cb4041972aa46a0987a719
+msgid ""
+"**Description**: Get per-dataset combination statistics from SYNERGxDB. "
+"Returns the number of unique drug combinations, total experiments, and "
+"data points for each screening study. Useful for understanding the scale "
+"and coverage of each integrated dataset."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:90 4a2afa7f30604c718e4d419e7cf201b4
+msgid "**SYNERGxDB_get_drug** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:92 7dc2367b40ab4533ae6b22f9bd1dacf5
+msgid ""
+"Get detailed information about a specific drug in SYNERGxDB by its "
+"database ID. Returns drug name..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst 6ec95681cc5d4f2281c2fb07ea212984
+msgid "SYNERGxDB_get_drug tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:98 d5ca6ad881d943e9ad33c12d6dbb1579
+msgid "**Name**: ``SYNERGxDB_get_drug``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:100 5b1463afdcae4c5da4b31a4794f50b78
+msgid ""
+"**Description**: Get detailed information about a specific drug in "
+"SYNERGxDB by its database ID. Returns drug name, ATC code, PubChem ID, "
+"and DrugBank ID. Known drug IDs: 11 (Bortezomib), 24 (Dasatinib), 34 "
+"(Erlotinib), 41 (Fluorouracil), 48 (Imatinib), 52 (Lapatinib), 97 "
+"(Topotecan), 106 (Vorinostat)."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:107 52221d74e61149a99f0e51a23ba113e7
+msgid ""
+"``drug_id`` (integer) (required) SYNERGxDB drug ID (e.g., 11 for "
+"Bortezomib)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:124 e748205aa8804d68ab3b678a4f87ed6f
+msgid "**SYNERGxDB_list_cell_lines** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:126 c884efd5374f4146b7973077fe2a35ef
+msgid ""
+"List all cancer cell lines in the SYNERGxDB database. Returns cell line "
+"names, tissue types, dise..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst f9066ac513774b45bfff340df689a603
+msgid "SYNERGxDB_list_cell_lines tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:132 99275971a727461198a1b494a0684c01
+msgid "**Name**: ``SYNERGxDB_list_cell_lines``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:134 7ead2989ad95424b884a884717881abe
+msgid ""
+"**Description**: List all cancer cell lines in the SYNERGxDB database. "
+"Returns cell line names, tissue types, disease annotations, Cellosaurus "
+"IDs, and demographic data. Contains 151 cancer cell lines. Tissue types "
+"include blood, breast, lung, colon, CNS, ovary, prostate, kidney, skin."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:154 a468c0b50b0844adbd370f18197cb51c
+msgid "**SYNERGxDB_list_datasets** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:156 30f0eca2b0144f1eba4525f76a39dfbf
+msgid ""
+"List all drug combination screening datasets integrated in SYNERGxDB. "
+"Returns dataset names, numb..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst c7a5055d1c244dbcbd0f709905b808b6
+msgid "SYNERGxDB_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:162 4c38f2d32308464e8167073471046629
+msgid "**Name**: ``SYNERGxDB_list_datasets``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:164 4e22504e1bd240d5816c60c693b22c3b
+msgid ""
+"**Description**: List all drug combination screening datasets integrated "
+"in SYNERGxDB. Returns dataset names, number of drugs, cell lines, and "
+"publication references. Key datasets: NCI-ALMANAC (101 drugs, 60 cell "
+"lines), MERCK (38 drugs, 39 cell lines), STANFORD, YALE-PDAC, YALE-TNBC, "
+"MIT-MELANOMA, CLOUD, ASTRAZENECA."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:184 3baf9fcb5965478b8d7d01c09c72630d
+msgid "**SYNERGxDB_list_drugs** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:186 188012e80dc8423d970a2ce3897c9516
+msgid ""
+"List drugs in the SYNERGxDB database with their identifiers. Returns drug"
+" names, IDs, PubChem CID..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst d36158f3787a4388978ac363558877d4
+msgid "SYNERGxDB_list_drugs tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:192 ad831f0ecc844eb48df4fee568e234f9
+msgid "**Name**: ``SYNERGxDB_list_drugs``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:194 aabe58faa21c439b96cf6cd341585a44
+msgid ""
+"**Description**: List drugs in the SYNERGxDB database with their "
+"identifiers. Returns drug names, IDs, PubChem CIDs, DrugBank IDs, SMILES,"
+" InChIKey, and associated datasets. Contains 1977 unique compounds. Use "
+"'query' or 'name' to filter by drug name (e.g., 'imatinib'). Use drug IDs"
+" from this list in SYNERGxDB\\_search\\_combos queries."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:201 6eca1fa3f094404ab756bbeb5c101529
+msgid ""
+"``query`` (string) (optional) Filter by drug name (case-insensitive "
+"substring match, e.g., 'imatinib', 'taxol'). Alias: name."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:204 de6475c8b3cf43c69fb5bbe07bb080f0
+msgid "``name`` (string) (optional) Alias for query. Filter by drug name."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:220 2f1f68037428460fa933bfb7ee223231
+msgid "**SYNERGxDB_search_combos** (Type: SYNERGxDBTool)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:222 f2906e8190a940fbbbdec9c028e28f65
+msgid ""
+"Search drug combination synergy scores in SYNERGxDB. Returns synergy "
+"metrics (Bliss, Loewe, HSA, ..."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst f02fda75c1fe4edcaa33762864c93fc8
+msgid "SYNERGxDB_search_combos tool specification"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:228 d2d4ac8bd2a54d90ac4f5ccf2c1f2e76
+msgid "**Name**: ``SYNERGxDB_search_combos``"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:230 efe5fb4a5f9248b9bd35265fa6e56954
+msgid ""
+"**Description**: Search drug combination synergy scores in SYNERGxDB. "
+"Returns synergy metrics (Bliss, Loewe, HSA, ZIP) for drug pairs across "
+"cancer cell lines. Filter by drug IDs, cell line/tissue, and dataset. The"
+" database integrates 22,507 unique drug combinations from 9 major studies"
+" (NCI-ALMANAC, MERCK, MIT-MELANOMA, VISAGE, DECREASE, YALE-TNBC, YALE-"
+"PDAC, STANFORD, CLOUD). Positive ZIP scores indicate synergy. Use "
+"list\\_drugs first to find drug IDs. NOTE: SYNERGxDB covers pairwise in "
+"vitro cytotoxicity screening; standard-of-care clinical regimens (FOLFOX,"
+" FOLFIRI, CAPOX, R-CHOP) and most targeted therapies/biologics "
+"(BRAF/MEK/KRAS inhibitors, immune checkpoint inhibitors, monoclonal "
+"antibodies) are not represented."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:237 dca56497d82746939dee5578c26f41d0
+msgid ""
+"``drug_id_1`` (integer, null) (optional) SYNERGxDB drug ID for drug A. "
+"Use SYNERGxDB\\_list\\_drugs to find IDs. Examples: 11 (Bortezomib), 48 "
+"(Imatinib), 52 (Lapatinib). Alternatively, use drug\\_name\\_1 for "
+"automatic ID lookup."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:240 b6918d80a4fe493f880083e67d2dadbd
+msgid ""
+"``drug_name_1`` (string, null) (optional) Drug name for drug A — triggers"
+" automatic SYNERGxDB ID lookup (e.g., 'gemcitabine', 'imatinib', "
+"'paclitaxel'). Aliases: drug1. Use instead of drug\\_id\\_1 when you "
+"don't know the integer ID."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:243 012a7e9a55c941879d3e74a503866463
+msgid ""
+"``drug_id_2`` (integer, null) (optional) SYNERGxDB drug ID for drug B. "
+"Examples: 97 (Topotecan), 34 (Erlotinib), 24 (Dasatinib). Alternatively, "
+"use drug\\_name\\_2 for automatic ID lookup."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:246 53b5bfbdf07e4254a4a3035e74364108
+msgid ""
+"``drug_name_2`` (string, null) (optional) Drug name for drug B — triggers"
+" automatic SYNERGxDB ID lookup (e.g., 'erlotinib', 'topotecan', "
+"'oxaliplatin'). Aliases: drug2. Use instead of drug\\_id\\_2 when you "
+"don't know the integer ID."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:249 1cf97149ea844fce988ede72601c985d
+msgid ""
+"``sample`` (string, null) (optional) Cell line ID (integer as string) or "
+"tissue name. Valid tissue names: 'colorectal' (NOT 'colon'), 'blood', "
+"'breast', 'lung', 'ovary', 'skin', 'CNS', 'prostate', 'kidney', "
+"'pancreas', 'gastric', 'melanoma'. Use SYNERGxDB\\_list\\_cell\\_lines to"
+" find valid values. Aliases: tissue\\_name, tissue. Common alias 'colon' "
+"is auto-mapped to 'colorectal'."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:252 3cd696338dba45119892ff5b4acded33
+msgid ""
+"``dataset`` (integer, string, null) (optional) Dataset source ID "
+"(integer) or name (string). Examples: 2 or 'NCI-ALMANAC', 1 or 'MERCK', "
+"10 or 'VISAGE', 7 or 'MIT-MELANOMA'. Use SYNERGxDB\\_list\\_datasets to "
+"see all available datasets and their IDs."
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:255 a7d8a1de43dc40bdbad7cf0ae0fd398c
+msgid ""
+"``page`` (integer) (optional) Page number for paginated results (default:"
+" 1)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:258 662b3901c02a42adbd7a35de4f0baa27
+msgid "``per_page`` (integer) (optional) Results per page (default: 20, max: 500)"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:274 a5b898b267c94b36b5b086e7c21842d2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:276 45f00cc4941c425187d28d38f07b0308
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/synergxdb_tools.rst:277 7ad2a2bba514451fb3b5e94494b04935
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

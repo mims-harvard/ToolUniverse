@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_compara_tools.rst:10 0923d373636045f08a050928ce7226b8
+msgid "Ensembl Compara Tools"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:12 b2c8494345a641a7bc61ceb4a5136ed5
+msgid ""
+"**Configuration File**: ``ensembl_compara_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:16 cde7215add3140b9b56e5a4c3a4dbbfb
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_compara_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:19 ab68bf2ec38b43a48ab65e621e6982e3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:22 9dc5e5b02a2d41f1a3dcc6e41ed12014
+msgid "**EnsemblCompara_get_gene_tree** (Type: EnsemblComparaTool)"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:24 da9bd0fc43834105bf764fae0b8a94f2
+msgid ""
+"Get the phylogenetic gene tree showing evolutionary relationships of a "
+"gene family across species..."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst b48f70a3ce854629b3f8143a2be2d24e
+msgid "EnsemblCompara_get_gene_tree tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:28
+#: ../../tools/ensembl_compara_tools.rst:62
+#: ../../tools/ensembl_compara_tools.rst:102 19115f8bd74347d08740d362e15b2e2e
+#: 5951763197eb4b53b32f104932d8d1e1 84d3045efc6d4d07a1b3b304bf3b6f62
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:30 133e0dab8c8446cb9c30cbd242987f57
+msgid "**Name**: ``EnsemblCompara_get_gene_tree``"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:31
+#: ../../tools/ensembl_compara_tools.rst:65
+#: ../../tools/ensembl_compara_tools.rst:105 14921e46e0594d3fb5c96d4a57b20a57
+#: a17f7f3ce8f64b3c8fe30bd8bf61e342 be106dd55c0c4000869b445a4bc10683
+msgid "**Type**: ``EnsemblComparaTool``"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:32 d489c87710ae4a0b924122f10cfdea23
+msgid ""
+"**Description**: Get the phylogenetic gene tree showing evolutionary "
+"relationships of a gene family across species from Ensembl Compara. Gene "
+"trees trace the history of speciation and duplication events for a gene "
+"family. Returns tree members (genes across species), tree structure, and "
+"optionally Newick format. Useful for evolutionary analysis and "
+"understanding gene family expansion. Example: TP53 gene tree shows "
+"conservation across vertebrates."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:34
+#: ../../tools/ensembl_compara_tools.rst:68
+#: ../../tools/ensembl_compara_tools.rst:108 881f8a822bce4309bf8fc0afd8b5d34e
+#: ab765d9d2c414d968bfb4161c0339889 eec896cc3c8845ae8b5cf2566ee64ba9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:36 31beab41dc064b4cba511f730e0452b5
+msgid ""
+"``gene`` (string) (required) Gene symbol or Ensembl gene ID. Examples: "
+"'TP53', 'BRCA1', 'ENSG00000141510'. Ensembl IDs are more reliable than "
+"symbols for gene tree retrieval."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:39 ef88a9c9814c4641b0c6a64586af54f1
+msgid ""
+"``species`` (string) (optional) Species (default: 'human'). Used when "
+"providing a gene symbol. Examples: 'human', 'mouse'."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:42
+#: ../../tools/ensembl_compara_tools.rst:82
+#: ../../tools/ensembl_compara_tools.rst:116 235af928546a4449b12bbcf73dc7a199
+#: 8f6633170d514396bf9c714c6d329a17 c31ae3c4075c4db79e3ecdbfa8ac9d31
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:56 7f70f5531cfd408eb5b0a74873a2668a
+msgid "**EnsemblCompara_get_orthologues** (Type: EnsemblComparaTool)"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:58 5a363792c7e94312b14800f77ed2eace
+msgid ""
+"Find orthologous genes (genes in different species that evolved from a "
+"common ancestor) using Ens..."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst e2d0f7c4b75c4ce9b344d189e3f90be2
+msgid "EnsemblCompara_get_orthologues tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:64 28c8bd9e55de4755839c126a90c4a1d3
+msgid "**Name**: ``EnsemblCompara_get_orthologues``"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:66 87600665254e4fada07de069cb3417b1
+msgid ""
+"**Description**: Find orthologous genes (genes in different species that "
+"evolved from a common ancestor) using Ensembl Compara. Essential for "
+"comparative genomics - finding the mouse, zebrafish, or fly equivalent of"
+" a human gene. Returns orthologue gene IDs, species, homology type (one-"
+"to-one, one-to-many), and taxonomy level of divergence. Example: TP53 in "
+"human has a one-to-one orthologue (Trp53) in mouse."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:70 c11ccb22cf414ff495b66d0e4bf155e7
+msgid ""
+"``gene`` (string) (required) Gene symbol or Ensembl gene ID. Examples: "
+"'BRCA1', 'TP53', 'ENSG00000141510', 'ENSG00000012048'."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:73 ae07e7ecb5c04416b8242a23464ca964
+msgid ""
+"``species`` (string) (optional) Source species (default: 'human'). "
+"Examples: 'human', 'mouse', 'zebrafish', 'drosophila\\_melanogaster'."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:76 71ee865d1eac4ae18800087922985efd
+msgid ""
+"``target_species`` (string) (optional) Target species to limit orthologue"
+" search. Examples: 'mouse', 'zebrafish', 'rat', "
+"'drosophila\\_melanogaster'. Default: all species."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:79 872b097f5be549f9bcbd63370146ed38
+msgid ""
+"``target_taxon`` (integer) (optional) NCBI taxon ID to limit orthologue "
+"search. Examples: 10090 (mouse), 7955 (zebrafish), 7227 (fruit fly). "
+"Alternative to target\\_species."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:96 569cd3c153ab431a8f91f2d58c0259cf
+msgid "**EnsemblCompara_get_paralogues** (Type: EnsemblComparaTool)"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:98 6067b02eb6334d6e8b37bc6fd7233f1f
+msgid ""
+"Find paralogous genes (genes within the same species that arose from gene"
+" duplication events) usi..."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst 714341edeb554b54a92b12c39de18163
+msgid "EnsemblCompara_get_paralogues tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:104 4d1864aab47a4cdb81f961a29d3433b3
+msgid "**Name**: ``EnsemblCompara_get_paralogues``"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:106 7e41352048794d079289852165aa1bdf
+msgid ""
+"**Description**: Find paralogous genes (genes within the same species "
+"that arose from gene duplication events) using Ensembl Compara. "
+"Paralogues often have related but diverged functions. Returns paralogue "
+"gene IDs, duplication type, and evolutionary context. Example: TP53 has "
+"paralogues TP63 (ENSG00000073282) and TP73 (ENSG00000078900) in human, "
+"from ancient vertebrate gene duplication."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:110 b8cac8527f3147d5aa7bb4c5b3ef668d
+msgid ""
+"``gene`` (string) (required) Gene symbol or Ensembl gene ID. Examples: "
+"'TP53', 'BRCA1', 'ENSG00000141510'."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:113 65699ab0e6c146f28c061d63171e0f93
+msgid ""
+"``species`` (string) (optional) Species (default: 'human'). Examples: "
+"'human', 'mouse', 'zebrafish'."
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:130 891845c0342b41c996d1bb153c04e40c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:132 59a8c6772597482f9b3c3023717680de
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_compara_tools.rst:133 8abcc7ba060048759e7825d10d5314db
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

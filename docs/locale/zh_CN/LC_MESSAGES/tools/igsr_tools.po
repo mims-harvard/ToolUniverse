@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/igsr_tools.rst:10 68e379fa9c584b0194217e0ffa4e0dac
+msgid "Igsr Tools"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:12 e06718495857475a95e9999a03ca32af
+msgid ""
+"**Configuration File**: ``igsr_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:16 065ded17675c4c57b6b71225ceb98a77
+msgid ""
+"This page contains all tools defined in the ``igsr_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:19 e10ae6faa56c470f8dc4695b275baa43
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:22 258bc5c73e92453db8eaff0161e1a398
+msgid "**IGSR_list_data_collections** (Type: IGSRTool)"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:24 1128ad3ad2ac462d97724f27aa6f94a6
+msgid ""
+"List available data collections from the International Genome Sample "
+"Resource (IGSR). Data collec..."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst fdec161aec264a8da57a4e86010959de
+msgid "IGSR_list_data_collections tool specification"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:28 ../../tools/igsr_tools.rst:61
+#: ../../tools/igsr_tools.rst:100 795c7786190045c788a0b46b82ee94e8
+#: b0a64de2373a4c2989e8db7b89488a06 f903db68173048c1920a5b6ed86817af
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:30 7093d19759f44ba5bcf5a0c9e4f73f87
+msgid "**Name**: ``IGSR_list_data_collections``"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:31 ../../tools/igsr_tools.rst:64
+#: ../../tools/igsr_tools.rst:103 16b3bbfa17ac491297b1143bf257b915
+#: 24ee0cc0048940f4802831a4bd18de67 6463b681fa3d4b90809091d5ae8f49d8
+msgid "**Type**: ``IGSRTool``"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:32 989a62f26ed44742b6ac54fa1b1c1cf4
+msgid ""
+"**Description**: List available data collections from the International "
+"Genome Sample Resource (IGSR). Data collections include the original 1000"
+" Genomes Project phases, the 30x high-coverage resequencing, Human Genome"
+" Structural Variation Consortium (HGSVC), Human Pangenome Reference "
+"Consortium (HPRC), and other related studies. Returns collection codes, "
+"titles, sample/population counts, and available data types (sequence, "
+"alignment, variants). Use this to discover what genomics datasets are "
+"available through IGSR."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:34 ../../tools/igsr_tools.rst:67
+#: ../../tools/igsr_tools.rst:106 61d4ee5d0a1d4a10862314d341866ca0
+#: 6612026d718f4e19837fb12a00202a8e 9a78cc690d8d4a99bc6fd9d3e9f2b14f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:36 2d93ffff146e465a95d39eaa9f68a556
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"list\\_data\\_collections)."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:39 ../../tools/igsr_tools.rst:78
+#: ../../tools/igsr_tools.rst:120 12ced745070d440d95dcf15951f76927
+#: 3aed59984fac4126bf9b730f61009d91 f5656dee97104b8f9513381818a1f79a
+msgid "``limit`` (integer) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:42 ../../tools/igsr_tools.rst:81
+#: ../../tools/igsr_tools.rst:123 10039d1e53014d8a8e5bb1fe177618ae
+#: 2b20c102e58e4f02b58ff54b387f0c86 2fc269e0bf9e48d3a3d347aa47301353
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:55 01d86d8615d84f31a3422d8484771f4f
+msgid "**IGSR_search_populations** (Type: IGSRTool)"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:57 52d1d4726a1847b7a0a4da5222e9cb9d
+msgid ""
+"Search 1000 Genomes Project populations from the International Genome "
+"Sample Resource (IGSR). The..."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst a2b13cf91090443da2ceec1ece763f94
+msgid "IGSR_search_populations tool specification"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:63 000f40bb49ed43888ffdcc45ea2b9a86
+msgid "**Name**: ``IGSR_search_populations``"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:65 3cf387d31d744eb2b2d9be74885cf09a
+msgid ""
+"**Description**: Search 1000 Genomes Project populations from the "
+"International Genome Sample Resource (IGSR). The 1000 Genomes Project "
+"characterized genetic variation across 26 populations grouped into 5 "
+"superpopulations: AFR (African), AMR (Admixed American), EAS (East "
+"Asian), EUR (European), SAS (South Asian). Returns population codes, "
+"names, geographic coordinates, sample counts, and superpopulation "
+"assignments. Use this to find populations for allele frequency "
+"comparisons, population stratification analysis, or ancestry-specific "
+"variant studies."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:69 e047a6495d574adbabdd2398bed89fbc
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_populations)."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:72 b4b6e25508484dafbbf62cd52ede2bf1
+msgid ""
+"``superpopulation`` (string, null) (optional) Filter by superpopulation "
+"code: AFR (African), AMR (Admixed American), EAS (East Asian), EUR "
+"(European), SAS (South Asian). Leave empty for all."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:75 e921474148264dc598fe5fd507941d55
+msgid ""
+"``query`` (string, null) (optional) Free-text search query to find "
+"populations by name or description (e.g., 'Chinese', 'Yoruba', "
+"'British')."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:94 944eec16586b4e35a66a2ad5ef8da14c
+msgid "**IGSR_search_samples** (Type: IGSRTool)"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:96 a09846c7150b4a68b7f7186d3855600b
+msgid ""
+"Search samples from the 1000 Genomes Project by population, data "
+"collection, or sample name. Retu..."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst e91ab45e18a24ed69aeffff8a92225e5
+msgid "IGSR_search_samples tool specification"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:102 04d69711cb7b480294b8944a0f3f1c49
+msgid "**Name**: ``IGSR_search_samples``"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:104 6738a9970e61488d8e93664c1b3e2e55
+msgid ""
+"**Description**: Search samples from the 1000 Genomes Project by "
+"population, data collection, or sample name. Returns sample names (e.g., "
+"HG00096, NA12878), sex, BioSample IDs, population assignments, and "
+"available data collections. Use this to find samples from specific "
+"populations for variant analysis, to identify samples with particular "
+"sequencing data types (WGS, exome, RNA-seq), or to look up specific well-"
+"characterized samples like NA12878 (reference genome sample)."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:108 01e335876dd944c994ec1cbb6ebabb82
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_samples)."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:111 90a0db2003b24a999d034b9ab14a211b
+msgid ""
+"``population`` (string, null) (optional) Filter by population code (e.g.,"
+" 'CHB', 'YRI', 'GBR', 'CEU'). Use IGSR\\_search\\_populations to find "
+"valid codes."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:114 f09dcd9ec7f4437c900d19882fd02666
+msgid ""
+"``data_collection`` (string, null) (optional) Filter by data collection "
+"title (e.g., '1000 Genomes 30x on GRCh38', '1000 Genomes on GRCh38')."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:117 b46d09d1fc8e4eb5856017c877f62964
+msgid ""
+"``sample_name`` (string, null) (optional) Look up specific sample by name"
+" (e.g., 'HG00096', 'NA12878')."
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:136 c5f4ea9cd90a4e9a9f7fd98a412a71cd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:138 e09471715af54c67b45fafd0347966d8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/igsr_tools.rst:139 4c45c257b22f4293acad0351aea4d1c6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

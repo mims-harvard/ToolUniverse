@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ctd_tools.rst:10 4c0146010b5146f88dd2e6edff6db568
+msgid "Ctd Tools"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:12 652e10bd3b1746708b3a0dda0417d5b7
+msgid ""
+"**Configuration File**: ``ctd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:16 173f23e62fa04f1c948481a392a2a584
+msgid ""
+"This page contains all tools defined in the ``ctd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:19 b9961a0bb5b84e64926051c918bb0429
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:22 68ed0bc40f6d4a40a4a8e3554fc2c1f8
+msgid "**CTD_get_chemical_diseases** (Type: CTDTool)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:24 322a6444dc6c4566a7f12928abf0a6b3
+msgid ""
+"Get curated chemical-disease associations from CTD. Given a chemical "
+"name, returns diseases it is..."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst 5e054b7848794258904e9e9c4145ceb3
+msgid "CTD_get_chemical_diseases tool specification"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:28 ../../tools/ctd_tools.rst:59
+#: ../../tools/ctd_tools.rst:90 ../../tools/ctd_tools.rst:121
+#: ../../tools/ctd_tools.rst:152 580cced1838b4f0c9fc6300263a7bce7
+#: ae058129cb1b42249b358e164b4c8bbd e5c296e683844f819ab614e8b29f06da
+#: edea47553da744a1bb62fbc659e3c825 f217baa65dd542d98a2a8f143480fdf4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:30 40685b9e20184466a1fbdfd2412cf3a2
+msgid "**Name**: ``CTD_get_chemical_diseases``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:31 ../../tools/ctd_tools.rst:62
+#: ../../tools/ctd_tools.rst:93 ../../tools/ctd_tools.rst:124
+#: ../../tools/ctd_tools.rst:155 4acdd3d7e60f4c8dbeab6ad18da465bb
+#: 5a331a9b4c5943019950f9b6241bd5d2 5d9e7d9b814649009a6ba8fb32483896
+#: c28e8ef192924f22a81471ae6d0e6b66 e5904a8cdc204c1587bbedc1366847df
+msgid "**Type**: ``CTDTool``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:32 3e28127532ba4013b426230cc6b1c267
+msgid ""
+"**Description**: Get curated chemical-disease associations from CTD. "
+"Given a chemical name, returns diseases it is associated with, including "
+"direct evidence type (therapeutic, marker/mechanism) and disease "
+"categories. Example: 'bisphenol A' returns associations with cancer, "
+"reproductive disorders, etc."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:34 ../../tools/ctd_tools.rst:65
+#: ../../tools/ctd_tools.rst:96 ../../tools/ctd_tools.rst:127
+#: ../../tools/ctd_tools.rst:158 013ce629202f4f8899583360389a7f78
+#: 052bab860fd9459c880eb6305a5643d8 220b6365a2ae43adb50ee5cdf3862561
+#: 9cebce963fab413bb3a7a7104608f22d c3fec265aba1458eaeae3a7b3eee777f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:36 b21b9542237b44dca7c19dcaec77f7a1
+msgid ""
+"``input_terms`` (string) (required) Chemical name, MeSH name, synonym, "
+"CAS RN, or MeSH ID. Examples: 'arsenic', 'bisphenol A', 'C006780'."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:39 ../../tools/ctd_tools.rst:70
+#: ../../tools/ctd_tools.rst:101 ../../tools/ctd_tools.rst:132
+#: ../../tools/ctd_tools.rst:169 0512bf302eee4faa92048feaac254163
+#: 3cfed68f0da845389596b465e4793765 74d8f4ba0f5844aea8d4d52d227446bb
+#: da3baa862ce54798b405565f9cc44dc9 ecc4dabc16204ef4b42d301b3f36cc2b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:53 d5a5cfeec262476bba8c3add168a86e0
+msgid "**CTD_get_chemical_gene_interactions** (Type: CTDTool)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:55 5a234e3818fc4d44a08df2f8925f42d9
+msgid ""
+"Get curated chemical-gene interactions from CTD (Comparative "
+"Toxicogenomics Database). Given a ch..."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst 314715ca842e498fa2ba743d93bb31a1
+msgid "CTD_get_chemical_gene_interactions tool specification"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:61 c0d94d9ddc7e4e2094d8bb1ab1d09ab2
+msgid "**Name**: ``CTD_get_chemical_gene_interactions``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:63 55f011648194439fa8d4b41bf7968993
+msgid ""
+"**Description**: Get curated chemical-gene interactions from CTD "
+"(Comparative Toxicogenomics Database). Given a chemical name, returns "
+"genes it interacts with, including organism, PubMed references, and "
+"interaction types. Example: 'bisphenol A' returns thousands of gene "
+"interactions across species."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:67 f02830b2c2544872b8a4d5a63991e6c3
+msgid ""
+"``input_terms`` (string) (required) Chemical name, MeSH name, synonym, "
+"CAS RN, or MeSH ID. Examples: 'bisphenol A', 'acetaminophen', 'D000082' "
+"(MeSH ID for acetaminophen)."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:84 f77ce48e39834c52b4ab97928cad961c
+msgid "**CTD_get_disease_chemicals** (Type: CTDTool)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:86 9b028e411ba3470f9904aaad8977c2e4
+msgid ""
+"Get curated disease-chemical associations from CTD. Given a disease name,"
+" returns chemicals assoc..."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst 940614521d124ac0a4643a68273ce8ee
+msgid "CTD_get_disease_chemicals tool specification"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:92 cdbe31e328ad465bb50a62c074d59f44
+msgid "**Name**: ``CTD_get_disease_chemicals``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:94 421c9d5e416747a987da84c1253e6a2a
+msgid ""
+"**Description**: Get curated disease-chemical associations from CTD. "
+"Given a disease name, returns chemicals associated with it, including "
+"evidence type. Example: 'Breast Neoplasms' returns chemicals linked to "
+"breast cancer including both therapeutic agents and toxicants."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:98 8d71fcc19fa34f58bff412a8562fac32
+msgid ""
+"``input_terms`` (string) (required) Disease name, MeSH name, synonym, or "
+"MeSH/OMIM ID. Examples: 'Breast Neoplasms', 'asthma', 'MESH:D001249'."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:115 c350a2f581aa4c28b7cf4560228a02be
+msgid "**CTD_get_gene_chemicals** (Type: CTDTool)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:117 683c385d64ca4dd0b146ded9bea6bd24
+msgid ""
+"Get curated gene-chemical interactions from CTD. Given a gene symbol, "
+"returns chemicals that inte..."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst 384c4af283c84fc1a05ed41e6d84f150
+msgid "CTD_get_gene_chemicals tool specification"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:123 77143f5f2763415aba31f5c23208816f
+msgid "**Name**: ``CTD_get_gene_chemicals``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:125 f06e2a9a4fcc4d1c89d9f7a27f419182
+msgid ""
+"**Description**: Get curated gene-chemical interactions from CTD. Given a"
+" gene symbol, returns chemicals that interact with the gene product, with"
+" PubMed evidence. Example: 'TP53' returns over 2000 chemical interactions"
+" including drugs, environmental toxicants."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:129 fd3fb211b3dd483c99846e90eaaec5be
+msgid ""
+"``input_terms`` (string) (required) Gene symbol or NCBI Gene ID. "
+"Examples: 'CYP1A1', 'TP53', 'ESR1'."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:146 eb115589d4e545569d1dd602dcab52e4
+msgid "**CTD_get_gene_diseases** (Type: CTDTool)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:148 ab806d60e6e14314b1827860f3ff3e6b
+msgid ""
+"Get curated gene-disease associations from CTD. Given a gene symbol, "
+"returns diseases associated ..."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst 54286951e7164d0ba85262ca3dd95331
+msgid "CTD_get_gene_diseases tool specification"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:154 328e9d858df04af6b4a6e3a143b2cc89
+msgid "**Name**: ``CTD_get_gene_diseases``"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:156 2bbf27a43e9a4d5ab499b34bda563ae3
+msgid ""
+"**Description**: Get curated gene-disease associations from CTD. Given a "
+"gene symbol, returns diseases associated with the gene, including direct "
+"evidence and disease categories. Example: 'TP53' returns associations "
+"with various cancers and other diseases."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:160 6ae1523af65e4436b3cd52b59e2330fc
+msgid ""
+"``input_terms`` (string) (optional) Gene symbol or NCBI Gene ID. "
+"Examples: 'TP53', 'BRCA1', 'CYP1A1', '7157' (Gene ID for TP53)."
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:163 cdb1c66c85a640b48daab1ed04885015
+msgid ""
+"``query`` (string) (optional) Gene symbol or name to search (alias for "
+"input\\_terms, e.g. TP53)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:166 fa064f22a6004ddb8a7d0065e5081722
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol (alias for input\\_terms,"
+" e.g. TP53)"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:182 15e0235e07bf425791294787ef64c129
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:184 108c6cb73baa4ab8b88ce8bc73a3369b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ctd_tools.rst:185 c8dd4ef45d824c7abc59c3b21a98d8e6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

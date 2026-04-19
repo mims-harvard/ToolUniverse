@@ -1,0 +1,207 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mousemine_tools.rst:10 77236ec35833430cbb0ea3432d7e9b67
+msgid "Mousemine Tools"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:12 ce662426b32e42129f5035372bc74275
+msgid ""
+"**Configuration File**: ``mousemine_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:16 9d0e9707714148d69e47b6c1583e53a4
+msgid ""
+"This page contains all tools defined in the ``mousemine_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:19 22c00907b4984ea6a1f45958c49fb208
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:22 a8ced26ea0f447b5ac5bb503e27ffa47
+msgid "**MouseMine_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:24 713cf87abc6145b989418123404658fc
+msgid ""
+"Search MouseMine, the InterMine data warehouse for mouse (Mus musculus) "
+"genomics data from MGI (M..."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst 03e5b59fe42148b7aa7f6a224be130eb
+msgid "MouseMine_search tool specification"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:28 ../../tools/mousemine_tools.rst:68
+#: ../../tools/mousemine_tools.rst:102 cb51450545ad4bc3b657098611088a1a
+#: db52b365e0794528b5100ea9ffb995c6 ebae6e49f2ab4416938b0c83551cd80f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:30 3fa4ec0f69114ee2b4ae77c370f00359
+msgid "**Name**: ``MouseMine_search``"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:31 ../../tools/mousemine_tools.rst:71
+#: ../../tools/mousemine_tools.rst:105 0b462f3b061c4bf49c6f607a78ec0e39
+#: a65a221242904549935224b42c269fde d70635e93e4e4d2a8a4eaa7df64dae30
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:32 825cf79fa11c43c69808deb21031189f
+msgid ""
+"**Description**: Search MouseMine, the InterMine data warehouse for mouse"
+" (Mus musculus) genomics data from MGI (Mouse Genome Informatics). "
+"Searches across genes, alleles, proteins, publications, gene ontology "
+"terms, protein domains, and more. Returns matching records with category "
+"facets and relevance scores. MouseMine integrates data from MGI including"
+" gene annotations, phenotypes, alleles, expression data, pathways, and "
+"disease models. Use facet\\_Category parameter to filter by specific "
+"entity type (e.g., 'ProteinCodingGene', 'Allele', 'Publication', "
+"'Protein')."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:34 ../../tools/mousemine_tools.rst:74
+#: ../../tools/mousemine_tools.rst:108 6629be17666c4e53b9ba8e505e64ef6a
+#: 9961315c50274ecc8a294ca0c5860ba9 fb3cd8b626454b8791e71a66b591b1f0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:36 5241339951a84c85b045c40ab6fa6dfc
+msgid ""
+"``q`` (string) (required) Search query: gene symbol (e.g., 'Brca1', "
+"'Tp53', 'Sox9'), protein name, disease term, or free text."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:39 fadbbe567de44ed2bd2b359f48d7d2a5
+msgid ""
+"``size`` (integer) (optional) Number of results to return (default: 10, "
+"max: 100)."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:42 85be5ef00e08426dba194d6adaada281
+msgid "``format`` (string) (optional) Response format. Must be 'json'."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:45 80ba68fa0a85442d8144f86aed757029
+msgid ""
+"``facet_Category`` (string) (optional) Filter results by entity category."
+" Options include: 'ProteinCodingGene', 'Gene', 'Allele', 'Protein', "
+"'Publication', 'Genotype', 'GOTerm', 'ProteinDomain', 'GXDExpression', "
+"'NcRNAGene', 'AntisenseLncRNAGene', 'Strain', 'HTExperiment', "
+"'InteractionExperiment', 'DOTerm', 'UniProtFeature'."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:48 ../../tools/mousemine_tools.rst:82
+#: ../../tools/mousemine_tools.rst:116 123629f2fbab41ba97148f1fc907119f
+#: b9d4dceef3dd467d9c9e0af3d778a797 cc633ccd2fca48248c9af3d4410d8812
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:62 5815b25e3a784c48bbf377e87d4e5fb7
+msgid "**MouseMine_search_alleles** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:64 a8f5c250c77347b3861d9484071c271b
+msgid ""
+"Search MouseMine specifically for mouse alleles and mutants. Returns "
+"allele symbols, names, MGI i..."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst 534053296d5e4f08b04b25d4526b792b
+msgid "MouseMine_search_alleles tool specification"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:70 04bb468e19a544569400915b24216d7c
+msgid "**Name**: ``MouseMine_search_alleles``"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:72 16736db7681044808da585f062df6937
+msgid ""
+"**Description**: Search MouseMine specifically for mouse alleles and "
+"mutants. Returns allele symbols, names, MGI identifiers, allele types "
+"(Targeted, Endonuclease-mediated, Spontaneous, etc.), and attribute "
+"strings (Null/knockout, etc.) from Mouse Genome Informatics (MGI). Useful"
+" for finding knockout/knockin alleles, spontaneous mutations, and "
+"transgenic alleles for specific genes. For broader searches, use "
+"MouseMine\\_search instead."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:76 d01de314e6f84c4a9a4383bf60bcaa0b
+msgid ""
+"``q`` (string) (required) Allele search query: gene symbol (e.g., "
+"'Brca1'), allele symbol (e.g., 'Brca1<tm1Whl>'), or keyword."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:79 ../../tools/mousemine_tools.rst:113
+#: 61a76833cd2e4459a4e3ec485e3449be 9cb25c36b0e44338a24388965a682759
+msgid "``size`` (integer) (optional) Number of results to return (default: 10)."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:96 19e29aef65394b2caa987b8646b6ca4c
+msgid "**MouseMine_search_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:98 ba6e54e356954c7ab4dea2ad2b0e6e58
+msgid ""
+"Search MouseMine specifically for mouse protein-coding genes. This is a "
+"convenience wrapper that ..."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst 499574e368cf41e4bf2e6fe9abf74d00
+msgid "MouseMine_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:104 37b71d6905ae4742986f4f701eeb71bd
+msgid "**Name**: ``MouseMine_search_genes``"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:106 0aa02d7abacc4d348de6b99573e17928
+msgid ""
+"**Description**: Search MouseMine specifically for mouse protein-coding "
+"genes. This is a convenience wrapper that filters results to "
+"ProteinCodingGene category only. Returns gene symbols, MGI identifiers, "
+"and organism information from Mouse Genome Informatics (MGI). For broader"
+" searches across all entity types, use MouseMine\\_search instead."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:110 dbfe6ce198824a57a4af2c037c498282
+msgid ""
+"``q`` (string) (required) Gene search query: gene symbol (e.g., 'Brca1', "
+"'Tp53'), gene name, or keyword."
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:130 1ccca5075f794e5fa2c791b6e01d98ca
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:132 a221320658a2465d9745a84ee6a66029
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mousemine_tools.rst:133 1a3db769fc114317a6c83e1f5b94b246
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

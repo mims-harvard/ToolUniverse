@@ -1,0 +1,241 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biostudies_tools.rst:10 2d5b3a5faa4e4e1e90bbacad103a05fc
+msgid "Biostudies Tools"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:12 3e77d5c69b264d6d9bad4a104c02d02c
+msgid ""
+"**Configuration File**: ``biostudies_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:16 a1cf47eb925d4572aa8527d39d11f546
+msgid ""
+"This page contains all tools defined in the ``biostudies_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:19 ac6ab91ae8d44b5d8f2ae64e8bd3cac1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:22 7602dcb6786443bd83f95e462674caea
+msgid "**biostudies_get_study** (Type: BioStudiesRESTTool)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:24 e47d2d53b74a4b1c919a2cdd351659b4
+msgid ""
+"Get detailed information about a specific BioStudies study by accession "
+"number. Returns complete ..."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst fff19906d47846f8a66767f15ae14485
+msgid "biostudies_get_study tool specification"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:28 ../../tools/biostudies_tools.rst:59
+#: ../../tools/biostudies_tools.rst:90 ../../tools/biostudies_tools.rst:132
+#: 5eabf733212946e5a1956b7846c7aaa7 9da7fb1e478b46fc9689dac37e22d29b
+#: a4d41ad44d5941d080a86e0e60df893e dde27186443b41de9a96fcaa7e9a5ae6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:30 ba499babdb204bddb0d207370df19f97
+msgid "**Name**: ``biostudies_get_study``"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:31 ../../tools/biostudies_tools.rst:62
+#: ../../tools/biostudies_tools.rst:93 ../../tools/biostudies_tools.rst:135
+#: 216822799a184c18987347e68340f758 27860f4a58e04a3aa272f3bbf2854ea8
+#: 8d81e7f747594a39aea09773f1b3a80f c1ed4af398b445be86bb518843bec6d7
+msgid "**Type**: ``BioStudiesRESTTool``"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:32 0a20dba10ce1441e93fd9114acf1c7d2
+msgid ""
+"**Description**: Get detailed information about a specific BioStudies "
+"study by accession number. Returns complete study metadata including "
+"attributes, sections, files, and links. Supports various accession "
+"formats (e.g., S-BSST123, E-GEOD-12345 for ArrayExpress). HTML responses "
+"are converted to Markdown."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:34 ../../tools/biostudies_tools.rst:65
+#: ../../tools/biostudies_tools.rst:96 ../../tools/biostudies_tools.rst:138
+#: c43eb2435c9e4745ad14b3587614bf85 cee9a539635141e791d4278183398041
+#: d9fa35844a2744f3b4c4bd3eb96e70d1 f9db3607a4634a20bb6014db74ec6885
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:36 4a734a5e170d415397b4c6c51de8c56f
+msgid ""
+"``accession`` (string) (required) BioStudies accession number (e.g., "
+"'S-BSST123', 'E-GEOD-26319' for ArrayExpress studies)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:39 ../../tools/biostudies_tools.rst:70
+#: ../../tools/biostudies_tools.rst:113 ../../tools/biostudies_tools.rst:152
+#: 1ba3bd726d2948de8eb00ba61d3e95ab 6ddb79bbff2f4d84900c7c3c05de056c
+#: 8135486ee52b4ed2a3538e4de3d92918 c830b97279904efe91131d787cc26594
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:53 72a5037f537848e6af2747e6a49329f8
+msgid "**biostudies_get_study_files** (Type: BioStudiesRESTTool)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:55 389a09a124794c48a695ab34f43d879f
+msgid ""
+"Get list of files associated with a BioStudies study. Returns file "
+"metadata including paths, size..."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst befcfbebcbcf4c188960e0de65c19bca
+msgid "biostudies_get_study_files tool specification"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:61 b26420669f744d0394f0df2e222dfeb9
+msgid "**Name**: ``biostudies_get_study_files``"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:63 a286442fa96d4e9eb209cb8a891ebf9f
+msgid ""
+"**Description**: Get list of files associated with a BioStudies study. "
+"Returns file metadata including paths, sizes, types, and attributes. "
+"Files are extracted from the study's section hierarchy."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:67 170eb1db3155417cbd831238e76c40be
+msgid "``accession`` (string) (required) BioStudies accession number"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:84 f8e76ee2850041e390b2722f6a84d41d
+msgid "**biostudies_search** (Type: BioStudiesRESTTool)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:86 9670226e229d413aa7b6b9b0ddaf17ff
+msgid ""
+"Search BioStudies repository for biological studies across all "
+"collections. BioStudies is a compr..."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst c5693b22aca646d79b47b9662d1e70e9
+msgid "biostudies_search tool specification"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:92 29bbcb91ea74432c8f8d1d9f25ef5262
+msgid "**Name**: ``biostudies_search``"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:94 805371655a6e449dbd8dcd94f180f4cc
+msgid ""
+"**Description**: Search BioStudies repository for biological studies "
+"across all collections. BioStudies is a comprehensive repository at EMBL-"
+"EBI that hosts diverse study types including genomics, transcriptomics, "
+"proteomics, imaging data, and more. Supports full-text search with "
+"pagination and sorting. HTML responses are automatically converted to "
+"Markdown using markitdown."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:98 4c8f91858d5c4175b7996f5738f01e45
+msgid ""
+"``query`` (string) (optional) Search query (supports keywords, phrases, "
+"and Boolean operators). Use '\\*' for all studies."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:101 ../../tools/biostudies_tools.rst:146
+#: ab377393cd2b4d1c8feaeec11e2b59af c0765f66a55746218bd278eafb92c83e
+msgid ""
+"``pageSize`` (integer) (optional) Number of results per page (default: "
+"10, max: 100)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:104 db756ac8c2c142d9b0cff5903a64cd65
+msgid ""
+"``page`` (integer) (optional) Page number for pagination (default: 1, "
+"1-based)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:107 be3ec29c17ff4d57b1c955c74891f6a3
+msgid ""
+"``sortBy`` (string) (optional) Sort field (e.g., 'relevance', "
+"'accession', 'release\\_date')"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:110 4daafce97ac640db8d8206d3f91a3080
+msgid "``sortOrder`` (string) (optional) Sort order: 'ascending' or 'descending'"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:126 2929182b929541c1b2b7e86041da46f8
+msgid "**biostudies_search_by_collection** (Type: BioStudiesRESTTool)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:128 3cfb6b60f36c438fb6d4fb4c988ef95f
+msgid ""
+"Search BioStudies by specific collection (e.g., ArrayExpress, BioImages, "
+"EuropePMC). Collections ..."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst 2c0a75d2fbad43d5953d45fb299d450e
+msgid "biostudies_search_by_collection tool specification"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:134 1ca6a46b86bf465abfc5c6b95f1007c4
+msgid "**Name**: ``biostudies_search_by_collection``"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:136 6964c2ca68d44ffba89f5239906831d5
+msgid ""
+"**Description**: Search BioStudies by specific collection (e.g., "
+"ArrayExpress, BioImages, EuropePMC). Collections are curated datasets "
+"within BioStudies that focus on specific data types or domains. HTML "
+"responses are automatically converted to Markdown."
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:140 f061651a3a3f43e4b7558234b2847c1f
+msgid "``query`` (string) (optional) Search query within the collection"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:143 1d8efa07f44043c4be3b31abb3b249a7
+msgid ""
+"``collection`` (string) (required) Collection name (e.g., 'arrayexpress',"
+" 'bioimages', 'biomodels')"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:149 9490cd79470749f7b3f0e0523791f8a1
+msgid "``page`` (integer) (optional) Page number (default: 1)"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:166 a9242567bbc34305a20053ae6a31175b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:168 015d5a9167a04a2a87fa59028eefa122
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biostudies_tools.rst:169 59bef8f028ba40869fb8f850ab17fac5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

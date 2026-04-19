@@ -1,0 +1,230 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pathwaycommons_tools.rst:10 88ed1537c71b4c9cae22700d32f238ed
+msgid "Pathwaycommons Tools"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:12 d1ffbcf2c8e440cea1a88ee3a3107fc3
+msgid ""
+"**Configuration File**: ``pathwaycommons_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:16 16cba9ee1b69453384beed0d902d7fc9
+msgid ""
+"This page contains all tools defined in the ``pathwaycommons_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:19 69472ea9288d4d479896d8bfb2022fe5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:22 10d444ae3a7c40e1ac69e2c7ea35f494
+msgid "**PathwayCommons_get_neighborhood** (Type: PathwayCommonsTool)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:24 17ee32e0c15d41589843e01a814aac43
+msgid ""
+"Get the interaction neighborhood for a gene from Pathway Commons. Returns"
+" all known interactions ..."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst a05f385cb89e4ff599bf6ebd6de6c36c
+msgid "PathwayCommons_get_neighborhood tool specification"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:28
+#: ../../tools/pathwaycommons_tools.rst:68
+#: ../../tools/pathwaycommons_tools.rst:99 026280299ceb489889922f31846c7201
+#: 03b2884202e9461b85f350a7c42c1118 1f1779c78d5e499a97b81725c379b25a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:30 3b9eb4886f0d4110a131381f81afdf12
+msgid "**Name**: ``PathwayCommons_get_neighborhood``"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:31
+#: ../../tools/pathwaycommons_tools.rst:71
+#: ../../tools/pathwaycommons_tools.rst:102 9937227aee4c4db89ffcb03e85755537
+#: 9c40a4ca69cb4997acf2e8d51d14e301 ed8fab16e9c84852b6ca3ee66b19712f
+msgid "**Type**: ``PathwayCommonsTool``"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:32 ac4864f0cf984dcdac11cc6de39d457b
+msgid ""
+"**Description**: Get the interaction neighborhood for a gene from Pathway"
+" Commons. Returns all known interactions (protein-protein, regulatory, "
+"catalytic, complex membership) for the query gene from 22 integrated "
+"databases. Each interaction includes the partner gene, interaction type "
+"(interacts-with, controls-state-change-of, controls-expression-of, in-"
+"complex-with, etc.), data source, and PubMed references. Useful for "
+"building gene interaction networks and finding functional partners."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:34
+#: ../../tools/pathwaycommons_tools.rst:74
+#: ../../tools/pathwaycommons_tools.rst:105 021914c0707746dd991434637666873d
+#: 5526479b9e374bd3a0d12de0f3f78220 aae53dace61943e6b76a80aede3a7f1f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:36 9695401ca00a41b8bd44d863b3d66d41
+msgid "``gene`` (string) (required) Gene symbol (e.g., BRCA1, TP53, EGFR)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:39 0cad7646052447da91b62abc7a180ec0
+msgid ""
+"``limit`` (integer, null) (optional) Graph search depth (1 = direct "
+"neighbors, 2 = neighbors of neighbors). Default 1. Higher values return "
+"much more data."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:42 bf6139a1e01d4ccb997c87800ea670b6
+msgid ""
+"``datasource`` (string, null) (optional) Filter by data source: reactome,"
+" kegg, biogrid, intact, hprd, pid, corum, ctd, drugbank"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:45 68035ae2381c483a8eb4dcae336f2cf7
+msgid ""
+"``max_results`` (integer, null) (optional) Maximum number of interactions"
+" to return (default: 100)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:48
+#: ../../tools/pathwaycommons_tools.rst:79
+#: ../../tools/pathwaycommons_tools.rst:122 8255645b81a041a9b6adb240479b7c17
+#: 9926392814e74b0aba6e4bad963e3cc7 a588f186246846eb9dda3a56bd7deaac
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:62 f5a00b5c12be4234921aa713e9e7b32f
+msgid "**PathwayCommons_get_pathway** (Type: PathwayCommonsTool)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:64 4a2bfc20289c423a965dd9b053dde764
+msgid ""
+"Get detailed pathway information from Pathway Commons by URI. Returns the"
+" pathway name, participa..."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst 91d66e748f29449f96832f519d35638d
+msgid "PathwayCommons_get_pathway tool specification"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:70 b3c54d7af76a4b7b85899e440066756a
+msgid "**Name**: ``PathwayCommons_get_pathway``"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:72 3676e8671ae24b9a9c22bd74ceffaecc
+msgid ""
+"**Description**: Get detailed pathway information from Pathway Commons by"
+" URI. Returns the pathway name, participants (proteins, small molecules, "
+"complexes), and processes (interactions, catalysis, controls). Use URIs "
+"from PathwayCommons\\_search results. Covers Reactome, KEGG, "
+"WikiPathways, PID, and other sources. Response is parsed from BioPAX"
+"/JSON-LD format."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:76 f043843ec6da43af80fd42684e865fa2
+msgid ""
+"``uri`` (string) (required) Pathway Commons URI from search results, "
+"e.g., http://bioregistry.io/reactome:R-HSA-5693532 (DNA Double-Strand "
+"Break Repair)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:93 5778be1f5e39418aa1c872c2eaa60c6c
+msgid "**PathwayCommons_search** (Type: PathwayCommonsTool)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:95 8bb2b564a7404cd3bea8b4819d71e00a
+msgid ""
+"Search Pathway Commons for pathways, interactions, and molecular entities"
+" across 22 integrated da..."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst 5451b5ed8767480aaecb3379da6cd363
+msgid "PathwayCommons_search tool specification"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:101 66ff421d0fb249eebea27ed0bf11d11c
+msgid "**Name**: ``PathwayCommons_search``"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:103 414fa54d1d36418887238028f76748e3
+msgid ""
+"**Description**: Search Pathway Commons for pathways, interactions, and "
+"molecular entities across 22 integrated databases (Reactome, KEGG, "
+"WikiPathways, PID, BioGRID, IntAct, HPRD, etc.). Search by gene symbol, "
+"protein name, or keyword. Optionally filter by BioPAX entity type "
+"(Pathway, Protein, SmallMolecule, Complex) and data source. Returns "
+"pathway URIs, names, data sources, and participant/process counts. Use "
+"PathwayCommons\\_get\\_pathway with returned URI for full pathway "
+"details."
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:107 ff1dfdc977e343329afeebe4126ccfd9
+msgid ""
+"``query`` (string) (required) Search query: gene symbol (BRCA1, TP53), "
+"protein name, pathway name, or keyword"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:110 1c3832dd6aa5486588f7cbfad2d64fdf
+msgid ""
+"``type`` (string, null) (optional) BioPAX entity type filter (default: "
+"all types)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:113 cf03fecef1104d18929d9e69153d32ff
+msgid ""
+"``datasource`` (string, null) (optional) Data source filter: reactome, "
+"kegg, wikipathways, pid, biogrid, intact, hprd, panther, netpath, corum, "
+"ctd, drugbank, msigdb, mirtarbase"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:116 20abeea10611423aa649add0466a8926
+msgid ""
+"``organism`` (string, null) (optional) Organism filter: taxonomy ID (9606"
+" for human, 10090 for mouse) or organism name"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:119 c560b88eea4d4c60a6847a25452dd515
+msgid ""
+"``page`` (integer, null) (optional) Page number for pagination (0-based, "
+"100 results per page)"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:136 a263716a5a3f4c01aabf7049bb986630
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:138 a23498fbce9c4a53b357a9d2c92045ea
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pathwaycommons_tools.rst:139 5fced94cf0a14d21aefa8df465c40e3c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

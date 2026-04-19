@@ -1,0 +1,247 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/finngen_tools.rst:10 c34067b553e3400ea3d194fe51ff07a2
+msgid "Finngen Tools"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:12 95d98ce7cd3c41e69ac84feef379fdf1
+msgid ""
+"**Configuration File**: ``finngen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:16 459a934701734ab6a1098fe76affd327
+msgid ""
+"This page contains all tools defined in the ``finngen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:19 7aaf5179550544788ac03225475d1123
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:22 c4639307492140e9978284ab0c336ed4
+msgid "**FinnGen_get_phenotype** (Type: FinnGenTool)"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:24 e882a677a5f44395a3be1d3627b4fd32
+msgid ""
+"Get detailed information about a specific FinnGen disease endpoint "
+"(phenotype). Returns case/cont..."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst c6947d3c129a43518a05b4b26c3c22b0
+msgid "FinnGen_get_phenotype tool specification"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:28 ../../tools/finngen_tools.rst:59
+#: ../../tools/finngen_tools.rst:94 ../../tools/finngen_tools.rst:125
+#: 3489c6c9174c44099060f509cc409a19 380f75c6bea04d76ac504844c1acd024
+#: bafe998006e04b5c8298d7db0f85e4af bd275b88a80b48de8f453b60a76a38aa
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:30 876a3e71217b4dda8b4182c784686264
+msgid "**Name**: ``FinnGen_get_phenotype``"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:31 ../../tools/finngen_tools.rst:62
+#: ../../tools/finngen_tools.rst:97 ../../tools/finngen_tools.rst:128
+#: 16c4110cda534d4e946eeec45c0cb68e 2b06dd3ae79f4c8d859479e6f5dbabaf
+#: 8baaac8ff5134e539bd4c1a87daad3fe b7b2a923d67d4dc091441bc4d1879756
+msgid "**Type**: ``FinnGenTool``"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:32 29c8bb1deae544ea924bc9899cbcef2d
+msgid ""
+"**Description**: Get detailed information about a specific FinnGen "
+"disease endpoint (phenotype). Returns case/control counts, genomic "
+"control lambda values, and genome-wide significant loci count for a given"
+" phenocode. Use phenocodes from FinnGen\\_list\\_phenotypes (e.g., 'T2D' "
+"for type 2 diabetes, 'I9\\_CHD' for coronary heart disease, 'C3\\_BREAST'"
+" for breast cancer)."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:34 ../../tools/finngen_tools.rst:65
+#: ../../tools/finngen_tools.rst:100 ../../tools/finngen_tools.rst:131
+#: 0dfdf28851da4cbba0fd00dc9ffe6059 9b0d9258875049a88d78626545233526
+#: d82830fb54064c6f99446a5ee2e84ea1 fba074626a50434e97615bdd6752ca3d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:36 7fa88fd9da684cfaa60b8dcea1569218
+msgid ""
+"``phenocode`` (string) (required) FinnGen phenotype code (e.g., 'T2D', "
+"'I9\\_CHD', 'C3\\_BREAST', 'J10\\_ASTHMA'). Get valid codes from "
+"FinnGen\\_list\\_phenotypes."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:39 ../../tools/finngen_tools.rst:73
+#: ../../tools/finngen_tools.rst:105 ../../tools/finngen_tools.rst:145
+#: 92d7d90f6df14f50933827a9972c88cf bb1718eb90414ce7a7efa13a7aabec4e
+#: c5c9a5a0152e4b39ac0affb1bc6fc966 f53c021bfc9f410a8fccad400d639762
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:53 cef69f0cdcfd47dd93830140f65fdbaf
+msgid "**FinnGen_get_region_associations** (Type: FinnGenTool)"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:55 f48c1956a5c84d4e88131457a8692f20
+msgid ""
+"Get regional association and fine-mapping credible set data for a FinnGen"
+" phenotype in a specific..."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst 7f7d738031464715b5d795adb178fa9f
+msgid "FinnGen_get_region_associations tool specification"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:61 191ae834ef3c4566bc9dc0e2ccb3175e
+msgid "**Name**: ``FinnGen_get_region_associations``"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:63 7565c482639441f2a0184c7b560190bf
+msgid ""
+"**Description**: Get regional association and fine-mapping credible set "
+"data for a FinnGen phenotype in a specific genomic region. Returns "
+"credible sets with lead variants, posterior probabilities, and minor "
+"allele frequencies. Use to examine GWAS signals at a specific locus for a"
+" Finnish population disease endpoint."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:67 1298d512b29746f9a73f77d361e51199
+msgid ""
+"``phenocode`` (string) (required) FinnGen phenotype code (e.g., 'T2D', "
+"'I9\\_CHD'). Get codes from FinnGen\\_list\\_phenotypes."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:70 b9c8bfe1f78b4b92b19b2d99c44ee7f5
+msgid ""
+"``region`` (string) (required) Genomic region in chr:start-end format "
+"(GRCh38). Example: '9:22000000-22200000' for the CDKN2A/B locus on "
+"chromosome 9."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:88 340e21c533a54d0b8c889e59d43f20ac
+msgid "**FinnGen_get_variant_finemapping** (Type: FinnGenTool)"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:90 9b4abc4c3c664382a6c306ae01004a8c
+msgid ""
+"Get fine-mapping regions associated with a genomic variant in FinnGen. "
+"Returns phenotypes where t..."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst 4decb7aec6904ff5ab2faa218d240cef
+msgid "FinnGen_get_variant_finemapping tool specification"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:96 75eacdc31a3b47648c55b5e365c3d09f
+msgid "**Name**: ``FinnGen_get_variant_finemapping``"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:98 5a7065820d814254a4c0c8bd1b3844cb
+msgid ""
+"**Description**: Get fine-mapping regions associated with a genomic "
+"variant in FinnGen. Returns phenotypes where this variant appears in a "
+"credible set from statistical fine-mapping. Input variant in "
+"chr:pos:ref:alt format (GRCh38). Useful for understanding which disease "
+"associations a variant contributes to in the Finnish population."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:102 949b47ba64444b85bb4a8d336658558c
+msgid ""
+"``variant`` (string) (required) Genomic variant in chr:pos:ref:alt format"
+" (GRCh38). Examples: '19:44908684:T:C' (APOE rs429358), "
+"'10:112998590:C:T' (TCF7L2 rs7903146). Also accepts chr-pos-ref-alt "
+"format."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:119 235f979e7a7d4c68abf16a486a7b12f2
+msgid "**FinnGen_list_phenotypes** (Type: FinnGenTool)"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:121 4248e4da0ce24579a6cb2ea31930bca1
+msgid ""
+"Search and list FinnGen disease endpoints (phenotypes). FinnGen is a "
+"Finnish population genomics ..."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst 30a2cecb11b741d0a3621946b8dd2b3d
+msgid "FinnGen_list_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:127 00735a1dcf574efc9f6990e498b4a5c4
+msgid "**Name**: ``FinnGen_list_phenotypes``"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:129 ea661aaaa0aa47a29e4d9d8965a852da
+msgid ""
+"**Description**: Search and list FinnGen disease endpoints (phenotypes). "
+"FinnGen is a Finnish population genomics study with 486,367 participants "
+"and 2,470 phenotypes. Search by keyword (e.g., 'diabetes', 'asthma', "
+"'cancer') or browse by category. Returns phenotype codes, case/control "
+"counts, and number of genome-wide significant loci. Use phenocode values "
+"from results with FinnGen\\_get\\_phenotype and "
+"FinnGen\\_get\\_region\\_associations."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:133 a10c30fc121d4722965956200b4c568e
+msgid ""
+"``query`` (string, null) (optional) Search query to filter phenotypes by "
+"code, name, or category (e.g., 'diabetes', 'breast cancer', 'asthma'). "
+"Case-insensitive."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:136 74ba70c5514a48d6baa5670c653b689a
+msgid ""
+"``category`` (string, null) (optional) Filter by disease category (e.g., "
+"'Diabetes', 'circulatory', 'Neoplasms'). Case-insensitive substring "
+"match."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:139 287e7266e4374cdd9ba79a20d4b404bc
+msgid ""
+"``min_cases`` (integer, null) (optional) Minimum number of cases "
+"required. Use to filter for well-powered phenotypes (e.g., 1000)."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:142 b9b4f81eeb8a48d8b2bc12577cf1f90b
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 50)."
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:158 8e9fecc7d4c74861864ee9037217eb9c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:160 9f10bc3830cf40e38963e1a45fb7ca35
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/finngen_tools.rst:161 fb590b908f044c6aad8515dce555547c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

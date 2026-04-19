@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/humanbase_tools.rst:2 ef457cc8315744af940e33cae5539333
+#: ../../tools/humanbase_tools.rst:10 fc0264b363664ce5aefb62cf9ece8dfd
 msgid "Humanbase Tools"
 msgstr "Humanbase 工具"
 
-#: ../../tools/humanbase_tools.rst:4 55412f033bcc417899703a05c33f9d44
+#: ../../tools/humanbase_tools.rst:12 aaf77ad2cf7e4776b4cd357da29c17da
 msgid ""
 "**Configuration File**: ``humanbase_tools.json`` **Tool Type**: Local "
 "**Tools Count**: 1"
@@ -33,43 +33,43 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/humanbase_tools.rst:8 b7503d686c1d41b8b6c3d7244114d046
+#: ../../tools/humanbase_tools.rst:16 32bccaeeda1647989b0724c425413cbf
 msgid ""
 "This page contains all tools defined in the ``humanbase_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``humanbase_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/humanbase_tools.rst:11 f630ac3d2c4e491198918b1249dd16d6
+#: ../../tools/humanbase_tools.rst:19 c66aea1938434be382066b410f87d60d
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/humanbase_tools.rst:14 ad4f702390b94a54937c8b31d276cb32
+#: ../../tools/humanbase_tools.rst:22 7d565c5589eb49e5b2097f2f036076be
 msgid "**humanbase_ppi_analysis** (Type: HumanBaseTool)"
 msgstr "**humanbase_ppi_analysis**（类型：HumanBase工具）"
 
-#: ../../tools/humanbase_tools.rst:16 96c5e11dce6b413c9f1bd53e95825c45
+#: ../../tools/humanbase_tools.rst:24 3d3a193a5e604f2ba6995bab3564a058
 msgid ""
 "Retrieve tissue-specific protein-protein interactions and biological "
 "processes from HumanBase. Re..."
 msgstr "从 HumanBase 获取组织特异性蛋白质相互作用及生物过程。重新..."
 
-#: ../../tools/humanbase_tools.rst 1bba555f5e2448ae8e037ab8341547cc
+#: ../../tools/humanbase_tools.rst 7f64915979f34da79116ca29930036ac
 msgid "humanbase_ppi_analysis tool specification"
 msgstr "humanbase_ppi_analysis 工具规格说明"
 
-#: ../../tools/humanbase_tools.rst:20 fed8c4a1a68c40f4bb5c960293ffeb7d
+#: ../../tools/humanbase_tools.rst:28 896e1dc7e5ac4df69e75aa5c94f646a5
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/humanbase_tools.rst:22 3ab5b7eb401a481a92cc542ccb4d5733
+#: ../../tools/humanbase_tools.rst:30 b1d69102c83c4d29bee53e21d94982d9
 msgid "**Name**: ``humanbase_ppi_analysis``"
 msgstr "**名称**：``humanbase_ppi_analysis``"
 
-#: ../../tools/humanbase_tools.rst:23 8e7c79643a0a4653ad7148c0c2876a89
+#: ../../tools/humanbase_tools.rst:31 3e51140e299e4b86a76fd79e6eac1a15
 msgid "**Type**: ``HumanBaseTool``"
 msgstr "**类型**：``HumanBaseTool``"
 
-#: ../../tools/humanbase_tools.rst:24 33388bf769f74da7b100c90b46d3b6dd
+#: ../../tools/humanbase_tools.rst:32 87a8db798b154e1ba48f267df72654e2
 msgid ""
 "**Description**: Retrieve tissue-specific protein-protein interactions "
 "and biological processes from HumanBase. Returns a NetworkX graph of "
@@ -79,36 +79,39 @@ msgstr ""
 "**描述**：从HumanBase中检索组织特异性蛋白质-蛋白质相互作用和生物学过程。返回一个包含组织特异性蛋白质-蛋白质相互作用的NetworkX图，以及一个由Gene"
 " Ontology提供的与给定基因相关的生物学过程列表。"
 
-#: ../../tools/humanbase_tools.rst:26 9a259ae04c404e49a00145c0638ae752
+#: ../../tools/humanbase_tools.rst:34 19447b7cf9534e8093d7ade08aa3bfc1
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/humanbase_tools.rst:28 2261b7a4b30c4f4da8a1dfab67f1acd7
+#: ../../tools/humanbase_tools.rst:36 b562d4ae9fa84425a48ff78289d0004e
+#, fuzzy
 msgid ""
-"``gene_list`` (array) (required) List of gene names or symbols to analyze"
+"``gene_list`` (array) (optional) List of gene names or symbols to analyze"
 " for protein-protein interactions. The gene name should be the official "
 "gene symbol, not the synonym."
 msgstr "``gene_list``（数组）（必填项）用于分析蛋白质-蛋白质相互作用的基因名称或符号列表。基因名称应使用官方基因符号，而非同义词。"
 
-#: ../../tools/humanbase_tools.rst:31 94f91d267ef84dea8589dfba1f7fb619
+#: ../../tools/humanbase_tools.rst:39 a1e4509e770f4cfcb019a22e9441a1d3
 #, fuzzy
 msgid ""
-"``tissue`` (string) (required) Tissue type for tissue-specific "
-"interactions. Examples: 'brain', 'heart', 'liver', 'kidney', etc."
+"``tissue`` (string) (optional) Tissue type for tissue-specific "
+"interactions. Use simple names like 'brain', 'heart', 'liver', 'kidney', "
+"'lung', 'blood'. For v3 networks with more cell-type specificity, append "
+"'-v3' (e.g., 'brain-v3', 'liver-v3')."
 msgstr "``tissue``（字符串）（可选）用于特定组织交互的组织类型。例如：'brain'（大脑）、'heart'（心脏）、'liver'（肝脏）、'kidney'（肾脏）等。"
 
-#: ../../tools/humanbase_tools.rst:34 4aee0eadb4bd42e9aef0ea06be51a585
+#: ../../tools/humanbase_tools.rst:42 f0aaaf1ca5fb450292f33a269eac7a76
 #, fuzzy
 msgid ""
-"``max_node`` (integer) (required) Maximum number of nodes to retrieve in "
+"``max_node`` (integer) (optional) Maximum number of nodes to retrieve in "
 "the interaction network. Warning: the more nodes, the more time it takes "
 "to retrieve the data. Default is 10 (~30 seconds)."
 msgstr "``max_node``（整数）（可选）交互网络中要检索的最大节点数。注意：节点数量越多，检索数据所需时间越长。默认值为10（约30秒）。"
 
-#: ../../tools/humanbase_tools.rst:37 da807de87fb34261a4c6f4aacdfd4330
+#: ../../tools/humanbase_tools.rst:45 9c9f774078354f339509cf2a7512e711
 #, fuzzy
 msgid ""
-"``interaction`` (string) (required) Specific interaction type to filter "
+"``interaction`` (string) (optional) Specific interaction type to filter "
 "by. Available types: 'co-expression', 'interaction', 'tf-binding', 'gsea-"
 "microrna-targets', 'gsea-perturbations'. If not specified, all types will"
 " be included."
@@ -117,10 +120,10 @@ msgstr ""
 "'、'tf-binding'、'gsea-microrna-targets'、'gsea-"
 "perturbations'。如果未指定，将包含所有类型。"
 
-#: ../../tools/humanbase_tools.rst:40 809bef5e2d8c4fe599120f67a33eeec1
+#: ../../tools/humanbase_tools.rst:48 82e54d87a7fe4b0dae655d3726e15908
 #, fuzzy
 msgid ""
-"``string_mode`` (boolean) (required) Whether to return the result in "
+"``string_mode`` (boolean) (optional) Whether to return the result in "
 "string mode. If True, the result will be a string of the network graph "
 "and the biological processes. If False, the result will be a NetworkX "
 "graph and a list of biological processes."
@@ -128,19 +131,31 @@ msgstr ""
 "``string_mode``（布尔值）（可选）是否以字符串模式返回结果。如果为 True，结果将是网络图和生物过程的字符串。如果为 "
 "False，结果将是一个 NetworkX 图和一个生物过程列表。"
 
-#: ../../tools/humanbase_tools.rst:43 e9a901af41724f7b9d1577e1aa74c7f5
+#: ../../tools/humanbase_tools.rst:51 3713cbc25dd1457b9383f4555bf78e4f
+msgid ""
+"``genes`` (array) (optional) Alias for gene\\_list. List of gene symbols "
+"to analyze."
+msgstr ""
+
+#: ../../tools/humanbase_tools.rst:54 4a505ce4a3ed44caa1a2fba1385e9625
+msgid ""
+"``top_n`` (integer) (optional) Alias for max\\_node. Maximum number of "
+"network nodes to retrieve."
+msgstr ""
+
+#: ../../tools/humanbase_tools.rst:57 a896279333bd4e7496fbd4ea2d78a64d
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/humanbase_tools.rst:61 0b39cebbcd334614ad038009197b0deb
+#: ../../tools/humanbase_tools.rst:70 c923a82985484b93b4e963bd742cca26
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/humanbase_tools.rst:63 f96f043d69e34abd90975cfc2a941b9b
+#: ../../tools/humanbase_tools.rst:72 9bcf719b20b145b9b6c417edb3391322
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/humanbase_tools.rst:64 21774d41e4fc4743acb0cbd0a80590cf
+#: ../../tools/humanbase_tools.rst:73 6733a3c4039d4673b9793496ea37aac8
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

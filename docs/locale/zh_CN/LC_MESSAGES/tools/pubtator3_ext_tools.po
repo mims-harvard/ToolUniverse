@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pubtator3_ext_tools.rst:10 8785a5501b66481faac0c52598cb80ca
+msgid "Pubtator3 Ext Tools"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:12 7d7c7cbcd815436e9c954976ce1ac05f
+msgid ""
+"**Configuration File**: ``pubtator3_ext_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:16 b69cbd9ccc68413e84cfa36b9a82d47b
+msgid ""
+"This page contains all tools defined in the ``pubtator3_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:19 104570b46376429eb10fd45fab052380
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:22 b8dbad8f474f4824936747d327bf613b
+msgid "**PubTator3_get_annotations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:24 6caa368f5c844c8abb1c3a243889b385
+msgid ""
+"Extract biomedical entity annotations from PubMed articles using NCBI "
+"PubTator3. Given one or mor..."
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst 1bf86fc506164eb0a00e8417cc346b90
+msgid "PubTator3_get_annotations tool specification"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:28 86e353becbdc4b1a9d7ea162c0416790
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:30 8f249a64fafb438388dd171ff9b0f23d
+msgid "**Name**: ``PubTator3_get_annotations``"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:31 3d049276a2bb4020ada3cd4bb2844f3d
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:32 ec6fb04d3d4b4711ab31398577f36f8c
+msgid ""
+"**Description**: Extract biomedical entity annotations from PubMed "
+"articles using NCBI PubTator3. Given one or more PubMed IDs (PMIDs), "
+"returns text-mined entities including genes, diseases, chemicals, "
+"species, mutations, and cell lines with their normalized identifiers "
+"(NCBI Gene ID, MeSH, NCBI Taxonomy, etc.) and text positions. Useful for "
+"extracting structured biomedical knowledge from literature. Provide PMIDs"
+" as a comma-separated string."
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:34 abfc7abd5ca547af9cdd2080df138332
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:36 fe2d69e9d94149d0b0bd82475bb8bf91
+msgid ""
+"``pmids`` (string) (required) Comma-separated PubMed IDs (e.g., "
+"'33205991', '33205991,34234088'). Maximum ~100 PMIDs per request."
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:39 37087f372bbd466f82cf7bdd8c7f8cb5
+msgid ""
+"``concepts`` (string) (optional) Comma-separated entity types to extract:"
+" gene, disease, chemical, species, mutation, cellline (default: all "
+"types)"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:42 ab268b6ba07747c99735a9c65216cb8e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:56 38cc839d3d224a1aaa64c3148afb30b8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:58 c0566d08e2514832a63b2af706c7abf3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pubtator3_ext_tools.rst:59 701b6e5e91cd4337a2f50fb7464860e0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

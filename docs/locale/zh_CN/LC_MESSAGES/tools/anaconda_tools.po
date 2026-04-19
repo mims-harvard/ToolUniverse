@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/anaconda_tools.rst:10 1e9d779bce41466cbce92d2a598804a8
+msgid "Anaconda Tools"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:12 0a7d0aac75a44b7f955ed268b3e23c5d
+msgid ""
+"**Configuration File**: ``anaconda_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:16 aa5142e55af84c2b8d8c02757682a4bb
+msgid ""
+"This page contains all tools defined in the ``anaconda_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:19 a3bc1b2ee667413ca1e8a0740e2268cb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:22 c67ea8ab3e20440f81fbf6434f27b9fd
+msgid "**Anaconda_get_package** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:24 031aa74fd2374f3186dacafb9b616de0
+msgid ""
+"Get detailed information about a specific conda package from a specific "
+"channel on Anaconda.org. ..."
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst df6bd842ca874a61bc6fe6e9d0bdbc30
+msgid "Anaconda_get_package tool specification"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:28 ../../tools/anaconda_tools.rst:63
+#: c02fe0bbd4fd4533add05feb7385a30c e74ec34b7a9d432da0cd3fdf561e9385
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:30 ae6e4855bffa4dd8a05357942570a6ed
+msgid "**Name**: ``Anaconda_get_package``"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:31 ../../tools/anaconda_tools.rst:66
+#: e2173937120a4a0bae691e24b1f0870d e5b5c1cc18054b59bdeb7c015b18fd16
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:32 15956ce4d245407e8ecddcbffbd0af6f
+#, python-brace-format
+msgid ""
+"**Description**: Get detailed information about a specific conda package "
+"from a specific channel on Anaconda.org. Returns the package's full "
+"metadata including description, all versions, platform availability, "
+"download counts, home URL, license, and owner details. Use the format "
+"'{channel}/{package\\_name}' (e.g., 'conda-forge/numpy', "
+"'bioconda/samtools', 'defaults/scipy')."
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:34 ../../tools/anaconda_tools.rst:69
+#: 7b6085f523b3446690b8eb1248378cd1 993811dea32e4d0a942f09b5ceb663cc
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:36 ccaa1a97da2a4acebeddbd75a2134cdf
+msgid ""
+"``channel`` (string) (required) Channel or owner name (e.g., 'conda-"
+"forge', 'bioconda', 'defaults', 'anaconda')"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:39 c949ce795147472680fca9c757cd7217
+msgid ""
+"``package_name`` (string) (required) Exact package name (e.g., 'numpy', "
+"'samtools', 'biopython', 'r-ggplot2')"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:42 ../../tools/anaconda_tools.rst:77
+#: 8d47fc2ee1d342708bf7c1a9ec930613 dd42d3e2125542b6b448f0c10cd5bf36
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:57 4d669c5cd08f4da799e0ecf4b41229b5
+msgid "**Anaconda_search_packages** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:59 f986731fc7f040abaf7728add9ed1972
+msgid ""
+"Search Anaconda.org for conda packages across all channels (conda-forge, "
+"bioconda, defaults, etc...."
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst 323ccbd97c5e424d8fbe35f115b3d2f9
+msgid "Anaconda_search_packages tool specification"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:65 c6c0dfb176e640f2b3c2c4fad6013524
+msgid "**Name**: ``Anaconda_search_packages``"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:67 64aaaf5ac81a4d2fb74bff6301e1be50
+msgid ""
+"**Description**: Search Anaconda.org for conda packages across all "
+"channels (conda-forge, bioconda, defaults, etc.). Returns matching "
+"packages with name, owner/channel, summary, versions, platforms, and "
+"download counts. Anaconda.org hosts conda packages for Python, R, and "
+"other languages used in scientific computing, data science, and "
+"bioinformatics. Bioconda alone has 9,000+ bioinformatics packages."
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:71 27f3b87d36c444468255fa85343717b5
+msgid ""
+"``name`` (string) (required) Package name to search for (e.g., 'numpy', "
+"'samtools', 'biopython', 'r-ggplot2')"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:74 dd2b3b73193e4d3e99100a5eaa763ded
+msgid ""
+"``type`` (string, null) (optional) Package type filter: 'conda' "
+"(default), 'pypi', or 'standard\\_python'"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:91 ae2e1300a21e4c76b7f02ced4c4a301c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:93 42273e07b1ea469ab12ebb2489e680c0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/anaconda_tools.rst:94 8e019a0a01bf48aba9cdcf8794643cca
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

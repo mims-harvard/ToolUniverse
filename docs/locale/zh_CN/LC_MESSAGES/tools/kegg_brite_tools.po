@@ -1,0 +1,154 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/kegg_brite_tools.rst:10 d2cf89dc5f6446c8a0062ef235bae899
+msgid "Kegg Brite Tools"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:12 a946adaca7c545d2bbb63bbf28b82b1b
+msgid ""
+"**Configuration File**: ``kegg_brite_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:16 8d6d24c8802c4724b081fdd0d41e1195
+msgid ""
+"This page contains all tools defined in the ``kegg_brite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:19 06fe7e83f0e740b8830e9ce9ac8000cd
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:22 1be0c27702ea4b9297788a3286dc1b94
+msgid "**KEGG_get_brite_hierarchy** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:24 94882a7bee8544cd9c141b8db718abb2
+msgid ""
+"Get the full hierarchical classification tree for a specific KEGG BRITE "
+"hierarchy in JSON format...."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst 717c206d26e345299b3a152397b7113e
+msgid "KEGG_get_brite_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:28 ../../tools/kegg_brite_tools.rst:59
+#: d80d1ef29e3b4dc099ab6921c215beb2 dab67f48dc3f4c16aa6476a00129cf2a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:30 cc3b10d3dce54ecba2815c73cf24f073
+msgid "**Name**: ``KEGG_get_brite_hierarchy``"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:31 ../../tools/kegg_brite_tools.rst:62
+#: 0979c14b99324d92a686f2e3fadd7bdb dcb4265d4d9f424f8f251aca2b28071d
+msgid "**Type**: ``KEGGExtTool``"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:32 bbe1b289f91347e599a64f021de9c457
+msgid ""
+"**Description**: Get the full hierarchical classification tree for a "
+"specific KEGG BRITE hierarchy in JSON format. Returns a nested tree "
+"structure where each node has a 'name' field and optionally a 'children' "
+"array of sub-nodes. This is extremely useful for functional "
+"classification of genes, proteins, enzymes, transporters, receptors, etc."
+" Common hierarchies: 'ko01000' (Enzymes by EC number), 'ko01001' (Protein"
+" kinases), 'ko01002' (Peptidases and inhibitors), 'ko02000' "
+"(Transporters), 'ko03000' (Transcription factors), 'ko04030' (GPCRs), "
+"'ko04040' (Ion channels), 'ko04050' (Cytokine receptors), 'ko04090' (CD "
+"molecules), 'ko01504' (Antimicrobial resistance genes), 'ko03200' (Viral "
+"proteins). The tree can be very large (e.g., ko00001 has thousands of "
+"entries)."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:34 ../../tools/kegg_brite_tools.rst:65
+#: a3f3610654824fa1a42a7b21d4ade29b fb2d994ecd0c40da97adf211707d33d6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:36 4e75bfe31fa246ce9e6ad925db3a6751
+msgid ""
+"``hierarchy_id`` (string) (required) KEGG BRITE hierarchy ID. Examples: "
+"'ko01000' (Enzymes), 'ko01001' (Protein kinases), 'ko02000' "
+"(Transporters), 'ko03000' (Transcription factors), 'ko04030' (GPCRs), "
+"'ko04040' (Ion channels). Use KEGG\\_list\\_brite\\_hierarchies to see "
+"all available IDs."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:39 ../../tools/kegg_brite_tools.rst:69
+#: aae1c559d94c4839a701ab05b800e6da edf78526c3f947d89c564d5f9dd4a5bd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:53 faaab988ec6245ef8dcfb58f89e6c1ca
+msgid "**KEGG_list_brite_hierarchies** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:55 1cc28f03b20340699198e08c518c03da
+msgid ""
+"List all available KEGG BRITE hierarchy classification files. KEGG BRITE "
+"is a collection of hiera..."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst fc15bd157922436c8214864190b6c0c8
+msgid "KEGG_list_brite_hierarchies tool specification"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:61 2e44e515fd7949f489e46de36a2f9f22
+msgid "**Name**: ``KEGG_list_brite_hierarchies``"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:63 acd6950f8c414750beb63d0ad3654c25
+msgid ""
+"**Description**: List all available KEGG BRITE hierarchy classification "
+"files. KEGG BRITE is a collection of hierarchical text (htext) files "
+"capturing functional hierarchies of various biological objects, "
+"especially those represented as KEGG objects. Returns hierarchy IDs and "
+"names including: ko00001 (KEGG Orthology), ko01000 (Enzymes), ko01001 "
+"(Protein kinases), ko01002 (Peptidases and inhibitors), ko02000 "
+"(Transporters), ko03000 (Transcription factors), ko04030 (G protein-"
+"coupled receptors), ko04040 (Ion channels), ko04050 (Cytokine receptors),"
+" ko04090 (CD molecules), br08001 (Compounds with biological roles), "
+"br08901 (KEGG pathway maps), and many more. Use the hierarchy ID with "
+"KEGG\\_get\\_brite\\_hierarchy to retrieve the full classification tree."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:67 b4c6b7fa3ad94e778e20452d7c158ae6
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:82 b752f768c3804d5ca03ff10a2d9958bd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:84 da863dac253d4554aeeb2163f6e380bc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/kegg_brite_tools.rst:85 848f275e7c4443799c2eae62939ecc9d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/epmc_annotations_tools.rst:10 52db189eb7504f68988134ecbe36f4af
+msgid "Epmc Annotations Tools"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:12 2ebe9bd13c4d4b38b221fe441e657659
+msgid ""
+"**Configuration File**: ``epmc_annotations_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:16 4ed0bd039c964ab083773314042015b2
+msgid ""
+"This page contains all tools defined in the "
+"``epmc_annotations_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:19 60017d7e42c545a6ba7c9164d20ad8c8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:22 5f8705c7ff6e48048821f336c27e778c
+msgid "**EPMC_get_article_chemicals** (Type: EPMCAnnotationsTool)"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:24 989b6a5343e44dadafbedb378b53970e
+msgid ""
+"Get chemicals and drugs mentioned in a biomedical article, identified by "
+"text mining from Europe ..."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst 19f102e0e4ed4e549e8748cc079f2c45
+msgid "EPMC_get_article_chemicals tool specification"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:28
+#: ../../tools/epmc_annotations_tools.rst:61
+#: ../../tools/epmc_annotations_tools.rst:94
+#: ../../tools/epmc_annotations_tools.rst:127
+#: ../../tools/epmc_annotations_tools.rst:160 130002ed2ce94617bfbe85479b39b3d8
+#: 2bf3045a8b014bd78ade57911b34a8ef 7e8581979ea649c4b8f57525c78bd946
+#: 891d373e46324adda449cf89c300e89a d3adffa9d93946ad9fa9a1c89ad55cab
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:30 2ccba9ab412d400787478a3d3494b160
+msgid "**Name**: ``EPMC_get_article_chemicals``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:31
+#: ../../tools/epmc_annotations_tools.rst:64
+#: ../../tools/epmc_annotations_tools.rst:97
+#: ../../tools/epmc_annotations_tools.rst:130
+#: ../../tools/epmc_annotations_tools.rst:163 2731b9b31dcd4fb2962d84cd9419d0d0
+#: 2cf75b6d888b4ada840cc663ceaf574c 7121af9f289b47cd9fb870092d2ac518
+#: a620b0861fc843c4b5acb5c7d6fef770 fb00f3c166d746a48875062eddd7b3bc
+msgid "**Type**: ``EPMCAnnotationsTool``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:32 1f8216050766408d8cdb01bff36fc49a
+msgid ""
+"**Description**: Get chemicals and drugs mentioned in a biomedical "
+"article, identified by text mining from Europe PMC. Returns chemical/drug"
+" names with database links and mention frequency. Example: "
+"pmid='33332779' returns tocilizumab, dexamethasone, etc."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:34
+#: ../../tools/epmc_annotations_tools.rst:67
+#: ../../tools/epmc_annotations_tools.rst:100
+#: ../../tools/epmc_annotations_tools.rst:133
+#: ../../tools/epmc_annotations_tools.rst:166 4f891406afcf49dca28bcc80aab224e5
+#: 5857367bb391458b8b9600341eb1d383 714c42c204d74141aa1b17c084bdb46c
+#: 9762b1ed6ff14274a7b63c5c0336e393 ea06ee2e26084195adeae6bfe12249f0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:36
+#: ../../tools/epmc_annotations_tools.rst:69
+#: ../../tools/epmc_annotations_tools.rst:102
+#: ../../tools/epmc_annotations_tools.rst:135 2a8dbc7ed2974ed1a51b9a4cb1a84bb4
+#: 7ac71e950ffe4e2396e063bc76da99c7 85ae7fda68a641d096b580ce7486e2fc
+#: bed715c036b14714acac81b368b00dbb
+msgid "``pmid`` (string) (optional) PubMed ID (e.g., '33332779')."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:39
+#: ../../tools/epmc_annotations_tools.rst:72
+#: ../../tools/epmc_annotations_tools.rst:105
+#: ../../tools/epmc_annotations_tools.rst:138
+#: ../../tools/epmc_annotations_tools.rst:171 5ffb830669284e98b0ac9d0d065bf306
+#: 73916ef94cac4af8946aa56e27fb3f68 815003de9d7d4fb583260016422094d0
+#: 9acb2314c6c749eb8991138e89138097 d8b887a77f094fb3953ce7e15286c6b3
+msgid ""
+"``pmcid`` (string) (optional) PubMed Central ID (e.g., 'PMC7781101'). "
+"Alternative to pmid."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:42
+#: ../../tools/epmc_annotations_tools.rst:75
+#: ../../tools/epmc_annotations_tools.rst:108
+#: ../../tools/epmc_annotations_tools.rst:141
+#: ../../tools/epmc_annotations_tools.rst:177 31493cbcab884814bb1ed4884a34f955
+#: 7604daf5aac542dba9052f6a6cd59456 af77c31a814f4ceb910cc6386fdd77d7
+#: c169b0e416714cb4a4bfe624bc7ab85c f0b4062f5d9a4c21a7ef9a5218d7c0bb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:55 e72b5d2772c4427e8bf873c1ca7b702e
+msgid "**EPMC_get_article_diseases** (Type: EPMCAnnotationsTool)"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:57 7a40fa55c1ec4dab94947e3c3620c136
+msgid ""
+"Get diseases mentioned in a biomedical article, identified by text mining"
+" from Europe PMC. Return..."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst a3e00b3caa624684926313903f16bf0a
+msgid "EPMC_get_article_diseases tool specification"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:63 00a60ce71804430fb0238dd513a03414
+msgid "**Name**: ``EPMC_get_article_diseases``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:65 a2ea3dcd3e7e44198ef7f88afc0d4ec7
+msgid ""
+"**Description**: Get diseases mentioned in a biomedical article, "
+"identified by text mining from Europe PMC. Returns disease names with "
+"ontology links (EFO, HPO) and mention frequency. Example: pmid='33332779'"
+" returns COVID-19, pneumonia, etc."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:88 b4e869b3c71b40789788de1469dcba97
+msgid "**EPMC_get_article_genes** (Type: EPMCAnnotationsTool)"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:90 9e01b028367546be958eba0d69fd9a69
+msgid ""
+"Get genes and proteins mentioned in a biomedical article, identified by "
+"text mining from Europe P..."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst 634a8197e7814074816968f519d49848
+msgid "EPMC_get_article_genes tool specification"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:96 a3466d2f6b6a4234b06e77dbd284e2ce
+msgid "**Name**: ``EPMC_get_article_genes``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:98 47c53390c72e4e2eb3cf9ff589302918
+msgid ""
+"**Description**: Get genes and proteins mentioned in a biomedical "
+"article, identified by text mining from Europe PMC. Returns gene/protein "
+"names with UniProt links and mention frequency. Useful for identifying "
+"which genes a paper discusses. Example: pmid='33332779' returns "
+"interleukin-6 receptor and other proteins."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:121 4d31221362774c5cbac2d4fc70e8f460
+msgid "**EPMC_get_article_organisms** (Type: EPMCAnnotationsTool)"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:123 62147a93e9a648c78fefd93236c30f58
+msgid ""
+"Get organisms mentioned in a biomedical article, identified by text "
+"mining from Europe PMC. Retur..."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst f3191e2e271947ef8b7742d5c5f55f29
+msgid "EPMC_get_article_organisms tool specification"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:129 1f31e68db4784456a331542b8f78192a
+msgid "**Name**: ``EPMC_get_article_organisms``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:131 0635d65abd4b4022b331f13c62c4ef02
+msgid ""
+"**Description**: Get organisms mentioned in a biomedical article, "
+"identified by text mining from Europe PMC. Returns organism names with "
+"NCBI Taxonomy links and mention frequency. Example: pmid='33332779' "
+"returns SARS-CoV-2, Homo sapiens, etc."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:154 3b5c8eb6e91b4d81988d9364fe53a7ae
+msgid "**EPMC_get_text_mined_annotations** (Type: EPMCAnnotationsTool)"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:156 76e6b9ea0f7a4921b2be39f1ea4c12af
+msgid ""
+"Get all text-mined annotations from a biomedical article via Europe PMC. "
+"Returns gene/protein men..."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst 29ef0f3258344e37ab7887d7d825917a
+msgid "EPMC_get_text_mined_annotations tool specification"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:162 e6c3847f735d40b58ac761449d9b178a
+msgid "**Name**: ``EPMC_get_text_mined_annotations``"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:164 766725bfe7f54ea896efe0f3b517dfec
+msgid ""
+"**Description**: Get all text-mined annotations from a biomedical article"
+" via Europe PMC. Returns gene/protein mentions, diseases, chemicals, "
+"organisms, and GO terms automatically extracted from the full text. "
+"Useful for quickly identifying which genes, drugs, or diseases are "
+"discussed in a paper. Example: pmid='33332779' (COVID-19 tocilizumab "
+"trial) returns IL-6 receptor, tocilizumab, SARS-CoV-2, etc."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:168 c77c4be011a549408403009bda690ba4
+msgid ""
+"``pmid`` (string) (optional) PubMed ID (e.g., '33332779'). Either pmid or"
+" pmcid is required."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:174 2e58e916ac8c406499d68e75fce52395
+msgid ""
+"``annotation_type`` (string) (optional) Filter by annotation type. "
+"Options: 'Gene\\_Proteins', 'Diseases', 'Chemicals', 'Organisms', "
+"'Gene\\_Ontology', 'EFO'. Leave empty for all types."
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:190 2a5e87cee1ed4a929d2bffec1eb11e56
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:192 9a2e0447cb09425aba90226c116b8508
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/epmc_annotations_tools.rst:193 88950c15cd9047f2b481d2928e58496a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

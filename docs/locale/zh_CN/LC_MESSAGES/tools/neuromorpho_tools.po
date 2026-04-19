@@ -1,0 +1,256 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/neuromorpho_tools.rst:10 118c5a01f2f64fa9aa35ce41ca75c6c4
+msgid "Neuromorpho Tools"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:12 91cd3e06d6e348e0a6519db3a428d955
+msgid ""
+"**Configuration File**: ``neuromorpho_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:16 6e9956fb0e1d465495d7bf7f09260834
+msgid ""
+"This page contains all tools defined in the ``neuromorpho_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:19 cf93303a132a46baa896fae037d523ea
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:22 0f7bc0a0ced74a8d94daa347d236940c
+msgid "**NeuroMorpho_get_field_values** (Type: NeuroMorphoTool)"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:24 acd2a6769fec40848c9bd6821b0c6df8
+msgid ""
+"Get available values for a neuron metadata field in NeuroMorpho.Org. "
+"Useful for discovering what ..."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst 73b5c23faa214c959342813cd69436b1
+msgid "NeuroMorpho_get_field_values tool specification"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:28 ../../tools/neuromorpho_tools.rst:65
+#: ../../tools/neuromorpho_tools.rst:98 ../../tools/neuromorpho_tools.rst:131
+#: 5b89e813743d491083367f2c1b8e7fad b028c19ca06543a89992370d6823221a
+#: c580a4da663f4482b23c20088d5212a7 c9dd345a6144472a8413f6dd97f52e78
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:30 4839f4daf2974b1bad86e99761826e9b
+msgid "**Name**: ``NeuroMorpho_get_field_values``"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:31 ../../tools/neuromorpho_tools.rst:68
+#: ../../tools/neuromorpho_tools.rst:101 ../../tools/neuromorpho_tools.rst:134
+#: 8da475fdaed34c7c98aadd440c6d939d 92b532922b524a9baf12f063581b179c
+#: a2a97d2ff795406ab350690c5497488d cb03450b9d9547e0b57f5d935f6fa108
+msgid "**Type**: ``NeuroMorphoTool``"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:32 26dc3de6bbb64e9b88340270d6b793ee
+msgid ""
+"**Description**: Get available values for a neuron metadata field in "
+"NeuroMorpho.Org. Useful for discovering what species, brain regions, cell"
+" types, or other attributes are available for searching. Example: "
+"field\\_name='species' returns all species represented in the database."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:34 ../../tools/neuromorpho_tools.rst:71
+#: ../../tools/neuromorpho_tools.rst:104 ../../tools/neuromorpho_tools.rst:137
+#: 090e23e2a1a94fd8bc49d0c06159d4e6 5342954d6c3c44988fa7cfed84225c20
+#: a57fb32d57cb462c98b36bc43fa3c385 cd21e045b771469ebf574c38b4676df6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:36 cb4f95b5db6b4144882985d3de9be7bf
+msgid ""
+"``field_name`` (string) (required) Metadata field name. Common fields: "
+"'species', 'brain\\_region', 'cell\\_type', 'archive', 'stain', "
+"'protocol', 'gender', 'age\\_classification', 'experiment\\_condition'."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:39 ../../tools/neuromorpho_tools.rst:151
+#: 520eec2d71ea44509fe32ef52c0f0802 c380ea1fb281499bb0f35e95f9cf77f1
+msgid "``page`` (integer) (optional) Page number (0-indexed). Default: 0."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:42 9c7280a057b84f87bc8c4e1582adaed1
+msgid "``size`` (integer) (optional) Results per page (max 500). Default: 500."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:45 ../../tools/neuromorpho_tools.rst:79
+#: ../../tools/neuromorpho_tools.rst:112 ../../tools/neuromorpho_tools.rst:157
+#: 5cae9e67e0024b6b956bf846973cc97a 73ffc5ed51d54ef3aa0c4bc070c9f3eb
+#: b3e6eb96c1b44de79575173b6ba2f049 dcda2ab42b1942b0b84be2ec2bacc5eb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:59 0fe1e51f2c10419f9cab4aa0010b9776
+msgid "**NeuroMorpho_get_morphometry** (Type: NeuroMorphoTool)"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:61 9ea36d24469e4f11a23293886605771b
+msgid ""
+"Get morphometric measurements for a neuron from NeuroMorpho.Org. Returns "
+"quantitative properties ..."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst d388a948823b4212acd037fd8be10212
+msgid "NeuroMorpho_get_morphometry tool specification"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:67 2bbe795e4dad46ee8e677e8da15515a2
+msgid "**Name**: ``NeuroMorpho_get_morphometry``"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:69 4709ffca9fa74e2f9d8e5873069d8ec6
+msgid ""
+"**Description**: Get morphometric measurements for a neuron from "
+"NeuroMorpho.Org. Returns quantitative properties including surface area, "
+"volume, number of stems, bifurcations, branches, width, height, depth, "
+"average diameter, Euclidean/path distance, fractal dimension, and more."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:73 7bd7230013424f7b8d2b0ec05a1689f0
+msgid "``neuron_id`` (integer, null) (optional) Numeric neuron ID. Example: 1."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:76 05998386ecc240a0b392a013b5e2381b
+msgid ""
+"``neuron_name`` (string, null) (optional) Neuron name (alternative to "
+"neuron\\_id). Example: 'cnic\\_001'."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:92 37d600d71ee44d25b3a6f4f5dafbe652
+msgid "**NeuroMorpho_get_neuron** (Type: NeuroMorphoTool)"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:94 7d4f5660f70b43ea9eca1afd5546637a
+msgid ""
+"Get detailed neuron reconstruction data from NeuroMorpho.Org by neuron ID"
+" or name. Returns specie..."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst 9d86e1d5548c4815bf6bcfcb9668d544
+msgid "NeuroMorpho_get_neuron tool specification"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:100 dc24b12e82c648e98ea8c7c96f4921f1
+msgid "**Name**: ``NeuroMorpho_get_neuron``"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:102 2ed5082a7c904bd5a8d293a80b7d5ea0
+msgid ""
+"**Description**: Get detailed neuron reconstruction data from "
+"NeuroMorpho.Org by neuron ID or name. Returns species, brain region, cell"
+" type, staining method, reconstruction software, morphological "
+"attributes, and associated publications. Example: neuron\\_id=1 returns a"
+" Rhesus monkey prefrontal pyramidal neuron."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:106 3dce02b9461449e788de8a1315dc356a
+msgid ""
+"``neuron_id`` (integer, null) (optional) Numeric neuron ID in "
+"NeuroMorpho.Org database. Examples: 1, 102399, 50000."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:109 04a24f2a82d34416a987e6c9d86c603b
+msgid ""
+"``neuron_name`` (string, null) (optional) Neuron name string (alternative"
+" to neuron\\_id). Example: 'cnic\\_001'."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:125 8530490c36ac47d7a16ba137059f128a
+msgid "**NeuroMorpho_search_neurons** (Type: NeuroMorphoTool)"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:127 344a3232e8004af18f21b15f329f0e54
+msgid ""
+"Search for neurons in NeuroMorpho.Org by species, brain region, cell "
+"type, or other attributes. S..."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst 69b272b274be4408b3eadeae5d4b84a1
+msgid "NeuroMorpho_search_neurons tool specification"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:133 d5bfa1b857d04fb981048aa37ebad647
+msgid "**Name**: ``NeuroMorpho_search_neurons``"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:135 74bc63820811468491f02603b1efb926
+msgid ""
+"**Description**: Search for neurons in NeuroMorpho.Org by species, brain "
+"region, cell type, or other attributes. Supports filtering by multiple "
+"criteria. Returns paginated list of matching neurons. Example: searching "
+"species 'human' returns thousands of human neuron reconstructions."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:139 d1ca908785b7481baf3d5f299ed66d5f
+msgid ""
+"``query_field`` (string) (optional) Field to search on. Common fields: "
+"'species', 'brain\\_region', 'cell\\_type', 'archive', 'stain', "
+"'protocol'. Use NeuroMorpho\\_get\\_field\\_values to see available "
+"values."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:142 195a8f4e32044d599eaca4188abec34c
+msgid ""
+"``query_value`` (string) (required) Value to search for. Examples: "
+"'human', 'rat', 'mouse', 'hippocampus', 'pyramidal', 'interneuron'. "
+"Comma-separated for multiple values."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:145 48316c1a7a9a4467bff1cf4e11dfdeb6
+msgid ""
+"``filter_field`` (string, null) (optional) Optional additional filter "
+"field. Example: 'cell\\_type'."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:148 1c859a0fcdef4730b831c6892fd7329d
+msgid ""
+"``filter_value`` (string, null) (optional) Value for the filter field. "
+"Example: 'pyramidal'."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:154 ddf259aee1c34a599809ad8fddc0d893
+msgid "``size`` (integer) (optional) Results per page (max 500). Default: 20."
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:171 353211ab5a4844638a617609fc9b7240
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:173 344e6fe7956d4fb4817374fb69dc03bc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/neuromorpho_tools.rst:174 7cd3a24dc1c04a3f8e6bd2d89ad22569
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

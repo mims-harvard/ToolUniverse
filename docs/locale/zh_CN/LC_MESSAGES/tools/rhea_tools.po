@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rhea_tools.rst:10 d3608498968d4330bdd1eaf93a1a8c1e
+msgid "Rhea Tools"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:12 d0a674a231e84b2e97a623d611e246fb
+msgid ""
+"**Configuration File**: ``rhea_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:16 993d5f12e5ab4c29aa48eaf3a226662a
+msgid ""
+"This page contains all tools defined in the ``rhea_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:19 051ab0f3b06d4f739c17d3c4e86ec327
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:22 5d2b414a28094d72b266dca5fd98b6e8
+msgid "**Rhea_search_by_chebi** (Type: RheaTool)"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:24 1929b4a4e8494f2fb1ad9163dd2e4c31
+msgid ""
+"Search for biochemical reactions involving a specific ChEBI compound in "
+"Rhea. Returns reactions w..."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst 8cb61dc5a9b04578afceb869ac8098a8
+msgid "Rhea_search_by_chebi tool specification"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:28 ../../tools/rhea_tools.rst:62
+#: ../../tools/rhea_tools.rst:96 5b71480673d94697a19f3464b5bf6fe9
+#: cbff0f96a3134187901c537f024fd789 d4a6c547c7394b7f92d667ac0ad2cc89
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:30 8d384ab0d99b455ca8353d66df2ae5f0
+msgid "**Name**: ``Rhea_search_by_chebi``"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:31 ../../tools/rhea_tools.rst:65
+#: ../../tools/rhea_tools.rst:99 0d9eb74500a54b7887b3942d49e207a0
+#: 31cc6ccbc79440d2a3114667a9233b97 6954d7fd27704f5797dd7ad025a094de
+msgid "**Type**: ``RheaTool``"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:32 7980957060b3419d8028db27ea54dd2c
+msgid ""
+"**Description**: Search for biochemical reactions involving a specific "
+"ChEBI compound in Rhea. Returns reactions where the given compound "
+"participates as a substrate, product, or cofactor. All Rhea reactions are"
+" linked to ChEBI compound identifiers. Example: CHEBI:17234 (glucose) "
+"returns reactions including lactose hydrolysis, glucose isomerization, "
+"and glucose oxidation with their balanced equations and EC numbers."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:34 ../../tools/rhea_tools.rst:68
+#: ../../tools/rhea_tools.rst:102 17eba4d32bac4d1088dfe1f1e689ac59
+#: 3f5a3021a8a140b592ecaee975044354 dee6f42f2ee940bc9d3d9cadd351dca5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:36 5e42c28b249a481197e400cb3b1700ad
+msgid ""
+"``chebi_id`` (string) (required) ChEBI compound identifier. Can include "
+"or omit 'CHEBI:' prefix. Examples: 'CHEBI:17234' (glucose), 'CHEBI:15377'"
+" (water), 'CHEBI:15422' (ATP), 'CHEBI:16761' (ADP)."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:39 ../../tools/rhea_tools.rst:73
+#: ../../tools/rhea_tools.rst:107 00500b40cf604a62a10c223c0844884b
+#: 2bda425fff0048d2b86f7e58343a8ff8 adbb085fadd2409bb07f40bd5f38eff6
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results (default "
+"20, max 50)."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:42 ../../tools/rhea_tools.rst:76
+#: ../../tools/rhea_tools.rst:110 80fcbb05c5bf4167ad7d0f5f75cf2c40
+#: b46b5d433736485fab8299bb9610ff4c ce153810121248fdb175faf2cc6a3d44
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:56 0f8951ba9b6b4e98be93d20d2e6979a3
+msgid "**Rhea_search_by_ec** (Type: RheaTool)"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:58 487c06d61c2a4826afcb3b472d20167a
+msgid ""
+"Search for biochemical reactions in Rhea by EC (Enzyme Commission) "
+"number. Returns all reactions ..."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst dbc23178444f40dc92bd67d57c95cfad
+msgid "Rhea_search_by_ec tool specification"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:64 707e822fb0834b8ba271079d13cead43
+msgid "**Name**: ``Rhea_search_by_ec``"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:66 73f91c2422ac448b92f64aade645ae31
+msgid ""
+"**Description**: Search for biochemical reactions in Rhea by EC (Enzyme "
+"Commission) number. Returns all reactions catalyzed by enzymes in a given"
+" EC class. Useful for finding the specific biochemical transformations "
+"catalyzed by a class of enzymes. Example: EC:1.1.1.1 (alcohol "
+"dehydrogenase) returns reactions including 'a primary alcohol + NAD(+) = "
+"an aldehyde + NADH + H(+)' and 'ethanol + NAD(+) = acetaldehyde + NADH + "
+"H(+)'."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:70 29ca04082bf84733bd048dd270ed2054
+msgid ""
+"``ec_number`` (string) (required) EC (Enzyme Commission) number. Can "
+"include or omit 'EC:' prefix. Examples: 'EC:1.1.1.1' (alcohol "
+"dehydrogenase), '3.5.1.50' (pentanamidase), '2.7.1.1' (hexokinase), "
+"'1.14.13.39' (nitric-oxide synthase)."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:90 f0550889476f460f8871426a83f02ed8
+msgid "**Rhea_search_reactions** (Type: RheaTool)"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:92 5afb5e06d55f4ac5b1577932a92d77e2
+msgid ""
+"Search for biochemical reactions in the Rhea database by compound name, "
+"reaction description, or ..."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst 86289c7f89f2488f9d2f169db4882698
+msgid "Rhea_search_reactions tool specification"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:98 f8bfe07096c745beb92e7083b95f3099
+msgid "**Name**: ``Rhea_search_reactions``"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:100 d7f781a23e7a4e788419fe68eb7d41ed
+msgid ""
+"**Description**: Search for biochemical reactions in the Rhea database by"
+" compound name, reaction description, or keyword. Rhea is an expert-"
+"curated knowledgebase of over 15,000 chemical and transport reactions of "
+"biological interest maintained by SIB Swiss Institute of Bioinformatics. "
+"All reactions are linked to ChEBI compounds and EC enzyme numbers. "
+"Example: searching 'glucose' returns reactions like 'D-glucose + NAD(+) ="
+" D-glucono-1,5-lactone + NADH + H(+)' with EC:1.1.1.47."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:104 9779d035cac84ac1bf20bd94078264bf
+msgid ""
+"``query`` (string) (required) Search keyword for reactions. Can be a "
+"compound name, reaction term, or general keyword. Examples: 'glucose', "
+"'ATP', 'kinase', 'ethanol', 'acetyl-CoA', 'phosphorylation'."
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:124 b09479836d6b47948bbbf09ef76f9d03
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:126 6f8cfd8674cf4ea589a5725f4e3117e5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rhea_tools.rst:127 04b9a65710574496b3af585051d88ca1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

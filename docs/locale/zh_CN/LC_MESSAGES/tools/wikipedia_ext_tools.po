@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wikipedia_ext_tools.rst:10 95ad7d2fdbc6454da00209c40b25e3e7
+msgid "Wikipedia Ext Tools"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:12 f2309182bb8f422398e66bc9917e47db
+msgid ""
+"**Configuration File**: ``wikipedia_ext_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:16 0b99de94daf946518678bba179dfd885
+msgid ""
+"This page contains all tools defined in the ``wikipedia_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:19 81f4e61c7fd94777a79bf995d75751fb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:22 9fa841f5d15a4e34bc0f54e237f50999
+msgid "**Wikipedia_get_featured_content** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:24 b2a03aae68ef40d4858f70708ec26346
+msgid ""
+"Get Wikipedia's featured content for a specific date including the "
+"featured article of the day, m..."
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst dd41a740a0cf4bba82ec641a8dffa267
+msgid "Wikipedia_get_featured_content tool specification"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:28 9aa5b1b862c249bcb2409bc95b88a11e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:30 feaeff6ef242486ea70c6a63b721c015
+msgid "**Name**: ``Wikipedia_get_featured_content``"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:31 37034005053a459b915a0e8c8432ca92
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:32 4ad2babaf7134d068f2dd8e83d1a5fcb
+msgid ""
+"**Description**: Get Wikipedia's featured content for a specific date "
+"including the featured article of the day, most-read articles, picture of"
+" the day, and on-this-day events using the Wikipedia REST API. No "
+"authentication required. Useful for daily briefings and trending content "
+"discovery."
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:34 2362a578971b49d3866fefc6e40a6076
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:36 5fb608dc033e499b9dc912b8f15b21fe
+msgid "``year`` (integer) (required) Year. Examples: 2023, 2024"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:39 d31389facd64451682f28a03456fa0a5
+msgid "``month`` (integer) (required) Month number (1-12). Examples: 1, 6, 12"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:42 aec46a37585f44e186bda9c0c82fa8aa
+msgid "``day`` (integer) (required) Day of month (1-31). Examples: 1, 15, 25"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:45 f092a23a81284eb8a79aabe22fb77cde
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:61 ff32ee03604f45b8880deafb186b7723
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:63 c243ff2dc3e24e6089a7d971ec472a19
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wikipedia_ext_tools.rst:64 5f90b8db6a074b2a90599bb6d7388f03
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

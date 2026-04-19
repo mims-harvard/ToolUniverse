@@ -1,0 +1,589 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/omnipath_tools.rst:10 f662dbedb95c47679ffd45daa9b7ba78
+msgid "Omnipath Tools"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:12 66d937567655434691ccfdf602d7e650
+msgid ""
+"**Configuration File**: ``omnipath_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:16 333e1bdfaac84c06969250f8b5d3b200
+msgid ""
+"This page contains all tools defined in the ``omnipath_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:19 9e91ab5704794b87b6488ba4a167b14b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:22 d48f8a18785b4b1a839f984b752d230d
+msgid "**OmniPath_get_cell_communication_annotations** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:24 806d50794e30422aae76583363d4761a
+msgid ""
+"Get cell-cell communication annotations for proteins from databases like "
+"CellPhoneDB, CellChatDB,..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst b56e052cac7245fb82cdcf2d31d5720a
+msgid "OmniPath_get_cell_communication_annotations tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:28 ../../tools/omnipath_tools.rst:65
+#: ../../tools/omnipath_tools.rst:99 ../../tools/omnipath_tools.rst:133
+#: ../../tools/omnipath_tools.rst:175 ../../tools/omnipath_tools.rst:223
+#: ../../tools/omnipath_tools.rst:268 ../../tools/omnipath_tools.rst:319
+#: 28e59d20ac504ba1a85da4ddcf853832 399bc15139814e1b8c950a6c8c674881
+#: 63d4bfc92c1b42f6bfa7b6960c4712d4 85d090c8cc87479abb269695367aa2f7
+#: b0f33edc1f5d4e15b21b9b84ac2bae9f c9df40f9980a441a8cc965b3b9b0865f
+#: e8a3779857ae4b56938bf86c5dfd3156 fc29370476544cb0af04c45bce89d1d0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:30 7a84ec1bbb8743f2a1486d5d712aa4a9
+msgid "**Name**: ``OmniPath_get_cell_communication_annotations``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:31 ../../tools/omnipath_tools.rst:68
+#: ../../tools/omnipath_tools.rst:102 ../../tools/omnipath_tools.rst:136
+#: ../../tools/omnipath_tools.rst:178 ../../tools/omnipath_tools.rst:226
+#: ../../tools/omnipath_tools.rst:271 ../../tools/omnipath_tools.rst:322
+#: 47452c789f0d441f977af4e6259e4e5a 5c9849f73f294dae81ae1da17978a815
+#: 66109ad42d6f4c149b600c5c01440de9 b81c97ef59144fe0a8b1f16b61bc5f2e
+#: c3f51ee6168a4895a6e39db2b6032f9a c8a4691dae374f148217506d9dab8da7
+#: c8cca9873376483ba67c472cd4d04785 de609dfed4ce489ca24b44ead9517f69
+msgid "**Type**: ``OmniPathTool``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:32 f2d45e2ecb814ea3b46d24647a27effe
+msgid ""
+"**Description**: Get cell-cell communication annotations for proteins "
+"from databases like CellPhoneDB, CellChatDB, CellTalkDB, ICELLNET, and "
+"other curated resources integrated into OmniPath. Returns role "
+"classifications (ligand/receptor), signaling pathway assignments, "
+"categories (Secreted Signaling, Cell-Cell Contact, ECM-Receptor), and "
+"other cell communication metadata. Useful for understanding the "
+"functional context of proteins in intercellular signaling. Example: TGFB1"
+" (P01137) is annotated as 'ligand' in CellChatDB pathway 'TGFb' category "
+"'Secreted Signaling'; TGFBR2 (P37173) is annotated as 'receptor' in "
+"multiple pathways."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:34 ../../tools/omnipath_tools.rst:71
+#: ../../tools/omnipath_tools.rst:105 ../../tools/omnipath_tools.rst:139
+#: ../../tools/omnipath_tools.rst:181 ../../tools/omnipath_tools.rst:229
+#: ../../tools/omnipath_tools.rst:274 ../../tools/omnipath_tools.rst:325
+#: 54b94e4c6f264de7b5343b2c08136a1c 5c8d9a98567e4229a306abf99563d8c0
+#: a0d85b8582e8469aa459fe5bb7febe31 aa31bd802afe4c28b64480e16176df94
+#: bb8f2b31a52c429097a5b7a5a7f789e0 e69b5cb979114bcdb184a87c3eaf2240
+#: ee42ca7cdcd24424b34458a0e1f3d1f0 ff9643848e3a42a9a9a5226007ff91ae
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:36 922cea29a7284d1a9eab9bb379efd19a
+msgid ""
+"``proteins`` (string) (required) UniProt accession(s) or gene symbol(s), "
+"comma-separated. Examples: 'P01137,P37173', 'TGFB1,EGFR', 'P00533'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:39 ec69d2ca89674628b0d1224e4358f141
+msgid ""
+"``databases`` (string, null) (optional) Filter by annotation database(s),"
+" comma-separated. Cell communication databases: CellPhoneDB, CellChatDB, "
+"CellTalkDB, ICELLNET, iTALK, scConnect, Cellinker, connectomeDB2020, "
+"Ramilowski2015, Baccin2019, LRdb, HPMR. Other databases: HPA\\_tissue, "
+"UniProt\\_tissue, PanglaoDB, CellTypist, DGIdb, Guide2Pharma. Default: "
+"CellPhoneDB,CellChatDB."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:42 05eb61dabef449d795ff98c6676f24ea
+msgid ""
+"``genesymbols`` (boolean, null) (optional) Whether to include gene "
+"symbols in output (default: true)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:45 ../../tools/omnipath_tools.rst:79
+#: ../../tools/omnipath_tools.rst:113 ../../tools/omnipath_tools.rst:156
+#: ../../tools/omnipath_tools.rst:204 ../../tools/omnipath_tools.rst:249
+#: ../../tools/omnipath_tools.rst:300 ../../tools/omnipath_tools.rst:336
+#: 0dcf360694bd40449ca4bf724fe505b3 5915181c0438428d826ec6eb27ea8322
+#: 8298b2d9f1fd4ccfbdcd7b9bab996d67 89481d376e524d70a738cc18912f8039
+#: 940d19ca3e1f46fca96637cc408967f7 b98cf1f7aa524e65bf5d5a7303890f95
+#: cf3c9de56b8540168f0ff54f9c1560c4 e5c099bd8092420095fbf82a0759b076
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:59 8c9c56413002412a8de0b19f2fa77965
+msgid "**OmniPath_get_complexes** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:61 80d1183087b24aa2b63dc958b1090bc0
+msgid ""
+"Get protein complex compositions from OmniPath's comprehensive complex "
+"database. Integrates 22,00..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst 28e1c8c36152451e8b10955536b634e4
+msgid "OmniPath_get_complexes tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:67 6eb99daa7e3f41f1a0dcdf7429cdb66a
+msgid "**Name**: ``OmniPath_get_complexes``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:69 7a4e2564bede4cf4b0eafc3dccd034f7
+msgid ""
+"**Description**: Get protein complex compositions from OmniPath's "
+"comprehensive complex database. Integrates 22,000+ complexes from CORUM, "
+"CellPhoneDB, CellChatDB, ComplexPortal, PDB, Guide2Pharma, SIGNOR, KEGG, "
+"and other resources. Returns complex names, component proteins with gene "
+"symbols, stoichiometry, and database identifiers. Essential for "
+"understanding multi-subunit ligand-receptor complexes in cell "
+"communication (e.g., heteromeric cytokine receptors). Example: TGFB1 "
+"(P01137) participates in 24 complexes including 'TGF-beta receptor II-"
+"TGF-beta1 complex' (TGFB1+TGFBR2) and 'ITGAV-ITGB8-MMP14-TGFB1 complex'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:73 ad4ab4708e2749ef9da9b455200a7dde
+msgid ""
+"``proteins`` (string) (required) UniProt accession(s), comma-separated. "
+"Note: gene symbols are NOT supported for this endpoint; use UniProt IDs. "
+"Examples: 'P01137' (TGFB1), 'P00533' (EGFR), 'P01137,P37173' "
+"(TGFB1+TGFBR2)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:76 de46508b9f5f4ab1bf08f5e798dd8ee1
+msgid ""
+"``databases`` (string, null) (optional) Filter by source database(s), "
+"comma-separated. Options: CORUM, CellPhoneDB, CellChatDB, ComplexPortal, "
+"Guide2Pharma, PDB, SIGNOR, KEGG-MEDICUS, Cellinker, ICELLNET, hu.MAP, "
+"Compleat. Default: all."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:93 4c9001a9316643209267a2f88c3a3522
+msgid "**OmniPath_get_dorothea_regulon** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:95 113439bcfd7e449381fe9f3a9909ed72
+msgid ""
+"Get the complete DoRothEA regulon for a transcription factor from "
+"OmniPath. Returns all target ge..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst c9f8d8b6e68141e5b9af485167900c34
+msgid "OmniPath_get_dorothea_regulon tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:101 48ff29e07aec44f1a394aa7ac2cea53a
+msgid "**Name**: ``OmniPath_get_dorothea_regulon``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:103 1bc44b15ea414e42bd7e15081072c2c7
+msgid ""
+"**Description**: Get the complete DoRothEA regulon for a transcription "
+"factor from OmniPath. Returns all target genes with mode of regulation "
+"(MoR: +1=activation, -1=repression), DoRothEA confidence levels, and "
+"source databases. Optionally filter by confidence levels (A, B, C). "
+"DoRothEA is the standard resource for TF activity estimation in tools "
+"like VIPER, decoupleR, and PROGENy. Use for: TF regulon retrieval for "
+"activity scoring, network analysis."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:107 36229102d039465985b82f2554e5792d
+msgid ""
+"``tf_gene`` (string) (required) Transcription factor gene symbol (e.g., "
+"'TP53', 'MYC', 'STAT3', 'NF2')"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:110 a75f287be0dc4397a6f1649e2e735174
+msgid ""
+"``confidence_levels`` (string, null) (optional) Comma-separated DoRothEA "
+"confidence levels to include (e.g., 'A,B' for high confidence only). "
+"Options: A, B, C, D, E. Default: all levels."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:127 19dd8ab2402d449aad9c06cf7ff27377
+msgid "**OmniPath_get_enzyme_substrate** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:129 3896ac3e8cb440909f4f56ee50be7067
+msgid ""
+"Get enzyme-substrate (post-translational modification) interactions from "
+"OmniPath. Integrates dat..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst ec8a054240984a32bdb82b2e318bb357
+msgid "OmniPath_get_enzyme_substrate tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:135 84ad7600a0814c74bf503e72c2ad21fd
+msgid "**Name**: ``OmniPath_get_enzyme_substrate``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:137 55dcc3edf48d417ebd7de4ad6434d9fa
+msgid ""
+"**Description**: Get enzyme-substrate (post-translational modification) "
+"interactions from OmniPath. Integrates data from PhosphoSite, phosphoELM,"
+" dbPTM, SIGNOR, HPRD, KEA, and other PTM databases. Returns "
+"kinase/phosphatase->substrate relationships with specific residue "
+"positions, modification types, and supporting evidence. Critical for "
+"understanding signaling cascades downstream of receptor activation (e.g.,"
+" RTK->SRC->downstream phosphorylation targets). Example: SRC kinase "
+"(P12931) has 200+ substrates with phosphorylation sites; LCK (P06239) "
+"phosphorylates SOCS3 at Y204 and Y221."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:141 573a9b7e0ecc45aabeb0d5f56eff70de
+msgid ""
+"``enzymes`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) for"
+" enzyme/kinase. Comma-separated for multiple. Examples: 'SRC', 'P12931', "
+"'LCK,FYN'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:144 2f672712558241c08cb654c7ca8e1348
+msgid ""
+"``substrates`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) "
+"for substrate. Examples: 'STAT3', 'P40763'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:147 8c6821c913b34d249ab8cd579c3a9208
+msgid ""
+"``types`` (string, null) (optional) Modification type filter. Options "
+"include: phosphorylation, ubiquitination, acetylation, methylation, "
+"sumoylation, glycosylation. Default: all types."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:150 274caaf0c3ba4a34946bf63679553c98
+msgid ""
+"``organisms`` (integer, null) (optional) NCBI taxonomy ID. Default: 9606 "
+"(human)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:153 5336ac3ded6e486a90b57654edd28e8a
+msgid "``limit`` (integer, null) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:169 9bf374bf83d34462868b5434f0d3bdbb
+msgid "**OmniPath_get_intercell_roles** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:171 d4d1edf882a8440d902e06b29e710f20
+msgid ""
+"Get intercellular communication roles for proteins from OmniPath. "
+"Classifies proteins as ligands,..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst 7721ad6ecf554a779c80bcf717d56eaf
+msgid "OmniPath_get_intercell_roles tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:177 629fa5e901054ddc9f74788ba4951038
+msgid "**Name**: ``OmniPath_get_intercell_roles``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:179 4f03f8efd1334fc5b9f780b3c8386424
+msgid ""
+"**Description**: Get intercellular communication roles for proteins from "
+"OmniPath. Classifies proteins as ligands, receptors, transmembrane "
+"proteins, secreted factors, or extracellular matrix components based on "
+"evidence from 40+ databases. Returns functional categories "
+"(ligand/receptor/adhesion/transporter), locational annotations "
+"(secreted/transmembrane/peripheral), consensus scores, and supporting "
+"databases. Critical for identifying which genes act as senders vs "
+"receivers in cell-cell communication. Example: querying EGFR shows it is "
+"classified as 'receptor' by 10 databases with consensus\\_score 7, "
+"plasma\\_membrane\\_transmembrane=true; querying TGFB1 shows it is a "
+"'ligand' (secreted=true, transmitter=true)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:183 9ee3de9ac5624cb7b338a5953da8ecf1
+msgid ""
+"``proteins`` (string, null) (optional) Gene symbol(s) or UniProt ID(s), "
+"comma-separated. Examples: 'EGFR', 'TGFB1,PDCD1', 'P00533,P01137'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:186 7e8c3208938c4465af03304c0a24f23e
+msgid ""
+"``categories`` (string, null) (optional) Filter by intercellular role "
+"category. Examples: 'ligand', 'receptor', 'adhesion', 'transporter', "
+"'ecm', 'transmembrane'. Comma-separated for multiple."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:189 ac1b162a6cae479fa894c0cf56d8e202
+msgid ""
+"``scope`` (string, null) (optional) Filter by annotation scope: 'generic'"
+" (general role) or 'specific' (cell-type specific). Default: all."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:192 74928ad7aee04d9da62534d764cec8ee
+msgid ""
+"``transmitter`` (boolean, null) (optional) Filter for transmitter/sender "
+"proteins (true) or non-transmitters (false)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:195 2c6c7959f3584c78b81010f7721865a3
+msgid ""
+"``receiver`` (boolean, null) (optional) Filter for receiver proteins "
+"(true) or non-receivers (false)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:198 c193bc050a654deb8af97a2e5dcf5cbd
+msgid ""
+"``secreted`` (boolean, null) (optional) Filter for secreted proteins "
+"(true) or non-secreted (false)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:201 40045c3b12524cfd86ff7ca493d7d2c1
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return."
+" Default: no limit."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:217 c6c563b96df743f6aff8dc71aab5f803
+msgid "**OmniPath_get_ligand_receptor_interactions** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:219 8de91b6ebdef4baa8c9bdb59d257809a
+msgid ""
+"Get ligand-receptor interaction pairs from OmniPath, the largest "
+"integrated intercellular communi..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst f947829e6bcc4eab85e9e680f7a6c10c
+msgid "OmniPath_get_ligand_receptor_interactions tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:225 592fa3202f5d4706a3c107f8fdc37e73
+msgid "**Name**: ``OmniPath_get_ligand_receptor_interactions``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:227 62e39d3113d845fd8445ede25929783e
+msgid ""
+"**Description**: Get ligand-receptor interaction pairs from OmniPath, the"
+" largest integrated intercellular communication database. Combines data "
+"from CellPhoneDB, CellChatDB, CellTalkDB, connectomeDB, Ramilowski2015, "
+"Guide2Pharma, HPMR, and 20+ other curated resources. Returns "
+"source/target proteins with directionality, stimulation/inhibition flags,"
+" supporting databases, and curation effort scores. Essential for cell-"
+"cell communication analysis in single-cell transcriptomics "
+"(CellPhoneDB/CellChat/LIANA workflows). Example: querying TGFB1 returns "
+"30 ligand-receptor interactions including TGFB1->TGFBR2 (135 curation "
+"effort, 34 databases), TGFB1->ACVRL1 (14 curation effort, 26 databases); "
+"querying CD274 (PD-L1) finds CD274->PDCD1 immune checkpoint interaction "
+"supported by 22 databases."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:231 4aa32f8d35c843348f1885bb27d1953d
+msgid ""
+"``partners`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) to"
+" query as interaction partners (either source or target). Comma-separated"
+" for multiple. Examples: 'TGFB1', 'CD274,PDCD1', 'EGFR', 'P01137'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:234 c1e9d8f4300d414ab951b69a2882366a
+msgid ""
+"``sources`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) for"
+" source (ligand) proteins only. Use instead of 'partners' to get outgoing"
+" interactions. Examples: 'TGFB1', 'WNT3A'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:237 482ba7cf5f8745fa9699b69de797aa9b
+msgid ""
+"``targets`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) for"
+" target (receptor) proteins only. Use instead of 'partners' to get "
+"incoming interactions. Examples: 'EGFR', 'PDCD1'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:240 3743615201a94f20b4ee91dc056c6935
+msgid ""
+"``databases`` (string, null) (optional) Filter by specific source "
+"database(s), comma-separated. Options include: CellPhoneDB, CellChatDB, "
+"CellTalkDB, connectomeDB2020, Ramilowski2015, Guide2Pharma, HPMR, iTALK, "
+"scConnect, Baccin2019, ICELLNET, LRdb, Cellinker. Default: all databases."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:243 fef9a837feaa47a695841d12a0945823
+msgid ""
+"``organisms`` (integer, null) (optional) NCBI taxonomy ID for species "
+"filter. Default: 9606 (human). Options: 9606 (human), 10090 (mouse), "
+"10116 (rat)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:246 a7db5f1f512544ed9f6a0e9e4d0534ca
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of interactions to "
+"return. Default: no limit (returns all)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:262 3876ef7a244f4e4ca54bb6d966a7f43b
+msgid "**OmniPath_get_signaling_interactions** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:264 c4b3176718d642009db6e1100e689009
+msgid ""
+"Get intracellular signaling pathway interactions from OmniPath's curated "
+"datasets. Supports query..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst 08d1dae81d0741b7a271bd41d78b42fb
+msgid "OmniPath_get_signaling_interactions tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:270 f2c07f9fdfae4f6bb5ff2576e72adfc2
+msgid "**Name**: ``OmniPath_get_signaling_interactions``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:272 c4393d74379543dea6dbff2e7bc561a1
+msgid ""
+"**Description**: Get intracellular signaling pathway interactions from "
+"OmniPath's curated datasets. Supports querying the main OmniPath "
+"signaling network (literature-curated, directed PPI), pathwayextra "
+"(activity flow from Reactome/KEGG/WikiPathways), kinaseextra (kinase-"
+"substrate from PhosphoSite/dbPTM), and more. Returns directed, signed "
+"interactions with stimulation/inhibition annotations and supporting "
+"evidence. Useful for reconstructing signaling cascades downstream of "
+"receptor activation. Example: NOTCH1 has 110 directed signaling "
+"interactions; SRC kinase connects to 200+ downstream substrates; TP53 has"
+" 500+ pathway interactions."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:276 68dbf7781d96481e8547cdbbcd822268
+msgid ""
+"``partners`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) to"
+" query. Comma-separated for multiple. Examples: 'TP53', 'NOTCH1', "
+"'SRC,ABL1'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:279 259d7e5c0b9645619c8fc085d402d0a4
+msgid ""
+"``sources`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) for"
+" source/upstream proteins only."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:282 8676fde93a804f80a199a866e333d27e
+msgid ""
+"``targets`` (string, null) (optional) Gene symbol(s) or UniProt ID(s) for"
+" target/downstream proteins only."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:285 f152037393454ec8a4602c2f5515d105
+msgid ""
+"``datasets`` (string, null) (optional) Which OmniPath dataset(s) to "
+"query, comma-separated. Options: 'omnipath' (curated signaling, default),"
+" 'pathwayextra' (activity flow from pathway DBs), 'kinaseextra' (kinase-"
+"substrate), 'dorothea' (TF-target), 'tf\\_target' (TF regulation), "
+"'mirnatarget' (miRNA targets), 'lncrna\\_mrna' (lncRNA regulation). "
+"Default: 'omnipath'."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:288 aeeac00b352d4da1814adc7716e1d13f
+msgid ""
+"``directed`` (boolean, null) (optional) Filter for directed interactions "
+"only (default: true for signaling)."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:291 3ce589506ece4b4aa85930473b9e6419
+msgid ""
+"``signed`` (boolean, null) (optional) Filter for interactions with known "
+"stimulation/inhibition sign."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:294 f975568c9b5240f1b021037f9d69fbd1
+msgid ""
+"``organisms`` (integer, null) (optional) NCBI taxonomy ID. Default: 9606 "
+"(human). Options: 9606, 10090, 10116."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:297 f7ce7f5495184962807a4541e3201df4
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of interactions to "
+"return."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:313 361fc5463bd94dd79d64bc511720bfe8
+msgid "**OmniPath_get_tf_target_interactions** (Type: OmniPathTool)"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:315 25e1c516c6964eb19b1f10c97eba6f33
+msgid ""
+"Get transcription factor (TF) to target gene interactions from OmniPath "
+"DoRothEA and CollecTRI re..."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst 862e872642614a5cac419d3dfa316736
+msgid "OmniPath_get_tf_target_interactions tool specification"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:321 942d3406143846eb8f8e3f7c9165515f
+msgid "**Name**: ``OmniPath_get_tf_target_interactions``"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:323 56f8cb364e4a46afb686a4381440a7d9
+msgid ""
+"**Description**: Get transcription factor (TF) to target gene "
+"interactions from OmniPath DoRothEA and CollecTRI regulons. Returns "
+"directed TF-target pairs with mode of regulation (activation/repression),"
+" DoRothEA confidence levels (A-E), and supporting evidence. Query by TF "
+"gene symbol or target gene. Use for: TF activity inference, regulatory "
+"network construction, identifying TF targets for VIPER/decoupleR "
+"analysis."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:327 fe7051c1f18d4bca8ab95f1ce98c2aff
+msgid ""
+"``tf_gene`` (string, null) (optional) Transcription factor gene symbol "
+"(e.g., 'TP53', 'MYC', 'STAT3'). Mutually exclusive with target\\_gene or "
+"can be combined."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:330 5d824498d7d4439389c2562dd9915f03
+msgid ""
+"``target_gene`` (string, null) (optional) Target gene symbol to find "
+"regulating TFs (e.g., 'CDKN1A', 'BCL2'). Mutually exclusive with "
+"tf\\_gene or can be combined."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:333 cd1f43c3a1d54afbbfdc163de14bbd22
+msgid ""
+"``confidence_level`` (string, null) (optional) DoRothEA confidence level "
+"filter: A=highest (1-2 sources), B=high (3+ sources), C=medium, D=low, "
+"E=lowest. A/B recommended for analysis."
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:349 ddcd8985412f460fb06a61ac7ac35e0a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:351 b4be34c27fad404a8292421c46c09022
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/omnipath_tools.rst:352 81bbf56cf67046fe95682fa8bb5ea11e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

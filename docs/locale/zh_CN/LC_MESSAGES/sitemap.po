@@ -1,0 +1,280 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../sitemap.rst:2 4b7d53a2587c4605b2589298553b3521
+msgid "Documentation Sitemap"
+msgstr ""
+
+#: ../../sitemap.rst:4 7af864bc55624f00b07d5c4623a5c628
+msgid "**Complete navigation of all ToolUniverse documentation**"
+msgstr ""
+
+#: ../../sitemap.rst:7 2e74f867ddb34fa4acc8d528c3ba4edb
+msgid "Get Started"
+msgstr ""
+
+#: ../../sitemap.rst:9 df825cdbdf2542f8bf22c180b7e8fa60
+msgid ":doc:`guide/python_guide` - Python Developer Guide"
+msgstr ""
+
+#: ../../sitemap.rst:10 42f37401416f4ffb92ff2b89d7574b03
+msgid ":doc:`guide/building_ai_scientists/index` - Choose Your AI Agent Platform"
+msgstr ""
+
+#: ../../sitemap.rst:11 b79dd124be6c4db7ab8cb47c8ce0fc57
+msgid ":doc:`guide/skills_showcase` - AI Agent Skills"
+msgstr ""
+
+#: ../../sitemap.rst:12 76e0640b84d5464887c90a7be5f7a6e0
+msgid ":doc:`guide/api_keys` - API Keys Configuration"
+msgstr ""
+
+#: ../../sitemap.rst:15 48f4a7f250b349ffb09e0597082f3fa0
+msgid "Tutorials & Workflows"
+msgstr ""
+
+#: ../../sitemap.rst:17 ba8769610dc94ec6b76637208495dcfa
+msgid ":doc:`guide/index` - Tutorials Overview"
+msgstr ""
+
+#: ../../sitemap.rst:18 5db2c3d87808444fb153ba1c7d830dfa
+msgid ":doc:`guide/tooluniverse_case_study` - Case Study"
+msgstr ""
+
+#: ../../sitemap.rst:19 fd98227be976426897ce6e9b22ead4a5
+msgid ":doc:`guide/agentic_tools_tutorial` - Agentic Tools Tutorial"
+msgstr ""
+
+#: ../../sitemap.rst:20 38e8e423fe9247c7832f137d56c896d3
+msgid ":doc:`guide/literature_search_tools_tutorial` - Literature Search Tutorial"
+msgstr ""
+
+#: ../../sitemap.rst:21 9b448f67b90f44279201708a8566d56a
+msgid ":doc:`guide/literature_search_web_ui_tutorial` - Literature Search Web UI"
+msgstr ""
+
+#: ../../sitemap.rst:22 b8e47de98d164bc1ba0ef2ca0faa2960
+msgid ":doc:`guide/clinical_guidelines_tools` - Clinical Guidelines Tools"
+msgstr ""
+
+#: ../../sitemap.rst:23 09b386004c0f4dd5875d93cb7413e61c
+msgid ":doc:`guide/euhealth_tools_tutorial` - EUHealth Tools Tutorial"
+msgstr ""
+
+#: ../../sitemap.rst:24 302ebbf3da1c4d8599bfb13e18c4e72e
+msgid ":doc:`guide/scientific_workflows` - Scientific Workflows"
+msgstr ""
+
+#: ../../sitemap.rst:25 6d78395565244dc98a8ee11cbe4944a2
+msgid ":doc:`guide/expert_feedback` - Expert Feedback"
+msgstr ""
+
+#: ../../sitemap.rst:26 2e7c3d2d2a95435c85809cab89cbef34
+msgid ""
+":doc:`guide/make_your_data_agent_searchable` - Make Your Data Agent "
+"Searchable"
+msgstr ""
+
+#: ../../sitemap.rst:27 6cb7648bc019421789f566f5a705dcb2
+msgid ":doc:`guide/visualization_tutorial` - Visualization Tutorial"
+msgstr ""
+
+#: ../../sitemap.rst:30 19193d7d610748b49c17eaa842545d65
+msgid "Advanced Features"
+msgstr ""
+
+#: ../../sitemap.rst:32 aa22317ba6994c678444de393086138e
+msgid ":doc:`guide/building_ai_scientists/compact_mode` - Compact Mode"
+msgstr ""
+
+#: ../../sitemap.rst:33 73b83c938a62469c9462a2f1abf7857d
+msgid ":doc:`guide/toolspace` - Toolspace"
+msgstr ""
+
+#: ../../sitemap.rst:34 55f0605a9143495fb643a94301a3893e
+msgid ":doc:`guide/hooks/index` - Hooks System"
+msgstr ""
+
+#: ../../sitemap.rst:35 e4039c206b4946f0ac0b4af5f1a69a6a
+msgid ":doc:`guide/cache_system` - Cache System"
+msgstr ""
+
+#: ../../sitemap.rst:36 d31d700a633849558f1d6d36d7f8fb6e
+msgid ":doc:`guide/examples` - Examples"
+msgstr ""
+
+#: ../../sitemap.rst:37 8d3de45c9f6044e7a713e079197cacdc
+msgid ":doc:`guide/logging` - Logging"
+msgstr ""
+
+#: ../../sitemap.rst:38 64f270f46c954509adb89e4e6550f10e
+msgid ":doc:`guide/openrouter_support` - OpenRouter Support"
+msgstr ""
+
+#: ../../sitemap.rst:39 a33f339708264512860aba772c093d64
+msgid ":doc:`guide/streaming_tools` - Streaming Tools"
+msgstr ""
+
+#: ../../sitemap.rst:40 209d22158b5343ed88234caf088a6690
+msgid ":doc:`guide/tools` - Tools"
+msgstr ""
+
+#: ../../sitemap.rst:41 18b4688b8e724c4d8d4c793649186801
+msgid ":doc:`guide/vllm_support` - vLLM Support"
+msgstr ""
+
+#: ../../sitemap.rst:42 8083b7aa2aa542ef8e51ce1491b8fe05
+msgid ":doc:`guide/http_api` - HTTP API"
+msgstr ""
+
+#: ../../sitemap.rst:43 0de0f7c0db594cb8ac8ff90339e56254
+msgid ":doc:`help/wechat_community` - WeChat Community"
+msgstr ""
+
+#: ../../sitemap.rst:46 769630c381254901b5fa49faaceee2da
+msgid "Expand ToolUniverse"
+msgstr ""
+
+#: ../../sitemap.rst:48 1ef1dd2b6ec0436dbb7f65bfc7d63997
+msgid ":doc:`expand_tooluniverse/index` - Overview"
+msgstr ""
+
+#: ../../sitemap.rst:49 621eb4bd14e34e3c8a7c8eaf0c35d67e
+msgid ":doc:`expand_tooluniverse/quick_start` - Quick Start"
+msgstr ""
+
+#: ../../sitemap.rst:50 5d58dc3964cb466aa1af82ba5a460c50
+msgid ":doc:`expand_tooluniverse/local_tools/index` - Local Tools"
+msgstr ""
+
+#: ../../sitemap.rst:51 0ff9bac7d37649a985e536780502be27
+msgid ":doc:`expand_tooluniverse/remote_tools/index` - Remote Tools"
+msgstr ""
+
+#: ../../sitemap.rst:52 eb77f5ebaefc4fbb90f234efdb4bf534
+msgid ":doc:`expand_tooluniverse/contributing/index` - Contributing"
+msgstr ""
+
+#: ../../sitemap.rst:53 bb5badded29546f49d0ffbf22471e6aa
+msgid ":doc:`expand_tooluniverse/architecture` - Architecture"
+msgstr ""
+
+#: ../../sitemap.rst:56 99954d3c43bd4108a8b23ef5bf3b1bc1
+msgid "Tools Catalog"
+msgstr ""
+
+#: ../../sitemap.rst:58 04fbed110a0942d4ae40de5e5daff741
+msgid ":doc:`tools/tools_config_index` - Tools Configuration Index"
+msgstr ""
+
+#: ../../sitemap.rst:59 4fc0106140694332a01d0d569e031083
+msgid ":doc:`tools/remote_tools` - Remote Tools"
+msgstr ""
+
+#: ../../sitemap.rst:62 7f38636825524bac9b5ef216d5120d61
+msgid "API Reference"
+msgstr ""
+
+#: ../../sitemap.rst:64 32b8829cf63340f8815a5c556ca64da8
+msgid ":doc:`api/modules` - API Modules"
+msgstr ""
+
+#: ../../sitemap.rst:67 25684f33536a405db5a4ed228c084586
+msgid "Help & Reference"
+msgstr ""
+
+#: ../../sitemap.rst:69 e89ac69386564757bb3db874142167c4
+msgid ":doc:`reference/cli_tools` - CLI Tools"
+msgstr ""
+
+#: ../../sitemap.rst:70 07d0d6ad20a84d888222d41092fd3ae6
+msgid ":doc:`reference/environment_variables` - Environment Variables"
+msgstr ""
+
+#: ../../sitemap.rst:71 f37d08aaab8c46e893e202311963e9ca
+msgid ":doc:`reference/glossary` - Glossary"
+msgstr ""
+
+#: ../../sitemap.rst:72 76b676f39f674a60b523d84ed322b886
+msgid ":doc:`reference/data_sources` - Data Sources"
+msgstr ""
+
+#: ../../sitemap.rst:73 08bf4f7c61a548dcb9d679f64e0e8ac0
+msgid ":doc:`help/index` - Help"
+msgstr ""
+
+#: ../../sitemap.rst:74 786fc2ce9e6c473fa9f95d4ad4112e7c
+msgid ":doc:`expand_tooluniverse/reference/index` - Reference"
+msgstr ""
+
+#: ../../sitemap.rst:75 f627ce81fd04442baf61ffe199571d4b
+msgid ":doc:`about/index` - About"
+msgstr ""
+
+#: ../../sitemap.rst:78 a9848ae76fd14835b90cbfab5826d3b0
+msgid "Legacy Documentation"
+msgstr ""
+
+#: ../../sitemap.rst:80 e277e9c3b899429fab896d548bf1a1f5
+msgid ":doc:`old/quickstart` - Quick Start (Legacy)"
+msgstr ""
+
+#: ../../sitemap.rst:81 8158a867eb374c3abf4d8a69190fd174
+msgid ":doc:`old/installation` - Installation (Legacy)"
+msgstr ""
+
+#: ../../sitemap.rst:82 237aecc3182f42d4ad8c2dfa34478d09
+msgid ":doc:`old/getting_started` - Getting Started (Legacy)"
+msgstr ""
+
+#: ../../sitemap.rst:85 71700bf434b64852907ad8127888b384
+msgid "Python API Pages"
+msgstr ""
+
+#: ../../sitemap.rst:87 f44e360796854c1eacce7798a5be50d5
+msgid ":doc:`guide/coding_api` - Coding API"
+msgstr ""
+
+#: ../../sitemap.rst:88 d0873fbd42304c3d89fc3232c03cc0d6
+msgid ":doc:`guide/interaction_protocol` - Interaction Protocol"
+msgstr ""
+
+#: ../../sitemap.rst:89 30bab1d4a21c4384ada1322379e087a5
+msgid ":doc:`guide/loading_tools` - Loading Tools"
+msgstr ""
+
+#: ../../sitemap.rst:90 e446c78000dc452d93d719b351345c82
+msgid ":doc:`guide/listing_tools` - Listing Tools"
+msgstr ""
+
+#: ../../sitemap.rst:91 5d00656b94384dadb6025847168dea6c
+msgid ":doc:`guide/finding_tools` - Finding Tools"
+msgstr ""
+
+#: ../../sitemap.rst:92 c7ea5f5330c540bda61806e49a2bb3ea
+msgid ":doc:`guide/tool_caller` - Tool Caller"
+msgstr ""
+
+#: ../../sitemap.rst:93 545c5560855d40828fcc4f61b614c189
+msgid ":doc:`guide/tool_composition` - Tool Composition"
+msgstr ""
+

@@ -1,0 +1,153 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mgnify_tools.rst:10 834dc4adb3bc409fa42742b9e97e2e4e
+msgid "Mgnify Tools"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:12 6c9b826813d94cdd960e5f07ac2d1efd
+msgid ""
+"**Configuration File**: ``mgnify_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:16 96be809cf3504fc5944983939eaafb6a
+msgid ""
+"This page contains all tools defined in the ``mgnify_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:19 36610e83fdcd4e839477362098d6b769
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:22 06830405837c4f348785e938a7e9ee9d
+msgid "**MGnify_list_analyses** (Type: MGnifyAnalysesTool)"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:24 44aca9a6c38148b59c466ea0ac20c2d9
+msgid ""
+"List analyses associated with a study accession (taxonomic/functional "
+"outputs). Use to enumerate ..."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst aa6ea22ab709403eb6f3da1e14a4bd05
+msgid "MGnify_list_analyses tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:28 ../../tools/mgnify_tools.rst:62
+#: 48ef7ee480d04da882123b2a68f22188 93405371965f4a1cb49cde31ca827a46
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:30 a21d50f16f95432e98cbdf3507c2a8f1
+msgid "**Name**: ``MGnify_list_analyses``"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:31 441b72aa0a784ce6a35fd7313933703c
+msgid "**Type**: ``MGnifyAnalysesTool``"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:32 4adc6bc8f3e24755b6ebaeae8c22ace1
+msgid ""
+"**Description**: List analyses associated with a study accession "
+"(taxonomic/functional outputs). Use to enumerate available processed "
+"results for programmatic retrieval."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:34 ../../tools/mgnify_tools.rst:68
+#: 4ef22f9bcc784aea957529e52b66ae9a d1b70a52c56f46b895d2b7ae26d869de
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:36 950bfd00edb543ae86630388cbaf91f7
+msgid ""
+"``study_accession`` (string) (required) MGnify study accession (e.g., "
+"'MGYS00000001')."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:39 ../../tools/mgnify_tools.rst:76
+#: 0b47122e02da48ad84f7520423ed7d06 7660f11c7ed04b41b8a379c6b99fd573
+msgid "``size`` (integer) (optional) Number of records per page (1–100)."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:42 ../../tools/mgnify_tools.rst:79
+#: 86693ff74b54438a882e17e38e746f19 f86c11499d3940339a2be2be78038a78
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:56 182f5b635eae4c038dee19eeb429c98f
+msgid "**MGnify_search_studies** (Type: MGnifyStudiesTool)"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:58 30d74f61df8542aaa58ce7cab56e5cf2
+msgid ""
+"Search MGnify metagenomics/microbiome studies by biome or keyword. "
+"Returns study accessions (MGYS..."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst a0bb86759bdf4419bb31d6b397492e9d
+msgid "MGnify_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:64 a63cec84a76340c88f41163bdf8d727d
+msgid "**Name**: ``MGnify_search_studies``"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:65 8cb72097518246b3aba59040cfbf0f84
+msgid "**Type**: ``MGnifyStudiesTool``"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:66 8a5a8318fc534082bd8022fec0b972d1
+msgid ""
+"**Description**: Search MGnify metagenomics/microbiome studies by biome "
+"or keyword. Returns study accessions (MGYS...), names, bioproject IDs, "
+"biome names, and analysis counts. Use to find datasets from specific "
+"environments (e.g., gut microbiome, soil, ocean) before retrieving "
+"analyses or taxonomy. Example: biome='root:Host-associated' returns gut, "
+"skin, and oral studies."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:70 b558c040b51c405aab0e77098f1d9faa
+msgid ""
+"``biome`` (string) (optional) Biome identifier (e.g., 'root:Host-"
+"associated')."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:73 28aa917c056845158e5b98afcf65231b
+msgid ""
+"``search`` (string) (optional) Keyword to search in study "
+"titles/descriptions."
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:92 420662af5d2d435a8e67cee77e4ab074
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:94 adab5f03b056464989e96e702a0a8e3e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mgnify_tools.rst:95 fa50b63eceb54741a2eee669b96357c6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

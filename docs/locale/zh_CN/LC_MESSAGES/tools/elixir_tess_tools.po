@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/elixir_tess_tools.rst:10 1463502306774538b184669c2f696a11
+msgid "Elixir Tess Tools"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:12 b8170f960ca149b595a87184d97ecb68
+msgid ""
+"**Configuration File**: ``elixir_tess_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:16 fd8236bef5d245b3bb9e67b1d60132f6
+msgid ""
+"This page contains all tools defined in the ``elixir_tess_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:19 409bbccfdec3455eab47ed564eca4408
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:22 135067c95a064a6aa41dda3eb35f49a4
+msgid "**ELIXIRTeSS_search_events** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:24 4041428baf114c708188b3e4a7ac9d0d
+msgid ""
+"Search ELIXIR TeSS for upcoming and past bioinformatics training events, "
+"workshops, and courses. ..."
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst 5c879a0bb2d54c2b85f89205dce02260
+msgid "ELIXIRTeSS_search_events tool specification"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:28 ../../tools/elixir_tess_tools.rst:70
+#: 247a117cf3974266b8b428c00899fcb1 5bbabb255cf14c07be97df9947ae6a43
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:30 2cf81b2af5ad4b54ba15ca8f32b31f00
+msgid "**Name**: ``ELIXIRTeSS_search_events``"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:31 ../../tools/elixir_tess_tools.rst:73
+#: 551145fab9894f15a5e9b383fc18206d 5d8f8e269d8b446591a8cdaa598cc7b5
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:32 0cc9948064e149f6bf28ac8c06247047
+msgid ""
+"**Description**: Search ELIXIR TeSS for upcoming and past bioinformatics "
+"training events, workshops, and courses. TeSS aggregates events from "
+"ELIXIR nodes and partner organizations across Europe and worldwide. "
+"Returns event details including organizer, location (online or physical),"
+" dates, costs, and registration links. Useful for finding bioinformatics "
+"training opportunities."
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:34 ../../tools/elixir_tess_tools.rst:76
+#: 7fbccc2fb9ce49c39ae69e7c0e453033 be02d5a0746f406da2a9025387528a7b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:36 c03b0b02580d47838523b742c693b0c0
+msgid ""
+"``q`` (string, null) (optional) Search query for events. Examples: "
+"'metagenomics workshop', 'NGS training', 'structural biology course'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:39 72855fa9b3d141418c6a52054bd3351f
+msgid ""
+"``country`` (string, null) (optional) Filter by country. Examples: "
+"'United Kingdom', 'Germany', 'Netherlands', 'Online'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:42 63d006a80d76432b9bee7510c075a466
+msgid ""
+"``event_type`` (string, null) (optional) Filter by event type. Values: "
+"'workshops\\_and\\_courses', 'conferences', 'webinars'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:45 13c53f4f9f0d4c988908c25a301b8764
+msgid ""
+"``online`` (boolean, null) (optional) Filter to online events only "
+"(true/false)"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:48 6b35d43b7350449c8195421809c69e81
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default 10)"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:51 ../../tools/elixir_tess_tools.rst:99
+#: 2355e6ffb1c44c8488b58d41c28aa2bc 4131be7aaacf42e39b3e955e76536c75
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:64 90d7cd8e6e6e41d3ab670b9c3b578051
+msgid "**ELIXIRTeSS_search_materials** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:66 f53a2135b9d14532ad40b1ad1409379e
+msgid ""
+"Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life"
+" science training materi..."
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst 94d9342da4ca4a7abd6194010c845f0c
+msgid "ELIXIRTeSS_search_materials tool specification"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:72 25151597e32140e18b230dabe0d001ce
+msgid "**Name**: ``ELIXIRTeSS_search_materials``"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:74 efb3694532f84e4f89dfbedc51a2304b
+msgid ""
+"**Description**: Search ELIXIR TeSS (Training eSupport System) for "
+"bioinformatics and life science training materials. TeSS aggregates "
+"learning resources from ELIXIR nodes and partner organizations including "
+"tutorials, online courses, webinars, and training presentations. Returns "
+"materials with scientific topics, EDAM operations, difficulty levels, and"
+" resource URLs. Essential for finding bioinformatics training resources "
+"and educational content."
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:78 3cb599b15bbf4755a45e1845cbb8c73c
+msgid ""
+"``q`` (string, null) (optional) Search query for training materials. "
+"Examples: 'CRISPR', 'protein structure prediction', 'RNA-seq', 'machine "
+"learning', 'genome assembly'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:81 b66ea2fc72a34a2eb50499cb2ad5649d
+msgid ""
+"``scientific_topics`` (string, null) (optional) Filter by EDAM scientific"
+" topic. Examples: 'Genomics', 'Proteomics', 'Sequence analysis', "
+"'Phylogenetics'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:84 9e2b0a8cec5449be868ea49a03aa05aa
+msgid ""
+"``target_audience`` (string, null) (optional) Filter by target audience. "
+"Examples: 'Researchers', 'Graduate students', 'Bioinformaticians'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:87 035e9025758f4bfeb05e61892b080d05
+msgid ""
+"``difficulty_level`` (string, null) (optional) Filter by difficulty: "
+"'Beginner', 'Intermediate', 'Advanced'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:90 71c579d0292c4bfa91f6c6e19640770e
+msgid ""
+"``licence`` (string, null) (optional) Filter by license type. Example: "
+"'CC-BY'"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:93 6b48aa9a9e6244599cf369194f4d5e67
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:96 220f239eb08b4e37aba47044d4afa6de
+msgid "``page`` (integer, null) (optional) Page number for pagination"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:112 67fa3b514c94493fbf5c270acff1cbfa
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:114 62abcb5664694f50bbebed4035549863
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/elixir_tess_tools.rst:115 c2504dee8eff4a85848adbe6a9810286
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

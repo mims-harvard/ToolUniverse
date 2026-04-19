@@ -1,0 +1,242 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/vdjdb_tools.rst:10 db67e1213d064f19905b4c42a198b846
+msgid "Vdjdb Tools"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:12 16bc5e4236c94582b46b149137bf5dba
+msgid ""
+"**Configuration File**: ``vdjdb_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:16 0756012b2a294c8db718829b7f10520c
+msgid ""
+"This page contains all tools defined in the ``vdjdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:19 de51b839279047b0883ba340ae999965
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:22 ce0e4dad61814a97b59a88043e906758
+msgid "**VDJDB_get_antigen_specificity** (Type: VDJDBTool)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:24 bbe4db2233e14e4b986c5724a54b39d2
+msgid ""
+"Search VDJdb by epitope peptide sequence to find all TCRs with confirmed "
+"specificity for a given ..."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst 2bacd76803f4437e8a66a108011b5702
+msgid "VDJDB_get_antigen_specificity tool specification"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:28 ../../tools/vdjdb_tools.rst:81
+#: ../../tools/vdjdb_tools.rst:112 31fb21b0adc3466d944f871d103237d3
+#: 9fa78671b3d8465591a9a0f4986505d9 d01dfa51a9aa4c8da86ec22f23fc8b38
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:30 11f01b4d9b64462386df617b2ca0fac1
+msgid "**Name**: ``VDJDB_get_antigen_specificity``"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:31 ../../tools/vdjdb_tools.rst:84
+#: ../../tools/vdjdb_tools.rst:115 996804cf591a44189599d5f01d174a9d
+#: dd51c6cdc26b419b8b66657bbf422e5f e3d354c19b2249348f247a0c56fb16e1
+msgid "**Type**: ``VDJDBTool``"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:32 f10a11ad01a0493b95eadb62a36b6063
+msgid ""
+"**Description**: Search VDJdb by epitope peptide sequence to find all "
+"TCRs with confirmed specificity for a given antigen. Returns CDR3 "
+"sequences, V/J gene usage, MHC restriction, and confidence scores for "
+"TCRs recognizing the epitope. Filter by species, TCR chain, MHC class "
+"(MHCI/MHCII), and minimum VDJdb confidence score (0-3). Connects to IEDB "
+"epitope tools upstream and IMGT nomenclature downstream."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:34 ../../tools/vdjdb_tools.rst:87
+#: ../../tools/vdjdb_tools.rst:118 4ab7861fc2c2404d908a7f678a1c8919
+#: 82371db1960841ba9ebd5a4d2d03e918 db8a0891bc28418fa1af308deb65c7a1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:36 ../../tools/vdjdb_tools.rst:89
+#: ../../tools/vdjdb_tools.rst:120 6663bfb6b5a4435f9453aaad4ec0f76e
+#: 7c1b90c102834a5f98507adab6287564 f57ce83d2f9d45d6801aedabdec446ac
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:39 3115e2b898c5466e9190cde348cb4599
+msgid ""
+"``epitope`` (string) (required) Epitope peptide sequence to search (e.g.,"
+" 'GILGFVFTL' for Influenza M1, 'GLCTLVAML' for EBV BMLF1)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:42 ../../tools/vdjdb_tools.rst:126
+#: 3e07258ca72c473193d14e822df42260 a77629f2a4d146259092c027affd9ae4
+msgid ""
+"``species`` (string, null) (optional) Species filter: HomoSapiens, "
+"MusMusculus, or MacacaMulatta"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:45 ../../tools/vdjdb_tools.rst:129
+#: 3f8c3b2485e44ad9bdf08ca5072e3cd2 cdc96d7292ae4a38bef015837d95f61c
+msgid ""
+"``gene`` (string, null) (optional) TCR chain filter: TRA (alpha) or TRB "
+"(beta)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:48 4d96fd2c42134ac99f0b26467050507f
+msgid "``mhc_class`` (string, null) (optional) MHC class filter: MHCI or MHCII"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:51 992000a8b15740e9a4fa23e6831304f4
+msgid ""
+"``min_score`` (integer, null) (optional) Minimum VDJdb confidence score "
+"(0-3). Score 3 = highest confidence with multiple verification methods."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:54 ../../tools/vdjdb_tools.rst:144
+#: 00bc0af9b854404795452b389a46b376 88ae000a6eed4a118643529df8c40929
+msgid ""
+"``page`` (integer) (optional) Page number (0-indexed) for paginated "
+"results"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:57 ../../tools/vdjdb_tools.rst:147
+#: 3fd4e23283984af88f47aa1e6495056f f7a97670abf84b3f912514e5e34c0aa6
+msgid ""
+"``page_size`` (integer) (optional) Number of results per page (default: "
+"25, max: 100)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:60 ../../tools/vdjdb_tools.rst:92
+#: ../../tools/vdjdb_tools.rst:150 11d7547c5c2e466cb082bc46d3bc95d8
+#: 754944ed5992480d88f93a1b19f12153 fa2bb96ff1e947288e3af95c4047fbbf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:75 bbe404c64b8d4ee58b8280f66e4e5027
+msgid "**VDJDB_get_database_summary** (Type: VDJDBTool)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:77 e33364296cc44cbba7ad162c8480a3e0
+msgid ""
+"Get VDJdb database metadata and statistics including total record count, "
+"available columns (gene,..."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst 49c07b96ca564cd1bacddee9b1d0804e
+msgid "VDJDB_get_database_summary tool specification"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:83 3a521b7d65f34dab97f3243f5128f8f8
+msgid "**Name**: ``VDJDB_get_database_summary``"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:85 6510f3f7d24041f59d26ee716120ff92
+msgid ""
+"**Description**: Get VDJdb database metadata and statistics including "
+"total record count, available columns (gene, cdr3, v.segm, j.segm, "
+"species, MHC, antigen, etc.), and their data types. Useful for "
+"understanding the database schema and current data coverage before "
+"querying."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:106 033c406b7efc46319602d7b550e5fcca
+msgid "**VDJDB_search_cdr3** (Type: VDJDBTool)"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:108 87502d05634b4f5aa55c979a106aadd2
+msgid ""
+"Search VDJdb for TCR/BCR CDR3 sequences linked to antigen specificity. "
+"Given a CDR3 amino acid se..."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst bf805bb123db46979b43e1cfd24b8120
+msgid "VDJDB_search_cdr3 tool specification"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:114 dcbf21a65ee548febdeed7193d0d371f
+msgid "**Name**: ``VDJDB_search_cdr3``"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:116 c95487536168456a92955e6fcd0c3b9a
+msgid ""
+"**Description**: Search VDJdb for TCR/BCR CDR3 sequences linked to "
+"antigen specificity. Given a CDR3 amino acid sequence, finds matching "
+"records with epitope, MHC, V/J gene usage, species, and confidence "
+"scores. Supports exact match, fuzzy (Levenshtein distance), and pattern "
+"matching. Filter by species (HomoSapiens, MusMusculus, MacacaMulatta) and"
+" TCR chain (TRA, TRB). Connects to IMGT gene nomenclature upstream and "
+"IEDB epitope data downstream."
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:123 72be816a8f0442c594954dcab4a6e9a2
+msgid ""
+"``cdr3`` (string) (required) CDR3 amino acid sequence to search (e.g., "
+"'CASSIRSSYEQYF', 'CAAAASGGSYIPTF')"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:132 140d63ca6dce468dabe94b436feb28f0
+msgid ""
+"``match_type`` (string) (optional) Match type: 'exact' for exact CDR3 "
+"match, 'fuzzy' for Levenshtein distance, 'pattern' for regex pattern"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:135 d054aa60894b42e78ff58ee14a8b3c0c
+msgid ""
+"``substitutions`` (integer, null) (optional) Max substitutions for fuzzy "
+"match (default: 1). Only used with match\\_type='fuzzy'"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:138 0b85c67ab67d4b79854497a196a5ccfd
+msgid ""
+"``insertions`` (integer, null) (optional) Max insertions for fuzzy match "
+"(default: 1). Only used with match\\_type='fuzzy'"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:141 4c097ac785af4a1f80961d2bd869d978
+msgid ""
+"``deletions`` (integer, null) (optional) Max deletions for fuzzy match "
+"(default: 1). Only used with match\\_type='fuzzy'"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:165 302f6fba463b4e2a93c1369252972dde
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:167 d0ebf3e302d742feabd2ef06b30d532a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/vdjdb_tools.rst:168 302e9671319642ab845d87cf1544dc86
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,269 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fourdn_tools.rst:10 ac2200fec17743e2b0721564d7254edd
+msgid "Fourdn Tools"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:12 1ae0bbe421ef45689e348901f0218e67
+msgid ""
+"**Configuration File**: ``fourdn_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:16 46728ba7a11c4bf0bc96af45368a78d1
+msgid ""
+"This page contains all tools defined in the ``fourdn_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:19 ba528f40dd604462b475c8eb8052befb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:22 82f61b42d3fb4439a21473b9b28524a6
+msgid "**FourDN_get_download_url** (Type: FourDNTool)"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:24 38e7169a8b99424e92c8b409846025c2
+msgid ""
+"Get download URL and DRS (Data Repository Service) API endpoint for 4DN "
+"files. Prerequisites: (1)..."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst 8e8958ded9e844ed883796404d10b9b3
+msgid "FourDN_get_download_url tool specification"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:28 ../../tools/fourdn_tools.rst:63
+#: ../../tools/fourdn_tools.rst:101 ../../tools/fourdn_tools.rst:139
+#: 11d34ffb6a39459e8a7994fab40c0dc8 4aa2b3481066442896d729f79a941005
+#: 6e513231d4c8426ca93b401f48e08ed6 85307a7e9d434770b982fc9bc62f2e7d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:30 7feb37d7bdcc4b4598f8863dcf923be2
+msgid "**Name**: ``FourDN_get_download_url``"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:31 ../../tools/fourdn_tools.rst:66
+#: ../../tools/fourdn_tools.rst:104 ../../tools/fourdn_tools.rst:142
+#: 64211e398858428e85bafa149a152399 7d8f8d819d9b4455ae9b19a8f84320f7
+#: 83886d6aa5324aef8e08e0b884e88172 c28a0c4d2efd436ca3ba48c12f318901
+msgid "**Type**: ``FourDNTool``"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:32 fcf2e1479ab54d259587632b1a233651
+msgid ""
+"**Description**: Get download URL and DRS (Data Repository Service) API "
+"endpoint for 4DN files. Prerequisites: (1) Requires file accession - "
+"obtain by using FourDN\\_search\\_data with item\\_type='File'. (2) "
+"Requires free 4DN account - create at data.4dnucleome.org, then generate "
+"access key in your profile settings. Returns download URL and "
+"instructions for command-line access with curl. Supports GA4GH DRS "
+"standard for interoperability. Use for: programmatic file download, batch"
+" processing, workflow integration."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:34 ../../tools/fourdn_tools.rst:69
+#: ../../tools/fourdn_tools.rst:107 ../../tools/fourdn_tools.rst:145
+#: 77da0a2996a9491898a610cbf01b9201 9c82a05263924dd68353b06f5eaf24b7
+#: c4c36817b61d4eb395dcb810cc61c09c c8ea3b7a40864fb7a13501bc7c07afe3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:36 ../../tools/fourdn_tools.rst:71
+#: ../../tools/fourdn_tools.rst:109 ../../tools/fourdn_tools.rst:147
+#: 1645757b639842778f0c2f660cd584da bccc0e2e4ef24fedab65e5e0ce8065f8
+#: cdf5459a140e45cc9154151520be2b12 cf4fbe83b2964df1aa4af1069a3edf28
+msgid "``operation`` (string) (required) No description"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:39 ../../tools/fourdn_tools.rst:112
+#: a5a116d7182c46fca2a30583f2d9bdad b1f5275fb393424b99a68a30171b1b57
+msgid ""
+"``file_accession`` (string) (required) 4DN file accession (e.g., "
+"'4DNFIIA7E3HL'). Obtain by searching with FourDN\\_search\\_data "
+"(item\\_type='File')."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:42 ../../tools/fourdn_tools.rst:80
+#: ../../tools/fourdn_tools.rst:118 ../../tools/fourdn_tools.rst:168
+#: 4740418186c546d499b6f76ce5d158d0 67d5685625094c0b90d82d0c172d3515
+#: 6cbc7aa636354319b2f1020de82d30fb c82a1442526242a9897eab8daeb9709b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:57 138e16fb0719498ab1889a94962a17de
+msgid "**FourDN_get_experiment_metadata** (Type: FourDNTool)"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:59 07c6a47631f64b599939bd02968393de
+msgid ""
+"Get metadata for 4DN experiments including experimental design, biosource"
+" information, protocol d..."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst 473dacbe91ac478ea21bfe6814f6fffb
+msgid "FourDN_get_experiment_metadata tool specification"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:65 9bf207c75124495592ed980ccf92dc10
+msgid "**Name**: ``FourDN_get_experiment_metadata``"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:67 5279c8daf6a14984b6228db644ebf14b
+msgid ""
+"**Description**: Get metadata for 4DN experiments including experimental "
+"design, biosource information, protocol details, and associated files. "
+"Returns experiment type (Hi-C variants, ATAC-seq, ChIP-seq), cell type, "
+"processing status, and list of output files. Prerequisites: Requires "
+"experiment accession - obtain by using FourDN\\_search\\_data with "
+"item\\_type='Experiment'. Use for: understanding experimental context, "
+"finding all files from experiment, checking data provenance."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:74 fcbbe6b9fbdb4ecab2c7418aab8db213
+msgid ""
+"``experiment_accession`` (string) (required) 4DN experiment accession "
+"(e.g., '4DNEXHVF8WA9'). Obtain by searching with FourDN\\_search\\_data "
+"(item\\_type='Experiment')."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:77 2c388bac789d4c1896b06d03c7774e07
+msgid ""
+"``include_full_metadata`` (boolean) (optional) Include complete API "
+"response in 'metadata' field (default: false). Set to true only if you "
+"need all raw fields. Omitting this reduces response size significantly."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:95 83384d676eb3449bac9819264d5e2bd6
+msgid "**FourDN_get_file_metadata** (Type: FourDNTool)"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:97 298e610225bb4dadb56b470f6e88b1ef
+msgid ""
+"Get detailed metadata for specific 4DN files including Hi-C contact "
+"matrices, TAD (Topologically ..."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst cc8016137f044017b5ab01e6112da90b
+msgid "FourDN_get_file_metadata tool specification"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:103 79c65e5c57284a89b20757d8d93f1a94
+msgid "**Name**: ``FourDN_get_file_metadata``"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:105 f548bdc2a62244d084b0d1a4291581c2
+msgid ""
+"**Description**: Get detailed metadata for specific 4DN files including "
+"Hi-C contact matrices, TAD (Topologically Associating Domain) calls, A/B "
+"compartment annotations, and chromatin loop lists. Returns file type, "
+"format, size (check before downloading - files can be GBs), description, "
+"associated experiment, and biosource information. Prerequisites: Requires"
+" file accession - obtain by using FourDN\\_search\\_data with "
+"item\\_type='File'. Use for: checking file details before download, "
+"understanding processing pipeline, accessing quality metrics."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:115 efc32ee29712468fa9b814b6427b5b43
+msgid ""
+"``include_full_metadata`` (boolean) (optional) Include complete API "
+"response in 'metadata' field (default: false). Set to true only if you "
+"need all raw fields. Omitting this reduces response size by ~97%."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:133 7dc70af0e5fe4d639a03d622e957dc7c
+msgid "**FourDN_search_data** (Type: FourDNTool)"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:135 199949c50dbe47de9bc54bced41863f9
+msgid ""
+"Search 4DN Data Portal for Hi-C chromatin conformation files and "
+"experiments. Access 350+ uniform..."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst b0f1bc4c820641c5b4f68bcb7c650139
+msgid "FourDN_search_data tool specification"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:141 6263655bb7a249e1a892a9b44d169e50
+msgid "**Name**: ``FourDN_search_data``"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:143 791a0bc4769d4ddb9f722af7bcaa093a
+msgid ""
+"**Description**: Search 4DN Data Portal for Hi-C chromatin conformation "
+"files and experiments. Access 350+ uniformly processed Hi-C contact files"
+" from multiple technologies (in situ Hi-C, Capture Hi-C, Micro-C XL). "
+"Search by assay type, cell type, or keywords. Returns file metadata with "
+"download URLs. Note: Downloads require free 4DN account (create at "
+"data.4dnucleome.org). Use for: finding Hi-C datasets, discovering 3D "
+"genome data, accessing TAD (Topologically Associating Domain) boundaries,"
+" A/B compartments, chromatin loop calls."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:150 26d6ad8533954cfab192d4f732084a1b
+msgid "``query`` (string) (optional) Search query (default: '\\*' for all)"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:153 544f4e6811204ef09f92fb35ee850709
+msgid "``item_type`` (string) (optional) Type of item to search"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:156 a34bd81808374ca9a866e00a02a58700
+msgid ""
+"``file_type`` (string) (optional) Filter by file type. Common types: "
+"'contact list' (processed contact matrices), 'pairs' (aligned read "
+"pairs), 'cooler' (multi-resolution contact matrices), 'mcool' (multi-"
+"resolution cooler), 'hic' (Juicer format)."
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:159 b03965f201564df090a7d192298879c2
+msgid ""
+"``assay_title`` (string) (optional) Filter by assay (e.g., 'Hi-C', "
+"'Micro-C', 'Capture Hi-C')"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:162 6bf0eb87d9884d70a9ee3a5e4839ff68
+msgid ""
+"``biosource_name`` (string) (optional) Filter by cell type (e.g., "
+"'H1-hESC', 'HFFc6', 'GM12878')"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:165 0da1418495ce41508937cd956659febe
+msgid "``limit`` (integer) (optional) Maximum results to return"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:182 803f5feb43aa4befa9d63f78a1ab5ac9
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:184 73b0cc0cbcc54ebaac411cc13be1eb90
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fourdn_tools.rst:185 455e958a01d24fc096277531a5f23331
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

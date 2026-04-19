@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,60 +18,62 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/special_tools.rst:2 3bb871e7205d43449bf4c3307c7eb747
+#: ../../tools/special_tools.rst:10 15edf471705341aa9d9842e89c2256db
 msgid "Special Tools"
 msgstr "专用工具"
 
-#: ../../tools/special_tools.rst:4 aabf0fb4f4624b03a0e5f23313ec6837
+#: ../../tools/special_tools.rst:12 73894350c5a6442c9fece691fde0f872
+#, fuzzy
 msgid ""
 "**Configuration File**: ``special_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 2"
+"**Tools Count**: 3"
 msgstr ""
 "**配置文件**：``special_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：2"
 
-#: ../../tools/special_tools.rst:8 c5d15fddab9a479bb79e9e3319208714
+#: ../../tools/special_tools.rst:16 d093e23091e44e2d902d16547bdcdf65
 msgid ""
 "This page contains all tools defined in the ``special_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``special_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/special_tools.rst:11 33f4e6df76e5421fa806d96bc91bc655
+#: ../../tools/special_tools.rst:19 cbcf2d1ed1b54d5497b616a98dc9ce54
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/special_tools.rst:14 3a316b6f44e4440ea7348e5416d993b1
+#: ../../tools/special_tools.rst:22 46fa5e882fb14fd186d1cc18f0bb264b
 msgid "**CallAgent** (Type: SpecialTool)"
 msgstr "**CallAgent**（类型：SpecialTool）"
 
-#: ../../tools/special_tools.rst:16 a8d310e6e51a4263b8f17112157f2477
+#: ../../tools/special_tools.rst:24 3968ef994c83448c8e13506618175aae
 msgid ""
 "Give a solution plan to the agent and let it solve the problem. Solution "
 "plan should reflect a di..."
 msgstr "向智能体提供解决方案计划，并让其解决问题。解决方案计划应反映一个 di..."
 
-#: ../../tools/special_tools.rst f56fa559deb84c03b6daacb318823a35
+#: ../../tools/special_tools.rst c1ce5eb8e6b845389a71c7d23166c584
 msgid "CallAgent tool specification"
 msgstr "CallAgent 工具规范"
 
-#: ../../tools/special_tools.rst:20 ../../tools/special_tools.rst:51
-#: 192415b148744b7eb9ab1968705a222c 598faa18f5eb48fd800bf5103056da15
+#: ../../tools/special_tools.rst:28 ../../tools/special_tools.rst:59
+#: ../../tools/special_tools.rst:88 7b97bd5600bb4b96952b20ce08cc1bd9
+#: 810208f01afe4ce48c95b629d0d103f9 e27b2a3875364e6d97b62dbb0b04d248
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/special_tools.rst:22 c46d30c9db5c491db75e963afaf8f0d4
+#: ../../tools/special_tools.rst:30 6cd4255a82a74884a62370708f4b2930
 msgid "**Name**: ``CallAgent``"
 msgstr "**名称**：``CallAgent``"
 
-#: ../../tools/special_tools.rst:23 ../../tools/special_tools.rst:54
-#: 0d9e81640b7c4e43a393a2ba48a3ac58 d5cdac9f192349eda54f452093d9901d
+#: ../../tools/special_tools.rst:31 ../../tools/special_tools.rst:62
+#: 9e116d635a874955b7b0143adee4d23c d7980f22b1284c9580b6ed5915c14b4f
 msgid "**Type**: ``SpecialTool``"
 msgstr "**类型**：``SpecialTool``"
 
-#: ../../tools/special_tools.rst:24 05cde51b56864fe78e309218a399e998
+#: ../../tools/special_tools.rst:32 8f7e8a46fd854aa4b9c02a6e1a76c4be
 msgid ""
 "**Description**: Give a solution plan to the agent and let it solve the "
 "problem. Solution plan should reflect a distinct method, approach, or "
@@ -82,56 +84,97 @@ msgid ""
 "instead of unverified information."
 msgstr "**描述**：提供一个解决方案计划给智能体，让其解决问题。解决方案计划应体现出一种独特的方法、途径或观点来解决所提出的问题。多次调用这些函数，每个解决方案计划应从问题的不同方面开始，例如基因、表型、疾病或药物等。CallAgent将根据计划完成任务，因此只需提供计划，而不要提供未经验证的信息。"
 
-#: ../../tools/special_tools.rst:26 ../../tools/special_tools.rst:57
-#: 9a7c98e0a41d42cc80c742e018671b44 fbc0f3a3ba4a438988d88d5652b0ce72
+#: ../../tools/special_tools.rst:34 ../../tools/special_tools.rst:65
+#: ../../tools/special_tools.rst:94 3979172a1c0347c580f579f8993c816c
+#: a031701aa2094576a0f9fb5e7e376526 b922e83f111f4eb3a8670db6536fdc1a
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/special_tools.rst:28 2f8f604dadd546f699773b9cab6988c9
+#: ../../tools/special_tools.rst:36 a101de3ccd9f42218c1e253888443b49
 #, fuzzy
 msgid ""
 "``solution`` (string) (required) A feasible and concise solution plan "
 "that address the question."
 msgstr "``solution``（字符串）（可选）一个可行且简洁的解决方案，用于解决该问题。"
 
-#: ../../tools/special_tools.rst:31 ../../tools/special_tools.rst:61
-#: 7c50d7a938cf4de09b2682175b35ca9f f8752c3abf284ce0aa6c6201d2fa9f12
+#: ../../tools/special_tools.rst:39 ../../tools/special_tools.rst:69
+#: ../../tools/special_tools.rst:99 224eaa54c4974a188e3ded99f4af185c
+#: 70555941eb474fda9bb9519acd252289 90d65a5b16e64f8f8d2f64d77c73bd01
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/special_tools.rst:45 5a0d8049794f4399b6689be48546eae3
+#: ../../tools/special_tools.rst:53 29152b0e6bd84fd6ae5db06d3284a55a
 msgid "**Finish** (Type: SpecialTool)"
 msgstr "**完成**（类型：SpecialTool）"
 
-#: ../../tools/special_tools.rst:47 5bd2b90a50994a568c44126140bb2139
+#: ../../tools/special_tools.rst:55 d07e6ce0c4b04417900dedaf64471d9c
 msgid "Indicate the end of multi-step reasoning."
 msgstr "指明多步骤推理的结束。"
 
-#: ../../tools/special_tools.rst 51e1a211ce8241b3ba2b39f0626abb52
+#: ../../tools/special_tools.rst c62ae69d36024f528a62e028cbea69d6
 msgid "Finish tool specification"
 msgstr "完成工具规格"
 
-#: ../../tools/special_tools.rst:53 47abf661cad54da6af07c24457d7a101
+#: ../../tools/special_tools.rst:61 9828073a6d5b46e8a54f8b3c436148ca
 msgid "**Name**: ``Finish``"
 msgstr "**名称**: ``完成``"
 
-#: ../../tools/special_tools.rst:55 b631d2ae4a0e42e88225cdd77534bf76
+#: ../../tools/special_tools.rst:63 5e09b4d82fad42f5b15da23aef5cf041
 msgid "**Description**: Indicate the end of multi-step reasoning."
 msgstr "**描述**：指示多步骤推理的结束。"
 
-#: ../../tools/special_tools.rst:59 a1a16051ee3c4836903cfd4a783c1b3d
+#: ../../tools/special_tools.rst:67 4d54dda8ecc04b68826f28ca2f11315d
 msgid "No parameters required."
 msgstr "无需参数。"
 
-#: ../../tools/special_tools.rst:74 250a446400ac463c85d316f3899c08be
+#: ../../tools/special_tools.rst:82 b866c5f8d8cc4c23bb857a31e9c6b7a5
+msgid "**ToolUniverse_get_usage_tips** (Type: UsageTipsTool)"
+msgstr ""
+
+#: ../../tools/special_tools.rst:84 ac374b2c51814e008041bf88994f9bb8
+msgid ""
+"Return concise usage tips for the ToolUniverse SDK. Use topic='all' "
+"(default) to get all tips, or..."
+msgstr ""
+
+#: ../../tools/special_tools.rst ae991e2e5c0940f997b0fe27db75744b
+#, fuzzy
+msgid "ToolUniverse_get_usage_tips tool specification"
+msgstr "CallAgent 工具规范"
+
+#: ../../tools/special_tools.rst:90 d4a492feb1424f38abc18713f33473e4
+msgid "**Name**: ``ToolUniverse_get_usage_tips``"
+msgstr ""
+
+#: ../../tools/special_tools.rst:91 d9e15c03460b490fa45f347bce29828f
+#, fuzzy
+msgid "**Type**: ``UsageTipsTool``"
+msgstr "**类型**：``SpecialTool``"
+
+#: ../../tools/special_tools.rst:92 c0814dde85e441e3ab42cf7b8aa4b066
+msgid ""
+"**Description**: Return concise usage tips for the ToolUniverse SDK. Use "
+"topic='all' (default) to get all tips, or specify a topic: 'loading', "
+"'running', 'searching', 'workspace'. No API keys or network access "
+"required — always available offline."
+msgstr ""
+
+#: ../../tools/special_tools.rst:96 d3f2c75c333846cea35f8a411cca3273
+msgid ""
+"``topic`` (string) (optional) Topic to filter tips. One of: 'loading', "
+"'running', 'searching', 'workspace', or 'all' (default) to return every "
+"topic."
+msgstr ""
+
+#: ../../tools/special_tools.rst:112 b58e0289650e4e908be02d340dddc193
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/special_tools.rst:76 b2886753997949c8a1260a0be007754a
+#: ../../tools/special_tools.rst:114 69954c3dc8ed42ee9966ae4d9fda654c
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/special_tools.rst:77 bfa8aaa7e3564e3ea816f3ccf54e0c9a
+#: ../../tools/special_tools.rst:115 e0ed622301e041b6bab10d7564393216
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

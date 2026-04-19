@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/osf_preprints_tools.rst:2 412f59c84a884f5c823bc89c8f3c648a
+#: ../../tools/osf_preprints_tools.rst:10 0dd18cdb4222477eb64b8f0817b66ed5
 msgid "Osf Preprints Tools"
 msgstr "Osf 预印本工具"
 
-#: ../../tools/osf_preprints_tools.rst:4 7fec1f736d264e159a24ef334d6ea7c7
+#: ../../tools/osf_preprints_tools.rst:12 ffea484247f94e97b58f99b5c5b0401e
 msgid ""
 "**Configuration File**: ``osf_preprints_tools.json`` **Tool Type**: Local"
 " **Tools Count**: 1"
@@ -33,43 +33,43 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/osf_preprints_tools.rst:8 dfff990748da4b34b2f1652f1fc32acb
+#: ../../tools/osf_preprints_tools.rst:16 2dd04fd19e5c46e282cddd8276981dc2
 msgid ""
 "This page contains all tools defined in the ``osf_preprints_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``osf_preprints_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/osf_preprints_tools.rst:11 0a71037113ca483d9f8784bf5473cf25
+#: ../../tools/osf_preprints_tools.rst:19 34a7d6b2c30f457e955cfc94650b6d20
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/osf_preprints_tools.rst:14 ab1940a9c26c4100b3cae77cc2bc841d
+#: ../../tools/osf_preprints_tools.rst:22 761df185207143fab3315823142c3f07
 msgid "**OSF_search_preprints** (Type: OSFPreprintsTool)"
 msgstr "**OSF_search_preprints**（类型：OSFPreprintsTool）"
 
-#: ../../tools/osf_preprints_tools.rst:16 eba0f6503d3942f89fba7342857a9c7b
+#: ../../tools/osf_preprints_tools.rst:24 89b09ddc07b345ab97dd36a64cec8854
 msgid ""
 "Search OSF (Open Science Framework) Preprints for research preprints and "
 "working papers. OSF Prep..."
 msgstr "在 OSF（开放科学框架）预印本中搜索研究预印本和工作论文。OSF 预印本..."
 
-#: ../../tools/osf_preprints_tools.rst 6dd847d7e8c046d6acfeb6edd09c5f54
+#: ../../tools/osf_preprints_tools.rst 8d3f86cded1e46559f83730fb0ec965f
 msgid "OSF_search_preprints tool specification"
 msgstr "OSF_search_preprints 工具规范"
 
-#: ../../tools/osf_preprints_tools.rst:20 b71f0a2849074535af3cde2e9b1f3457
+#: ../../tools/osf_preprints_tools.rst:28 6376ec33dd3e4e7cae81c874e67a4688
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/osf_preprints_tools.rst:22 daf945bd41d24cf28f3240d54e59d9c8
+#: ../../tools/osf_preprints_tools.rst:30 b6e3bee9719e4c07b8286e29209c188b
 msgid "**Name**: ``OSF_search_preprints``"
 msgstr "**名称**：``OSF_search_preprints``"
 
-#: ../../tools/osf_preprints_tools.rst:23 7c0a0b1ae8504970a56080dd884116df
+#: ../../tools/osf_preprints_tools.rst:31 3e9d9cf210914ca2af763b71c6e4cc7f
 msgid "**Type**: ``OSFPreprintsTool``"
 msgstr "**类型**：``OSFPreprintsTool``"
 
-#: ../../tools/osf_preprints_tools.rst:24 b62a92ac9ca54940b4e3e31333a5692c
+#: ../../tools/osf_preprints_tools.rst:32 ba9d4a0582e240b6977f78a7899e3f6f
 msgid ""
 "**Description**: Search OSF (Open Science Framework) Preprints for "
 "research preprints and working papers. OSF Preprints aggregates preprints"
@@ -78,46 +78,46 @@ msgstr ""
 "**描述**：搜索 OSF（开放科学框架）预印本中的研究预印本和工作论文。OSF 预印本汇集了包括 OSF、PsyArXiv "
 "及其他多个提供者的预印本。"
 
-#: ../../tools/osf_preprints_tools.rst:26 5a6717a75170470bb664fc6422914a1e
+#: ../../tools/osf_preprints_tools.rst:34 dc44a55723844a5986697e333cadc89b
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/osf_preprints_tools.rst:28 5880edc9aff64ec2a9b171004a34f002
+#: ../../tools/osf_preprints_tools.rst:36 90ad53c981174306bbd4cea552ee36d2
 msgid ""
 "``query`` (string) (required) Search query for OSF preprints. Use "
 "keywords to search across titles and abstracts."
 msgstr "``query``（字符串）（必填）用于搜索 OSF 预印本的查询词。使用关键词在标题和摘要中进行搜索。"
 
-#: ../../tools/osf_preprints_tools.rst:31 4812788604864600b49aac1cc446c1a7
+#: ../../tools/osf_preprints_tools.rst:39 f446953bffab435ca9a10bb24f926f20
 #, fuzzy
 msgid ""
-"``max_results`` (integer) (required) Maximum number of results to return."
+"``max_results`` (integer) (optional) Maximum number of results to return."
 " Default is 10, maximum is 100."
 msgstr "``max_results``（整数）（可选）返回结果的最大数量。默认值为10，最大值为100。"
 
-#: ../../tools/osf_preprints_tools.rst:34 1590b9012e264e2b9cae09714484c06a
+#: ../../tools/osf_preprints_tools.rst:42 aec6e13a331c44c59c9f657b42197af8
 #, fuzzy
 msgid ""
-"``provider`` (string) (required) Optional preprint provider filter (e.g.,"
+"``provider`` (string) (optional) Optional preprint provider filter (e.g.,"
 " 'osf', 'psyarxiv', 'socarxiv'). If not specified, searches all "
 "providers."
 msgstr ""
 "``provider``（字符串）（可选） "
 "可选的预印本提供商筛选器（例如，'osf'、'psyarxiv'、'socarxiv'）。若未指定，则搜索所有提供商。"
 
-#: ../../tools/osf_preprints_tools.rst:37 0b2720aedac14db781239a821cf5f075
+#: ../../tools/osf_preprints_tools.rst:45 ce658819976d4afa88d9772af484f6f1
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/osf_preprints_tools.rst:53 ce8c0da298ae4d6cb40302866ee4996f
+#: ../../tools/osf_preprints_tools.rst:59 90142999cd4b4dfe8a775977d3dcb2f9
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/osf_preprints_tools.rst:55 430155e807fa4f99a2b9367d11c42fcb
+#: ../../tools/osf_preprints_tools.rst:61 4b26a3c8400949baa71bdffe3cad08fb
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/osf_preprints_tools.rst:56 7e9fdc029d9c44fca96eac633c2b2eee
+#: ../../tools/osf_preprints_tools.rst:62 5e98c2dd525d42bcb8e14905fb260383
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

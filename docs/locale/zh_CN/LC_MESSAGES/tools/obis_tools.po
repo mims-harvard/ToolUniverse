@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/obis_tools.rst:10 58aeb7bf55c74075b0dd8fb2781e4f2b
+msgid "Obis Tools"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:12 8dbcf89f6fec4cfb853c0d3432e71b13
+msgid ""
+"**Configuration File**: ``obis_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:16 7d2b28c8276544ec9a649ba8497bf52e
+msgid ""
+"This page contains all tools defined in the ``obis_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:19 9d82ca8ab399428fb08a4a4fdbbe023d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:22 884edf1261ad4159a80964b6abd8892b
+msgid "**OBIS_search_occurrences** (Type: OBISOccurrenceTool)"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:24 e4f80853e6e945aa99ece470704071ec
+msgid ""
+"Retrieve marine species occurrence records (with coordinates/time) from "
+"OBIS using flexible filte..."
+msgstr ""
+
+#: ../../tools/obis_tools.rst 06905e3113944607a78a4151062fe99d
+msgid "OBIS_search_occurrences tool specification"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:28 ../../tools/obis_tools.rst:64
+#: 5823862ced0d4365936ec4370ef131d2 82e4c03d200747f898d27e85dff396e7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:30 cfbb80e2279d47cd9933cc0a7ebd2682
+msgid "**Name**: ``OBIS_search_occurrences``"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:31 450218b41d12422cbad61709fafb1fc6
+msgid "**Type**: ``OBISOccurrenceTool``"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:32 9fc14b6f7cbb4b358f177f53c5d845d8
+msgid ""
+"**Description**: Retrieve marine species occurrence records (with "
+"coordinates/time) from OBIS using flexible filters. Use for ocean "
+"biodiversity distribution analyses."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:34 ../../tools/obis_tools.rst:70
+#: c0121e532d4e44f1b02b4f7e3199972c c09c4a4629f944d48afc6a300f5707b7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:36 fc48712a921f4222b548ec62eb0502e9
+msgid ""
+"``scientificname`` (string) (optional) Scientific name filter to restrict"
+" occurrences."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:39 7679d35adfce47838643b1f08022cb84
+msgid "``areaid`` (string) (optional) Area identifier filter (per OBIS API)."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:42 ../../tools/obis_tools.rst:75
+#: 2e7e627811804002abc7437873ef49c2 312aae29a5ad49ba8b2ff4643b1ef4df
+msgid "``size`` (integer) (optional) Number of records to return (1–100)."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:45 ../../tools/obis_tools.rst:78
+#: 32111aa00bff40ad8d5f6e65b9fc873d ff9868ff6912406fbc6fae75c3840f37
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:58 6d2090f5b2ba4fd282aad78aac6c93da
+msgid "**OBIS_search_taxa** (Type: OBISTaxaTool)"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:60 c714852e93194aaa8e51e8f9628b1481
+msgid ""
+"Resolve marine taxa in OBIS by scientific name to obtain standardized "
+"identifiers (AphiaID), rank..."
+msgstr ""
+
+#: ../../tools/obis_tools.rst 55335873d1674db88eb5672ca7840da8
+msgid "OBIS_search_taxa tool specification"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:66 7eceeffa8982480295dcaacdc47ede3d
+msgid "**Name**: ``OBIS_search_taxa``"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:67 eeede814d41b45a793b4325d179ebbc2
+msgid "**Type**: ``OBISTaxaTool``"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:68 47da4cbc1f4b4fc3b939cd01d567a948
+msgid ""
+"**Description**: Resolve marine taxa in OBIS by scientific name to obtain"
+" standardized identifiers (AphiaID), ranks, and names. Use before "
+"querying marine occurrences."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:72 8d1a006967054d8d84f7a0016dfdef9d
+msgid ""
+"``scientificname`` (string) (required) Scientific name query (e.g., "
+"'Gadus')."
+msgstr ""
+
+#: ../../tools/obis_tools.rst:92 3e4ac80e1f354e42a96d23551e97944c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:94 a6252f24340345a6b9f54b51fe894346
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/obis_tools.rst:95 777eb5e7d07349ed8f56c2d8c383d2c4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

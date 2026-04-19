@@ -1,0 +1,312 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/brenda_tools.rst:10 39a727251bc7421980b0c70888e22b74
+msgid "Brenda Tools"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:12 a5db929bbc974e4a806d1a8998b1db2a
+msgid ""
+"**Configuration File**: ``brenda_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:16 1810c41b514b42de86ed8ad0c4822a68
+msgid ""
+"This page contains all tools defined in the ``brenda_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:19 506016f665254b559194a9b972c0f204
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:22 700eb0f21fdb4d9980e6fb99a0cf949b
+msgid "**BRENDA_get_enzyme_info** (Type: BRENDATool)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:24 a356fbde0da6491abc1110fadc239173
+msgid ""
+"Get general enzyme information from BRENDA by EC number. Returns enzyme "
+"name, systematic name, an..."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst 7df2c4441f97478e8937468341d77f7d
+msgid "BRENDA_get_enzyme_info tool specification"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:28 ../../tools/brenda_tools.rst:64
+#: ../../tools/brenda_tools.rst:109 ../../tools/brenda_tools.rst:148
+#: ../../tools/brenda_tools.rst:187 2ab67b9d4ebf4c6b88c22805df461d8d
+#: 2e1359774f6b4098940aa836fda5f67d 407f4f503b26423b9d858fb7350d3baf
+#: af447e6ce77c4fe389269993b9d7cfba d4cb649a10814738a6b898e5ee93971b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:30 17f3107868694a358447d346cf43bad8
+msgid "**Name**: ``BRENDA_get_enzyme_info``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:31 ../../tools/brenda_tools.rst:67
+#: ../../tools/brenda_tools.rst:112 ../../tools/brenda_tools.rst:151
+#: ../../tools/brenda_tools.rst:190 1bb56b53f7a4477baf4598d418c52d83
+#: 3c1daf99f9a4475f8e7129da14c7a556 580cdbaf649c4a74a1f006b3920e3173
+#: a975afb994ff4adb9929fa9e9e9441ee b80e6fd1b4b04db9b85a79c520d2f901
+msgid "**Type**: ``BRENDATool``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:32 69adb5bb0be1407a9415406b3d2ad9aa
+msgid ""
+"**Description**: Get general enzyme information from BRENDA by EC number."
+" Returns enzyme name, systematic name, and catalyzed reaction. Requires "
+"free BRENDA account (register at brenda-enzymes.org/register.php)."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:34 ../../tools/brenda_tools.rst:70
+#: ../../tools/brenda_tools.rst:115 ../../tools/brenda_tools.rst:154
+#: ../../tools/brenda_tools.rst:193 026e55f5831a4b0c8a3af8dd64649a7c
+#: 27393a698b2b4ddd9eb67d48ae041b70 778f22d9fff04f56a1bb55fc2cb4d96a
+#: a35fba8f33f74b6fa90c8c11f87d30aa cbcc0aecfe36412eb349affed76ed4ff
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:36 480b27d6e380434bbab27de8c6a490f9
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_enzyme\\_info)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:39 a6ef14e98b1d42c1be6a4e43844bb095
+msgid "``ec_number`` (string) (optional) EC number (e.g., 1.1.1.1)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:42 ../../tools/brenda_tools.rst:126
+#: ../../tools/brenda_tools.rst:165 ../../tools/brenda_tools.rst:204
+#: 31b1f673fb094698a8e757f9fc630936 94472e188e7a44aab9ca229e139acfc6
+#: e3bafe05348e4e6e964d5400f93b6bf8 f987b20dace6473a9f7c8b63a8088f7f
+msgid ""
+"``enzyme_id`` (string) (optional) Alias for ec\\_number. Enzyme "
+"identifier in EC notation (e.g., 1.1.1.1)."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:45 ../../tools/brenda_tools.rst:90
+#: ../../tools/brenda_tools.rst:129 ../../tools/brenda_tools.rst:168
+#: ../../tools/brenda_tools.rst:207 151080b5326848c9b8ebbc13f938980b
+#: 49070ca3e42d40669c7f73b9fca12832 63fe855d43944dfbad4623ee9e0f36f4
+#: 834d4427259d4d799b21f2c06fed159d c6ab8bd4547c41da9463d6934fa7a579
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:58 33765a9c888b42c6b4f1a90e7c4f2ba2
+msgid "**BRENDA_get_enzyme_kinetics** (Type: BRENDATool)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:60 2bd7c7cd015543ae853f2ff548843eb3
+msgid ""
+"Get comprehensive enzyme kinetic parameters WITHOUT requiring BRENDA "
+"credentials. Retrieves enzym..."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst c37e066524074a90bfa5b1fc8a789dc1
+msgid "BRENDA_get_enzyme_kinetics tool specification"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:66 10394227af9642079cded48ab82121f0
+msgid "**Name**: ``BRENDA_get_enzyme_kinetics``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:68 1f1f89653ade4ab0be96f06d917e8861
+msgid ""
+"**Description**: Get comprehensive enzyme kinetic parameters WITHOUT "
+"requiring BRENDA credentials. Retrieves enzyme identity (name, catalytic "
+"activity, alternative names) from ExPASy ENZYME and kinetic parameters "
+"(Km, kcat, Ki, Vmax, kcat/Km) from SABIO-RK. If BRENDA credentials are "
+"set (BRENDA\\_EMAIL, BRENDA\\_PASSWORD), additionally fetches optimal pH,"
+" optimal temperature, and specific activity from BRENDA. Accepts EC "
+"number (e.g., 1.1.1.1) or enzyme name (e.g., alcohol dehydrogenase). "
+"Returns aggregated summary statistics across all reported values plus "
+"individual measurements with substrate specificity and organism "
+"information."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:72 e104394214194c6a9b7a3f071166ba20
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_enzyme\\_kinetics)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:75 81dc4415cecf45feb92ea44d209a7036
+msgid ""
+"``ec_number`` (string) (optional) EC number (e.g., 1.1.1.1 for alcohol "
+"dehydrogenase, 2.7.1.1 for hexokinase, 3.4.21.5 for thrombin)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:78 6e8b0d0b5ac54b4ab38be43980a047f3
+msgid ""
+"``enzyme_name`` (string) (optional) Enzyme common name. Will be resolved "
+"to EC number via UniProt. Examples: alcohol dehydrogenase, hexokinase, "
+"lactate dehydrogenase, thrombin"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:81 4abb197dd56f4fb087a1b131cbf0dcd5
+msgid ""
+"``organism`` (string) (optional) Optional organism filter (e.g., Homo "
+"sapiens, Escherichia coli, Saccharomyces cerevisiae)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:84 bd62c06e5403463e89217976984af45e
+msgid ""
+"``enzyme_id`` (string) (optional) Alias for ec\\_number. Enzyme "
+"identifier in EC notation."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:87 2f57157a0b4d4f2d8299e749d5362ac3
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of SABIO-RK kinetic "
+"law entries to retrieve (default 20)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:103 88f919abef024ed288d575ab058e30ab
+msgid "**BRENDA_get_inhibitors** (Type: BRENDATool)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:105 3d29e49b6fa54ac98a32048fb42b2a4f
+msgid ""
+"Get enzyme inhibitor data from BRENDA. Returns inhibitor names and Ki "
+"(inhibition constant) value..."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst 6ca6d622d1c64fdfaed00d62b58d070f
+msgid "BRENDA_get_inhibitors tool specification"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:111 20ec966ecebb4bccbb8778ab920854fb
+msgid "**Name**: ``BRENDA_get_inhibitors``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:113 adae77f750aa4fc0b9df79054fc7b098
+msgid ""
+"**Description**: Get enzyme inhibitor data from BRENDA. Returns inhibitor"
+" names and Ki (inhibition constant) values in mM with organism "
+"information. Lower Ki means more potent inhibition. Requires free BRENDA "
+"account (register at brenda-enzymes.org/register.php)."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:117 a5bc58433974458ea6997f5ff3227e51
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_inhibitors)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:120 ../../tools/brenda_tools.rst:159
+#: 04bc49676f8e4f73b323a20d8e7c13ca 57ceb9a8e61a4eb5a60d7a6888befa87
+msgid "``ec_number`` (string) (optional) EC number"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:123 ../../tools/brenda_tools.rst:162
+#: 00dde95210554b0daefc482ebd471ad4 8f1debccdefa4d4eb9304aa3ebe941d2
+msgid "``organism`` (string) (optional) Optional organism filter"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:142 fd96327b386144cbbdd0415bd421c120
+msgid "**BRENDA_get_kcat** (Type: BRENDATool)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:144 e45110672a0f42e99d58f4c611ddc62c
+msgid ""
+"Get kcat (turnover number) values from BRENDA enzyme database. kcat is "
+"the maximum number of subs..."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst 954f0b5d1da741f094c245ec3fe60fd7
+msgid "BRENDA_get_kcat tool specification"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:150 bf526980441846938857873876ee8092
+msgid "**Name**: ``BRENDA_get_kcat``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:152 cd26846b22304c99ac526c9b8752a202
+msgid ""
+"**Description**: Get kcat (turnover number) values from BRENDA enzyme "
+"database. kcat is the maximum number of substrate molecules converted to "
+"product per enzyme per second. Returns values in 1/s. Requires free "
+"BRENDA account."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:156 af7c41eb2b0245b091824b04c6f5e199
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_kcat)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:181 1f947860332c4aa2964a36d581184330
+msgid "**BRENDA_get_km** (Type: BRENDATool)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:183 bcb23827b75c4d19bf6d99928a4190fb
+msgid ""
+"Get Km (Michaelis constant) values from BRENDA enzyme database. Km "
+"indicates substrate affinity -..."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst 1dfbd8b0424146aeae6664938710de43
+msgid "BRENDA_get_km tool specification"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:189 081beed7ac9a4baba637726c2f3352b2
+msgid "**Name**: ``BRENDA_get_km``"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:191 5f7c54dc57ca493cbee7dcb14bb7c3fd
+msgid ""
+"**Description**: Get Km (Michaelis constant) values from BRENDA enzyme "
+"database. Km indicates substrate affinity - lower Km means higher "
+"affinity. Returns values in mM with organism and substrate information. "
+"Requires free BRENDA account (register at brenda-"
+"enzymes.org/register.php)."
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:195 ceab58a2ba3b496fb4c0b54480fa5fe2
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_km)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:198 2d27492eb5c04df28c3d103983ab172e
+msgid ""
+"``ec_number`` (string) (optional) EC number (e.g., 1.1.1.1 for alcohol "
+"dehydrogenase, 2.7.1.1 for hexokinase)"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:201 5caebff5f61b416e9fd206fba8914219
+msgid ""
+"``organism`` (string) (optional) Optional organism filter (e.g., 'Homo "
+"sapiens', 'Escherichia coli')"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:220 460fe202a05b4121a32e4e569fe9113f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:222 0402428e809a4e72a28a554b3a74808a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/brenda_tools.rst:223 db9d92bbb5d844099c5d4ae9f687c717
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

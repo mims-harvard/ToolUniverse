@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_sifts_tools.rst:10 93c85daeff024749bb7fed5d3433eff2
+msgid "Pdbe Sifts Tools"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:12 113ef2b5735b4858b9ca237c6833c1a6
+msgid ""
+"**Configuration File**: ``pdbe_sifts_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:16 87c60cabdfbb4d10a64853daf33a92a8
+msgid ""
+"This page contains all tools defined in the ``pdbe_sifts_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:19 0d810063de17430d8ef5877bf7a58bbd
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:22 785b51532a194d3fa6ff74c7f0e30ea2
+msgid "**PDBeSIFTS_get_all_structures** (Type: PDBeSIFTSTool)"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:24 8790431e46634e34802bc5faaa362500
+msgid ""
+"Get all PDB structures for a UniProt protein, grouped by PDB entry with "
+"chain details, from PDBe ..."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst 59905bbf41b34416989222d5b0b6e91a
+msgid "PDBeSIFTS_get_all_structures tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:28 ../../tools/pdbe_sifts_tools.rst:59
+#: ../../tools/pdbe_sifts_tools.rst:90 2172881d64bb4e009bbb28948ceeff27
+#: 7badbe92b1544366a065275d78ab4065 c30db85953f6471eaad71d4cbd074b97
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:30 afc97971ff4846f4aa43d91e63b30413
+msgid "**Name**: ``PDBeSIFTS_get_all_structures``"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:31 ../../tools/pdbe_sifts_tools.rst:62
+#: ../../tools/pdbe_sifts_tools.rst:93 0ed0ada9bc2a422c87a01ad77dec8e26
+#: 474dfaffeb2d469aa0d463ba2be9cf76 ded5278de1f84a449d2a5efc4bac2a2a
+msgid "**Type**: ``PDBeSIFTSTool``"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:32 b9105e14ec07453593350edd4244f338
+msgid ""
+"**Description**: Get all PDB structures for a UniProt protein, grouped by"
+" PDB entry with chain details, from PDBe SIFTS. Unlike best\\_structures "
+"which returns a flat ranked list, this groups results by PDB ID showing "
+"all chains per structure, sorted by resolution. Useful for comprehensive "
+"structural coverage analysis. Example: P04637 (TP53) has structures "
+"across hundreds of unique PDB entries covering different domains and "
+"complexes."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:34 ../../tools/pdbe_sifts_tools.rst:65
+#: ../../tools/pdbe_sifts_tools.rst:96 464b9dceb34c44c9956ea4e66ec0d9e9
+#: b3fa741083cd4edf92fe7961388ca8f3 f3c1cdc494e34320a7bfd330828e20a5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:36 f27a1976b1af46ab85a15fda26bde5ad
+msgid ""
+"``uniprot_accession`` (string) (required) UniProt accession for the "
+"protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:39 ../../tools/pdbe_sifts_tools.rst:70
+#: ../../tools/pdbe_sifts_tools.rst:101 52b130f7128643f39993a9bebb8b1fa1
+#: 9432715061ad481fbfa6cb7f31bdefee af3deb73ea694b4ea61f823072514088
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:53 0ea449debe4f44b88fdb8cbed9590fb0
+msgid "**PDBeSIFTS_get_best_structures** (Type: PDBeSIFTSTool)"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:55 17985cd686ba43e5b611e53d49c286c8
+msgid ""
+"Get the best available PDB structures for a UniProt protein, ranked by "
+"coverage and resolution fr..."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst 6b5fd427ff3d40c495909f1fcf76b924
+msgid "PDBeSIFTS_get_best_structures tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:61 f2e590424c43471393dc39cf64422c7e
+msgid "**Name**: ``PDBeSIFTS_get_best_structures``"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:63 f82c554a8c1b4a6eb1b0dfbb97c9897b
+msgid ""
+"**Description**: Get the best available PDB structures for a UniProt "
+"protein, ranked by coverage and resolution from PDBe SIFTS. Returns PDB "
+"IDs with chain mapping, resolution, experimental method (X-ray, cryo-EM, "
+"NMR), and UniProt sequence coverage. Essential for structural biologists "
+"to find the most suitable structure for a protein of interest. Example: "
+"P04637 (TP53) returns 641 structure entries, P00533 (EGFR) returns 633 "
+"entries, with X-ray and cryo-EM structures ranked by quality."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:67 803c144616644ca2b79b11a566849d92
+msgid ""
+"``uniprot_accession`` (string) (required) UniProt accession for the "
+"protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), "
+"'P01308' (Insulin)."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:84 88818427d7274f498bb5583fea55d529
+msgid "**PDBeSIFTS_get_pdb_to_uniprot** (Type: PDBeSIFTSTool)"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:86 54364630b7514f9e8d6c41c90e302d58
+msgid ""
+"Map PDB entry chains to UniProt protein accessions using PDBe SIFTS "
+"cross-referencing. For a give..."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst f0bafb8b0d79442c8a5a22669a5d34e0
+msgid "PDBeSIFTS_get_pdb_to_uniprot tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:92 e7f3339dd98244bd91385112909099a1
+msgid "**Name**: ``PDBeSIFTS_get_pdb_to_uniprot``"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:94 e2638ac7f6394ac4a12c2cb1f990d809
+msgid ""
+"**Description**: Map PDB entry chains to UniProt protein accessions using"
+" PDBe SIFTS cross-referencing. For a given PDB structure, returns which "
+"UniProt proteins are present, which chains correspond to each protein, "
+"and the residue-level mapping between PDB and UniProt numbering. "
+"Essential for understanding multi-chain structures and identifying "
+"proteins in crystal/EM structures. Example: PDB 1tup maps chain A/B/C to "
+"P04637 (TP53) residues 94-312."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:98 6da5c18f49854fdbb4c37ba238433aee
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4-character code). Examples:"
+" '1tup' (p53-DNA complex), '1m17' (EGFR kinase), '3pxe' (BRCA1 BRCT), "
+"'4hhb' (hemoglobin)."
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:115 f6b154deafe143cb86af9b82b48787a8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:117 b7094ca8d46841998daed65caca97c15
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_sifts_tools.rst:118 1a7b02e404c0436c9ec58b78b86cbc74
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

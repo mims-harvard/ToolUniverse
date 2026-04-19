@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mutalyzer_tools.rst:10 d0008e504d2c498fbcb92c0a10914d36
+msgid "Mutalyzer Tools"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:12 835ab49f114c4b2ea7f881a29d26377c
+msgid ""
+"**Configuration File**: ``mutalyzer_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:16 7b60b318ecd646c8adf5ebe7e18bcd56
+msgid ""
+"This page contains all tools defined in the ``mutalyzer_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:19 eb1cf8f1d02d4baf9bacca4e5141a58c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:22 f5a7dc58527e462daaa180c0042bbdf4
+msgid "**Mutalyzer_back_translate** (Type: MutalyzerTool)"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:24 ece36e101ffb4dd18ac738b099fbd63e
+msgid ""
+"Convert a protein-level HGVS variant to possible DNA-level variant "
+"descriptions using Mutalyzer. ..."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst f50ebc21b0c0437d8f3c3725ad7dface
+msgid "Mutalyzer_back_translate tool specification"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:28 ../../tools/mutalyzer_tools.rst:59
+#: ../../tools/mutalyzer_tools.rst:90 45b2cf5339134777b0e2f1df5c8ded06
+#: 61e8217e94bc4b929375408656163315 ef190d3b9d574db594915dcd883ec11c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:30 4c6099a4b73942319fbb32e6dc259caf
+msgid "**Name**: ``Mutalyzer_back_translate``"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:31 ../../tools/mutalyzer_tools.rst:62
+#: ../../tools/mutalyzer_tools.rst:93 1f6beb5991174bc5868c20fcdf08642a
+#: b8a0a0c6766e47fca6523ded2ad32485 e1321735a30a48b19a14d70743fc9297
+msgid "**Type**: ``MutalyzerTool``"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:32 feb2183758cf46f0a8de19b951de5f14
+msgid ""
+"**Description**: Convert a protein-level HGVS variant to possible DNA-"
+"level variant descriptions using Mutalyzer. Given a protein change like "
+"NP\\_002993.1:p.Asp92Tyr, returns the corresponding coding DNA change(s) "
+"like NM\\_003002.4:c.(274G>T). Useful for finding the DNA-level "
+"representation of a known amino acid change, accounting for codon "
+"degeneracy."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:34 ../../tools/mutalyzer_tools.rst:65
+#: ../../tools/mutalyzer_tools.rst:96 7b1cc60fdafe48faa84ae15cf1da4dd7
+#: b37705b269f24173b5348d583b56d58e e332087a39614949a91eea8661aeb010
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:36 8112d1db179f4e0bbd56d43d92756469
+msgid ""
+"``variant`` (string) (required) Protein-level HGVS variant description. "
+"Examples: 'NP\\_002993.1:p.Asp92Tyr' (SDHD), 'NP\\_000537.3:p.Pro72Arg' "
+"(TP53), 'NP\\_000050.2:p.Tyr32Cys' (BRCA2). Format: "
+"NP\\_accession:p.AminoAcidChange"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:39 ../../tools/mutalyzer_tools.rst:70
+#: ../../tools/mutalyzer_tools.rst:101 3121620e89c44a5db0ace14c3160f190
+#: 53925e36f7904a4997c7dfd550df0da6 f1f0c8477a1447d9b9b795d1f0dac5fe
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:53 b5b6a3d87d104c2cade75cfece819d6a
+msgid "**Mutalyzer_normalize_variant** (Type: MutalyzerTool)"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:55 084cfce041484cb8a5e4dfbfb440a67f
+msgid ""
+"Validate and normalize an HGVS variant description using Mutalyzer. "
+"Returns the corrected/normali..."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst dcefc31250c5426197c7f45a6c63d6f7
+msgid "Mutalyzer_normalize_variant tool specification"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:61 e03f915eb29c42e687d11a2f3453016a
+msgid "**Name**: ``Mutalyzer_normalize_variant``"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:63 a740deb2f5a04c39821e8ae8873a1b9a
+msgid ""
+"**Description**: Validate and normalize an HGVS variant description using"
+" Mutalyzer. Returns the corrected/normalized HGVS notation, predicted "
+"protein effect, RNA description, and gene symbol. Essential for clinical "
+"variant interpretation - ensures HGVS nomenclature compliance and "
+"predicts amino acid changes. Accepts coding DNA (c.), genomic (g.), "
+"protein (p.), or RNA (r.) variant descriptions. Example: "
+"'NM\\_003002.4:c.274G>T' normalizes to a SDHD missense variant with "
+"protein prediction p.(Asp92Tyr)."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:67 f0390ca86f584c22acda8e8641d78d00
+msgid ""
+"``variant`` (string) (required) HGVS variant description. Examples: "
+"'NM\\_003002.4:c.274G>T' (SDHD missense), 'NM\\_000546.6:c.215C>G' (TP53 "
+"p.Pro72Arg), 'NM\\_000059.4:c.7397C>T' (BRCA2). Format: "
+"reference:coordinate\\_system.change"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:84 8b8badac90dc424f85c895dee28b1e4f
+msgid "**Mutalyzer_parse_hgvs** (Type: MutalyzerTool)"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:86 ef8bde0cf72a4d98a62255ba466a7ead
+msgid ""
+"Parse an HGVS variant description into a structured model using "
+"Mutalyzer. Returns the reference ..."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst 21735fc93b164f289c373e25907cc240
+msgid "Mutalyzer_parse_hgvs tool specification"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:92 7dfbc549cb51495abc88df9256c16789
+msgid "**Name**: ``Mutalyzer_parse_hgvs``"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:94 39e03eb155254753977da2b237854c3d
+msgid ""
+"**Description**: Parse an HGVS variant description into a structured "
+"model using Mutalyzer. Returns the reference sequence ID, coordinate "
+"system (c./g./p./r.), variant type (substitution, deletion, insertion, "
+"etc.), and exact positions. Useful for programmatically extracting "
+"components of HGVS notation without regex parsing."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:98 5a4395bdfa5148bf959c5aceb470584d
+msgid ""
+"``variant`` (string) (required) HGVS variant description to parse. "
+"Examples: 'NM\\_003002.4:c.274G>T', 'NC\\_000017.11:g.7674220C>G', "
+"'NM\\_000546.6:c.215C>G'. Supports coding (c.), genomic (g.), protein "
+"(p.), and RNA (r.) coordinates."
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:115 196221779c764fbea6c2bb293fa35eaf
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:117 40f28d49baf44c87b55fd6483ecfe229
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mutalyzer_tools.rst:118 366ee4f1fd6f43b9929ebd413d1d52e3
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

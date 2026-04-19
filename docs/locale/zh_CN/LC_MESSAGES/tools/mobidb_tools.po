@@ -1,0 +1,151 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mobidb_tools.rst:10 8c7e25365b764e8bb935687dfd35e494
+msgid "Mobidb Tools"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:12 85b8a62a4f0b42f6bdec96e5a8d45d6f
+msgid ""
+"**Configuration File**: ``mobidb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:16 7ed61e4752af4f1faaad48a794a5ef46
+msgid ""
+"This page contains all tools defined in the ``mobidb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:19 b8af47e3885449258ec155aaf10439d1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:22 8c7e579055b74fabbfe5d3f7bb4cca9c
+msgid "**MobiDB_get_consensus** (Type: MobiDBTool)"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:24 86367acead3a43acb29a25ab1dfb8cb3
+msgid ""
+"Get consensus disorder analysis for a protein from MobiDB, focusing on "
+"merged/consensus predictio..."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst 98ff2c6e855043cabc3b4f148b4af626
+msgid "MobiDB_get_consensus tool specification"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:28 ../../tools/mobidb_tools.rst:59
+#: 302c0bf1d6d741029ab14d98d2c1c9cb cf115217ee8643d3b4412c4e9dc5f5f1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:30 21b1d5057bd0418ea0519cc998ab333c
+msgid "**Name**: ``MobiDB_get_consensus``"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:31 ../../tools/mobidb_tools.rst:62
+#: 8e2763d0e6f84ce3b95ca8e84cf1d753 d5c25f6cedfd40cca3cad108e2bb6541
+msgid "**Type**: ``MobiDBTool``"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:32 dcbc7267e93541c0a9e5900b665c11e4
+msgid ""
+"**Description**: Get consensus disorder analysis for a protein from "
+"MobiDB, focusing on merged/consensus predictions, phase separation data, "
+"and binding mode transitions. Returns predicted disorder regions from "
+"MobiDB-lite, curated disorder regions merged across all evidence sources,"
+" phase separation propensity, and disorder-to-order/disorder-to-disorder "
+"binding mode transitions. Useful for understanding how a protein's "
+"disordered regions function in signaling, condensate formation, and "
+"protein-protein interactions. Example: P04637 (TP53) shows phase "
+"separation regions and binding mode transitions in the transactivation "
+"domain."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:34 ../../tools/mobidb_tools.rst:65
+#: 4a91e767695a44ce83fc22ed214b3853 d763d6b6a21c4ed186ccd097caadc844
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:36 d873174eb0ae43159ecf2983f229106d
+msgid ""
+"``accession`` (string) (required) UniProt accession (e.g., 'P04637' for "
+"TP53, 'P00533' for EGFR)."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:39 ../../tools/mobidb_tools.rst:70
+#: 29d3599f16cc4668a06c179d777253d2 6b533ddf06d04a139d410dfdd8ae22eb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:53 1f6d27de022649cbac581aefcbcb9ac5
+msgid "**MobiDB_get_protein** (Type: MobiDBTool)"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:55 bcc55c768b7b4e8198533c1a394e8a8f
+msgid ""
+"Get comprehensive protein disorder data from MobiDB for a UniProt "
+"accession. MobiDB integrates cu..."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst ec8097082be94a27800f5a75b1a87c7e
+msgid "MobiDB_get_protein tool specification"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:61 eece0d7c210f458b990ce05081447e3b
+msgid "**Name**: ``MobiDB_get_protein``"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:63 a000b92e9f5e4846811001ab93d0763a
+msgid ""
+"**Description**: Get comprehensive protein disorder data from MobiDB for "
+"a UniProt accession. MobiDB integrates curated disorder from DisProt, "
+"predicted disorder from MobiDB-lite, structural data from PDB, PTM "
+"annotations, and binding mode information to provide a complete picture "
+"of protein intrinsic disorder. Returns predicted disordered regions with "
+"residue-level scores, curated disorder regions, linear interacting "
+"peptides (LIPs), PTM summary, and subcellular localization. Example: "
+"P04637 (TP53) shows predicted disorder at N-terminus (1-90) and "
+"C-terminus (360-393), curated disorder from DisProt, 28+ PTM types "
+"including phosphoserine and acetyllysine, localized to "
+"cytoplasm/nucleus/mitochondria."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:67 fdaed3f709834ccfb205344ca200e901
+msgid ""
+"``accession`` (string) (required) UniProt accession (e.g., 'P04637' for "
+"TP53, 'P00533' for EGFR, 'P38398' for BRCA1)."
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:84 cf8fc2aa0494406698abba0f1ce70c9b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:86 919542e9f0254ebea1f34e24c8418e74
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mobidb_tools.rst:87 3c7f7ca87d2646618452f05c09f1b67a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

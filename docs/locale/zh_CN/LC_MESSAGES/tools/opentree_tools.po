@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/opentree_tools.rst:10 f73d396f54434002ad1450a50776f330
+msgid "Opentree Tools"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:12 96ed69ce565c44f4a114f03859cd6b25
+msgid ""
+"**Configuration File**: ``opentree_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:16 ee3adff10aae4198a08c6036751e7662
+msgid ""
+"This page contains all tools defined in the ``opentree_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:19 2bbe226e908f48648e9ced5cf5a531f9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:22 b6fa18efd9d74c6fb94f79599793a83c
+msgid "**OpenTree_get_induced_subtree** (Type: OpenTreeTool)"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:24 15e95773cc934f079aaf48764b48bbec
+msgid ""
+"Get a phylogenetic subtree (in Newick format) from the Open Tree of Life "
+"synthetic tree for a spe..."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst 644fef74f9e14cd2b56607e400db75ed
+msgid "OpenTree_get_induced_subtree tool specification"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:28 ../../tools/opentree_tools.rst:59
+#: ../../tools/opentree_tools.rst:90 ../../tools/opentree_tools.rst:121
+#: 11887d4e9c064c65ad031eb08ba12cd3 421e6cf9be61479b8d6939d042c6cfd9
+#: 746a977428a04e9ea00349915bc9e01a d618d726b06d48079dcb5776607d9354
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:30 73fb82923aa44f7da56c3aa3bb890710
+msgid "**Name**: ``OpenTree_get_induced_subtree``"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:31 ../../tools/opentree_tools.rst:62
+#: ../../tools/opentree_tools.rst:93 ../../tools/opentree_tools.rst:124
+#: 02a3c052e0434115b247fa8eb6609a16 57e63b4fae06479c8263589ea5d59190
+#: 6ce31d8dd327485c87a7987a668d4111 f48c01d29fdc4d1c9b2942deb8bb05d3
+msgid "**Type**: ``OpenTreeTool``"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:32 289b0bb8fe7a4eb0a31318a82cc695b8
+msgid ""
+"**Description**: Get a phylogenetic subtree (in Newick format) from the "
+"Open Tree of Life synthetic tree for a specified set of taxa. Returns the"
+" evolutionary tree connecting the given taxa, showing their branching "
+"relationships. Useful for constructing phylogenies for comparative "
+"studies. Example: OTT IDs 770315 (Homo sapiens), 417950 (Pan "
+"troglodytes), 158484 (Pan paniscus) returns the ape phylogeny showing Pan"
+" troglodytes and Pan paniscus as sister species."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:34 ../../tools/opentree_tools.rst:65
+#: ../../tools/opentree_tools.rst:96 ../../tools/opentree_tools.rst:127
+#: 49af8c586e2543178dba69ea56142819 4cdfc4d783ad4422a0ebbc26935b179e
+#: 6d113cb6630a445f87f57b71e562d83d f19553da295d4dfea66ae0a91d894691
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:36 ffe08a7a72044141b3f1150408b61222
+msgid ""
+"``ott_ids`` (string) (required) Comma-separated OTT IDs (at least 2). "
+"Examples: '770315,417950,158484' (human, chimp, bonobo), "
+"'770315,417950,158484,770309' (plus Homo genus)."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:39 ../../tools/opentree_tools.rst:70
+#: ../../tools/opentree_tools.rst:101 ../../tools/opentree_tools.rst:132
+#: 482a824772534db69f7ef543ab11a3a7 5050e40c73b84d5a86bb3480fe996810
+#: 72cdb37f25b94b7a8708a56637e3bbcd c266db34cb31478db8ed8c8a80bc1ff3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:53 1d11486e6c4745119ecfe438e289d86a
+msgid "**OpenTree_get_mrca** (Type: OpenTreeTool)"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:55 986d0f61f11f468f85b3e584b1ac1126
+msgid ""
+"Find the Most Recent Common Ancestor (MRCA) of a set of taxa in the Open "
+"Tree of Life synthetic p..."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst 6f3f18e6eb7f4202b8c57e14cfb38de2
+msgid "OpenTree_get_mrca tool specification"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:61 54c86a9b33ed45179a947d7c4f598cdb
+msgid "**Name**: ``OpenTree_get_mrca``"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:63 e51a64ec53af42ce8f45a494046b1441
+msgid ""
+"**Description**: Find the Most Recent Common Ancestor (MRCA) of a set of "
+"taxa in the Open Tree of Life synthetic phylogeny. Takes two or more OTT "
+"IDs and returns their MRCA with its taxonomic name and rank. Essential "
+"for understanding evolutionary relationships between species. Example: "
+"OTT IDs 770315 (Homo sapiens) and 417950 (Pan troglodytes) gives MRCA in "
+"subfamily Homininae."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:67 7ee6bebfb45b4a73888e18924550a70e
+msgid ""
+"``ott_ids`` (string) (required) Comma-separated OTT IDs (at least 2). Use"
+" OpenTree\\_match\\_names to get IDs. Examples: '770315,417950' (human + "
+"chimp), '770315,417950,158484' (human + chimp + bonobo), '244265,417950' "
+"(fruit fly + chimp)."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:84 a3d9344778cb4debb49606aa498cdfc4
+msgid "**OpenTree_get_taxon** (Type: OpenTreeTool)"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:86 376104a4de8741a4afde90347e8ccd9e
+msgid ""
+"Get detailed taxonomy information for a taxon from the Open Tree of Life "
+"by its OTT ID. Returns t..."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst a9d4819d733848709bb67783d18ab3d4
+msgid "OpenTree_get_taxon tool specification"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:92 86106e2d74d044b3982b9d47c2142315
+msgid "**Name**: ``OpenTree_get_taxon``"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:94 a36ca0b4123443f58e013a1863a5e321
+msgid ""
+"**Description**: Get detailed taxonomy information for a taxon from the "
+"Open Tree of Life by its OTT ID. Returns the taxon name, rank, synonyms, "
+"source databases (NCBI, GBIF, IRMNG), and flags indicating taxonomic "
+"status. Use OpenTree\\_match\\_names first to get OTT IDs from species "
+"names. Example: OTT ID 770315 returns Homo sapiens with rank 'species', "
+"synonyms, and NCBI/GBIF cross-references."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:98 054de16a2b0643618b0290c2227f3491
+msgid ""
+"``ott_id`` (integer) (required) Open Tree Taxonomy ID. Examples: 770315 "
+"(Homo sapiens), 417950 (Pan troglodytes), 158484 (Pan paniscus), 312031 "
+"(Homininae), 244265 (Drosophila melanogaster)."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:115 1b9e4cc34c654379a2b1012684efebb4
+msgid "**OpenTree_match_names** (Type: OpenTreeTool)"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:117 266e590eb6064d91af0cd78e36891869
+msgid ""
+"Resolve species names to standardized Open Tree of Life taxonomy IDs (OTT"
+" IDs) using the TNRS (Ta..."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst ce2e40cc907648f2b0af55fdaa6d7e62
+msgid "OpenTree_match_names tool specification"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:123 fd15f2cf0f8949549a0b82a0db27937d
+msgid "**Name**: ``OpenTree_match_names``"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:125 dc5f6378e54949db940a033f571dad1d
+msgid ""
+"**Description**: Resolve species names to standardized Open Tree of Life "
+"taxonomy IDs (OTT IDs) using the TNRS (Taxonomic Name Resolution "
+"Service). Takes one or more species names and finds matching taxa in the "
+"Open Tree taxonomy, which synthesizes NCBI, GBIF, IRMNG, and other "
+"taxonomic sources. Returns OTT IDs that can be used with other OpenTree "
+"tools to retrieve phylogenetic trees and evolutionary relationships. "
+"Example: 'Homo sapiens' resolves to OTT ID 770315."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:129 bb89fa7fcfa34e96aa2585d3dc292355
+msgid ""
+"``names`` (string) (required) Comma-separated list of species or taxon "
+"names to resolve. Examples: 'Homo sapiens', 'Homo sapiens,Pan "
+"troglodytes,Gorilla gorilla', 'Canis lupus,Felis catus'."
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:146 5706e21ce9264e8fae2e7b820ef235b1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:148 1162c99a68484f9995cceed244b1b455
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/opentree_tools.rst:149 fc7aed07cbdb42bf9eba5b799f2b658f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

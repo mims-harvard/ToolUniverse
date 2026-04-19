@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/tu_cli.rst:2 b8204b2e1f79409cbe3d1ba7f64cb34f
+msgid "tu — ToolUniverse CLI"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:4 c760cc15a4f94f4fabe9a463153330c3
+msgid ""
+"``tu`` is the command-line interface for ToolUniverse. It mirrors the "
+"compact-mode MCP tools so you can discover and call tools directly from "
+"your shell."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:10 5c9667536ca04654b3bd36e30f5cc546
+msgid ""
+"Output is human-readable by default. Add ``--json`` for pretty JSON or "
+"``--raw`` for compact JSON (pipe-friendly)."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:12 ../../guide/tu_cli.rst:114
+#: 0ad14ca091f8459ea3a00032fd09cfc1 a8e71a556d8043ef89690672a0d7ed8f
+msgid "---"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:15 0421e5a7da2b417c8ecbe1cfaac7bc6c
+msgid "Commands"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:18 44858901dc9e448fb43a868851bdfa0b
+msgid "list"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:20 5fe447b0ff9a4b919ec8ec7972f54803
+msgid ""
+"List available tools. Default view shows category counts; add "
+"``--categories`` to list tools within a category."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:29 3d5ca9188aad4cb7b71839bab3bac580
+msgid ""
+"Modes: ``names``, ``categories`` (default), ``basic``, ``by_category``, "
+"``summary``, ``custom``"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:32 3b604ad276bd4fe7a5d195402b5a3908
+msgid "grep"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:34 9f3a13ba403e4af4b79cb3d3489d4d25
+msgid "Search tools by text or regex."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:42 b43f8b44d42b4949b1269e8c7639afa2
+msgid "Fields: ``name`` (default), ``description``, ``type``, ``category``"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:45 a52421875c734e9abe931e6fb87eee84
+msgid "find"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:47 d5f9c56098464ecab160de0b37c30561
+msgid "Find tools by natural-language query (keyword scoring, no API key needed)."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:56 8e7bd01763ad4b6fb57b26e9a5c7f75c
+msgid "info"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:58 0fd47c1f7a0a4ff5b4b759694f28aa73
+msgid "Show the schema for one or more tools."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:67 1ba9c7b6e0cc417d97c6ddda6abc4805
+msgid "run"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:69 25b24036b1b84fd9900b8cc414c0da11
+msgid "Execute a tool. Arguments can be ``key=value`` pairs or a JSON string."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:77 62208ab9d8444036999ce092d301f80d
+msgid "test"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:79 56c44b96455e492a88134c3344d4ea94
+msgid "Test a tool with example inputs and report pass/fail."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:87 293887d0786741919f098c29c64f15eb
+msgid "status"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:89 503c9a69500d4ed89c9e41fefb627071
+msgid "Show how many tools are loaded and the top categories."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:96 95637f142154465cacc9f2b049f2c2e9
+msgid "build"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:98 b7acab104caa459bac2481e3448539a2
+msgid ""
+"Regenerate the static tool registry and coding-API wrapper files. Output "
+"defaults to ``.tooluniverse/coding_api/``; use ``--output`` to override."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:106 cc6b86583ac545e69071d39a2a423c9f
+msgid "serve"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:108 0548a90c83594a3ab1dfea009c1d47f6
+msgid "Start the MCP stdio server (equivalent to running ``tooluniverse``)."
+msgstr ""
+
+#: ../../guide/tu_cli.rst:117 6e812de9233844a48ec177a3d48230a2
+msgid "See Also"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:119 4c548cfd6a7343c8a9e1aadf1badda61
+msgid ":doc:`toolspace` — configure which tools load via ``profile.yaml``"
+msgstr ""
+
+#: ../../guide/tu_cli.rst:120 964f9280e86741479694d44b71cc13be
+msgid ":doc:`building_ai_scientists/compact_mode` — compact mode in MCP"
+msgstr ""
+

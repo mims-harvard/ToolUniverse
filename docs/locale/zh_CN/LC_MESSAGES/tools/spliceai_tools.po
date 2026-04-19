@@ -1,0 +1,205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/spliceai_tools.rst:10 67237e33c52c441495c1d816d2aeca26
+msgid "Spliceai Tools"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:12 cc0e202d92364288a336e408450334a5
+msgid ""
+"**Configuration File**: ``spliceai_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:16 c470db7606e842d4a2ce68657f958336
+msgid ""
+"This page contains all tools defined in the ``spliceai_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:19 e2ba2880d629402b8e63c5980063ed68
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:22 a6e833527b4049928e1087845037fbf0
+msgid "**SpliceAI_get_max_delta** (Type: SpliceAITool)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:24 2feee2bc5d494e68b8a393f9099969ae
+msgid ""
+"Get simplified maximum SpliceAI delta score and pathogenicity "
+"interpretation for a variant. Retur..."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst e8c70031a6984550892b86da83b31438
+msgid "SpliceAI_get_max_delta tool specification"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:28 ../../tools/spliceai_tools.rst:62
+#: ../../tools/spliceai_tools.rst:102 18d0e5e36f5a44afb3828de2aa2f325c
+#: 324fd0fbb3f84a95b16901309533feac ac71bcd07886404291584f91abea6728
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:30 08035b87ee314e7787deb497a9dd290c
+msgid "**Name**: ``SpliceAI_get_max_delta``"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:31 ../../tools/spliceai_tools.rst:65
+#: ../../tools/spliceai_tools.rst:105 08affae61a9e4617892652ce047cbc46
+#: 3cd485c54d634d10a182042c5dd6623d c34e17f62acf4b5b96ac70d755c196c4
+msgid "**Type**: ``SpliceAITool``"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:32 4f358a328776426bb1ad27cf53f630aa
+msgid ""
+"**Description**: Get simplified maximum SpliceAI delta score and "
+"pathogenicity interpretation for a variant. Returns single max score "
+"across all splice effects (AG/AL/DG/DL) with interpretation: benign "
+"(<0.2), low (0.2-0.5), moderate (0.5-0.8), high (≥0.8). Best for quick "
+"variant triage."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:34 ../../tools/spliceai_tools.rst:68
+#: ../../tools/spliceai_tools.rst:108 1f2b18a71cf344739f6a3cf161a43cf9
+#: 55f3eca1da554429ac20433776808104 96955803428c44539de086b080b39407
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:36 ../../tools/spliceai_tools.rst:70
+#: 796cbf2f521d4cbcac6aadfa9f3ca82d d39dff632443407193bff64cab70f1c1
+msgid ""
+"``variant`` (string) (required) Variant in chr-pos-ref-alt format (e.g., "
+"chr8-140300616-T-G)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:39 ../../tools/spliceai_tools.rst:73
+#: aa5a83d0e1e44c3ca4481d5df208ccd8 e343545fc6cf4282a7a6684583057d1d
+msgid "``genome`` (string) (optional) Genome build: 37 or 38 (default: 38)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:42 ../../tools/spliceai_tools.rst:82
+#: ../../tools/spliceai_tools.rst:122 609a40b243e94cb088450d9707ae9727
+#: 621cb02ca0a14d97896d245ad2b0614a 92be8d870c6a46d7a77fce3e1a50d602
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:56 67ddc175c32d4dab9d6074b3ae767414
+msgid "**SpliceAI_predict_pangolin** (Type: SpliceAITool)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:58 ceb1118b6a8540dca696cef2d89c6b56
+msgid ""
+"Predict splice-altering effects using Pangolin model (alternative to "
+"SpliceAI). Pangolin uses a d..."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst 347f753c1baf4d50b75dff65c317fe47
+msgid "SpliceAI_predict_pangolin tool specification"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:64 394ecf0d652f4f42b17f3e0c1726917a
+msgid "**Name**: ``SpliceAI_predict_pangolin``"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:66 f7d1a962a5684e1ca6e1cf87198fa5c7
+msgid ""
+"**Description**: Predict splice-altering effects using Pangolin model "
+"(alternative to SpliceAI). Pangolin uses a different architecture and may"
+" provide complementary predictions. Returns splice effect scores per "
+"transcript. Useful for validation or when SpliceAI gives borderline "
+"results."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:76 ed159530cafc4d61b3704d9b1b2a6ac0
+msgid ""
+"``distance`` (integer) (optional) Distance parameter for model (default: "
+"1000)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:79 01afd1e43fd8443cb3018f2efd4e01af
+msgid "``mask`` (boolean) (optional) Use masked scores"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:96 926073d39500425ba93c253ed7c46192
+msgid "**SpliceAI_predict_splice** (Type: SpliceAITool)"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:98 3f243baa85a34fc2b5aa7878e42726a4
+msgid ""
+"Predict splice-altering effects using SpliceAI deep learning model. "
+"Returns delta scores for acce..."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst 1bfba83a642547a4a9905d5c86cc6df0
+msgid "SpliceAI_predict_splice tool specification"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:104 a3e7af634f82442da79b08da6ce6c4ca
+msgid "**Name**: ``SpliceAI_predict_splice``"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:106 6525c491c57e4a29a8450402416c47c1
+msgid ""
+"**Description**: Predict splice-altering effects using SpliceAI deep "
+"learning model. Returns delta scores for acceptor gain (DS\\_AG), "
+"acceptor loss (DS\\_AL), donor gain (DS\\_DG), donor loss (DS\\_DL). "
+"Scores ≥0.2 suggest splice impact, ≥0.5 moderate, ≥0.8 high "
+"pathogenicity. Critical for intronic/exonic variant interpretation."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:110 3f21e9ce421f46c4a8f87eaf65499c6e
+msgid ""
+"``variant`` (string) (required) Variant in chr-pos-ref-alt format (e.g., "
+"chr8-140300616-T-G) or colon-separated"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:113 e4e530368fb34913bc564b6159d0fa93
+msgid ""
+"``genome`` (string) (optional) Genome build: 37 (GRCh37/hg19) or 38 "
+"(GRCh38/hg38). Default: 38"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:116 668544f2344245fbb1c6f9772af05697
+msgid ""
+"``distance`` (integer) (optional) Distance parameter for model (default: "
+"50). Larger values capture more distal effects."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:119 c75d5c462f3648b3950727cc86e931fd
+msgid ""
+"``mask`` (boolean) (optional) Use masked scores (recommended for variant "
+"interpretation). Raw scores better for alternative splicing analysis."
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:136 b1b44bae57544138a15426c801fb7c03
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:138 af58954d2cb24f8fa99761054c8fd645
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/spliceai_tools.rst:139 d25121dd38fe4d0aa904f08d502957aa
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

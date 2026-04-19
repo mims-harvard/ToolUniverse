@@ -1,0 +1,419 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cellxgene_census_tools.rst:10 81badfd0bc03404fbd6c0f20faf8516e
+msgid "Cellxgene Census Tools"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:12 1fed7ab5433f48a399387debdd2e9092
+msgid ""
+"**Configuration File**: ``cellxgene_census_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:16 be06569516fe4c32ac635acf272f6963
+msgid ""
+"This page contains all tools defined in the "
+"``cellxgene_census_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:19 ce73bd52728b489b83fe4cc004915db1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:22 60ae9e0379624320a5a65093794be24c
+msgid "**CELLxGENE_download_h5ad** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:24 1a77890b96c745c8b809ba40f344090a
+msgid ""
+"Download original H5AD (HDF5-based AnnData) files from CELLxGENE datasets"
+" or get their URIs. Acce..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst a20cace666e24a4fb31fac7eea3727b3
+msgid "CELLxGENE_download_h5ad tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:28
+#: ../../tools/cellxgene_census_tools.rst:69
+#: ../../tools/cellxgene_census_tools.rst:113
+#: ../../tools/cellxgene_census_tools.rst:143
+#: ../../tools/cellxgene_census_tools.rst:183
+#: ../../tools/cellxgene_census_tools.rst:232
+#: ../../tools/cellxgene_census_tools.rst:275 40989e15bdcb43bc8382ec354fd7c124
+#: 6ed85f548e274478aa0457f196f1a2e5 707156fa79304dbca411ab5cc6a25443
+#: 7c9f5ec2cf97483698091e2b862fd4c4 a6f7e0f85e624ec9a74ea86f3367aa73
+#: d6aaa7cad9364120b131913f05829b40 f804e9d649ca4d088e155002818f0fcb
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:30 29728339075e463e9ee96cd655972e51
+msgid "**Name**: ``CELLxGENE_download_h5ad``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:31
+#: ../../tools/cellxgene_census_tools.rst:72
+#: ../../tools/cellxgene_census_tools.rst:116
+#: ../../tools/cellxgene_census_tools.rst:146
+#: ../../tools/cellxgene_census_tools.rst:186
+#: ../../tools/cellxgene_census_tools.rst:235
+#: ../../tools/cellxgene_census_tools.rst:278 0e21e70ad80a46aea05ff5b05e5c5ebc
+#: 26b2d38f2a0c4c36b7b9258a35b1ea51 3bcde4845a2b4e65b0ddebcd62a6f9c4
+#: 4bab3bab99c24528a5e589a5e820db34 554a82b860ad4831ae8be6f52792920f
+#: aba884e014bf441ea86b469e0445171a de4a3c12a32b4dcfbf125fcde1dd598f
+msgid "**Type**: ``CELLxGENECensusTool``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:32 93c6a9e811c445e0bec43ac6bb239ee6
+msgid ""
+"**Description**: Download original H5AD (HDF5-based AnnData) files from "
+"CELLxGENE datasets or get their URIs. Access unprocessed data from "
+"individual studies with complete metadata and analysis results. Requires "
+"dataset\\_id from CELLxGENE Discover. Note: Files can be large (GBs). Use"
+" for: accessing raw data, reproducibility, offline analysis, custom "
+"processing pipelines."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:34
+#: ../../tools/cellxgene_census_tools.rst:75
+#: ../../tools/cellxgene_census_tools.rst:119
+#: ../../tools/cellxgene_census_tools.rst:149
+#: ../../tools/cellxgene_census_tools.rst:189
+#: ../../tools/cellxgene_census_tools.rst:238
+#: ../../tools/cellxgene_census_tools.rst:281 27480bf4b2f54effb32d51e0b4affc1d
+#: 78dd66251c27420b8e984327df3b3e43 c0e3cd08f52d463a96ca4ff599164da2
+#: c4e80e0e30344ca59ac41e26cfc76013 db1899d2bce440629133b162b82b5ffc
+#: dc313cf18ab24e33a59e5162cd724cfd f061f05482dc4cbf80548f3cf0224f70
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:36
+#: ../../tools/cellxgene_census_tools.rst:77
+#: ../../tools/cellxgene_census_tools.rst:151
+#: ../../tools/cellxgene_census_tools.rst:191
+#: ../../tools/cellxgene_census_tools.rst:240
+#: ../../tools/cellxgene_census_tools.rst:283 012962b498994c4fab6cd51e464cef34
+#: 30a789f433614b2ca11053ae2f6d5284 36a683ca8ed342a8a402f251c9e266b1
+#: 3bb3e61427914ff99b93f3a4da7bce37 6b9e5f95d67143ef8b1ed8dc10e99f2a
+#: 829f6cccab404b18ad19976f77bfb49f
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:39 637b3c28ea0e483eb84c7caed0e611c2
+msgid "``dataset_id`` (string) (required) CELLxGENE dataset identifier (required)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:42 fd8a5cf2fb694c79aed9ac807bb2e8ab
+msgid ""
+"``output_path`` (string) (optional) Local path to save H5AD file (omit to"
+" get URI only)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:45
+#: ../../tools/cellxgene_census_tools.rst:89
+#: ../../tools/cellxgene_census_tools.rst:160
+#: ../../tools/cellxgene_census_tools.rst:209
+#: ../../tools/cellxgene_census_tools.rst:252
+#: ../../tools/cellxgene_census_tools.rst:289 0bb8d308dca6491bb2341b15e36e1357
+#: 18ca73c45d08468b81ffa142a97e3b28 226807537d6e4fe4bc924c0e55333c88
+#: 481ff3c247c34c99829671b96059f86d 5be71c17986a4211a22f15c3934fddc3
+#: b4dac189fbf4441a9903b159ba67a58d
+msgid ""
+"``census_version`` (string) (optional) Census version to query. 'stable' "
+"(recommended, Long-Term Support release), 'latest' (newest data, may "
+"change), or specific date 'YYYY-MM-DD' (for reproducibility). Default "
+"'stable' is best for production analyses."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:48
+#: ../../tools/cellxgene_census_tools.rst:92
+#: ../../tools/cellxgene_census_tools.rst:124
+#: ../../tools/cellxgene_census_tools.rst:163
+#: ../../tools/cellxgene_census_tools.rst:212
+#: ../../tools/cellxgene_census_tools.rst:255
+#: ../../tools/cellxgene_census_tools.rst:292 232a599437a546f4b27430166661ace6
+#: 98b2022056cd4f78a30dc76f8347c4d4 b2a210ed1faf4939bd5d72572154ed01
+#: e421038c0b5c4eecb6cafeb464fdfdde ee633588cf674b52a21cce0f304cecab
+#: f798650d86f94ecfbf746c687d6db9fb ff3ffd4bd09148c19786e3baada4566f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:63 912e94f9bb4a4f0ea990fcf7759dd1f1
+msgid "**CELLxGENE_get_cell_metadata** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:65 e20740038d0448cdbc1f362f7dd28381
+msgid ""
+"Query cell metadata from CELLxGENE Census (50M+ human/mouse single "
+"cells). CRITICAL: obs\\_value\\_..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 664a66c4a7ba4b9fb4c030ade88ff9a1
+msgid "CELLxGENE_get_cell_metadata tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:71 087ae21303c2418ea27e7ade4e668c80
+msgid "**Name**: ``CELLxGENE_get_cell_metadata``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:73 0c8b45bce14f46d4afec3e0787a2a612
+msgid ""
+"**Description**: Query cell metadata from CELLxGENE Census (50M+ "
+"human/mouse single cells). CRITICAL: obs\\_value\\_filter is REQUIRED - "
+"unfiltered queries will timeout. Common filters: tissue\\_general (brain,"
+" heart, lung, liver, blood, kidney, skin, eye, intestine), cell\\_type (T"
+" cell, B cell, neuron, macrophage, fibroblast), disease (normal, "
+"COVID-19, Alzheimer disease, cancer). Start with: "
+"obs\\_value\\_filter='tissue\\_general == \"lung\" and disease == "
+"\"normal\"'. Returns cell type, tissue, disease, donor info. Use for: "
+"finding cells by criteria, cohort selection, exploring cell populations."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:80
+#: ../../tools/cellxgene_census_tools.rst:154
+#: ../../tools/cellxgene_census_tools.rst:194
+#: ../../tools/cellxgene_census_tools.rst:243
+#: ../../tools/cellxgene_census_tools.rst:286 0dcec5d78a35462388c3005ba8ed3a96
+#: 6dd5c985268b4fcd97a2b0c7b386a8f1 ba9fd151278a46ddbbaffacff0a7d758
+#: d936935274384dd5b74faa5a7eddb160 f2ee621a50de4aa890fb4275716b269e
+msgid "``organism`` (string) (optional) Organism name"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:83 2ae8f8dbb84d48e78b01acac67e95048
+msgid ""
+"``obs_value_filter`` (string) (required) REQUIRED - filter cells using "
+"SQL-like syntax. Unfiltered queries timeout (50M+ cells). Format: 'field "
+"== \"value\"'. Operators: ==, !=, in, <, >, <=, >=. Combine with "
+"'and'/'or'. Common fields and values: tissue\\_general (brain, heart, "
+"lung, liver, blood, kidney, skin, eye, intestine, pancreas, bone marrow),"
+" cell\\_type (T cell, B cell, neuron, macrophage, fibroblast, epithelial "
+"cell, endothelial cell), disease (normal, COVID-19, Alzheimer disease, "
+"lung adenocarcinoma), assay (10x 3' v3, Smart-seq2), sex (male, female). "
+"Examples: 'tissue\\_general == \"lung\"', 'disease == \"COVID-19\" and "
+"tissue\\_general == \"blood\"', 'cell\\_type in [\"T cell\", \"B cell\"] "
+"and disease == \"normal\"'."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:86
+#: ../../tools/cellxgene_census_tools.rst:249 3de460281c4349c9bb5def1396944877
+#: f7ba8e1ff7fc478db39a3126a6e5c9b7
+msgid ""
+"``column_names`` (array) (optional) Specific columns to return (default: "
+"all columns)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:107 4e3998d86632415ba7b7ff44d6ddb71a
+msgid "**CELLxGENE_get_census_versions** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:109 994c0d8ca6d24298823b0d2048395374
+msgid ""
+"Get list of available CELLxGENE Census versions with release dates and "
+"descriptions. The Census c..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 70d7930ee4db4bcbb401f9e2cfa3f614
+msgid "CELLxGENE_get_census_versions tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:115 72470b81a95340178740291bbec260c5
+msgid "**Name**: ``CELLxGENE_get_census_versions``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:117 d7ba1655806a45908dc2e1f54c21e2ee
+msgid ""
+"**Description**: Get list of available CELLxGENE Census versions with "
+"release dates and descriptions. The Census contains single-cell RNA-seq "
+"data from 50M+ cells (human, mouse, non-human primates). Latest LTS "
+"release: 2025-11-08. Prerequisites: Requires 'cellxgene-census' package "
+"(install: pip install tooluniverse[singlecell]). Use for: checking "
+"available data versions, selecting stable vs latest builds, understanding"
+" data updates."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:121 d6513ee7c8d84695995b6e302ef89b81
+msgid "``operation`` (string) (optional) Operation type"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:137 afd2b398e1954a36bfcb6c72cd1dbf59
+msgid "**CELLxGENE_get_embeddings** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:139 d7e5c3b4065a4076bcd8cc34e74485f1
+msgid ""
+"Access pre-calculated cell embeddings (scVI, Geneformer) from CELLxGENE "
+"Census. Returns available..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 7ae4e84867954ea7823d13b1e52bc3ef
+msgid "CELLxGENE_get_embeddings tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:145 67a39b7638da4066a32f56576fd67e95
+msgid "**Name**: ``CELLxGENE_get_embeddings``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:147 24e9da1c8b794f97ad73b51dbf9bfafd
+msgid ""
+"**Description**: Access pre-calculated cell embeddings (scVI, Geneformer)"
+" from CELLxGENE Census. Returns available embedding names or specific "
+"embedding data. Embeddings enable rapid visualization and analysis "
+"without recomputation. Use for: UMAP/t-SNE visualization, cell similarity"
+" analysis, transfer learning."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:157 031b2cefb53d4b6b95d0310d7f73a8d0
+msgid ""
+"``embedding_name`` (string) (optional) Name of specific embedding to "
+"retrieve (omit to list available embeddings)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:177 63a6b47c28104741983f0ff64be6d364
+msgid "**CELLxGENE_get_expression_data** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:179 97aa57e84a5e4beab17cab8941841668
+msgid ""
+"Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ "
+"genes). CRITICAL: At least one..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 387703c9b134400d8c84d4df731da854
+msgid "CELLxGENE_get_expression_data tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:185 eae21dd3e6fa4463a5f295c2198636fb
+msgid "**Name**: ``CELLxGENE_get_expression_data``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:187 78a304a67b5140a98ce72f02d17c42ab
+msgid ""
+"**Description**: Query gene expression data from CELLxGENE Census (50M+ "
+"cells, 60K+ genes). CRITICAL: At least one filter REQUIRED - unfiltered "
+"queries timeout. Start with: obs\\_value\\_filter='tissue\\_general == "
+"\"lung\" and disease == \"normal\"' AND "
+"var\\_value\\_filter='feature\\_name in [\"TP53\", \"EGFR\"]'. Returns "
+"AnnData summary (dimensions, metadata). For full matrix data, use Python "
+"API with sufficient memory."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:197 db501c587fb3404683ecda6db986e996
+msgid ""
+"``obs_value_filter`` (string) (optional) REQUIRED (or use "
+"var\\_value\\_filter) - Cell filter. Common values: tissue\\_general "
+"(brain, lung, heart, blood, liver), cell\\_type (T cell, B cell, neuron, "
+"macrophage), disease (normal, COVID-19, Alzheimer disease). Example: "
+"'tissue\\_general == \"lung\" and disease == \"normal\"'"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:200 c56c7965b61d4cd0b80e76971806300c
+msgid ""
+"``var_value_filter`` (string) (optional) REQUIRED (or use "
+"obs\\_value\\_filter) - Gene filter by symbol or Ensembl ID. Examples: "
+"'feature\\_name in [\"TP53\", \"BRCA1\", \"EGFR\"]', 'feature\\_name == "
+"\"CD4\"'. Common genes: TP53, EGFR, BRCA1, CD4, CD8A, IL6, TNF, GAPDH."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:203 185c7860e0be4ad2a6c9bc1854235b87
+msgid "``obs_column_names`` (array) (optional) Cell metadata columns to include"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:206 abb660016989418689e855251e1309d6
+msgid "``var_column_names`` (array) (optional) Gene metadata columns to include"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:226 5cd066c4c8134bc3af826e8c2a74ecd3
+msgid "**CELLxGENE_get_gene_metadata** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:228 cb9d4b1ad7a74ab6b475675a206906c8
+msgid ""
+"Query gene (variable) metadata from CELLxGENE Census. Returns gene "
+"symbols, Ensembl IDs, feature ..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 5248711d98e948898d194f7669cfc61b
+msgid "CELLxGENE_get_gene_metadata tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:234 ef17a34b7399442aaceaf9056a6c9f00
+msgid "**Name**: ``CELLxGENE_get_gene_metadata``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:236 a4fcf71c969f480cbfb44d601804d98f
+msgid ""
+"**Description**: Query gene (variable) metadata from CELLxGENE Census. "
+"Returns gene symbols, Ensembl IDs, feature types, and summary statistics."
+" Filter by gene name, feature type, or expression characteristics. Use "
+"for: finding genes of interest, validating gene symbols, exploring "
+"feature presence across datasets."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:246 f8a1bae13fc34ce499afd694d2aaf372
+msgid ""
+"``var_value_filter`` (string) (optional) Filter genes using SQL-like "
+"syntax. Format: 'field == \"value\"'. Common fields: feature\\_name (gene"
+" symbol), feature\\_id (Ensembl ID), feature\\_biotype. Examples: "
+"'feature\\_name == \"TP53\"', 'feature\\_name in [\"CD4\", \"CD8A\"]', "
+"'feature\\_biotype == \"protein\\_coding\"'."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:269 4fc1c40503d6412a83b7cf251d4146c4
+msgid "**CELLxGENE_get_presence_matrix** (Type: CELLxGENECensusTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:271 9f3372ede0af48a8af3abee3873d36ee
+msgid ""
+"Get feature presence matrix showing which genes are measured in which "
+"datasets. Returns sparse ma..."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst 07716b10327f4d0c9fcf8f87b83270a8
+msgid "CELLxGENE_get_presence_matrix tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:277 143dbdc97ce243fa8b28fef45cc8dbe7
+msgid "**Name**: ``CELLxGENE_get_presence_matrix``"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:279 2bf900b327c2409585582af0d8bdd3dd
+msgid ""
+"**Description**: Get feature presence matrix showing which genes are "
+"measured in which datasets. Returns sparse matrix dimensions and density."
+" Useful for understanding data completeness and selecting datasets with "
+"genes of interest. Use for: checking gene coverage, dataset selection, "
+"quality assessment."
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:306 d70e9adb09bb4ac58c6b36e7ff878d99
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:308 107b0684091342b3bb329cda1abcba68
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cellxgene_census_tools.rst:309 7c809a7f783146ef82b17910cd6aa613
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

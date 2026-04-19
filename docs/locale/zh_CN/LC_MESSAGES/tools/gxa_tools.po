@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gxa_tools.rst:10 d5175027986e458b80a7ac123ba704ff
+msgid "Gxa Tools"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:12 a6553ac3064448fe921bc98ffa376363
+msgid ""
+"**Configuration File**: ``gxa_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:16 ae83900ccbd24335be44f7117a4971fc
+msgid ""
+"This page contains all tools defined in the ``gxa_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:19 6ae3a00eb3054337a78778ce9153a479
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:22 3566ec83466746b3b0bf6abfb3c7773d
+msgid "**GxA_get_experiment_expression** (Type: GxATool)"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:24 6b3b6cef19c74954a061d9940c71d56d
+msgid ""
+"Get gene expression data from a specific Expression Atlas experiment. "
+"Returns expression levels a..."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst 8d91942a5af6459994483b5085d8b2be
+msgid "GxA_get_experiment_expression tool specification"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:28 ../../tools/gxa_tools.rst:62
+#: ../../tools/gxa_tools.rst:93 09cbd4962c2b483fb943fe7e9a2f7c87
+#: 15705ec0ce8f4862a56d0fd56d8dbcd7 39393df513dc428d9b6e3e7a73328d2e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:30 4be47816f3ce4708b835d2793895e048
+msgid "**Name**: ``GxA_get_experiment_expression``"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:31 ../../tools/gxa_tools.rst:65
+#: ../../tools/gxa_tools.rst:96 53051761a0524e7d8b04f630fc262284
+#: 9815db08933c4c98991290809273543b 9b258fede517431aa2ae73d29867fa23
+msgid "**Type**: ``GxATool``"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:32 f38adea371ce48f4bf5d737714856425
+msgid ""
+"**Description**: Get gene expression data from a specific Expression "
+"Atlas experiment. Returns expression levels across tissues or conditions,"
+" with optional filtering by gene ID. Experiment E-MTAB-2836 contains RNA-"
+"seq of 122 human tissues, E-MTAB-2706 covers 675 cancer cell lines. For "
+"each gene, expression values are provided across all assayed conditions "
+"(tissues, cell types, developmental stages, etc.)."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:34 ../../tools/gxa_tools.rst:68
+#: ../../tools/gxa_tools.rst:99 6839ee2e153a47c484cda9cc32057dae
+#: 7b28463e5f8e40de9beb1925d325d4ae ea0468df5f67433888ea9c52c0260616
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:36 8d5cb91332d241349d27f5205c61c254
+msgid ""
+"``experiment_accession`` (string) (required) Expression Atlas experiment "
+"accession (e.g., 'E-MTAB-2836' for human tissues RNA-seq, 'E-MTAB-2706' "
+"for cancer cell lines)."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:39 d85da7fd94234a0ab23026407697e767
+msgid ""
+"``gene_id`` (string) (optional) Optional Ensembl gene ID to filter "
+"expression data for a specific gene (e.g., 'ENSG00000141510' for TP53). "
+"Leave empty for all genes in the experiment."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:42 ../../tools/gxa_tools.rst:73
+#: ../../tools/gxa_tools.rst:110 036d59e12e67446f81b465810ace3a96
+#: ac5000bcda7b4b0492ce8105e3b776f7 df6486f703814c10a8c06e49adff8b2a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:56 ce25033603ea4ccc8c6899cc849e770c
+msgid "**GxA_get_experiment_info** (Type: GxATool)"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:58 53b23eabb41a4e6d8f538e0723324dc7
+msgid ""
+"Get metadata about a Gene Expression Atlas experiment including species, "
+"number of genes and cond..."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst 120d93f602274de19bef0048f8b346c3
+msgid "GxA_get_experiment_info tool specification"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:64 c0d477b193f94b74a29facb410402552
+msgid "**Name**: ``GxA_get_experiment_info``"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:66 ef973ddf2f3b451caa72ac881f2e1000
+msgid ""
+"**Description**: Get metadata about a Gene Expression Atlas experiment "
+"including species, number of genes and conditions, and experimental "
+"design. Useful for understanding what data is available before querying "
+"specific gene expression. Example: E-MTAB-2836 has 29 conditions "
+"(tissues) and profiles for thousands of genes in Homo sapiens."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:70 7a0568397c6448a6ae64f9322e22cc5e
+msgid ""
+"``experiment_accession`` (string) (required) Expression Atlas experiment "
+"accession (e.g., 'E-MTAB-2836', 'E-MTAB-2706', 'E-GEOD-46817')."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:87 94c96efe728b464b9484ba516c092de1
+msgid "**GxA_list_experiments** (Type: GxATool)"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:89 7f3c56c30fcf4f3ab1e5d5f6c8ecbb90
+msgid ""
+"List gene expression experiments from EBI Gene Expression Atlas. Can "
+"filter by species (e.g., 'Ho..."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst 91c1b00ec4274e348f873872f110d877
+msgid "GxA_list_experiments tool specification"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:95 465adfc591c8480b94824dd909fe3942
+msgid "**Name**: ``GxA_list_experiments``"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:97 fa5db8597e4549ba8550204069cf25e3
+msgid ""
+"**Description**: List gene expression experiments from EBI Gene "
+"Expression Atlas. Can filter by species (e.g., 'Homo sapiens') and "
+"experiment type ('baseline' for tissue expression, 'differential' for "
+"condition comparisons). The Atlas contains 4,500+ experiments across "
+"hundreds of species. Example: filtering by 'Homo sapiens' and 'baseline' "
+"returns 123 human tissue-level expression experiments including "
+"E-MTAB-2836 (122 human tissues), E-MTAB-2706 (675 cancer cell lines), and"
+" E-GEOD-46817 (melanoma)."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:101 8adb1d12e84e410fa4192219855981b5
+msgid ""
+"``species`` (string) (optional) Species name to filter experiments (e.g.,"
+" 'Homo sapiens', 'Mus musculus', 'Arabidopsis thaliana'). Leave empty for"
+" all species."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:104 5da58aa2c66243ccb5eeb67bf4b2fd5a
+msgid ""
+"``experiment_type`` (string) (optional) Filter by experiment type: "
+"'baseline' (tissue/cell type expression), 'differential' (condition "
+"comparisons), 'proteomics', or 'rnaseq'. Leave empty for all types."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:107 e6b7eb2fa4ea4712acbf06dfb49e70d2
+msgid ""
+"``limit`` (integer) (optional) Maximum number of experiments to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:123 eabcedf466554994a0c2887c8abbda63
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:125 b227750cf2f848d28fe1beb59e4ae48f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gxa_tools.rst:126 0462db5f67e243cb9dba45cfb9f9177b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

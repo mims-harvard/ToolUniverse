@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/msigdb_tools.rst:10 5caafa8f3ca24723b05bacaefbf3148b
+msgid "Msigdb Tools"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:12 9ce38df7369b4ceeb881fe82784531e8
+msgid ""
+"**Configuration File**: ``msigdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:16 37d058eb535a4fdfb69135d15baa1ff3
+msgid ""
+"This page contains all tools defined in the ``msigdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:19 bb2f99d438b442258190af27aff7ae41
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:22 3e04d0c7a7e7462e85737c0c3e111f3e
+msgid "**MSigDB_get_geneset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:24 c04cc17222d44704bcef902055dc1f38
+msgid ""
+"Retrieve a specific gene set from MSigDB (Molecular Signatures Database) "
+"by its exact name. MSigD..."
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst 7b2c8366c6ab4248b0a7fd22feff6cdc
+msgid "MSigDB_get_geneset tool specification"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:28 ../../tools/msigdb_tools.rst:59
+#: 1bd51d4ca34e47cd9ab816f43fccbbe5 d76f669a1ae240e5ab39bc83d2627edc
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:30 c626cd0e71a7449d9e9788f97d083725
+msgid "**Name**: ``MSigDB_get_geneset``"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:31 ../../tools/msigdb_tools.rst:62
+#: 2740048d78ad4d03b15bb33ce5eefd23 65731591691a41c89bccb65e5bf8e212
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:32 35f8ddf138524e708a036fbb95304382
+msgid ""
+"**Description**: Retrieve a specific gene set from MSigDB (Molecular "
+"Signatures Database) by its exact name. MSigDB is the definitive database"
+" for gene sets used in Gene Set Enrichment Analysis (GSEA), containing "
+"33,000+ gene sets organized into 9 major collections: H (hallmark), C1 "
+"(positional), C2 (curated pathways from "
+"KEGG/Reactome/BioCarta/WikiPathways), C3 (regulatory motifs), C4 "
+"(computational cancer), C5 (Gene Ontology), C6 (oncogenic signatures), C7"
+" (immunologic signatures), C8 (cell type signatures). Returns the gene "
+"symbols in the set, systematic name, PMID, collection, and URLs."
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:34 ../../tools/msigdb_tools.rst:65
+#: 0c450f3d7d054aa9a1c3e015747b295b 3e76365b723d4bd28a9f6ecb902c8740
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:36 4ce88a3da4044860a1ef44498bde8e20
+msgid ""
+"``geneSetName`` (string) (required) Exact MSigDB gene set name (case-"
+"sensitive). Examples: 'HALLMARK\\_APOPTOSIS', "
+"'KEGG\\_P53\\_SIGNALING\\_PATHWAY', 'GOBP\\_APOPTOTIC\\_PROCESS', "
+"'HALLMARK\\_HYPOXIA', 'KRAS.LUNG\\_UP.V1\\_UP'. Find names at https://www"
+".gsea-msigdb.org/gsea/msigdb/"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:39 ../../tools/msigdb_tools.rst:70
+#: 40f01ab14d214f029d92f74d3281b1ff 9de99ab142ad450da87be5c9ef7de88f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:53 5af17a5763494184bf712e2d9ecb6b9e
+msgid "**MSigDB_get_hallmark_geneset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:55 4a240a9630be401bb8331e8dc6664a48
+msgid ""
+"Retrieve a Hallmark gene set from MSigDB. The Hallmark collection (H) "
+"contains 50 gene sets repre..."
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst f9a747d51ba84a9f90b76e96fafa336e
+msgid "MSigDB_get_hallmark_geneset tool specification"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:61 cf893239c7c540bda93c51270194d6bf
+msgid "**Name**: ``MSigDB_get_hallmark_geneset``"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:63 6e5fb3f6cf8c4bb396a1e28069e6e588
+msgid ""
+"**Description**: Retrieve a Hallmark gene set from MSigDB. The Hallmark "
+"collection (H) contains 50 gene sets representing well-defined biological"
+" states and processes with coherent expression, distilled from multiple "
+"founder sets. These are the most commonly used gene sets for pathway "
+"analysis and GSEA. Hallmark gene set names are prefixed with "
+"'HALLMARK\\_' followed by the pathway name in uppercase with underscores "
+"(e.g., HALLMARK\\_APOPTOSIS, HALLMARK\\_HYPOXIA, "
+"HALLMARK\\_P53\\_PATHWAY, HALLMARK\\_INFLAMMATORY\\_RESPONSE, "
+"HALLMARK\\_EPITHELIAL\\_MESENCHYMAL\\_TRANSITION)."
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:67 8892d347d2854f28af2ac5f479139e2b
+msgid ""
+"``pathway_name`` (string) (required) Hallmark pathway name without the "
+"'HALLMARK\\_' prefix (will be auto-prepended). Examples: 'APOPTOSIS', "
+"'P53\\_PATHWAY', 'HYPOXIA', 'DNA\\_REPAIR', 'INFLAMMATORY\\_RESPONSE', "
+"'EPITHELIAL\\_MESENCHYMAL\\_TRANSITION', 'TNFA\\_SIGNALING\\_VIA\\_NFKB',"
+" 'KRAS\\_SIGNALING\\_UP', 'OXIDATIVE\\_PHOSPHORYLATION', 'GLYCOLYSIS', "
+"'MYC\\_TARGETS\\_V1'"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:84 da4affe76531485b9249f6162513fdf9
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:86 f48dc67d442a4bba9d42d987cb961b9f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/msigdb_tools.rst:87 3aa318af2da14fadbfe1736330ef2623
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

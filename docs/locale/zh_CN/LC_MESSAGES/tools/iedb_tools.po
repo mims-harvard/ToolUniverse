@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/iedb_tools.rst:10 7cc7d93afb8e4a46b16996383ca43bd5
+msgid "Iedb Tools"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:12 70976a3163744d7287323c79531b9564
+msgid ""
+"**Configuration File**: ``iedb_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 8"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:16 4df3d80959144c28930ad2f59d8e619a
+msgid ""
+"This page contains all tools defined in the ``iedb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:19 600cafdc155444e1951e0d25ef790dc0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:22 561614887c04455897831898649e6f29
+msgid "**iedb_get_epitope_antigens** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:24 eca0e2ee117f4d479709b72aae8eaa35
+msgid ""
+"Given an epitope \\`structure\\_id\\`, get linked antigens (IEDB Query "
+"API). Returned rows contain \\..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst c1478c621b624710ad7210f2883411b8
+msgid "iedb_get_epitope_antigens tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:28 ../../tools/iedb_tools.rst:74
+#: ../../tools/iedb_tools.rst:120 ../../tools/iedb_tools.rst:166
+#: ../../tools/iedb_tools.rst:210 ../../tools/iedb_tools.rst:254
+#: ../../tools/iedb_tools.rst:306 ../../tools/iedb_tools.rst:350
+#: 146894c62f1a482ebd702cfe73efef02 501d436e70434bcd9839164bf14a4091
+#: 511776a7fa914a13b5cea24e82dab997 607b7673fdad4980bb219a67c433e1ab
+#: 679dc314efe44b7e9005e0148891a975 6cd32ce2019d42619a68e2eb46eb268c
+#: 6dafd866d55b41bc90a0aaa5ddc1d8f0 72d8d5b2d54442ebbe3e5290890141f3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:30 d268518f8b9847dc91b68a6ace977f6c
+msgid "**Name**: ``iedb_get_epitope_antigens``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:31 ../../tools/iedb_tools.rst:77
+#: ../../tools/iedb_tools.rst:123 ../../tools/iedb_tools.rst:169
+#: ../../tools/iedb_tools.rst:213 ../../tools/iedb_tools.rst:257
+#: ../../tools/iedb_tools.rst:309 ../../tools/iedb_tools.rst:353
+#: 4f469af1670a4ce0886b1dd38f4dedf7 66bf0eb6fc824b7bbac8be72b0a9b6e5
+#: 71d32739724944ac90be72690c132f66 923febba640042ebaceba2f1931345e3
+#: 9ca48879fac64cb38ead7ea0e25065c9 b7c9e369b42847c9b661379caa2e1391
+#: d42cbb69c38d4dc4b39d3a0374abb8bb e36f4aed887e4bf09aab168389b19325
+msgid "**Type**: ``IEDBTool``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:32 2a397b8b4fa143d197ede5d4d461beec
+msgid ""
+"**Description**: Given an epitope \\`structure\\_id\\`, get linked "
+"antigens (IEDB Query API). Returned rows contain "
+"\\`parent\\_source\\_antigen\\_iri\\` (an antigen identifier) that you "
+"can use in other filters/searches."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:34 ../../tools/iedb_tools.rst:80
+#: ../../tools/iedb_tools.rst:126 ../../tools/iedb_tools.rst:174
+#: ../../tools/iedb_tools.rst:218 ../../tools/iedb_tools.rst:264
+#: ../../tools/iedb_tools.rst:314 ../../tools/iedb_tools.rst:358
+#: 4b53a948061045faa41f28a6e7c26132 4c4f4c182e144b0498b33cd30a7e1f7f
+#: 6e7ff5f8db624ef3a3398180095567f3 818a57a9fa904021881b5305f923b9ba
+#: 8c0c522b054e480ca793d84d14bcb140 a568623a200a456582b2c9c31bbdc248
+#: c58e6231c6be4f87ab029ef4cd0e7fad df1e8211675847528c2ffa1fcd0186d7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:36 ../../tools/iedb_tools.rst:82
+#: ../../tools/iedb_tools.rst:128 3b460d1e4f724ae99e219d4ebcf89c05
+#: 3c0dbe97db2a4db1a81b0405cb7809e9 a76708f34dfd4cbc91360c4c53c6e90f
+msgid ""
+"``structure_id`` (integer) (required) IEDB epitope structure ID (from "
+"\\`iedb\\_search\\_epitopes\\`)."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:39 ../../tools/iedb_tools.rst:85
+#: ../../tools/iedb_tools.rst:131 ../../tools/iedb_tools.rst:176
+#: ../../tools/iedb_tools.rst:220 ../../tools/iedb_tools.rst:272
+#: ../../tools/iedb_tools.rst:316 ../../tools/iedb_tools.rst:360
+#: 05126b6883714136947d286c74831361 2112366c7c2343b391fa7f26972fcd13
+#: 4ee361b370e345ecb664b3b88a3a0331 80790c5c1a074b5795b3999b823dc2ce
+#: 96a893c41be545f0a62f9389660d9f08 b9ac392b63134f13b794be64c3aa536c
+#: f04e005a510a4d599f2e39c25beba950 fafa7d0985b84b9baefda294741c372b
+msgid "``limit`` (integer) (optional) Maximum number of rows to return."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:42 ../../tools/iedb_tools.rst:88
+#: ../../tools/iedb_tools.rst:134 ../../tools/iedb_tools.rst:179
+#: ../../tools/iedb_tools.rst:223 ../../tools/iedb_tools.rst:275
+#: ../../tools/iedb_tools.rst:319 ../../tools/iedb_tools.rst:363
+#: 40055c1d38374b3996ed3e2eee0f987b 5bc2f96efdf54579b07cafe5c09128d3
+#: 7f41c95d477345a78c6709b8c4b7f169 92575693ecb446569ffdcd49989c258f
+#: a428469bdffa4756ab5af31f17f784c0 c1476118ffed46158266d24439fde6d2
+#: c8bb03f69c994e41aa1047d1eceeaba5 e2c8be20e0dc417884f4076bee201f7e
+msgid "``offset`` (integer) (optional) Pagination offset."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:45 ../../tools/iedb_tools.rst:91
+#: ../../tools/iedb_tools.rst:137 ../../tools/iedb_tools.rst:182
+#: ../../tools/iedb_tools.rst:226 ../../tools/iedb_tools.rst:322
+#: ../../tools/iedb_tools.rst:366 0360a2803a434b7f9dcc3f9b228db266
+#: 1079799ba3204358b352c77eb42ba6bf 59cfd80abbcd4e95bc0d66f027f63215
+#: 80e6a9608b594c10858ae2099e90ee9d 88febcf5832d43958839401c07ab9b33
+#: a11fba07e9ef4281bd11aea2d7b10051 f10ea69958a74c0dac1a8eabee933a8a
+msgid "``order`` (string) (optional) Optional PostgREST order clause."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:48 ../../tools/iedb_tools.rst:94
+#: ../../tools/iedb_tools.rst:140 ../../tools/iedb_tools.rst:185
+#: ../../tools/iedb_tools.rst:229 ../../tools/iedb_tools.rst:325
+#: ../../tools/iedb_tools.rst:369 07e8c64d69774ac485c6eaca554fa797
+#: 95c49559527c4b6b91df5fc5d0134fda 9d1f6893c5d24e1f9eafc45e0698da19
+#: 9f3fd857612f47e08468f7d4d66338e2 afd4c108e639469784fa105382f98476
+#: c19f14fa62734e568a89192a7c2fc684 d2348c5d99714fdb985a48ac860a8758
+msgid ""
+"``select`` (unknown) (optional) Optional projection list (comma-separated"
+" string or array of field names)."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:51 ../../tools/iedb_tools.rst:97
+#: ../../tools/iedb_tools.rst:143 ../../tools/iedb_tools.rst:188
+#: ../../tools/iedb_tools.rst:232 ../../tools/iedb_tools.rst:328
+#: ../../tools/iedb_tools.rst:372 39d9cb80de1b4361b9b389797ebeba33
+#: 502b7fc67e944fbba27712223e789b7d 5965cb7cf0a64003b340c781059189b4
+#: 6a30ba2a683946229e6c7215f18dee63 7611238fb6dd4529bcfab71fa742ccb5
+#: b565736a118e4408a545e84458cb2063 c8897b46260341949b26ea7d286e3c79
+msgid ""
+"``filters`` (object) (optional) Advanced PostgREST filters mapping column"
+" -> filter expression."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:54 ../../tools/iedb_tools.rst:100
+#: ../../tools/iedb_tools.rst:146 ../../tools/iedb_tools.rst:191
+#: ../../tools/iedb_tools.rst:235 ../../tools/iedb_tools.rst:287
+#: ../../tools/iedb_tools.rst:331 ../../tools/iedb_tools.rst:375
+#: 05d4ee3b83174e68a3839f5243ddad57 0a5ddbb6c7844ac49f1875e68c9121d2
+#: 0d0fc3defc274290abe477ae75b32a50 3fc6cea91a534ef098b6be6d338a8628
+#: 5628e68c6f3c4e3c8ec1f0aa1e0018d8 67f4ffb542eb440eb49790fdea342689
+#: c6e25af2624c4616b04bea7584e4cd1e e902188c628d4f96ada00325d40f0438
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:68 358b176ea6bb4d029453410bca603303
+msgid "**iedb_get_epitope_mhc** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:70 d3d2a8b92dd84addae9d1a6eca200c2d
+msgid ""
+"Given an epitope \\`structure\\_id\\`, get linked MHC restriction "
+"association rows (IEDB Query API)...."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst ce5dba9741c94fd7bfd864de4b5a2636
+msgid "iedb_get_epitope_mhc tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:76 00dfd8d86f79471f86081cba79f5b74a
+msgid "**Name**: ``iedb_get_epitope_mhc``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:78 40c5147ef087464895c21c265fd86705
+msgid ""
+"**Description**: Given an epitope \\`structure\\_id\\`, get linked MHC "
+"restriction association rows (IEDB Query API). Returned rows include "
+"\\`elution\\_id\\` for the association."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:114 bcc93f7e0ee2428aba59ac52309c4608
+msgid "**iedb_get_epitope_references** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:116 10fdd555c70b45ab9d708eec92c3db24
+msgid ""
+"Given an epitope \\`structure\\_id\\`, get linked references (IEDB Query "
+"API). Returned rows include..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst b9498bd8cbed41c79abef3aaeeccbd21
+msgid "iedb_get_epitope_references tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:122 185fff50372c4104b10cf909be37e024
+msgid "**Name**: ``iedb_get_epitope_references``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:124 a68763b757e14d6c913cab4fff1d02ec
+msgid ""
+"**Description**: Given an epitope \\`structure\\_id\\`, get linked "
+"references (IEDB Query API). Returned rows include \\`reference\\_id\\`; "
+"use \\`iedb\\_search\\_references\\` to retrieve titles and PubMed IDs "
+"for those reference IDs."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:160 9a2f68cb2093460b99c2aa415cd3d888
+msgid "**iedb_search_antigens** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:162 a2234d08f86c4b41b3a844fcdc7bb945
+msgid ""
+"Search antigen-related rows (IEDB Query API). This is mainly useful for "
+"discovering antigen IRIs/..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst b369fcfe0b554a139c074fc3924fee6a
+msgid "iedb_search_antigens tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:168 1845915c993943d0b0022c9d8776b034
+msgid "**Name**: ``iedb_search_antigens``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:170 dffc89f7f1f6462495e189df008c391c
+msgid ""
+"**Description**: Search antigen-related rows (IEDB Query API). This is "
+"mainly useful for discovering antigen IRIs/IDs to use in other filters."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:172 ../../tools/iedb_tools.rst:216
+#: ../../tools/iedb_tools.rst:312 ../../tools/iedb_tools.rst:356
+#: 057a48bc64064eabb5cb4200121e71fc 41aa0db403d1475db20d256713304457
+#: 940f7e9bfcb84d199903b8278f8a9387 be7a3e7b65c54bf1948a4d5a9df66afc
+msgid ""
+"Tip: use \\`select\\` to request only a few fields (smaller + faster "
+"responses)."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:204 4a731b01a8324363a508e5d84b238fbb
+msgid "**iedb_search_bcell** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:206 ffb90855728b4eae92a2038fb610b7f0
+msgid ""
+"Search B-cell assay rows (IEDB Query API). Use this to discover "
+"\\`bcell\\_id\\` values and related ..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst cc273928d081412cabf6c735a47c6409
+msgid "iedb_search_bcell tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:212 e3dd940d26244b7cbc374440166e36ee
+msgid "**Name**: ``iedb_search_bcell``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:214 419aa9c3b0824da4bc84aab0535a43f4
+msgid ""
+"**Description**: Search B-cell assay rows (IEDB Query API). Use this to "
+"discover \\`bcell\\_id\\` values and related epitope \\`structure\\_id\\`"
+" values."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:248 52e5588bec6d48b297c9f6f8ff6958c8
+msgid "**iedb_search_epitopes** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:250 71f08eb2a986463d9f16293ba66eb103
+msgid ""
+"Search immune epitopes (IEDB Query API). Use this to discover epitope "
+"\\`structure\\_id\\` values, t..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst 1f1d54bc86fe482b89db05ca917978c6
+msgid "iedb_search_epitopes tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:256 90783abcb40b44cd9d073695cbd6589b
+msgid "**Name**: ``iedb_search_epitopes``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:258 426ea9c79a7643b8bd6ee7f277f4fc7d
+msgid ""
+"**Description**: Search immune epitopes (IEDB Query API). Use this to "
+"discover epitope \\`structure\\_id\\` values, then use the epitope "
+"linking tools (e.g., \\`iedb\\_get\\_epitope\\_references\\`) to retrieve"
+" related references, MHC, antigens, etc."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:260 92c16b5d1ba04dbcbc21aa7d924884fd
+msgid ""
+"Tips: - Use \\`select\\` to request only a few fields (smaller + faster "
+"responses). - For advanced filtering, pass \\`filters\\` with values like"
+" \\`eq.123\\` or \\`ilike.\\*KVF\\*\\`."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:266 da9fc200dcb942838e3b85f7e0fabe2a
+msgid ""
+"``sequence_contains`` (string) (optional) Sequence fragment to search "
+"within \\`linear\\_sequence\\` using a contains match. Example: 'KVF' "
+"finds epitopes containing that motif."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:269 1ccf134860784fbda49516ffca0cd047
+msgid ""
+"``structure_type`` (string) (optional) Filter by epitope structure type. "
+"Example: 'Linear peptide'."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:278 94691ed259ac42cf968f6041a2331ced
+msgid ""
+"``order`` (string) (optional) Optional PostgREST order clause (e.g., "
+"'structure\\_id.asc')."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:281 68b02bd747d649cdb84114f8dc07282a
+msgid ""
+"``select`` (unknown) (optional) Optional projection list to reduce "
+"payload size. Provide a comma-separated string or an array of field names"
+" (e.g., ['structure\\_id','linear\\_sequence'])."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:284 615aa95046664d77bfcd2074f428abbb
+#, python-brace-format
+msgid ""
+"``filters`` (object) (optional) Advanced PostgREST filters mapping column"
+" -> filter expression (e.g., "
+"{\"linear\\_sequence\":\"ilike.\\*KVF\\*\"})."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:300 1ae7d5b632c24033989694b14a85d1b0
+msgid "**iedb_search_mhc** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:302 dd110ac030d640cf962b75ff4601db49
+msgid ""
+"Search MHC-related assay rows (IEDB Query API). Use this to discover "
+"epitope \\`structure\\_id\\` va..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst 02c435417d6e4bb6a75dc5146c492a52
+msgid "iedb_search_mhc tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:308 b4ca4ee1c6014bb5b664e6b92863ec9a
+msgid "**Name**: ``iedb_search_mhc``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:310 c0b36bf0030e4ba3950fcc3e2f06753d
+msgid ""
+"**Description**: Search MHC-related assay rows (IEDB Query API). Use this"
+" to discover epitope \\`structure\\_id\\` values involved in MHC "
+"restriction."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:344 5a56906085654a3ea3556b1bb3dcb21f
+msgid "**iedb_search_references** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:346 fcc63a83a01f4ee99a863e7fc2b5d87b
+msgid ""
+"Search references/citations (IEDB Query API). Use this to discover "
+"\\`reference\\_id\\` values, PubM..."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst 4a4e491fb91e4863b8d7cc1d2be213ae
+msgid "iedb_search_references tool specification"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:352 1d4c50f6782e4d26becebc7d817fc316
+msgid "**Name**: ``iedb_search_references``"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:354 e86bd324ecc04e5eb16c48e951ac658b
+msgid ""
+"**Description**: Search references/citations (IEDB Query API). Use this "
+"to discover \\`reference\\_id\\` values, PubMed IDs, and paper titles."
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:388 413c2e8f39704411acf1797e65cbc2d9
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:390 72aecefee097449aa5bc3e6282ec9796
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/iedb_tools.rst:391 c96a2efb58244f7989a758a2f793d8e9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

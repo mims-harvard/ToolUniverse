@@ -20,12 +20,14 @@ Quick Start
 
 **I want to learn tool development systematically:**
 → Choose your path:
+
  - **Local tools**: :doc:`local_tools/local_tools_tutorial` - Python classes for API wrappers, data processing
  - **Async tools**: :doc:`async_tools_guide` - Long-running operations with automatic polling
  - **Remote tools**: :doc:`remote_tools/tutorial` - MCP servers for microservices, heavy computation
 
 **I want to contribute tools to the community:**
 → Choose your tool type:
+
  - **Local tools**: :doc:`contributing/local_tools` - Submit Python tools (requires modifying ``__init__.py``)
  - **Remote tools**: :doc:`contributing/remote_tools` - Submit MCP servers (requires deployment)
  - **Complete guide**: :doc:`contributing/index` - Full contribution guidelines with code examples
@@ -75,26 +77,31 @@ Development Workflow
 --------------------
 
 1. **Plan Your Tool**
+
  - Define functionality and requirements
  - Choose between local or remote implementation
  - Design API and parameter structure
 
 2. **Develop Your Tool**
+
  - Implement core functionality
  - Add proper error handling
  - Write comprehensive tests
 
 3. **Document Your Tool**
+
  - Create clear documentation
  - Provide usage examples
  - Document all parameters and outputs
 
 4. **Test Thoroughly**
+
  - Unit tests for all functionality
  - Integration tests with ToolUniverse
  - Test edge cases and error conditions
 
 5. **Submit for Review** (if contributing)
+
  - Follow contribution guidelines
  - Create pull request
  - Address review feedback

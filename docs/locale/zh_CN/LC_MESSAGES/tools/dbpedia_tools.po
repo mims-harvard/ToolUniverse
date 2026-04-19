@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dbpedia_tools.rst:10 cd5c1c9ba67d43b88504c85901542038
+msgid "Dbpedia Tools"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:12 3439962cc6284100af1569c708dd41bf
+msgid ""
+"**Configuration File**: ``dbpedia_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:16 30a2cea111f644b387c55c5b24ce2981
+msgid ""
+"This page contains all tools defined in the ``dbpedia_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:19 debcd59883ab40aa9c3db4f1d412516a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:22 0413c6b7fb1744fc808d8229cc3157cb
+msgid "**DBpedia_SPARQL_query** (Type: DBpediaSPARQLTool)"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:24 fa598db4e51040b991e1812970b9a2c9
+msgid ""
+"Execute SPARQL queries against DBpedia to retrieve structured knowledge. "
+"DBpedia extracts structu..."
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst 231ae10ca04c4d08a438a339d39419a7
+msgid "DBpedia_SPARQL_query tool specification"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:28 42767dc797624e648cf19eb4af5c155c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:30 f6d3a9e6d0894576b3ed5681a06b0541
+msgid "**Name**: ``DBpedia_SPARQL_query``"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:31 05b9b0669ea64912b2f426e3330f3488
+msgid "**Type**: ``DBpediaSPARQLTool``"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:32 dbd1387954dc463cbb0c0415c6e18ad6
+msgid ""
+"**Description**: Execute SPARQL queries against DBpedia to retrieve "
+"structured knowledge. DBpedia extracts structured information from "
+"Wikipedia and makes it available as linked data. This tool is "
+"particularly useful for querying information about people, places, "
+"organizations, works, and other entities, especially in humanities and "
+"social sciences domains. No API key required."
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:34 f263e296b5454f12970849dc6dc83334
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:36 29b0160faa014eba9d2e06ea85454e64
+msgid ""
+"``sparql`` (string) (required) SPARQL query string to execute against "
+"DBpedia. Use SPARQL syntax to query entities, relationships, and "
+"properties. DBpedia uses different property names than Wikidata (e.g., "
+"dbo:abstract, dbo:birthDate, rdfs:label)."
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:39 2a3f3b0e895645c69adfbaceaa2900b3
+msgid ""
+"``max_results`` (integer) (required) Optional result limit override. If "
+"not specified, uses the LIMIT clause in the SPARQL query or returns all "
+"results."
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:42 ba1816b486be4701b515a14332288436
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:57 645222720d5c43779d259d3a497fc0f7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:59 fa20f3ea2cd74b58941779f8584fa39f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dbpedia_tools.rst:60 af290063392141a8be7b92129bea572e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

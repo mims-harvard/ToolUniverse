@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 16:01-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,131 +18,109 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../expand_tooluniverse/quick_start.rst:2 024ff7f787a3495382c5f8d1fe7dba9c
+#: ../../expand_tooluniverse/quick_start.rst:2 0e6a906d667f4243b108ad32aab0072f
 #, fuzzy
 msgid "Create Your First Tool"
 msgstr "快速入门：创建您的第一个工具"
 
-#: ../../expand_tooluniverse/quick_start.rst:4 cb543218194846519ccd3fb9e6764704
+#: ../../expand_tooluniverse/quick_start.rst:4 aae503502e5c49e7ba903cf908135fd8
 msgid ""
 "Get up and running with ToolUniverse in 5 minutes! This guide shows you "
 "how to create a simple local tool for your own use."
 msgstr "5分钟快速上手ToolUniverse！本指南将向您展示如何创建一个简单的本地工具供您个人使用。"
 
-#: ../../expand_tooluniverse/quick_start.rst:7 ed97dd4c75144309965aad9ab5f3c171
+#: ../../expand_tooluniverse/quick_start.rst:7 0d31a2ad0bd7451cafb18c43466eca9b
 msgid "What You'll Build"
 msgstr "您将构建的内容"
 
-#: ../../expand_tooluniverse/quick_start.rst:9 cdb89947815f4d51b4cf670a5093e302
+#: ../../expand_tooluniverse/quick_start.rst:9 7f8484715f8c4b1a8750a9d93bd84c61
 msgid ""
 "A text processing tool that converts text to uppercase - simple but "
 "demonstrates all the core concepts."
 msgstr "一种文本处理工具，可将文本转换为大写——简单但展示了所有核心概念。"
 
 #: ../../expand_tooluniverse/quick_start.rst:12
-#: 48c57af6b90d4f918973f17a60060987
+#: ddbc21d52eb941b593151ea8a4a2bc6c
 msgid "Complete Working Example"
 msgstr "完整工作示例"
 
 #: ../../expand_tooluniverse/quick_start.rst:14
-#: ff3cb545cb4140d492268a6476f31d0d
+#: ce90ae01cba44da5ad43991979aa94e2
 msgid "**Step 1: Create the tool file**"
 msgstr "**步骤 1：创建工具文件**"
 
 #: ../../expand_tooluniverse/quick_start.rst:16
-#: 383cfd02b63e4fa0999a994a910014f8
+#: 041b157d3154498aba92747bc68a831c
 msgid "Create ``my_text_tool.py`` in your project directory:"
 msgstr "在您的项目目录中创建 ``my_text_tool.py``："
 
 #: ../../expand_tooluniverse/quick_start.rst:69
-#: 3290fd1140434a1ebf44ce4fb0defdaf
+#: 12606a37110b43f997272ca22161ead8
 msgid "**Step 2: Use the tool**"
 msgstr "**步骤 2：使用工具**"
 
 #: ../../expand_tooluniverse/quick_start.rst:71
-#: bc53f0a92f964226a3370c7f2040dba6
+#: 5fced755fb40476e82329dcaf2647e86
 msgid "Create ``main.py`` in the same directory:"
 msgstr "在同一目录下创建 ``main.py``:"
 
 #: ../../expand_tooluniverse/quick_start.rst:110
-#: 1583d947ac47493f854f7a89bb69b827
+#: fd9aa0f6515749018c76f220ec677537
 msgid "**Step 3: Run it**"
 msgstr "**步骤 3：运行它**"
 
 #: ../../expand_tooluniverse/quick_start.rst:116
-#: 1e812e8af8e24a1da11657c1f355800e
-msgid "**Expected Output:** .. code-block:: text"
+#: 0c241b563a594e9780f6c75ae57aacee
+#, fuzzy
+msgid "**Expected Output:**"
 msgstr "**预期输出：** .. code-block:: text"
 
-#: ../../expand_tooluniverse/quick_start.rst:122
-#: 8a714ef73b7042909ee43d76da32dda4
-msgid "Test 1: uppercase Input:  'Hello World' Output: 'HELLO WORLD'"
-msgstr ""
-"测试 1：大写  \n"
-"输入：'Hello World'  \n"
-"输出：'HELLO WORLD'"
-
-#: ../../expand_tooluniverse/quick_start.rst:126
-#: 3c61c4353ed94b3f81ba58e0ce059851
-msgid "Test 2: lowercase Input:  'PYTHON' Output: 'python'"
-msgstr ""
-"测试 2：小写  \n"
-"输入：'PYTHON'  \n"
-"输出：'python'"
-
-#: ../../expand_tooluniverse/quick_start.rst:130
-#: 741ee27d5c154e6fa2fbdf5171028e88
-msgid "Test 3: reverse Input:  'ToolUniverse' Output: 'esrevinUlooT'"
-msgstr ""
-"测试 3：反转  \n"
-"输入：'ToolUniverse'  \n"
-"输出：'esrevinUlooT'"
-
-#: ../../expand_tooluniverse/quick_start.rst:135
-#: 8ca9ac64ff084290990c847d9513dc81
-msgid "That's It! 🎉"
+#: ../../expand_tooluniverse/quick_start.rst:136
+#: b25c2d6cb7b94ccabc062c5fadffe203
+#, fuzzy
+msgid "That's It!"
 msgstr "就是这样！🎉"
 
-#: ../../expand_tooluniverse/quick_start.rst:137
-#: 9f25e17081e4416984b0a4d682951d17
+#: ../../expand_tooluniverse/quick_start.rst:138
+#: 82e2d2ada0d54e4eba4d5a8907fc33a3
 msgid ""
 "You've successfully created and used your first ToolUniverse tool! Here's"
 " what happened:"
 msgstr "您已成功创建并使用了您的第一个 ToolUniverse 工具！以下是发生的情况："
 
-#: ../../expand_tooluniverse/quick_start.rst:139
-#: 2c1970a97d3d47b4b2fe48ad8202c023
+#: ../../expand_tooluniverse/quick_start.rst:140
+#: 7c85334afad7403baffdd8fa277f0862
 msgid ""
 "**Tool Definition**: The ``@register_tool`` decorator registered your "
 "tool with ToolUniverse"
 msgstr "**工具定义**：``@register_tool`` 装饰器将您的工具注册到 ToolUniverse"
 
-#: ../../expand_tooluniverse/quick_start.rst:140
-#: 4c570130a7ad4c068cdce71890337c17
+#: ../../expand_tooluniverse/quick_start.rst:141
+#: ed60e70d1a504c9da2c83c6a8fb1a42d
 msgid ""
 "**Configuration**: The config dictionary defined the tool's interface and"
 " parameters"
 msgstr "**配置**：配置字典定义了工具的界面和参数"
 
-#: ../../expand_tooluniverse/quick_start.rst:141
-#: 1dac4707eb6f432cbab66e15ac6e2ac0
+#: ../../expand_tooluniverse/quick_start.rst:142
+#: 31e2ebf52ba44c40b59e59af15af99d5
 msgid "**Implementation**: The ``run()`` method contained your tool's logic"
 msgstr "**实现**：``run()`` 方法包含了工具的逻辑"
 
-#: ../../expand_tooluniverse/quick_start.rst:142
-#: 083f98e902784e7d88d946d7ac04496e
+#: ../../expand_tooluniverse/quick_start.rst:143
+#: caf36fc1f8ba46b292d3a94ce03e583f
 msgid "**Usage**: ToolUniverse automatically discovered and loaded your tool"
 msgstr "**使用说明**：ToolUniverse 已自动发现并加载您的工具"
 
-#: ../../expand_tooluniverse/quick_start.rst:145
-#: 44b056c5528540828ba1ec2f9b716137
+#: ../../expand_tooluniverse/quick_start.rst:146
+#: 02d4610562f94207bcc6c48bf071b8e9
 msgid "Key Concepts Explained"
 msgstr "关键概念解析"
 
-#: ../../expand_tooluniverse/quick_start.rst:147
-#: 4a99be8aad6e456194f3557415758e4c
+#: ../../expand_tooluniverse/quick_start.rst:148
+#: c80070dcdbe048a7b1d5e571c8650210
 #, python-brace-format
 msgid ""
 "**Tool Registration** - ``@register_tool('ToolType', config={...})`` "
@@ -152,8 +130,8 @@ msgstr ""
 "**工具注册** - ``@register_tool('ToolType', config={...})`` 用于注册您的工具 - "
 "配置项定义了工具的名称、参数和元数据 - ToolUniverse 会自动发现已注册的工具"
 
-#: ../../expand_tooluniverse/quick_start.rst:152
-#: 0cc8338f6b71406b90d14cf323c91cb2
+#: ../../expand_tooluniverse/quick_start.rst:153
+#: d823cd5f301342d7954fda38fd4e9ee0
 msgid ""
 "**BaseTool Class** - All tools must inherit from ``BaseTool`` - Implement"
 " the ``run(arguments)`` method with your logic - Return a dictionary with"
@@ -162,64 +140,67 @@ msgstr ""
 "**BaseTool 类** - 所有工具必须继承 ``BaseTool`` - 使用您的逻辑实现 ``run(arguments)`` 方法 -"
 " 返回一个包含 ``success`` 和结果数据的字典"
 
-#: ../../expand_tooluniverse/quick_start.rst:157
-#: c5457870f8fc466f878a2e30aa38a3fd
+#: ../../expand_tooluniverse/quick_start.rst:158
+#: 54471b7003474a4db4eecb649f7704a9
+#, fuzzy
 msgid ""
-"**Tool Execution** - Use ``tu.run_one_function()`` to execute tools - "
-"Pass tool name and arguments as a dictionary - ToolUniverse handles "
-"parameter validation and execution"
+"**Tool Execution** - Use ``tu.run()`` to execute tools - Pass tool name "
+"and arguments as a dictionary - ToolUniverse handles parameter validation"
+" and execution"
 msgstr ""
 "**工具执行** - 使用 ``tu.run_one_function()`` 执行工具 - 将工具名称和参数以字典形式传递 - "
 "ToolUniverse 负责参数验证和执行"
 
-#: ../../expand_tooluniverse/quick_start.rst:162
-#: 5b629c8209064f32b58f8595f1ffce55
+#: ../../expand_tooluniverse/quick_start.rst:163
+#: 16a25dcb6b634e18b89582654919b241
 msgid ""
 "**Parameter Validation** - ToolUniverse automatically validates "
 "parameters based on your config - Required parameters are enforced - Type"
 " checking happens automatically"
 msgstr "**参数验证** - ToolUniverse 会根据您的配置自动验证参数 - 强制执行必需参数 - 自动进行类型检查"
 
-#: ../../expand_tooluniverse/quick_start.rst:168
-#: f6657a4ef743423fbdbb003f11de49b4
+#: ../../expand_tooluniverse/quick_start.rst:169
+#: 9dbbd05c22ee4515925e3e20d70b5a76
 msgid "Next Steps"
 msgstr "下一步"
 
-#: ../../expand_tooluniverse/quick_start.rst:170
-#: abf7f15270014ab985f0a4185dbab6fa
+#: ../../expand_tooluniverse/quick_start.rst:171
+#: ecf541d25363484e88f9b5fb9b8fa842
 msgid "Now that you have a working tool, you can:"
 msgstr "现在您已经拥有一个可用的工具，您可以："
 
-#: ../../expand_tooluniverse/quick_start.rst:172
-#: e4dd8e149822424ba3f99d86be3970d7
+#: ../../expand_tooluniverse/quick_start.rst:173
+#: 07e0472130bf4416b44bd51d677c9ca0
 #, fuzzy
 msgid ""
-"**📚 Learn More:** - :doc:`local_tools/tutorial` - Comprehensive local "
-"tool development - :doc:`remote_tools/tutorial` - Create remote tools and"
-" MCP servers - Review the tool type comparison table in "
-":doc:`contributing/index`"
+"** Learn More:** - :doc:`local_tools/local_tools_tutorial` - "
+"Comprehensive local tool development - :doc:`remote_tools/tutorial` - "
+"Create remote tools and MCP servers - Review the tool type comparison "
+"table in :doc:`contributing/index`"
 msgstr ""
 "**📚 了解更多：**  \n"
 "- :doc:`local_tools/tutorial` - 本地工具开发全面指南  \n"
 "- :doc:`remote_tools/tutorial` - 创建远程工具和MCP服务器  \n"
 "- :doc:`reference/comparison` - 比较不同工具类型及使用场景"
 
-#: ../../expand_tooluniverse/quick_start.rst:177
-#: 7bb663d2aa8d4c32929985cb37462903
+#: ../../expand_tooluniverse/quick_start.rst:178
+#: e33ef63a4c104fdcb6feb850b64bb101
+#, fuzzy
 msgid ""
-"**🎁 Contribute to Community:** - :doc:`contributing/local_tools` - Submit"
-" your tool to ToolUniverse (requires additional steps) - "
+"** Contribute to Community:** - :doc:`contributing/local_tools` - Submit "
+"your tool to ToolUniverse (requires additional steps) - "
 ":doc:`contributing/remote_tools` - Submit remote tools to the community"
 msgstr ""
 "**🎁 贡献社区：**  \n"
 "- :doc:`contributing/local_tools` - 提交您的工具至 ToolUniverse（需额外步骤）  \n"
 "- :doc:`contributing/remote_tools` - 提交远程工具至社区"
 
-#: ../../expand_tooluniverse/quick_start.rst:181
-#: 44d847435931451ba4aae80d1f8fc84e
+#: ../../expand_tooluniverse/quick_start.rst:182
+#: ccc59632de7f4a5290142152ce2a90df
+#, fuzzy
 msgid ""
-"**🔧 Advanced Features:** - Add input validation with ``validate_input()``"
-" method - Implement error handling and retry logic - Add caching and "
+"** Advanced Features:** - Add input validation with ``validate_input()`` "
+"method - Implement error handling and retry logic - Add caching and "
 "performance optimizations - Create more complex tools with multiple "
 "operations"
 msgstr ""
@@ -229,10 +210,11 @@ msgstr ""
 "- 添加缓存和性能优化  \n"
 "- 创建具有多种操作的更复杂工具"
 
-#: ../../expand_tooluniverse/quick_start.rst:187
-#: e28ddff638344c45a5ff1c16e8b90327
+#: ../../expand_tooluniverse/quick_start.rst:188
+#: e0f58b10a1df430b938eeb4828fe62ba
+#, fuzzy
 msgid ""
-"**💡 Pro Tips:** - Start simple and add complexity gradually - Test your "
+"** Pro Tips:** - Start simple and add complexity gradually - Test your "
 "tools thoroughly before contributing - Use meaningful parameter names and"
 " descriptions - Follow the existing tool patterns in the codebase"
 msgstr ""
@@ -242,13 +224,13 @@ msgstr ""
 "- 使用有意义的参数名称和描述  \n"
 "- 遵循代码库中现有的工具模式"
 
-#: ../../expand_tooluniverse/quick_start.rst:194
-#: d45fd48678c843fabf3168e96181a000
+#: ../../expand_tooluniverse/quick_start.rst:195
+#: a002e1d6fa9442f1a8b568365f7082a9
 msgid "Common Questions"
 msgstr "常见问题"
 
-#: ../../expand_tooluniverse/quick_start.rst:196
-#: 175e0e5c5cc449a48d91122351cc711c
+#: ../../expand_tooluniverse/quick_start.rst:197
+#: 61934dcaa2024ccba048886cab594663
 msgid ""
 "**Q: Can I put the tool in a different file?** A: Yes! Just make sure to "
 "import it where you use ToolUniverse."
@@ -256,8 +238,8 @@ msgstr ""
 "**Q: 我可以将工具放在不同的文件中吗？**  \n"
 "A: 可以！只需确保在使用 ToolUniverse 的地方导入它即可。"
 
-#: ../../expand_tooluniverse/quick_start.rst:199
-#: 41596463e39d4cefa5c7b9216beeb08e
+#: ../../expand_tooluniverse/quick_start.rst:200
+#: fbff026c1d054ffd85a55f948333f130
 msgid ""
 "**Q: What if I want to add more operations?** A: Just add them to the "
 "``enum`` list in the config and implement them in the ``run()`` method."
@@ -265,8 +247,8 @@ msgstr ""
 "**问：如果我想添加更多操作怎么办？**  \n"
 "**答：只需将它们添加到配置中的``enum``列表，并在``run()``方法中实现即可。**"
 
-#: ../../expand_tooluniverse/quick_start.rst:202
-#: 3bd6a32a29844c07963b779564726227
+#: ../../expand_tooluniverse/quick_start.rst:203
+#: 2b59ae60191e466f8b161a1fdc8a33af
 msgid ""
 "**Q: Can I use this tool in other projects?** A: Yes! Copy the tool file "
 "and import it in any project that has ToolUniverse installed."
@@ -274,8 +256,8 @@ msgstr ""
 "**Q: 我可以在其他项目中使用这个工具吗？**  \n"
 "A: 可以！复制工具文件并将其导入到任何安装了 ToolUniverse 的项目中。"
 
-#: ../../expand_tooluniverse/quick_start.rst:205
-#: 8354fe19e00e455780639e1f377fbc33
+#: ../../expand_tooluniverse/quick_start.rst:206
+#: 9d9d6d1d4bb74d3da6c7023e6506e4a1
 msgid ""
 "**Q: How do I handle errors better?** A: Add a ``validate_input()`` "
 "method to your tool class for custom validation."
@@ -283,8 +265,8 @@ msgstr ""
 "**问：如何更好地处理错误？**  \n"
 "答：在您的工具类中添加一个``validate_input()``方法，用于自定义验证。"
 
-#: ../../expand_tooluniverse/quick_start.rst:208
-#: 5d7739240283412bbccf3e93e3ad4878
+#: ../../expand_tooluniverse/quick_start.rst:209
+#: 2d25ce7e3e104ec99a82167a138c7613
 msgid ""
 "**Q: Can I make this a remote tool?** A: Yes! See "
 ":doc:`remote_tools/tutorial` for creating MCP servers."
@@ -292,8 +274,27 @@ msgstr ""
 "**问：我可以将其设置为远程工具吗？**  \n"
 "答：可以！请参阅 :doc:`remote_tools/tutorial` 了解创建 MCP 服务器的教程。"
 
-#: ../../expand_tooluniverse/quick_start.rst:211
-#: 26f2a42f1d634769b4383f4ec5fd31ac
-msgid "Ready to build something amazing? Let's go! 🚀"
+#: ../../expand_tooluniverse/quick_start.rst:212
+#: 6885267360394db48fd3bccedd4451eb
+#, fuzzy
+msgid "Ready to build something amazing? Let's go!"
 msgstr "准备好打造非凡成果了吗？开始吧！🚀"
+
+#~ msgid "Test 1: uppercase Input:  'Hello World' Output: 'HELLO WORLD'"
+#~ msgstr ""
+#~ "测试 1：大写  \n"
+#~ "输入：'Hello World'  \n"
+#~ "输出：'HELLO WORLD'"
+
+#~ msgid "Test 2: lowercase Input:  'PYTHON' Output: 'python'"
+#~ msgstr ""
+#~ "测试 2：小写  \n"
+#~ "输入：'PYTHON'  \n"
+#~ "输出：'python'"
+
+#~ msgid "Test 3: reverse Input:  'ToolUniverse' Output: 'esrevinUlooT'"
+#~ msgstr ""
+#~ "测试 3：反转  \n"
+#~ "输入：'ToolUniverse'  \n"
+#~ "输出：'esrevinUlooT'"
 

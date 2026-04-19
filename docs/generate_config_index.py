@@ -10,6 +10,7 @@ import json
 import sys
 from pathlib import Path
 from collections import defaultdict
+import re
 
 
 def load_tool_configs_by_file(data_dir):
@@ -62,10 +63,31 @@ def get_auto_generated_header(script_name="generate_config_index.py"):
 """
 
 
+def escape_rst_text(text):
+    """Escape plain text before inserting it into generated RST prose."""
+    if text is None:
+        return ""
+    text = str(text)
+    text = text.replace("\\", "\\\\")
+    text = text.replace("`", "\\`")
+    text = text.replace("*", "\\*")
+    text = text.replace("|", "\\|")
+    # Escape underscores that would otherwise become references/substitutions.
+    text = re.sub(r"(?<!\\)_", r"\\_", text)
+    return text
+
+
+def format_param_type(param_type):
+    """Normalize JSON schema type values for display."""
+    if isinstance(param_type, list):
+        return ", ".join(str(t) for t in param_type)
+    return str(param_type)
+
+
 def format_tool_details(tool):
     """Format detailed tool information in collapsible sections."""
     tool_name = tool.get("name", "Unknown")
-    tool_desc = tool.get("description", "No description provided")
+    tool_desc = escape_rst_text(tool.get("description", "No description provided"))
     tool_type = tool.get("type", "Unknown")
     parameters = tool.get("parameter", {})
     
@@ -86,8 +108,10 @@ def format_tool_details(tool):
         
         if properties:
             for param_name, param_info in properties.items():
-                param_type = param_info.get('type', 'unknown')
-                param_desc = param_info.get('description', 'No description')
+                param_type = format_param_type(param_info.get('type', 'unknown'))
+                param_desc = escape_rst_text(
+                    param_info.get('description', 'No description')
+                )
                 is_required = param_name in required
                 req_marker = " (required)" if is_required else " (optional)"
                 
@@ -165,7 +189,7 @@ def generate_file_page(file_path, tools, is_remote=False):
     for tool in sorted(tools, key=lambda x: x.get("name", "")):
         tool_name = tool.get("name", "Unknown")
         tool_type = tool.get("type", "Unknown")
-        tool_desc = tool.get("description", "No description")
+        tool_desc = escape_rst_text(tool.get("description", "No description"))
         
         # Truncate description if too long for summary
         if len(tool_desc) > 100:

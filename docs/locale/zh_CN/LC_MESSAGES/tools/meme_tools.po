@@ -1,0 +1,314 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/meme_tools.rst:10 bc7770ae943e4563bd68663f983a462e
+msgid "Meme Tools"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:12 2044e8fa8b244db3bdccbf734cf4f0a9
+msgid ""
+"**Configuration File**: ``meme_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:16 35f0b3dc0d4d495e89e7aacb37078e00
+msgid ""
+"This page contains all tools defined in the ``meme_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:19 1a1668f08d214e9c974d1fd21f097509
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:22 142a8dc108c3442aa806a23bf4cb72d9
+msgid "**MEME_discover_motifs** (Type: MEMETool)"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:24 48b59a6ae7364f6b87b4c1f7d1e892e0
+msgid ""
+"Run de novo motif discovery on a set of DNA sequences using the MEME "
+"algorithm from the MEME Suit..."
+msgstr ""
+
+#: ../../tools/meme_tools.rst a29100db3678433da7cdf53ee9725a98
+msgid "MEME_discover_motifs tool specification"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:28 ../../tools/meme_tools.rst:78
+#: ../../tools/meme_tools.rst:123 ../../tools/meme_tools.rst:157
+#: 2d4262cf573644d4bb06f1fa5da51927 322001ce0fbe42238aee3dba2689667b
+#: 3e90bbce9d9e4caf801af6a1b94eb0cf 7800acca8ed74b66900e084ed17bf434
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:30 ddb9a6266d814b10bf2d0c6ed21f235f
+msgid "**Name**: ``MEME_discover_motifs``"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:31 ../../tools/meme_tools.rst:81
+#: ../../tools/meme_tools.rst:126 ../../tools/meme_tools.rst:160
+#: 74db322ff05a4a43b1f267b44558c698 a82a1adc986b4833969ea5fd92202a18
+#: e17c1b6bdb224c55bef22aaafbc89607 ee35ef5a07ce45259c373bda01d1519d
+msgid "**Type**: ``MEMETool``"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:32 eeeb615a71df4ce48292c6538eb0be96
+msgid ""
+"**Description**: Run de novo motif discovery on a set of DNA sequences "
+"using the MEME algorithm from the MEME Suite. MEME finds overrepresented "
+"ungapped sequence patterns (motifs) that may correspond to transcription "
+"factor binding sites, splice sites, or other functional elements. "
+"Requires at least 2 FASTA sequences as input. Returns discovered motifs "
+"with consensus sequences, E-values, probability matrices, and site "
+"counts. Note: this submits a job to meme-suite.org and polls for results "
+"(typically 30-120 seconds depending on input size)."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:34 ../../tools/meme_tools.rst:84
+#: ../../tools/meme_tools.rst:129 ../../tools/meme_tools.rst:163
+#: 557ea3d0afde4222a55f99f795fe123a 6f00b9b3598c41b5afd89b8158bb3af4
+#: c11ae12c4d4340159c68a93a603b0cfb f36664ec88ef4dab92612b1f728b1db6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:36 ../../tools/meme_tools.rst:86
+#: ../../tools/meme_tools.rst:131 ../../tools/meme_tools.rst:165
+#: 407e5a76bfff42c598d5c470dc338055 4b01b2ca6be645b882e6d19f19b60260
+#: befa5edd264d4e6c967da601e47fa989 c7f524084a764d90987c5f9a24ec1fda
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:39 1c24ebd2bc9d480fa7a9f13e8393f601
+msgid ""
+"``sequences`` (string) (required) Multiple DNA sequences in FASTA format "
+"(minimum 2 sequences). Should contain related sequences expected to share"
+" common motifs, e.g., promoter regions of co-regulated genes."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:42 e08d4796da4a43988f04bba03c150c27
+msgid ""
+"``nmotifs`` (integer, null) (optional) Maximum number of motifs to find. "
+"Default 3."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:45 98154ca38e4840d787ef61791b07c9f3
+msgid ""
+"``minw`` (integer, null) (optional) Minimum motif width in nucleotides. "
+"Default 6."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:48 5143afc5432141e99c1ca86eecb7887b
+msgid ""
+"``maxw`` (integer, null) (optional) Maximum motif width in nucleotides. "
+"Default 50."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:51 040f0c40f59843ac9fb0d43f7c764c0c
+msgid ""
+"``distribution`` (string, null) (optional) Motif site distribution model."
+" 'oops' = one per sequence, 'zoops' = zero or one per sequence (default),"
+" 'anr' = any number of repetitions."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:54 ae497ee6d71940caa180fa4cc26e9a45
+msgid ""
+"``scan_rc`` (boolean, null) (optional) If true (default), search both "
+"strands."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:57 ../../tools/meme_tools.rst:101
+#: ../../tools/meme_tools.rst:137 ../../tools/meme_tools.rst:180
+#: 0155fba3aa914ff5ab51c3a0cdcfb6bb 505219e71c4446bca1f9a4111780bea5
+#: 8b93cc18860f4b61b5425f66d64dd6ac 9f7f4515b83b465c873ceea32e30603e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:72 ccf9def9c72946aa9209f6fc6405b1d3
+msgid "**MEME_fimo_scan** (Type: MEMETool)"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:74 3a1f70bbe4d940ff8b692a5d90c23187
+msgid ""
+"Scan DNA sequences for transcription factor (TF) binding motifs using "
+"FIMO (Find Individual Motif..."
+msgstr ""
+
+#: ../../tools/meme_tools.rst 60a26b5cad804ea68e4c543f0d5cb68d
+msgid "MEME_fimo_scan tool specification"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:80 4183d24ff225454dbf7f9e419f8b8a0c
+msgid "**Name**: ``MEME_fimo_scan``"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:82 9a3522396d57471c8b6944740e0e2884
+msgid ""
+"**Description**: Scan DNA sequences for transcription factor (TF) binding"
+" motifs using FIMO (Find Individual Motif Occurrences) from the MEME "
+"Suite. Provide sequences in FASTA format and a motif in MEME format, and "
+"FIMO returns all statistically significant binding sites with p-values, "
+"scores, strand, and matched sequences. Ideal for scanning promoter "
+"regions for known TF binding sites from JASPAR or HOCOMOCO. Note: this "
+"submits a job to meme-suite.org and polls for results (typically 10-30 "
+"seconds)."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:89 2d0a246ae7f442aab34726b66cbee729
+msgid ""
+"``sequences`` (string) (required) DNA sequences in FASTA format to scan "
+"for motif occurrences. Example: "
+"'>seq1\\\\nATGCATGCTATAAAAGGATCC\\\\n>seq2\\\\nGGATCCATGCATGCATGCAT'"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:92 f6587e6ff65a4d01b3dc603bfd4e0538
+msgid ""
+"``motif_text`` (string) (required) Motif(s) in MEME format. Must include "
+"the full MEME header (MEME version 5, ALPHABET, strands, Background "
+"letter frequencies) followed by MOTIF blocks with letter-probability "
+"matrices. Example for a TATA box motif: 'MEME version "
+"5\\\\n\\\\nALPHABET= ACGT\\\\n\\\\nstrands: + -\\\\n\\\\nBackground "
+"letter frequencies\\\\nA 0.25 C 0.25 G 0.25 T 0.25\\\\n\\\\nMOTIF TATABOX"
+"\\\\nletter-probability matrix: alength= 4 w= 6 nsites= 100 E= 0\\\\n0.00"
+" 0.00 0.00 1.00\\\\n1.00 0.00 0.00 0.00\\\\n0.00 0.00 0.00 1.00\\\\n1.00 "
+"0.00 0.00 0.00\\\\n1.00 0.00 0.00 0.00\\\\n1.00 0.00 0.00 0.00'"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:95 8bed8f21a9ef4b82a4b2b3e66361a47b
+msgid ""
+"``pvalue_threshold`` (number, null) (optional) P-value threshold for "
+"reporting motif occurrences. Default 1e-4. Lower values are more "
+"stringent."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:98 1933dfe8abc246f484d1e120dffc2c7d
+msgid ""
+"``scan_rc`` (boolean, null) (optional) If true (default), scan both "
+"strands. Set false to scan only the given strand."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:117 bb32c2c8435a4452b23ac9befa1bc448
+msgid "**MEME_list_databases** (Type: MEMETool)"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:119 473e1a34fca743f9ba43a88b6696e38f
+msgid ""
+"List available motif databases on the MEME Suite server for use with FIMO"
+" motif scanning and TOMT..."
+msgstr ""
+
+#: ../../tools/meme_tools.rst d311fe5cf48045dd9734b201e345a20e
+msgid "MEME_list_databases tool specification"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:125 8c85cf8b6ec042a586d235178c07bb12
+msgid "**Name**: ``MEME_list_databases``"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:127 88d28bc785dc481fa911fe2060cae1db
+msgid ""
+"**Description**: List available motif databases on the MEME Suite server "
+"for use with FIMO motif scanning and TOMTOM motif comparison. Returns "
+"categories (Eukaryote DNA, JASPAR, HOCOMOCO, CIS-BP, etc.) with database "
+"counts, plus shortcut names for popular databases that can be used "
+"directly with the TOMTOM target\\_db parameter. No remote API call is "
+"needed — this returns locally cached database metadata."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:134 2a0c52c22ca74115b97d9cf27b98818d
+msgid ""
+"``category_filter`` (string, null) (optional) Filter categories by name "
+"or description substring. E.g., 'JASPAR', 'human', 'RNA'. If null, "
+"returns all categories."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:151 f75a39e6078f459988e601ca4e4331de
+msgid "**MEME_tomtom_compare** (Type: MEMETool)"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:153 3170944244e94668b4e903576e682dc0
+msgid ""
+"Compare a query motif against known motif databases (JASPAR, HOCOMOCO, "
+"CIS-BP) using TOMTOM from ..."
+msgstr ""
+
+#: ../../tools/meme_tools.rst 4226ce11ae06484aaa5f63303bce2023
+msgid "MEME_tomtom_compare tool specification"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:159 60c94887b1bc4ba5a4c61d63f1153219
+msgid "**Name**: ``MEME_tomtom_compare``"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:161 725182bae6a44babbab0a0fe6f910db1
+msgid ""
+"**Description**: Compare a query motif against known motif databases "
+"(JASPAR, HOCOMOCO, CIS-BP) using TOMTOM from the MEME Suite. Given a "
+"motif in MEME format, identifies the most similar known transcription "
+"factor binding motifs. Useful for annotating de novo discovered motifs — "
+"e.g., after running MEME motif discovery, use TOMTOM to determine which "
+"TF likely binds the discovered motif. Returns matches ranked by E-value "
+"with query/target consensus sequences. Note: this submits a job to meme-"
+"suite.org and polls for results (typically 5-20 seconds)."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:168 afd224eda890456aa9830b6b963e53d6
+msgid ""
+"``query_motif`` (string) (required) Query motif in MEME format. Must "
+"include the full MEME header followed by one or more MOTIF blocks with "
+"letter-probability matrices."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:171 3413b6922f47414ab165c3ce237c26c3
+msgid ""
+"``target_db`` (string, null) (optional) Target motif database to search "
+"against. Options: 'JASPAR2026\\_vertebrates' (default, recommended), "
+"'JASPAR2026\\_all', 'JASPAR2024\\_vertebrates', 'HOCOMOCO\\_v12'. Use "
+"MEME\\_list\\_databases to see all options."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:174 0b4bd560fc6044f08dafcf2dc3e0baa4
+msgid ""
+"``evalue_threshold`` (number, null) (optional) E-value threshold for "
+"reporting matches. Default 0.5. Must be <= 1.0."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:177 db23cc6e853b4291b6851fee60a984e3
+msgid ""
+"``comparison_function`` (string, null) (optional) Distance function for "
+"motif comparison. 'pearson' = Pearson correlation (default), 'ed' = "
+"Euclidean distance, 'sandelin' = Sandelin-Wasserman, 'allr' = average "
+"log-likelihood ratio."
+msgstr ""
+
+#: ../../tools/meme_tools.rst:195 42ec8a489cda47cbabd7e9e7f6acad54
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:197 752dc526a24547a4b17c484b3e1a00ca
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/meme_tools.rst:198 bb5c442724e14028ad7e41e8bf0940b8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

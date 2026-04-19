@@ -1,0 +1,119 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/interpro_ext_tools.rst:10 b9ecfbe20fff4f3b91eedadb0fc9eb8b
+msgid "Interpro Ext Tools"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:12 49ef66a5c37e4594ba308da8b876a770
+msgid ""
+"**Configuration File**: ``interpro_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:16 7eea80b6839946fbbf42fa16ebb2fa42
+msgid ""
+"This page contains all tools defined in the ``interpro_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:19 9a17e3c07e05490493ea29edf30d330f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:22 ba7adb7cc280449f8796cf68825f34f9
+msgid "**InterPro_get_proteins_by_domain** (Type: InterProExtTool)"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:24 3e1aadc86d9f418ba934343516a250fe
+msgid ""
+"Find proteins that contain a specific InterPro domain. Performs a reverse"
+" lookup from an InterPro..."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst 2a3d97a1cf044f86b5e36679ddc88531
+msgid "InterPro_get_proteins_by_domain tool specification"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:28 31be5e7a089f4f4cb86ea66705f3189a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:30 1a61a506a3ec471c874964773af23bd3
+msgid "**Name**: ``InterPro_get_proteins_by_domain``"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:31 1111fea5e1c34d889d3819fa0ad4e264
+msgid "**Type**: ``InterProExtTool``"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:32 ad9eee6d802a4bdbbdf641c7206733c6
+msgid ""
+"**Description**: Find proteins that contain a specific InterPro domain. "
+"Performs a reverse lookup from an InterPro domain/family accession to the"
+" list of UniProt proteins annotated with that domain. Supports filtering "
+"by reviewed (Swiss-Prot) entries only. Useful for discovering all "
+"proteins in a protein family or containing a specific functional domain. "
+"Example: IPR011615 (p53 DNA-binding domain) returns 6,251 proteins "
+"including P04637 (TP53), P10276 (TP63), P63165 (TP73)."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:34 0f28cf00ed97452b8c4cd657d39e3fb5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:36 8f40f1b2aade4f2ea982b31889996af0
+msgid ""
+"``domain_id`` (string) (required) InterPro accession ID. Examples: "
+"'IPR011615' (p53 DNA-binding domain, 6K proteins), 'IPR000719' (Protein "
+"kinase domain, 2.2M proteins), 'IPR002117' (p53 family), 'IPR001245' "
+"(Serine-threonine/tyrosine-protein kinase)."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:39 34130058f8164806a701f2eb57bdcd5a
+msgid ""
+"``page_size`` (integer) (optional) Number of proteins to return (1-50, "
+"default 20)."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:42 b5738604d649461284103b98236c364d
+msgid ""
+"``reviewed_only`` (boolean) (optional) If true, only return Swiss-Prot "
+"reviewed entries (default false returns all UniProt)."
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:45 58c6543cda99487ba4cddc6360d3a86f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:59 c3e4a2975d534412b7dad3c53ca3a564
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:61 d7da998ea12746cfb406b6ce91c6d2a2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/interpro_ext_tools.rst:62 6c7da22c37f740dbaf8df9eb7cbe51d4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

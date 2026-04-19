@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/figshare_tools.rst:10 13ef41227bcb4a88a4916cda3082e0b6
+msgid "Figshare Tools"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:12 edb6877f0004423390485edfdaba0afe
+msgid ""
+"**Configuration File**: ``figshare_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:16 fda1d7fffe2f442db8f21f1d096b4802
+msgid ""
+"This page contains all tools defined in the ``figshare_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:19 1b2818068d2e42789904fc4d67237292
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:22 478c5d9d477a4c6c898b7ebea5a6f286
+msgid "**Figshare_get_article** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:24 b5e9617daf264e60b8739a21a8474ddb
+msgid ""
+"Get detailed metadata for a specific Figshare research output by its "
+"article ID. Returns complete..."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst 8e94f9ab66d341d4bd84f70a6217d30b
+msgid "Figshare_get_article tool specification"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:28 ../../tools/figshare_tools.rst:59
+#: 5d0a050d96fb409ba93cdc9d25e51214 7423b3fcd34f4359b2432c58f0f02c32
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:30 326601f95cb8437f97a64f6716dbd479
+msgid "**Name**: ``Figshare_get_article``"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:31 ../../tools/figshare_tools.rst:62
+#: 044b86cd344d4f06bd7aa7bf7ade7906 0df7207a0ace4d63b8e8d214245a3a3d
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:32 d8f1c7a7b5204684bc6039f4dd8a0bf0
+msgid ""
+"**Description**: Get detailed metadata for a specific Figshare research "
+"output by its article ID. Returns complete information including title, "
+"description, authors, DOI, files, categories, tags, funding, license, "
+"citation, and download statistics. Use this after searching to get full "
+"details about a specific dataset, code package, or figure."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:34 ../../tools/figshare_tools.rst:65
+#: 70a83bbef5cd4e4ea978d82d338bfd18 e5c303ac36e34769913ce7417bac68ad
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:36 e5e116692c13462e8cbf28ee16e49421
+msgid ""
+"``article_id`` (integer) (required) Figshare article ID (numeric, e.g., "
+"14847609, 1000050). Obtain from search results or from Figshare URLs like"
+" 'figshare.com/articles/dataset/name/14847609'."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:39 ../../tools/figshare_tools.rst:79
+#: 400755b6ef4b4e61b790cacf0b0e3e72 e6c384f2aa2446738325b4c31025042b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:53 107567fae4ba44a8a687119aa90f0933
+msgid "**Figshare_search_articles** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:55 a21bbbe448714b84860a1ce585cf92b6
+msgid ""
+"Search Figshare for research outputs (datasets, figures, code, posters, "
+"papers, theses, presentat..."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst 5923ca22a05b450b9625be2ca2a48a06
+msgid "Figshare_search_articles tool specification"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:61 7e1247e2beb74b8080874d1ae1d262f9
+msgid "**Name**: ``Figshare_search_articles``"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:63 5baa656b4af64e9e80b8a3d5a58978db
+msgid ""
+"**Description**: Search Figshare for research outputs (datasets, figures,"
+" code, posters, papers, theses, presentations) by keyword. Figshare is a "
+"major open-access research repository where researchers share "
+"supplementary data, code, figures, and complete datasets. Returns article"
+" ID, title, DOI, resource type, publication date, and authors. Essential "
+"for finding research datasets, supplementary materials, and research code"
+" associated with published papers."
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:67 bd44839b72f94d62a1d07ea23fff5aa1
+msgid ""
+"``search_for`` (string) (required) Keyword search query (e.g., 'CRISPR "
+"knockout RNA-seq', 'protein structure cryo-EM', 'climate change "
+"temperature dataset')"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:70 2c47fd68f8e741ffa9980f7391189694
+msgid ""
+"``item_type`` (integer, null) (optional) Filter by item type: 3=dataset, "
+"2=media, 1=figure, 9=code, 7=thesis, 6=book, 5=presentation, 4=paper, "
+"12=journal contribution, 11=poster"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:73 e7c2a9b74a4d4e77b78557aaa4b230ca
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results (default 10, "
+"max 1000)"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:76 ad905af1519c4e8d9af6b41546e999fa
+msgid ""
+"``published_since`` (string, null) (optional) Filter to articles "
+"published after this date in format 'YYYY-MM-DD' (e.g., '2023-01-01')"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:93 4900cb414ad74b009349dbab60b5bcd4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:95 7a30c2e082f44ea7a1b424a023959e41
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/figshare_tools.rst:96 597db57b85c04afbb6a03001a4d59fa7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

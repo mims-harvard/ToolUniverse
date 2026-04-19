@@ -1,0 +1,386 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/metabolomics_workbench_tools.rst:10
+#: a9a83b71d1a14ebfbc476cd93bcaeffc
+msgid "Metabolomics Workbench Tools"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:12
+#: 55a62a9b1c704dd9adef6b6eefa8986c
+msgid ""
+"**Configuration File**: ``metabolomics_workbench_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:16
+#: 632d5a00a30448778e05bac219d2c7b8
+msgid ""
+"This page contains all tools defined in the "
+"``metabolomics_workbench_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:19
+#: ae16ba831081403b83ac31045cc9b14a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:22
+#: 9f92476e3b4e421a8cd98eccb3ee4ac5
+msgid ""
+"**MetabolomicsWorkbench_get_compound_by_pubchem_cid** (Type: "
+"MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:24
+#: 34f4a60e007e4476a2c88f5e27cbbb7a
+msgid ""
+"Get metabolite information by PubChem compound ID (CID). Useful for "
+"cross-referencing with PubChe..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: fd5e73a2be1a4fc891b9428d960c1aa5
+msgid "MetabolomicsWorkbench_get_compound_by_pubchem_cid tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:28
+#: ../../tools/metabolomics_workbench_tools.rst:62
+#: ../../tools/metabolomics_workbench_tools.rst:96
+#: ../../tools/metabolomics_workbench_tools.rst:130
+#: ../../tools/metabolomics_workbench_tools.rst:164
+#: ../../tools/metabolomics_workbench_tools.rst:204
+#: 110b064853764abfaa3de73e229d5846 6150eca6c86b4e4ba673e4924de841a6
+#: 776e407767e742fcbd150f69a594460d 8807ea895f0c4e3993bf190c0e77b43b
+#: 9c931b24693b4fd5b1b019a48ccb1396 eaf301589daa46cab676c9c66c8ca782
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:30
+#: 2cfeb283380742ffb927d352bc43ba08
+msgid "**Name**: ``MetabolomicsWorkbench_get_compound_by_pubchem_cid``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:31
+#: ../../tools/metabolomics_workbench_tools.rst:65
+#: ../../tools/metabolomics_workbench_tools.rst:99
+#: ../../tools/metabolomics_workbench_tools.rst:133
+#: ../../tools/metabolomics_workbench_tools.rst:167
+#: ../../tools/metabolomics_workbench_tools.rst:207
+#: 1bb9b1c2d3b741e29b60cdc800333ccb 2908223c066649f4bd051cb77251f19e
+#: 352cdaa5c7944512bc5a374066694822 7c949e6099a241c88c7615b45e7b8519
+#: 96b4dca7ae474c939dceed93bf20c13b d803ea28c5144aa4919aeb1fc8c2bb1c
+msgid "**Type**: ``MetabolomicsWorkbenchTool``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:32
+#: 516f80c727824c42a38c4706a485a967
+msgid ""
+"**Description**: Get metabolite information by PubChem compound ID (CID)."
+" Useful for cross-referencing with PubChem data."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:34
+#: ../../tools/metabolomics_workbench_tools.rst:68
+#: ../../tools/metabolomics_workbench_tools.rst:102
+#: ../../tools/metabolomics_workbench_tools.rst:136
+#: ../../tools/metabolomics_workbench_tools.rst:170
+#: ../../tools/metabolomics_workbench_tools.rst:210
+#: 4e6fbc35b5fd4915aa74ac7093caa94e 66d6da21277240c7b5f44aec5555e2b8
+#: bd6311163fd0448291a80a02c46ead44 d4dd69c5930346568fbaaa2fbd65bb76
+#: d6ea1a0cee6f411aa829f449660497dd f7bc3dbfe108450aaf4013b645292ad0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:36
+#: 8b9c54b4f9874b54858ee56be5bd6689
+msgid ""
+"``input_value`` (string) (required) PubChem compound ID (CID) as a string"
+" (e.g., '311' for citric acid)."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:39
+#: ../../tools/metabolomics_workbench_tools.rst:218
+#: 5a59dc460994472a8b1a5bc498d45e31 ca3957334ac949f49756fcdf46d3a83e
+msgid "``output_item`` (string) (optional) Type of output to return."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:42
+#: ../../tools/metabolomics_workbench_tools.rst:76
+#: ../../tools/metabolomics_workbench_tools.rst:110
+#: ../../tools/metabolomics_workbench_tools.rst:144
+#: ../../tools/metabolomics_workbench_tools.rst:184
+#: ../../tools/metabolomics_workbench_tools.rst:221
+#: 24976ab9839f43769cc0f3a675091e65 3c5ff8f576ae4238a5349cffa4fd4e94
+#: 50f0a15ed5684f23a14e0753eab56552 664c8ba64c864e48a20365d6d02e2565
+#: 9e106068c1d246cf89291364b8ce3521 bb123774db1447f2acb2e2336468cd0b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:56
+#: 88156d56867240b7b72844e944aaac41
+msgid ""
+"**MetabolomicsWorkbench_get_refmet_info** (Type: "
+"MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:58
+#: 9e65ba44793540c6acaa21d33e182e07
+msgid ""
+"Get RefMet standardized nomenclature for a metabolite. RefMet provides "
+"consistent, standardized m..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: a8a645fc137e40d08f832887c5762153
+msgid "MetabolomicsWorkbench_get_refmet_info tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:64
+#: dc1443d5bdba4196aaf733b387029352
+msgid "**Name**: ``MetabolomicsWorkbench_get_refmet_info``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:66
+#: 3c9993f16b724561b1f445c29784ccec
+msgid ""
+"**Description**: Get RefMet standardized nomenclature for a metabolite. "
+"RefMet provides consistent, standardized metabolite names across studies."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:70
+#: 434b6cfe9f3b481d957df0a948334fb7
+msgid ""
+"``input_value`` (string) (required) Metabolite name to look up in RefMet "
+"(e.g., 'Glucose', 'Palmitic acid')."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:73
+#: c5762d6c5b9f404481a49532c0a9c078
+msgid "``output_item`` (string) (optional) Type of information to return."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:90
+#: 7778e59003dd441d8ca44ef1ae0af0f8
+msgid "**MetabolomicsWorkbench_get_study** (Type: MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:92
+#: af49efb809134ddb86f70aaecfd13d0f
+msgid ""
+"Get metadata and information about a metabolomics study by its study ID. "
+"Returns study summary in..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: 830d0dd8872b465ca19c36c9b3e92351
+msgid "MetabolomicsWorkbench_get_study tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:98
+#: 1a41917bc2bd4d3b9962e4ffd3c1b6de
+msgid "**Name**: ``MetabolomicsWorkbench_get_study``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:100
+#: a03de6c6bbcd46d89be88ec91f1a7a5d
+msgid ""
+"**Description**: Get metadata and information about a metabolomics study "
+"by its study ID. Returns study summary including title, subject species, "
+"analysis type, and metabolites."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:104
+#: f2404bb07adb4d9fa9c9706a7e49fe88
+msgid ""
+"``study_id`` (string) (required) Metabolomics Workbench study ID (e.g., "
+"'ST000001', 'ST000100')."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:107
+#: 215061b24e3348a990a561e8ba05cb63
+msgid ""
+"``output_item`` (string) (optional) Type of information to return. "
+"Options: 'summary' (study overview), 'factors' (experimental factors), "
+"'analysis' (analysis methods), 'metabolites' (metabolite list), 'data' "
+"(full data matrix)."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:124
+#: 03a3f4b3f62f44a18ae20a6af4bd714d
+msgid ""
+"**MetabolomicsWorkbench_search_by_exact_mass** (Type: "
+"MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:126
+#: e8aa0a3dccd14018bc8e9bded966d847
+msgid ""
+"Search metabolites by exact molecular mass. Useful for identifying "
+"unknown metabolites from high-..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: e2e5373c671848b58dd05873a46c251d
+msgid "MetabolomicsWorkbench_search_by_exact_mass tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:132
+#: f0e69aa042964fc3abdaa11ecd3549b0
+msgid "**Name**: ``MetabolomicsWorkbench_search_by_exact_mass``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:134
+#: 30e2bc7e9a77465db5f426d00de5f8cd
+msgid ""
+"**Description**: Search metabolites by exact molecular mass. Useful for "
+"identifying unknown metabolites from high-resolution mass spectrometry."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:138
+#: be055e3fdcc645e9b2e4eedbd39ff650
+msgid ""
+"``mass_value`` (number) (required) The exact mass value to search for in "
+"Daltons (e.g., 180.0634)."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:141
+#: ../../tools/metabolomics_workbench_tools.rst:178
+#: 3b9a92a88d0f4328b6b030ea431f8388 e7323d62a5a544ef9f296a991ab3f06d
+msgid ""
+"``tolerance`` (number) (optional) Mass tolerance in Daltons for the "
+"search."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:158
+#: c64094503aa947fdac3b06b4628275e6
+msgid "**MetabolomicsWorkbench_search_by_mz** (Type: MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:160
+#: 98223f623014447aadeb25e932a4eb97
+msgid ""
+"Search metabolites by m/z (mass-to-charge ratio) value from mass "
+"spectrometry data. Essential for..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: e153c0d175ea4e5f96402bbc91c0cbca
+msgid "MetabolomicsWorkbench_search_by_mz tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:166
+#: c05b1edaf352489da237c4fffefd8256
+msgid "**Name**: ``MetabolomicsWorkbench_search_by_mz``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:168
+#: 1df11a07505945648d39a09943769d0a
+msgid ""
+"**Description**: Search metabolites by m/z (mass-to-charge ratio) value "
+"from mass spectrometry data. Essential for metabolite identification from"
+" MS experiments."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:172
+#: cf5335a5c503466b8e11b1b1932bce73
+msgid ""
+"``mz_value`` (number) (required) The m/z value to search for (e.g., "
+"180.0634 for glucose [M+H]+)."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:175
+#: f015a14a37b04e46a276f9ef589adc0c
+msgid ""
+"``adduct`` (string) (optional) Adduct type. Common values: 'M+H' "
+"(protonated), 'M-H' (deprotonated), 'M+Na' (sodiated), 'M+K' "
+"(potassiated)."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:181
+#: a57aead5393f48a399fb8d564df58f83
+msgid ""
+"``database`` (string) (optional) Database to search: 'MB' (Metabolomics "
+"Workbench, default), 'LIPIDS', or 'REFMET'."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:198
+#: 9c81d1f03d7847f29917f279e6da4372
+msgid ""
+"**MetabolomicsWorkbench_search_compound_by_name** (Type: "
+"MetabolomicsWorkbenchTool)"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:200
+#: e2e9ab8f03a34904b57f55bf2d755352
+msgid ""
+"Search for a metabolite/compound by its name using RefMet nomenclature. "
+"Returns standardized comp..."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst
+#: 2b2807e83a214292a034d63d1fe7bfd1
+msgid "MetabolomicsWorkbench_search_compound_by_name tool specification"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:206
+#: 0b5e177a74c34500b18f3ded7f85fe19
+msgid "**Name**: ``MetabolomicsWorkbench_search_compound_by_name``"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:208
+#: db2414a721814f3bac947487e48fa3a0
+msgid ""
+"**Description**: Search for a metabolite/compound by its name using "
+"RefMet nomenclature. Returns standardized compound information including "
+"formula, exact mass, and classification. Use this for finding metabolites"
+" by common name."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:212
+#: ae10d7b347ca426792961b867a2c8a83
+msgid ""
+"``input_value`` (string) (optional) Compound/metabolite name to search "
+"(e.g., 'Glucose', 'Cholesterol', 'Palmitic acid'). Aliases: "
+"compound\\_name, name."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:215
+#: f0ba45c22f7d47e2817e767a3fe0e821
+msgid "``compound_name`` (string) (optional) Alias for input\\_value."
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:234
+#: 17ce4413a9834540a59fb2d60a32b327
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:236
+#: 91e761e090154fe4bcc434699f4282cf
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/metabolomics_workbench_tools.rst:237
+#: d6029ff5e33b4d29a88bb8a151c75582
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

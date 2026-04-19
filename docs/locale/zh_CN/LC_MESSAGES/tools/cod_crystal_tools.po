@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cod_crystal_tools.rst:10 900f30d1ff73476aa605233044b7fef2
+msgid "Cod Crystal Tools"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:12 4796c9a721824be3965cefb51d37ce67
+msgid ""
+"**Configuration File**: ``cod_crystal_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:16 422b22bba7b84f7f824badd8213adbbd
+msgid ""
+"This page contains all tools defined in the ``cod_crystal_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:19 1ce035d571194ce182ac7f722fe1dd8c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:22 5275a3dd92e94d2fa3f4fc9c88e6a8af
+msgid "**COD_get_structure** (Type: CODTool)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:24 3e5d6866c07441f4bc2a07d74be435da
+msgid ""
+"Get detailed crystal structure information from the Crystallography Open "
+"Database (COD) by COD en..."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst 6ff902a1194b4ad4afc94f1bed4f9584
+msgid "COD_get_structure tool specification"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:28 ../../tools/cod_crystal_tools.rst:61
+#: 6d489c8465f14f53871478fcb957d88d 6d6b7d16c313494ebfd344ab7ab24ae6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:30 76388dd57ea24ceb8a05cec400561ac6
+msgid "**Name**: ``COD_get_structure``"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:31 ../../tools/cod_crystal_tools.rst:64
+#: 19e92887b9ac47fc8fdfc5e4caeed1e3 30764d287e5e48199d719857357405a5
+msgid "**Type**: ``CODTool``"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:32 17b329aafa2a4be2853243b2d2db0a75
+msgid ""
+"**Description**: Get detailed crystal structure information from the "
+"Crystallography Open Database (COD) by COD entry ID. Returns complete "
+"crystallographic data including unit cell parameters (a, b, c, alpha, "
+"beta, gamma), space group, chemical formula, mineral/compound name, Z "
+"value, publication details (DOI, journal, authors, year), diffraction "
+"method, and radiation type. Use COD\\_search\\_structures first to find "
+"COD IDs, then use this tool for full details on a specific structure."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:34 ../../tools/cod_crystal_tools.rst:67
+#: ae588af14d9c40a6bec72a3ee1dc9edf c39259c38aca43c6bb9c2c245777637b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:36 1722d0f987344bef8432fbe636de14c2
+msgid ""
+"``cod_id`` (string) (optional) Alias for 'id'. COD structure entry ID "
+"(numeric string). Examples: '9008460' (Aluminum), '1011240' (Hematite "
+"Fe2O3), '5900000' (Methane), '1515581' (Aspirin)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:39 e7b1102b70064a0b90fcfb88855ecc63
+msgid ""
+"``id`` (string) (optional) COD structure entry ID (numeric string). "
+"Examples: '9008460' (Aluminum), '1011240' (Hematite Fe2O3), '5900000' "
+"(Methane), '1515581' (Aspirin)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:42 ../../tools/cod_crystal_tools.rst:111
+#: 1f9752ee683e4d98811e21decaf7ad08 ec73f4852e03408191171b9ec5d45fa0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:55 44b90545399f4c87ab78764186dd4fe3
+msgid "**COD_search_structures** (Type: CODTool)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:57 6a9747b1e59c41b48ac4f4d7b6b4bd66
+msgid ""
+"Search the Crystallography Open Database (COD) for crystal structures by "
+"chemical formula, elemen..."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst 2afed97c897442968cd95d00fda314f6
+msgid "COD_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:63 5ef61f065fe64b77886c4bbe8aab1120
+msgid "**Name**: ``COD_search_structures``"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:65 0573e8f2176d4cfd878baa9b0c36ba2b
+msgid ""
+"**Description**: Search the Crystallography Open Database (COD) for "
+"crystal structures by chemical formula, elements, space group, mineral "
+"name, or compound name. COD is the largest open-access collection of "
+"crystal structures with 500,000+ experimentally determined structures. "
+"Returns unit cell parameters (a, b, c, alpha, beta, gamma), space group, "
+"chemical formula, mineral/compound name, and publication details (DOI, "
+"journal, authors). Useful for materials science, chemistry, mineralogy, "
+"and solid-state physics research."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:69 f7f43c3577344f6687e0e6d0f10c9f27
+msgid ""
+"``query`` (string, null) (optional) Alias for 'text'. Free text search "
+"across titles, keywords, and compound names. Examples: 'aspirin', "
+"'perovskite', 'diamond'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:72 2f515f2126164ca99b37cccdb54e3075
+msgid ""
+"``text`` (string, null) (optional) Free text search across titles, "
+"keywords, and compound names. Examples: 'aspirin', 'perovskite', "
+"'diamond', 'zeolite', 'ice'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:75 eb0efc97147c4ffbb9edf2f7971a8ff4
+msgid ""
+"``formula`` (string, null) (optional) Chemical formula to search (use "
+"spaces between elements). Examples: 'Fe2 O3', 'Si O2', 'Na Cl', 'C H4'. "
+"Exact formula matching."
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:78 599d2f49139b4d758003a9f75485b043
+msgid ""
+"``el1`` (string, null) (optional) First required element (chemical "
+"symbol). Examples: 'Cu', 'Fe', 'Si', 'C', 'N'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:81 cb0ca5e2bcc847c78fac57ac310b0413
+msgid ""
+"``el2`` (string, null) (optional) Second required element (chemical "
+"symbol)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:84 b30631c53958486299e64e3d7b3caae5
+msgid "``el3`` (string, null) (optional) Third required element (chemical symbol)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:87 696194f72aa1405eb3c44513509f5ba3
+msgid ""
+"``nel`` (string, null) (optional) Number of distinct elements in formula "
+"(e.g., '2' for binary compounds, '3' for ternary)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:90 b7ded393426a462d9b854a62c45936a4
+msgid ""
+"``commonname`` (string, null) (optional) Common/trivial name search "
+"(partial match). Examples: 'quartz', 'perovskite', 'zeolite', 'diamond'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:93 10181c4979204664a43da0d4147c61a0
+msgid ""
+"``mineral`` (string, null) (optional) Mineral name search (partial "
+"match). Examples: 'calcite', 'feldspar', 'pyrite', 'magnetite'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:96 f185a236941c48d5ad3bf9119aca7fb0
+msgid ""
+"``spacegroup`` (string, null) (optional) Alias for 'sg'. Space group "
+"symbol (Hermann-Mauguin notation). Examples: 'P 21/c', 'Fm -3 m', 'P 1'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:99 67d8b629eba447cf9360afff82f26b06
+msgid ""
+"``sg`` (string, null) (optional) Space group symbol (Hermann-Mauguin "
+"notation). Examples: 'P 21/c', 'Fm -3 m', 'P 1'"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:102 33f7814ceeca4c1a938852c2b3b22590
+msgid ""
+"``sgNumber`` (string, null) (optional) Space group number (1-230). "
+"Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, common for perovskites)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:105 a77ac7b68a0f4b258db78abcd155951b
+msgid ""
+"``max_results`` (integer, null) (optional) Alias for 'results'. Maximum "
+"number of results to return (default 100, use smaller values for speed, "
+"e.g. 5 or 10)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:108 48647fda19a54b9a8f50b4ca993ac433
+msgid ""
+"``results`` (integer, null) (optional) Maximum number of results to "
+"return (default 100, use smaller values for speed, e.g. 5 or 10)"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:124 12efbf5e92e24810ad24e9303de1699d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:126 f0e709d7fc9f47c298478ed0a61223fa
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cod_crystal_tools.rst:127 fffcf1c493c0457bbf66b0711dfa6072
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

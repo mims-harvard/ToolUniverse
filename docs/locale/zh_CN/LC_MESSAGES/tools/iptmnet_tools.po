@@ -1,0 +1,277 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/iptmnet_tools.rst:10 f36787c255444cd297028a99433ef91f
+msgid "Iptmnet Tools"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:12 f588552c8d484ca291abc3a973daacd7
+msgid ""
+"**Configuration File**: ``iptmnet_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:16 258a202e16dc47348c58796302815918
+msgid ""
+"This page contains all tools defined in the ``iptmnet_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:19 b67f16cb4bbb4750a541576cb0344f95
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:22 5815f8e144c54c7d96e8189cd7510666
+msgid "**iPTMnet_get_proteoforms** (Type: iPTMnetTool)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:24 0efe81ba814548d8825172b26beb2250
+msgid ""
+"Get proteoform records for a protein from iPTMnet. Proteoforms represent "
+"specific combinations of..."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst 5eb8ea164b524349b273fe71c7d78ad9
+msgid "iPTMnet_get_proteoforms tool specification"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:28 ../../tools/iptmnet_tools.rst:63
+#: ../../tools/iptmnet_tools.rst:101 ../../tools/iptmnet_tools.rst:139
+#: 0dc3622dda8b46b7a54aa8056ad042be 707807af07cb4a538b20f90441a7c003
+#: 843d6ac65983423b9d6e284b0b6c9f1b b70e4bbd92dd485dab686f05989845d6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:30 0fca25d4f19940c2aee23ee45085df4d
+msgid "**Name**: ``iPTMnet_get_proteoforms``"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:31 ../../tools/iptmnet_tools.rst:66
+#: ../../tools/iptmnet_tools.rst:104 ../../tools/iptmnet_tools.rst:142
+#: 62277a5ae8ef40fe9de02a630eaa5513 9e4b4b53bd0740cba1417cd8c63898e4
+#: a22b470ab76a4514bafc4455225f61d1 fb40c1065e2f4164b22b5bec2fb844bc
+msgid "**Type**: ``iPTMnetTool``"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:32 c636ab9de6fb4e4c8bdda5bd43ced753
+msgid ""
+"**Description**: Get proteoform records for a protein from iPTMnet. "
+"Proteoforms represent specific combinations of PTM sites on a protein, as"
+" defined by the PRO ontology. Each proteoform has a PRO ID, modified "
+"sites, the responsible enzyme (if known), source database, and PubMed "
+"references. Useful for understanding which specific PTM combinations have"
+" been experimentally observed. Use with UniProt accession (e.g., P04637 "
+"for TP53)."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:34 ../../tools/iptmnet_tools.rst:69
+#: ../../tools/iptmnet_tools.rst:107 ../../tools/iptmnet_tools.rst:145
+#: 73a5f5521e6f4d7b82d3aee3a9c3a0d2 75edfc5c8fc6424aa10865543f7308ee
+#: a6794751bd914a98a68afef0748525e2 d2f5c04bf96e4f06856aa7cb557a364d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:36 ../../tools/iptmnet_tools.rst:71
+#: ../../tools/iptmnet_tools.rst:109 58fbb067fb8447e08ab322fb5136dd01
+#: 757f5507f36742e4bf5c35f1ee9eb6c2 761485515d444e8f9c373980fc94e28e
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:39 ../../tools/iptmnet_tools.rst:74
+#: 163b6263cc9c42259e985025d286274e 616f73b84374479ab4d04beca23a4349
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession, e.g., P04637 "
+"(TP53), P00533 (EGFR), P31749 (AKT1)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:42 ../../tools/iptmnet_tools.rst:80
+#: ../../tools/iptmnet_tools.rst:118 ../../tools/iptmnet_tools.rst:168
+#: 3b9e890468824e57a2fc508dad367859 868d400c846d4492a3253162e304859a
+#: acc5b8163fbc459887559622c5a9bc4d c278398ea11e43a8bc1b4f796d16869e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:57 e28f0df654994bdb8b7f0901b73a497f
+msgid "**iPTMnet_get_ptm_ppi** (Type: iPTMnetTool)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:59 7108848276ae4aec9f90046e492d8c9f
+msgid ""
+"Get PTM-dependent protein-protein interactions from iPTMnet. Returns "
+"interactions where a post-tr..."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst 1fe0de7df57041569a7a52ba3a12db1f
+msgid "iPTMnet_get_ptm_ppi tool specification"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:65 033497bfe3784311a2575791ab950d14
+msgid "**Name**: ``iPTMnet_get_ptm_ppi``"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:67 572936a2abc4430aa39c3b1421adba1a
+msgid ""
+"**Description**: Get PTM-dependent protein-protein interactions from "
+"iPTMnet. Returns interactions where a post-translational modification on "
+"one protein affects its binding to another protein. Each interaction "
+"includes the PTM type, modified substrate with site position, the "
+"interacting partner, association type (association/dissociation), data "
+"source, and PubMed reference. Essential for understanding how PTMs "
+"regulate protein interaction networks. Use with UniProt accession (e.g., "
+"P04637 for TP53)."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:77 127cc8a7db664bd5b333fd4a9613ba7c
+msgid ""
+"``ptm_type`` (string, null) (optional) Filter by PTM type: "
+"Phosphorylation, Acetylation, Ubiquitination, Methylation. Case-"
+"insensitive. Omit to return all types."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:95 727dcfc5a1ff4bd1b840734b391e27d5
+msgid "**iPTMnet_get_ptm_sites** (Type: iPTMnetTool)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:97 4c6bbd6aa2824d4c95b20a9678b80771
+msgid ""
+"Get all post-translational modification (PTM) sites for a protein from "
+"iPTMnet. Returns residue, ..."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst 26479d4fd0e448a68ce377a9318f79c9
+msgid "iPTMnet_get_ptm_sites tool specification"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:103 b6c295f08e5c483a9fd724e425162cb1
+msgid "**Name**: ``iPTMnet_get_ptm_sites``"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:105 0f87df8f1d214af689dc5c2728b0ae8f
+msgid ""
+"**Description**: Get all post-translational modification (PTM) sites for "
+"a protein from iPTMnet. Returns residue, position, PTM type, confidence "
+"score, source databases, catalytic enzymes, and PubMed references for "
+"each site. Data aggregated from PhosphoSitePlus, UniProt, and text "
+"mining. Covers phosphorylation, acetylation, ubiquitination, methylation,"
+" glycosylation, sumoylation, and more. Results organized by protein "
+"isoform. Use with UniProt accession (e.g., P04637 for TP53)."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:112 7231b0b3337a4a12beba62b04567692e
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession, e.g., P04637 "
+"(TP53), P00533 (EGFR), P31749 (AKT1), Q16539 (MAPK14/p38)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:115 1759c5566dd249ac9174aef83adc7b28
+msgid ""
+"``ptm_type`` (string, null) (optional) Filter by PTM type: "
+"Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, "
+"N-Glycosylation, O-Glycosylation, S-Nitrosylation. Case-insensitive. Omit"
+" to return all types."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:133 cfe5ad1c526b41d39af7bd40baaa4ee7
+msgid "**iPTMnet_search** (Type: iPTMnetTool)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:135 e81eca3ab6fa4f92aba8af32624629ea
+msgid ""
+"Search the iPTMnet database for proteins with post-translational "
+"modification (PTM) data. Find pr..."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst 31b48f36571e46c29f7196ad02961239
+msgid "iPTMnet_search tool specification"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:141 771b9e86049f459fb29d996af6873bd3
+msgid "**Name**: ``iPTMnet_search``"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:143 03c1769b6e2a499a8ef9ec9819724f49
+msgid ""
+"**Description**: Search the iPTMnet database for proteins with post-"
+"translational modification (PTM) data. Find proteins by gene name, "
+"protein name, or keyword. Filter by role (Substrate = modified protein, "
+"Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, "
+"Ubiquitination, Methylation, etc.). iPTMnet integrates data from "
+"PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt "
+"IDs, PTM site counts, enzyme/substrate roles, and isoform counts."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:147 38b5e19b8ac34fc5ae44880382c8ba67
+msgid "``operation`` (string) (optional) Operation type"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:150 507627ef1e00480eb9bee144a741cebd
+msgid ""
+"``search_term`` (string) (optional) Search query: gene name (TP53, EGFR, "
+"AKT1), protein name (p53, insulin receptor), or keyword (kinase, "
+"ubiquitin)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:153 688d49efecc048679744bf97fd06e0b3
+msgid ""
+"``role`` (string) (optional) Filter by protein role. Substrate = proteins"
+" that are modified; Enzyme = proteins that modify others. Default: "
+"Substrate"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:156 6034fa11c2a847239822cf22a1eae2a0
+msgid ""
+"``ptm_type`` (string, null) (optional) Filter by PTM type: "
+"Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, "
+"N-Glycosylation, O-Glycosylation, S-Nitrosylation, etc. Case-sensitive. "
+"Omit to return all types."
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:159 1d5fe10d5ed240ebaf8182463a2cd5d6
+msgid ""
+"``term_type`` (string) (optional) Type of search term. Default: All "
+"(searches across all fields)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:162 c5b5b316a4aa48539158a582a95b0459
+msgid ""
+"``max_results`` (integer) (optional) Maximum results to return (default: "
+"25)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:165 99c55e3b3ca34aa9abaf7ec6b7875910
+msgid ""
+"``query`` (string) (optional) Gene name, protein name, or keyword to "
+"search (alias for search\\_term)"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:181 11d55063e7324e20923ea32a4bc0e79b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:183 92665efaa698415ea2394807737fac93
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/iptmnet_tools.rst:184 4c87560be26f485eadda9b1faf082e64
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

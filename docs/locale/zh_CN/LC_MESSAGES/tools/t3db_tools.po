@@ -1,0 +1,142 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/t3db_tools.rst:10 ac3cd49ecfc24ad5a9249c119b692500
+msgid "T3Db Tools"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:12 23fe5383559e44f8b4da3a0abdec063d
+msgid ""
+"**Configuration File**: ``t3db_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:16 fb366d3993ae4bb2a80ab9937a421629
+msgid ""
+"This page contains all tools defined in the ``t3db_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:19 e9dc7a23d1ac4fc8af07715a06713b3e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:22 e38a3fda3fc44ef4bd165470358a261e
+msgid "**T3DB_get_toxin** (Type: T3DBTool)"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:24 68e23a92d1e9442c8dd8e55787ea66ba
+msgid ""
+"Get detailed toxin information from the Toxin and Toxin-Target Database "
+"(T3DB) by T3DB ID. Return..."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst b1513e0dde77401e9f809395a438f403
+msgid "T3DB_get_toxin tool specification"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:28 ../../tools/t3db_tools.rst:59
+#: 281a7a8140e040069ddb49df28792c3b 31b15d1e857e4a5ba57861d2ce43c9b4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:30 6d663ba3711f40c8b26e5d420baff9d9
+msgid "**Name**: ``T3DB_get_toxin``"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:31 ../../tools/t3db_tools.rst:62
+#: 552dfda4a9b448ad9b2e3682aa76621c e7907f5cb9964e5cafc394c8edacae05
+msgid "**Type**: ``T3DBTool``"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:32 02f58e7e61ce4230ba80688e31715aa6
+msgid ""
+"**Description**: Get detailed toxin information from the Toxin and Toxin-"
+"Target Database (T3DB) by T3DB ID. Returns chemical properties (name, "
+"CAS, formula, molecular weight), mechanism of toxicity, health effects, "
+"route of exposure, and protein/gene targets with UniProt IDs. Covers "
+"3,678 common toxins including pollutants, pesticides, drugs, and food "
+"toxins. Use for toxicology research, environmental health, and chemical "
+"safety assessment."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:34 ../../tools/t3db_tools.rst:65
+#: 6a8981109c96495eae14cec7f61af839 aa056ed509dd44fdba933512403b4b00
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:36 ffc11d9204d24026bdf42c9eafc56786
+msgid ""
+"``toxin_id`` (string) (required) T3DB toxin ID (e.g., 'T3D0001' for "
+"Arsenic, 'T3D0002' for Lead). Numeric-only input is auto-prefixed with "
+"T3D."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:39 ../../tools/t3db_tools.rst:70
+#: 66dbfd01df3b4d54a4d08e2ad3f4e4a9 c09debbc77e144bea096aa571e52fd57
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:53 b71508f4b12547009f6ec502832d0487
+msgid "**T3DB_search_toxins** (Type: T3DBTool)"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:55 d7ed8edf64e742bba4fcf9347874a061
+msgid ""
+"Search for toxins by name or keyword in the T3DB (Toxin and Toxin-Target "
+"Database). Returns match..."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst 4133b2bbd19148c285e7f0c0352bb3b8
+msgid "T3DB_search_toxins tool specification"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:61 a50ff7f2f74c403ea26e9963f2c66f17
+msgid "**Name**: ``T3DB_search_toxins``"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:63 832b5ce545f84c07b1a9410b345b5244
+msgid ""
+"**Description**: Search for toxins by name or keyword in the T3DB (Toxin "
+"and Toxin-Target Database). Returns matching toxin IDs and names. Use "
+"T3DB\\_get\\_toxin with the returned ID for detailed information. Covers "
+"pollutants, pesticides, drugs, food toxins, and environmental chemicals."
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:67 f559aba291424d8da9cfb37c9922f328
+msgid ""
+"``query`` (string) (required) Toxin name or keyword (e.g., 'arsenic', "
+"'lead', 'mercury', 'bisphenol')"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:84 20b93840d7f544fcb71a99c370d7218c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:86 08bae64774ca43f087e45970bfef467e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/t3db_tools.rst:87 929db18581fb40b9b78c4fcca8527209
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

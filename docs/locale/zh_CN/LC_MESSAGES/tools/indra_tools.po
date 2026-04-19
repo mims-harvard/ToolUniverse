@@ -1,0 +1,229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/indra_tools.rst:10 af63bf8a9a624894b21b87e1ef5f24b6
+msgid "Indra Tools"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:12 9d9d918001604ff6a6f25544f1c28b5f
+msgid ""
+"**Configuration File**: ``indra_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:16 3dfd1a9ea3f945988ad5e6d8f1605cae
+msgid ""
+"This page contains all tools defined in the ``indra_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/indra_tools.rst:19 309597042fdc4a69a62c25aec4950401
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:22 078e207198aa465a9933f0e363014ada
+msgid "**INDRA_get_evidence_count** (Type: INDRADBTool)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:24 8300b859c1ee49bc9de04893b17038ca
+msgid ""
+"Get the total number of literature evidence items in INDRA DB for a gene,"
+" protein, or chemical wi..."
+msgstr ""
+
+#: ../../tools/indra_tools.rst f749e97669554823bd0a74b1dc5f86a2
+msgid "INDRA_get_evidence_count tool specification"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:28 ../../tools/indra_tools.rst:65
+#: ../../tools/indra_tools.rst:102 3d1935dfba1e4dcbb851111cb857ca8b
+#: 6c5421ce6695459eb5be4962542f0fdc ee87491248d44c9b978abf7f83cb98d6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:30 bb4dcc7cd829455b8b1aeacfd673da3c
+msgid "**Name**: ``INDRA_get_evidence_count``"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:31 ../../tools/indra_tools.rst:68
+#: ../../tools/indra_tools.rst:105 55f3d3aaac0745e88285c712c93dec8e
+#: a247b62fe55c405889c9d60441a5e32c bdf57a4ffe2043cdb29edc6a12647f8f
+msgid "**Type**: ``INDRADBTool``"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:32 b72156ddd98546279dfb2839a5476a10
+msgid ""
+"**Description**: Get the total number of literature evidence items in "
+"INDRA DB for a gene, protein, or chemical without fetching full "
+"statements. Useful for quickly assessing how much is known about an "
+"entity in the literature. Optionally filter by statement type."
+msgstr ""
+
+#: ../../tools/indra_tools.rst:34 ../../tools/indra_tools.rst:71
+#: ../../tools/indra_tools.rst:108 19a38221a53846dfb2949aac64025e98
+#: 71e2a654a1004427b05d495a2c55ee86 79e6fd2358da4ffba8483365de03c8be
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:36 64f73e106df141f0ad2cdddc8197618c
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_evidence\\_count)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:39 5f09e11142394169ae2450265ecbb5e4
+msgid ""
+"``agent`` (string) (required) Gene symbol, protein name, or chemical name"
+" (e.g., 'TP53', 'EGFR')"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:42 c8f26229478340da95627eb61af6c675
+msgid ""
+"``type`` (string) (optional) Optional: filter by statement type (e.g., "
+"'Activation', 'Inhibition', 'Phosphorylation')"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:45 ../../tools/indra_tools.rst:82
+#: ../../tools/indra_tools.rst:128 0ab301c4a3634f29baff178a94c42a09
+#: 8adeabf7fbc64736b610c9660ff7f594 db405536caee42989cbba89f6bf43cd9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:59 6e49efb5ca7a499c989217ff76637692
+msgid "**INDRA_get_statement_by_hash** (Type: INDRADBTool)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:61 baf2822c3a84488cbcf52f905d664d65
+msgid ""
+"Get a specific INDRA statement by its hash with full evidence details. "
+"Use statement hashes retur..."
+msgstr ""
+
+#: ../../tools/indra_tools.rst 608d6e62973a43db84f2d1691013415c
+msgid "INDRA_get_statement_by_hash tool specification"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:67 ea36a2085e324e3d833f3960ca5ae33f
+msgid "**Name**: ``INDRA_get_statement_by_hash``"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:69 02295061fea34c7ca587940ea2d34641
+msgid ""
+"**Description**: Get a specific INDRA statement by its hash with full "
+"evidence details. Use statement hashes returned by "
+"INDRA\\_get\\_statements to retrieve comprehensive evidence for a "
+"specific biological relationship."
+msgstr ""
+
+#: ../../tools/indra_tools.rst:73 e15a8c89e5994fb98bba1cfda8c3e226
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_statement\\_by\\_hash)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:76 2b3419114d91459f9ea44b25889a0495
+msgid ""
+"``hash`` (string) (required) Statement hash from INDRA\\_get\\_statements"
+" results"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:79 b5d7b3e62a6747f39c89156b2be231c1
+msgid ""
+"``ev_limit`` (integer) (optional) Maximum evidence items to return "
+"(default: 10)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:96 4b380ad262714284824bf9f4fb9fafe0
+msgid "**INDRA_get_statements** (Type: INDRADBTool)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:98 931fee61032845cab74ac00f878fdcf8
+msgid ""
+"Get literature-mined biological statements for a gene, protein, or "
+"chemical from INDRA DB. Return..."
+msgstr ""
+
+#: ../../tools/indra_tools.rst 3be33a8fa45847f281fef6538dee63a4
+msgid "INDRA_get_statements tool specification"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:104 a9b31f31ad5143e0ab6ad49d833c7c96
+msgid "**Name**: ``INDRA_get_statements``"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:106 5654bca9f1f44b28b8e6b93a931e4bb0
+msgid ""
+"**Description**: Get literature-mined biological statements for a gene, "
+"protein, or chemical from INDRA DB. Returns mechanistic relationships "
+"(Activation, Inhibition, Phosphorylation, Complex, etc.) with supporting "
+"evidence from PubMed articles. INDRA aggregates knowledge from 30+ NLP "
+"readers across millions of publications. Use 'agent' for the entity name "
+"(e.g., 'TP53', 'EGFR', 'gefitinib'). Optionally filter by statement "
+"'type' (Activation, Inhibition, Phosphorylation, etc.) or specify "
+"'agent2' for pairwise interactions."
+msgstr ""
+
+#: ../../tools/indra_tools.rst:110 6cc6f6ecadb94ad7a72a1aaac33f2bf9
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_statements)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:113 4f6bbe82b302472c877c432445be4568
+msgid ""
+"``agent`` (string) (required) Gene symbol, protein name, or chemical name"
+" (e.g., 'TP53', 'EGFR', 'gefitinib', 'BRAF')"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:116 87d3e6d4be524e72841aaadc2d6ca218
+msgid ""
+"``type`` (string) (optional) Filter by statement type: Activation, "
+"Inhibition, Phosphorylation, Dephosphorylation, Ubiquitination, Complex, "
+"IncreaseAmount, DecreaseAmount, Translocation, Autophosphorylation"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:119 8edeeb177cbf46ecaa172b695b0ab95f
+msgid ""
+"``agent2`` (string) (optional) Second agent for pairwise queries (e.g., "
+"agent='BRAF' agent2='MAP2K1')"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:122 eb8bd31c07cd4d5fb8d58cb9be932186
+msgid "``limit`` (integer) (optional) Maximum statements to return (default: 10)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:125 c77f369b60e7407bb77f5683600d101a
+msgid ""
+"``ev_limit`` (integer) (optional) Maximum evidence items per statement "
+"(default: 2)"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:142 94e219eb818c44b49e7657f808cae5c3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:144 223f64ced12a480f8b86840144652c5b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/indra_tools.rst:145 9c01ed3a71f4441e8235ea5273588cfe
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

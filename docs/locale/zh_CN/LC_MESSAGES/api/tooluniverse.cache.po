@@ -7,150 +7,158 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-18 23:04-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../api/tooluniverse.cache.rst:2 1d3679e68184438da056a0614b7f8bf7
+#: ../../api/tooluniverse.cache.rst:2 140c46271f1346d68204cff235d59e0a
 msgid "tooluniverse.cache package"
 msgstr "tooluniverse.cache 软件包"
 
-#: d634fb52ae10440eabc21633e28c9eae of tooluniverse.cache:1
+#: 467416f6e321417cb04d0dbe7cb52b64 of tooluniverse.cache:1
 msgid "Cache utilities for ToolUniverse."
 msgstr "ToolUniverse 缓存工具"
 
-#: ../../api/tooluniverse.cache.rst:11 9abb905f776b4e19b9bfed99d003be16
+#: ../../api/tooluniverse.cache.rst:10 8ce5c53911dd4a7d8ae2db41c8ad0394
 msgid "Submodules"
 msgstr "子模块"
 
-#: ../../api/tooluniverse.cache.rst:14 a93683f343a2494eab2ca76c759c75b7
+#: ../../api/tooluniverse.cache.rst:13 94751c50887e44f4979c711f39632950
 #, fuzzy
 msgid "tooluniverse.cache.memory\\_cache module"
 msgstr "tooluniverse.cache 软件包"
 
-#: 768d4d1b9ace45e0b0b32b1335c8abc1 of tooluniverse.cache.memory_cache:1
+#: b9119d8f07aa483dbde7180010ae5cfc of tooluniverse.cache.memory_cache:1
 #, fuzzy
 msgid "In-memory cache utilities for ToolUniverse."
 msgstr "ToolUniverse 缓存工具"
 
-#: a4bc6999206c45d3ae95d9d0e718466e of tooluniverse.cache.memory_cache:3
+#: 2b7f573fd27f4b029c1924f2793d00a6 of tooluniverse.cache.memory_cache:3
 msgid ""
 "Provides a lightweight, thread-safe LRU cache with optional singleflight "
 "deduplication for expensive misses."
 msgstr "提供一个轻量级、线程安全的LRU缓存，并支持可选的singleflight机制，用于减少高成本的缓存未命中情况。"
 
-#: 24caa351a83944c78b6d71f0370ace36 27d5b42c2150448b8f155403ff8c29bd
-#: 60f5943000fa4591a737113b4bf397ec b3c812ba6e334177bc510dc49f45720b
-#: c3a1e873935248db9549bb935024e515 e0a05ec38da84d74942db7066fb6d175
-#: f9b55d5b73834f9487e610a157e7d8ca of
+#: 568472706a4b4534bccca87a571401fc 67e40c435ffa4aadaea62a8c5351ff2c
+#: 71a96c7610584aae8fc4301fc3cd2729 80507ee7097643d4b26c7553988deda9
+#: d11b5d2d106742f29ad83d5e8f79cb34 fef76a810c99448b91f097c49f10fdc7 of
 #: tooluniverse.cache.memory_cache.LRUCache:1
 #: tooluniverse.cache.memory_cache.SingleFlight:1
 #: tooluniverse.cache.result_cache_manager.CacheRecord:1
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager:1
-#: tooluniverse.cache.result_cache_manager._DummyContext:1
 #: tooluniverse.cache.sqlite_backend.CacheEntry:1
 #: tooluniverse.cache.sqlite_backend.PersistentCache:1
 msgid "Bases: :py:class:`object`"
 msgstr "基类：:py:class:`object`"
 
-#: da3d570bc5294e1295d69267dd4f21db of
+#: 8c467576cfe2435db341ebab559d22cf of
 #: tooluniverse.cache.memory_cache.LRUCache:1
 msgid "Thread-safe LRU cache with basic telemetry."
 msgstr "线程安全的LRU缓存，带有基本的遥测功能。"
 
-#: be40ad77dd4e424b936e6bb274b0d94b of
+#: 9fb57ad1e7a546c4a49ceee215082cdc of
 #: tooluniverse.cache.memory_cache.SingleFlight:1
 msgid "Per-key lock manager to collapse duplicate cache misses."
 msgstr "每键锁管理器用于合并重复的缓存未命中。"
 
-#: ../../api/tooluniverse.cache.rst:23 7aaa0257aaa9482390d95c1d137d6b85
+#: ../../api/tooluniverse.cache.rst:21 b18baa77ed8f4c879af582b83168e694
 #, fuzzy
 msgid "tooluniverse.cache.result\\_cache\\_manager module"
 msgstr "tooluniverse.cache 软件包"
 
-#: d471758f5fb84ddb803cbbedd1043abd of
+#: 10b4bf859a614e28bcb39159f6ca6919 of
 #: tooluniverse.cache.result_cache_manager:1
-msgid ""
-"Result cache manager that coordinates in-memory and persistent storage."
+msgid "Result cache manager that coordinates in-memory and persistent storage."
 msgstr "结果缓存管理器，用于协调内存和持久化存储。"
 
-#: 5d582faec5e74b2aaff657b968d39318 of
+#: 8df7e5ad9f7746c2a9ec339c142ea73a of
 #: tooluniverse.cache.result_cache_manager.CacheRecord:1
 msgid ""
-"CacheRecord(value: 'Any', expires_at: 'Optional[float]', namespace: 'str', "
-"version: 'str')"
+"CacheRecord(value: 'Any', expires_at: 'Optional[float]', namespace: "
+"'str', version: 'str')"
 msgstr ""
-"CacheRecord(value: '任意类型', expires_at: '可选[浮点数]', namespace: '字符串', version:"
-" '字符串')"
+"CacheRecord(value: '任意类型', expires_at: '可选[浮点数]', namespace: '字符串', "
+"version: '字符串')"
 
-#: dfd3083e11f34b95a385d1e985ce6a28 of
+#: 0e1ebb3351aa42eca674a2836edb62af of
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager:1
 msgid "Facade around memory + persistent cache layers."
 msgstr "围绕内存和持久缓存层的外观模式。"
 
-#: 75bef3717a144c749ea9e2999423b1f8 of
+#: ccefe08a9f3e4040a3060713c206476d of
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager.bulk_get:1
 msgid "Fetch multiple cache entries at once."
 msgstr "一次性获取多个缓存条目。"
 
-#: ../../api/tooluniverse.cache.rst 86ac79a8228e441793a2577e06f0e5ce
+#: ../../api/tooluniverse.cache.rst 0b14ff459a6f42ae8a2051c55e469539
 msgid "Parameters"
 msgstr "参数"
 
-#: 630e8d29621545e483ca43279aa07a9d of
+#: 76ff18e3d9e24387b77c271f1acda01a of
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager.bulk_get:3
-msgid ""
-"Iterable of dicts containing ``namespace``, ``version`` and ``cache_key``."
+msgid "Iterable of dicts containing ``namespace``, ``version`` and ``cache_key``."
 msgstr "包含``namespace``、``version``和``cache_key``的字典迭代对象。"
 
-#: 00839da746f149b68a896733f58df5fc of
+#: 45ac1e42619f4209a0e4b4e1a42f9fea of
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager.bulk_get:5
 msgid "Returns"
 msgstr "返回"
 
-#: f9897dc43d744de59ac12b8b84c4e747 of
+#: 4999ce85b5f7454caebfd6e2ad361eaf of
 #: tooluniverse.cache.result_cache_manager.ResultCacheManager.bulk_get:6
 msgid "Mapping of composed cache keys to cached values."
 msgstr "将组合缓存键映射到缓存值。"
 
-#: ../../api/tooluniverse.cache.rst:32 38bd8ab9882448a9b08d8b6d2405c261
+#: e9d913d40a7543d5bb7777d8f4a8a9d9 of
+#: tooluniverse.cache.result_cache_manager.ResultCacheManager.close:1
+msgid "Close the cache manager and cleanup resources."
+msgstr ""
+
+#: 0a5df28b28b1424eadac173dae41f650 of
+#: tooluniverse.cache.result_cache_manager.ResultCacheManager.__del__:1
+msgid "Ensure cleanup happens even if close() is not called explicitly."
+msgstr ""
+
+#: ../../api/tooluniverse.cache.rst:29 bfa05d8f97ea42b89fe0390b9c32f331
 #, fuzzy
 msgid "tooluniverse.cache.sqlite\\_backend module"
 msgstr "tooluniverse.cache 软件包"
 
-#: 10c33d96cd3b487caccb6d6b48fc51f2 of tooluniverse.cache.sqlite_backend:1
+#: 6143df9179554a9d8c6cdb64bbad14a4 of tooluniverse.cache.sqlite_backend:1
 msgid "SQLite-backed persistent cache for ToolUniverse."
 msgstr "基于SQLite的ToolUniverse持久缓存。"
 
-#: dc8046800e8f43d19374e82b174ae26d of tooluniverse.cache.sqlite_backend:3
+#: 7d1f7c85c46d4497a903eb2244904d6f of tooluniverse.cache.sqlite_backend:3
 msgid ""
 "The cache stores serialized tool results with TTL and version metadata. "
 "Designed to be a drop-in persistent layer behind the in-memory cache."
 msgstr "缓存存储带有TTL和版本元数据的序列化工具结果。设计为内存缓存后端的可直接使用的持久层。"
 
-#: bc6fb3cfaf69450eb8feb4ba415fdc27 of
+#: 618ff71636f843a897e3c722578309f2 of
 #: tooluniverse.cache.sqlite_backend.CacheEntry:1
+#, fuzzy
 msgid ""
-"CacheEntry(key: 'str', value: 'Any', namespace: 'str', version: 'str', ttl: "
-"'Optional[int]', created_at: 'float', last_accessed: 'float', hit_count: "
-"'int')"
+"CacheEntry(key: 'str', value: 'Any', namespace: 'str', version: 'str', "
+"ttl: 'Optional[int]', created_at: 'float', last_accessed: 'float', "
+"hit_count: 'int', expires_at: 'Optional[float]' = None)"
 msgstr ""
-"CacheEntry(key: '字符串', value: '任意类型', namespace: '字符串', version: '字符串', ttl:"
-" '可选[int]', created_at: '浮点数', last_accessed: '浮点数', hit_count: '整数')"
+"CacheEntry(key: '字符串', value: '任意类型', namespace: '字符串', version: '字符串', "
+"ttl: '可选[int]', created_at: '浮点数', last_accessed: '浮点数', hit_count: '整数')"
 
-#: 4dc21e1dab1d43469a2d440f9fcee25e of
+#: 877e149602a8435fbc49c498034290d4 of
 #: tooluniverse.cache.sqlite_backend.PersistentCache:1
 msgid "SQLite-backed cache layer with TTL support."
 msgstr "基于SQLite的缓存层，支持TTL功能。"
 
 #~ msgid "Return type"
 #~ msgstr "返回类型"
+

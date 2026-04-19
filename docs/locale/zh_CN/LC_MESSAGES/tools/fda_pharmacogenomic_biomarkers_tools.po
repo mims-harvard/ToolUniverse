@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:10
+#: 4e50acb4f3a5421e8724c5dacd74361b
+msgid "Fda Pharmacogenomic Biomarkers Tools"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:12
+#: 35af8f7d39a54ce185fc7a975644eaae
+msgid ""
+"**Configuration File**: ``fda_pharmacogenomic_biomarkers_tools.json`` "
+"**Tool Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:16
+#: 9abb7ede16e54dd29745eeeaabfb4a58
+msgid ""
+"This page contains all tools defined in the "
+"``fda_pharmacogenomic_biomarkers_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:19
+#: 78b9461922c4400882ec883b49673781
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:22
+#: 88efd6aec88544bdb4f7ea493390e57d
+msgid ""
+"**fda_pharmacogenomic_biomarkers** (Type: "
+"FDAPharmacogenomicBiomarkersTool)"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:24
+#: 292c4e4216334cb499ff73880617baa6
+msgid ""
+"Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool "
+"fetches the Table of Pharmaco..."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst
+#: 787a0a49f1d849d087ed7ed8e51744e2
+msgid "fda_pharmacogenomic_biomarkers tool specification"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:28
+#: 7a009c5d3b52457cb1b3615890a15579
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:30
+#: dccb2f8c1a534ca8911746d34107860a
+msgid "**Name**: ``fda_pharmacogenomic_biomarkers``"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:31
+#: 456d0d82921e45779fd0be0c1c0a9ad0
+msgid "**Type**: ``FDAPharmacogenomicBiomarkersTool``"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:32
+#: 55e2caa255a344bab6f2af2d4a048e54
+msgid ""
+"**Description**: Retrieve pharmacogenomic biomarkers from FDA drug "
+"labels. This tool fetches the Table of Pharmacogenomic Biomarkers in Drug"
+" Labeling from the FDA website and allows filtering by drug name or "
+"biomarker."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:34
+#: 27befcaee4c54c19b900b114be2bd13c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:36
+#: d498bb9d83a04c62beb4f2898bf6e1c9
+msgid ""
+"``drug_name`` (string) (optional) Filter by the name of the drug (e.g., "
+"'Sivextro', 'Abacavir'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:39
+#: 9889e82330c348e782f80d56940dbc75
+msgid ""
+"``biomarker`` (string) (optional) Filter by the specific biomarker (e.g.,"
+" 'CYP2D6', 'HLA-B\\*5701'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:42
+#: 19f7c125f06146239ad29cad5f3ae9af
+msgid "``limit`` (integer) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:45
+#: 2e67024f73354e998a9765256404526d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:58
+#: d5d100c8836143a6868234c9cfdbcbe0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:60
+#: c46a36efa3494c8daa7386611a8a8161
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fda_pharmacogenomic_biomarkers_tools.rst:61
+#: 18725fd6522d498db4f5ca244cac9899
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

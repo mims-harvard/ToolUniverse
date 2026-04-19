@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/disgenet_tools.rst:10 4344725c32534c318344764258645c76
+msgid "Disgenet Tools"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:12 dabf3fe3c18044daad7de4c9b2e47c71
+msgid ""
+"**Configuration File**: ``disgenet_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:16 53090e8a312e4eb295524f0fb09f2f62
+msgid ""
+"This page contains all tools defined in the ``disgenet_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:19 02b750e9658f46f69c10f0fdd3e071f9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:22 cae024330456445e8f89dd56dc092949
+msgid "**DisGeNET_get_disease_genes** (Type: DisGeNETTool)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:24 1a0c744f5d7c492f81a2e2fac838507f
+msgid ""
+"Get all genes associated with a disease from DisGeNET. Returns ranked "
+"gene list with association ..."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst 43cce83c1ba4415abce5c1b3ca4614b0
+msgid "DisGeNET_get_disease_genes tool specification"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:28 ../../tools/disgenet_tools.rst:68
+#: ../../tools/disgenet_tools.rst:113 ../../tools/disgenet_tools.rst:152
+#: ../../tools/disgenet_tools.rst:189 1ef459d212ff43a18d0b011d19327878
+#: 5cb942ef8639415fb5117dd2bf77c95e 6de62dff31cb4e9d861247c5839b3f8c
+#: 8929c7c091af430eb074ff40b957ae27 b53f3f71ad164cc9a6fc5b6429c65a40
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:30 bb453ac1c584486691d59eac1a3e4158
+msgid "**Name**: ``DisGeNET_get_disease_genes``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:31 ../../tools/disgenet_tools.rst:71
+#: ../../tools/disgenet_tools.rst:116 ../../tools/disgenet_tools.rst:155
+#: ../../tools/disgenet_tools.rst:192 439f245cfecf45db8b39c2943d330ade
+#: 8580701420e64fdfb56dc7cc37b5cdea 88e1558010184fd5aad8356a24eaffa4
+#: 956767ad7127436a85b47d804633e060 b805e3045c894264b85e3c822d76b939
+msgid "**Type**: ``DisGeNETTool``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:32 25f0dc64378b47c89c03501f7d38910b
+msgid ""
+"**Description**: Get all genes associated with a disease from DisGeNET. "
+"Returns ranked gene list with association scores and evidence counts. "
+"Filter by minimum score to get high-confidence associations. Useful for "
+"disease gene prioritization."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:34 ../../tools/disgenet_tools.rst:74
+#: ../../tools/disgenet_tools.rst:119 ../../tools/disgenet_tools.rst:158
+#: ../../tools/disgenet_tools.rst:195 40637f226acd4eeeb406689cb669e4fc
+#: 681177d9449947e79e400188f91eec42 6d8bd305766c476b8b96eb5278d9e26a
+#: 885fbc937fcf42218880f4aa314868b4 ad79f4e9c709427eaf380cad48f850e6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:36 d7a736e7e4d749f8b81512342ed9e47e
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_disease\\_genes)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:39 dead5c332b274be2b96a45796c52ea58
+msgid "``disease`` (string) (required) Disease ID (UMLS CUI) or disease name"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:42 90461b7f18874b78aa179564d76c8416
+msgid ""
+"``min_score`` (number) (optional) Minimum association score (0-1). "
+"Default: no filter"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:45 6d99e5240da942ca8c8975d44aac8e47
+msgid "``limit`` (integer) (optional) Maximum genes to return (default: 50)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:48 ../../tools/disgenet_tools.rst:94
+#: ../../tools/disgenet_tools.rst:133 ../../tools/disgenet_tools.rst:169
+#: ../../tools/disgenet_tools.rst:206 3b4fc75b772f4d8d8e7b8fca07cc86c6
+#: 40267269c2b1456f863c3978d5b2df24 4f6fabd06f244d0c8a7f5a6099f14980
+#: 63b13c50b2a04da9a6531990eeaca667 75836d157ae6456e875f84f7943fe082
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:62 085125b62b364e3597475cc801b985c5
+msgid "**DisGeNET_get_gda** (Type: DisGeNETTool)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:64 2e5fedbeb84441b595db8abcf7d39ac2
+msgid ""
+"Get gene-disease associations with filtering. Filter by data source "
+"(CURATED, LITERATURE, ANIMAL\\..."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst 79be00a1a9d74de09b87f103db5388eb
+msgid "DisGeNET_get_gda tool specification"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:70 aa911622c7f845ccb00f61af3781e961
+msgid "**Name**: ``DisGeNET_get_gda``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:72 0a7dbc49a5914f6c8e45cf79baaf650d
+msgid ""
+"**Description**: Get gene-disease associations with filtering. Filter by "
+"data source (CURATED, LITERATURE, ANIMAL\\_MODELS) and minimum score. "
+"Returns comprehensive GDA data with evidence levels. Requires "
+"DISGENET\\_API\\_KEY."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:76 09e83800223b4e8f852b46cffe8d4268
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_gda)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:79 e1a29cbc788b4b25b32c0c9cedc6ae77
+msgid "``gene`` (string) (optional) Gene symbol (optional if disease provided)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:82 a97a6712a1b04fd49899125412cb391b
+msgid ""
+"``disease`` (string) (optional) Disease ID/UMLS CUI (optional if gene "
+"provided)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:85 870299c24cc346939f63e35a09ff9f35
+msgid ""
+"``source`` (string) (optional) Data source filter: CURATED, "
+"ANIMAL\\_MODELS, LITERATURE, etc."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:88 4db038f2cdfd41c0acbd4cd6665e1b7d
+msgid ""
+"``min_score`` (number) (optional) Minimum GDA score (0-1). Higher = "
+"stronger evidence."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:91 ../../tools/disgenet_tools.rst:130
+#: 42cd683c65944be28b5e176f76ed22e0 5a2157feff8f4f70a1a6dfb83894cc10
+msgid "``limit`` (integer) (optional) Maximum results (default: 25)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:107 2a37ae6a089643d9ae8e5cf8aaf98df5
+msgid "**DisGeNET_get_vda** (Type: DisGeNETTool)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:109 f59167e0311c473e9f9565b6f5c6bce4
+msgid ""
+"Get variant-disease associations from DisGeNET. Query by rsID or gene "
+"symbol to find disease-asso..."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst 25060873ef8f4501877f61fe88c38288
+msgid "DisGeNET_get_vda tool specification"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:115 21133bbd502b4a1fbc29ce1e1b77c0d4
+msgid "**Name**: ``DisGeNET_get_vda``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:117 ddcccb408c904adf9eb07daba70b0d9b
+msgid ""
+"**Description**: Get variant-disease associations from DisGeNET. Query by"
+" rsID or gene symbol to find disease-associated variants. Returns variant"
+" IDs, diseases, and evidence scores. Useful for pharmacogenomics and "
+"variant interpretation."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:121 8320a73d111444e7b1616260fcba6600
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_vda)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:124 2f4cd71ba5994b22bf135f9a2828e69e
+msgid ""
+"``variant`` (string) (optional) Variant rsID (e.g., rs1234) - optional if"
+" gene provided"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:127 068b092b91854c85b9c302dea25e605c
+msgid ""
+"``gene`` (string) (optional) Gene symbol to get all variants - optional "
+"if variant provided"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:146 ad27b386a7334ce4be1f15a8d604588b
+msgid "**DisGeNET_search_disease** (Type: DisGeNETTool)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:148 8ffc93097bf44b748bb2825657711d27
+msgid ""
+"Search DisGeNET for genes associated with a disease. Query by disease "
+"name or UMLS CUI (e.g., C00..."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst 26f16e08759346518de3ea04f7a0a204
+msgid "DisGeNET_search_disease tool specification"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:154 05a9acd0e4be4d8e92db071df7c54929
+msgid "**Name**: ``DisGeNET_search_disease``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:156 09d8684208cd464094c0cc2401c64e2c
+msgid ""
+"**Description**: Search DisGeNET for genes associated with a disease. "
+"Query by disease name or UMLS CUI (e.g., C0006142 for breast cancer). "
+"Returns associated genes with scores and evidence. Requires "
+"DISGENET\\_API\\_KEY."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:160 6a1d0574b3714e728a4584cbc1f29366
+msgid "``operation`` (string) (optional) Operation type (fixed: search\\_disease)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:163 e7d77058a00041dba83e096052bc07ef
+msgid ""
+"``disease`` (string) (required) Disease name or UMLS CUI (e.g., C0006142,"
+" breast cancer)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:166 ../../tools/disgenet_tools.rst:203
+#: 328df741822d4a799a630b4bd8bff13e cb37d3d397ba4f438fcd80dd85c50d6d
+msgid ""
+"``limit`` (integer) (optional) Maximum associations to return (default: "
+"10)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:183 306ee95a0d704ab6bba9cdf2fd4fef8a
+msgid "**DisGeNET_search_gene** (Type: DisGeNETTool)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:185 8f684babecea46afb52cace5b55bf880
+msgid ""
+"Search DisGeNET for diseases associated with a gene. DisGeNET is the "
+"largest public database of g..."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst 69d256c4ecf24501b8c4047895c01275
+msgid "DisGeNET_search_gene tool specification"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:191 c0da61625a964a94b1a09f898b46b230
+msgid "**Name**: ``DisGeNET_search_gene``"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:193 be538e4b677b476f8910d871b04e3ee2
+msgid ""
+"**Description**: Search DisGeNET for diseases associated with a gene. "
+"DisGeNET is the largest public database of gene-disease associations. "
+"Returns diseases, association scores, and evidence counts. Use the 'gene'"
+" parameter (e.g., 'BRCA1', 'TP53') — note: parameter name is 'gene', not "
+"'gene\\_symbol'. Requires DISGENET\\_API\\_KEY env var (register free at "
+"disgenet.org)."
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:197 39cd55a493ca483c9e21aa4b1d09b7aa
+msgid "``operation`` (string) (optional) Operation type (fixed: search\\_gene)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:200 8d56f609c88b46cfbf6a401e2a1e8f2a
+msgid "``gene`` (string) (required) Gene symbol (e.g., BRCA1, TP53, EGFR)"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:220 b8ae593b997642969d0f090b39751884
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:222 5377a7e36ba3401c898b05b8fb0e76f3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/disgenet_tools.rst:223 82b4368a06b7489b96451bdf799ae688
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

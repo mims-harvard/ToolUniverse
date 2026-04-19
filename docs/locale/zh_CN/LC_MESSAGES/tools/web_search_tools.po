@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/web_search_tools.rst:10 53ecff8274744fd6b2e5d154e8bdd27b
+msgid "Web Search Tools"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:12 d33c1ce25e5f4d5ea284e10b54862f08
+msgid ""
+"**Configuration File**: ``web_search_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:16 e952d41687ef4b319a09b8bb34e469c9
+msgid ""
+"This page contains all tools defined in the ``web_search_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:19 6f790f12d64d4d56a90ebdc94146889c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:22 766e09b8b37b4fbeac7183b94d616447
+msgid "**web_api_documentation_search** (Type: WebAPIDocumentationSearchTool)"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:24 1b53428899d24ffba8d47f2c4fec6afc
+msgid ""
+"Specialized web search for API documentation, Python packages, and "
+"technical resources using DDGS..."
+msgstr ""
+
+#: ../../tools/web_search_tools.rst 9ea22f449c164d3d815ffe5bafc40980
+msgid "web_api_documentation_search tool specification"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:28 ../../tools/web_search_tools.rst:68
+#: aead7b42e5ed49f2b35f7c5171448313 bb14b72917224a49b98a5b41267e7c58
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:30 abe02f0f3de74fceab2faf8b550f156e
+msgid "**Name**: ``web_api_documentation_search``"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:31 dc29b73b14514deb8778712f5f1885cf
+msgid "**Type**: ``WebAPIDocumentationSearchTool``"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:32 6b53cfb781d648e6b3b5c35485b2485c
+msgid ""
+"**Description**: Specialized web search for API documentation, Python "
+"packages, and technical resources using DDGS with multiple search "
+"engines. Optimized for finding official documentation and library "
+"information."
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:34 ../../tools/web_search_tools.rst:74
+#: 252a9643b5594184bfa3622ccf512a64 a76a407750a645d8befb6b0f08be22ed
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:36 4fed5e06dd1948db8b15d5e771496e25
+msgid ""
+"``query`` (string) (required) Search query string (e.g., tool name, "
+"library name, API name)"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:39 ../../tools/web_search_tools.rst:79
+#: ddba1611680d424eafc4565f84a9304d fad9eed88b93424b859245367c531f8f
+msgid "``max_results`` (integer) (optional) Maximum number of results to return"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:42 ead911e568764290a2ed035422e3739f
+msgid "``focus`` (string) (optional) Focus area for the search"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:45 ../../tools/web_search_tools.rst:85
+#: 09399cc645da431ea11e969942c1319e bfaef512cdd64c1b9b4ceaa8123d1e69
+msgid "``backend`` (string) (optional) Search engine backend to use"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:48 ../../tools/web_search_tools.rst:94
+#: 071e37bf13724f61bc2de34ec8f89728 80f38ba681764c98881db1ac9b2a0488
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:62 90eb293a300d4c628c92d7f47fb4124b
+msgid "**web_search** (Type: WebSearchTool)"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:64 20bd453da0064bbdb53c280def7075df
+msgid ""
+"General web search using DDGS (Dux Distributed Global Search) supporting "
+"multiple search engines ..."
+msgstr ""
+
+#: ../../tools/web_search_tools.rst bfd5660259b4449bb8ccfb83815790e1
+msgid "web_search tool specification"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:70 91181ab31bdd4630b314f237a2e8cfd7
+msgid "**Name**: ``web_search``"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:71 7a4d7f5459304405967785d4b0eeb91a
+msgid "**Type**: ``WebSearchTool``"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:72 ae953d386d4f410f91a1525499636ec6
+msgid ""
+"**Description**: General web search using DDGS (Dux Distributed Global "
+"Search) supporting multiple search engines including Google, Bing, Brave,"
+" Yahoo, and DuckDuckGo. No API keys required."
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:76 b8cea838a84f4deeb6ed218f0e4b7a40
+msgid "``query`` (string) (required) Search query string"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:82 5a35aa196a4a4c4cb47ec1668b6d5698
+msgid "``search_type`` (string) (optional) Type of search to perform"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:88 f70210a74f024361bc9a5e80e51659fd
+msgid "``region`` (string) (optional) Search region/locale"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:91 eb826e5990e34970b85e3eef1d6a8c79
+msgid "``safesearch`` (string) (optional) Safe search level"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:108 17c2ed72e4fd4247a141ba74bf68562d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:110 84b40d2d47cf4446bae08753a55b895b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/web_search_tools.rst:111 a0580bb1311a48c0a9022a08ed16b2ca
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

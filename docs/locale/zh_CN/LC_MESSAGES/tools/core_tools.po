@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,118 +18,253 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/core_tools.rst:2 686e1a25afed443a9c00cc01e6954f7a
+#: ../../tools/core_tools.rst:10 5aa1d519406040d58e8d07d55b4c4394
 msgid "Core Tools"
 msgstr "核心工具"
 
-#: ../../tools/core_tools.rst:4 2dd490c4eec2401886471643fd1c5987
+#: ../../tools/core_tools.rst:12 16b6bfd1e1594abea7d7276edba0eb80
+#, fuzzy
 msgid ""
 "**Configuration File**: ``core_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 1"
+"Count**: 2"
 msgstr ""
 "**配置文件**：``core_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/core_tools.rst:8 3ee9de1c3751458290567ae81adb85f0
+#: ../../tools/core_tools.rst:16 3268a71995f048ac86445e47fc2a87d8
 msgid ""
 "This page contains all tools defined in the ``core_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``core_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/core_tools.rst:11 d2fc057413614d489f5e96ebf0def3a9
+#: ../../tools/core_tools.rst:19 e6b62ed919f6450f99e4bd671bb1c0ba
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/core_tools.rst:14 ef98790382bb4d488a7f54976f02f2d6
-msgid "**CORE_search_papers** (Type: CoreTool)"
+#: ../../tools/core_tools.rst:22 e78a5517801e49e797ed40375ee8ca17
+#, fuzzy
+msgid "**CORE_get_fulltext_snippets** (Type: CorePDFSnippetsTool)"
 msgstr "**CORE_search_papers**（类型：CoreTool）"
 
-#: ../../tools/core_tools.rst:16 2012646773574d1e9c48082b065e4fdd
+#: ../../tools/core_tools.rst:24 ef703853677c45fc8435bb39c8c737e7
 msgid ""
-"Search for open access academic papers using CORE API. CORE is the "
-"world's largest collection of ..."
-msgstr "使用 CORE API 搜索开放获取的学术论文。CORE 是全球最大的文献集合之一，..."
+"Fetch an open-access PDF (commonly returned by CORE\\_search\\_papers) "
+"and return bounded text snip..."
+msgstr ""
 
-#: ../../tools/core_tools.rst a7e42af3439d46d59a320cdee3170f24
-msgid "CORE_search_papers tool specification"
+#: ../../tools/core_tools.rst 053823ff12324d188c9149eeaeeff9c3
+#, fuzzy
+msgid "CORE_get_fulltext_snippets tool specification"
 msgstr "CORE_search_papers 工具规格说明"
 
-#: ../../tools/core_tools.rst:20 8013a0dea2774185bffb98af2b3d3078
+#: ../../tools/core_tools.rst:28 ../../tools/core_tools.rst:89
+#: 341f2b7ba218470ea8a823a6924ef5f8 7ef5b6cc8a0b44bb9f3222cc3698314d
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/core_tools.rst:22 786cf0ae95c04d2e83345005b45b7819
-msgid "**Name**: ``CORE_search_papers``"
+#: ../../tools/core_tools.rst:30 a9b1f212d9404a39b1a5c648980cc051
+#, fuzzy
+msgid "**Name**: ``CORE_get_fulltext_snippets``"
 msgstr "**名称**：``CORE_search_papers``"
 
-#: ../../tools/core_tools.rst:23 d089e709c87e4ad0b2f6898980008a3d
-msgid "**Type**: ``CoreTool``"
+#: ../../tools/core_tools.rst:31 ac65b90551ff462bac061d58d7bb31d8
+#, fuzzy
+msgid "**Type**: ``CorePDFSnippetsTool``"
 msgstr "**类型**：``CoreTool``"
 
-#: ../../tools/core_tools.rst:24 ef613a9811e64f158e7628dcc6aadcda
+#: ../../tools/core_tools.rst:32 2704ef88cf5546d99150af8077f31a6d
 msgid ""
-"**Description**: Search for open access academic papers using CORE API. "
-"CORE is the world's largest collection of open access research papers, "
-"providing access to over 200 million papers from repositories and "
-"journals worldwide."
+"**Description**: Fetch an open-access PDF (commonly returned by "
+"CORE\\_search\\_papers) and return bounded text snippets around provided "
+"terms. This is a local (download + scan) full-text search fallback when "
+"index-based search misses body-only keywords. Extraction backends: "
+"PyMuPDF (fitz), pypdf, or markitdown (auto-selects fastest available "
+"unless \\`extractor\\` is set)."
 msgstr ""
-"**描述**：使用 CORE API 搜索开放获取的学术论文。CORE 是全球最大的开放获取研究论文集合，提供来自全球各大仓储和期刊的超过 2 "
-"亿篇论文的访问。"
 
-#: ../../tools/core_tools.rst:26 d33458f651954dc496e08e78e15620c3
+#: ../../tools/core_tools.rst:34 ../../tools/core_tools.rst:95
+#: 4287d23364bc4239af42e5e0d465a905 63aef863629940a8b881959cbe315384
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/core_tools.rst:28 dc4b7669a89e4c3794f47164cbdb87a8
+#: ../../tools/core_tools.rst:36 a7ae30d24df04d1ab0dcbec54d3404e6
 msgid ""
-"``query`` (string) (required) Search query for CORE papers. Use keywords "
+"``pdf_url`` (string) (optional) Direct PDF URL to download (preferred). "
+"CORE\\_search\\_papers returns this as the \\`url\\` field in many "
+"results."
+msgstr ""
+
+#: ../../tools/core_tools.rst:39 8f76e8a5b4c54743827be25ad31e7573
+msgid ""
+"``url`` (string) (optional) Alias for \\`pdf\\_url\\` for convenience "
+"when piping CORE\\_search\\_papers outputs."
+msgstr ""
+
+#: ../../tools/core_tools.rst:42 b8d6576972354d0e9611ec55d4cf8160
+msgid ""
+"``terms`` (array) (required) Terms to search for in the extracted PDF "
+"text (case-insensitive)."
+msgstr ""
+
+#: ../../tools/core_tools.rst:45 0f012d9c7a624d40ac17cf3997206271
+msgid ""
+"``window_chars`` (integer) (optional) Context window size (characters) "
+"before and after each match."
+msgstr ""
+
+#: ../../tools/core_tools.rst:48 ff89d9d2246a46d1a51ca3564d3143a6
+msgid ""
+"``max_snippets_per_term`` (integer) (optional) Maximum number of snippets"
+" returned per term."
+msgstr ""
+
+#: ../../tools/core_tools.rst:51 b080d80319454b22a35393179ae26fee
+msgid ""
+"``max_total_chars`` (integer) (optional) Hard cap on total characters "
+"returned across all snippets."
+msgstr ""
+
+#: ../../tools/core_tools.rst:54 4b59ddef57064c399754c8eddccbf011
+msgid ""
+"``extractor`` (string) (optional) PDF text extraction backend: auto "
+"(default), fitz (PyMuPDF), pypdf, or markitdown."
+msgstr ""
+
+#: ../../tools/core_tools.rst:57 9d9fef27dce74d039944809750826f7e
+msgid ""
+"``timeout`` (integer) (optional) Download timeout in seconds (bounded to "
+"<=55 to stay under typical MCP call deadlines)."
+msgstr ""
+
+#: ../../tools/core_tools.rst:60 3b21486de753495ba6f06333452d0cb1
+msgid ""
+"``max_pdf_bytes`` (integer) (optional) Maximum PDF size (bytes) allowed "
+"for download/scan. Prevents timeouts on huge PDFs."
+msgstr ""
+
+#: ../../tools/core_tools.rst:63 47898bd4ba92461fbca443eede6ac9a0
+msgid ""
+"``max_pages`` (integer) (optional) Maximum number of PDF pages to scan "
+"when using fitz/pypdf extractors."
+msgstr ""
+
+#: ../../tools/core_tools.rst:66 c48b8a1e0a0f433e89be9333dacc901f
+msgid ""
+"``max_text_chars`` (integer) (optional) Maximum number of extracted text "
+"characters to scan for term matches (limits CPU/memory)."
+msgstr ""
+
+#: ../../tools/core_tools.rst:69 ../../tools/core_tools.rst:124
+#: 116b13040d444e0f88dbed38c310b806 79b73853a4ab4c42a4655043909cfe31
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/core_tools.rst:83 7b1c417f8be64338974970b2c797d73d
+msgid "**CORE_search_papers** (Type: CoreTool)"
+msgstr "**CORE_search_papers**（类型：CoreTool）"
+
+#: ../../tools/core_tools.rst:85 609acfe339654cd6a60413bcaf052e36
+#, fuzzy
+msgid ""
+"Search for open access academic papers using CORE API. CORE aggregates OA"
+" repository and journal ..."
+msgstr "使用 CORE API 搜索开放获取的学术论文。CORE 是全球最大的文献集合之一，..."
+
+#: ../../tools/core_tools.rst 8c0b60cc07a4447ca24f39e066f7b686
+msgid "CORE_search_papers tool specification"
+msgstr "CORE_search_papers 工具规格说明"
+
+#: ../../tools/core_tools.rst:91 ff22cf81e5b8478084152590ed85bd7b
+msgid "**Name**: ``CORE_search_papers``"
+msgstr "**名称**：``CORE_search_papers``"
+
+#: ../../tools/core_tools.rst:92 6197f92970d4469d9104008cda35ca1f
+msgid "**Type**: ``CoreTool``"
+msgstr "**类型**：``CoreTool``"
+
+#: ../../tools/core_tools.rst:93 eaad419c55ef4558a94ee8149ef0be88
+msgid ""
+"**Description**: Search for open access academic papers using CORE API. "
+"CORE aggregates OA repository and journal content; queries can match "
+"metadata and (for many records) indexed full text, but coverage varies by"
+" source. Use CORE\\_get\\_fulltext\\_snippets to search inside a returned"
+" PDF URL when exact body-text terms matter."
+msgstr ""
+
+#: ../../tools/core_tools.rst:97 8b9149c8c30647a39bbfa1e17dafc436
+#, fuzzy
+msgid ""
+"``query`` (string) (optional) Search query for CORE papers. Use keywords "
 "separated by spaces to refine your search."
 msgstr "``query``（字符串）（必填）用于搜索CORE论文的查询词。使用空格分隔的关键词以细化搜索结果。"
 
-#: ../../tools/core_tools.rst:31 d9f71355255340109ec65a56680eb673
+#: ../../tools/core_tools.rst:100 7e2bf18b354644a3bec5f3a6b5531b97
+msgid "``search`` (string) (optional) Alias for \\`query\\`."
+msgstr ""
+
+#: ../../tools/core_tools.rst:103 f2922c4906644eb99103e263f7640042
+msgid "``q`` (string) (optional) Alias for \\`query\\`."
+msgstr ""
+
+#: ../../tools/core_tools.rst:106 0d544edb987d442d8d5870445fcaa9b9
 #, fuzzy
 msgid ""
-"``limit`` (integer) (required) Maximum number of papers to return. This "
+"``limit`` (integer) (optional) Maximum number of papers to return. This "
 "sets the maximum number of papers retrieved from CORE."
 msgstr "``limit``（整数）（可选） 返回的论文最大数量。此参数设置从 CORE 检索的论文最大数量。"
 
-#: ../../tools/core_tools.rst:34 f523730ce6fe41b883f5cf5daf7508b2
+#: ../../tools/core_tools.rst:109 f5bef55de67946238362c25c2e39cd79
+msgid "``page_size`` (integer) (optional) Alias for \\`limit\\`."
+msgstr ""
+
+#: ../../tools/core_tools.rst:112 cf5e25c3918143888f089e5e7c359b16
+msgid "``max_results`` (integer) (optional) Alias for \\`limit\\`."
+msgstr ""
+
+#: ../../tools/core_tools.rst:115 9299a5eb744f4531878272c6363e28b6
 msgid ""
 "``year_from`` (integer) (optional) Start year for publication date filter"
 " (e.g., 2020). Optional parameter to limit search to papers published "
 "from this year onwards."
 msgstr "``year_from``（整数）（可选）出版日期筛选的起始年份（例如，2020）。可选参数，用于限制搜索仅包含从该年份起发表的论文。"
 
-#: ../../tools/core_tools.rst:37 aa500948f3a5419eb0d407c0c11c66e7
+#: ../../tools/core_tools.rst:118 b7207774eb324b6b8b03c5c3b9e61613
 msgid ""
 "``year_to`` (integer) (optional) End year for publication date filter "
 "(e.g., 2024). Optional parameter to limit search to papers published up "
 "to this year."
 msgstr "``year_to``（整数）（可选）出版日期筛选的结束年份（例如，2024年）。可选参数，用于限制搜索范围至该年份及之前发表的论文。"
 
-#: ../../tools/core_tools.rst:40 38743e67b3044745ad97632b4a4eb50b
+#: ../../tools/core_tools.rst:121 c32dd5e9c4dd410298dabe160dd1bce4
 msgid ""
 "``language`` (string) (optional) Language filter for papers (e.g., 'en', "
 "'es', 'fr'). Optional parameter to limit search to papers in specific "
 "language."
 msgstr "``language``（字符串）（可选）用于筛选论文的语言（例如，'en'、'es'、'fr'）。可选参数，用于限制搜索特定语言的论文。"
 
-#: ../../tools/core_tools.rst:43 d9b4759a830a49edabbb011a813abbe2
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
-
-#: ../../tools/core_tools.rst:58 d6287b5c4314460ca881f893a425ddf6
+#: ../../tools/core_tools.rst:137 311c38a88b42415eb1f43fbcbccaf418
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/core_tools.rst:60 acfe8bd83a8b48db8356db60f3bec431
+#: ../../tools/core_tools.rst:139 8412e96e53704dce8ae4f1b1269fbd22
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/core_tools.rst:61 d685c03a811f4222a47f6041cfc45e5e
+#: ../../tools/core_tools.rst:140 983ed8f5502b4e04b2411e5aa459eb0c
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "**Description**: Search for open access "
+#~ "academic papers using CORE API. CORE "
+#~ "is the world's largest collection of "
+#~ "open access research papers, providing "
+#~ "access to over 200 million papers "
+#~ "from repositories and journals worldwide."
+#~ msgstr ""
+#~ "**描述**：使用 CORE API 搜索开放获取的学术论文。CORE "
+#~ "是全球最大的开放获取研究论文集合，提供来自全球各大仓储和期刊的超过 2 亿篇论文的访问。"
 

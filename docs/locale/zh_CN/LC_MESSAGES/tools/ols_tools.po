@@ -1,0 +1,416 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ols_tools.rst:10 268f5a904b1748fc96248cddeff426c7
+msgid "Ols Tools"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:12 6a1644f501374d78a3ed40c38fa3cfd6
+msgid ""
+"**Configuration File**: ``ols_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 7"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:16 e72d1f7ff65746128873e670a93298c2
+msgid ""
+"This page contains all tools defined in the ``ols_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:19 ab1986d4e9e5436480e5302735c1fd5c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:22 7c58ddeb96d9414caf37e01ffba19f36
+msgid "**ols_find_similar_terms** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:24 b211ae1f33b9498ba8fcbd8934a2ab74
+msgid "Find similar terms using LLM-based similarity"
+msgstr ""
+
+#: ../../tools/ols_tools.rst 65cdc8e915c34a7a8a01d832213c8ba7
+msgid "ols_find_similar_terms tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:28 ../../tools/ols_tools.rst:71
+#: ../../tools/ols_tools.rst:107 ../../tools/ols_tools.rst:152
+#: ../../tools/ols_tools.rst:197 ../../tools/ols_tools.rst:236
+#: ../../tools/ols_tools.rst:275 127cbf58a5634d9fa18c5d6e5c86cbad
+#: 59348d89e66246e7b932cc3ab35b1787 643ffe3448bd4fafb6be38d75bd08504
+#: 7e34873ae6794bb49cb29d2a2ca58b4b 8aaf4fd99d7e4f009bbad7bae648934e
+#: bb140e612b944e9c968ea89fc43621e4 db6034d824c2492487730d345f567724
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:30 75ee3d6b19e9484c912ecebbf061164f
+msgid "**Name**: ``ols_find_similar_terms``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:31 ../../tools/ols_tools.rst:74
+#: ../../tools/ols_tools.rst:110 ../../tools/ols_tools.rst:155
+#: ../../tools/ols_tools.rst:200 ../../tools/ols_tools.rst:239
+#: ../../tools/ols_tools.rst:278 898856dcd59644f1b05110184104a839
+#: 9438b6826ca64ad6ae01d41e6aa16cf0 95454366c01142d795eab8fe9f48e389
+#: a04e00f1a05b4baf87e11d03921acbcb b9ab1e31bf544b39a646ee6bf903c771
+#: d3f90ef2e90d47688ec47a717f59e4fd e680dc54989a4b43bf9a5f5c893b34b0
+msgid "**Type**: ``OLSTool``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:32 df871eb40dc7469cab2de4e6ffe1db10
+msgid "**Description**: Find similar terms using LLM-based similarity"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:34 ../../tools/ols_tools.rst:77
+#: ../../tools/ols_tools.rst:113 ../../tools/ols_tools.rst:158
+#: ../../tools/ols_tools.rst:203 ../../tools/ols_tools.rst:242
+#: ../../tools/ols_tools.rst:281 0190e4011e52444c91262a034a321aa6
+#: 2aa1e86992db40f19a5e497da68fff08 6f6ee303aad94c68bbff4b1d85827ec3
+#: 8810026bd6a141378bd6fc54c9e1676f a7e7a22238e04b29ab22fb5f22e6b36f
+#: c5fe84dfebda498887720fc65b494db5 d164f22f8d5b46b29c807ca8580d12e4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:36 d6e0eaf64a584f4da5c9b71e6c48e1ca
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(find\\_similar\\_terms)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:39 149062d61fb04178896729f1ced81f62
+msgid ""
+"``term_iri`` (string) (optional) The IRI of the term to find similar "
+"terms for"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:42 2902116612da49fdba3d02e3c039a8df
+msgid "``ontology`` (string) (required) The ontology ID"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:45 0da5cf19486b4f1d91dff265e8150ef3
+msgid ""
+"``size`` (integer) (optional) Number of similar terms to return (default:"
+" 10)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:48 e7c08d04d2fa434cbcb2fae5fbd142d5
+msgid ""
+"``term_id`` (string) (optional) Alias for term\\_iri. Short-form ontology"
+" ID (e.g., GO:0008150) or full IRI."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:51 ../../tools/ols_tools.rst:88
+#: ../../tools/ols_tools.rst:133 ../../tools/ols_tools.rst:178
+#: ../../tools/ols_tools.rst:217 ../../tools/ols_tools.rst:256
+#: ../../tools/ols_tools.rst:307 25a2f68a891f436bb5214fb2a5ca1c56
+#: 28a3d5b7838b4ece9acc61fdb6bc9ad6 69d356f1d26647288c5bef64a22e5342
+#: 8949099147264ae892f460591730dbac c6829f5e385d4808936ad3004c613074
+#: e0b756338354441b8ab8f704ce882f14 fa60aad24c074b4989805e3079c85ddf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:65 3b89ed5ef06c4478bb1a65e4984569e7
+msgid "**ols_get_ontology_info** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:67 9523387362074de7aaa45784b4055447
+msgid "Get detailed information about an ontology"
+msgstr ""
+
+#: ../../tools/ols_tools.rst a1a612c49d144db3b692182a467295dd
+msgid "ols_get_ontology_info tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:73 f1070848bfb446d6b07d4544a65ca7b9
+msgid "**Name**: ``ols_get_ontology_info``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:75 2551d6db04c24d7aa439c865005aeadf
+msgid "**Description**: Get detailed information about an ontology"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:79 76b57cffa956428ab40a34e95c54f65d
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(get\\_ontology\\_info)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:82 3d9054f49de545a7afdadd617cef1683
+msgid "``ontology_id`` (string) (optional) The ID of the ontology to retrieve"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:85 83398eaea5084f93bccb57e2da51cf9a
+msgid ""
+"``ontology`` (string) (optional) Alias for ontology\\_id. The ontology "
+"abbreviation (e.g. mondo, hp, go, ordo)."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:101 76f6c0082c39449ebda817174672a4b7
+msgid "**ols_get_term_ancestors** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:103 704b62890f044cc199c104331239015b
+msgid ""
+"Get ancestor terms of a specific term in an ontology. Use \\`term\\_id\\`"
+" with CURIE format (e.g., '..."
+msgstr ""
+
+#: ../../tools/ols_tools.rst 6233db9101314b8da177429df67ae52b
+msgid "ols_get_term_ancestors tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:109 ff1198702cef477da60a0d922435b2ae
+msgid "**Name**: ``ols_get_term_ancestors``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:111 7962cdf108474d72a7718b764c420cf5
+msgid ""
+"**Description**: Get ancestor terms of a specific term in an ontology. "
+"Use \\`term\\_id\\` with CURIE format (e.g., 'HP:0001928') — the ontology"
+" is auto-inferred from the prefix. Or supply \\`term\\_iri\\` + "
+"\\`ontology\\` explicitly."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:115 75f59780cab04583b2aedec04b1b437f
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(get\\_term\\_ancestors)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:118 ../../tools/ols_tools.rst:163
+#: 2ec321ca8df84b2cadd9b1e0162a0cbb 480b34f0034d4e91ba6e84421d67b5ab
+msgid ""
+"``term_iri`` (string) (optional) The full IRI of the term (e.g., "
+"http://www.ebi.ac.uk/efo/EFO\\_0000408)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:121 ../../tools/ols_tools.rst:166
+#: 3a2c78d2d7dc40afa36383d76a437fff 91180d97cdb04d2f837237954b16a13b
+msgid ""
+"``term_id`` (string) (optional) Short-form CURIE (e.g., 'HP:0001928', "
+"'GO:0008150'). Ontology is auto-inferred from prefix."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:124 ../../tools/ols_tools.rst:169
+#: 1d9626974fad4eb193361da94773551f 7dd029b9d1d848b6b314911fc58c7bfc
+msgid ""
+"``ontology`` (string) (optional) Ontology ID (e.g., 'hp', 'go', 'efo'). "
+"Auto-inferred from term\\_id prefix when not supplied."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:127 ../../tools/ols_tools.rst:172
+#: ../../tools/ols_tools.rst:301 692f983599e245518d25b5d1b4ca6833
+#: 9347fa7e25484cc3a802743fc28a39af f157c26f0f3a46ec84775584aa7cf683
+msgid ""
+"``include_obsolete`` (boolean) (optional) Include obsolete terms "
+"(default: false)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:130 ../../tools/ols_tools.rst:175
+#: 33d6b9e165104b5c966d68bf16a09998 8f00a8e6a6ea4d168be86cbc7d97b7df
+msgid "``size`` (integer) (optional) Number of results to return (default: 20)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:146 30b36faee80e4072945101288509b2d1
+msgid "**ols_get_term_children** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:148 0f83afff14374ab1bd03cbbc47a67197
+msgid ""
+"Get child terms of a specific term in an ontology. Use \\`term\\_id\\` "
+"with CURIE format (e.g., 'HP:..."
+msgstr ""
+
+#: ../../tools/ols_tools.rst f69e5bbfd7d04c9d97a33621e2f740a8
+msgid "ols_get_term_children tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:154 0f7355bceca84c9e9fbb2c7ae786d4e7
+msgid "**Name**: ``ols_get_term_children``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:156 7fb8261fc20643a1b74d145e49597269
+msgid ""
+"**Description**: Get child terms of a specific term in an ontology. Use "
+"\\`term\\_id\\` with CURIE format (e.g., 'HP:0001928') — the ontology is "
+"auto-inferred from the prefix. Or supply \\`term\\_iri\\` + "
+"\\`ontology\\` explicitly."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:160 c3612ac5b9344dbdabd11effc991ed5e
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(get\\_term\\_children)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:191 94c2f9fb35aa4395a3600b4a9084ac6a
+msgid "**ols_get_term_info** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:193 3c9d15b96d1a4cb687c6d973c7c85061
+msgid "Get detailed information about a specific term in OLS"
+msgstr ""
+
+#: ../../tools/ols_tools.rst b0061037504f448e83aa0bd160a9ced1
+msgid "ols_get_term_info tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:199 08814c331ed144158493810c9c538043
+msgid "**Name**: ``ols_get_term_info``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:201 cd787f45fce04afda615947b8416cc87
+msgid "**Description**: Get detailed information about a specific term in OLS"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:205 86d5b71b7b1b468a96a4b8e6592000fd
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(get\\_term\\_info)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:208 d0643df4a3b54475964bcc7e9e12ffab
+msgid ""
+"``id`` (string) (optional) Ontology term ID or IRI (e.g. HP:0001903, "
+"http://purl.obolibrary.org/obo/HP\\_0001903)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:211 1460822314f8409696653ff4c10c28be
+msgid ""
+"``term_id`` (string) (optional) Alias for id — ontology term ID (e.g. "
+"HP:0001903)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:214 0bdd8b72d6fa4777b1cd7959db4189ea
+msgid ""
+"``term_iri`` (string) (optional) Alias for id. Full IRI or short-form ID "
+"(e.g., GO:0008150, EFO:0003971). Same as id."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:230 4fa0efca171d4740a5279dff172321c7
+msgid "**ols_search_ontologies** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:232 c25e34728f734222af5ac79f17a27c26
+msgid "Search for ontologies in OLS"
+msgstr ""
+
+#: ../../tools/ols_tools.rst 86a0e04c6d3d49ba85fd2018c06b2683
+msgid "ols_search_ontologies tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:238 b22631241c934651b9a74fd7748c0853
+msgid "**Name**: ``ols_search_ontologies``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:240 0e9e9f23f72949ef97cfde28c897ec4a
+msgid "**Description**: Search for ontologies in OLS"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:244 1777147c839f4f01995658ac5506cbdc
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(search\\_ontologies)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:247 fa42c38140f8408685eb8ae3c65d2d85
+msgid "``search`` (string) (optional) Search query for ontologies (optional)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:250 8db521cf20c04931a49a32ac40e290c3
+msgid "``page`` (integer) (optional) Page number (default: 0)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:253 0d8b0084d8a74e74986f26b6aa25228d
+msgid "``size`` (integer) (optional) Number of results per page (default: 20)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:269 3f62b31db67f47888a54bf3830091297
+msgid "**ols_search_terms** (Type: OLSTool)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:271 ddf02b30d9ea4ddc9a7e185107eeee18
+msgid "Search for terms in OLS (Ontology Lookup Service)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst 589a3e80331c4cb092ee6dae3a8114dd
+msgid "ols_search_terms tool specification"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:277 44dc117c90614a6e800a11c13aceac87
+msgid "**Name**: ``ols_search_terms``"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:279 99490889588a4464982e1935a03a35e4
+msgid "**Description**: Search for terms in OLS (Ontology Lookup Service)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:283 8220b2bf512a47ac96d0c3e086c72dea
+msgid ""
+"``operation`` (string) (optional) The operation to perform "
+"(search\\_terms)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:286 eaca75f9de324d6eba1e7fa177484966
+msgid "``query`` (string) (required) The search query for terms"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:289 75793aefac864bd191854652206f7af3
+msgid ""
+"``rows`` (integer) (optional) Number of results to return (default: 10). "
+"Alias: size."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:292 a3031342a634465cb2c44a4953225f5d
+msgid ""
+"``size`` (integer) (optional) Alias for rows. Number of results to return"
+" (default: 10)."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:295 d572d9f8a2c34e2787add42759caf723
+msgid "``ontology`` (string) (optional) Filter by specific ontology (optional)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:298 d3b8f4bcfb3b414aae1eb86e7ace00c5
+msgid ""
+"``exact_match`` (boolean) (optional) Search for exact matches only "
+"(default: false)"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:304 2734549cffaa4695a93431be89eb0b1c
+msgid ""
+"``limit`` (integer, null) (optional) Alias for rows. Maximum number of "
+"results to return (default: 10, max: 100)."
+msgstr ""
+
+#: ../../tools/ols_tools.rst:321 7a88a9ac2c3f46979283f812ddb138a2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:323 9a0ccf3046714b0692e895025959b63c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ols_tools.rst:324 a706e4ae06294764890a41a2cd96781a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

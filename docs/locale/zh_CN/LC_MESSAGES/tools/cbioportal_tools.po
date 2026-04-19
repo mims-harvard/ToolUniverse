@@ -1,0 +1,502 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cbioportal_tools.rst:10 35167dc0cce2452cb6ac0007a0de8030
+msgid "Cbioportal Tools"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:12 d78e89b9febb4aa080bbd999128f0b10
+msgid ""
+"**Configuration File**: ``cbioportal_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 13"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:16 90944f2ef64341a394cc7fbb94e84276
+msgid ""
+"This page contains all tools defined in the ``cbioportal_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:19 b74129a08d084d94a818a722ec45e3a0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:22 6d67fa862d2341f0b4e167c919487a7a
+msgid "**cBioPortal_get_cancer_studies** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:24 18ea7b1a12694245bf995a6ef8d2db91
+msgid "Get list of cancer studies from cBioPortal"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 5bd4f6f869c84dbf8d7d92476f599d23
+msgid "cBioPortal_get_cancer_studies tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:28 ../../tools/cbioportal_tools.rst:58
+#: ../../tools/cbioportal_tools.rst:87 ../../tools/cbioportal_tools.rst:118
+#: ../../tools/cbioportal_tools.rst:155 ../../tools/cbioportal_tools.rst:186
+#: ../../tools/cbioportal_tools.rst:217 ../../tools/cbioportal_tools.rst:247
+#: ../../tools/cbioportal_tools.rst:280 ../../tools/cbioportal_tools.rst:311
+#: ../../tools/cbioportal_tools.rst:349 ../../tools/cbioportal_tools.rst:383
+#: ../../tools/cbioportal_tools.rst:414 0c2a16610cef4f08ac837219446db957
+#: 0d88a84aa87d4d9ebc6a15501b00185e 2ab62cb7477848b6914d1ae81c4211c6
+#: 3e5e6aa5be0b41fb9d8f7c8c812ed62b 479786a0773d46abb85ceb69ae62d747
+#: 4e7b9bdf76574d66b98c86c82f53b1f1 8e798d6d67694304be720ce5f3e75e8e
+#: 9ee2f6101d2b4240a3ef472ff78e1d69 a7e7cadfde96475e80e0aa292e0e8d65
+#: aa695c169b2b40798da69c29459d4395 ab255ac1b811476585f1ae98168d251d
+#: c6fd1b34b0754c6fbd6297f3665c82c7 ccd7c32342864fee8fb2993409765ab7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:30 c727bcf2180a4bdfb6ad2962063ea0c3
+msgid "**Name**: ``cBioPortal_get_cancer_studies``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:31 ../../tools/cbioportal_tools.rst:61
+#: ../../tools/cbioportal_tools.rst:90 ../../tools/cbioportal_tools.rst:121
+#: ../../tools/cbioportal_tools.rst:158 ../../tools/cbioportal_tools.rst:189
+#: ../../tools/cbioportal_tools.rst:220 ../../tools/cbioportal_tools.rst:250
+#: ../../tools/cbioportal_tools.rst:283 ../../tools/cbioportal_tools.rst:314
+#: ../../tools/cbioportal_tools.rst:352 ../../tools/cbioportal_tools.rst:386
+#: ../../tools/cbioportal_tools.rst:417 1f99c0a9c3fb4e0e8820e033cc6ffe35
+#: 383f9facce3d46d69feb1200a3f71ae1 3a5ccab95caf446dad1a2bf5b472630b
+#: 3ed6b8a4324e48c7a20642be23349fa5 56383c073ec34dde9789aaf9068ffe30
+#: 84320805ea234ba7884542f30e0992eb 8c89c03ac5424aeda5510577a67e371c
+#: 9332e6867a7a4778a2d19fa03cf67647 95ba0c763bcb407fbec79c8e0a944753
+#: be934049d8dc424c8bfe5573b02fb64e d25fb6da208444de9ed02a313128868f
+#: d6b7a1092cc14c6abbe24cfd22d2ed06 dd938c9d6115495592cf9469fed94c7e
+msgid "**Type**: ``CBioPortalRESTTool``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:32 431c4caf7f7241d990100f9ce6608380
+msgid "**Description**: Get list of cancer studies from cBioPortal"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:34 ../../tools/cbioportal_tools.rst:64
+#: ../../tools/cbioportal_tools.rst:93 ../../tools/cbioportal_tools.rst:124
+#: ../../tools/cbioportal_tools.rst:161 ../../tools/cbioportal_tools.rst:192
+#: ../../tools/cbioportal_tools.rst:223 ../../tools/cbioportal_tools.rst:253
+#: ../../tools/cbioportal_tools.rst:286 ../../tools/cbioportal_tools.rst:317
+#: ../../tools/cbioportal_tools.rst:355 ../../tools/cbioportal_tools.rst:389
+#: ../../tools/cbioportal_tools.rst:420 0ebe2a66a85844dba996356d3c0c5b49
+#: 1c9752c557d9440fbb5f4961ce119c58 39d264a00fed4c2c814d18d32b6f124d
+#: 3d784e0c6f634b8ca969b3b1f0f6525b 452d30cb28194506a887443d7a4afee4
+#: 6793f1554591439b9ceb982624a0526a 9ce5d2bd401b44819d382ce8aa5f28a8
+#: a52cc5c0bfe342ac8c5cc6d21dff8cc3 a99c6947fa714f8a9885a02e7c59db38
+#: bfc261bba27d4f569606c8cbb19f7699 c66f3eb7969649a3937637149512c1e4
+#: d0ca05d4471e4666945f05a2e3df3adc d42bdbbc7b5f484ab3982aac5b2bb703
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:36 68bdb2673ba74e92818ca512cfbc98c5
+msgid "``limit`` (integer) (optional) Number of studies to return"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:39 ../../tools/cbioportal_tools.rst:68
+#: ../../tools/cbioportal_tools.rst:98 ../../tools/cbioportal_tools.rst:135
+#: ../../tools/cbioportal_tools.rst:166 ../../tools/cbioportal_tools.rst:197
+#: ../../tools/cbioportal_tools.rst:228 ../../tools/cbioportal_tools.rst:261
+#: ../../tools/cbioportal_tools.rst:291 ../../tools/cbioportal_tools.rst:328
+#: ../../tools/cbioportal_tools.rst:363 ../../tools/cbioportal_tools.rst:394
+#: ../../tools/cbioportal_tools.rst:428 0c780435a522487daca2327ec811a9ee
+#: 117f3a2194824b4aa41aea6b8881dff8 4336b35bd5974c8898d71144af180e29
+#: 4a0c08bd49f24eacb8eda2f25ab36480 52d485f2d7024e37bf94b3a10f4293c6
+#: 6f08367ffe0b491e945f671c4e66c4fd 7da92da9a01647b2b54eea6a73908e3a
+#: 8c252027c0aa43109757a8e77228d07f 8cfd5d9fcbb244998a4064eeecb8561b
+#: 929f1b19b7c646a8ba0ba418a72becbf a060c3762587493da9494908d5e135ec
+#: d17b935f8c5d4e0d9774aa7f8e31953a fdc8b6fdc9dc46559c8d2a7db71ae80f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:52 78322c469d7c4a949dd09c12ce0e4a92
+msgid "**cBioPortal_get_cancer_types** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:54 0397ee5e11fd4f2c87ce147c138f982d
+msgid ""
+"Get all cancer types from cBioPortal including TCGA, Pan-Cancer Atlas, "
+"and other studies. Returns..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 1d3276e37643425294c7c4cb7e1d6aa3
+msgid "cBioPortal_get_cancer_types tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:60 dc97c249dc5444878e205ac2f2efdb63
+msgid "**Name**: ``cBioPortal_get_cancer_types``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:62 ad24a83d5bff46e4b704984cb8c492d0
+msgid ""
+"**Description**: Get all cancer types from cBioPortal including TCGA, "
+"Pan-Cancer Atlas, and other studies. Returns cancerTypeId, name, and "
+"clinical trial keywords for filtering studies."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:66 e060f8c8c5e74ac694399d7c263cfb54
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:81 ea9e1dd4f17f4b67be5fb5b327d0072f
+msgid "**cBioPortal_get_clinical_attributes** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:83 3a28c961e3dd48f99d0d45ce0cca0538
+msgid ""
+"Get available clinical attributes for a cancer study. Returns attribute "
+"IDs, names, and data type..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst afe406b0f7ee4f388b8df96d4049ab56
+msgid "cBioPortal_get_clinical_attributes tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:89 98e134fb105347e39a731b1c30cfc0d5
+msgid "**Name**: ``cBioPortal_get_clinical_attributes``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:91 cf74261d43174b48bfec73325f0c4341
+msgid ""
+"**Description**: Get available clinical attributes for a cancer study. "
+"Returns attribute IDs, names, and data types. Use to know what clinical "
+"data can be queried (e.g., stage, grade, survival)."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:95 ../../tools/cbioportal_tools.rst:319
+#: 7fd63f6dba8e44769eaa88c4d0fc7c48 bd379e22e94247ed92f72acf5e6d6419
+msgid "``study_id`` (string) (required) Cancer study ID (e.g., 'brca\\_tcga')"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:112 a0f36c97dbca4c9ab25d3718ddd14023
+msgid "**cBioPortal_get_clinical_data** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:114 ec7464916f5b4b62823962d66ef5daf7
+msgid ""
+"Get clinical data for all samples in a study. Returns patient-level data "
+"like tumor stage, histol..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 62b0087259d34b13986db4ce3305d553
+msgid "cBioPortal_get_clinical_data tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:120 05f7597b48034f218a24cbe816a4e806
+msgid "**Name**: ``cBioPortal_get_clinical_data``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:122 8a32eba630a44877aa90f2af7727bb31
+msgid ""
+"**Description**: Get clinical data for all samples in a study. Returns "
+"patient-level data like tumor stage, histology, survival status. Filter "
+"by clinical attribute ID for specific data types."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:126 ../../tools/cbioportal_tools.rst:288
+#: ../../tools/cbioportal_tools.rst:357 ../../tools/cbioportal_tools.rst:391
+#: ../../tools/cbioportal_tools.rst:422 23e45a411b274f93b5f418da7d277d10
+#: 4da63387201747c993f5c13ee57d8f45 5ec6eb84058e4a10a454efb1bf1f96d7
+#: 7458cc53c5f14613a56c8ad2e6398ae8 bd1116edbffb489f8e1bb8f51c93d225
+msgid "``study_id`` (string) (required) Cancer study ID"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:129 d6acf31a11b842cb9d8b8604369c5792
+msgid ""
+"``clinical_attribute_id`` (string) (optional) Optional clinical attribute"
+" ID to filter by"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:132 47a02c4065564e648fdf2f62b0fc72fb
+msgid "``page_size`` (integer) (optional) Number of records to return"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:149 71912e9b3a034efc955c8243e9f2735b
+msgid "**cBioPortal_get_gene_info** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:151 ce90d51224264a318b6776cbbf9a4640
+msgid ""
+"Get detailed information about a specific gene by Entrez Gene ID. Returns"
+" gene symbol, aliases, t..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst e3afd27e3510441bb13fd9e70b3552cf
+msgid "cBioPortal_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:157 af1e7ccb7219429fb23249674d2a0b5a
+msgid "**Name**: ``cBioPortal_get_gene_info``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:159 9f62c6075009467b82e7683c268e7d0a
+msgid ""
+"**Description**: Get detailed information about a specific gene by Entrez"
+" Gene ID. Returns gene symbol, aliases, type, and chromosome location."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:163 4095ba5e7f7f42328f968664932b1a9c
+msgid ""
+"``entrez_gene_id`` (integer) (required) Entrez Gene ID (e.g., 672 for "
+"BRCA1)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:180 6c2b8e80b6a44e548d46150cf42ae78e
+msgid "**cBioPortal_get_gene_panel_genes** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:182 9d696c24cad945b6a43f929d90f03f3d
+msgid ""
+"Get all genes in a specific gene panel. Essential for understanding what "
+"genes are covered when a..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst b9bf9b2faee445dfb595ca5eff11d846
+msgid "cBioPortal_get_gene_panel_genes tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:188 a7fa6c485c0c421a9818b19bc9f793eb
+msgid "**Name**: ``cBioPortal_get_gene_panel_genes``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:190 660f4160092a4e2680b91f6c681eebe4
+msgid ""
+"**Description**: Get all genes in a specific gene panel. Essential for "
+"understanding what genes are covered when analyzing mutation frequency "
+"data from targeted sequencing studies."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:194 7b2ca30f16774eeba64bbba876d913aa
+msgid "``gene_panel_id`` (string) (required) Gene panel ID (e.g., 'IMPACT468')"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:211 b03d3212f992417480d26c403c47d8b3
+msgid "**cBioPortal_get_gene_panels** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:213 811d0040fb8e4d1a8e70a32d1024be50
+msgid ""
+"Get all gene panels used in cBioPortal studies. Gene panels define which "
+"genes were sequenced in ..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst b998cf84381e4c45b4d15061dad1d411
+msgid "cBioPortal_get_gene_panels tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:219 5903568aa7bb44bbb4b4a8fba503a64f
+msgid "**Name**: ``cBioPortal_get_gene_panels``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:221 42866be5b5d84f87b903a521f2d59632
+msgid ""
+"**Description**: Get all gene panels used in cBioPortal studies. Gene "
+"panels define which genes were sequenced in a study. Use to understand "
+"coverage before querying mutation data."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:225 a0c6cd9ad3214ec9801604e3907e36bd
+msgid "``page_size`` (integer) (optional) Number of panels to return"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:241 7127b4d2009246ccb17203c562d60a59
+msgid "**cBioPortal_get_genes** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:243 d271575ed81d462a979a2f07c52fa6c9
+msgid ""
+"Search for genes by keyword or query (gene symbol or alias). Alias: "
+"cBioPortal\\_search."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 80538aa8380e4eaebee6d3a290bcfab3
+msgid "cBioPortal_get_genes tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:249 e09653a138804293ac3546a3e725b674
+msgid "**Name**: ``cBioPortal_get_genes``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:251 d782c158e69f441aa091224c47a35163
+msgid ""
+"**Description**: Search for genes by keyword or query (gene symbol or "
+"alias). Alias: cBioPortal\\_search."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:255 ac75120d5a024c0fb6ccd79f2c07740a
+msgid ""
+"``keyword`` (string) (optional) Gene symbol or alias to search for (e.g.,"
+" 'BRCA1', 'TP53')"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:258 ee2827b2ee454466aab9b34be8cc361c
+msgid ""
+"``query`` (string) (optional) Alias for keyword: gene symbol or alias to "
+"search for"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:274 8113017461914df3bc4ae52b7da54dba
+msgid "**cBioPortal_get_molecular_profiles** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:276 5a74e24af09c4919bdf805ac4d6b1390
+msgid ""
+"Get molecular profiles for a cancer study. Molecular profiles include "
+"mutation data, copy number ..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst a3537f9b53d644f5995c08519e6fef4a
+msgid "cBioPortal_get_molecular_profiles tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:282 0fb2fa8008aa41dcb609268320e26dbf
+msgid "**Name**: ``cBioPortal_get_molecular_profiles``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:284 589afd839a864cfc96851eabe1c3e842
+msgid ""
+"**Description**: Get molecular profiles for a cancer study. Molecular "
+"profiles include mutation data, copy number alterations, mRNA expression,"
+" etc."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:305 a2b56538f8274300b994843a2f6ca45d
+msgid "**cBioPortal_get_mutations** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:307 94c28e82135c4c94aa87b8d1d488cb33
+msgid ""
+"Get mutation data for specific genes in a cancer study. This uses the "
+"updated cBioPortal API that..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 293ad9fc542440b19c2e7e9bf184bcbc
+msgid "cBioPortal_get_mutations tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:313 0dfabeb9955948d3a4021b02ec4ab549
+msgid "**Name**: ``cBioPortal_get_mutations``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:315 644d52460ff84670a800850bda9390f2
+msgid ""
+"**Description**: Get mutation data for specific genes in a cancer study. "
+"This uses the updated cBioPortal API that requires molecular profiles."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:322 236f939b93564f2b9821a643094d5351
+msgid ""
+"``gene_list`` (string) (required) Comma-separated gene symbols (e.g., "
+"'BRCA1,BRCA2')"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:325 da177ac1ca0e4013a9714be3c63bf05b
+msgid ""
+"``sample_list_id`` (string) (optional) Optional sample list ID. If not "
+"provided, uses all samples in the study."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:343 33632b7c8dfe4b338a428205e86caaa4
+msgid "**cBioPortal_get_patients** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:345 77262102713e4e8da5b10b55d7e3796e
+msgid "Get all patients in a cancer study"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 1bc4d8a4eb784040830924f088deadb2
+msgid "cBioPortal_get_patients tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:351 d4a24f87a3cc4d95beb77f93e3f5a4dc
+msgid "**Name**: ``cBioPortal_get_patients``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:353 0d17e23f97b5485f846cf2c1e6658c44
+msgid "**Description**: Get all patients in a cancer study"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:360 07a49e8ece99474899c21227e6dac614
+msgid "``page_size`` (integer) (optional) Number of patients to return"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:377 6e20ae515b7b42a6b58ecc2f06e36501
+msgid "**cBioPortal_get_sample_lists** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:379 7771158167614526a01dc0d36e42d039
+msgid ""
+"Get all sample lists (cohort definitions) in a cancer study. Sample lists"
+" define groups like 'sam..."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 9507dff99a424f89a7c8c95fedc506d4
+msgid "cBioPortal_get_sample_lists tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:385 f71a754095f0412483ab657db6795054
+msgid "**Name**: ``cBioPortal_get_sample_lists``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:387 13721cec5911468da4b35b7f4ec36e58
+msgid ""
+"**Description**: Get all sample lists (cohort definitions) in a cancer "
+"study. Sample lists define groups like 'samples with mutations', 'samples"
+" with CNA data'. Use for targeted queries."
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:408 5850483f3f6c420b99035b2111eecc9b
+msgid "**cBioPortal_get_samples** (Type: CBioPortalRESTTool)"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:410 90759c7565714fe1be137214ef5c5df1
+msgid "Get all samples in a cancer study"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst 6591c2931cee43d5919d3d25369c7c15
+msgid "cBioPortal_get_samples tool specification"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:416 0b1e6d516cdf4ab0bde3c91866cc5822
+msgid "**Name**: ``cBioPortal_get_samples``"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:418 bcd4ddd9faf54f6abb9438ee677a031c
+msgid "**Description**: Get all samples in a cancer study"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:425 cf3b9a43b4e74cc7abc40c774832256e
+msgid "``page_size`` (integer) (optional) Number of samples to return"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:442 986d4b2fa42744cfbf815d51eac79863
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:444 371589803c3144bdb2a02e32ccbf0429
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cbioportal_tools.rst:445 f528787e02644d1398ca224979de3312
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

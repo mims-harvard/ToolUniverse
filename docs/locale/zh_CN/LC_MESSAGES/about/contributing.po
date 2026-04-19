@@ -7,239 +7,238 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../about/contributing.rst:2 08dba14acf704710bb6f3f20a59b7308
+#: ../../about/contributing.rst:2 3da66990ee2a436c85192bc9edd4cb59
 msgid "Contributing to ToolUniverse"
 msgstr "为ToolUniverse做贡献"
 
-#: ../../about/contributing.rst:4 3c628ebcd1054255865305c46874832c
-msgid ""
-"We welcome contributions to ToolUniverse! This Tutorial explains how to "
-"contribute effectively."
-msgstr "我们欢迎为ToolUniverse做贡献！本教程解释如何有效贡献。"
+#: ../../about/contributing.rst:4 e304cd06a218412db0000d6ad8079a5a
+#, fuzzy
+msgid "We welcome contributions to ToolUniverse!"
+msgstr "为ToolUniverse做贡献"
 
-#: ../../about/contributing.rst:7 5f923674089e453faa6f5135af4152fe
+#: ../../about/contributing.rst:7 e75952c1d5bf45a3a59e92daa84db206
 msgid "Getting Started"
 msgstr "快速入门"
 
-#: ../../about/contributing.rst:10 db79064a61784dc2821742232216b289
+#: ../../about/contributing.rst:10 51c2af3777ee497ab0177a2bf7416b45
 msgid "Development Setup"
 msgstr "开发环境搭建"
 
-#: ../../about/contributing.rst:12 0689a4c4bc1f472f9a0196fb206656c6
+#: ../../about/contributing.rst:12 a00bf466a97c4d46a78241763045d570
 msgid "Fork the repository on GitHub"
 msgstr "在 GitHub 上派生该仓库"
 
-#: ../../about/contributing.rst:13 ee700cf72535440a8b34c8c0aac6c695
+#: ../../about/contributing.rst:13 01e1119d4da943259855c7521c8912e3
 msgid "Clone your fork locally:"
 msgstr "在本地克隆您的派生仓库："
 
-#: ../../about/contributing.rst:20 2bf36479d55e4bb5b5c456c21672200f
+#: ../../about/contributing.rst:20 bb581557ecf5408c9c672af0c3649fa4
 msgid "Create a virtual environment:"
 msgstr "创建虚拟环境："
 
-#: ../../about/contributing.rst:27 1c452842d60e4ebaaccc2cf30dfe3614
+#: ../../about/contributing.rst:27 41e2b772936548d3aca575ac54bfff71
 msgid "Install in development mode:"
 msgstr "以开发模式安装："
 
-#: ../../about/contributing.rst:33 95f755390e96432d93e138271e7ec37b
+#: ../../about/contributing.rst:33 acce9fa8830843dd9cd60ec795db94b7
 msgid "Install pre-commit hooks:"
 msgstr "安装 pre-commit 钩子："
 
-#: ../../about/contributing.rst:35 d5cd1f45a269444c887c7947ee0e5b79
+#: ../../about/contributing.rst:35 f22288ffafc24742bac59156ac16c060
 msgid "**Automatic Setup (Recommended):**"
 msgstr "**自动设置（推荐）：**"
 
-#: ../../about/contributing.rst:42 895a41068db54304a7a40d670fd6026b
+#: ../../about/contributing.rst:42 60f25c6c69f34a1cade5f58536a862f3
 msgid "**Manual Setup:**"
 msgstr "**手动设置：**"
 
-#: ../../about/contributing.rst:56 22a60fe4bac14fa7b349dc4f3360c9c3
+#: ../../about/contributing.rst:56 b572c9f4d93f45b7810c35e542ba0d8a
 msgid "Development Dependencies"
 msgstr "开发依赖项"
 
-#: ../../about/contributing.rst:58 1d2b7d8f000346f3849891faa8f55594
+#: ../../about/contributing.rst:58 dc99cc18c30145e3831a789106f08cbd
 msgid "The development setup includes:"
 msgstr "开发设置包括："
 
-#: ../../about/contributing.rst:60 e7f9383ac9d74163bda3e4d21c8a152a
+#: ../../about/contributing.rst:60 d51048b73bbb41a38e3dd020d4860c85
 msgid "``pytest`` - Testing framework"
 msgstr "``pytest`` - 测试框架"
 
-#: ../../about/contributing.rst:61 5ef5da15d8024ee1a1a6a64a9693b44c
+#: ../../about/contributing.rst:61 926a89b64c9f484ea55707362d8527a4
 msgid "``black`` - Code formatting"
 msgstr "``black`` - 代码格式化"
 
-#: ../../about/contributing.rst:62 dd2787907de54f87aded9842819426be
+#: ../../about/contributing.rst:62 d0a325fbb5d84033afb307c5f3709750
 msgid "``flake8`` - Code linting"
 msgstr "``flake8`` - 代码静态检查"
 
-#: ../../about/contributing.rst:63 2728e9a30d864bffa4d017dcfa549cc1
+#: ../../about/contributing.rst:63 d649358d6103469cbcb156d3c6b5ee2e
 msgid "``mypy`` - Type checking"
 msgstr "``mypy`` - 类型检查"
 
-#: ../../about/contributing.rst:64 eef48a93f81749dc8541fe7a9b10e279
+#: ../../about/contributing.rst:64 fc4a7474ca1a4b2fa16847dd1bd258d9
 msgid "``sphinx`` - Documentation"
 msgstr "``sphinx`` - 文档"
 
-#: ../../about/contributing.rst:65 af2493158a5f4c4d8224601b734a2449
+#: ../../about/contributing.rst:65 6af7b575935c4a828f097af81bb1d317
 msgid "``pre-commit`` - Git hooks"
 msgstr "``pre-commit`` - Git 钩子"
 
-#: ../../about/contributing.rst:68 d811396bc5a04e3aa35e0d4701baabf7
+#: ../../about/contributing.rst:68 78483d31c26e483290c19dd8fb7ad4b6
 msgid "Code Standards"
 msgstr "代码标准"
 
-#: ../../about/contributing.rst:71 0edd6c372b7c410c803f9963471b653b
+#: ../../about/contributing.rst:71 37eb5043f55349d597900bc93635fa1b
 msgid "Code Style"
 msgstr "代码风格"
 
-#: ../../about/contributing.rst:73 64977fc72328478d942724b4147d9cb1
+#: ../../about/contributing.rst:73 0fa4431fd77d4c17a946d832eb864abc
 msgid "We use Black for code formatting and follow PEP 8:"
 msgstr "我们使用 Black 进行代码格式化，并遵循 PEP 8："
 
-#: ../../about/contributing.rst:84 0d269bc55cff4a65a1e8c5f6c1487b76
+#: ../../about/contributing.rst:84 b17ae92263c346bab6f32bf8aa678b4d
 msgid "Linting"
 msgstr "代码检查"
 
-#: ../../about/contributing.rst:86 8975e83ae942466ba498a665b3337a5d
+#: ../../about/contributing.rst:86 66708ec4e7f845fd86e33c93f3ff9d69
 msgid "Use flake8 for linting:"
 msgstr "使用 flake8 进行代码检查："
 
-#: ../../about/contributing.rst:93 a40bb34b1a854c109967f76022595682
+#: ../../about/contributing.rst:93 2738f03b49694ed7a6ff6e1ab9449736
 msgid "Type Hints"
 msgstr "类型提示"
 
-#: ../../about/contributing.rst:95 39e36a4a69e741af9dd1b8f2e5c70aa9
+#: ../../about/contributing.rst:95 0d4ead17abb7431daad7e8045446268c
 msgid "All new code should include type hints:"
 msgstr "所有新代码应包含类型提示："
 
-#: ../../about/contributing.rst:109 43af5f0563d74da9a90dc3c22a32aade
+#: ../../about/contributing.rst:109 147cf7d809c643879c223bc9035e80af
 msgid "Testing"
 msgstr "测试"
 
-#: ../../about/contributing.rst:112 f6b432877aa04a528921abbc87c8a52c
+#: ../../about/contributing.rst:112 74f66e8dc666401792d9c6d99274e63a
 msgid "Running Tests"
 msgstr "运行测试"
 
-#: ../../about/contributing.rst:114 2bb46f236b3f4b0891ca8ca2d7f06700
+#: ../../about/contributing.rst:114 a0d81928582f453e8527bc602b048564
 msgid "Run the test suite:"
 msgstr "运行测试套件："
 
-#: ../../about/contributing.rst:128 48488a0487784110a8c11151037a4cb4
+#: ../../about/contributing.rst:128 ad088cf8e9814f7193c67ebbb65accc6
 msgid "Writing Tests"
 msgstr "编写测试"
 
-#: ../../about/contributing.rst:130 d7bbb78082364ac1adb237cd15023f40
+#: ../../about/contributing.rst:130 d2032fdcdeeb44c994a2574f7935c924
 msgid "Write tests for all new functionality:"
 msgstr "为所有新功能编写测试："
 
-#: ../../about/contributing.rst:166 4cb7d4fbc6444f99896d31a0f70c679c
+#: ../../about/contributing.rst:166 a4de12c48aaf48058ddbf7e7d5285fbe
 msgid "Test Coverage"
 msgstr "测试覆盖率"
 
-#: ../../about/contributing.rst:168 85d936f35112466081d34d26f39f828f
+#: ../../about/contributing.rst:168 5b4453ad11674d22950df93bac5f087f
 msgid "Aim for >90% test coverage:"
 msgstr "目标测试覆盖率超过90%："
 
-#: ../../about/contributing.rst:176 9899fe3516a54e659825fbf74b891ec6
+#: ../../about/contributing.rst:176 5614e2b8f06b4e9f8ed848f3eac3f86c
 msgid "Documentation"
 msgstr "文档"
 
-#: ../../about/contributing.rst:179 e745316f1b794c93b1ccae06c2c4f03c
+#: ../../about/contributing.rst:179 9981a6943de047bf8030ec2f9e1ea6d0
 msgid "Building Documentation"
 msgstr "构建文档"
 
-#: ../../about/contributing.rst:188 3821396c640f43a4a12b3522c92a5ee6
+#: ../../about/contributing.rst:188 bdbfaed2f9d04a0687e187177c06714f
 msgid "Live Documentation"
 msgstr "实时文档"
 
-#: ../../about/contributing.rst:190 342a61dd97ef48bd87cd13f520b864e0
+#: ../../about/contributing.rst:190 9dee023adcc14118a9cfdd17e81b71b4
 msgid "For live editing:"
 msgstr "实时编辑："
 
-#: ../../about/contributing.rst:198 0f3a623c4e464bd1982324bf14db5cf1
+#: ../../about/contributing.rst:198 bb14111f2d1843cc8c42b8b93188e7f0
 msgid "Writing Documentation"
 msgstr "编写文档"
 
-#: ../../about/contributing.rst:200 9f4f7d66fb4e4a0eae957c935a82b194
+#: ../../about/contributing.rst:200 29eb35e1063845008304abd4e58a10e5
 msgid "Document all public APIs"
 msgstr "记录所有公共 API"
 
-#: ../../about/contributing.rst:201 66f8fbf416fa43d59fbd00cb08ae3002
+#: ../../about/contributing.rst:201 d3ef8cbea79e4db0838cf6c4279850d4
 msgid "Include examples in docstrings"
 msgstr "在文档字符串中包含示例"
 
-#: ../../about/contributing.rst:202 98b0307f9b7949a5a74e64f2d7f8746d
+#: ../../about/contributing.rst:202 a180214419f1409896579d0c3bceed63
 msgid "Update user guides for new features"
 msgstr "更新用户指南以涵盖新功能"
 
-#: ../../about/contributing.rst:203 138f8d4cb785473ab1894e6523d084a0
+#: ../../about/contributing.rst:203 3549df257340460eac03bce284f340f6
 msgid "Add tutorials for complex workflows"
 msgstr "为复杂工作流程添加教程"
 
-#: ../../about/contributing.rst:206 8fa3942ab3fd44d1b89792767a1e4d1f
+#: ../../about/contributing.rst:206 cd035c1fa9ab4f70a0a3ed62645a844d
 msgid "Docstring Format"
 msgstr "文档字符串格式"
 
-#: ../../about/contributing.rst:208 9174aeeff99643fab0fe023a76194784
+#: ../../about/contributing.rst:208 40524b85480842eeb3881e6c6a7bc946
 msgid "Use Google-style docstrings:"
 msgstr "使用 Google 风格的文档字符串："
 
-#: ../../about/contributing.rst:236 6bf4f217f3834c24a76d659c00c9d24d
+#: ../../about/contributing.rst:236 3226a589b9b54ae895c7d96def75e1dd
 msgid "Contributing Workflow"
 msgstr "贡献工作流程"
 
-#: ../../about/contributing.rst:239 0150b9aaef644c2d88e3f6924b097437
+#: ../../about/contributing.rst:239 4ce8b34b61ec44dca1fcad7ce945c8e2
 msgid "1. Create a Feature Branch"
 msgstr "1. 创建功能分支"
 
-#: ../../about/contributing.rst:246 ecec8514db384f3892e712bc743e2923
+#: ../../about/contributing.rst:246 82036df9ad3446cb92a2179724203bef
 msgid "2. Make Changes"
 msgstr "2. 进行更改"
 
-#: ../../about/contributing.rst:248 6dc83768698642028acc16eee46bcf35
+#: ../../about/contributing.rst:248 7bf9f2bb0fe548348a8af7a459ec6b7e
 msgid "Write code following our standards"
 msgstr "按照我们的标准编写代码"
 
-#: ../../about/contributing.rst:249 c1585cbe9e9a404aacf08134d08fab8f
+#: ../../about/contributing.rst:249 eb761ceab2f744ffb5d46426cc9ca641
 msgid "Add comprehensive tests"
 msgstr "添加全面测试"
 
-#: ../../about/contributing.rst:250 4f16b456db1c4f1f9e3293de3db040e3
+#: ../../about/contributing.rst:250 6b93bc83631842b198b1a098680e9b2e
 msgid "Update documentation"
 msgstr "更新文档"
 
-#: ../../about/contributing.rst:251 941bde65307444ebb68e041e4e8455ef
+#: ../../about/contributing.rst:251 6581524289c04eb2b0e91ae1a89cb0ab
 msgid "Run the test suite"
 msgstr "运行测试套件"
 
-#: ../../about/contributing.rst:254 4b3a8e3e0bfd4664bb9942344b5ae2e7
+#: ../../about/contributing.rst:254 c9379d38e4004e8cb8ac1d76faaeefb3
 msgid "3. Commit Changes"
 msgstr "3. 提交更改"
 
-#: ../../about/contributing.rst:256 b34fec2c4de54edf80c5baaf0120b04a
+#: ../../about/contributing.rst:256 b92d937e828b480685ce79a6bf4865dd
 msgid "Use conventional commit messages:"
 msgstr "使用规范的提交信息："
 
-#: ../../about/contributing.rst:268 cdb109a1cba24f5ea32c7d5663973f61
+#: ../../about/contributing.rst:268 be20b29b65894ca9bbd7ef5f7b2c9911
 msgid ""
 "Commit Types: - ``feat``: New features - ``fix``: Bug fixes - ``docs``: "
 "Documentation updates - ``test``: Test additions or modifications - "
-"``refactor``: Code refactoring - ``style``: Code style changes - ``chore``: "
-"Build/maintenance tasks"
+"``refactor``: Code refactoring - ``style``: Code style changes - "
+"``chore``: Build/maintenance tasks"
 msgstr ""
 "提交类型：  \n"
 "- ``feat``：新功能  \n"
@@ -250,15 +249,15 @@ msgstr ""
 "- ``style``：代码风格变更  \n"
 "- ``chore``：构建/维护任务"
 
-#: ../../about/contributing.rst:278 b1a8fa1049d34d379232d255ab953030
+#: ../../about/contributing.rst:278 ebea8ffc8eca42f9a14cd71e113a462b
 msgid "4. Push and Create PR"
 msgstr "4. 推送并创建合并请求（PR）"
 
-#: ../../about/contributing.rst:284 72c328c6a2dc424db72ec9920c540065
+#: ../../about/contributing.rst:284 7b5dc14948cb4fc1b56266232f641acc
 msgid ""
-"Then create a Pull Request on GitHub with: - Clear description of changes - "
-"Link to related issues - Screenshots for UI changes - Performance impact "
-"notes"
+"Then create a Pull Request on GitHub with: - Clear description of changes"
+" - Link to related issues - Screenshots for UI changes - Performance "
+"impact notes"
 msgstr ""
 "然后在 GitHub 上创建一个 Pull Request，内容包括：  \n"
 "- 清晰的变更描述  \n"
@@ -266,254 +265,262 @@ msgstr ""
 "- 界面更改的截图  \n"
 "- 性能影响说明"
 
-#: ../../about/contributing.rst:291 3679f2eb8fed4a02be6571351857d6a7
+#: ../../about/contributing.rst:291 f3c178f42a904c0b8f617e67dfbdf86b
 msgid "Types of Contributions"
 msgstr "贡献类型"
 
-#: ../../about/contributing.rst:294 0a6cc95e5e6945b08dba8ee2979596b4
+#: ../../about/contributing.rst:294 9800ba471a004a558aceb2ee36062980
 msgid "Bug Reports"
 msgstr "错误报告"
 
-#: ../../about/contributing.rst:296 d7e6019b3eb644afa24c9e202bde2228
+#: ../../about/contributing.rst:296 3cf7721c07e74f3d9ba5b8d935578928
 msgid "When reporting bugs, include:"
 msgstr "报告缺陷时，请包括："
 
-#: ../../about/contributing.rst:298 8ceb64b68e9548ec87b3282e322e6df9
+#: ../../about/contributing.rst:298 074a84c34cdb47f9b7dc586ae6a1d61c
 msgid "Python version and OS"
 msgstr "Python 版本与操作系统"
 
-#: ../../about/contributing.rst:299 ef75c8dd6ccf4b3cae0b77dbb1d12a66
+#: ../../about/contributing.rst:299 72bf937cb1574f46add1e510e111c690
 msgid "ToolUniverse version"
 msgstr "ToolUniverse 版本"
 
-#: ../../about/contributing.rst:300 73e8b419b5814c26b2aaa4e36a990b16
+#: ../../about/contributing.rst:300 eb9e9724872245dd968aac2cf900536f
 msgid "Minimal code to reproduce"
 msgstr "重现问题的最简代码"
 
-#: ../../about/contributing.rst:301 7e0a5079feb7441ab77de523c96de467
+#: ../../about/contributing.rst:301 8afc1c2357e347e8a888f3658e40af94
 msgid "Full error traceback"
 msgstr "完整错误追踪信息"
 
-#: ../../about/contributing.rst:302 ed8dd666a5ca454086b3a94ea96955d3
+#: ../../about/contributing.rst:302 4fdec1318aef46c5986b520ddf8c143f
 msgid "Expected vs actual behavior"
 msgstr "预期行为与实际行为"
 
-#: ../../about/contributing.rst:305 9d093a8a63fe46dd85fef4e67d4a8a50
+#: ../../about/contributing.rst:305 8253c2626c524551ab45759704e5f833
 msgid "Feature Requests"
 msgstr "功能请求"
 
-#: ../../about/contributing.rst:307 c8bee2bc77304954a06d0530670efca9
+#: ../../about/contributing.rst:307 3abf1b75c2134a05b96ea27df2a85b32
 msgid "For new features, provide:"
 msgstr "对于新功能，请提供："
 
-#: ../../about/contributing.rst:309 ab7b057218b749d5b711749daab5bfac
+#: ../../about/contributing.rst:309 1338622e6a0045308c4d7b2a7fedc5f5
 msgid "Clear use case description"
 msgstr "清晰的用例描述"
 
-#: ../../about/contributing.rst:310 737cd16a35484bbeae67e5077c4dfa25
+#: ../../about/contributing.rst:310 426249d59c9b4bf89c7ca959f8bd5225
 msgid "Proposed API design"
 msgstr "拟议的 API 设计"
 
-#: ../../about/contributing.rst:311 720521d8701e4c24889b381bccb3cba5
+#: ../../about/contributing.rst:311 cc6f3b7a6d4c48ceba85e3fbc4bee3a6
 msgid "Implementation suggestions"
 msgstr "实施建议"
 
-#: ../../about/contributing.rst:312 9721b9063e954c79a657a37db63b9922
+#: ../../about/contributing.rst:312 796c9b02cbb54157a30cba502608afb9
 msgid "Impact on existing code"
 msgstr "对现有代码的影响"
 
-#: ../../about/contributing.rst:315 aaf24f7afb4a4502a914175995066875
+#: ../../about/contributing.rst:315 1bf8f4d38a1e4fdf89eb116744695115
 msgid "New Tools"
 msgstr "新工具"
 
-#: ../../about/contributing.rst:317 0d26a3594c9b401fb9e1a57b2714f695
+#: ../../about/contributing.rst:317 3c168f117855404382a4c89b9998cc61
 msgid "When adding new scientific tools:"
 msgstr "添加新科学工具时："
 
-#: ../../about/contributing.rst:319 1b015eae63c44f57907688a17ae15c8e
+#: ../../about/contributing.rst:319 bb132d6a8c4d407098c3c33242f33f0d
 msgid "Research the data source thoroughly"
 msgstr "彻底调研数据来源"
 
-#: ../../about/contributing.rst:320 dbb672856d23469b83132fa611b57ca6
+#: ../../about/contributing.rst:320 1168b8b3a6584784a33247a6147a72e9
 msgid "Design a clean, consistent API"
 msgstr "设计简洁且一致的 API"
 
-#: ../../about/contributing.rst:321 a71893dfd33f466b84017c8fd250a909
+#: ../../about/contributing.rst:321 7d2ccfeea63c4129a03afcc2c6d5c09b
 msgid "Implement comprehensive error handling"
 msgstr "实施全面的错误处理"
 
-#: ../../about/contributing.rst:322 a940bd066660470b820423dad64f8c9f
+#: ../../about/contributing.rst:322 5293a32affb9478e93de52370cb64566
 msgid "Add extensive tests and documentation"
 msgstr "添加详尽的测试和文档"
 
-#: ../../about/contributing.rst:323 57393dc1e1a84583b913b16586480ba9
+#: ../../about/contributing.rst:323 545c58eee8754d1194103644913965a8
 msgid "Include usage examples"
 msgstr "包含使用示例"
 
-#: ../../about/contributing.rst:325 e5ec9703c34841b59c08266a764625c1
+#: ../../about/contributing.rst:325 47107a811e544a12bde5f23254f12470
 msgid "Example new tool structure:"
 msgstr "示例新工具结构："
 
-#: ../../about/contributing.rst:353 8bd45bd0dcc24e3f94364f32e82e3a06
+#: ../../about/contributing.rst:353 f8caf03ef571496b8323be837da6719f
 msgid "Documentation Improvements"
 msgstr "文档改进"
 
-#: ../../about/contributing.rst:355 528ff9867d0f41d68f0ec957eac4bfa8
+#: ../../about/contributing.rst:355 ddb46301a1fd48708fa6c417995e1a88
 msgid "Help improve documentation by:"
 msgstr "帮助改进文档："
 
-#: ../../about/contributing.rst:357 9ba641d1752e4cd6a1fa0bb17d0447d0
+#: ../../about/contributing.rst:357 67328dc350bc48649f4227e6d746b6df
 msgid "Fixing typos and grammar"
 msgstr "修正拼写错误和语法问题"
 
-#: ../../about/contributing.rst:358 51797cab009448f3bade0d6acb7fd5aa
+#: ../../about/contributing.rst:358 63cf38c168a548b9abba12e95dbc98e3
 msgid "Adding missing examples"
 msgstr "添加缺失的示例"
 
-#: ../../about/contributing.rst:359 a02f74022cf443c8a564afbe3f7f75b4
+#: ../../about/contributing.rst:359 6018372d48bb49bc8308509d2aa64dba
 msgid "Clarifying confusing sections"
 msgstr "澄清易混淆部分"
 
-#: ../../about/contributing.rst:360 0612aa4513cb480789b9f03747aa1738
+#: ../../about/contributing.rst:360 508673af58c249c5b22c7075e0071c90
 msgid "Translating to other languages"
 msgstr "翻译成其他语言"
 
-#: ../../about/contributing.rst:361 9b751da0653f4f448d474b278ff72602
+#: ../../about/contributing.rst:361 97ad364961bd46698fef8987239fece8
 msgid "Adding video tutorials"
 msgstr "添加视频教程"
 
-#: ../../about/contributing.rst:364 e3c66b5b53b14f46be326e641416dfb5
+#: ../../about/contributing.rst:364 f91e532f586947a3876d78f710626333
 msgid "Review Process"
 msgstr "审核流程"
 
-#: ../../about/contributing.rst:366 22767ee1ebeb438598a1027757313be8
+#: ../../about/contributing.rst:366 7472c4026ae64a2aab978eb2be669b33
 msgid "All contributions go through code review:"
 msgstr "所有贡献均需经过代码审查："
 
-#: ../../about/contributing.rst:368 954f9d93b0144c21bb1d8304f79dc69e
+#: ../../about/contributing.rst:368 c52f66b48257401fa9ea6bcc9c2854db
 msgid "**Automated Checks**: CI runs tests, linting, and type checking"
 msgstr "**自动化检查**：CI 执行测试、代码规范检查和类型检查"
 
-#: ../../about/contributing.rst:369 a4377655a6204851ae37b6d81ac6a014
+#: ../../about/contributing.rst:369 67ac7dcb72b847d1af7fde0f34b966a9
 msgid "**Manual Review**: Maintainers review code quality and design"
 msgstr "**人工审核**：维护者审查代码质量和设计"
 
-#: ../../about/contributing.rst:370 1442fce0cae04551af6b358426fae08f
+#: ../../about/contributing.rst:370 0ece0d7c7b9f4159b5b5149775a4d8a0
 msgid "**Documentation Review**: Ensure docs are clear and complete"
 msgstr "**文档审核**：确保文档清晰完整"
 
-#: ../../about/contributing.rst:371 eaa5cca4e8164c5c92c100a74599f172
+#: ../../about/contributing.rst:371 6e24e007fb654f1ba753568e306e9751
 msgid "**Testing**: Verify functionality works as expected"
 msgstr "**测试**：验证功能是否按预期工作"
 
-#: ../../about/contributing.rst:374 8f0bf64b7f17415c85897a67ffc7997f
+#: ../../about/contributing.rst:374 2838781e01004382a38586cc30a29c98
 msgid "Review Criteria"
 msgstr "审核标准"
 
-#: ../../about/contributing.rst:376 5a96cc3bc6ea405baf40ccc921970d38
+#: ../../about/contributing.rst:376 3b5c2d0b69a04709914a5ea3cc6ce068
 msgid "Code follows project standards"
 msgstr "代码遵循项目标准"
 
-#: ../../about/contributing.rst:377 afba076a954a41668c6a9e3f846783b3
+#: ../../about/contributing.rst:377 8ffcdd8658024557a4b03ed997c259c5
 msgid "Tests provide adequate coverage"
 msgstr "测试覆盖率充足"
 
-#: ../../about/contributing.rst:378 0658eb307a594031b26c3c98b99e5b11
+#: ../../about/contributing.rst:378 ca969a4ba2404bd0951bb7bbc3abfe17
 msgid "Documentation is complete and clear"
 msgstr "文档完整且清晰"
 
-#: ../../about/contributing.rst:379 88f0283d2ee840238dd2e26bffa7f498
+#: ../../about/contributing.rst:379 d990a10fe22a47bab3cc76e132a11723
 msgid "Performance impact is acceptable"
 msgstr "性能影响在可接受范围内"
 
-#: ../../about/contributing.rst:380 53d90aa5daf8423da28bb5f04a791719
+#: ../../about/contributing.rst:380 984055c1b72f41d29f97e5fd8db10fe0
 msgid "Breaking changes are justified"
 msgstr "重大变更是有正当理由的"
 
-#: ../../about/contributing.rst:383 e422c90a66cf40b895617d657ef7f8bb
+#: ../../about/contributing.rst:383 3b8a1c3a9c7d4391b4661f96e1aa63b5
 msgid "Getting Help"
 msgstr "获取帮助"
 
-#: ../../about/contributing.rst:386 72b84490c616488195db91e8bb26214e
+#: ../../about/contributing.rst:386 90558d8470ce4e1ea6d04d163677a38c
 msgid "Community Resources"
 msgstr "社区资源"
 
-#: ../../about/contributing.rst:388 a9818eb474d84577a94d08ba9c63a0de
+#: ../../about/contributing.rst:388 a3c7e36b9d254d81bdfe7ca31a0b1fd9
 msgid "**GitHub Discussions**: General questions and ideas"
 msgstr "**GitHub 讨论区**：常见问题与创意交流"
 
-#: ../../about/contributing.rst:389 6818b85319d74ba89aa0108d108688a6
+#: ../../about/contributing.rst:389 1dd75452eb7b426795a03179b1c66fdd
 msgid "**GitHub Issues**: Bug reports and feature requests"
 msgstr "**GitHub 问题**：错误报告与功能请求"
 
-#: ../../about/contributing.rst:390 a6c9a68bea154aa4a9db34cfa09ba91f
+#: ../../about/contributing.rst:390 512c096dc0614908b3959ab429c2b483
 msgid "**Email**: Direct contact with maintainers"
 msgstr "**电子邮件**：与维护人员直接联系"
 
-#: ../../about/contributing.rst:393 1bf5065200f24093b88bcb36983729d3
+#: ../../about/contributing.rst:393 f434ea133700481a8cc74a532fa347b5
 msgid "Maintainer Contact"
 msgstr "维护者联系方式"
 
-#: ../../about/contributing.rst:395 f75c6058ef5b458599b4500c72ea79dc
+#: ../../about/contributing.rst:395 0b87cceeb5db4acc93948a408d981778
 msgid "**Shanghua Gao**: shanghuagao@gmail.com"
 msgstr "**高尚华**：shanghuagao@gmail.com"
 
-#: ../../about/contributing.rst:396 9ed27688c78341748db476fb1abbd6a2
+#: ../../about/contributing.rst:396 8418efd9382144ed9ca4ce2bff0b212b
 msgid "**GitHub**: @shanghuagao"
 msgstr "**GitHub**：@shanghuagao"
 
-#: ../../about/contributing.rst:399 ab957226b3c64ea28ff5d951284ba712
+#: ../../about/contributing.rst:399 c6474656605946e9a489b7b2f5acc73b
 msgid "Development Tips"
 msgstr "开发技巧"
 
-#: ../../about/contributing.rst:402 14f6346ac20f49098ada9bab4853d755
+#: ../../about/contributing.rst:402 c4c39685d30240e8a51483f80244a8af
 msgid "Debugging"
 msgstr "调试"
 
-#: ../../about/contributing.rst:404 e1e32266659148bba88e5b0f6f84a588
+#: ../../about/contributing.rst:404 0dee1413698d4b109cecb20142aadaa8
 msgid "Use the built-in debugging features:"
 msgstr "使用内置调试功能："
 
-#: ../../about/contributing.rst:418 d26e1bf1e4c849b8ad89b0ec12c344c0
+#: ../../about/contributing.rst:418 4d69a8c5d13e4a48b1c124800d296b33
 msgid "Testing API Changes"
 msgstr "测试 API 变更"
 
-#: ../../about/contributing.rst:420 5487a9cad8f8434ca98bbdd4d4e8353f
+#: ../../about/contributing.rst:420 8e3c6b7479374ae5938aab29a4d10fa7
 msgid "Test against multiple data sources:"
 msgstr "针对多个数据源进行测试："
 
-#: ../../about/contributing.rst:429 62bbc2ffdb5a48b8b89819aa7b956a33
+#: ../../about/contributing.rst:429 c1c49c0ba0fc44928543580e1222e11f
 msgid "Performance Testing"
 msgstr "性能测试"
 
-#: ../../about/contributing.rst:431 72f90ce9960f4c0da7ffd90c2ac07b39
+#: ../../about/contributing.rst:431 92b97e34b21a4d56963e5a9eb9b49ac7
 msgid "Profile your changes:"
 msgstr "分析您的更改："
 
-#: ../../about/contributing.rst:448 02ee4e3044a447f5a6a8355923c27e48
+#: ../../about/contributing.rst:448 9761e426768e4a97b736e82d143f6696
 msgid "Recognition"
 msgstr "识别"
 
-#: ../../about/contributing.rst:450 064b03fe97ac469a9265acb05750b1ca
+#: ../../about/contributing.rst:450 3a3c4bc8b9004725b55b9087995ae090
 msgid "Contributors are recognized in:"
 msgstr "贡献者将被列入以下内容："
 
-#: ../../about/contributing.rst:452 35f3c38137ba409ca52b27a92041c7e9
+#: ../../about/contributing.rst:452 83fccf8244324f54b7d19f9cc341a91a
 msgid "Release notes"
 msgstr "发布说明"
 
-#: ../../about/contributing.rst:453 c27b1a7bd1d24f0cbeec939cc820a0f3
+#: ../../about/contributing.rst:453 bdbac4d6d3f6455ca1c32d7de945de18
 msgid "Contributors file"
 msgstr "贡献者文件"
 
-#: ../../about/contributing.rst:454 197b1aac5d9a44bcb6ba165585062a79
+#: ../../about/contributing.rst:454 f4627e6e50344527967cb825cf789496
 msgid "Documentation acknowledgments"
 msgstr "文档致谢"
 
-#: ../../about/contributing.rst:455 b7d753f5707c4e99ad3bc77fb7635981
+#: ../../about/contributing.rst:455 788645a3cf3347389900dc1d45443167
 msgid "Annual contributor highlights"
 msgstr "年度贡献者亮点"
 
-#: ../../about/contributing.rst:457 c07c4aca5e624d169faf3efb3fa65ad3
-msgid "Thank you for contributing to ToolUniverse! 🧬🔬"
+#: ../../about/contributing.rst:457 cfa651bbcaea4ec9842102692d0eb569
+#, fuzzy
+msgid "Thank you for contributing to ToolUniverse!"
 msgstr "感谢您为 ToolUniverse 做出的贡献！🧬🔬"
+
+#~ msgid ""
+#~ "We welcome contributions to ToolUniverse! "
+#~ "This Tutorial explains how to contribute"
+#~ " effectively."
+#~ msgstr "我们欢迎为ToolUniverse做贡献！本教程解释如何有效贡献。"
+

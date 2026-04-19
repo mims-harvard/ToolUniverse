@@ -1,0 +1,220 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/orcid_tools.rst:10 e5628f1888d44e2aad70c64720369a56
+msgid "Orcid Tools"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:12 c799bf556bee45c58fe0cba6684e198f
+msgid ""
+"**Configuration File**: ``orcid_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 4"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:16 87c1b343f6964a96b009789ee9d4ceba
+msgid ""
+"This page contains all tools defined in the ``orcid_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:19 ba8ecbd97f714a13ad30532bc24d5f70
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:22 0e7c45f9b6f34d6094b8aa37a587d05a
+msgid "**ORCID_get_employments** (Type: ORCIDTool)"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:24 61d2bd61ced349a38d0640c3c7cff8d4
+msgid ""
+"Get employment and affiliation history for an ORCID researcher. Returns "
+"organization names, depar..."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst 2ab250c0400b469dbceafca86c7b88bc
+msgid "ORCID_get_employments tool specification"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:28 ../../tools/orcid_tools.rst:63
+#: ../../tools/orcid_tools.rst:98 ../../tools/orcid_tools.rst:133
+#: 323d1eb8eda34afe81d653b3aae6fd49 68f20b0ed40e4431bbdbc2647daf8ed2
+#: cb7d3ed0fc374c72bc64723f4092886d f2438ccea0f2453ebcb2736fa5ea1bca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:30 693f9cb9181e413ba10b345ecc49a2ba
+msgid "**Name**: ``ORCID_get_employments``"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:31 ../../tools/orcid_tools.rst:66
+#: ../../tools/orcid_tools.rst:101 ../../tools/orcid_tools.rst:136
+#: 116807f354304ce38104a6f14dd78321 688e60f510f44b62a7b1c493378ffefb
+#: c3ba6fae69b04acd8937ab45b1cd227e df1201ce8a504863bb09afaa7c05401f
+msgid "**Type**: ``ORCIDTool``"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:32 0bb6733839ac463baa4c9578f39aa55e
+msgid ""
+"**Description**: Get employment and affiliation history for an ORCID "
+"researcher. Returns organization names, departments, roles, and "
+"employment date ranges. Use for: verifying academic affiliations, tracing"
+" career history, finding current institution."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:34 ../../tools/orcid_tools.rst:69
+#: ../../tools/orcid_tools.rst:104 ../../tools/orcid_tools.rst:139
+#: 5f351996df7444f4a706033f4c7dbe7b 7ee250fdebe74d698d036ccfb0f080e8
+#: 8bdcec5bbc3c46d1a6514ff1360e266a c77b9288924e4551977ef4c3649076fe
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:36 ../../tools/orcid_tools.rst:71
+#: ../../tools/orcid_tools.rst:106 ../../tools/orcid_tools.rst:141
+#: 3791477d670349a7806132a173d6c0fd 4b06c0478fa14eb79db63acb5ad740fc
+#: 5f81d7a75c4d441ead2f6f4357edec75 d0d48f70e6c242f2815c5e5a638e246b
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:39 ../../tools/orcid_tools.rst:109
+#: ec11c68246f3422bbf4069e05c96b909 ffb8325d3df0401c92d3013931f45445
+msgid "``orcid`` (string) (required) ORCID iD in format XXXX-XXXX-XXXX-XXXX"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:42 ../../tools/orcid_tools.rst:77
+#: ../../tools/orcid_tools.rst:112 ../../tools/orcid_tools.rst:153
+#: 0369f0119db447119f246f35dab56b2d 1bc687dc572f430d884fd34cc5389772
+#: 656e909785b64c0c81a5a8ceccffed0b b10e2264973d4f3ea33b3680c51c90d5
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:57 62338bd0a7a64997b27bc573a45201b9
+msgid "**ORCID_get_profile** (Type: ORCIDTool)"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:59 c629ca99d1f6434db5dc15e57af70f45
+msgid ""
+"Get a researcher's full ORCID profile by ORCID iD. Returns name, "
+"biography, email, keywords, rese..."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst 3bd6c14078d94ba2aeddc75af69ebeb4
+msgid "ORCID_get_profile tool specification"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:65 783faeb0a2b142e69d3389a8b3e9cc60
+msgid "**Name**: ``ORCID_get_profile``"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:67 ba38163746c743b7b7f616d2c12ecd5f
+msgid ""
+"**Description**: Get a researcher's full ORCID profile by ORCID iD. "
+"Returns name, biography, email, keywords, researcher URLs, and summary "
+"counts of works and employments. ORCID iDs have format XXXX-XXXX-XXXX-"
+"XXXX (e.g., 0000-0002-1825-0097). Use for: identifying researchers, "
+"getting affiliation info, finding publication counts."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:74 976cf7861b2a4ffb969890cee36e9147
+msgid ""
+"``orcid`` (string) (required) ORCID iD in format XXXX-XXXX-XXXX-XXXX "
+"(e.g., '0000-0002-1825-0097')"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:92 30ea35c3a31c41ecab330045d2467da1
+msgid "**ORCID_get_works** (Type: ORCIDTool)"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:94 77f20851074c4e19a43364178dda5411
+msgid ""
+"Get list of publications and works for an ORCID researcher. Returns "
+"titles, publication types, da..."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst 9d0b4dad3e4745d8a006b2728341d41f
+msgid "ORCID_get_works tool specification"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:100 9da27ca8a45145c8921b42cb474081ba
+msgid "**Name**: ``ORCID_get_works``"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:102 4a2e5fe7965440f980bba3cd79ef886d
+msgid ""
+"**Description**: Get list of publications and works for an ORCID "
+"researcher. Returns titles, publication types, dates, journal names, and "
+"external identifiers (DOI, PubMed ID). Use for: finding researcher's "
+"publication history, getting DOIs, assessing research output."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:127 8bcdbf3f82ae4667a6a59adea81ee1cf
+msgid "**ORCID_search_researchers** (Type: ORCIDTool)"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:129 e6bc28b5441544c69ce3e005ff24fd37
+msgid ""
+"Search ORCID registry for researchers by keyword query. Returns ORCID iDs"
+" matching the search. Su..."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst dfb9e47824c44bab85ea7dd19e28daf5
+msgid "ORCID_search_researchers tool specification"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:135 465649738cb1431990f3d7ddf43ed612
+msgid "**Name**: ``ORCID_search_researchers``"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:137 4e661c5c469042eb8a5f6fa70719d85a
+msgid ""
+"**Description**: Search ORCID registry for researchers by keyword query. "
+"Returns ORCID iDs matching the search. Supports full-text search across "
+"names, affiliations, publications, and keywords. Use for: finding "
+"researchers working on specific topics, identifying collaborators, "
+"disambiguating authors."
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:144 d79bd084bc3b46778411edff9d423a71
+msgid ""
+"``query`` (string) (required) Search query (e.g., 'BRCA1 cancer "
+"genetics', 'Harvard genomics')"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:147 a7b669712842454fa1e1f1b201e81849
+msgid "``start`` (integer) (optional) Pagination offset (0-based)"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:150 6cd65934ee3446008e7f7e8d6b33820b
+msgid "``rows`` (integer) (optional) Number of results to return"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:168 2ab9a2ab9388424c87c7d70d81783773
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:170 0fbd754cf58043048b350cf658b4710c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/orcid_tools.rst:171 af5a88f935ef416fa6c00946c9d2d93a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

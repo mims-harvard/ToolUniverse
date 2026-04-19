@@ -1,0 +1,106 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/remap_tools.rst:10 5dc414a36f16448cb2ded345e5638fe0
+msgid "Remap Tools"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:12 f2c75f80f0e547ad8537fbc616f09a48
+msgid ""
+"**Configuration File**: ``remap_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 1"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:16 29aa4815165748c0ba647e26850a6bc0
+msgid ""
+"This page contains all tools defined in the ``remap_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/remap_tools.rst:19 f855e2f24f4f40818d49dd025317102f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:22 a58f7ef1e2a046419eeb2174996bb184
+msgid "**ReMap_get_transcription_factor_binding** (Type: ReMapRESTTool)"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:24 e16a5e0160eb494b8a1aefe28356c5b3
+msgid ""
+"Get transcription factor binding sites from ReMap database for specific "
+"genes and cell types"
+msgstr ""
+
+#: ../../tools/remap_tools.rst 4c859c5291d6441fa262a7ded4517ca4
+msgid "ReMap_get_transcription_factor_binding tool specification"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:28 b8ebd615c8de48008b7b73cae725a912
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:30 bbdcdb87cdd74c0aa33de307901d080a
+msgid "**Name**: ``ReMap_get_transcription_factor_binding``"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:31 f8eef1174e2f4c47a7a57d36814d8a97
+msgid "**Type**: ``ReMapRESTTool``"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:32 40899b2516154c6d8f6d28ee6e9c6bfb
+msgid ""
+"**Description**: Get transcription factor binding sites from ReMap "
+"database for specific genes and cell types"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:34 bda451e5db4f4f2fafb8005aeacea9fd
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:36 878edd062eb74ff79f595cd49e3dd424
+msgid "``gene_name`` (string) (required) Gene symbol (e.g., BRCA1, TP53, MYC)"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:39 a33ffb15b26d4cdab777dc3ac1855b5d
+msgid "``cell_type`` (string) (optional) Cell type (e.g., HepG2, K562, MCF-7)"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:42 5cf9f7fb328243e4bbb92a542aa5359d
+msgid "``limit`` (integer) (optional) Number of results to return"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:45 5c4f38d8dff54bceb20488f65cebc818
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:59 300f38dad499490e89607ff0429fe346
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:61 7d0bf42552c245198aef4af181a687d2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/remap_tools.rst:62 3e1aa5c5ccf642eb80f2b2087dddf526
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

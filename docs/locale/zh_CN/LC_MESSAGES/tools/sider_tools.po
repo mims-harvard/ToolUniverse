@@ -1,0 +1,296 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sider_tools.rst:10 5c1df7bbb90445dd9add43b8493567cb
+msgid "Sider Tools"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:12 e994a84130834ef185f9c0e6bcdbe2d0
+msgid ""
+"**Configuration File**: ``sider_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 5"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:16 f10a201f9db444a897bf2a7832044c8f
+msgid ""
+"This page contains all tools defined in the ``sider_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:19 496b7f0feb5b459db40c773cba94466b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:22 b391841cd89e40178f1cd80428749541
+msgid "**SIDER_get_drug_indications** (Type: SiderTool)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:24 2dfbc1b3f89448a7867dc05d218b0174
+msgid ""
+"Get the therapeutic indications for a drug from SIDER. Indications are "
+"medical conditions that a ..."
+msgstr ""
+
+#: ../../tools/sider_tools.rst 23adf04204a749b1b1c497492188897f
+msgid "SIDER_get_drug_indications tool specification"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:28 ../../tools/sider_tools.rst:65
+#: ../../tools/sider_tools.rst:105 ../../tools/sider_tools.rst:145
+#: ../../tools/sider_tools.rst:180 42978b9cb09a4696b1f892d30661d25a
+#: 46b8a62f28e74d0597d939a1c1893fc9 8b5a2774881d44ca8c308272d4da5625
+#: c2dc4d435e854fb4bd33610443c66548 fa49b223ffdc47d7b2c1cc0f117d8907
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:30 42980a1bc737425698f849acfc775984
+msgid "**Name**: ``SIDER_get_drug_indications``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:31 ../../tools/sider_tools.rst:68
+#: ../../tools/sider_tools.rst:108 ../../tools/sider_tools.rst:148
+#: ../../tools/sider_tools.rst:183 4f8227938bf44876851b4667e4e172bf
+#: d110631505ad47798d70ba00bbe32557 d823d14436de4af4b7b4e73efbc8a817
+#: eeea52e0210d4af2b8ae037cf7a2e303 f965e32f7a154d9c835e94e258aafc38
+msgid "**Type**: ``SiderTool``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:32 d274bf4875f34b409ad9bea15c4091b1
+msgid ""
+"**Description**: Get the therapeutic indications for a drug from SIDER. "
+"Indications are medical conditions that a drug is approved to treat, "
+"extracted from the indications and usage sections of drug labels. Returns"
+" MedDRA-coded conditions with descriptions. Provide either a drug name or"
+" SIDER drug ID."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:34 ../../tools/sider_tools.rst:71
+#: ../../tools/sider_tools.rst:111 ../../tools/sider_tools.rst:151
+#: ../../tools/sider_tools.rst:186 40aca5cf619d4123bc5ceebe6af994b4
+#: 4b1fd057a7f543608ba23d4c77607200 8536fa67b4bc49dc948dafc9556d7694
+#: 8be96df9db7c4834960ffc926401e63a e18af3d4d7c74c708b76a62fe4d48c39
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:36 ../../tools/sider_tools.rst:73
+#: ../../tools/sider_tools.rst:113 ../../tools/sider_tools.rst:153
+#: ../../tools/sider_tools.rst:188 061dee9631584c089bc15c1810ea0588
+#: 2d468155eab34e1bbb3618d84f04cdc2 445ccb3996d8494cb7b6daa0bf93406a
+#: ac346e01d9fa4f04ba0150dc38a871ad dca7a0494c7b46b49e08794ce43ab030
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:39 3536f88b3a9b4ded9cc83b80ddb0a33c
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name (e.g., 'aspirin', "
+"'metformin'). Will search SIDER and use first match."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:42 e878d3c98c9d41efa01dd3615d30e4bb
+msgid ""
+"``sider_drug_id`` (string, null) (optional) SIDER drug ID (PubChem CID) "
+"from SIDER\\_search\\_drug (e.g., '2244' for aspirin)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:45 ../../tools/sider_tools.rst:85
+#: ../../tools/sider_tools.rst:125 ../../tools/sider_tools.rst:159
+#: ../../tools/sider_tools.rst:194 077f3915601c4b188b64f9ac9aa95f09
+#: 45fad226ae11481fb77f993a232d6146 9357ec096a02452c9deb04878087b921
+#: 9eebaaf009e3406f9767fe7128b66222 c29588e6532b48b0b03976d022f97429
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:59 a32fb57309a2452781bf452b77bd2f05
+msgid "**SIDER_get_drug_side_effects** (Type: SiderTool)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:61 14952016157b44aab1b25555c20f39d9
+msgid ""
+"Get the list of known side effects for a drug from SIDER, including "
+"frequency data when available..."
+msgstr ""
+
+#: ../../tools/sider_tools.rst 5c21b445dba5487a9b5367e94e5d3054
+msgid "SIDER_get_drug_side_effects tool specification"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:67 12a6ae1b4c394b088af1e531465c49a2
+msgid "**Name**: ``SIDER_get_drug_side_effects``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:69 05e7d90c098f406bbbea80a4699216bf
+msgid ""
+"**Description**: Get the list of known side effects for a drug from "
+"SIDER, including frequency data when available. Side effects are "
+"extracted from drug labels and include MedDRA codes, frequency "
+"percentages from clinical trials (e.g., '21% - 57.5%'), and placebo "
+"comparison rates. Provide either a drug name (will auto-search) or a "
+"SIDER drug ID from SIDER\\_search\\_drug. Returns adverse reactions "
+"recorded in official drug labels."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:76 44f30f75215c442e92c09a559109e541
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name (e.g., 'ibuprofen', "
+"'metformin'). Will search SIDER and use first match. Mutually exclusive "
+"with sider\\_drug\\_id."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:79 22adccd472604feeb1818eccb3b9d382
+msgid ""
+"``sider_drug_id`` (string, null) (optional) SIDER drug ID (PubChem CID) "
+"from SIDER\\_search\\_drug results (e.g., '3672' for ibuprofen, '4091' "
+"for metformin)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:82 11a802ba7cc24777b6ca714754d03331
+msgid ""
+"``limit`` (integer) (optional) Maximum number of side effects to return "
+"(default: 50)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:99 50aad2997dff4922963e6e29b795b40f
+msgid "**SIDER_get_drugs_for_side_effect** (Type: SiderTool)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:101 5a651e620254440e9b64989109f0bda1
+msgid ""
+"Find all drugs associated with a specific side effect in SIDER. Returns "
+"drugs known to cause the ..."
+msgstr ""
+
+#: ../../tools/sider_tools.rst 73a1f9b0dc2a4b8ab1d9f5c2c885b903
+msgid "SIDER_get_drugs_for_side_effect tool specification"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:107 8d88fbf8ffe9436e9eaf7d7f7d077de2
+msgid "**Name**: ``SIDER_get_drugs_for_side_effect``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:109 8f2e4ab963f14d7bbe752f088d19448a
+msgid ""
+"**Description**: Find all drugs associated with a specific side effect in"
+" SIDER. Returns drugs known to cause the given adverse reaction, with "
+"frequency information when available (e.g., '7%', '5% - 18%', "
+"'postmarketing', 'common'). Provide either a MedDRA code (e.g., C0018681 "
+"for headache) or a side effect name (will auto-search). Useful for drug "
+"safety comparisons and adverse event analysis."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:116 add198e349e043098f7d1c2f7ccb82ae
+msgid ""
+"``meddra_code`` (string, null) (optional) MedDRA concept code / UMLS CUI "
+"(e.g., 'C0018681' for headache, 'C0027497' for nausea)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:119 a6f4110f06af4e5ba186e7a7d3e24e5b
+msgid ""
+"``side_effect_name`` (string, null) (optional) Side effect name to search"
+" (e.g., 'headache', 'nausea', 'diarrhea'). Will search SIDER and use "
+"first match."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:122 a14a7f40e2fc4da4a93dadeaa6111774
+msgid ""
+"``limit`` (integer) (optional) Maximum number of drugs to return "
+"(default: 50)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:139 53ea6862ae1e416597b831c8b6663682
+msgid "**SIDER_search_drug** (Type: SiderTool)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:141 f0096e4b84204497899df40557846afb
+msgid ""
+"Search the SIDER drug side effects database for a drug by name. Returns "
+"matching drugs with SIDER..."
+msgstr ""
+
+#: ../../tools/sider_tools.rst eb87986b91b24233ba420c981ce9f2e2
+msgid "SIDER_search_drug tool specification"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:147 9e7f36e103b748aaadffb5cbc511de20
+msgid "**Name**: ``SIDER_search_drug``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:149 eca964f63e7a451f9dd7111e430b8a6b
+msgid ""
+"**Description**: Search the SIDER drug side effects database for a drug "
+"by name. Returns matching drugs with SIDER IDs and any related side "
+"effects. SIDER contains adverse drug reaction data extracted from drug "
+"labels for marketed medicines. Use this to find the SIDER drug ID needed "
+"for other SIDER operations (get\\_side\\_effects, get\\_indications)."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:156 d9b859b29e4f467db674f6a6afedf7d7
+msgid ""
+"``drug_name`` (string) (required) Drug name to search for (e.g., "
+"'aspirin', 'ibuprofen', 'metformin', 'warfarin')"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:174 b3c06892c7064607bb5a5e579462e725
+msgid "**SIDER_search_side_effect** (Type: SiderTool)"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:176 5f2f4c42dda64557bfddb655a57d7b67
+msgid ""
+"Search for a side effect by name in SIDER. Returns matching side effects "
+"with their MedDRA codes ..."
+msgstr ""
+
+#: ../../tools/sider_tools.rst 547d532157264cb69a679ca9cb4e4f21
+msgid "SIDER_search_side_effect tool specification"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:182 cbf508d469cc45bb9ede2fd087b91dbe
+msgid "**Name**: ``SIDER_search_side_effect``"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:184 acf45d9364c44ffa8d63e73650516d0a
+msgid ""
+"**Description**: Search for a side effect by name in SIDER. Returns "
+"matching side effects with their MedDRA codes (UMLS CUIs). Use this to "
+"find the correct MedDRA code for a side effect before querying "
+"SIDER\\_get\\_drugs\\_for\\_side\\_effect. SIDER uses MedDRA (Medical "
+"Dictionary for Regulatory Activities) terminology for standardized "
+"adverse event reporting."
+msgstr ""
+
+#: ../../tools/sider_tools.rst:191 58585a62d24547e18bf5a4d09799265f
+msgid ""
+"``side_effect_name`` (string) (required) Side effect name to search "
+"(e.g., 'headache', 'nausea', 'diarrhea', 'liver')"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:209 5abfee90e85f4ceda7475cdae549d1c4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:211 bd5fd6bb6d514af38aaae4ed8eb2386b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sider_tools.rst:212 1af59b01580c44efa9a6feabc7848206
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

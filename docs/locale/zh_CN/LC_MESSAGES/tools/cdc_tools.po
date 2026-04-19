@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cdc_tools.rst:10 df6e9a832245405dac2193892207db13
+msgid "Cdc Tools"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:12 a065914ab35f4ef39b95fc9cb74ccad5
+msgid ""
+"**Configuration File**: ``cdc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:16 10e3a1fa568b4c82b5430c935b1b7bac
+msgid ""
+"This page contains all tools defined in the ``cdc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:19 51b48bca1bbb46f29345eca318b32d84
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:22 d2a5431bce95400ca4f7aed129b9d5c7
+msgid "**cdc_data_get_dataset** (Type: CDCRESTTool)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:24 8424ea5887b54b86bff23ebb33aff688
+msgid ""
+"Retrieve data from a specific CDC dataset on Data.CDC.gov. Requires a "
+"dataset ID (view ID) which ..."
+msgstr ""
+
+#: ../../tools/cdc_tools.rst 4170d665e4f248eb820e94de5c5dc09a
+msgid "cdc_data_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:28 ../../tools/cdc_tools.rst:71
+#: 9814e6b5a4014921a7aaea237e919aee eb29ea0fbf174c00b2c08e101a776793
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:30 f876c949527246b4b030ba25274cd4dc
+msgid "**Name**: ``cdc_data_get_dataset``"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:31 ../../tools/cdc_tools.rst:74
+#: 71715d00d2df4c0da87e5d8996e9fecb b64407ca251e49febfaa82c2cd3bdffc
+msgid "**Type**: ``CDCRESTTool``"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:32 ac5f3b3dde2245c98ec9d093eb7e16b9
+msgid ""
+"**Description**: Retrieve data from a specific CDC dataset on "
+"Data.CDC.gov. Requires a dataset ID (view ID) which can be found using "
+"cdc\\_data\\_search\\_datasets."
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:34 ../../tools/cdc_tools.rst:77
+#: 39888b5fc4874164858d6f46831bbfa8 3b05bac0b46342c6b0bc0d1ec040cbf4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:36 62fc75516809447f9c1d00a6197405ff
+msgid ""
+"``dataset_id`` (string) (required) Dataset ID (view ID) from Data.CDC.gov"
+" (e.g., 'p5x4-u35c')"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:39 d8668979c9014672a6b2739a39fb27e0
+msgid ""
+"``limit`` (integer) (optional) Maximum number of rows to return (default:"
+" 100, max: 50000)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:42 a869de6edfe046ceaef06e824341e736
+msgid ""
+"``offset`` (integer) (optional) Number of rows to skip for pagination "
+"(default: 0)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:45 196ea471b5c542ce9649a6021bcb45bd
+msgid ""
+"``where_clause`` (string) (optional) Optional SoQL WHERE clause for "
+"filtering (e.g., \"year = '2020'\")"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:48 22e45ac99c7941fd8b8ef05ed6109406
+msgid ""
+"``order_by`` (string) (optional) Optional column name to order by (e.g., "
+"'year')"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:51 ../../tools/cdc_tools.rst:91
+#: 5b7202be99e64920b6e96ebbf5a0a8b4 a92c9e2db9da420a906348ea72e61707
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:65 08f6269233f34e2bb2796516fa8d821f
+msgid "**cdc_data_search_datasets** (Type: CDCRESTTool)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:67 26ce20c12d584034ad2a2c3bfdc94b14
+msgid ""
+"Search for datasets on Data.CDC.gov (CDC's Socrata-based open data "
+"portal). Returns a list of ava..."
+msgstr ""
+
+#: ../../tools/cdc_tools.rst de7c14bc623d499b8df73aa742d66456
+msgid "cdc_data_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:73 4f9afa51ab234628a5cca775b38f1060
+msgid "**Name**: ``cdc_data_search_datasets``"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:75 0fb723fe9ed84f5aa47d39b5e1a73488
+msgid ""
+"**Description**: Search for datasets on Data.CDC.gov (CDC's Socrata-based"
+" open data portal). Returns a list of available datasets matching search "
+"criteria. Use this to discover datasets before querying data."
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:79 911c48dcd8294ff39b84b412e5e4b516
+msgid ""
+"``search_query`` (string) (optional) Search term to find datasets (e.g., "
+"'mortality', 'vaccination', 'covid')"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:82 ef0066e1408a4c4e9fc9b6d0f6859f0f
+msgid ""
+"``category`` (string) (optional) Optional category filter (e.g., "
+"'Health', 'Public Safety')"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:85 482e18c15d0f4920b945176cd42e3abd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of datasets to return "
+"(default: 50, max: 1000)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:88 8aa29c0069b843eb94c6cf536612484a
+msgid ""
+"``offset`` (integer) (optional) Number of results to skip for pagination "
+"(default: 0)"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:104 ceb6618c96a242f4b56633baa3eed291
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:106 e8a9a66593484e95884a3d8981c3dfc4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cdc_tools.rst:107 360c171f682e4b49bfdaa3f321cfa203
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbepisa_tools.rst:10 6a69f76b5ff6446dba640531bd0316fa
+msgid "Pdbepisa Tools"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:12 ee5aeae0ec9748c8857a2cd538698f31
+msgid ""
+"**Configuration File**: ``pdbepisa_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:16 771d22782ae44fb7bb34e01d2a107489
+msgid ""
+"This page contains all tools defined in the ``pdbepisa_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:19 cf44c19f1edf413d86d7823cf230565a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:22 706dbcf78d6b4053b94ea207430fe777
+msgid "**PDBePISA_get_assemblies** (Type: PDBePISATool)"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:24 c9c16dc048ca47cdb7b5cf0d26d887e7
+msgid ""
+"Get predicted biological assemblies from a crystal structure using "
+"PDBePISA. Analyzes crystal pac..."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst d113be0b868644849e9242c2891c7e94
+msgid "PDBePISA_get_assemblies tool specification"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:28 ../../tools/pdbepisa_tools.rst:59
+#: ../../tools/pdbepisa_tools.rst:90 24f9f2bf17d14a21bff8735ba912a488
+#: 7f73f67614b4426ca6579e1ade1df5d0 8a6ed2af7a814127bc4e5df3cc2ee894
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:30 1d8d24558ec843f79e8d92794b444b59
+msgid "**Name**: ``PDBePISA_get_assemblies``"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:31 ../../tools/pdbepisa_tools.rst:62
+#: ../../tools/pdbepisa_tools.rst:93 39180a13286d4e7e8e393ba3031e3ec7
+#: 3e597a07708a4bce825a42b380422087 8c8f177bd1b4432c84f9a6861e665807
+msgid "**Type**: ``PDBePISATool``"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:32 eb4412b5b0d6420aa52d7bf408f0372d
+msgid ""
+"**Description**: Get predicted biological assemblies from a crystal "
+"structure using PDBePISA. Analyzes crystal packing to predict the most "
+"likely biological assembly (monomer, dimer, tetramer, etc.) with "
+"stability scores, dissociation energy, accessible/buried surface areas, "
+"and composition. Use after structure retrieval from RCSB/PDBe to "
+"determine the biologically relevant oligomeric state. Positive "
+"dissociation energy indicates a stable assembly."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:34 ../../tools/pdbepisa_tools.rst:65
+#: ../../tools/pdbepisa_tools.rst:96 0e79e8e6df194c7186ca1437082e18f9
+#: 913c368bb03a4b12b98439fe3e463101 98dbc6b3d0c346b490a82b848be6e952
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:36 1aa3cee55582451b97f6283973a01db4
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4-character code, e.g., "
+"'4hhb' for hemoglobin tetramer, '3hl2' for insulin dimer)"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:39 ../../tools/pdbepisa_tools.rst:70
+#: ../../tools/pdbepisa_tools.rst:101 2c3ce022fa2941e3a6b3e0904d4a5721
+#: 8de3e5fd57c34ffbb271907cd6d1a826 959dad3048dd4b4dbb8e0ddf05e039aa
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:53 457eb48cec3043a6bdb0bd08c2cf41cc
+msgid "**PDBePISA_get_interfaces** (Type: PDBePISATool)"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:55 5fcf0d1cf82d481da7a0f76726877355
+msgid ""
+"Analyze protein-protein and protein-ligand interfaces in a crystal "
+"structure using PDBePISA. Retu..."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst 55473466dc6e4a839df4756699fa3a9e
+msgid "PDBePISA_get_interfaces tool specification"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:61 68c20822e67b49819de8d2203747e675
+msgid "**Name**: ``PDBePISA_get_interfaces``"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:63 7ea0df359ba74cccb28c9536461b5320
+msgid ""
+"**Description**: Analyze protein-protein and protein-ligand interfaces in"
+" a crystal structure using PDBePISA. Returns interface area, solvation "
+"energy, p-value, hydrogen bonds, salt bridges, disulfide bonds, and per-"
+"molecule contributions for each interface. Use after retrieving a PDB "
+"structure from RCSB/PDBe tools to assess biological relevance of crystal "
+"contacts. Low p-value (<0.5) and negative solvation energy suggest "
+"biologically relevant interfaces."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:67 ../../tools/pdbepisa_tools.rst:98
+#: 1e15d74f24f54d1c914692be765c5dfa 48fcfcfcee5048d784cebd8eea3e48d3
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4-character code, e.g., "
+"'4hhb' for hemoglobin, '1cbs' for CRABP-II)"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:84 f1dc8c706ac749408587e6477da7fe2d
+msgid "**PDBePISA_get_monomer_analysis** (Type: PDBePISATool)"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:86 a7348372d3794e918c2936c3e5d2613f
+msgid ""
+"Analyze solvent-accessible surface area and interface participation for "
+"each chain in a PDB struc..."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst f251c65daa5344e79e0b6c6402c65d83
+msgid "PDBePISA_get_monomer_analysis tool specification"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:92 f379f9d97b284776a1c53fb01543df8a
+msgid "**Name**: ``PDBePISA_get_monomer_analysis``"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:94 4e0d61899006438fa91d2decf0b7da8e
+msgid ""
+"**Description**: Analyze solvent-accessible surface area and interface "
+"participation for each chain in a PDB structure using PDBePISA. Returns "
+"per-chain total interface area, number of interface contacts, and "
+"detailed interface participations. Useful for identifying which chains "
+"are most involved in crystal contacts and protein interactions. Use with "
+"RCSB/PDBe structure data and STRING network analysis."
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:115 58621bee4e9e44d2835c87197ad23c4c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:117 f43738d5d32f478092a4ef9358fd0bb9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbepisa_tools.rst:118 e39176b134404ad8b78e58862875ecb5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

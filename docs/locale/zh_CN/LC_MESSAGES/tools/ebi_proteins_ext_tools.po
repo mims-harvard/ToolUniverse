@@ -1,0 +1,359 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_proteins_ext_tools.rst:10 3911b17013584e9ab83c7c45660b1374
+msgid "Ebi Proteins Ext Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:12 a72a9b1a9948490d8fee68ec5150fe1e
+msgid ""
+"**Configuration File**: ``ebi_proteins_ext_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:16 0fe833f5d01941bcb04a6c3fb642748a
+msgid ""
+"This page contains all tools defined in the "
+"``ebi_proteins_ext_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:19 a4dd8b7e7af44684a18b9f4141e5a2aa
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:22 4ec4e01b67a049a8a885a0e1d71f5941
+msgid "**EBIProteins_get_antigen** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:24 4416954f63c148d3ba07fffd2b9a2abf
+msgid ""
+"Get predicted antigenic regions for a protein from the EBI Proteins API. "
+"Returns regions of the p..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst bcc4e13616cc43b4a33ad9b71e6e25cf
+msgid "EBIProteins_get_antigen tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:28
+#: ../../tools/ebi_proteins_ext_tools.rst:59
+#: ../../tools/ebi_proteins_ext_tools.rst:90
+#: ../../tools/ebi_proteins_ext_tools.rst:124
+#: ../../tools/ebi_proteins_ext_tools.rst:155
+#: ../../tools/ebi_proteins_ext_tools.rst:186
+#: ../../tools/ebi_proteins_ext_tools.rst:217 06d73cd67ced441da346dafa5743a63f
+#: 254c494c328c4ffea2ea16cc9e82d409 257a08c31032497ba0c98e0c070f4242
+#: 33bdcad2b75b4c3eb52e0e27c8b13ed0 3dd3ff18beca47edbf9f3329b9cf3e84
+#: 4212dc6969b24cda80796e961dec7152 501c2bcac1eb435ab2f453aff0cf4b58
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:30 331c7e9b11e54b738b35ca7db270856c
+msgid "**Name**: ``EBIProteins_get_antigen``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:31
+#: ../../tools/ebi_proteins_ext_tools.rst:62
+#: ../../tools/ebi_proteins_ext_tools.rst:93
+#: ../../tools/ebi_proteins_ext_tools.rst:127
+#: ../../tools/ebi_proteins_ext_tools.rst:158
+#: ../../tools/ebi_proteins_ext_tools.rst:189
+#: ../../tools/ebi_proteins_ext_tools.rst:220 33d4731b5bec49d98d33a331fa7adfd8
+#: 5c63bad7739346f4bca7bd4aee1f6e43 66df06dee31341fc80f3c61541d44825
+#: 6f3f36c8751b493d85002f6d31b16d50 791e0d8252e24b018c182a9afe057e99
+#: 7b8f745ce05f4250aa4321a99625f8c9 fcb697ee4eae4d5984bab94cd28805be
+msgid "**Type**: ``EBIProteinsExtTool``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:32 21d492b527324bc1af66f57c888f4548
+msgid ""
+"**Description**: Get predicted antigenic regions for a protein from the "
+"EBI Proteins API. Returns regions of the protein sequence predicted to be"
+" immunogenic and suitable for antibody generation. Includes match scores "
+"indicating prediction confidence. Critical for antibody design, vaccine "
+"development, and immunology research. Example: P04637 (TP53) returns 2 "
+"antigenic regions at positions 291-379 and 5-64 with 100% match scores."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:34
+#: ../../tools/ebi_proteins_ext_tools.rst:65
+#: ../../tools/ebi_proteins_ext_tools.rst:96
+#: ../../tools/ebi_proteins_ext_tools.rst:130
+#: ../../tools/ebi_proteins_ext_tools.rst:161
+#: ../../tools/ebi_proteins_ext_tools.rst:192
+#: ../../tools/ebi_proteins_ext_tools.rst:223 215465bf847646d89a9bcfe8b633a632
+#: 33e0490dc71f4d85b246268ca5539ebd 7dbc763338e545eda08cf15bd4a1b127
+#: b1d0a1e150284ab1b94b4cacf787e256 d7e2c5e63f5f471eb1680aab41ce0535
+#: efe02ae0b45f4771a8de84169aafe4f6 f6036b7d4e65413693caaeb0ed5b0a9f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:36
+#: ../../tools/ebi_proteins_ext_tools.rst:98 6dddac2d07ec4c1887a7978c5d384d54
+#: a5956fb9f64e4e9ca3720a5955994b25
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53), 'P00533' (EGFR), 'P01308' (Insulin)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:39
+#: ../../tools/ebi_proteins_ext_tools.rst:70
+#: ../../tools/ebi_proteins_ext_tools.rst:104
+#: ../../tools/ebi_proteins_ext_tools.rst:135
+#: ../../tools/ebi_proteins_ext_tools.rst:166
+#: ../../tools/ebi_proteins_ext_tools.rst:197
+#: ../../tools/ebi_proteins_ext_tools.rst:234 226054cc672a4eb688562051c77ea3db
+#: 3fe2f2cf6a9b466eb1adb311dea746e6 656ff243052a4f1d8b3d5bb69bb0def6
+#: 7faa1af747ce47a1a5c470d2415e9433 d2f1f582b7bd4975ab384c2adb44ee73
+#: f469489fcae242589086eb4068743b6a f88ccf782e534e8c9a63bd3bdf7d9d4d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:53 19a7dd062f7c41aa8a52019aaed2f0c5
+msgid "**EBIProteins_get_coordinates** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:55 b9f65eeeccc84f3faed7c3f2234e4f2c
+msgid ""
+"Get genomic coordinate mappings for a protein from the EBI Proteins API. "
+"Maps UniProt protein to ..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst dd096af34a9848929d480e62dc1c2694
+msgid "EBIProteins_get_coordinates tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:61 ec14c6985bf043dbb0493567aaad8e5b
+msgid "**Name**: ``EBIProteins_get_coordinates``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:63 813bd14205db4f6a985cd048277eaa3d
+msgid ""
+"**Description**: Get genomic coordinate mappings for a protein from the "
+"EBI Proteins API. Maps UniProt protein to genomic coordinates including "
+"Ensembl gene/transcript IDs, chromosome location, strand, and exon "
+"structure. Essential for cross-referencing protein features with genomic "
+"data, variant mapping between coordinate systems, and genome browser "
+"integration. Example: P04637 (TP53) maps to ENSG00000141510 on chr17."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:67
+#: ../../tools/ebi_proteins_ext_tools.rst:163
+#: ../../tools/ebi_proteins_ext_tools.rst:225 5bb2176f011b45e28f31f097efbb5c66
+#: c050ac023bca4b67921452b6f27ed77d fc518c3b531f4bc2b3d4d7956104b9de
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:84 f3010a11125f4022b8f0f86ba9434736
+msgid "**EBIProteins_get_features** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:86 d7d71f404ddb4c9d8109b9ee1c867d05
+msgid ""
+"Get protein features filtered by category from the EBI Proteins API. "
+"Categories include DOMAINS\\_..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst e2920532b52647cdbfdb6a1aa43da763
+msgid "EBIProteins_get_features tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:92 c1bb3ee9e3024a93ae394a6353cd8fda
+msgid "**Name**: ``EBIProteins_get_features``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:94 f27dae356a4a46c29d5152ada7d51a24
+msgid ""
+"**Description**: Get protein features filtered by category from the EBI "
+"Proteins API. Categories include DOMAINS\\_AND\\_SITES (domains, binding "
+"sites, active sites, motifs), MOLECULE\\_PROCESSING (signal peptides, "
+"transit peptides, chains), PTM (glycosylation, phosphorylation, disulfide"
+" bonds), STRUCTURAL (helices, strands, turns), TOPOLOGY (transmembrane, "
+"extracellular, cytoplasmic), and VARIANTS. Provides a consolidated view "
+"of all UniProt-annotated features. Example: P04637 (TP53) with "
+"DOMAINS\\_AND\\_SITES returns 31 features including DNA-binding domain, "
+"transactivation regions."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:101 0493c689ee38473fa39fdca36557a0e8
+msgid ""
+"``category`` (string) (optional) Feature category. Options: "
+"'DOMAINS\\_AND\\_SITES', 'MOLECULE\\_PROCESSING', 'PTM', 'STRUCTURAL', "
+"'TOPOLOGY', 'VARIANTS', 'MUTAGENESIS'. Default: 'DOMAINS\\_AND\\_SITES'."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:118 789beb7242fa4a6eb90457e5c56973c4
+msgid "**EBIProteins_get_mutagenesis** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:120 844189bda8714c21b0c060b3947f9913
+msgid ""
+"Get mutagenesis experiment data for a protein from the EBI Proteins API. "
+"Returns experimentally c..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst f3a48a85ea734c70bc9cde4abe4554f8
+msgid "EBIProteins_get_mutagenesis tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:126 7fea6ddb1aa64cd7bad40708f954b480
+msgid "**Name**: ``EBIProteins_get_mutagenesis``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:128 aadb0c4e2b404c7db2fc0759c5d77542
+msgid ""
+"**Description**: Get mutagenesis experiment data for a protein from the "
+"EBI Proteins API. Returns experimentally characterized mutations with "
+"their functional effects, including gain/loss of function, binding "
+"changes, and structural impacts. Data is curated from UniProtKB with "
+"literature evidence. Essential for understanding structure-function "
+"relationships. Example: P04637 (TP53) returns 651 mutagenesis annotations"
+" showing effects of each mutation on p53 function."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:132 ae08045c3f0246e285ef5c8f5bd9b71e
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53/p53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P01308' (Insulin)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:149 b1c074b75b4a4c198b704014d1a10bf9
+msgid "**EBIProteins_get_proteomics_peptides** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:151 95f989e2336149fdb9dda6f17497f024
+msgid ""
+"Get mass spectrometry proteomics peptide evidence for a protein from the "
+"EBI Proteins API. Return..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst cdc4591d99d74a45a2d8d66adda670f7
+msgid "EBIProteins_get_proteomics_peptides tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:157 e1f58da9362b4607a4795cb08c21d29d
+msgid "**Name**: ``EBIProteins_get_proteomics_peptides``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:159 f7b8a21d56074544962b2621beba3be8
+msgid ""
+"**Description**: Get mass spectrometry proteomics peptide evidence for a "
+"protein from the EBI Proteins API. Returns detected peptides with their "
+"positions, uniqueness status, and source databases (PeptideAtlas, "
+"ProteomicsDB, MaxQB, EPD). Shows which parts of the protein have been "
+"experimentally confirmed by mass spectrometry. Useful for validating "
+"protein expression and mapping coverage. Example: P04637 (TP53) returns "
+"64 detected peptides, P00533 (EGFR) returns 241 peptides."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:180 0669d780430e4bfcb8ba830a9a477825
+msgid "**EBIProteins_get_proteomics_ptm** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:182 253959567a5140e4a32778232c8da59b
+msgid ""
+"Get post-translational modification (PTM) evidence from mass spectrometry"
+" proteomics for a protei..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst 420178f06b724c3788b2449cc0c24533
+msgid "EBIProteins_get_proteomics_ptm tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:188 89bfe634fe264f17ad5ad1c27949101d
+msgid "**Name**: ``EBIProteins_get_proteomics_ptm``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:190 6d09ba0ca93b4ef2b265aef77f15068b
+msgid ""
+"**Description**: Get post-translational modification (PTM) evidence from "
+"mass spectrometry proteomics for a protein from the EBI Proteins API. "
+"Returns experimentally detected PTMs (phosphorylation, acetylation, "
+"ubiquitination, etc.) with evidence from PeptideAtlas, ProteomicsDB, "
+"MaxQB, and EPD proteomics repositories. Shows modification positions, "
+"types, and detection confidence. Example: P04637 (TP53) returns 101 PTM "
+"features including phosphorylation sites critical for p53 regulation."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:194 529e9b458d3b4d82b94f93b8b8d018ab
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53/p53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P31749' (AKT1)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:211 46d446d89f564774a183247a855e4827
+msgid "**EBIProteins_get_variation** (Type: EBIProteinsExtTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:213 46566854c39f4aa2b926ab5369926095
+msgid ""
+"Get all known protein sequence variants for a UniProt protein from the "
+"EBI Proteins API. Returns ..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst 587556d990e5417b83a42b86b5fe633b
+msgid "EBIProteins_get_variation tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:219 1d7b02e5363549d385009542bb6abb53
+msgid "**Name**: ``EBIProteins_get_variation``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:221 bc1d3385af3246ac819a0d9c0ac85f14
+msgid ""
+"**Description**: Get all known protein sequence variants for a UniProt "
+"protein from the EBI Proteins API. Returns variants from multiple sources"
+" including COSMIC (somatic mutations in cancer), ClinVar (clinical "
+"significance), gnomAD/ExAC (population frequencies), and UniProt "
+"(curated). Includes disease associations, clinical significance "
+"classifications, and cross-references. Essential for variant impact "
+"analysis and clinical interpretation. Example: P04637 (TP53) returns 3469"
+" variants with cancer associations and clinical classifications."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:228 daab7e31c17e46108758562e4d71e621
+msgid ""
+"``source_type`` (string, null) (optional) Filter by variant source. "
+"Options: 'large\\_scale\\_study' (COSMIC, gnomAD), 'mixed' (multiple "
+"sources), 'uniprot' (curated). Null returns all."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:231 1fea25de31374920878f14e4b063deff
+msgid ""
+"``disease_only`` (boolean) (optional) If true, return only variants with "
+"disease associations. Default: false."
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:248 d38ac66134e941bea2c07b9ab8891ba1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:250 e01f081af2ba49dda07a80270a22c0e1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_proteins_ext_tools.rst:251 1fd3254bbed341308bdd39acb24bb09c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

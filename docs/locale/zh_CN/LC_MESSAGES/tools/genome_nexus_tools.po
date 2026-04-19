@@ -1,0 +1,254 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/genome_nexus_tools.rst:10 5c9333e23bc54c9aba6f0b05765a3ee8
+msgid "Genome Nexus Tools"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:12 9f2af1b86ef54bdb979ca6350e8d4a3d
+msgid ""
+"**Configuration File**: ``genome_nexus_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:16 b0b4398b99124aa8a9b2392b833b325c
+msgid ""
+"This page contains all tools defined in the ``genome_nexus_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:19 26e431e7d65e4bd8a3cea3b694937e3b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:22 da2676b821d946f7822b92be83f9a9eb
+msgid "**GenomeNexus_annotate_mutation** (Type: GenomeNexusTool)"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:24 5b1de178a033496b9b43a58786a1ca12
+msgid ""
+"Annotate a cancer mutation using Genome Nexus (MSK) by specifying "
+"chromosome, start, end, referen..."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst cc6158205d6e4634b79d50187aeaf30a
+msgid "GenomeNexus_annotate_mutation tool specification"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:28 ../../tools/genome_nexus_tools.rst:75
+#: ../../tools/genome_nexus_tools.rst:106
+#: ../../tools/genome_nexus_tools.rst:137 865b1293135d4002b32502ec2c99bbe3
+#: 90af1f65c840457691d9bead4b7bb382 ab60b5457dd841328986bfa9927ce6ea
+#: dc9a3182a97d4c94942f1518ab6abec2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:30 0d55809a2a97408b8cfca3bba129cd31
+msgid "**Name**: ``GenomeNexus_annotate_mutation``"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:31 ../../tools/genome_nexus_tools.rst:78
+#: ../../tools/genome_nexus_tools.rst:109
+#: ../../tools/genome_nexus_tools.rst:140 2537cb1e0beb4e09a86e4d3833771e3c
+#: 26d8af7ac2464a37924848b5e9dc3c9d 4dfd9e11518746cf92069e9db304966d
+#: 68769c9accae4a0ab68cd322241b3576
+msgid "**Type**: ``GenomeNexusTool``"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:32 92cc69ec8219493eb45f7530cbffcafc
+msgid ""
+"**Description**: Annotate a cancer mutation using Genome Nexus (MSK) by "
+"specifying chromosome, start, end, reference allele, and variant allele "
+"separately. This is an alternative to the HGVS-based annotation for when "
+"you have genomic coordinates directly (GRCh37/hg19). Returns the same "
+"comprehensive annotation as GenomeNexus\\_annotate\\_variant including "
+"VEP consequences, SIFT, PolyPhen, AlphaMissense scores, cancer hotspots, "
+"and mutation assessor. Example: chr=7, start=140453136, end=140453136, "
+"ref=A, alt=T for BRAF V600E."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:34 ../../tools/genome_nexus_tools.rst:81
+#: ../../tools/genome_nexus_tools.rst:112
+#: ../../tools/genome_nexus_tools.rst:143 4ecf22bb440a471fa6ffb1e5574c8c45
+#: 796f394a9f744b7398e3e3d120db5efb 86e84b0d390243f9aa60c2715b32a14c
+#: b90d04b448a64c4c8ddaa82f25e4b2aa
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:36 9fe23ed50cfb4a00a73f53a75a9eb0dc
+msgid ""
+"``chromosome`` (string) (required) Chromosome (without 'chr' prefix). "
+"Examples: '7', '17', '12', 'X'."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:39 d22557dd3ecf4fcbb41d7fb6bb4b8848
+msgid "``start`` (integer) (required) Start position (GRCh37/hg19, 1-based)."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:42 ab3afc41bb054434adc4e9802bd2c15d
+msgid ""
+"``end`` (integer) (required) End position (GRCh37/hg19, 1-based). Same as"
+" start for SNVs."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:45 adf72f655a154cbaafc004832641c508
+msgid "``reference_allele`` (string) (required) Reference allele. Example: 'A'."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:48 b51e839ad8a5449fb11fe47dc09e1ea7
+msgid ""
+"``variant_allele`` (string) (required) Variant (alternate) allele. "
+"Example: 'T'."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:51 ../../tools/genome_nexus_tools.rst:86
+#: ../../tools/genome_nexus_tools.rst:117
+#: ../../tools/genome_nexus_tools.rst:148 2e18e2c78e394197b4350c04d930eb43
+#: 3e03c59dca6046e0b71488a4494a96db 699021f238e64414a2980fdbc59a54c4
+#: c55af58a46354086ba92bd6e6bde3491
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:69 fd2b3eed8feb435cbc6ad3cc76d47247
+msgid "**GenomeNexus_annotate_variant** (Type: GenomeNexusTool)"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:71 737bcbf040c2488cb24019b89fc633e7
+msgid ""
+"Annotate a genomic variant using Genome Nexus (Memorial Sloan Kettering),"
+" which aggregates varian..."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst dc3923bb3ea348c983453709f7e631ae
+msgid "GenomeNexus_annotate_variant tool specification"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:77 b2bca10d17c34f068d073c2923709b06
+msgid "**Name**: ``GenomeNexus_annotate_variant``"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:79 f9e97a3d4fc946088dcf9387bf4ebf17
+msgid ""
+"**Description**: Annotate a genomic variant using Genome Nexus (Memorial "
+"Sloan Kettering), which aggregates variant annotations from multiple "
+"sources including VEP, SIFT, PolyPhen-2, AlphaMissense, cancer hotspots, "
+"and mutation assessor. Input is a GRCh37/hg19 HGVS genomic notation "
+"(e.g., '7:g.140453136A>T' for BRAF V600E, '17:g.7577120C>T' for TP53 "
+"R273H). Returns the most severe consequence, transcript consequences with"
+" pathogenicity scores (SIFT, PolyPhen, AlphaMissense), cancer hotspot "
+"information, and annotation summary with HGVS protein notation. This is "
+"the primary variant annotation tool for cancer genomics. Note: "
+"coordinates must be in GRCh37/hg19 assembly."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:83 28915ee608c4458189019c213544804d
+msgid ""
+"``hgvsg`` (string) (required) Genomic variant in HGVS notation using "
+"GRCh37/hg19 coordinates. Format: 'chr:g.posRef>Alt'. Examples: "
+"'7:g.140453136A>T' (BRAF V600E), '17:g.7577120C>T' (TP53 R273H), "
+"'12:g.25398284C>T' (KRAS G12D)."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:100 8ce0d89a701b4e8eabcf1b06155775ff
+msgid "**GenomeNexus_get_cancer_hotspots** (Type: GenomeNexusTool)"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:102 935915c61342405eaee67a5b81b7b4fd
+msgid ""
+"Get cancer mutation hotspot annotations from Genome Nexus (MSK) for a "
+"specific genomic variant. C..."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst 275bc79edc2143abac1f00e685e4b36b
+msgid "GenomeNexus_get_cancer_hotspots tool specification"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:108 f0c080e0b6784f34bdb403ebbe3d340d
+msgid "**Name**: ``GenomeNexus_get_cancer_hotspots``"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:110 1f33fddb268047eb9aa127445832da68
+msgid ""
+"**Description**: Get cancer mutation hotspot annotations from Genome "
+"Nexus (MSK) for a specific genomic variant. Cancer hotspots are "
+"recurrently mutated residues in cancer, curated by the Chang et al. "
+"study. Returns hotspot residue, tumor count, hotspot type (single residue"
+" or 3D cluster), and the gene symbol. Use this to check if a variant "
+"falls in a known cancer hotspot. Input is a GRCh37/hg19 HGVS genomic "
+"variant. Example: '7:g.140453136A>T' (BRAF V600E) returns V600 hotspot "
+"with 897 tumors."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:114 5978dbd3fe6b4d4a91e308ee62a97e04
+msgid ""
+"``hgvsg`` (string) (required) Genomic variant in HGVS notation using "
+"GRCh37/hg19 coordinates. Format: 'chr:g.posRef>Alt'. Examples: "
+"'7:g.140453136A>T' (BRAF V600E), '17:g.7577120C>T' (TP53 R273H)."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:131 90aa82370ba744389534f441c7042e51
+msgid "**GenomeNexus_get_canonical_transcript** (Type: GenomeNexusTool)"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:133 48bf1bf9cfb2428b92b056324b7087fd
+msgid ""
+"Get the canonical transcript for a gene from Genome Nexus (MSK). Returns "
+"the Ensembl transcript I..."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst 56c8ce37b7464fb38f6d82c2032f632b
+msgid "GenomeNexus_get_canonical_transcript tool specification"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:139 38c1edf4c7674544b169f0c8eeccd2c4
+msgid "**Name**: ``GenomeNexus_get_canonical_transcript``"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:141 7b8b23ce5a814f76aa60ec4e5cedf58d
+msgid ""
+"**Description**: Get the canonical transcript for a gene from Genome "
+"Nexus (MSK). Returns the Ensembl transcript ID, protein ID, protein "
+"length, RefSeq mRNA ID, CCDS ID, HUGO symbol, and Pfam protein domain "
+"annotations. Useful for determining the standard transcript to use for "
+"variant annotation, and for getting a quick overview of protein domain "
+"architecture. Input is a HUGO gene symbol (e.g., 'TP53', 'BRAF', "
+"'BRCA1')."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:145 336de6b37bbd4803ba3fe60a9b935694
+msgid ""
+"``gene_symbol`` (string) (required) HUGO gene symbol. Examples: 'TP53', "
+"'BRAF', 'BRCA1', 'EGFR', 'KRAS'."
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:162 76bad6162e3b4b7b903a56837d451a6d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:164 aef63959f35947788f5536a2a47883e4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/genome_nexus_tools.rst:165 c10a7ac3b86a4d58a60510b22f6e9ae8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

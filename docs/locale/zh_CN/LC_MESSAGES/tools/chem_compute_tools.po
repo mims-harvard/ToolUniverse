@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/chem_compute_tools.rst:10 771fab1d50454702a419ccb7a8c63622
+msgid "Chem Compute Tools"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:12 90ae4e8b5c884485a4c54a18c38cb57c
+msgid ""
+"**Configuration File**: ``chem_compute_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:16 71959417b96442548ffe1be8ace70c41
+msgid ""
+"This page contains all tools defined in the ``chem_compute_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:19 60f28bb30c7e43319b3aa7a03268f092
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:22 37129248df9e4e868c1c5de644c19cdb
+msgid "**Chem_sa_score** (Type: ChemComputeTool)"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:24 b452744f813b43d89d20968227eaffc2
+msgid ""
+"Compute the synthetic accessibility (SA) score for a molecule supplied as"
+" a SMILES string, using ..."
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst 206cd89ae7f64fe6b4548a0273ff8161
+msgid "Chem_sa_score tool specification"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:28 5e78ba103a1949908008596f2c7aedba
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:30 0c409920185540f9bd6a594a74fc7313
+msgid "**Name**: ``Chem_sa_score``"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:31 c1240dd821274c458cf1df6081630c5c
+msgid "**Type**: ``ChemComputeTool``"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:32 8a02d33b924d43d6b2c58322efea9d5a
+msgid ""
+"**Description**: Compute the synthetic accessibility (SA) score for a "
+"molecule supplied as a SMILES string, using the RDKit SA\\_Score "
+"contribution module. The algorithm encodes synthetic complexity from "
+"fragment frequency statistics across drug-like compounds. Scores run from"
+" 1 (minimal synthetic effort, simple building blocks) to 10 (highly "
+"complex, exotic or multi-step routes); practical benchmarks: <=3 readily "
+"accessible, 3-6 moderate synthetic challenge, >6 significant complexity. "
+"Accepts any SMILES parseable by RDKit. Useful for filtering synthetically"
+" intractable hits in virtual screening workflows."
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:34 4e9f64a67aa44d1e88f63134ee672c7f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:36 1c039bbad22240d28b1b9ac141c91ef4
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:39 17fc17a59ada413191a390272aeaacc5
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule (e.g., "
+"'CC(=O)Oc1ccccc1C(=O)O' for aspirin)"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:42 e86638a4f0d1490fb14534754c3b438e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:57 0414a468b4cf452b9f4b26c68137e118
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:59 ccb4a1167d6a45d0b5d8bcc12f635a3b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/chem_compute_tools.rst:60 ec57d522df1441ed83b14551844dddf0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

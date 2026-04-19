@@ -16,65 +16,35 @@ def load_mcp_tools(self, server_urls: List[str] = None, **kwargs):
     This method automatically discovers tools from MCP servers and registers them
     as ToolUniverse tools, enabling seamless usage of remote capabilities.
 
-    Parameters
-    ----------
-    server_urls : list of str, optional
-        List of MCP server URLs to load tools from. Examples:
+    Args:
+        server_urls: Optional list of MCP server URLs to load tools from.
+            Example values include ``["http://localhost:8001"]`` and
+            ``["ws://localhost:9000"]``. If omitted, the method tries to
+            discover servers from the local MCP tool registry.
+        **kwargs: Additional configuration options such as ``tool_prefix``,
+            ``timeout``, ``auto_register``, ``selected_tools``, and
+            ``categories``.
 
-        - ["http://localhost:8001", "http://analysis-server:8002"]
-        - ["ws://localhost:9000"]  # WebSocket MCP servers
+    Returns:
+        dict: Summary of loaded tools, connected servers, and any errors.
 
-        If None, attempts to discover from local MCP tool registry.
-
-    **kwargs
-        Additional configuration options:
-
-        - tool_prefix (str): Prefix for loaded tool names (default: "mcp_")
-        - timeout (int): Connection timeout in seconds (default: 30)
-        - auto_register (bool): Whether to auto-register discovered tools (default: True)
-        - selected_tools (list): Specific tools to load from each server
-        - categories (list): Tool categories to filter by
-
-    Returns
-    -------
-    dict
-        Summary of loaded tools with counts and any errors encountered.
-
-    Examples
-    --------
-
-    Load from specific servers:
+    Example:
 
     .. code-block:: python
 
         tu = ToolUniverse()
 
-        # Load tools from multiple MCP servers
-        result = tu.load_mcp_tools([
-            "http://localhost:8001",  # Local analysis server
-            "http://ml-server:8002",  # Remote ML server
-            "ws://realtime:9000"      # WebSocket server
-        ])
+        result = tu.load_mcp_tools(
+            ["http://localhost:8001", "ws://realtime:9000"],
+            tool_prefix="analysis_",
+            timeout=60,
+            selected_tools=["protein_analysis", "drug_interaction"],
+        )
 
-        print(f"Loaded {result['total_tools']} tools from {result['servers_connected']} servers")
+        print(result["total_tools"])
 
-    Load with custom configuration:
-
-    .. code-block:: python
-
-        tu.load_mcp_tools(
-        server_urls=["http://localhost:8001"],
-        tool_prefix="analysis\\_",
-        timeout=60,
-        selected_tools=["protein_analysis", "drug_interaction"]
-    )
-    ```
-
-    Auto-discovery from local registry:
-    ```python
-    # If you have registered MCP tools locally, auto-discover their servers
-    tu.load_mcp_tools()  # Uses servers from mcp_tool_registry
-    ```
+        # Auto-discovery from the local MCP registry
+        tu.load_mcp_tools()
     """
     # Default configuration
     config = {
@@ -462,4 +432,3 @@ def _patch_tooluniverse(tool_universe_cls):
 
     except Exception as e:
         print(f"⚠️ Could not patch ToolUniverse: {e}")
-

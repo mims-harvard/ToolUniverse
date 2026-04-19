@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/diseasesh_tools.rst:10 833418ee1af74cfabd50dcc1263d79c4
+msgid "Diseasesh Tools"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:12 d2dde961b484456c924225ecd6fd2362
+msgid ""
+"**Configuration File**: ``diseasesh_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:16 73c11b120cb9422fa9d5d4247e67c7e4
+msgid ""
+"This page contains all tools defined in the ``diseasesh_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:19 fe343fde91094e0bb4f5eed9eafa964e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:22 b3db40d18df7497fa9481086d0df22d2
+msgid "**DiseaseSh_get_country_stats** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:24 d90baa8b838b4898b78b8ea16c6a5a7b
+msgid ""
+"Get COVID-19 statistics for a specific country from the Disease.sh API. "
+"Returns total and daily c..."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst c6ccad6ad28c4707ade3a582a5bdb6ed
+msgid "DiseaseSh_get_country_stats tool specification"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:28 ../../tools/diseasesh_tools.rst:59
+#: ../../tools/diseasesh_tools.rst:88 3807d2bb706e4ec6bb877deb2561d266
+#: 50143162fb9d4523ae8769bd545693fc d320ad854a2445d298079b36d33969ee
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:30 f170b1d6bfa74ccd9fec4c749f83c5f0
+msgid "**Name**: ``DiseaseSh_get_country_stats``"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:31 ../../tools/diseasesh_tools.rst:62
+#: ../../tools/diseasesh_tools.rst:91 3b6c661f5299459b986cce8aaae80b6c
+#: 44be8ba2e1374cff8e0ce19492183078 8ee2fbc8bd4d47d2820ca50bcb0640fc
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:32 0750add8ed3045878bc739a3dbe3b186
+msgid ""
+"**Description**: Get COVID-19 statistics for a specific country from the "
+"Disease.sh API. Returns total and daily cases, deaths, recovered, active,"
+" critical, testing data, and per-million rates. Also includes country "
+"metadata (population, continent, flag image, latitude/longitude). Accepts"
+" country name, ISO2, ISO3, or country ID. Example: 'USA', 'US', 'United "
+"States' all return US data. Useful for comparing pandemic impact across "
+"nations."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:34 ../../tools/diseasesh_tools.rst:65
+#: ../../tools/diseasesh_tools.rst:94 2f748a60c28d4379b9de6ed41223e2af
+#: 62b31a9086c148e5af186e873fbc074f e773f5567fb94a56af182d6066aed2e9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:36 1ce7f598c8cd4e31a63662ad65a64c81
+msgid ""
+"``country`` (string) (required) Country name (e.g., 'USA', 'India', "
+"'Brazil'), ISO2 code (e.g., 'US', 'IN'), or ISO3 code (e.g., 'USA', "
+"'IND')"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:39 ../../tools/diseasesh_tools.rst:69
+#: ../../tools/diseasesh_tools.rst:102 0260c1425db542889dc1553b97f32f2d
+#: 14a93853631e450ea80c65a10012505e 69731b7cd525447dbd5172035126bbee
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:53 2480496e9b874bdeae4674f1ed45a9b0
+msgid "**DiseaseSh_get_global_stats** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:55 ccab1b71075641f4a2bfc3e044793c3f
+msgid ""
+"Get global COVID-19 statistics from the Disease.sh API. Returns worldwide"
+" totals for confirmed ca..."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst d1cac1949b924ec0bc921d69afd3b555
+msgid "DiseaseSh_get_global_stats tool specification"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:61 ee514ffd825f4462a169fbcb9c0559e0
+msgid "**Name**: ``DiseaseSh_get_global_stats``"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:63 bf235829a9884ed08d29c6e554af1782
+msgid ""
+"**Description**: Get global COVID-19 statistics from the Disease.sh API. "
+"Returns worldwide totals for confirmed cases, deaths, recovered, active "
+"cases, critical cases, tests performed, and per-million rates. Data is "
+"aggregated from multiple sources including Johns Hopkins University, "
+"Worldometers, and government health agencies. Updated multiple times per "
+"day. Useful for epidemiology research, public health monitoring, and "
+"global pandemic tracking."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:67 174aeb6489dc4ccfb5009e04ec1cc723
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:82 20dce39d21f844bba26209096834460b
+msgid "**DiseaseSh_get_historical** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:84 6d096ee82c0744d2bc4021ab0a078883
+msgid ""
+"Get historical COVID-19 time series data for a country or globally from "
+"Disease.sh. Returns daily..."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst b19cb313decf4af48065bdbdc04d2306
+msgid "DiseaseSh_get_historical tool specification"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:90 090539ba44c54b07ab93bba8bd3cf4ef
+msgid "**Name**: ``DiseaseSh_get_historical``"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:92 7e6306a787de4601b4f97e2c83b0e3a5
+msgid ""
+"**Description**: Get historical COVID-19 time series data for a country "
+"or globally from Disease.sh. Returns daily cumulative totals for cases, "
+"deaths, and recovered over the specified time period. Data sourced from "
+"Johns Hopkins University CSSE. Use lastdays parameter to control the time"
+" range. Example: lastdays=30 returns the last 30 days, lastdays=all "
+"returns all available data from the start of the pandemic. Useful for "
+"trend analysis, epidemiological modeling, and visualization."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:96 95db47df234d4801a22f6af365f93469
+msgid ""
+"``country`` (string, null) (optional) Country name or 'all' for global "
+"data. Examples: 'USA', 'India', 'all'. If omitted, returns global data."
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:99 4c9bd48449b7409889f14c07ec4fb827
+msgid ""
+"``lastdays`` (string, null) (optional) Number of days of historical data "
+"to return. Use a number (e.g., '30') or 'all' for all available data. "
+"Default: '30'"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:115 e718a79ed0254518bb3d1ff50e8e6be7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:117 06ef703178574be6a9c296418096a9a7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/diseasesh_tools.rst:118 600b39bc0e334f0f96e27397a3d39806
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

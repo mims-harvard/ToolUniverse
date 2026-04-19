@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bridgedb_tools.rst:10 3dca82526bd64474972efe2839d05aee
+msgid "Bridgedb Tools"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:12 c0606b367cea4631afc0f71b40857091
+msgid ""
+"**Configuration File**: ``bridgedb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:16 cc540eed7e184a70b5b8c3d1d4b50cf3
+msgid ""
+"This page contains all tools defined in the ``bridgedb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:19 862a2f93a7fd415bb546234d73a29aba
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:22 53deaf91bd1148caa34290f52fda078e
+msgid "**BridgeDb_attributes** (Type: BridgeDbTool)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:24 16d1380b5311488e847d55088258a1bc
+msgid ""
+"Get properties and attributes for a biological identifier from BridgeDb. "
+"Returns metadata such as..."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst 05e3bd775d254a348217a8498331d321
+msgid "BridgeDb_attributes tool specification"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:28 ../../tools/bridgedb_tools.rst:69
+#: ../../tools/bridgedb_tools.rst:106 36bebc5f674b4bc69debe6b1e6afc6dd
+#: b13a1b47681a440eade4d2319a180f57 cb4f257185e44741abd79d0b1b0c523b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:30 2b457bdf170641a4849938e2db07cbf8
+msgid "**Name**: ``BridgeDb_attributes``"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:31 ../../tools/bridgedb_tools.rst:72
+#: ../../tools/bridgedb_tools.rst:109 069049fde6454be29dc03526f4069076
+#: 510e9ec7462c4e778294ca9817ead660 541969f00f0141d88b7410492bcb304f
+msgid "**Type**: ``BridgeDbTool``"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:32 ee90ec22f42943e4b0a1043841ebcef6
+msgid ""
+"**Description**: Get properties and attributes for a biological "
+"identifier from BridgeDb. Returns metadata such as molecular formula, "
+"molecular weight, InChI, InChIKey, synonyms, and other database-specific "
+"attributes. Especially useful for metabolites (HMDB, ChEBI, KEGG compound"
+" IDs) to get chemical properties, and for genes to get symbol and name "
+"information. System codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, "
+"En=Ensembl, H=HGNC, S=UniProt."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:34 ../../tools/bridgedb_tools.rst:75
+#: ../../tools/bridgedb_tools.rst:112 0f723284d3334665a57cb912b76a59cd
+#: d4e6ef90abc743ea85461ff1491c62d6 ffff66d34bd5433f9f5dfce375746320
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:36 dd49592dff334d2081b1c2d4cf1700e8
+msgid "``operation`` (string) (optional) Operation type (fixed: attributes)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:39 6fdae8cd2236428aa729e727c948e753
+msgid ""
+"``identifier`` (string) (required) The identifier to look up (e.g., "
+"'HMDB0000122' for glucose, '17234' for ChEBI glucose)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:42 6ff6d7fd0d1b47099e99a5dddd11c33d
+msgid ""
+"``source`` (string) (required) Source database name or system code. "
+"Common: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, "
+"S=UniProt"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:45 1181a01e35f14f11954d5a686f3dbbeb
+msgid ""
+"``organism`` (string) (optional) Organism name (default: Human). Options:"
+" Human, Mouse, Rat, Yeast, etc."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:48 ../../tools/bridgedb_tools.rst:86
+#: ../../tools/bridgedb_tools.rst:135 3cc6e1e36269474084cf817f229fd13d
+#: 928ce5f64ff941d3ba97e5a46f574111 a1e26bf686c04353bdc862300641876b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:63 c46d1a4efcb94a42a9584ba2c1a9039a
+msgid "**BridgeDb_search** (Type: BridgeDbTool)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:65 2253438d3580498b9f8d2e6b20faafac
+msgid ""
+"Search for biological identifiers by name using BridgeDb. Enter a gene "
+"name, metabolite name, or ..."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst d4a129c8c2744590bd2e5a7b899c302b
+msgid "BridgeDb_search tool specification"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:71 b7cf097cacb04478a4fdfca738f3c4d8
+msgid "**Name**: ``BridgeDb_search``"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:73 b664351133244acbbc2bdc6c51f5a83e
+msgid ""
+"**Description**: Search for biological identifiers by name using "
+"BridgeDb. Enter a gene name, metabolite name, or protein name and get "
+"matching identifiers from supported databases. Useful for finding "
+"database-specific IDs when you only know the common name. Searches across"
+" all database sources available for the specified organism. Returns "
+"identifier-database pairs. For example, searching 'glucose' returns "
+"matches from MetaCyc, KEGG, and other databases."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:77 8f69dc6a33644d52a6ec3aa9a85beafb
+msgid "``operation`` (string) (optional) Operation type (fixed: search)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:80 9dc12658c72e4ae0aa63427ed66864fd
+msgid ""
+"``query`` (string) (required) Name to search for (e.g., 'glucose', "
+"'TP53', 'ATP')"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:83 755a0b00eddf49719f7f8a8160d37a82
+msgid ""
+"``organism`` (string) (optional) Organism name (default: Human). Options:"
+" Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, etc."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:100 d60f5af1fdb24d26a1f0d59139735a75
+msgid "**BridgeDb_xrefs** (Type: BridgeDbTool)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:102 7473c18d215140578f5a1dc0324d4cac
+msgid ""
+"Map a biological identifier across databases using BridgeDb. Given an "
+"identifier from one databas..."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst a2eadaec32ae47ac8c9481168dbd04cc
+msgid "BridgeDb_xrefs tool specification"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:108 d62cf1f98b4d4b6e9606b4a4f7903b15
+msgid "**Name**: ``BridgeDb_xrefs``"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:110 a5b45b47519f42f08ba8158982c3f557
+msgid ""
+"**Description**: Map a biological identifier across databases using "
+"BridgeDb. Given an identifier from one database (e.g., HMDB0000122 from "
+"HMDB), returns equivalent identifiers in all other supported databases "
+"(ChEBI, KEGG, PubChem, Wikidata, CAS, etc.). Supports genes, proteins, "
+"metabolites, and other biological entities across 45+ databases and 30+ "
+"organisms. System codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl,"
+" H=HGNC, S=UniProt, L=NCBI Gene, Cpc=PubChem-compound, Ik=InChIKey. Use "
+"this when you need to convert between database identifiers for the same "
+"biological entity."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:114 89cf6bee5c8c40e39b616105a3d7123d
+msgid "``operation`` (string) (optional) Operation type (fixed: xrefs)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:117 9541bf78907e4cd9b16187ddc8317260
+msgid ""
+"``identifier`` (string) (required) The identifier to look up (e.g., "
+"'HMDB0000122' for glucose, 'ENSG00000141510' for TP53, '17234' for ChEBI "
+"glucose)"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:120 71a1157bde4242ff8c3749ce95589f74
+msgid ""
+"``source`` (string) (optional) Source database name or system code. "
+"Common codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, "
+"S=UniProt, L=NCBI Gene, Cpc=PubChem-compound"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:123 9b8ddba8568d4e3d8b7fa8b243494c7a
+msgid ""
+"``source_database`` (string) (optional) Alias for source. Source database"
+" name or system code."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:126 00ec675f8a8d43cea6b4a3d154024877
+msgid ""
+"``organism`` (string) (optional) Organism name (default: Human). Options "
+"include: Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, "
+"Arabidopsis thaliana, and others."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:129 6c4588c7da334c2ea7a7c4eee940fc57
+msgid ""
+"``target_source`` (string) (optional) Optional: filter results to a "
+"specific target database. Use database name or system code."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:132 6efc97a0be74478c9a7b10ce9aa33e14
+msgid ""
+"``target_database`` (string) (optional) Alias for target\\_source. Filter"
+" results to a specific target database."
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:149 99f8079300954422bf10861fd2d22543
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:151 044a51e36f8b4e639d03448702d2e0de
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bridgedb_tools.rst:152 5f56026c32c84ea5bf8744f7df71db1e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

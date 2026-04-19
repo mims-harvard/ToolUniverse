@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/string_network_tools.rst:10 6b70d318993a47b78efabe14528a4a4d
+msgid "String Network Tools"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:12 e70d6efb48ba4ebdbf7596795b2d7996
+msgid ""
+"**Configuration File**: ``string_network_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:16 4ac54fcba6234282ab731d5113475ade
+msgid ""
+"This page contains all tools defined in the ``string_network_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:19 e1a6a655e9c94d20b89ccf5ac30c60f9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:22 a837be9954234511b88e7779561ba485
+msgid "**STRING_get_interaction_partners** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:24 9db6c3d9c841494ba49b4525abe0e52f
+msgid ""
+"Get interaction partners for a single protein from STRING database. "
+"Returns a ranked list of prot..."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst 9967c6d9278c43eea6b4f64b47f68b54
+msgid "STRING_get_interaction_partners tool specification"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:28
+#: ../../tools/string_network_tools.rst:68 1c386248514b47d58ae2171e7860c172
+#: 84ca726259f04d0c92badf6cded22b7a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:30 24e3a99d9cb947248a6b420b1bf114fd
+msgid "**Name**: ``STRING_get_interaction_partners``"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:31
+#: ../../tools/string_network_tools.rst:71 25376420abc04318872f3bf3b78f25a4
+#: 497e386703e54fe5b80ec898169d9602
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:32 73c861b3517245e3b10084a96aa65693
+msgid ""
+"**Description**: Get interaction partners for a single protein from "
+"STRING database. Returns a ranked list of proteins that interact with the"
+" query protein, along with detailed confidence scores by evidence type "
+"(experimental, database, text-mining, etc.). Different from "
+"STRING\\_get\\_network which returns all edges in a network - this "
+"returns a simple partner list focused on one protein. Useful for finding "
+"what proteins a given protein interacts with."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:34
+#: ../../tools/string_network_tools.rst:74 5b8f019fa73448c2b8ac5e627d4da52b
+#: 883e90f049c94252ad08042803134152
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:36 8677de3f41c74c96984715dfc84e3254
+msgid ""
+"``identifiers`` (string) (required) Protein identifier (gene name or "
+"STRING ID). Examples: 'TP53', 'BRCA1', 'EGFR', '9606.ENSP00000269305'"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:39 43848af287744da2aeaaed0eae16bfa8
+msgid ""
+"``species`` (integer) (optional) NCBI taxonomy ID (9606=human, "
+"10090=mouse, 7227=fly, 6239=worm)"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:42 f08abbed46004165861c1a6496a7d035
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interaction partners to "
+"return"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:45 b571772e91844321a350f10ffdd7f4de
+msgid ""
+"``required_score`` (integer, null) (optional) Minimum combined STRING "
+"score (0-1000). 400=medium, 700=high, 900=highest confidence."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:48
+#: ../../tools/string_network_tools.rst:88 6fe75333fb0e4c56b8c228816b08a600
+#: e2401b58e8dc4af69dccc03b75088676
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:62 f51dcc0ff044482093a1dff01332d60d
+msgid "**STRING_get_network** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:64 213a5c8af1d34e248b53e081b2d6ac21
+msgid ""
+"Get the protein-protein interaction network for one or more proteins from"
+" STRING database. Return..."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst d0878e0add8a4830a6ffcf2870622ba5
+msgid "STRING_get_network tool specification"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:70 0b9105900b0849faabf4ed3dab41c62d
+msgid "**Name**: ``STRING_get_network``"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:72 9796c3dabe4f4c3b94c0e556d12a9005
+msgid ""
+"**Description**: Get the protein-protein interaction network for one or "
+"more proteins from STRING database. Returns all interactions (edges) "
+"between the query proteins and their neighbors, including confidence "
+"scores broken down by evidence type (experiments, co-expression, "
+"databases, text-mining, etc.). Different from "
+"STRING\\_get\\_functional\\_annotations (which returns GO/pathway "
+"annotations) and STRING\\_get\\_enrichment (which tests enrichment of a "
+"set). Use this to build or visualize PPI networks. Multiple proteins can "
+"be separated by carriage return characters (\\\\r)."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:76 fc74a72e57814217a9311cc7b0a91759
+msgid ""
+"``identifiers`` (string) (required) Protein identifier(s). For multiple "
+"proteins, separate with '\\\\r' (carriage return character). Examples: "
+"'TP53', 'BRCA1\\\\rBRCA2\\\\rTP53', '9606.ENSP00000269305'"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:79 4e86cdbdb1f34963a8ce2cef6b69572e
+msgid ""
+"``species`` (integer) (optional) NCBI taxonomy ID. Examples: 9606 "
+"(human), 10090 (mouse), 7227 (Drosophila), 6239 (C. elegans)"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:82 a34fec885c96444fa1de2e308cf69d16
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interaction partners to "
+"include (per protein). 0 = only interactions among input proteins."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:85 f42879b3ed67480e98ae8473feece81a
+msgid ""
+"``required_score`` (integer, null) (optional) Minimum combined STRING "
+"score (0-1000). 400=medium, 700=high, 900=highest confidence. Default: "
+"400."
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:102 aa37d0b61a4c461caa276afa2c57c4df
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:104 148c1e78d297446380823c67fc07c39f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/string_network_tools.rst:105 5c5acaeb61994a1ea13dbc3e7b531370
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

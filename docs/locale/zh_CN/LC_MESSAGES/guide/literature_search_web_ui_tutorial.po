@@ -1,0 +1,792 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:2
+#: 55e9091397c94703be66ab6558e545ab
+msgid "Wide Research Web UI Tutorial"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:4
+#: fea4d78b8cb74fa9a66f3c8fd7709f07
+msgid ""
+"This tutorial demonstrates how to use the ToolUniverse Wide Research Web "
+"UI, a powerful web-based interface that provides intelligent literature "
+"search and analysis capabilities across multiple academic databases."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:7
+#: fd9dab58818b476e864037236b8f3b09
+msgid "Overview"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:9
+#: a4d6102948c3471d81a4ffa6f9195f94
+msgid "The Wide Research Web UI is a comprehensive web application that combines:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:11
+#: aad80b48fcbd49a2a0533b4b544d4f0d
+msgid "**Multi-database search** across 11+ academic databases"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:12
+#: 61c26a36d8af46968b20e247e8b0f0fe
+msgid "**AI-powered query expansion** for better search results"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:13
+#: 8f9df86475914122a117e74b20e800a6
+msgid "**Intelligent summarization** with temporal and thematic analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:14
+#: 63a11b5ba13946c8b439d337d6fc5984
+msgid "**Modern web interface** with paper card display"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:15
+#: 3ff19346a8444551b12cd6e9aa3a58ba
+msgid "**Real-time search status** and tool usage tracking"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:18
+#: 063a67fb8bf44c829fdac0f49e5622d8
+msgid "Key Features"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:20
+#: cadf473c704949beaf3a111519a8b836
+msgid ""
+"**Unified Search Interface**: Search across ArXiv, PubMed, Crossref, "
+"Semantic Scholar, OpenAlex, DBLP, DOAJ, Europe PMC, HAL, MedRxiv, and "
+"Unpaywall"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:21
+#: 63c7377aeea0451b94b4be4421601306
+msgid ""
+"**Smart Query Processing**: AI-powered query expansion to generate "
+"multiple search terms"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:22
+#: 58f8a5cc45ab414baeca0fd283b47522
+msgid "**Intelligent Analysis**: Comprehensive literature review generation with:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:23
+#: b186c3568cdf4acebbfda73c811317dc
+msgid "Research overview and scope analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:24
+#: cd167cc479f344a99b44c73d4746924a
+msgid "Temporal analysis of research trends"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:25
+#: cc09c934a54647ec9f3ce1af3102c2e7
+msgid "Thematic analysis of research areas"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:26
+#: 791a3e4754204e5a84c92c39f5b49de6
+msgid "Key contributions identification"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:27
+#: 9ab7412c9d2343e68363298e8fee4db9
+msgid "Research gaps and future directions"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:28
+#: 8aa8b58c5115440395db5a9c9e563b90
+msgid ""
+"**Paper Card Display**: Modern, responsive interface showing papers with "
+"source identification"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:29
+#: 239add80f867491f86d03857e4f23ad0
+msgid "**Real-time Status**: Live updates on tool usage and search progress"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:32
+#: 80a1e98060784f538b12d375c7dbdca2
+msgid "Quick Start"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:35
+#: a562c43064fc4b1fb82c16459a2baa3c
+msgid "Starting the Web UI"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:37
+#: e7ef09c54f20469d8c66f04b846832b5
+msgid ""
+"The easiest way to start the Wide Research Web UI is using the command-"
+"line tool:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:43
+#: b94e5ecaa5c14beebda78b38a05d4df4
+msgid "This will start the web server and display:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:56
+#: f58508c8fe554b8cb0e9bf92988fd1ad
+msgid "Access the web interface by opening http://localhost:5001 in your browser."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:59
+#: 4d38e6c1bad743538be2fe843481cf9b
+msgid "Alternative Startup Methods"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:61
+#: e05e2cfb13094623af43dca4f4c195fa
+msgid "You can also start the web UI directly:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:73
+#: a13b5f489f0c4a7fb077b2857ce30b3b
+msgid "Using the Web Interface"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:76
+#: 9e1b01c76efd494f8ccf4adb8ee5c8cc
+msgid "Basic Search"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:78
+#: 9ccc1c9dcfaf440d9a167ad5e5597c21
+msgid "**Enter your search query** in the search box"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:79
+#: 4a8e31b8a52a4354bc208195868b0fb2
+msgid "**Choose search options**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:80
+#: de6d9852d2c34b9a842ebecb63ba5a70
+msgid "Enable \"AI Query Split\" to automatically expand your search terms"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:81
+#: d4afb3ebfe474b9fad07beac06c51623
+msgid "Enable \"AI Summary\" to generate intelligent literature analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:82
+#: d7b0c81befa64c76b493770f136131b4
+msgid "Adjust the result limit (default: 10)"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:83
+#: e08559a37b1548a683ddd371c212cf79
+msgid "**Click \"Search Literature\"** to start the search"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:85
+#: ae09b31f6e59465ca6a6b8b27277ee4b
+msgid ""
+"Example searches: - \"machine learning deep learning\" - \"cancer "
+"immunotherapy\" - \"quantum computing algorithms\" - \"renewable energy "
+"storage\" - \"artificial intelligence ethics\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:93
+#: 6142cb2f4399431b85933aab453c8016
+msgid "Understanding the Results"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:95
+#: 670012ab945047f482abc52b4fa74dfc
+msgid "The web interface displays results in several sections:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:97
+#: fee660202bb94f80b647f4b300bac5aa
+msgid ""
+"**Search Status** - Real-time updates on which tools are being used - "
+"Success/failure status for each database - Total number of papers found"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:102
+#: 1b2767cd75a844e786e9814a3e25ed83
+msgid ""
+"**Paper Cards** Each paper is displayed as a card showing: - **Title** "
+"and **Authors** - **Publication year** and **Source database** - "
+"**Abstract** (truncated with expand option) - **Journal/Venue** "
+"information - **DOI** and **Direct links** - **Source badge** with color-"
+"coded identification"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:111
+#: 4162416eb67645428915664a819b68a7
+msgid ""
+"**Intelligent Summary** (when enabled) - **Research Overview**: Scope, "
+"recent activity, data sources - **Research Timeline**: Temporal analysis "
+"of publication trends - **Research Themes**: Primary research areas and "
+"methodological approaches - **Key Contributions**: Notable papers and "
+"their significance - **Research Trends**: Collaboration patterns and "
+"emerging patterns - **Research Gaps**: Identified gaps and future "
+"opportunities - **Methodology**: Information about the search process"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:121
+#: 7dfab159245243de953737634a93f5ea
+msgid "Advanced Features"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:124
+#: ecd9830b059844baac9fbfe2448ff11c
+msgid "AI Query Expansion"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:126
+#: 24e3b9a53fe74c3ea6949b637b465e26
+msgid "When \"AI Query Split\" is enabled, the system automatically:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:128
+#: a167182a0db74cdea032ab95fc44bd26
+msgid "**Analyzes your query** to identify key concepts"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:129
+#: f216c09b9d6d4a119015ae4eba203983
+msgid "**Generates related terms** and synonyms"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:130
+#: 36a42331e1ec45ea99e8092678d2cb3b
+msgid "**Creates multiple search variations** for comprehensive coverage"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:131
+#: a524c37254cb4fb6b0ae9868bd5ed6a4
+msgid "**Searches each variation** across all databases"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:133
+#: e95dc724d97945c9bdb4a3b27bfa7a61
+msgid ""
+"Example: - Input: \"machine learning\" - Expanded queries: [\"machine "
+"learning\", \"deep learning\", \"neural networks\", \"AI applications\"]"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:138
+#: 684b98fd55c343a78ac6740a537f53dc
+msgid "Intelligent Summarization"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:140
+#: 88b63071904c41e9ba5c657adb8961bc
+msgid "The AI summary provides comprehensive analysis including:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:142
+#: eb194103214b4dd6831355279ebae297
+msgid ""
+"**Temporal Analysis** - Recent developments (2021+) - Historical context "
+"by decade - Publication trends over time - Key papers from each period"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:148
+#: 0508604e4dc945838340f5e0128209e4
+msgid ""
+"**Thematic Analysis** - Primary research areas (Machine Learning, "
+"Computer Vision, NLP, etc.) - Methodological approaches (Deep Learning, "
+"Statistical Methods, etc.) - Research focus distribution"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:153
+#: f1a3c1a9b1ac4677921673656674aeb4
+msgid ""
+"**Key Contributions** - Most important papers identified - Author "
+"collaboration patterns - Source diversity analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:158
+#: f616fdf499034dcd8c74378c004b571c
+msgid ""
+"**Research Gaps & Future Directions** - Emerging trends and patterns - "
+"Identified research gaps - Future research opportunities"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:164
+#: 8251987b29ff48d488a75ef1858acabe
+msgid "API Usage"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:166
+#: 42094385d1c4408694fee22e1ed8605f
+msgid "The web UI also provides RESTful API endpoints for programmatic access:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:169
+#: afc6ed6457ff455199a795faedf4498b
+msgid "Search Endpoint"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:183
+#: 14156891af3d4404b98b53c7c0695314
+msgid "Response format:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:211
+#: 426bd37a02c94b548b2a37350f850738
+msgid "Tool Information Endpoint"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:218
+#: 49bd85e1cf434f4fa5877bd318636d54
+msgid "Returns information about available search tools and their capabilities."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:221
+#: 269017439a88460e8c48750c58fb5280
+msgid "Search History Endpoint"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:228
+#: 861979dcce484e47923721a7341a9b9a
+msgid "Returns the last 10 search queries and their results."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:231
+#: e6e5055c1ea143c5a1bdfe2f3e44d334
+msgid "Configuration"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:234
+#: e531bb744278426eb2da1d86d3174a5c
+msgid "Environment Detection"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:236
+#: 8d4b3f2fba2b4128899068e4d44b1a61
+msgid "The web UI automatically detects your ToolUniverse environment:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:238
+#: e3b88ca14a5e4eba98b06ec7e5d2a6aa
+msgid "**Full Mode**: When ToolUniverse is available, uses all integrated tools"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:239
+#: d0f8bc6762ba485bb8761d2d7836907b
+msgid "**Demo Mode**: When ToolUniverse is not available, uses simulated data"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:241
+#: 80c76c4a7c8f472b80c15999750659e3
+msgid ""
+"You can check the mode in the startup messages or by calling the tools "
+"endpoint."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:244
+#: 74d1f287efe849409361fb1664a9bd35
+msgid "Customization"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:246
+#: f72e97b5816f4580a5fc0297c67c71e3
+msgid "The web UI can be customized by modifying:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:248
+#: 555b051ee7a24600aa00fd54dc4e9f3d
+msgid "**Port**: Change the default port (5001) in `simple_app.py`"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:249
+#: 4efb5e25e9ec435b8fcbc90140595c1b
+msgid "**Result limits**: Adjust default limits in the interface"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:250
+#: 44cbf8a871ed4f67940f33e7caa9d297
+msgid "**Database selection**: Enable/disable specific databases"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:251
+#: e04b3d8017c04a0c9aeb2cf9650b2d38
+msgid "**UI styling**: Modify the HTML/CSS templates"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:254
+#: 78eea386f7754164a4e8708fd2223a0c
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:257
+#: d15a9e4aedeb438e9e939bb990439c18
+msgid "Common Issues"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:259
+#: ede985d4cd9b4360b1b56a1a396cf6cc
+msgid ""
+"**Port Already in Use** - The default port 5001 is already occupied - "
+"Solution: Kill the process using the port or change the port in the code"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:263
+#: 5ef053aac49842578760db94bea8d668
+msgid ""
+"**ToolUniverse Not Found** - ToolUniverse is not properly installed or "
+"configured - Solution: Install ToolUniverse or run in demo mode"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:267
+#: ab2f5a8f091e4f5089f23443e5569f50
+msgid ""
+"**No Results Found** - Search query might be too specific - Try broader "
+"terms or enable AI query expansion - Check if databases are accessible"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:272
+#: e533df1ee0ed484c896020f4755ff08f
+msgid ""
+"**Slow Performance** - Large result sets or many databases can slow down "
+"searches - Reduce the result limit - Disable some databases if not needed"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:277
+#: e5ada42ffbd64487ad7a3722ae1e8c74
+msgid ""
+"**API Errors** - Check network connectivity - Verify API endpoints are "
+"accessible - Check for rate limiting"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:283
+#: cdb72045903b4d8b8338183fb7081f61
+msgid "Best Practices"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:286
+#: cff48b905a8941af9632bd4864a32145
+msgid "Search Optimization"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:288
+#: cdda4b1946da4be8ad7de91794d71f45
+msgid "**Use specific, relevant keywords**"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:289
+#: 76cabba29f9c41ddb2ea780f29399db3
+msgid "**Enable AI query expansion** for comprehensive coverage"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:290
+#: 869721922899457eae746c8eedd79766
+msgid "**Start with moderate result limits** (5-10) for faster searches"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:291
+#: 2510944b2a434a0985dc88cd919eac9a
+msgid "**Use the intelligent summary** to understand research landscape"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:294
+#: 1d46cea05cd4429488ee2fdb0318fc7c
+msgid "Result Analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:296
+#: 9c6e7d6d63474780ae5a1d4c0f5709df
+msgid "**Review the paper cards** for relevant publications"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:297
+#: 6b107101e1e740ada1d643752c95a35b
+msgid "**Read the intelligent summary** for research insights"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:298
+#: bafab23732684c04b5fbeed2fc24d1f7
+msgid "**Check source diversity** to ensure comprehensive coverage"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:299
+#: 2daddc9baca145b88d91033079cff9de
+msgid "**Use the timeline analysis** to understand research evolution"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:302
+#: 11cf55537af24890ab36948c1dad1410
+msgid "Workflow Integration"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:304
+#: 4cce12e1969d46ac882ad988cc3be078
+msgid "**Start with broad searches** to understand the field"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:305
+#: 68d92eb7de114d3392ae9238d9c177a7
+msgid "**Refine queries** based on initial results"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:306
+#: bb71a37661a246acb4e45b2770fa0760
+msgid "**Use multiple search sessions** for different aspects"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:307
+#: 800e53d945994006bff478d63d9db458
+msgid "**Export results** for further analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:310
+#: a0d927c1d839400c984d39a01d041e47
+msgid "Example Workflows"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:313
+#: b8f16a14f34642fd8535814fc8474aed
+msgid "Literature Review Preparation"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:315
+#: 8c1748e8dd9c4b50b78d1f0e96e9758b
+msgid "**Initial broad search**: \"artificial intelligence\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:316
+#: 2f1123d67e02407384f3c6ef7583e73a
+msgid "**Enable AI expansion** and summary"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:317
+#: 54cc401bb6aa47c88781dd8a00dd2f19
+msgid "**Review thematic analysis** to identify key areas"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:318
+#: 027da042bb1345a48e70b2d4c9a678dc
+msgid ""
+"**Focus on specific themes**: \"computer vision\", \"natural language "
+"processing\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:319
+#: f035d437f48f4e77bc57172c76cfc3ce
+msgid "**Use temporal analysis** to understand recent developments"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:320
+#: 313fc64002154f55b7d7be4957edc858
+msgid "**Identify research gaps** for your contribution"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:323
+#: a58855c1456c46cb8f8b073be8c0e2f5
+msgid "Research Gap Analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:325
+#: b8308339d28e4827bcbf1e96af77aff5
+msgid "**Search your research area**: \"quantum machine learning\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:326
+#: 76c986af02ff41d886627cbdcfc16c59
+msgid "**Enable intelligent summary** to see research gaps"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:327
+#: a1949c34404f465387d60d735c851533
+msgid "**Review recent papers** (last 2-3 years)"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:328
+#: 604e1f959e754c8bb052e488b482c5c4
+msgid "**Analyze collaboration patterns** for potential partnerships"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:329
+#: 78fe5c6ebf284cea825d979fc63943e0
+msgid "**Identify future directions** mentioned in the summary"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:332
+#: 017e35753bc64b78a1320e77fe251506
+msgid "Competitive Analysis"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:334
+#: 7a2b841756044202b3b3c31676f9bc1f
+msgid "**Search for key researchers** in your field"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:335
+#: 9c897fe63d5f4caba2296aa1a812955b
+msgid "**Use author names** in search queries"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:336
+#: 34733e2fc09c41e592034b6e0f92135d
+msgid "**Review recent publications** from competitors"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:337
+#: 0d19627cba014e2da83588b49d04ad65
+msgid "**Analyze research trends** to understand market direction"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:338
+#: e5facfa006c74ee3b4f9f986a2faa0bd
+msgid "**Identify emerging areas** for early entry"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:341
+#: 033aadf0161249f39c0ccf365b07c7bd
+msgid "Complete Example"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:343
+#: 627e5e7626f74e839bde2b9f8de4aa08
+msgid "Here's a complete example of using the Wide Research Web UI:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:345
+#: 17281a2cb2414fa2ba159a815e83a461
+msgid "**Start the web UI**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:351
+#: 74c3a20fe360423d8dbaff738b2aea43
+msgid "**Open your browser** and go to http://localhost:5001"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:353
+#: bf41c8c869484caf955bfe933bb03c47
+msgid "**Perform a search**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:354
+#: 919440c8920344d3922f29f4cc0afa10
+msgid "Query: \"deep learning computer vision\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:355
+#: 583edeaefc4b4a4a9adb353932436ca3
+msgid "Enable AI Query Split:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:356
+#: e0f99a0c092e4202ae3bf161c6fc2e90
+msgid "Enable AI Summary:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:357
+#: 00d5d78f8f574e77b8a25484f400db75
+msgid "Limit: 5"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:359
+#: 67c519fbfd3e4b9eae198d68b976fc03
+msgid "**Review the results**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:360
+#: 3e6a9f452bd4471aa50ef883a99764dc
+msgid "Check the paper cards for relevant publications"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:361
+#: 334949a035bc4540a43409a2a1000cba
+msgid "Read the intelligent summary for insights"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:362
+#: 28677903da4745fe9d899932c6627349
+msgid "Note the research timeline and themes"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:364
+#: 1c75644cc3444a5d8bb5f850d05e916f
+msgid "**Refine your search**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:365
+#: c5a82536293e4475996e45bab77e3987
+msgid "Try more specific terms: \"object detection deep learning\""
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:366
+#: 612be76531a044daadca363316f534af
+msgid "Focus on recent papers: adjust date filters"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:367
+#: ac479b5144274b66a8dccf1131a77b5c
+msgid "Explore related themes from the summary"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:369
+#: a225a58f663842d0a43fe8bb4767dc9d
+msgid "**Export results**:"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:370
+#: 547bb60b45e14feebb97d1d3fd5e7135
+msgid "Use the API to programmatically access results"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:371
+#: f00d47418372478480ab7bed15f07d22
+msgid "Save interesting papers for further reading"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:372
+#: 3f5addc3a9494fe2af9b4a536d40d6e6
+msgid "Use the summary for your literature review"
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:374
+#: 4084e127f769455b8948111343d15ab7
+msgid ""
+"This tutorial provides a comprehensive guide to using the ToolUniverse "
+"Wide Research Web UI. The interface combines the power of multiple "
+"academic databases with intelligent analysis to provide a complete "
+"literature research solution."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:376
+#: 4668c562f8a9410c8447d08adcd88e9c
+msgid ""
+"For more information about individual tools, see the `literature search "
+"tools tutorial <literature_search_tools_tutorial.html>`_."
+msgstr ""
+
+#: ../../guide/literature_search_web_ui_tutorial.rst:378
+#: f466dcbecfc0498894e501fc50384b7b
+msgid "For API reference, see the `API documentation <../api/index.html>`_."
+msgstr ""
+

@@ -7,113 +7,370 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 21:40-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/pubmed_tools.rst:2 c99d592553224636aae849c7b1399cfe
+#: ../../tools/pubmed_tools.rst:10 e139e3d4560843429198b338a5d32bdb
 msgid "Pubmed Tools"
 msgstr "Pubmed 工具"
 
-#: ../../tools/pubmed_tools.rst:4 6060b9537178488984035d0e217db56d
+#: ../../tools/pubmed_tools.rst:12 fb767f6954144988b0193244f57d7cda
+#, fuzzy
 msgid ""
-"**Configuration File**: ``pubmed_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 1"
+"**Configuration File**: ``pubmed_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
 msgstr ""
 "**配置文件**：``pubmed_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/pubmed_tools.rst:8 e6a2662ab98f45b18ed809f165c1d12b
+#: ../../tools/pubmed_tools.rst:16 f749965fc61a498d8bd12de705debb06
 msgid ""
 "This page contains all tools defined in the ``pubmed_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``pubmed_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/pubmed_tools.rst:11 e8d7054857284c78b9c20d581a7a2044
+#: ../../tools/pubmed_tools.rst:19 05c850775e774c8fae82b3e99758f99e
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/pubmed_tools.rst:14 f5eaa746dd254c18a95e7de22818bf19
-msgid "**PubMed_search_articles** (Type: PubMedTool)"
+#: ../../tools/pubmed_tools.rst:22 ec7bcd16895444e4941ed1e4aeb90db7
+#, fuzzy
+msgid "**PubMed_get_article** (Type: PubMedRESTTool)"
 msgstr "**PubMed_search_articles**（类型：PubMed工具）"
 
-#: ../../tools/pubmed_tools.rst:16 197587238421451498f416932534aae7
+#: ../../tools/pubmed_tools.rst:24 9a9f9c22592b4356ae03cf680f998e44
 msgid ""
-"Search PubMed using NCBI E-utilities (esearch + esummary) and return "
-"articles. Returns articles w..."
-msgstr "使用NCBI E-utilities（esearch + esummary）搜索PubMed并返回文章。返回的文章包含..."
+"Get complete metadata for a specific PubMed article by its PMID (PubMed "
+"ID) using efetch. Returns..."
+msgstr ""
 
-#: ../../tools/pubmed_tools.rst 31492f9f30cf435eb299f399b81d7cb3
-msgid "PubMed_search_articles tool specification"
+#: ../../tools/pubmed_tools.rst ac48d009abf748c781d3b9f53cadb50a
+#, fuzzy
+msgid "PubMed_get_article tool specification"
 msgstr "PubMed_search_articles 工具规范"
 
-#: ../../tools/pubmed_tools.rst:20 3ca0678d70544475913386ed37f6a8b3
+#: ../../tools/pubmed_tools.rst:28 ../../tools/pubmed_tools.rst:59
+#: ../../tools/pubmed_tools.rst:93 ../../tools/pubmed_tools.rst:124
+#: ../../tools/pubmed_tools.rst:158 20615ce0479742988d972c88acf9ca22
+#: 3550fb5e99c244bca4bb9d31822c311c 5ae930fa0fec4f94aeeb9025bf8c34fd
+#: 79d2249272ff4a1ab61c7de443ceba19 7b5bc0a7f2984877b9b9fc423f8c1258
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/pubmed_tools.rst:22 512362c5f7ed450baa500bc83adafaa2
-msgid "**Name**: ``PubMed_search_articles``"
+#: ../../tools/pubmed_tools.rst:30 fbb17d3840c74ccf8f393fb10ef34879
+#, fuzzy
+msgid "**Name**: ``PubMed_get_article``"
 msgstr "**名称**：``PubMed_search_articles``"
 
-#: ../../tools/pubmed_tools.rst:23 32c557e5e18d42afac9281cf21b94a03
-msgid "**Type**: ``PubMedTool``"
+#: ../../tools/pubmed_tools.rst:31 ../../tools/pubmed_tools.rst:62
+#: ../../tools/pubmed_tools.rst:96 ../../tools/pubmed_tools.rst:127
+#: ../../tools/pubmed_tools.rst:161 7e7c0c3adab04ae4a029266289760221
+#: bd068d043d0b4d41ab857a1f3a0c731c d550d9e231064397a644f8d6df22f526
+#: de8fbe51ff3e4d0cb3a73d97a7dc253e fa98f53237534743b0de204db25f4802
+#, fuzzy
+msgid "**Type**: ``PubMedRESTTool``"
 msgstr "**类型**：``PubMedTool``"
 
-#: ../../tools/pubmed_tools.rst:24 7d29e383ca5547f698c0e3eefde5fce2
+#: ../../tools/pubmed_tools.rst:32 01fe2ba080b44fc2a50de211e20e8d17
 msgid ""
-"**Description**: Search PubMed using NCBI E-utilities (esearch + esummary) "
-"and return articles. Returns articles with title, journal, year, DOI, and "
-"PubMed URL."
+"**Description**: Get complete metadata for a specific PubMed article by "
+"its PMID (PubMed ID) using efetch. Returns comprehensive article "
+"information including title, full abstract, complete author list with "
+"affiliations, journal details (name, volume, issue, pages), publication "
+"dates, DOI, MeSH terms, article type, grant information, and references. "
+"Essential for accessing full abstracts, detailed metadata, and citation "
+"information. Find PMIDs using PubMed\\_search\\_articles (format: integer"
+" like 12345678)."
 msgstr ""
-"**描述**：使用 NCBI E-utilities（esearch + esummary）搜索 PubMed "
-"并返回文章。返回包含标题、期刊、年份、DOI 及 PubMed 链接的文章信息。"
 
-#: ../../tools/pubmed_tools.rst:26 74456c1b266b4aa694ff12853c9be28f
+#: ../../tools/pubmed_tools.rst:34 ../../tools/pubmed_tools.rst:65
+#: ../../tools/pubmed_tools.rst:99 ../../tools/pubmed_tools.rst:130
+#: ../../tools/pubmed_tools.rst:164 00ee65e9805040148648d8c60389f808
+#: 07e17cb5cb2a4e5284e443564c268daa 3c15490bf0da4138b7489a83db5b91d0
+#: a45d4e2523f4447e917e88745d0d6c11 effdfa86ac1f45b6bbf095d9b5bcae8f
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/pubmed_tools.rst:28 dd5624f04b0c4f3092fe08e44fe3a864
+#: ../../tools/pubmed_tools.rst:36 fa1cd0ca85764f74875d81ea25b8145f
 msgid ""
-"``query`` (string) (required) Search query for PubMed articles. Use keywords"
-" separated by spaces to refine your search."
-msgstr "``query``（字符串）（必填）用于搜索PubMed文章的查询词。使用空格分隔的关键词以优化搜索结果。"
-
-#: ../../tools/pubmed_tools.rst:31 b4f9a2cd8bbc496e82dddb264fad655c
-msgid ""
-"``limit`` (integer) (optional) Number of articles to return. This sets the "
-"maximum number of articles retrieved from PubMed."
-msgstr "``limit``（整数）（可选） 返回的文章数量。此参数设置从PubMed检索的最大文章数。"
-
-#: ../../tools/pubmed_tools.rst:34 9e187fb0f23d4077a7b2ea4a7ea17cd4
-msgid ""
-"``api_key`` (string) (optional) Optional NCBI API key for higher rate "
-"limits. Get your free key at https://www.ncbi.nlm.nih.gov/account/"
+"``pmid`` (string, integer) (required) PubMed ID (PMID) as string or "
+"integer (e.g., '12345678' or 12345678, '33250470' or 33250470). Find "
+"PMIDs using PubMed\\_search\\_articles. Can also accept comma-separated "
+"PMIDs as string for multiple articles."
 msgstr ""
-"``api_key``（字符串）（可选）可选的 NCBI API 密钥，用于提高访问速率限制。您可以在 "
-"https://www.ncbi.nlm.nih.gov/account/ 免费获取密钥。"
 
-#: ../../tools/pubmed_tools.rst:37 d1fc76bd1eda4e9da586b9a377548903
+#: ../../tools/pubmed_tools.rst:39 ../../tools/pubmed_tools.rst:73
+#: ../../tools/pubmed_tools.rst:104 ../../tools/pubmed_tools.rst:138
+#: ../../tools/pubmed_tools.rst:190 00e07282eb0449b99be99a0576ccf133
+#: 2327074a16954527aa3c88538b654bcd 5cf71bd64c4e4e128958f91d04be47f8
+#: 76e073c893ce4801a4b626117668e8af c2ada5831ae64b06b27c7df5d9fa6589
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/pubmed_tools.rst:51 54e4f576bdaa4eafb8f7db5a5a4728cd
+#: ../../tools/pubmed_tools.rst:53 362562ea60764b738928a8b6b1971494
+#, fuzzy
+msgid "**PubMed_get_cited_by** (Type: PubMedRESTTool)"
+msgstr "**PubMed_search_articles**（类型：PubMed工具）"
+
+#: ../../tools/pubmed_tools.rst:55 ff9dcde8569a47ec960deebe5bb06663
+msgid ""
+"Get a list of PubMed articles that cite a specific PMID using elink. "
+"Returns PMIDs of articles th..."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst 5c65341d19ca442fa9a018ef93d3226a
+#, fuzzy
+msgid "PubMed_get_cited_by tool specification"
+msgstr "PubMed_search_articles 工具规范"
+
+#: ../../tools/pubmed_tools.rst:61 41907338d94b47dcb0d756dc31cfe16d
+#, fuzzy
+msgid "**Name**: ``PubMed_get_cited_by``"
+msgstr "**名称**：``PubMed_search_articles``"
+
+#: ../../tools/pubmed_tools.rst:63 29dbad585d9941cb8efc312e4de0b311
+msgid ""
+"**Description**: Get a list of PubMed articles that cite a specific PMID "
+"using elink. Returns PMIDs of articles that have cited the input article "
+"in their reference list. Use this to track citation impact, find more "
+"recent work building on a paper, or explore how research has been "
+"applied. Essential for literature reviews, impact analysis, and staying "
+"current with research developments. Find PMIDs using "
+"PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:67 10c46040976f43d4817e082419f01362
+msgid ""
+"``pmid`` (string) (required) PubMed ID (PMID) for which to find citing "
+"articles (e.g., '12345678'). Find PMIDs using PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:70 075ef8f0ee41459ebf6d289c6e441e49
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Maximum number of citing articles to "
+"return (default: 20, max: 100)."
+msgstr "``limit``（整数）（可选） 返回的文章数量。此参数设置从PubMed检索的最大文章数。"
+
+#: ../../tools/pubmed_tools.rst:87 7c71099596eb467aa6aca92195854a8c
+#, fuzzy
+msgid "**PubMed_get_links** (Type: PubMedRESTTool)"
+msgstr "**PubMed_search_articles**（类型：PubMed工具）"
+
+#: ../../tools/pubmed_tools.rst:89 f684139052624c4a8492a058cd2e6069
+msgid ""
+"Get external links (LinkOut) for a specific PubMed article by its PMID "
+"using elink. Returns URLs ..."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst e55377ec004c48109dd8068c5c256b5d
+#, fuzzy
+msgid "PubMed_get_links tool specification"
+msgstr "PubMed_search_articles 工具规范"
+
+#: ../../tools/pubmed_tools.rst:95 ca217689ab084f4ea3509a2527f770d4
+#, fuzzy
+msgid "**Name**: ``PubMed_get_links``"
+msgstr "**名称**：``PubMed_search_articles``"
+
+#: ../../tools/pubmed_tools.rst:97 2da4505618314c51b3eafcbbee178f57
+msgid ""
+"**Description**: Get external links (LinkOut) for a specific PubMed "
+"article by its PMID using elink. Returns URLs to full-text providers, "
+"supplementary data, related resources, clinical trials, and other "
+"external content. Use this to access full-text articles, find "
+"supplementary materials, or discover related datasets and resources. "
+"Essential for accessing paywalled content via institutional subscriptions"
+" or finding open-access versions. Find PMIDs using "
+"PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:101 267ae7325e9e485ab1407ee1ad1ae9e9
+msgid ""
+"``pmid`` (string) (required) PubMed ID (PMID) for which to retrieve "
+"external links (e.g., '19880848', '19822630'). Find PMIDs using "
+"PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:118 772ec4ffd5d94590966f8999e13ba5e4
+#, fuzzy
+msgid "**PubMed_get_related** (Type: PubMedRESTTool)"
+msgstr "**PubMed_search_articles**（类型：PubMed工具）"
+
+#: ../../tools/pubmed_tools.rst:120 93a13040b9804b93959a993888e1e9dc
+msgid ""
+"Get related PubMed articles for a specific PMID using elink. Returns a "
+"list of computationally si..."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst 9dbc5625bf3148a19584afa7503cda41
+#, fuzzy
+msgid "PubMed_get_related tool specification"
+msgstr "PubMed_search_articles 工具规范"
+
+#: ../../tools/pubmed_tools.rst:126 67f8b62e56914fee9361bc07d6307459
+#, fuzzy
+msgid "**Name**: ``PubMed_get_related``"
+msgstr "**名称**：``PubMed_search_articles``"
+
+#: ../../tools/pubmed_tools.rst:128 5755a64343354143971b1fd67754aebf
+msgid ""
+"**Description**: Get related PubMed articles for a specific PMID using "
+"elink. Returns a list of computationally similar articles based on title,"
+" abstract, and MeSH terms. Use this to discover additional relevant "
+"literature, find similar studies, or explore a research topic more "
+"comprehensively. The algorithm identifies articles with similar content, "
+"methodology, or subject matter. Find PMIDs using "
+"PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:132 f68ca61e82814f50918f7638b5309bc1
+msgid ""
+"``pmid`` (string) (required) PubMed ID (PMID) for which to find related "
+"articles (e.g., '20210808', '19879512'). Find PMIDs using "
+"PubMed\\_search\\_articles."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:135 518fa888de0042469266e2719aeb30c1
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Maximum number of related articles to "
+"return (default: 20, max: 100)."
+msgstr "``limit``（整数）（可选） 返回的文章数量。此参数设置从PubMed检索的最大文章数。"
+
+#: ../../tools/pubmed_tools.rst:152 e8b53af816cb4270886c84e82bb3094e
+#, fuzzy
+msgid "**PubMed_search_articles** (Type: PubMedRESTTool)"
+msgstr "**PubMed_search_articles**（类型：PubMed工具）"
+
+#: ../../tools/pubmed_tools.rst:154 816f33648e43429fa6db584327ba2cdc
+#, fuzzy
+msgid ""
+"Search PubMed biomedical literature database using NCBI E-utilities "
+"(esearch + esummary). Returns..."
+msgstr "使用NCBI E-utilities（esearch + esummary）搜索PubMed并返回文章。返回的文章包含..."
+
+#: ../../tools/pubmed_tools.rst c0c890126f1e41b3ac795048e4062299
+msgid "PubMed_search_articles tool specification"
+msgstr "PubMed_search_articles 工具规范"
+
+#: ../../tools/pubmed_tools.rst:160 1f80bd777ced4f7aa6145aef1437b846
+msgid "**Name**: ``PubMed_search_articles``"
+msgstr "**名称**：``PubMed_search_articles``"
+
+#: ../../tools/pubmed_tools.rst:162 2fd9bbd6990f4eaa861a8aa693864daa
+msgid ""
+"**Description**: Search PubMed biomedical literature database using NCBI "
+"E-utilities (esearch + esummary). Returns articles with PMID, title, "
+"authors, journal, publication year, DOI, article type, and PubMed URL. "
+"Automatically fetches rich metadata for each article. Use this to "
+"discover medical/life sciences literature, find articles by topic, or "
+"search for publications by author or journal. Rate limiting is "
+"automatically handled (3 req/sec without API key, 10 req/sec with key set"
+" via NCBI\\_API\\_KEY environment variable)."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:166 c2439e71826a4110b6d3b35efab2c609
+msgid ""
+"``query`` (string) (required) Search query for PubMed articles. Use "
+"keywords, author names, journal names, or MeSH terms. Examples: 'cancer "
+"immunotherapy', 'Smith J[Author]', 'Nature[Journal]', 'diabetes[MeSH]'. "
+"Use AND/OR/NOT for complex queries."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:169 631932319a31434499823d0ed8813ca9
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Number of articles to return. This sets "
+"the maximum number of articles retrieved from PubMed (max: 200)."
+msgstr "``limit``（整数）（可选） 返回的文章数量。此参数设置从PubMed检索的最大文章数。"
+
+#: ../../tools/pubmed_tools.rst:172 c9aaf384f8c6446395fbd6237a122a8d
+msgid ""
+"``mindate`` (string) (optional) Minimum date for results (format: "
+"YYYY/MM/DD or YYYY). Requires datetype to be set."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:175 e7aaf14c5d794b4993a2750671e0b944
+msgid ""
+"``maxdate`` (string) (optional) Maximum date for results (format: "
+"YYYY/MM/DD or YYYY). Requires datetype to be set."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:178 cb899f841a6a4e14a01ab687f35527cc
+msgid ""
+"``datetype`` (string) (optional) Type of date to filter on: 'pdat' "
+"(publication date), 'edat' (Entrez date), or 'mdat' (modification date). "
+"Required when using mindate/maxdate."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:181 a1ca56b054754b15a66f8f21af0cf987
+msgid ""
+"``include_abstract`` (boolean) (optional) If true, best-effort fetches "
+"abstracts via efetch (adds abstract/abstract\\_source fields)."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:184 834359a1d2444b45957994a5b2a37214
+msgid ""
+"``sort`` (string) (optional) Sort order for results. Valid values: "
+"'pub\\_date' (newest first), 'Author' (alphabetical by first author), "
+"'JournalName' (alphabetical by journal), 'relevance' (default PubMed "
+"ranking)."
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:187 39ab2ea573014ffd9af9c8245c989b48
+msgid ""
+"``max_results`` (integer) (optional) Alias for limit — maximum number of "
+"results to return"
+msgstr ""
+
+#: ../../tools/pubmed_tools.rst:204 8754d843476e49ba8c4a944bcdec2634
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/pubmed_tools.rst:53 fba14d4e469c423e926f8abcdd07bf96
+#: ../../tools/pubmed_tools.rst:206 b05cf0efd1b44990ae4674bd6021bdbe
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/pubmed_tools.rst:54 cbf96815e8b748cda4595f8fe0e47d6a
+#: ../../tools/pubmed_tools.rst:207 1e6b3ecd251d4ec0ba6901bea55f7835
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "**Description**: Search PubMed using NCBI "
+#~ "E-utilities (esearch + esummary) and "
+#~ "return articles. Returns articles with "
+#~ "title, journal, year, DOI, and PubMed"
+#~ " URL."
+#~ msgstr ""
+#~ "**描述**：使用 NCBI E-utilities（esearch + "
+#~ "esummary）搜索 PubMed 并返回文章。返回包含标题、期刊、年份、DOI 及 "
+#~ "PubMed 链接的文章信息。"
+
+#~ msgid ""
+#~ "``query`` (string) (required) Search query "
+#~ "for PubMed articles. Use keywords "
+#~ "separated by spaces to refine your "
+#~ "search."
+#~ msgstr "``query``（字符串）（必填）用于搜索PubMed文章的查询词。使用空格分隔的关键词以优化搜索结果。"
+
+#~ msgid ""
+#~ "``api_key`` (string) (optional) Optional NCBI"
+#~ " API key for higher rate limits. "
+#~ "Get your free key at "
+#~ "https://www.ncbi.nlm.nih.gov/account/"
+#~ msgstr ""
+#~ "``api_key``（字符串）（可选）可选的 NCBI API 密钥，用于提高访问速率限制。您可以在"
+#~ " https://www.ncbi.nlm.nih.gov/account/ 免费获取密钥。"
+

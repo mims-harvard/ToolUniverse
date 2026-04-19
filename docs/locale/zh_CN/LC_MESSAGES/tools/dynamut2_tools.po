@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dynamut2_tools.rst:10 c8f4f5649b4d495e9910468eb335ffb2
+msgid "Dynamut2 Tools"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:12 30afdad6bcf44b5b944115c0231f3ecc
+msgid ""
+"**Configuration File**: ``dynamut2_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:16 0263f0c872984b6fb872d1826e7af6a6
+msgid ""
+"This page contains all tools defined in the ``dynamut2_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:19 c378fd18cb3d4b0ba74167c83ec144d7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:22 fef08f3529324be1ac2a87f583a01e6c
+msgid "**DynaMut2_get_job** (Type: DynaMut2Tool)"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:24 2ac6f4d0eb53458fb5bba7f0f5608621
+msgid ""
+"Retrieve results for a previously submitted DynaMut2 stability prediction"
+" job. If the job is stil..."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst 50df6328163a4699a1101c38165f05b4
+msgid "DynaMut2_get_job tool specification"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:28 ../../tools/dynamut2_tools.rst:66
+#: 8d63e1a2d1ef43a3a84b9e3e3ae7547b 9b814de70a8b4c539051753625d49478
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:30 69a271e923974d17ab09915cb3476941
+msgid "**Name**: ``DynaMut2_get_job``"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:31 ../../tools/dynamut2_tools.rst:69
+#: 1a35a349068f4995834a08f36a6a95f7 2a80b893e74b410784b547b61e499028
+msgid "**Type**: ``DynaMut2Tool``"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:32 9756876c35d64f3882f49b7b3b76a51d
+msgid ""
+"**Description**: Retrieve results for a previously submitted DynaMut2 "
+"stability prediction job. If the job is still running, returns the "
+"current status. If complete, returns the full prediction result including"
+" ddG value and effect classification. Use this to check on long-running "
+"predictions or to retrieve results you submitted earlier."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:34 ../../tools/dynamut2_tools.rst:72
+#: 6713d855819f4473bd4f1921ea0647b5 9ff227fcadb14155b5f9a09f4c7969e3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:36 ../../tools/dynamut2_tools.rst:74
+#: c153ac9edabe48b7912e36c2b09c5a21 c904ebbd39d44aa6a9664cd6985ffaa0
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:39 1ed9903e58f347848935ae4dae4691e4
+msgid ""
+"``job_id`` (string) (required) DynaMut2 job identifier returned from a "
+"previous predict\\_stability call."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:42 1c6f1626c54148e886f4ba25ba280def
+msgid ""
+"``endpoint`` (string, null) (optional) API endpoint for the job type. "
+"Default: 'prediction\\_single'. Other options: 'prediction\\_list', "
+"'prediction\\_mm'."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:45 ../../tools/dynamut2_tools.rst:86
+#: 5a191d52a0c44040ac38e7063800ecc1 ac360588d00341cbac46ce98ef8cd281
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:60 c818d24d01a04d7e9aabcbd7f8a713c3
+msgid "**DynaMut2_predict_stability** (Type: DynaMut2Tool)"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:62 85b768a688df4c1592d5363ffb0062bc
+msgid ""
+"Predict the effect of a single-point amino acid mutation on protein "
+"stability and dynamics using ..."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst 34d38ad37c334b9c9de454ea2461d716
+msgid "DynaMut2_predict_stability tool specification"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:68 3756ebbf9a044b8db670c009bc703162
+msgid "**Name**: ``DynaMut2_predict_stability``"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:70 f6d76286d2a8475fbbd556c95d46745a
+msgid ""
+"**Description**: Predict the effect of a single-point amino acid mutation"
+" on protein stability and dynamics using DynaMut2. Provide a PDB ID "
+"(4-character code from RCSB PDB), chain identifier, and mutation in the "
+"format WtPosNew (e.g., V1A means Valine at position 1 mutated to "
+"Alanine). Returns the predicted change in Gibbs free energy (ddG in "
+"kcal/mol): positive = stabilizing, negative = destabilizing. The tool "
+"downloads the PDB structure from RCSB and submits it to DynaMut2 for "
+"analysis. Computation typically takes 15-30 seconds. Based on Normal Mode"
+" Analysis and graph-based signatures."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:77 f47efb69878643a584119f5b462d0312
+msgid ""
+"``pdb_id`` (string) (required) 4-character PDB accession code from RCSB "
+"PDB (e.g., '4HHB' for hemoglobin, '1U46' for ACK1 kinase). The structure "
+"will be downloaded automatically."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:80 2e1c513e7c9a43c7aa34df4479bc2fc8
+msgid ""
+"``chain`` (string) (required) Chain identifier in the PDB structure "
+"(e.g., 'A'). Must be a valid chain in the specified PDB entry."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:83 e97620429f3d4f9a83638502ff39c48f
+msgid ""
+"``mutation`` (string) (required) Single-point mutation in the format "
+"WtPosNew where Wt is the wild-type amino acid (1-letter code), Pos is the"
+" residue number, and New is the mutant amino acid (1-letter code). "
+"Examples: 'V1A' (Val1Ala), 'E346K' (Glu346Lys), 'G12D' (Gly12Asp)."
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:103 193833703dc94222888b5c5a49e9a8fe
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:105 12ebe93daff549e8b34db9b126589dfb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dynamut2_tools.rst:106 77426130dd234b08bc56509f3b7b2081
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

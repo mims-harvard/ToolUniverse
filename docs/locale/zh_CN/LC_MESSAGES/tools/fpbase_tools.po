@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fpbase_tools.rst:10 a0a0e76dc8174f5797da14d59ad8b426
+msgid "Fpbase Tools"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:12 536b7c9d10a44bd792cffbfe99de3736
+msgid ""
+"**Configuration File**: ``fpbase_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:16 3d709a763ae44fa9b62b623a9dd7cd05
+msgid ""
+"This page contains all tools defined in the ``fpbase_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:19 b7b13911cf394ea58fb1b1ffe8129a79
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:22 6b7ebd9b1782478f8054734fa0b62a94
+msgid "**FPbase_get_protein** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:24 e79ec218a0ac4873944b0b743edef70e
+msgid ""
+"Get detailed data for a fluorescent protein from FPbase by its slug/short"
+" name. Returns the prote..."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst d5bce9499bf144a1a4eb199d1945ed7c
+msgid "FPbase_get_protein tool specification"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:28 ../../tools/fpbase_tools.rst:59
+#: 9cb5f7a9f965470d8081542328525005 fc1e9500b12b418487de51d2ab1a0a47
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:30 69d2b37ba1d34cae84721e65d29065df
+msgid "**Name**: ``FPbase_get_protein``"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:31 ../../tools/fpbase_tools.rst:62
+#: 80101d0330e2480dae3a2e9d7607f91f c755fa7c7cea4eff97ae5192561d9f94
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:32 4e9c9d53b0b04e84b81d0a4a4368ba37
+msgid ""
+"**Description**: Get detailed data for a fluorescent protein from FPbase "
+"by its slug/short name. Returns the protein sequence, spectral properties"
+" (excitation max, emission max, extinction coefficient, quantum yield, "
+"brightness, pKa, maturation time), PDB and UniProt IDs, aggregation "
+"state, and relevant publications. FPbase is the comprehensive reference "
+"database for fluorescent proteins used in biological imaging. Examples: "
+"'egfp' (Ex 488/Em 507, brightness 33.5), 'mcherry' (Ex 587/Em 610), "
+"'tdtomato' (Ex 554/Em 581), 'itagbfp2' (blue), 'mirgfp' (infrared)."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:34 ../../tools/fpbase_tools.rst:65
+#: 2e365e1a190145ee97ed515a429035b0 875ccc03916b4f99bcf3d5de54d7bcf5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:36 358fb742b0e34e2e8ea9708db22c384d
+msgid ""
+"``slug`` (string) (required) Fluorescent protein slug/short name in "
+"lowercase (e.g., 'egfp', 'mcherry', 'tdtomato', 'cerulean', 'venus', "
+"'mscarlet', 'mirgfp', 'mscarlet-i'). Common GFP variants: 'egfp', "
+"'mtaggfp2', 'sgfp2'. Common red: 'mcherry', 'mscarlet', 'tdtomato'. "
+"Common blue: 'ebfp2', 'mtagbfp2'. NIR: 'mirgfp', 'bphp1-qd'."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:39 ../../tools/fpbase_tools.rst:85
+#: 6ac88faeb12f428f99fc351aba2907ea c129a1bbc96d4416b511661df1f2aefb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:53 d9ca24b38190486bb256e923387e9d75
+msgid "**FPbase_search_by_spectrum** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:55 474a1e3b0f704e91b2c071d41beabaa0
+msgid ""
+"Search FPbase for fluorescent proteins with specific spectral properties."
+" Filter by excitation wa..."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst 9dd6872acc894472bec794bb76f5c165
+msgid "FPbase_search_by_spectrum tool specification"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:61 b7495f134a794ba18852df6ad7e4e7a6
+msgid "**Name**: ``FPbase_search_by_spectrum``"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:63 88fdd7b568cf4d1097b7e599d9b9be47
+msgid ""
+"**Description**: Search FPbase for fluorescent proteins with specific "
+"spectral properties. Filter by excitation wavelength range, emission "
+"wavelength range, or name. Essential for selecting appropriate "
+"fluorescent proteins for multiplexed imaging, FRET experiments, or "
+"specific microscopy setups. FPbase contains over 1000 fluorescent "
+"proteins. Common wavelength ranges: UV/violet ~350-420nm, blue "
+"~430-480nm, cyan ~480-500nm, green ~490-530nm, yellow ~520-570nm, orange "
+"~550-590nm, red ~590-640nm, far-red ~640-680nm, near-infrared ~680-800nm."
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:67 5fbda24e3b9c448181b05994acca36a4
+msgid ""
+"``name__icontains`` (string, null) (optional) Search by name (case-"
+"insensitive partial match, e.g., 'GFP', 'cherry', 'scarlet', 'cyan')"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:70 11f0f421f8a54583aed748f7f3d73969
+msgid ""
+"``agg_exc_max__gte`` (integer, null) (optional) Minimum excitation "
+"wavelength in nm (e.g., 480 for green range)"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:73 8bb7a0e3fa9b4a5cb0e9ef2b75ce9139
+msgid ""
+"``agg_exc_max__lte`` (integer, null) (optional) Maximum excitation "
+"wavelength in nm (e.g., 520 for green range)"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:76 74c425b6791e48f6b99d9b87b3962dc1
+msgid ""
+"``agg_em_max__gte`` (integer, null) (optional) Minimum emission "
+"wavelength in nm"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:79 ba0556a364e443df937098ccab0c79b9
+msgid ""
+"``agg_em_max__lte`` (integer, null) (optional) Maximum emission "
+"wavelength in nm"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:82 7a943dc7c3494e668154be446e6f05f2
+msgid ""
+"``switch_type`` (string, null) (optional) Filter by photoswitching: 'b' "
+"(basic/constitutive), 'ps' (photoswitchable), 'pa' (photoactivatable), "
+"'pc' (photoconvertible)"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:98 168a38b45b9a473489a0e3d3872b1167
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:100 d99b189bce0848488691ea326975cf79
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fpbase_tools.rst:101 d3b80e9bcc9d4d2eb62e50af09de86b4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

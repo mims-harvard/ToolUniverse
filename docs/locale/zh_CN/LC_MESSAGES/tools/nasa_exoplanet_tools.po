@@ -1,0 +1,169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nasa_exoplanet_tools.rst:10 28d0ff1346f44a14b25559b991da0bd5
+msgid "Nasa Exoplanet Tools"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:12 c01da8867a7b4aa4b95d032222c55b05
+msgid ""
+"**Configuration File**: ``nasa_exoplanet_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:16 f01146b6d92240029932d15081fae506
+msgid ""
+"This page contains all tools defined in the ``nasa_exoplanet_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:19 93c4a0ff7a9543dcb0dfb1e40d2af86d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:22 7346f4854e464cdcaec9891352351961
+msgid "**NASAExoplanet_query_planets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:24 3a134c68d00140e4ae9323d70215863d
+msgid ""
+"Query the NASA Exoplanet Archive for confirmed exoplanets using SQL-like "
+"ADQL queries. Returns or..."
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst 413bf472b584416aaae42cc2d98bb75e
+msgid "NASAExoplanet_query_planets tool specification"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:28
+#: ../../tools/nasa_exoplanet_tools.rst:62 1d36fb3dd02144ca84d63f3d6ce104af
+#: cdf24fea520b407198a3c232ca268d6a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:30 a6174ec5c3ba42b68f2a31ba73ee7992
+msgid "**Name**: ``NASAExoplanet_query_planets``"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:31
+#: ../../tools/nasa_exoplanet_tools.rst:65 31eec460ea494ed19cdd392e2df90230
+#: e9abbada7164430ba921e1eb338cbefc
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:32 a4c0bf6c742d4e2caddc1036ad115f65
+msgid ""
+"**Description**: Query the NASA Exoplanet Archive for confirmed "
+"exoplanets using SQL-like ADQL queries. Returns orbital parameters, "
+"physical properties, and discovery information for 5,500+ confirmed "
+"exoplanets. Key table: 'ps' (Planetary Systems). Key columns: pl\\_name "
+"(planet name), hostname (host star), pl\\_orbper (orbital period days), "
+"pl\\_rade (radius in Earth radii), pl\\_bmasse (mass in Earth masses), "
+"pl\\_eqt (equilibrium temperature K), discoverymethod (transit/radial "
+"velocity/direct imaging/etc), disc\\_year (discovery year), sy\\_dist "
+"(distance in parsecs). Example hosts with multiple planets: TRAPPIST-1, "
+"Kepler-90, Kepler-11."
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:34
+#: ../../tools/nasa_exoplanet_tools.rst:68 3a5c324ec8654073aa63d778d3e22422
+#: 73b136fd3337433999d1b6629508d4fc
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:36 1ce81fa4c613427cbe0bebde7936878e
+msgid ""
+"``query`` (string) (required) ADQL/SQL query against the NASA Exoplanet "
+"Archive table 'ps'. Note: LIMIT is not supported; use WHERE conditions to"
+" restrict results. Examples: \"select "
+"pl\\_name,hostname,pl\\_orbper,pl\\_rade from ps where hostname = "
+"'TRAPPIST-1'\", \"select pl\\_name,pl\\_rade,pl\\_eqt from ps where "
+"pl\\_rade < 1.6 AND pl\\_eqt between 200 and 350 order by pl\\_eqt\", "
+"\"select discoverymethod,count(\\*) as n from ps group by discoverymethod"
+" order by n desc\""
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:39 6f455ac0a07a418aa71655a3c0955a88
+msgid ""
+"``format`` (string, null) (optional) Output format: 'json' (default), "
+"'csv', 'tsv', 'votable'"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:42
+#: ../../tools/nasa_exoplanet_tools.rst:73 aa4b06ce52354cfa9617289df7791951
+#: af1077621a6d499ead920097475379fd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:56 2b7d2570fe4946f6b02a40e8e26ae054
+msgid "**NASAExoplanet_query_stars** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:58 ed1fe8ad41fe4733979361070e5c80ec
+msgid ""
+"Query the NASA Exoplanet Archive for stellar host properties using ADQL "
+"SQL. Use table 'stellarho..."
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst 3cb4440947634a189e5693f1b2701692
+msgid "NASAExoplanet_query_stars tool specification"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:64 2af4052b06f64365a24acae4adc48728
+msgid "**Name**: ``NASAExoplanet_query_stars``"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:66 1deaab103f77475da17ff7fa88d35a8b
+msgid ""
+"**Description**: Query the NASA Exoplanet Archive for stellar host "
+"properties using ADQL SQL. Use table 'stellarhosts' to get host star "
+"characteristics: st\\_spectype (spectral type), st\\_teff (effective "
+"temperature K), st\\_mass (solar masses), st\\_rad (solar radii), "
+"st\\_met (metallicity), st\\_age (Gyr), sy\\_pnum (number of planets), "
+"sy\\_dist (distance parsecs). Essential for understanding planetary "
+"system habitability, stellar evolution context, and comparing star "
+"properties. Can join with 'ps' table for combined star+planet data."
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:70 7a0a61764c15472087075cde5f7409c9
+msgid ""
+"``query`` (string) (required) ADQL/SQL query against NASA Exoplanet "
+"Archive. Use 'stellarhosts' table for stellar data. Note: LIMIT is not "
+"supported; use WHERE conditions to restrict results. Examples: \"select "
+"hostname,st\\_spectype,st\\_teff,st\\_mass,st\\_rad,sy\\_pnum from "
+"stellarhosts where hostname = 'TRAPPIST-1'\", \"select "
+"hostname,st\\_teff,sy\\_pnum from stellarhosts where sy\\_pnum >= 5 order"
+" by sy\\_pnum desc\""
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:87 669262e4f8b14d078fa9c8b73377b0d3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:89 33035b9679f745b997933b9449b07fab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nasa_exoplanet_tools.rst:90 5d2db6d8c3a24d7c999bbe1fee7b0c08
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wikipathways_tools.rst:10 3b39262bfdc54fe39db518a75a0029d9
+msgid "Wikipathways Tools"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:12 2da842b9409e4c7d86c594aff0016696
+msgid ""
+"**Configuration File**: ``wikipathways_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:16 f973fbb422924241983d902fdd230fc6
+msgid ""
+"This page contains all tools defined in the ``wikipathways_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:19 2170230fe20b484bb7bac174e57e6322
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:22 11e282e6335f4e72b83ba8c895450ea8
+msgid "**WikiPathways_get_pathway** (Type: WikiPathwaysGetTool)"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:24 79dc4a260ee24817abda964bc66e927c
+msgid ""
+"Fetch pathway content by WPID (JSON/GPML). Use to programmatically access"
+" pathway nodes/edges/met..."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst f29cec71570d48e7af526cec2ac4bc07
+msgid "WikiPathways_get_pathway tool specification"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:28 ../../tools/wikipathways_tools.rst:62
+#: 1c22bfee136f42b9bd4963cc05e06776 6b6c08e20e964c4dbd28360a6890c99c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:30 02112affcb624c389e52623075ae0c5e
+msgid "**Name**: ``WikiPathways_get_pathway``"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:31 bf72cf37c596449b86e0af30d9974b2c
+msgid "**Type**: ``WikiPathwaysGetTool``"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:32 5e3cbfbe7566479f9281585c4e0d3513
+msgid ""
+"**Description**: Fetch pathway content by WPID (JSON/GPML). Use to "
+"programmatically access pathway nodes/edges/metadata for enrichment "
+"reporting or network visualization."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:34 ../../tools/wikipathways_tools.rst:68
+#: 8feb7e57866d45fa82e790baf65ed905 cf66c6ae53c84954a1631678dca37c3f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:36 1ea61a39c23340bea2d210440711f9e6
+msgid "``wpid`` (string) (required) WikiPathways identifier (e.g., 'WP254')."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:39 8dc9457b875a4cedaff1a9c702ee3395
+msgid ""
+"``format`` (string) (optional) Response format: 'json' for structured, "
+"'gpml' for GPML XML."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:42 ../../tools/wikipathways_tools.rst:76
+#: 26c53cd2d36846bba237951826c9a7da 5530c1d4adff4d6983b1a011f0ba8a9a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:56 bf421209c3f54418b400b0445b7d2d3b
+msgid "**WikiPathways_search** (Type: WikiPathwaysSearchTool)"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:58 00242ca4b9444a028cf26cf9366bb230
+msgid ""
+"Text search across community-curated pathways (disease, metabolic, "
+"signaling). Use to discover re..."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst 0a9f8a39647440b1abc504352b0624bf
+msgid "WikiPathways_search tool specification"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:64 1ca5d082343c4ec981aa6c99900f600c
+msgid "**Name**: ``WikiPathways_search``"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:65 a20e6ab56afd4dc38817ae0a2536316d
+msgid "**Type**: ``WikiPathwaysSearchTool``"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:66 b5b92ac0407c42f9ab93002d922118db
+msgid ""
+"**Description**: Text search across community-curated pathways (disease, "
+"metabolic, signaling). Use to discover relevant pathways for a topic/gene"
+" set and obtain WPIDs for retrieval/visualization."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:70 573115c32fc34a77bf43a506e28446b6
+msgid ""
+"``query`` (string) (required) Free-text query (keywords, gene symbols, "
+"processes), e.g., 'p53', 'glycolysis'."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:73 1b8fe5befc9d4dd881fc43c5b02d3468
+msgid ""
+"``organism`` (string) (optional) Organism filter (scientific name), e.g.,"
+" 'Homo sapiens'."
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:90 697e14c9226e4df38f935ccb3dcddb51
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:92 8331f6abb3804d2fbc03f7d1539757f1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wikipathways_tools.rst:93 aed048aa2d7c4226966b3625143a25fe
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

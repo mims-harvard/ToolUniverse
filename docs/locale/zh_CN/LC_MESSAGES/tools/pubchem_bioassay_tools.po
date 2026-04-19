@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pubchem_bioassay_tools.rst:10 1f4f95c77c454ec4a7b8410b92495df6
+msgid "Pubchem Bioassay Tools"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:12 36c4b1f450d24a3c82c1144fcc801b9c
+msgid ""
+"**Configuration File**: ``pubchem_bioassay_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:16 344b34b713da4797be2b8bfa6dbf72fe
+msgid ""
+"This page contains all tools defined in the "
+"``pubchem_bioassay_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:19 3557ed09cffe4f41858875f76d4932eb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:22 53c8e4dce67840dd8a2c3750d2e4afbe
+msgid "**PubChemBioAssay_get_assay** (Type: PubChemBioAssayTool)"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:24 dfd496eb9c97460daccfcd5750790ea7
+msgid ""
+"Get detailed description of a PubChem BioAssay by its AID (Assay ID). "
+"PubChem BioAssay stores ove..."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst 379262bb60be473d9ba9e37b57026ca5
+msgid "PubChemBioAssay_get_assay tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:28
+#: ../../tools/pubchem_bioassay_tools.rst:59
+#: ../../tools/pubchem_bioassay_tools.rst:90 bfcefec10ab84796bfef1e0e1bd9a8a4
+#: c15291ef98984ddfb0e92b7e97672cab dac7790817a14d309f314b88576dd45a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:30 7b71ead34c93494f8d62982677e5ca29
+msgid "**Name**: ``PubChemBioAssay_get_assay``"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:31
+#: ../../tools/pubchem_bioassay_tools.rst:62
+#: ../../tools/pubchem_bioassay_tools.rst:93 20d99bdcf62b42d180fb3e4e34313f5e
+#: a96f75aef0164fc9b6462850be078232 f14d6e0da92843e9904bb7b53a079f03
+msgid "**Type**: ``PubChemBioAssayTool``"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:32 e2d7a7bcb98c44d58a683d28a038d5a5
+msgid ""
+"**Description**: Get detailed description of a PubChem BioAssay by its "
+"AID (Assay ID). PubChem BioAssay stores over 1.3 million biological "
+"screening results from drug discovery, toxicology, and biological pathway"
+" research. Returns assay name, description, protocol, targets, and source"
+" information. Example: AID 1234 returns 'NIH Compound Library Profiling: "
+"Compound and DTT Dependent Redox Cycling H2O2 Generation' from University"
+" of Pittsburgh MLSC."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:34
+#: ../../tools/pubchem_bioassay_tools.rst:65
+#: ../../tools/pubchem_bioassay_tools.rst:96 953d78dc8c774e6194b3ae069b2dc425
+#: d7b742a5c08b4b22a23d283c01cbdd1b d7db94415c93426e8de04a492b50b5c9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:36 4982b8e25a9e4a328872905584ef7e70
+msgid ""
+"``aid`` (integer) (required) PubChem BioAssay ID (AID). Examples: 1234 "
+"(Redox Cycling H2O2 assay), 1259393 (TSHR counter screen), 504832 (Tox21 "
+"p53 activation)."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:39
+#: ../../tools/pubchem_bioassay_tools.rst:70
+#: ../../tools/pubchem_bioassay_tools.rst:101 11c989c5e9374259a29a1d70fc81d5fa
+#: 95ce2949b1384300a3b14e19d02af8ab 9e34b7864f9f4d2ba381aa49f7b7f520
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:53 2fbe2451526248beb10d6352b83a0a64
+msgid "**PubChemBioAssay_get_assay_summary** (Type: PubChemBioAssayTool)"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:55 d2993cab76af41f88c11c2f8c3e7b147
+msgid ""
+"Get summary and molecular target information for a PubChem BioAssay. "
+"Returns the assay name, sour..."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst d4bea5b3f9044641b18a6d7c61ea4d5f
+msgid "PubChemBioAssay_get_assay_summary tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:61 e440551a78d645a2b1f8c1511daa03c5
+msgid "**Name**: ``PubChemBioAssay_get_assay_summary``"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:63 bedc03a6d82c4a2ea2a345ba55b3a615
+msgid ""
+"**Description**: Get summary and molecular target information for a "
+"PubChem BioAssay. Returns the assay name, source, method type, scoring "
+"information, and detailed target gene/protein data. More concise than "
+"get\\_assay but includes gene symbol and ID mapping for targets. Example:"
+" AID 1259393 returns target gene TSHR (Gene ID 7253), protein 'thyroid "
+"stimulating hormone receptor', method type 'Summary'."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:67 a35370b1db7b4540afbb8f540f1be2cb
+msgid ""
+"``aid`` (integer) (required) PubChem BioAssay ID (AID). Examples: "
+"1259393, 504832, 1234."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:84 d3c39f54f6b94b1a8138b70b3773e086
+msgid "**PubChemBioAssay_search_by_gene** (Type: PubChemBioAssayTool)"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:86 c1e4f4444fe34cacaec381c930166da1
+msgid ""
+"Search for PubChem BioAssays that target a specific gene. Returns the "
+"list of assay IDs targeting..."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst 9b4af14ae0984f45aeed328bfd01556f
+msgid "PubChemBioAssay_search_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:92 64aa774e737141e599382ecd50260172
+msgid "**Name**: ``PubChemBioAssay_search_by_gene``"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:94 145eb9278a794112bc67c6d5b4e6583d
+msgid ""
+"**Description**: Search for PubChem BioAssays that target a specific "
+"gene. Returns the list of assay IDs targeting the gene along with "
+"summaries for the top results. Useful for finding screening data, drug "
+"discovery efforts, and toxicology studies targeting a particular gene "
+"product. Example: searching for 'TP53' returns assays for p53 activation,"
+" p53-mediated apoptosis, and Tox21 genotoxicity screens; 'TSHR' returns "
+"thyroid stimulating hormone receptor assays."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:98 6b9a101b25fe4c01810ad55329bdbd56
+msgid ""
+"``gene_symbol`` (string) (required) Human gene symbol. Examples: 'TP53' "
+"(tumor protein p53), 'EGFR' (epidermal growth factor receptor), 'TSHR' "
+"(thyroid stimulating hormone receptor), 'ESR1' (estrogen receptor alpha)."
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:115 e4e823ac03c042ecb276a261126d618b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:117 8def5c8aa6ec4877a357fc8752ea5af7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pubchem_bioassay_tools.rst:118 986cf599437741169a0f073781332e81
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

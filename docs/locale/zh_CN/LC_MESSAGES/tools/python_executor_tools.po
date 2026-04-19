@@ -1,0 +1,213 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/python_executor_tools.rst:10 c893409c6f60412e9c4fbd716dd76f5c
+msgid "Python Executor Tools"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:12 0bacbc504bcc46888993caa4756c04e5
+msgid ""
+"**Configuration File**: ``python_executor_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:16 00ccb5e5d2894e448cbb01b852b431e9
+msgid ""
+"This page contains all tools defined in the "
+"``python_executor_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:19 81dd447eeada4a75affd74670ecd9407
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:22 b495530bf0514740a76e7b8bee41f82d
+msgid "**python_code_executor** (Type: PythonCodeExecutor)"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:24 b4df4a6bf7584adcb15e8d110ee0d11b
+msgid ""
+"Execute Python code snippets safely in sandboxed environment with timeout"
+" and resource limits. Su..."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst 087c7915c5554bb78e9ff6d2561e2090
+msgid "python_code_executor tool specification"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:28
+#: ../../tools/python_executor_tools.rst:80 4a45cce2fd5e4c82ac14a34c72bda441
+#: b39346e96ba84bb7a0d38b9f1ee972a5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:30 d016011d6b674ea29f5bb1b77e033623
+msgid "**Name**: ``python_code_executor``"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:31 eb287b40ef2f4033b8c2a878c8afe3b8
+msgid "**Type**: ``PythonCodeExecutor``"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:32 013aa100a7684b38ab34df0cd652ecdd
+msgid ""
+"**Description**: Execute Python code snippets safely in sandboxed "
+"environment with timeout and resource limits. Supports variable passing "
+"and result extraction."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:34
+#: ../../tools/python_executor_tools.rst:86 05e7a224ad324b8aa31a47992065f97e
+#: a453446e6e884daf9509f8d962f7c3ac
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:36 003a6bb7f02648f9895e0d97676c9a9c
+msgid ""
+"``code`` (string) (required) Python code to execute. Can use variables "
+"from 'arguments' parameter. Use 'result = ...' to return values."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:39 df43412d16f0401bbb6bf892932bc58c
+msgid ""
+"``arguments`` (object) (optional) Variables to pass into execution "
+"environment as dictionary. Keys become variable names in the code."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:42
+#: ../../tools/python_executor_tools.rst:94 52af54f42eaf4f13af0b76a77feadeb1
+#: ac3ea082216044b6b5cba9f829e39a04
+msgid "``timeout`` (integer) (optional) Execution timeout in seconds"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:45 6b56850906b74fabb3a75b017d34afa6
+msgid ""
+"``return_variable`` (string) (optional) Variable name to extract as "
+"result from the executed code"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:48 03545f031bef4b019a283721e5302821
+msgid ""
+"``allowed_imports`` (array) (optional) Additional allowed modules beyond "
+"the default safe set (math, json, datetime, etc.)"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:51 dbb22856f2f44e7e854774f85d2556de
+msgid ""
+"``dependencies`` (array) (optional) List of Python packages that the code"
+" depends on. Will be checked and optionally installed before execution."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:54
+#: ../../tools/python_executor_tools.rst:106 7d3e7dd5014648b59d3b4242637464b5
+#: f26c9b154a3b42fa9f06def5b964e702
+msgid ""
+"``auto_install_dependencies`` (boolean) (optional) Whether to "
+"automatically install missing dependencies without user confirmation"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:57
+#: ../../tools/python_executor_tools.rst:109 28f85a3debc74cd7810a2b61feff1a5c
+#: 8e2a3595ab8445d78a068149f1f4acaf
+msgid ""
+"``require_confirmation`` (boolean) (optional) Whether to require user "
+"confirmation before installing packages"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:60
+#: ../../tools/python_executor_tools.rst:112 2fc7c4939a0f49d0b4576b4fbb302f75
+#: 3d09eb0d964f4e67b7702bec48fce10a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:74 c3a84d6f4f45499ab045e59d13b5c8cb
+msgid "**python_script_runner** (Type: PythonScriptRunner)"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:76 0ca4228b38b24dd89dec7f62699f150c
+msgid ""
+"Run Python script files in isolated subprocess with resource limits and "
+"timeout. Supports command..."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst 1c97e1ca9f6846d08967e39d92df6d9a
+msgid "python_script_runner tool specification"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:82 2ddebe46ee6b4d34b08c80e52a667686
+msgid "**Name**: ``python_script_runner``"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:83 b80e320eba744c978b289948df45efe5
+msgid "**Type**: ``PythonScriptRunner``"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:84 841fb5e03b794000bbc8046d159e9226
+msgid ""
+"**Description**: Run Python script files in isolated subprocess with "
+"resource limits and timeout. Supports command-line arguments and "
+"environment variables."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:88 b7309daf1f824d43ba2ebfe32c2fc459
+msgid ""
+"``script_path`` (string) (required) Path to Python script file (.py) to "
+"execute"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:91 b0ead600200a4682b16dc9fe139a9c23
+msgid ""
+"``script_args`` (array) (optional) Command-line arguments to pass to the "
+"script"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:97 fffb307fc5a94df2b1eb0097cf405bc6
+msgid ""
+"``working_directory`` (string) (optional) Working directory for script "
+"execution (defaults to script directory)"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:100 9448bd7a3ab1426eafe753adfc6b87c1
+msgid ""
+"``env_vars`` (object) (optional) Environment variables to set for script "
+"execution"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:103 bcfaf628d56546429b928c4a51443431
+msgid ""
+"``dependencies`` (array) (optional) List of Python packages that the "
+"script depends on. Will be checked and optionally installed before "
+"execution."
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:126 0a9d45c8334e4a489b42e8bb50bf683c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:128 ec0a443813fa4494940388975cc9a084
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/python_executor_tools.rst:129 1ccb4fdfb5404acea5a34ddcc499f5cd
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

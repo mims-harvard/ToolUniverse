@@ -1,0 +1,289 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clue_tools.rst:10 2360b3d4c4f6425a93075648182a20c4
+msgid "Clue Tools"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:12 9ffe740c339344faab380ff4e0fe791a
+msgid ""
+"**Configuration File**: ``clue_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:16 a2e7e112661745bdae2f80efb7a82326
+msgid ""
+"This page contains all tools defined in the ``clue_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:19 0c02d28d690844dd9ffb36af19c1fb6a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:22 772c3eefbf38492dba00051d5e448f3e
+msgid "**CLUE_get_cell_lines** (Type: ClueTool)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:24 9e1086eb59144310b6ac25d835700b90
+msgid ""
+"Get cell line information used in L1000 Connectivity Map experiments. "
+"Returns cell line metadata ..."
+msgstr ""
+
+#: ../../tools/clue_tools.rst d32d12ad5bf5459194c2d1dc2c0801dc
+msgid "CLUE_get_cell_lines tool specification"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:28 ../../tools/clue_tools.rst:65
+#: ../../tools/clue_tools.rst:102 ../../tools/clue_tools.rst:139
+#: ../../tools/clue_tools.rst:179 011ed43c00e14d9fa58b16d29da2681f
+#: 347a8f28103e44f7ab96a759abfd28d9 44fe22d1801e46c78aa292df8747faa6
+#: d40c66b2055342219e52531d0c7b9978 e58a7863fa454d8f9420f1d70e17440d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:30 08a776f6702149bc95b977c178959f41
+msgid "**Name**: ``CLUE_get_cell_lines``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:31 ../../tools/clue_tools.rst:68
+#: ../../tools/clue_tools.rst:105 ../../tools/clue_tools.rst:142
+#: ../../tools/clue_tools.rst:182 0252af773f7c4025a6ad4b516c5cb3b9
+#: 2a173bc533c34b90b69d143c79bf54e7 6d3f66dd674d41ffa6cbc30aacd45623
+#: e6f171e99f3c4777ae54767104d5a48a ef343e762b5841de9cfb7f76fe9d6fea
+msgid "**Type**: ``ClueTool``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:32 643501213bad42a692156ff3e141c18d
+msgid ""
+"**Description**: Get cell line information used in L1000 Connectivity Map"
+" experiments. Returns cell line metadata including tissue of origin, "
+"growth properties, and available data types. Use cell\\_id for specific "
+"cell line lookup. Example: Get information about MCF7 breast cancer cell "
+"line."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:34 ../../tools/clue_tools.rst:71
+#: ../../tools/clue_tools.rst:108 ../../tools/clue_tools.rst:145
+#: ../../tools/clue_tools.rst:185 083dd79dd0244d4e9cd6b4079c600e3c
+#: 8db46f33c5ad4cafa03385a0cdac3ff7 a2fa640e880846578c2f3a1d38a7074d
+#: cb16b71253a44e5180ba455b1f55d4b7 f42cad6fdfa34c53aa6b83f44eba4e9e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:36 ../../tools/clue_tools.rst:73
+#: ../../tools/clue_tools.rst:110 ../../tools/clue_tools.rst:147
+#: ../../tools/clue_tools.rst:187 1e05755ae7bd4e6ebcb7e4136f789f08
+#: 5be79ab4844345a58f671c2cefa9a5be 809586b743b2485088adbe60c35422ab
+#: a3662efe51a74b0e8d01041318ff2425 a9b3f44665bb4c96bfe687ed1762a269
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:39 fa431a367c2c4f8e87cbd95e191a4283
+msgid ""
+"``cell_id`` (string, null) (optional) Cell line identifier (e.g., 'MCF7',"
+" 'A375', 'PC3')"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:42 ../../tools/clue_tools.rst:79
+#: ../../tools/clue_tools.rst:156 9d1bdbaf93fb4a1392bc5fa378fe048f
+#: a66df2596c0b435f8cff2ebf7820e4ef c4831d9be1a443a192f882377810e7e0
+msgid "``limit`` (integer) (optional) Maximum number of results"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:45 ../../tools/clue_tools.rst:82
+#: ../../tools/clue_tools.rst:119 ../../tools/clue_tools.rst:159
+#: ../../tools/clue_tools.rst:199 182593bd61b34beda99a22f9112eb15e
+#: 2edecf9989bc4aed87f42adaf78c5db2 8ee1780abf894e0296c0ded810947a10
+#: c0fb31222eb54bf68ec30c75f10b99f6 fc35e9ba4169489c81ce32e2fd8f750c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:59 40a42a7e25dc4780a8622890ce4c62f5
+msgid "**CLUE_get_gene_expression** (Type: ClueTool)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:61 2419e1f3144e445ead93fb54d710a16a
+msgid ""
+"Get gene information from L1000 Connectivity Map landmark and inferred "
+"gene set. Returns gene met..."
+msgstr ""
+
+#: ../../tools/clue_tools.rst 79c8d7d7589146929df1b2599a690a6f
+msgid "CLUE_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:67 013299fd061347da8914284280b378be
+msgid "**Name**: ``CLUE_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:69 61b08465580c4a0fad3e0ec291d7de59
+msgid ""
+"**Description**: Get gene information from L1000 Connectivity Map "
+"landmark and inferred gene set. Returns gene metadata including gene "
+"symbol, Entrez ID, L1000 gene type (landmark vs inferred). Use "
+"gene\\_symbol to search for specific genes. Example: Look up TP53 or "
+"BRCA1 in the L1000 gene space."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:76 df9a07ea36b34ff98684f94bc842b795
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol to search (e.g., 'TP53', "
+"'BRCA1')"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:96 13829b67b3104cba8003fb0294baf70a
+msgid "**CLUE_get_perturbation** (Type: ClueTool)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:98 4314a0334a3b453abdc471f2dc777385
+msgid ""
+"Get detailed information about a specific L1000 perturbagen from CLUE.io "
+"by ID or name. Returns f..."
+msgstr ""
+
+#: ../../tools/clue_tools.rst e0b4a3f9af7543dd8175d41f54f6b9b0
+msgid "CLUE_get_perturbation tool specification"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:104 70ac77e06313442785e0f1eaf2f14c6d
+msgid "**Name**: ``CLUE_get_perturbation``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:106 39f5854388a748488d2bcfee5743ca13
+msgid ""
+"**Description**: Get detailed information about a specific L1000 "
+"perturbagen from CLUE.io by ID or name. Returns full metadata including "
+"mechanism of action, target, SMILES, dose, time points. Use pert\\_id for"
+" exact ID lookup or pert\\_iname for name search. Example: Get full "
+"details for imatinib compound."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:113 533d3c596c254eb489f13acbab5a9c25
+msgid ""
+"``pert_id`` (string, null) (optional) Perturbagen ID (e.g., "
+"'BRD-K12345678'). Mutually exclusive with pert\\_iname."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:116 94f93ee914e9498e885969f3f7792a13
+msgid ""
+"``pert_iname`` (string, null) (optional) Perturbagen name (e.g., "
+"'imatinib'). Mutually exclusive with pert\\_id."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:133 352b381a00924bc3bc38c30173993757
+msgid "**CLUE_search_compounds** (Type: ClueTool)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:135 c9353402fd41445d9303d1d8253df463
+msgid ""
+"Search chemical compounds (small molecule drugs) in the L1000 "
+"Connectivity Map. Filters to trt\\_c..."
+msgstr ""
+
+#: ../../tools/clue_tools.rst 2ae21b5ab7dd4a75996e6853170028c8
+msgid "CLUE_search_compounds tool specification"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:141 de82cd9bedec4051ab03e029e987b842
+msgid "**Name**: ``CLUE_search_compounds``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:143 fe2b88db16d44f1a81729ddc63723704
+msgid ""
+"**Description**: Search chemical compounds (small molecule drugs) in the "
+"L1000 Connectivity Map. Filters to trt\\_cp perturbation type. Search by "
+"drug name or mechanism of action (MOA). Returns compound metadata "
+"including targets, pathways, and clinical status. Example: Find all "
+"kinase inhibitors or HDAC inhibitors."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:150 6e4177aa446d40b78ced5e2700649052
+msgid ""
+"``pert_iname`` (string) (optional) Compound name search (partial match). "
+"E.g., 'imatinib', 'vorinostat'"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:153 99c9358984b5489babf7ee12eb51fb09
+msgid ""
+"``moa`` (string) (optional) Mechanism of action search. E.g., 'HDAC "
+"inhibitor', 'kinase inhibitor'"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:173 dcda1c7951bc4e3b8f6d1c1be77c8eaa
+msgid "**CLUE_search_signatures** (Type: ClueTool)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:175 3fa8d523ada34767832d9e1fcbf54153
+msgid ""
+"Search L1000 Connectivity Map perturbation signatures from CLUE.io. "
+"Returns perturbation records ..."
+msgstr ""
+
+#: ../../tools/clue_tools.rst 84054206f09d4708b7ea5719eb408148
+msgid "CLUE_search_signatures tool specification"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:181 5edf2e3fd87840159a11921c1aeafb3f
+msgid "**Name**: ``CLUE_search_signatures``"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:183 faa805d52b0c4e0abacb6dbfd5050e5c
+msgid ""
+"**Description**: Search L1000 Connectivity Map perturbation signatures "
+"from CLUE.io. Returns perturbation records including genetic and chemical"
+" perturbagens with metadata. Use pert\\_type to filter by type "
+"(trt\\_cp=compounds, trt\\_oe=overexpression, trt\\_sh=knockdown). Use "
+"pert\\_iname for fuzzy name search. Example: Find all imatinib signatures"
+" or all compound perturbagens."
+msgstr ""
+
+#: ../../tools/clue_tools.rst:190 0f1d75978c7f4e8eb0cf6a9b001fd1c4
+msgid ""
+"``pert_type`` (string) (optional) Perturbation type filter: 'trt\\_cp' "
+"(compounds), 'trt\\_oe' (overexpression), 'trt\\_sh' (shRNA knockdown), "
+"'trt\\_xpr' (CRISPR)"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:193 f3a49367b31e4860b8b9016030561940
+msgid ""
+"``pert_iname`` (string) (optional) Perturbagen name to search (partial "
+"match). E.g., 'imatinib', 'TP53'"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:196 0638c5642f8e425381f9e5bbcfb70f32
+msgid "``limit`` (integer) (optional) Maximum number of results to return"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:213 eae06af186d34d92b39ef300e40dbe1d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:215 8391c61de53445a9b872477326b3340a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clue_tools.rst:216 3a8c7a7b30d840489b02171b7f5314d2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

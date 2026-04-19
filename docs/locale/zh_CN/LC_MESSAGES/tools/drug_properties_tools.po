@@ -1,0 +1,195 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/drug_properties_tools.rst:10 0fc4c5a3d57a4c45a0f8f6c2dfb7639a
+msgid "Drug Properties Tools"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:12 4b87b88534694e0187eeb6cd6d90fe16
+msgid ""
+"**Configuration File**: ``drug_properties_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:16 b1f2fe54368246dfa41505576cf7d5a8
+msgid ""
+"This page contains all tools defined in the "
+"``drug_properties_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:19 31d4ea727b824e7480354a17a99aed4d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:22 68b85ec01cef40c1bcbd305408d45307
+msgid "**DrugProps_calculate_qed** (Type: DrugPropertiesTool)"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:24 04c54c8186d1446b9ca5ad2cbc187849
+msgid ""
+"Calculate Quantitative Estimate of Drug-likeness (QED) score for a "
+"compound using the Bickerton e..."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst 6f70cce2c00d4b2a8c24a013ef59e955
+msgid "DrugProps_calculate_qed tool specification"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:28
+#: ../../tools/drug_properties_tools.rst:59
+#: ../../tools/drug_properties_tools.rst:90 77900078ac14493e881b7faa69d7e16a
+#: c9fb70ecbf674775b557db018ab8425e cd5d368b2da44228bae6d403c89dbef7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:30 791b1adff097478a9d722d3b866fa36b
+msgid "**Name**: ``DrugProps_calculate_qed``"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:31
+#: ../../tools/drug_properties_tools.rst:62
+#: ../../tools/drug_properties_tools.rst:93 3a01420b9a5248d0b9e3bf2232345d8e
+#: 7641e2e27fbf45e6b9857b3777c0c77b c528f56f24c1429ba3ea732b0c8ab93a
+msgid "**Type**: ``DrugPropertiesTool``"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:32 0133699b3468426290e29d479ca3aa61
+msgid ""
+"**Description**: Calculate Quantitative Estimate of Drug-likeness (QED) "
+"score for a compound using the Bickerton et al. (2012) method. QED "
+"integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable "
+"bonds, aromatic rings, structural alerts) into a single score from 0 "
+"(non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs "
+"is ~0.49. High QED (≥0.67) = drug-like; Medium (0.34–0.67) = borderline; "
+"Low (<0.34) = non-drug-like. Use after DrugProps\\_lipinski\\_filter for "
+"a more nuanced drug-likeness assessment."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:34
+#: ../../tools/drug_properties_tools.rst:65
+#: ../../tools/drug_properties_tools.rst:96 75c076d8608843e191d532d3a8985e2e
+#: e5bb2329bf724aed961ed8f4f730ec8d faf1a72c6d6d42019e6b9d7bf1c9109e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:36 2b7d7486bc9644bc9f16aa40e6cfde58
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule. Examples: "
+"'CC(=O)Oc1ccccc1C(=O)O' (aspirin, QED~0.55), "
+"'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, low QED)."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:39
+#: ../../tools/drug_properties_tools.rst:70
+#: ../../tools/drug_properties_tools.rst:101 90ed2a4d5a7e42f390aee9bf549fe994
+#: c2cbe77219b844429095cc53a0c0af6f d67cd8328d414640b81c4acc9d1abdd4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:53 7b88b94fd0764c6e85c4bc696001499e
+msgid "**DrugProps_lipinski_filter** (Type: DrugPropertiesTool)"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:55 a81c2a056bfb440e8eac076e37ac0ebb
+msgid ""
+"Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), "
+"Veber, Pfizer 3/75, Egan, an..."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst c289d353095842fba337dc21d871d256
+msgid "DrugProps_lipinski_filter tool specification"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:61 6480a4f445cd4e3894c2167d82f982e6
+msgid "**Name**: ``DrugProps_lipinski_filter``"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:63 f15ae0ffa7194bd1872312f298da35db
+msgid ""
+"**Description**: Check drug-likeness of a compound using Lipinski Rule of"
+" Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, "
+"cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for "
+"each filter. Essential first step in hit-to-lead optimization. Lipinski "
+"Ro5 (pass = drug-like): MW≤500, cLogP≤5, HBD≤5, HBA≤10 (max 1 violation)."
+" Veber (oral bioavailability): RotBonds≤10, TPSA≤140. Pfizer 3/75 "
+"(reduces promiscuity): cLogP≤3, TPSA≥75. Examples: aspirin "
+"('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to"
+" MW>900 (beyond-Ro5 territory)."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:67 bffd9234ce56479ba113e750568742be
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule. Examples: "
+"'CC(=O)Oc1ccccc1C(=O)O' (aspirin), 'CC(C)Cc1ccc(cc1)C(C)C(=O)O' "
+"(ibuprofen), 'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, non-drug-like)."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:84 57389f2796a446f2853a0e516b824574
+msgid "**DrugProps_pains_filter** (Type: DrugPropertiesTool)"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:86 f5029f6cf28d4019a252ec06b6b0c707
+msgid ""
+"Screen a compound for PAINS (Pan-Assay Interference Compounds), Brenk "
+"undesirable substructures, ..."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst 1faf8dd9b1274dfb89fc61e19542567c
+msgid "DrugProps_pains_filter tool specification"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:92 d9501a59345d4aaf8490181dca6eab16
+msgid "**Name**: ``DrugProps_pains_filter``"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:94 a7f88d8be83e46ef8ba7eeab2dd75846
+msgid ""
+"**Description**: Screen a compound for PAINS (Pan-Assay Interference "
+"Compounds), Brenk undesirable substructures, and NIH alerts using RDKit "
+"FilterCatalog. PAINS compounds produce false positives in biochemical "
+"assays due to non-specific activity mechanisms (rhodanines, quinones, "
+"catechols, etc.). Brenk filter flags reactive/toxic groups (Michael "
+"acceptors, epoxides, nitroaromatics, etc.). Returns match details and "
+"remediation recommendations. Essential quality filter before committing "
+"to high-throughput screening hits. Use before investing in hit "
+"validation."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:98 1975e74c47af4798ac950711285a3ca1
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule to screen. "
+"Examples: 'O=C1CSC(=S)N1' (rhodanine PAINS), 'O=C1C=CC(=O)c2ccccc21' "
+"(quinone PAINS), 'CC(=O)Oc1ccccc1C(=O)O' (aspirin, clean)."
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:115 2595a76efe164429887dea322ad3a242
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:117 55703a6c66cd45a79dbb223cd294eb15
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/drug_properties_tools.rst:118 76da64d7d3e6405db1058b25a3379465
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

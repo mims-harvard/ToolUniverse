@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bgee_tools.rst:10 87bf6cdc677c44cd8f81b666ed373f4b
+msgid "Bgee Tools"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:12 d59d41e342964927b25c201124ee39b9
+msgid ""
+"**Configuration File**: ``bgee_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:16 781e6cf0765749e2bfce90eb2b72792f
+msgid ""
+"This page contains all tools defined in the ``bgee_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:19 707fb5c91dc44c81aa960411d96fe70a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:22 1d4ad4d09e6844a09d742beb3f72e375
+msgid "**Bgee_get_gene_expression** (Type: BgeeTool)"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:24 da77182dab89475481be294fe0843ca3
+msgid ""
+"Get expression data for a gene across tissues and organs from the Bgee "
+"database. Returns where a ..."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst a457f41a426c44559b9f96fc335ab7d0
+msgid "Bgee_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:28 ../../tools/bgee_tools.rst:63
+#: ../../tools/bgee_tools.rst:92 a5d96ce704144ab6bb7f37893f877d6c
+#: b94580fa10c6428eb7f738c6dfda8272 c6474f8081bc4697bdfffbf664d68c10
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:30 9ea9b9f52a8b499499079de89e5c1a96
+msgid "**Name**: ``Bgee_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:31 ../../tools/bgee_tools.rst:66
+#: ../../tools/bgee_tools.rst:95 1653cd57d9b44fd8ad12c74c73ae1916
+#: 8cd5097f43f445abb68c598944a7c204 9b1fcfd87f304a4cb2e333cb4e6d407e
+msgid "**Type**: ``BgeeTool``"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:32 2bd99c1fa0a34e9a9f8c0237a594aa49
+msgid ""
+"**Description**: Get expression data for a gene across tissues and organs"
+" from the Bgee database. Returns where a gene is expressed with "
+"expression scores, confidence levels, and quality ratings. Supports RNA-"
+"Seq, Affymetrix, EST, and in situ hybridization data types. Requires both"
+" an Ensembl gene ID and NCBI taxonomy ID. Example: ENSG00000141510 (TP53)"
+" with species 9606 (human) returns expression across 145+ tissues "
+"including ventricular zone (score 95.11), ganglionic eminence, and "
+"monocytes."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:34 ../../tools/bgee_tools.rst:69
+#: ../../tools/bgee_tools.rst:98 365190ed8c3b4061bc7b0b76ded2339d
+#: 49d5e6d787394700ab70fd01ea1b9cee 8bbfe01c1cb74f46b70a9e4faa359d6b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:36 32f4b93d32e64797910f1d8c77457b0e
+msgid ""
+"``gene_id`` (string) (required) Ensembl gene ID. Examples: "
+"'ENSG00000141510' (human TP53), 'ENSMUSG00000059552' (mouse Trp53), "
+"'ENSDARG00000115148' (zebrafish tp53)."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:39 f9b36a09daad4706af02a31829101676
+msgid ""
+"``species_id`` (string) (required) NCBI taxonomy ID for the species. "
+"Examples: '9606' (human), '10090' (mouse), '7955' (zebrafish), '7227' "
+"(fruit fly)."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:42 ../../tools/bgee_tools.rst:73
+#: ../../tools/bgee_tools.rst:103 5c2d7161baa7469aadc00a7dc4100a2f
+#: 9b0113ffe11848fdbb326c12513d0f53 ad2c945254074f3ab9a48e50583e9710
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:57 d9b17c528b3447229bd8e5705ac09fc5
+msgid "**Bgee_list_species** (Type: BgeeTool)"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:59 51978ff1109d42d398d06a7d56b7ebb1
+msgid ""
+"List all species available in the Bgee gene expression database. Returns "
+"species with taxonomy ID..."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst a894e0eb7b164ea4a8e3190529eb3ff1
+msgid "Bgee_list_species tool specification"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:65 a0f504896055484daadaf7982ebbf0e1
+msgid "**Name**: ``Bgee_list_species``"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:67 72bfec01b8a44c49ad0e76e86fedb05a
+msgid ""
+"**Description**: List all species available in the Bgee gene expression "
+"database. Returns species with taxonomy IDs, genome versions, and common "
+"names. Bgee currently covers 29+ animal species including major model "
+"organisms (human, mouse, zebrafish, fruit fly, C. elegans, rat) and "
+"additional vertebrates and invertebrates. Useful for discovering which "
+"species are available before querying gene expression data."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:71 6a4a45f1326243229e018dc0793d8f7e
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:86 62485a3d41df43a59075db006fac7c01
+msgid "**Bgee_search_genes** (Type: BgeeTool)"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:88 c768d2f13b4244b09ebc6d79d7337087
+msgid ""
+"Search for genes in the Bgee comparative gene expression database across "
+"29+ animal species. Bgee..."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst 8ab7508554344d588d1075a1cb925f84
+msgid "Bgee_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:94 78a959950f9a4387bb13b46a794accda
+msgid "**Name**: ``Bgee_search_genes``"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:96 53950df87f7e4ebaadeab02d78be8777
+msgid ""
+"**Description**: Search for genes in the Bgee comparative gene expression"
+" database across 29+ animal species. Bgee integrates RNA-Seq, Affymetrix,"
+" EST, and in situ hybridization data to provide curated expression calls."
+" Search by gene symbol, name, or description. Returns matching genes with"
+" species information, biotype, and expression summaries. Example: "
+"searching 'TP53' returns tumor protein p53 across human, mouse, "
+"zebrafish, and other model organisms."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:100 e19d56cbb92d4aada8ff5dd55ead0acf
+msgid ""
+"``query`` (string) (required) Gene name, symbol, or description to search"
+" for. Examples: 'TP53', 'insulin', 'BRCA1', 'sonic hedgehog'."
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:117 54621657fa28474ab4e48978095e2618
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:119 6429ba5b97a344faaebd7941e05a238b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bgee_tools.rst:120 468694accb31479c94ae0cbb9ddfcdf9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

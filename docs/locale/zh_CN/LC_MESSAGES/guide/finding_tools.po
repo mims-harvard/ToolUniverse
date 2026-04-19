@@ -1,0 +1,469 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:26+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/finding_tools.rst:3 e7fe7b2960c149a7bf3d1abe5afa2b1b
+msgid "Tool Finder Tutorial"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:5 4bfdcbf82d3a454cb8f54011f4d2f9f3
+msgid ""
+"**Complete Tutorial to using ToolUniverse's three built-in tool discovery"
+" methods**"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:8 9d415ce45a934b03b85b21c7cc4fa39b
+msgid "Introduction"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:10 2d7e2bad0a5449ebbc62fed0ac278a30
+msgid ""
+"ToolUniverse contains a vast repository of over 1000+ scientific tools. "
+"To help you quickly find the right tools for your research tasks, "
+"ToolUniverse provides three sophisticated tool finder methods, each "
+"optimized for different use cases and computational requirements."
+msgstr ""
+
+#: ../../guide/finding_tools.rst:13 38e04fa09e334a0c8aceeff56e1da547
+msgid "Why Use Tool Finders?"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:15 ab6b5975c19d4daa87c5fccfd88a8b13
+msgid ""
+"**The Challenge**: With hundreds of available tools across domains like "
+"bioinformatics, chemistry, literature search, and data analysis, manually"
+" browsing through tool lists is time-consuming and inefficient."
+msgstr ""
+
+#: ../../guide/finding_tools.rst:17 9570976d7e704debb9c2006b84e46378
+msgid ""
+"**The Solution**: ToolUniverse's tool finders allow you to describe your "
+"research task in natural language and automatically discover the most "
+"relevant tools."
+msgstr ""
+
+#: ../../guide/finding_tools.rst:19 f68a58d8de0c4a2190639878925c2197
+msgid ""
+"**Three Approaches**: - **Keyword Search**: Fast, precise, resource-"
+"efficient - **LLM Search**: Intelligent, context-aware, handles complex "
+"queries - **Embedding Search**: Semantic understanding, scalable, "
+"similarity-based"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:25 6c38d773b45647728d5e654bdb65d658
+msgid "Overview of Tool Finder Methods"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:28 99c2af467a634cf891cfad2de66c7c29
+msgid "Strategic Trade-offs"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:30 ecbb2b689e644071a9aae522d16705b2
+msgid "Each method offers different advantages:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:32 5cc3d1c97d784b1abc4f1ec995377771
+msgid "Tool Finder Comparison"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:36 76da36377680432b8e297185ad1371f0
+msgid "Method"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:37 f90219a8be8149dea40d6260ed7a18d0
+msgid "Speed"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:38 024afaf4a14f43b09616e7d17df1b248
+msgid "Semantic Understanding"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:39 bda5dd9f359843f9b586cbbc80424ceb
+msgid "Resource Usage"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:40 b904bf73afda4fb9ba609598a7277e45
+msgid "**Keyword Search**"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:41 23286b7dd35143498fdc27c66606f863
+msgid "Very Fast"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:42 535ae563a6644ff7b5224329032082d8
+msgid "Basic"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:43 2bd63db5e17b4ab180255fe2d0e0a853
+msgid "Very Low"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:44 43c3085ade0f4fd3b867f28ecc1725c8
+msgid "**LLM Search**"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:45 ../../guide/finding_tools.rst:51
+#: 36544b942fad4337902eef98f44b48fd cb7f5fb8cf584965a1c8f9705f1478b8
+msgid "Moderate"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:46 a2a274cd318b4b5592f48f7fa7900aab
+msgid "Excellent"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:47 80575208d4694df4bc5274969228bb07
+msgid "High"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:48 9a1a2d1ea30d456d8e2201aaf3896654
+msgid "**Embedding Search**"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:49 48d580e2d6984c4297938caa40feadc4
+msgid "Fast"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:50 ce851c089b614f6a993573888aef35a4
+msgid "Good"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:54 bfc8a85cdab244a0a2aca250a2e5e5c2
+msgid "When to Use Each Method"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:56 0aa1824b053d4dd3a2fc3aef1a7e79cd
+msgid ""
+"** Keyword Search** - Use when: - You know specific technical terms - You"
+" need fast results - Working with limited computational resources - "
+"Looking for tools with specific names or exact terminology"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:62 8e43f2ea9e164414836590572d506306
+msgid ""
+"** LLM Search** - Use when: - You have complex, multi-step research "
+"questions - Need intelligent interpretation of abstract goals - Want tool"
+" sequence recommendations - Have access to LLM APIs"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:68 c2b7d1c850f34c308bebcf2c1bcf310c
+msgid ""
+"** Embedding Search** - Use when: - You want semantic similarity matching"
+" - Need scalable search across large tool sets - Looking for conceptually"
+" similar tools - Want to find tools based on research intent rather than "
+"exact keywords"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:75 708f64e4df3c49219529254c31a9c633
+msgid "Method 1: Keyword Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:78 dcbdb1f5e32a443ab27b5984cac7f4c1
+msgid "How Keyword Search Works"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:80 7f13d4225778498ea798c0776960012a
+msgid "Keyword search uses a sophisticated text processing pipeline:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:82 e28549fa0d124038bc85a51537b4c682
+msgid "**Query Processing**:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:83 69cbcd31752a44e8b2e26a4b1f8cbd56
+msgid "Tokenization via regular expressions"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:84 fd155601c2d841a0b1712a08906f44d9
+msgid "Removal of 45+ common English stop words"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:85 a8bc8f1df3c94d96967a183b302e7366
+msgid "Suffix-based stemming using 20 morphological rules"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:86 2528192027ed450f975e8e6ac719d73f
+msgid "Generation of n-grams (bigrams and trigrams)"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:88 5aefaae5abe7455ab453f939f38761c7
+msgid "**Relevance Scoring**:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:90 48014ca6e37a4c0591257eef473625e2
+msgid "Uses TF-IDF (Term Frequency-Inverse Document Frequency)"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:91 175f474e94954007b8102e6125ddd4d3
+msgid "Formula: ``Relevance = TF × IDF × log(1 + QueryFrequency)``"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:92 b388bb6ccf45475baafb02ded0a36a5f
+msgid "Hierarchical bonus structure:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:94 368c15c5e835449e957b054fc3b692bc
+msgid "Tool name matches: 2.0× multiplier"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:95 fe2d3681a6bd41e892503ee24b799719
+msgid "Exact phrase matches: 1.5× multiplier"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:97 3cbc4693eb6a48ebb3a0e66f7c566394
+msgid ""
+"**Fast Matching**: Pre-built index ensures rapid search without ML "
+"dependencies"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:100 44ae3b597e9149678a4ee2f9abdea9af
+msgid "Using Keyword Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:103 ../../guide/finding_tools.rst:173
+#: ../../guide/finding_tools.rst:289 698febf4c329466493b0dd00a443a430
+#: 9386226d8d624e12b1f01197e5d8a8ea bb30eb3c7e97413a8b17cedd83c81c45
+msgid "Basic Usage"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:127 2d4d750e66054d27bd8e557fa1c2fb12
+msgid "Advanced Usage with Filters"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:149 1627f85289ae476eb3e39e836127a6b6
+msgid "Keyword Search Best Practices"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:151 ef07b018d2974113979ca67a3975f417
+msgid ""
+"**Effective Queries**: - Use specific scientific terminology: \"CRISPR "
+"gene editing\", \"molecular docking\", \"phylogenetic analysis\" - "
+"Include domain-specific keywords: \"protein\", \"drug\", \"genomic\", "
+"\"clinical\" - Use technical abbreviations: \"PCR\", \"BLAST\", \"PDB\""
+msgstr ""
+
+#: ../../guide/finding_tools.rst:157 bb98dbced85642f8a1df01386cbf15e9
+msgid "Method 2: LLM Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:160 95722c17f2324eda88f49376c3241900
+msgid "How LLM Search Works"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:162 d4c42a7c4bf64b4c871fef25757a8bfe
+msgid "LLM search leverages Large Language Models for intelligent tool discovery:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:164 a4da476dc1004a8f8a9b7f37a5be78c8
+msgid ""
+"**Context Construction**: Creates detailed prompts combining user queries"
+" with tool specifications"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:165 dcae1106bbb9441ea34d93a74ad748bd
+msgid ""
+"**Intelligent Reasoning**: LLM analyzes context to infer optimal tools or"
+" tool sequences"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:166 8cb300adf7e34047bd8cb9621ca18f14
+msgid ""
+"**Complex Query Handling**: Excels at multi-step, abstract, or complex "
+"research questions"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:167 4ab34b3eadd043cab35523ac29859c1b
+msgid "**Agentic Implementation**: Uses ToolUniverse's agentic tool framework"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:170 c097869a367d486c86cfca0bc9c85d71
+msgid "Using LLM Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:200 66d9fc7039024bbe87a6d4c661bb8be9
+msgid "Complex Multi-Step Queries"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:232 f72b175da9d94716aeaeecf5f434548f
+msgid "Abstract Goal Interpretation"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:264 2ad3405238804ae6a8f9ef6a5947c288
+msgid "LLM Search Best Practices"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:266 0829c6c3215149e4bddce1be6d4ed08d
+msgid ""
+"**Effective Strategies**: - Describe your research context and goals "
+"clearly - Mention specific diseases, molecules, or research areas - "
+"Include workflow steps if you have a multi-step process - Ask for "
+"reasoning to understand why tools were recommended"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:273 2de3a39e7e98490d9f41cb4dadbcef04
+msgid "Method 3: Embedding Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:276 538d3b049d444e5783a123ffdee2589e
+msgid "How Embedding Search Works"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:278 42dd3bcb46f24d7a97711d4000a48c24
+msgid "Embedding search uses semantic similarity for tool discovery:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:280 05d016a4f92b4979a835bb89d1d7b85d
+msgid ""
+"**Model Training**: Fine-tuned embedding model on synthetic query-tool "
+"pairs"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:281 3b7b5bcd86c04a9eb631cc5d905ed13c
+msgid ""
+"**Offline Indexing**: Tool specifications converted to semantic vectors "
+"and stored in vector database"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:282 aa7f7e74221047ebbe22c5ebf296f83d
+msgid ""
+"**Online Querying**: User queries converted to vectors and matched via "
+"cosine similarity"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:283 b8bc36cc6c5544059afaf933527054c5
+msgid ""
+"**Semantic Understanding**: Captures conceptual relationships beyond "
+"keyword matching"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:286 3f33de9ab2374bcab580cee5f60694ee
+msgid "Using Embedding Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:312 556b6ba4b4ad434088578ba09f7e1872
+msgid "Semantic Similarity Examples"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:347 0d8f3e6a784c4af4b196e6a496b1b2ac
+msgid "Advanced Embedding Search"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:370 b6d5d3c143c443438d193bc7b094233f
+msgid "Comparing Search Methods"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:373 8b92a7ef615244ea8278f535ca743ace
+msgid "Practical Comparison"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:375 7fa2c397e9d2461f934955c32723b77d
+msgid "Let's compare all three methods on the same query:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:417 37e5bbff795643a788828b5259cca5c1
+msgid "Performance Analysis"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:419 99f702899d034d78b2c58421a8221560
+msgid "Measure and compare performance:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:470 2a89332dbde3471494ffdc643fbefe95
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:473 c73f572b31e7408f800a1e6ad0a7689e
+msgid "Common Issues and Solutions"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:475 6cc9f5a4d27b473c934894a5a60459ef
+msgid "**Issue**: LLM search fails"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:495 ecf455f1effa41edad2845eb468d2d84
+msgid "Conclusion"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:497 4059896ac5d14066b47e97701842b3ab
+msgid ""
+"ToolUniverse's three tool finder methods provide powerful and flexible "
+"approaches to discovering the right tools for your research:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:499 9b989e0786134cbab78baf71d686e330
+msgid ""
+"** Keyword Search**: Perfect for precise, fast searches with technical "
+"terminology"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:501 a0028f6964944fd981a52ec34cd37300
+msgid ""
+"** LLM Search**: Ideal for complex, multi-step research workflows "
+"requiring intelligence"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:503 d777a90a99ca446c9143cc83c69d069e
+msgid ""
+"** Embedding Search**: Excellent for semantic similarity and conceptual "
+"tool discovery"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:505 14f838f6dca74f699660f5e9ea76e3ce
+msgid "**Key Takeaways**:"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:507 a673cd96f33a4d709f826328feab54c4
+msgid ""
+"**Choose the right method** for your specific use case and computational "
+"constraints"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:508 715f1b5e8f9b4271aa90514bd903a649
+msgid "**Combine methods** for comprehensive tool discovery"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:509 6eb10174716a4cc6be89f3eb3c650f8c
+msgid "**Optimize queries** based on the search method's strengths"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:510 a16cd52c1a5648a8a62b3eff1fc50a8f
+msgid "**Use fallback strategies** when initial searches don't yield results"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:512 cbb00d7ae61c4bd89b70e6b8649468b5
+msgid "Happy tool hunting!"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:516 708750cce8674ce8a7deaf37e58062bd
+msgid ":doc:`../guide/tools` - Overview of all tools"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:517 a13a965c3f8842399b526b41a5c71bc0
+msgid ":doc:`../api/modules` - API reference"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:518 7c82d40e250540abb72421d439992455
+msgid ":doc:`../tools/tools_config_index` - Tool catalog by category"
+msgstr ""
+
+#: ../../guide/finding_tools.rst:519 f162654c7cbf4367888dca68ad1e5c8b
+msgid ":doc:`../help/troubleshooting` - Common issues and solutions"
+msgstr ""
+

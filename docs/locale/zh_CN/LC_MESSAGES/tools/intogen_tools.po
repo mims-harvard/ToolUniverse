@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/intogen_tools.rst:10 3e413463a3834c06a520621f91497ad1
+msgid "Intogen Tools"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:12 09b4695071a8493d9d131fa394e27847
+msgid ""
+"**Configuration File**: ``intogen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:16 ba0051fc6d8d4ec299aa526a3347ec68
+msgid ""
+"This page contains all tools defined in the ``intogen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:19 555cd787a6d64cec9bda29bf2b7c5530
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:22 dc33b1055d264fa7976191fdc521f196
+msgid "**IntOGen_get_drivers** (Type: IntOGenTool)"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:24 9f7ef2c2fc7f4eb0b3ef09d70213904c
+msgid ""
+"Get cancer driver genes for a specific cancer type from IntOGen. Returns "
+"genes identified as driv..."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst 2c7cfb64c6694ec78c717e1013368b23
+msgid "IntOGen_get_drivers tool specification"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:28 ../../tools/intogen_tools.rst:59
+#: ../../tools/intogen_tools.rst:90 ../../tools/intogen_tools.rst:119
+#: 078440e9c0e94a03a38fd74a4e68efc3 8daa99c6f5074d59bd7b7ad2ae8a2786
+#: bec784230e6641b9b91c541287afcc3c d74bc5bc455d44f1aad849189cef45e4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:30 8904350e53c443f9b0b79fa3e1adaf36
+msgid "**Name**: ``IntOGen_get_drivers``"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:31 ../../tools/intogen_tools.rst:62
+#: ../../tools/intogen_tools.rst:93 ../../tools/intogen_tools.rst:122
+#: 196ca9f4ff454d90a315356976518556 1dbf1f7982d1436f8569a77c93f5baa7
+#: 30b16f5a8ab04c3794034732a6df5024 fd09c4090ec94e759d4b9307f03ec78b
+msgid "**Type**: ``IntOGenTool``"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:32 2e4f4c37ef6f4aedb2fe301cb64765d5
+msgid ""
+"**Description**: Get cancer driver genes for a specific cancer type from "
+"IntOGen. Returns genes identified as drivers by computational methods "
+"(dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, "
+"MutPanning) applied to somatic mutation data from thousands of tumors. "
+"Each result includes the gene symbol, number of mutations and mutated "
+"samples across cohorts. Use IntOGen\\_list\\_cancer\\_types to see "
+"available cancer type codes. Example: cancer\\_type='BRCA' returns 118 "
+"driver genes for breast cancer including TP53, PIK3CA, GATA3."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:34 ../../tools/intogen_tools.rst:65
+#: ../../tools/intogen_tools.rst:96 ../../tools/intogen_tools.rst:125
+#: 19d5f1f73a394ff5a2cc33e4eb37ea1c 7548a246ab4140e098f7f4e74d27b8c2
+#: 8563298ff6db4894a043454311d957e6 8b84944607e54102980e33298f0c966e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:36 b9f224dd34bb4e259cc0b4966d02c08d
+msgid ""
+"``cancer_type`` (string) (required) IntOGen cancer type code. Examples: "
+"'BRCA' (breast), 'LUAD' (lung adenocarcinoma), 'COADREAD' (colorectal), "
+"'AML' (acute myeloid leukemia), 'SKCM' (melanoma), 'GBM' (glioblastoma). "
+"Use IntOGen\\_list\\_cancer\\_types to see all available codes."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:39 ../../tools/intogen_tools.rst:70
+#: ../../tools/intogen_tools.rst:100 ../../tools/intogen_tools.rst:130
+#: 22b44c2d3a2242b6b7c7b990f6ae56a2 31c789c70e9e411694c79a51083a2901
+#: 8ee830c1468f40afb580a039900ce00c e50434451b6b408a87cae23c79fb3729
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:53 6046eed46f8a4b44bdbebdaca96ef650
+msgid "**IntOGen_get_gene_info** (Type: IntOGenTool)"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:55 5be98e1ad53f4ed58433b06dde0cbc65
+msgid ""
+"Get driver gene classification for a specific gene across all cancer "
+"types from IntOGen. Returns ..."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst 6ee502254bd84d92a9995c4bc060d582
+msgid "IntOGen_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:61 5ee3232782644c4fba00c0bf7759b81d
+msgid "**Name**: ``IntOGen_get_gene_info``"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:63 f500ab82e41041109c047b6f562cb074
+msgid ""
+"**Description**: Get driver gene classification for a specific gene "
+"across all cancer types from IntOGen. Returns the list of cancer types "
+"where the gene is identified as a cancer driver, along with the detection"
+" methods used (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions,"
+" CBaSE, MutPanning) and mutation statistics. Example: gene='TP53' is a "
+"driver in 74 cancer types; gene='KRAS' is a driver in 22 cancer types."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:67 8574e1dfdf004ef38fbc88aac1c4b6a8
+msgid ""
+"``gene`` (string) (required) Gene symbol (HUGO nomenclature). Examples: "
+"'TP53', 'KRAS', 'PIK3CA', 'BRAF', 'EGFR', 'PTEN', 'APC', 'BRCA1', 'IDH1',"
+" 'NRAS'."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:84 7d5a9bb76c2141d1bff8c5a9aa643ceb
+msgid "**IntOGen_list_cancer_types** (Type: IntOGenTool)"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:86 9a977b2a05774c3495e3f04eddb9c0a3
+msgid ""
+"List all 87 cancer types available in IntOGen with their codes and full "
+"names. Returns cancer typ..."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst de523f6f8f21484fa2277cd4cf777358
+msgid "IntOGen_list_cancer_types tool specification"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:92 81e20d90dae34aeaa0249b8c71f0fe76
+msgid "**Name**: ``IntOGen_list_cancer_types``"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:94 3a983d1ef06e46a6ba34900fcd39e2ba
+msgid ""
+"**Description**: List all 87 cancer types available in IntOGen with their"
+" codes and full names. Returns cancer type identifiers (e.g., BRCA, LUAD,"
+" COADREAD, AML, SKCM) that can be used with IntOGen\\_get\\_drivers and "
+"IntOGen\\_list\\_cohorts. IntOGen covers 87 cancer types spanning solid "
+"tumors, hematological malignancies, and pediatric cancers."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:98 7e1faf98a6104adc89b240fcbde47433
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:113 4a5d10303f0e4d12a255cfb86eb32825
+msgid "**IntOGen_list_cohorts** (Type: IntOGenTool)"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:115 4ed9149374ac4311aa8163fc3dc61ee1
+msgid ""
+"List available cancer cohorts from IntOGen with sample counts and tumor "
+"types. Returns cohort IDs..."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst 8ac3a7210fc84fb1bc8f0a308d7a566d
+msgid "IntOGen_list_cohorts tool specification"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:121 7914f9cc7b474878a5a94bef2f69f237
+msgid "**Name**: ``IntOGen_list_cohorts``"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:123 fefab2fc84e44e1dba3d9bd383a7fb69
+msgid ""
+"**Description**: List available cancer cohorts from IntOGen with sample "
+"counts and tumor types. Returns cohort IDs, names, data sources (TCGA, "
+"ICGC, Hartwig, etc.), sample counts, tumor type (Primary/Metastasis), and"
+" age group (Adult/Pediatric). Optionally filter by cancer type. IntOGen "
+"includes 271 cohorts from major genomic studies. Example: "
+"cancer\\_type='BRCA' returns 14 breast cancer cohorts from TCGA, Hartwig,"
+" ICGC, and others."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:127 da71d92c441e4879b997095953410e3e
+msgid ""
+"``cancer_type`` (string, null) (optional) Optional cancer type code to "
+"filter cohorts. If omitted, returns all 271 cohorts. Examples: 'BRCA', "
+"'LUAD', 'COADREAD'."
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:143 8876dd81de624ae4ac2fa3dbaa71884d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:145 8ef1ba6347ba4dadb3f8b46acce7a5ef
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/intogen_tools.rst:146 646e331050a448c692ab67e2278f0352
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

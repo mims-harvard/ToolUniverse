@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/scite_tools.rst:10 c4ba8afc892e43f7a042955e0244aa60
+msgid "Scite Tools"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:12 dcb9442017ba4386bfe6254df41fec21
+msgid ""
+"**Configuration File**: ``scite_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 1"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:16 b2f291f2491446ef930e1b92e7df8c1a
+msgid ""
+"This page contains all tools defined in the ``scite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/scite_tools.rst:19 170df65ba6514d8596c3ee871ef124d3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:22 5576069d7e094d61868c4ea887905c07
+msgid "**scite_get_tallies** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:24 71a50aa17b324cde9b4cbf018366ff61
+msgid ""
+"Get smart citation tallies for a scientific paper using scite.ai. scite "
+"analyzes citation context..."
+msgstr ""
+
+#: ../../tools/scite_tools.rst 351e29a1e36041248b0ce78773eb83e6
+msgid "scite_get_tallies tool specification"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:28 c5ecb087b41c44c8916b959582d33879
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:30 aee3b0bcf89d49538a9bc4bbed88ceef
+msgid "**Name**: ``scite_get_tallies``"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:31 7fa5a8e18fc14b9abb524d0ad0a2113b
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:32 60469e5f960b4805a5450ec5a9d0a6c3
+msgid ""
+"**Description**: Get smart citation tallies for a scientific paper using "
+"scite.ai. scite analyzes citation contexts to classify citations as "
+"Supporting, Contradicting, or Mentioning. Returns counts of supporting "
+"citations (citations that confirm the paper's claims), contradicting "
+"citations (citations that dispute claims), mentioning citations (neutral "
+"references), and total citing publications. Supporting-to-contradicting "
+"ratios help assess scientific consensus and reproducibility. Example: "
+"10.1038/nature12303 has 13 supporting, 1 contradicting, 261 mentioning "
+"citations. Requires the paper's DOI."
+msgstr ""
+
+#: ../../tools/scite_tools.rst:34 59276a1f97b6436690e9303be84ad738
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:36 fedc353ae6294cfd8fe201ed7e1e71bd
+msgid ""
+"``doi`` (string) (required) DOI of the paper to get citation tallies for "
+"(e.g., '10.1038/nature12303', '10.1016/j.cell.2020.02.058'). Include the "
+"full DOI without URL prefix."
+msgstr ""
+
+#: ../../tools/scite_tools.rst:39 77e9c65b8c2641ea8d6cf29d69f97a24
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:53 d94551a008fb4567b21a474570ff9be6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:55 4c43d4ab10eb41598818e50e10bf70b4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/scite_tools.rst:56 31264d525285485e9f5b717fbb9a1942
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

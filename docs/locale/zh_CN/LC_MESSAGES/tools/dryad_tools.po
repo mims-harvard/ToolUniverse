@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dryad_tools.rst:10 82dcafbe88184416bc17afe877b760d4
+msgid "Dryad Tools"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:12 3c3d279586da406e961e0b8698b83391
+msgid ""
+"**Configuration File**: ``dryad_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:16 d58846c1ff1f44adb6ccfaa3c37a6526
+msgid ""
+"This page contains all tools defined in the ``dryad_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:19 051462cc60954fe89ab20435974824d8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:22 cb0d449b72aa4a799df7e1d06d78a9c4
+msgid "**Dryad_get_dataset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:24 69edbb1194134f20a148b2d7b3741fc8
+msgid ""
+"Get detailed metadata for a specific Dryad dataset by its numeric ID. "
+"Returns comprehensive infor..."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst d8f218eb0e1d41dfbba2f100383d8140
+msgid "Dryad_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:28 ../../tools/dryad_tools.rst:59
+#: ../../tools/dryad_tools.rst:90 3f85416162b8431aac57593a234f2abd
+#: d6f4002ba4d94876af35a7d7513871d5 d8ccc1da4f3745da9ea6cda309629e5a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:30 02bbde22cee24b4c87f3184950197d2f
+msgid "**Name**: ``Dryad_get_dataset``"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:31 ../../tools/dryad_tools.rst:62
+#: ../../tools/dryad_tools.rst:93 4de7d51312ac44cd871c36b5c7c9529f
+#: 7a522f36a877406bb4c0ae2766946f70 b9920aef1da3438d85ceb4b91412d0cd
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:32 7c97bb1973724fbf98934c64d2d1c809
+msgid ""
+"**Description**: Get detailed metadata for a specific Dryad dataset by "
+"its numeric ID. Returns comprehensive information including the DOI "
+"identifier, title, authors with affiliations and ORCID IDs, abstract, "
+"storage size, related publication ISSN, and HAL links to versions and "
+"files. The version ID from the \\_links.stash:version href can be used "
+"with Dryad\\_get\\_dataset\\_files to list downloadable files. Use "
+"Dryad\\_search\\_datasets first to find dataset IDs."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:34 ../../tools/dryad_tools.rst:65
+#: ../../tools/dryad_tools.rst:96 4e695e821cfd411e99891eee0f9f0e20
+#: 8b560a0ed7ad49259b5a72570e1139d0 a58025b1d79f405a8b0f49a13bb82c89
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:36 e048a8ef55db4dfa966963daa0716b31
+msgid ""
+"``dataset_id`` (integer) (required) Numeric dataset ID from Dryad (e.g., "
+"93, 94, 95). Find IDs using Dryad\\_search\\_datasets."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:39 ../../tools/dryad_tools.rst:70
+#: ../../tools/dryad_tools.rst:107 7a4836f972ae4ba7bc7938d59cb24534
+#: 89ca0e01a19c453d9edb197e905ca110 ec5ba69b3ffe48e8946833367088e248
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:53 dcaf06f200c74b8d80984a483ffa0d25
+msgid "**Dryad_get_dataset_files** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:55 fc3627323160432c8e9426cc81373b08
+msgid ""
+"Get the list of downloadable files for a specific Dryad dataset version. "
+"Returns file names, size..."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst 9da2a40f28604cdebfa2c7ce6dba8377
+msgid "Dryad_get_dataset_files tool specification"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:61 396c6c2bb3f0479b849fc0fe6073f9de
+msgid "**Name**: ``Dryad_get_dataset_files``"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:63 b2b42ec32ef444c0a15b24f99b2a3c48
+msgid ""
+"**Description**: Get the list of downloadable files for a specific Dryad "
+"dataset version. Returns file names, sizes, MIME types, and MD5 checksums"
+" for each file in the dataset. The version\\_id can be found in the "
+"Dryad\\_get\\_dataset response under \\_links.stash:version.href (extract"
+" the numeric ID from the path, e.g., '/api/v2/versions/124910' means "
+"version\\_id=124910). Use this to discover what data files are available "
+"before downloading."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:67 6d3f3c87f71c4cb38f37019a74f9e2bc
+msgid ""
+"``version_id`` (integer) (required) Version ID from Dryad dataset "
+"metadata. Found in \\_links.stash:version.href of Dryad\\_get\\_dataset "
+"response (e.g., 124910, 94, 93)."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:84 99832ed6734a4fb7bec0ae995d2b7037
+msgid "**Dryad_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:86 fb64541dc4784bbeacf9d58e78987006
+msgid ""
+"Search the Dryad open research data repository for published datasets. "
+"Dryad is a curated, genera..."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst e6012f881eef4df5bb961f9c462a8449
+msgid "Dryad_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:92 a0196985701e4441b307d0696dbc7bb2
+msgid "**Name**: ``Dryad_search_datasets``"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:94 ed5760bb68ad45799c0b41a7b02984b4
+msgid ""
+"**Description**: Search the Dryad open research data repository for "
+"published datasets. Dryad is a curated, general-purpose repository that "
+"makes research data discoverable, freely reusable, and citable. It hosts "
+"datasets across all scientific disciplines, with strong coverage in "
+"ecology, evolutionary biology, genetics, and life sciences. Returns "
+"dataset identifiers, titles, authors, abstracts, storage sizes, and "
+"related publication ISSNs. Use this to find openly available research "
+"datasets by keyword, then use Dryad\\_get\\_dataset for full metadata."
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:98 038bcf5eabda4a44ae38e333863f0098
+msgid ""
+"``q`` (string) (required) Search query string for dataset title, "
+"abstract, or author (e.g., 'climate change', 'CRISPR gene editing', "
+"'protein structure')"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:101 0f34b8c03adf41fdb2530ada93e4fb72
+msgid ""
+"``per_page`` (integer, null) (optional) Number of results per page "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:104 44f4347e843e451db754263700590675
+msgid ""
+"``page`` (integer, null) (optional) Page number for pagination (starts at"
+" 1)"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:121 40aedfb022dd4100aa3620e93385ec2b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:123 5254b7fb8cfd46028944b8498a8eeefb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dryad_tools.rst:124 b477d2ce77f2408584f7011e8b07b6d4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/omicsdi_tools.rst:10 43a044cd895e4515aaad990e7f5c4c4b
+msgid "Omicsdi Tools"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:12 c225402f1cd842bbb9363dcfaf746949
+msgid ""
+"**Configuration File**: ``omicsdi_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:16 7e636f56c7da43ea89e84e9a22029311
+msgid ""
+"This page contains all tools defined in the ``omicsdi_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:19 f3ab239cce3c45c6a12a8bddce5e6b31
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:22 c2553454fe1d4daabdace72346572488
+msgid "**OmicsDI_get_dataset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:24 d637185ba2b442b08df93dbdbff45d56
+msgid ""
+"Get detailed information about a specific omics dataset in OmicsDI by "
+"accession number and source..."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst 061efb57bdb84584a742418970804af7
+msgid "OmicsDI_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:28 ../../tools/omicsdi_tools.rst:63
+#: ../../tools/omicsdi_tools.rst:94 47f37079694a4a53953634b156c6a5a8
+#: 66f04fefdbfc42f58f94c622f2a3766f bedd45e309814cc28d725f85968da86f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:30 d4261abb09be4de1a56b422c088d35f2
+msgid "**Name**: ``OmicsDI_get_dataset``"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:31 ../../tools/omicsdi_tools.rst:66
+#: ../../tools/omicsdi_tools.rst:97 6dd41d94c44c4021a2a691de1622f1da
+#: 6e4005e7319c447eb4adcec11f74257a fd2815ffd44641cfbeddae3519847d0f
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:32 867ae22e5bba4f33a2fc6ca08a10f5ef
+msgid ""
+"**Description**: Get detailed information about a specific omics dataset "
+"in OmicsDI by accession number and source database. Returns full metadata"
+" including description, protocols, instruments, organisms, tissues, "
+"diseases, publication IDs, and download links. Example accessions: "
+"'MTBLS1355' (MetaboLights), 'GSE12345' (GEO), 'PXD000001' (PRIDE)."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:34 ../../tools/omicsdi_tools.rst:69
+#: ../../tools/omicsdi_tools.rst:100 5a85c27d4ad94605a0f7fe5db32c6456
+#: 9147b21ead06402f95305d0079351cc2 98b29b90b39b4c3aba2147fcc742c11d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:36 f200683c9c2141e3baa6d14869ec8f39
+msgid ""
+"``accession`` (string) (required) Dataset accession number (e.g., "
+"'MTBLS1355', 'E-GEOD-100000', 'PXD000001')"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:39 bac0bd7dcf6a40d1874d6da5fc2ff8aa
+msgid ""
+"``database`` (string) (required) Source database name (e.g., "
+"'metabolights\\_dataset', 'arrayexpress-repository', 'pride', 'geo')"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:42 ../../tools/omicsdi_tools.rst:74
+#: ../../tools/omicsdi_tools.rst:126 20902c0d7537463cb3bd6f3e84872522
+#: 38b291ee69584f06af0a49652296bc83 b294c7311f424f2a840b0846a9705b25
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:57 8d255f46a7004c46a9637370cd7f3c07
+msgid "**OmicsDI_get_statistics** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:59 334cee5112784365a927268659488a88
+msgid ""
+"Get statistics about the OmicsDI omics data repositories. Returns counts "
+"of datasets across diffe..."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst 3105d781a9ae4ca08b398d74a0347982
+msgid "OmicsDI_get_statistics tool specification"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:65 a0356eb78beb43a7aa49951f747c34fa
+msgid "**Name**: ``OmicsDI_get_statistics``"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:67 5dce5157755245d4a17fb45a36f10952
+msgid ""
+"**Description**: Get statistics about the OmicsDI omics data "
+"repositories. Returns counts of datasets across different domains (GEO, "
+"ArrayExpress, PRIDE, MetaboLights, etc.), organisms, and tissue types. "
+"Useful for discovering what data is available."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:71 ed014d32d4f5474b8c9c0d57292aa051
+msgid ""
+"``stat_type`` (string) (required) Type of statistics: 'domains' (list all"
+" data sources), 'organisms' (count by organism), 'tissues' (count by "
+"tissue)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:88 97701a73d62840cd8748a9ee9021fab8
+msgid "**OmicsDI_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:90 7776188e1b5d4334b8eb18541ebbc58f
+msgid ""
+"Search across multiple omics repositories integrated in OmicsDI (Omics "
+"Discovery Index). Searches..."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst 34dde187e7db432ab1bd46ee9670a156
+msgid "OmicsDI_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:96 f4df5ab8541c4c9292dd480e302527bd
+msgid "**Name**: ``OmicsDI_search_datasets``"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:98 d4ffc679f2d2446d8467ae774e884000
+msgid ""
+"**Description**: Search across multiple omics repositories integrated in "
+"OmicsDI (Omics Discovery Index). Searches GEO, ArrayExpress, PRIDE, "
+"MetaboLights, MetabolomicsWorkbench, PeptideAtlas, and 20+ other omics "
+"repositories. Filter by omics type, organism, tissue, or date. Returns "
+"dataset IDs, titles, sources, organisms, omics types, and citation "
+"counts. Use omics\\_type to filter: 'Transcriptomics', 'Proteomics', "
+"'Metabolomics', 'Genomics', 'Lipidomics'."
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:102 e17f509c56d8408b859bf8faa9d8bacc
+msgid ""
+"``query`` (string) (required) Search query text (e.g., 'Alzheimer brain',"
+" 'BRCA1 cancer', 'gut microbiome')"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:105 b9a9cb13f7cd4a70a3fecc091e5afbdc
+msgid "``start`` (integer, null) (optional) Offset for pagination (default 0)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:108 62355b9b322c40268657c2b826b4d615
+msgid ""
+"``size`` (integer, null) (optional) Number of results to return (default "
+"10, max 100)"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:111 9f18ac24a4a544d0b9dd968fbc4c8136
+msgid ""
+"``omics_type`` (string, null) (optional) Filter by omics type: "
+"'Transcriptomics', 'Proteomics', 'Metabolomics', 'Genomics', 'Lipidomics'"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:114 6469c3d2352e4156b78a6a95ec08e590
+msgid ""
+"``organism`` (string, null) (optional) Filter by organism (e.g., 'Homo "
+"sapiens', 'Mus musculus')"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:117 23f30f2750a14374acdf5de3cd988b52
+msgid ""
+"``tissue`` (string, null) (optional) Filter by tissue/cell type (e.g., "
+"'brain', 'liver', 'blood')"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:120 1b038115d9304f19a0b7e4cf3894c5e0
+msgid ""
+"``sortfield`` (string, null) (optional) Sort field: 'publication\\_date',"
+" 'id', 'title', 'views', 'downloads'"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:123 80b4dedcf0f34d2aa1fcfbae0093de2b
+msgid "``order`` (string, null) (optional) Sort order: 'desc' or 'asc'"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:140 ab48b4c5f709410dac999e560e1bd4a8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:142 ccdd1eecd7494e93b0203fcf406702da
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/omicsdi_tools.rst:143 632c3ed0d87d42f8893f9666efdc47a8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

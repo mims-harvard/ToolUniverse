@@ -1,0 +1,159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/eve_tools.rst:10 3ee92bc1d93f4762ab3dd9d3333eaec1
+msgid "Eve Tools"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:12 626f53a512064bb1a922f328d2a2510c
+msgid ""
+"**Configuration File**: ``eve_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:16 2736519db4b648d0924c348a12e98166
+msgid ""
+"This page contains all tools defined in the ``eve_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/eve_tools.rst:19 5944246c652f4728b641ba9b22ec2ad1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:22 114aba5e37f9430e94384ee4752ef2a3
+msgid "**EVE_get_gene_info** (Type: EVETool)"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:24 188eae28441c4d4897b4ad4aea76b5f3
+msgid ""
+"Check if EVE scores are available for a gene and get gene information. "
+"EVE covers ~3,000 disease-..."
+msgstr ""
+
+#: ../../tools/eve_tools.rst f0a255e12eba438d92027331ba2e6340
+msgid "EVE_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:28 ../../tools/eve_tools.rst:59
+#: 1b511b73f65547dbb3b8b93eb4f42c94 da5ca19940d748d5bcee05a5fcd7a545
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:30 5757e81f58ce435ba2444cb9809eb561
+msgid "**Name**: ``EVE_get_gene_info``"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:31 ../../tools/eve_tools.rst:62
+#: 242cc43dbb7446c697e98a9c5c1f657b 720fa5ccf0394e66944c3061e4572dff
+msgid "**Type**: ``EVETool``"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:32 a6e176aca1c543559e9a114869ca8934
+msgid ""
+"**Description**: Check if EVE scores are available for a gene and get "
+"gene information. EVE covers ~3,000 disease-related human genes. Returns "
+"Ensembl ID and link to EVE website."
+msgstr ""
+
+#: ../../tools/eve_tools.rst:34 ../../tools/eve_tools.rst:65
+#: 58ddd5bc23e94cfab3ef99f938fb1026 ba0148dcacd9490f8063fc106e026d38
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:36 16c6e5550e9f4e1e818513c0d507c98f
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'TP53', 'BRCA1', "
+"'EGFR')"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:39 ../../tools/eve_tools.rst:85
+#: 85b47ff2f61c40e38a95700089de1645 fb76427fa2ec433380e6f246e7a01ed6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:53 daaa88871a8547719359682613ac360e
+msgid "**EVE_get_variant_score** (Type: EVETool)"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:55 2dc57b57b4b54774956f89832bfc1e7b
+msgid ""
+"Get EVE (Evolutionary Variant Effect) pathogenicity score for a variant. "
+"EVE uses unsupervised de..."
+msgstr ""
+
+#: ../../tools/eve_tools.rst 3f9db451d7494592b8569ee1886903bc
+msgid "EVE_get_variant_score tool specification"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:61 1dbcb0c2f76949e3b6d330ceafbcc024
+msgid "**Name**: ``EVE_get_variant_score``"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:63 0ae858bec0e7428ba02df2eac682867e
+msgid ""
+"**Description**: Get EVE (Evolutionary Variant Effect) pathogenicity "
+"score for a variant. EVE uses unsupervised deep learning on evolutionary "
+"data. Scores: 0-1 where >0.5 is likely pathogenic. Accessed via Ensembl "
+"VEP API."
+msgstr ""
+
+#: ../../tools/eve_tools.rst:67 d5733268ea424a34a0690a5c084ab0e5
+msgid ""
+"``variant`` (string) (optional) Variant in HGVS format (e.g., "
+"'ENST00000269305.4:c.100G>A', 'NM\\_000546.5:c.215C>G')"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:70 4ac06edbb5b941d2a5b7bd6b06e0c185
+msgid ""
+"``chrom`` (string) (optional) Chromosome (1-22, X, Y). Use with pos, ref,"
+" alt instead of variant."
+msgstr ""
+
+#: ../../tools/eve_tools.rst:73 82852adc491c405e81a70407b8bf177f
+msgid "``pos`` (integer) (optional) Genomic position (GRCh38)"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:76 adeede67e0884f809697574d3ac3c2df
+msgid "``ref`` (string) (optional) Reference allele"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:79 8a0b6a97abc4464d96ea6436f1ea3a55
+msgid "``alt`` (string) (optional) Alternate allele"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:82 6b9b02ecbc30470cb631af1208329e1b
+msgid "``species`` (string) (optional) Species (default: human)"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:98 f8f458a8c4954497a1006b52ef5a7dc1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:100 57e56afc0ffc4e8e903faeeaf98a9963
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/eve_tools.rst:101 d7238252b5e34bdebd6740c9cb3c7ca2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

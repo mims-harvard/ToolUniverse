@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,58 +18,58 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/pinnacle_tools.rst:2 6f4ae270e89149c9971e6b30c3ca9393
+#: ../../tools/pinnacle_tools.rst:10 f24e9e4c1a4a439799f7493f5ce3dd95
 msgid "Pinnacle Tools"
 msgstr "巅峰工具"
 
-#: ../../tools/pinnacle_tools.rst:4 ebfdff2d846a49f7bf4295ae4dae76de
+#: ../../tools/pinnacle_tools.rst:12 bd535ebe999945cc86562c8294b11c9d
 msgid ""
 "**Configuration File**: ``remote_tools/pinnacle_tools.json`` **Tool "
 "Type**: Remote **Tools Count**: 1"
 msgstr "**配置文件**: ``remote_tools/pinnacle_tools.json`` **工具类型**: 远程 **工具数量**: 1"
 
-#: ../../tools/pinnacle_tools.rst:8 35959dafc8c44346990cc9b995fe4a09
+#: ../../tools/pinnacle_tools.rst:16 a0e882353b1f4df18ba26286adc9302f
 msgid ""
 "This page contains all tools defined in the ``pinnacle_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``pinnacle_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/pinnacle_tools.rst:11 7277d2ba7ab14abe9942aab7ce3fb573
+#: ../../tools/pinnacle_tools.rst:19 4edff91a5b8c4c11af56b720455612df
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/pinnacle_tools.rst:14 b3f0d77f2d3442edba7f17188a09bb52
+#: ../../tools/pinnacle_tools.rst:22 64c5138652274686a2fdd130654ae83c
 msgid "**run_pinnacle_ppi_retrieval** (Type: RemoteTool)"
 msgstr "**运行_pinnacle_ppi_检索**（类型：远程工具）"
 
-#: ../../tools/pinnacle_tools.rst:16 d297e096b0424734b17e2fb7729bd09a
+#: ../../tools/pinnacle_tools.rst:24 9d5fe0f58dea4366a4ffd3f45e3d04ca
 msgid ""
 "Retrieves cell-type-specific protein-protein interaction embeddings from "
 "PINNACLE. This tool prov..."
 msgstr "从PINNACLE中检索细胞类型特异性的蛋白质-蛋白质交互嵌入数据。该工具提供..."
 
-#: ../../tools/pinnacle_tools.rst 16177475a82842cdbba91f5aaf96abed
+#: ../../tools/pinnacle_tools.rst cb8d6b7946bc42259e33c98be8286e05
 msgid "run_pinnacle_ppi_retrieval tool specification"
 msgstr "run_pinnacle_ppi_retrieval 工具规范"
 
-#: ../../tools/pinnacle_tools.rst:20 f0ed0d8630e94b3ab38a76707697909c
+#: ../../tools/pinnacle_tools.rst:28 ed681d1556fe419f9129189c72577e25
 msgid "**Tool Information:**"
 msgstr ""
 "**工具信息：**\n"
 "\n"
 "Context: 文档"
 
-#: ../../tools/pinnacle_tools.rst:22 a76c0b89720a4630a6a437635a974274
+#: ../../tools/pinnacle_tools.rst:30 c8f9471275bc461cb102d9575eb6202c
 msgid "**Name**: ``run_pinnacle_ppi_retrieval``"
 msgstr "**名称**: ``run_pinnacle_ppi_retrieval``"
 
-#: ../../tools/pinnacle_tools.rst:23 41637cf6a4e2410da4d69a4bcc7bdb3c
+#: ../../tools/pinnacle_tools.rst:31 1256cecf868e4f0b8b0cd383021e09fc
 msgid "**Type**: ``RemoteTool``"
 msgstr "**类型**: ``RemoteTool``"
 
-#: ../../tools/pinnacle_tools.rst:24 f2ffdae22457426bb17cc864460576e8
+#: ../../tools/pinnacle_tools.rst:32 01931927dfcb437499121fa9c6b787d8
 msgid ""
 "**Description**: Retrieves cell-type-specific protein-protein interaction"
 " embeddings from PINNACLE. This tool provides access to pre-computed "
@@ -83,14 +83,15 @@ msgstr ""
 "Interaction Network Contextualized "
 "Learning，蛋白质相互作用网络上下文化学习）嵌入，这些嵌入表示特定细胞环境中的蛋白质-蛋白质相互作用。嵌入以密集向量表示蛋白质之间的功能关系，捕捉直接的物理相互作用和功能关联。"
 
-#: ../../tools/pinnacle_tools.rst:26 ddc379f2ec1a4ab5baaadce6b6f9b419
+#: ../../tools/pinnacle_tools.rst:34 50774c867bcc4359b1151c50350b3676
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/pinnacle_tools.rst:28 0a955339f08343ff8fa9df45abf1105e
+#: ../../tools/pinnacle_tools.rst:36 bf5fd15eb8c94b808e1bbd7fe1445b48
+#, fuzzy
 msgid ""
 "``cell_type`` (string) (required) Target cell type for embedding "
-"retrieval. Supports flexible naming: Standard formats: 'b_cell', "
+"retrieval. Supports flexible naming: Standard formats: 'b\\_cell', "
 "'hepatocyte', 'cardiomyocyte'; Alternative formats: 'B-cell', 'T cell', "
 "'NK cells'; Tissue types: 'liver', 'heart', 'brain', 'immune'. The tool "
 "performs intelligent matching to find the best available match."
@@ -99,27 +100,27 @@ msgstr ""
 " cell'、'NK "
 "cells'；组织类型：'liver'、'heart'、'brain'、'immune'。该工具会执行智能匹配以找到最佳可用匹配项。"
 
-#: ../../tools/pinnacle_tools.rst:31 f4603c8e94004256b298191f3d610335
+#: ../../tools/pinnacle_tools.rst:39 de2fb28890c9464a865e7e390b6ed936
 #, fuzzy
 msgid ""
 "``embed_path`` (string) (required) Path to the PINNACLE embeddings file "
 "(.pth format). If None, uses "
-"PINNACLE_DATA_PATH/pinnacle_embeds/ppi_embed_dict.pth."
+"PINNACLE\\_DATA\\_PATH/pinnacle\\_embeds/ppi\\_embed\\_dict.pth."
 msgstr "``embed_path``（字符串）（可选）指定PINNACLE嵌入文件的路径（.pth格式）。如果为None，则使用PINNACLE_DATA_PATH/pinnacle_embeds/ppi_embed_dict.pth。"
 
-#: ../../tools/pinnacle_tools.rst:34 f0b5c4bf114441dbb396b1138506c5b2
+#: ../../tools/pinnacle_tools.rst:42 4e27fffb710c465ab8531c1df775aa34
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/pinnacle_tools.rst:49 358f4d6d4df944bb836b55211943e230
+#: ../../tools/pinnacle_tools.rst:57 26c61296a8d24ef69304a2d7596217d2
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/pinnacle_tools.rst:51 4be7cfc6a33d4290875f6a363865a83a
+#: ../../tools/pinnacle_tools.rst:59 a0207e94a3d54cb38f53021612876088
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/pinnacle_tools.rst:52 c0874c42101f4574a0bb3e33a661f391
+#: ../../tools/pinnacle_tools.rst:60 9d08cfc8fa294d1b98e83cc7e7ca2370
 msgid ":doc:`remote_tools` - Remote Tools Setup"
 msgstr ":doc:`remote_tools` - 远程工具设置"
 

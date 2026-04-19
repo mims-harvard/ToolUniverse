@@ -7,407 +7,395 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:2 bfe8dd43974c4c1480aece8a61f27a50
+#: ../../guide/hooks/server_stdio_hooks.rst:2 be14f37649214a9b89c361219866560f
 msgid "Server and Stdio Hook Integration"
 msgstr "服务器与标准输入输出钩子集成"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:4 ed458d608ee54def98cc2a7f264cf992
+#: ../../guide/hooks/server_stdio_hooks.rst:4 6e322377f68a4f4aaa3a3b0708a66934
 msgid ""
 "**Complete Tutorial to using hooks with ToolUniverse servers and stdio "
 "interfaces**"
 msgstr "**使用 hooks 连接 ToolUniverse 服务器和 stdio 接口的完整教程**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:6 e695fdc8763146c381b08454b1d3b1dc
-msgid ""
-"This Tutorial covers how to use ToolUniverse's intelligent output processing"
-" hooks with both server and stdio modes, including command-line options, "
-"configuration files, and Python API integration."
-msgstr ""
-"本教程介绍了如何在服务器模式和标准输入输出（stdio）模式下使用 ToolUniverse 的智能输出处理钩子，包括命令行选项、配置文件及 "
-"Python API 集成。"
-
-#: ../../guide/hooks/server_stdio_hooks.rst:9 e0202e911e8e423a8100b76196119118
+#: ../../guide/hooks/server_stdio_hooks.rst:7 d85755c4bff84c79b85dd5ba94893321
 msgid "Overview"
 msgstr "概述"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:11
-#: a3df7d41bf5a45c59f5d51638994cfcb
+#: ../../guide/hooks/server_stdio_hooks.rst:9 babb96d32db7466a961cd674791623f4
 msgid ""
 "ToolUniverse provides intelligent output processing hooks that can "
 "automatically handle large tool outputs through:"
 msgstr "ToolUniverse 提供智能输出处理钩子，能够自动处理大型工具输出，具体包括："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:13
-#: 05cebaac4b7149d1a36948151028afbe
+#: ../../guide/hooks/server_stdio_hooks.rst:11 5cb4f2f667bb49fb8e47ca658c296a79
 msgid "**SummarizationHook**: AI-powered summarization of long outputs"
 msgstr "**SummarizationHook**：基于人工智能的长文本输出摘要功能"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:14
-#: 9649dfd254b744288ff3d00e37fd906c
+#: ../../guide/hooks/server_stdio_hooks.rst:12 6748f11fef6d4e8f873f69ee396766c1
 msgid "**FileSaveHook**: File-based archiving with metadata"
 msgstr "**FileSaveHook**：基于文件的归档及元数据管理"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:15
-#: ee63809bf13d40a99d92e02cf5ffef0a
+#: ../../guide/hooks/server_stdio_hooks.rst:13 96c683e5bf764c93936899c211554f8e
 msgid "**Custom Hooks**: User-defined processing logic"
 msgstr "**自定义 Hook**：用户定义的处理逻辑"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:17
-#: 3411e4c6bd5e4d48b2fec2cbd93d3ac8
+#: ../../guide/hooks/server_stdio_hooks.rst:15 bbe88368808841d4a71573318b72916c
 msgid ""
 "These hooks are available in both server and stdio modes with different "
 "default behaviors."
 msgstr "这些钩子可在 server 模式和 stdio 模式下使用，且默认行为各不相同。"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:20
-#: 4d9c228862a64dab90b61686ff92542a
+#: ../../guide/hooks/server_stdio_hooks.rst:18 fc99530a0fed462b927c1abc608cc47d
 msgid "Server Mode (HTTP/SSE)"
 msgstr "服务器模式（HTTP/SSE）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:22
-#: 1345c362e31045d7ad935cdd2fe7cd29
+#: ../../guide/hooks/server_stdio_hooks.rst:20 014ab1a0539742e790c9ad38cc5c7bdb
 msgid ""
 "The server mode provides HTTP and SSE transport with configurable hook "
 "support."
 msgstr "服务器模式提供支持可配置钩子的 HTTP 和 SSE 传输。"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:25
-#: ../../guide/hooks/server_stdio_hooks.rst:150
-#: 241acbeee12a4786b97e654f3cd30c64 4db631f0cf1641a2882be936a1b2cf1a
+#: ../../guide/hooks/server_stdio_hooks.rst:23
+#: ../../guide/hooks/server_stdio_hooks.rst:148
+#: 8c45d4e7eabd417a9bb073afbde11311 b48bca9d15574f5f80cf52fd28cba947
 msgid "Basic Usage"
 msgstr "基本用法"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:27
-#: 06e78f7842684ae387945ac7522e7ee2
+#: ../../guide/hooks/server_stdio_hooks.rst:25 ebbf7997143542b4bccf57f8946e9a22
 msgid "Start a server with hooks enabled:"
 msgstr "启动启用钩子的服务器："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:42
-#: ../../guide/hooks/server_stdio_hooks.rst:138
-#: b4c0a87a77894c8aa16d9bd67abe0f4f b618087eb08b4f78975b7c3883d04d95
+#: ../../guide/hooks/server_stdio_hooks.rst:40
+#: ../../guide/hooks/server_stdio_hooks.rst:136
+#: 27ecb607bb25411da0966f2a301762ad 293ebebe368b4092b386e91a00d9d972
 msgid "Available Parameters"
 msgstr "可用参数"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:44
-#: 4c920ba75d624d79b07de8d7a4cf89b3
+#: ../../guide/hooks/server_stdio_hooks.rst:42 d3259adf33314abbb5ba984438b052da
 msgid "``--hooks-enabled``: Enable output processing hooks (default: False)"
 msgstr "``--hooks-enabled``：启用输出处理钩子（默认值：False）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:45
-#: ../../guide/hooks/server_stdio_hooks.rst:141
-#: 01f82df1706142f9b266dc16e1b8b833 8cb364caa5d747078f597362f3936491
+#: ../../guide/hooks/server_stdio_hooks.rst:43
+#: ../../guide/hooks/server_stdio_hooks.rst:139
+#: 1949f10cdc394f6985df4a0a4d13b61f ed2d3a0bfd46426d84c20a4c080aa770
 msgid "``--hook-type``: Choose hook type (SummarizationHook, FileSaveHook)"
 msgstr "``--hook-type``：选择钩子类型（SummarizationHook，FileSaveHook）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:46
-#: ../../guide/hooks/server_stdio_hooks.rst:142
-#: 3bddb2782e604ec3bee6cc3e9d04202d 6bb27fb1ae3b43aabd6b625949257128
+#: ../../guide/hooks/server_stdio_hooks.rst:44
+#: ../../guide/hooks/server_stdio_hooks.rst:140
+#: 460351e216444bf2a81ea2696f768132 d404a4d78b3a4a3bbe9042c14b2ddebe
 msgid "``--hook-config-file``: Path to custom hook configuration JSON file"
 msgstr "``--hook-config-file``：自定义钩子配置 JSON 文件的路径"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:49
-#: 98cdb987e92644af962ecc1bab0cc2f4
+#: ../../guide/hooks/server_stdio_hooks.rst:47 0b10646fb3c7455aa751aeb0b34e7634
 msgid "Example Configurations"
 msgstr "示例配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:51
-#: 62e1056c016249219cc1c9bbbe181641
+#: ../../guide/hooks/server_stdio_hooks.rst:49 261d8d7237ac43d9b2ab45f2918cedb3
 msgid "**SummarizationHook Configuration:**"
 msgstr "**SummarizationHook 配置：**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:76
-#: 79316c1f153f44cdbf134d4ff4a111e2
+#: ../../guide/hooks/server_stdio_hooks.rst:74 ec54fb34cf4e4ac9a2d9889dafe5a65d
 msgid "**FileSaveHook Configuration:**"
 msgstr "**FileSaveHook 配置：**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:104
-#: 220f7193dacd49f194b954fd7b034e6a
+#: ../../guide/hooks/server_stdio_hooks.rst:102
+#: 813d62266e744254a228117c3d4cee29
 msgid "Stdio Mode (Desktop AI)"
 msgstr "标准输入输出模式（桌面人工智能）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:106
-#: 749d6e9991c64a83aac235894ad32bb9
+#: ../../guide/hooks/server_stdio_hooks.rst:104
+#: ba5c1a8b03d046af93ccda9c1eee29e1
 msgid ""
-"The stdio mode is designed for desktop AI applications like Claude Desktop, "
-"with hooks enabled by default."
+"The stdio mode is designed for desktop AI applications like Claude "
+"Desktop, with hooks enabled by default."
 msgstr "stdio 模式专为桌面 AI 应用程序（如 Claude Desktop）设计，默认启用钩子功能。"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:109
-#: 9cc08ad485b14ed6b5f429721e60e765
+#: ../../guide/hooks/server_stdio_hooks.rst:107
+#: c2ab01c1f77c4fe2af4cd17c217654e7
 msgid "Default Behavior"
 msgstr "默认行为"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:111
-#: 37222b8c7f834888ba775e7ab08a810f
+#: ../../guide/hooks/server_stdio_hooks.rst:109
+#: 764b4742df9a4e05be68885cc4a239bc
 msgid "Stdio mode enables SummarizationHook by default:"
 msgstr "Stdio 模式默认启用 SummarizationHook："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:122
-#: 69c2cae3e4fa403daa1e304040582de2
+#: ../../guide/hooks/server_stdio_hooks.rst:120
+#: cda1ee20cc3b48fa8f3c9ee49c08a4eb
 msgid "Hook Control"
 msgstr "挂钩控制"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:124
-#: d5f013f2d1814c2fa838d4073a4dbf81
+#: ../../guide/hooks/server_stdio_hooks.rst:122
+#: 77011d52fc0e403fa5b3f5bc7711ce4c
 msgid "Disable or modify hook behavior:"
 msgstr "禁用或修改钩子行为："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:140
-#: dc33570ab777494d8f9bb54b7b524b8f
+#: ../../guide/hooks/server_stdio_hooks.rst:138
+#: d499a7bcb7ee4fc8b44d75bf05c94caa
 msgid "``--no-hooks``: Disable output processing hooks (default: enabled)"
 msgstr "``--no-hooks``：禁用输出处理钩子（默认：启用）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:145
-#: a32725e0a0dc4b7fbb412cc189ba168f
+#: ../../guide/hooks/server_stdio_hooks.rst:143
+#: 14b285fa067f46fb9597ba720f01777f
 msgid "Python API Integration"
 msgstr "Python API 集成"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:147
-#: 38958449cf824baba051f5a78428a96e
+#: ../../guide/hooks/server_stdio_hooks.rst:145
+#: aee6e68f1d2e4db48ab04c5b47e7a692
 msgid "Use hooks programmatically with the SMCP class:"
 msgstr "使用 SMCP 类以编程方式使用钩子："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:177
-#: 82cb80617fed4d1ebf9eee233fc3f429
+#: ../../guide/hooks/server_stdio_hooks.rst:175
+#: 9f4ac2c249fa44c48a8f5d02c92070a8
 msgid "Advanced Configuration"
 msgstr "高级配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:179
-#: 40a193156fe24b79b44377c3710072d9
+#: ../../guide/hooks/server_stdio_hooks.rst:177
+#: 7a73c11c8b074503bd21ffd164779952
 msgid "Use custom hook configurations:"
 msgstr "使用自定义钩子配置："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:224
-#: de789264ad4b48dba73f9219fd03605e
+#: ../../guide/hooks/server_stdio_hooks.rst:222
+#: 28af5978cdf54158980f123055006e4b
 msgid "Configuration Precedence"
 msgstr "配置优先级"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:226
-#: 3be6efd35cc74c15adbdcb56cb006b9c
+#: ../../guide/hooks/server_stdio_hooks.rst:224
+#: 02e1600d73e344939d3e4fe7cdcec178
 msgid ""
 "When multiple configuration methods are used, the following precedence "
 "applies:"
 msgstr "当使用多种配置方法时，将遵循以下优先级："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:228
-#: 2f2f404a73fe41db84610b714e36aa75
+#: ../../guide/hooks/server_stdio_hooks.rst:226
+#: a6f174466ddf4135abf44a912d617ca2
 msgid "**hook_config** (highest priority)"
 msgstr "**hook_config**（最高优先级）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:229
-#: 02ab42e613914dde82db58b16c654ad3
+#: ../../guide/hooks/server_stdio_hooks.rst:227
+#: 9ab228a047d94f8bb683c74284b071d9
 msgid "**hook_type**"
 msgstr "**钩子类型**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:230
-#: a738e8ab28db47a494213f90e40c6a6d
+#: ../../guide/hooks/server_stdio_hooks.rst:228
+#: c43180c4d6944c1c9ca1596f5aacf01d
 msgid "**hooks_enabled** (lowest priority)"
 msgstr "**hooks_enabled**（最低优先级）"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:232
-#: 8c1190d9ae374569a279673d03d86c96
+#: ../../guide/hooks/server_stdio_hooks.rst:230
+#: 06e1dc11921d4ea5ae2b88ccdb6b5b9a
 msgid "Example:"
 msgstr "请提供需要翻译的具体英文文本，我将为您提供准确、流畅的中文翻译。"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:245
-#: b4798af891d84ab394fa1fce0b429042
+#: ../../guide/hooks/server_stdio_hooks.rst:243
+#: 44ca27c35efd40a282b2b28c6be6c3b6
 msgid "Best Practices"
 msgstr "最佳实践"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:248
-#: 57ed21cc8b8c4c4297c1f0b89cd7e96d
+#: ../../guide/hooks/server_stdio_hooks.rst:246
+#: dbf73727d8c648d0a99dc0b3720dda3b
 msgid "Server Mode"
 msgstr "服务器模式"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:250
-#: f5c65fc473604615a9384d6ba131bcb6
+#: ../../guide/hooks/server_stdio_hooks.rst:248
+#: 8cc983343c7c464087dedc599f6ada65
 msgid "Use ``--hooks-enabled`` for production servers"
 msgstr "在生产服务器上使用 ``--hooks-enabled``"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:251
-#: 9ecd067403bb4370ae6303ef626c04b2
+#: ../../guide/hooks/server_stdio_hooks.rst:249
+#: 32b00f37ef4947c58194a69e1c935ee9
 msgid "Choose appropriate hook types based on use case"
 msgstr "根据使用场景选择适当的钩子类型"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:252
-#: 85f4d9b1418c4832935c9664cf2f56b7
+#: ../../guide/hooks/server_stdio_hooks.rst:250
+#: 5ce484903093446ebb5dbba9976bef07
 msgid "Use custom configurations for complex requirements"
 msgstr "针对复杂需求使用自定义配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:253
-#: 0ac13335043044b885269fe8c0378442
+#: ../../guide/hooks/server_stdio_hooks.rst:251
+#: 9ae276a88a54471a8f0b59aa509372f6
 msgid "Monitor hook performance and adjust thresholds"
 msgstr "监控钩子性能并调整阈值"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:256
-#: e6483089e2b2419bae1221382cb30631
+#: ../../guide/hooks/server_stdio_hooks.rst:254
+#: 6fe09f14ca4c4daabc986b77afd33c7c
 msgid "Stdio Mode"
 msgstr "标准输入输出模式"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:258
-#: 702ab6d55a72474bbe209d72f5fe9921
+#: ../../guide/hooks/server_stdio_hooks.rst:256
+#: 8702b058abe44883b3938c9d1a4b000f
 msgid "Leverage default hook behavior for desktop AI"
 msgstr "利用默认钩子行为优化桌面端人工智能"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:259
-#: b4547bbafee64b4898e4a8c9415420c0
+#: ../../guide/hooks/server_stdio_hooks.rst:257
+#: faefc82e06924904a4f8e4172b1fbb25
 msgid "Use ``--no-hooks`` only when hooks cause issues"
 msgstr "仅在钩子引发问题时使用 ``--no-hooks``"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:260
-#: 2f626fea18f341b8a617ed2a57a88076
+#: ../../guide/hooks/server_stdio_hooks.rst:258
+#: c12278b2bf584ccab1193e3dab9fefd1
 msgid "Consider FileSaveHook for data archiving needs"
 msgstr "请考虑使用 FileSaveHook 满足数据归档需求"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:261
-#: c13aa4da2bc4404996dabc16ebb0d64d
+#: ../../guide/hooks/server_stdio_hooks.rst:259
+#: ebebca9864334656956f01da36e0ed85
 msgid "Test hook configurations before deployment"
 msgstr "在部署之前测试挂钩配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:264
-#: c0116729dc4749f0b9a2c04595f19a9d
+#: ../../guide/hooks/server_stdio_hooks.rst:262
+#: a61deaa6a4c544ed9c8a876a9f321634
 msgid "Performance Considerations"
 msgstr "性能注意事项"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:266
-#: 035145b74fb74c39923dd62c695eaeb0
+#: ../../guide/hooks/server_stdio_hooks.rst:264
+#: e2f00b4c792c455394a0e3eab2e1489a
 msgid "**SummarizationHook**: Adds processing time but reduces output size"
 msgstr "**SummarizationHook**：增加处理时间，但减小输出大小"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:267
-#: 05479687b3f040acb58ee558a207ab3b
+#: ../../guide/hooks/server_stdio_hooks.rst:265
+#: b671254b6ab241c2af6133ea813f2960
 msgid "**FileSaveHook**: Minimal processing overhead, good for archiving"
 msgstr "**FileSaveHook**：处理开销极小，适合归档使用"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:268
-#: 48fea58c51df4ae28685f125ca02101a
+#: ../../guide/hooks/server_stdio_hooks.rst:266
+#: 118590150de640fbbf1ce82883dc79de
 msgid "**Thresholds**: Set appropriate output length thresholds"
 msgstr "**阈值**：设置适当的输出长度阈值"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:269
-#: 470f1c9c981e4438933257fcba3c4c74
+#: ../../guide/hooks/server_stdio_hooks.rst:267
+#: 84dcf1a9b5e44b799d8a902028aca4cd
 msgid "**Chunk Size**: Balance processing efficiency and context preservation"
 msgstr "**块大小**：平衡处理效率与上下文保留"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:272
-#: 7e22a99e2c8f4a3ba62b058b549bfd43
+#: ../../guide/hooks/server_stdio_hooks.rst:270
+#: 7f4f241dc34c454594815ede83f17a15
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:275
-#: 3af93deda2bc4ef788bf41c8bc5f66ae
+#: ../../guide/hooks/server_stdio_hooks.rst:273
+#: d5421cc4cbc547b2bc7c84cf1dd5c248
 msgid "Common Issues"
 msgstr "常见问题"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:277
-#: 87f114e9aae84c7888478738141b6bd6
+#: ../../guide/hooks/server_stdio_hooks.rst:275
+#: 398fd74c04db4ea7955661738df65171
 msgid "**Hooks Not Triggering:**"
 msgstr "**钩子未触发：**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:279
-#: 7690628923cc47f086a76a4cf6a346bb
+#: ../../guide/hooks/server_stdio_hooks.rst:277
+#: a63c886ef5c34a0590826376e5102d03
 msgid "Check output length thresholds"
 msgstr "检查输出长度阈值"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:280
-#: 4502f496583c48bfbe992650d9a5393f
+#: ../../guide/hooks/server_stdio_hooks.rst:278
+#: c0b645ae71b346b6bb0a1dc8349ce403
 msgid "Verify hook configuration syntax"
 msgstr "验证钩子配置语法"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:281
-#: b64c36be637d4fe88a82139945524581
+#: ../../guide/hooks/server_stdio_hooks.rst:279
+#: 6195b917557c4e0aaa130bef9dcf11a8
 msgid "Ensure hooks are enabled"
 msgstr "确保已启用钩子"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:283
-#: 8d77fa99b46445648fd5a2753eaefdd3
+#: ../../guide/hooks/server_stdio_hooks.rst:281
+#: 9a046bd76a9f4dae96e62c2edb386abf
 msgid "**Performance Issues:**"
 msgstr "**性能问题：**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:285
-#: 00a6ab07dbfb4f1c986860cf4720f710
+#: ../../guide/hooks/server_stdio_hooks.rst:283
+#: 3eb4c6c19fd449f0b4886440c74ed607
 msgid "Adjust chunk sizes"
 msgstr "调整块大小"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:286
-#: 4fe6bde8c77045a1976409bf106d16ba
+#: ../../guide/hooks/server_stdio_hooks.rst:284
+#: fb718234ae5349b8b26cfb3f40226481
 msgid "Increase thresholds"
 msgstr "提高阈值"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:287
-#: acc1f31e602346e2844ecce2c447ee42
+#: ../../guide/hooks/server_stdio_hooks.rst:285
+#: 1881f5de2025405fb4eaffe25f377427
 msgid "Use tool-specific configurations"
 msgstr "使用特定工具的配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:289
-#: 4e81289158d840f4968fd4a949eed7c2
+#: ../../guide/hooks/server_stdio_hooks.rst:287
+#: bf6f3f13fcfb4028a28d2105279b3448
 msgid "**Configuration Errors:**"
 msgstr "**配置错误：**"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:291
-#: 007b62d70b9c4e6582c4d0dd43dfb1e0
+#: ../../guide/hooks/server_stdio_hooks.rst:289
+#: 19caa87524f3457a84643ab524ba80f7
 msgid "Validate JSON syntax"
 msgstr "验证 JSON 语法"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:292
-#: b89b6e8c30aa4acd96d59a5de563783f
+#: ../../guide/hooks/server_stdio_hooks.rst:290
+#: be6c1f603df7436e9bb11dc7346bc747
 msgid "Check parameter names"
 msgstr "检查参数名称"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:293
-#: db0ed2e3be654d54be75d670057bc54d
+#: ../../guide/hooks/server_stdio_hooks.rst:291
+#: 873190d1cbc34029977b298da0a9989c
 msgid "Verify hook types"
 msgstr "验证钩子类型"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:296
-#: cef1a98ffbf04b8aa611351a619df161
+#: ../../guide/hooks/server_stdio_hooks.rst:294
+#: f38d122226124d879c2f4ed39553698d
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:298
-#: 0b44ff6c8727434ead0fe47724fc122a
+#: ../../guide/hooks/server_stdio_hooks.rst:296
+#: 429bc202f6474acf98c4a227cdf47154
 msgid "Enable verbose logging for troubleshooting:"
 msgstr "启用详细日志记录以进行故障排除："
 
-#: ../../guide/hooks/server_stdio_hooks.rst:309
-#: 8e9b736d9f944a6296538bd4fedf6d5d
-msgid "Next Steps"
-msgstr "下一步"
-
-#: ../../guide/hooks/server_stdio_hooks.rst:311
-#: ef26d2b58ca44fc6a51a45ff134f97b0
-msgid ":doc:`index` - Complete hooks system Tutorial"
+#: ../../guide/hooks/server_stdio_hooks.rst:308
+#: 61c52f02943e44699ad453e3caff0398
+#, fuzzy
+msgid ":doc:`index` - Complete hooks system overview"
 msgstr ":doc:`index` - 完整的钩子系统教程"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:312
-#: 647db6d21a074bc880e578d53fd01b82
+#: ../../guide/hooks/server_stdio_hooks.rst:309
+#: 7759c24bc40d43788835aca55568e6eb
 msgid ":doc:`summarization_hook` - SummarizationHook details"
 msgstr ":doc:`summarization_hook` - SummarizationHook 详细信息"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:313
-#: e76e6996438b42b49f718a383af90c4d
+#: ../../guide/hooks/server_stdio_hooks.rst:310
+#: 12ec3c9b702f4cd0a9c676a6511f2216
 msgid ":doc:`file_save_hook` - FileSaveHook details"
 msgstr ":doc:`file_save_hook` - FileSaveHook 详情"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:314
-#: f0c4ec0b7d23481599c1c41ffbe1fea2
+#: ../../guide/hooks/server_stdio_hooks.rst:311
+#: 2e70d76e827b4ce593a5cb1d31b09353
 msgid ":doc:`hook_configuration` - Advanced configuration"
 msgstr ":doc:`hook_configuration` - 高级配置"
 
-#: ../../guide/hooks/server_stdio_hooks.rst:315
-#: 4b7d09dde1e74654a6f223e4f0a6ac95
-msgid ":doc:`../loading_tools` - Tool loading and management"
-msgstr ":doc:`../loading_tools` - 工具加载与管理"
+#~ msgid ""
+#~ "This Tutorial covers how to use "
+#~ "ToolUniverse's intelligent output processing "
+#~ "hooks with both server and stdio "
+#~ "modes, including command-line options, "
+#~ "configuration files, and Python API "
+#~ "integration."
+#~ msgstr ""
+#~ "本教程介绍了如何在服务器模式和标准输入输出（stdio）模式下使用 ToolUniverse "
+#~ "的智能输出处理钩子，包括命令行选项、配置文件及 Python API 集成。"
+
+#~ msgid "Next Steps"
+#~ msgstr "下一步"
+
+#~ msgid ":doc:`../loading_tools` - Tool loading and management"
+#~ msgstr ":doc:`../loading_tools` - 工具加载与管理"
+

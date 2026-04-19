@@ -1,0 +1,243 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/expression_atlas_tools.rst:10 e28f0c3ca2e24db18ff972dcbe9af074
+msgid "Expression Atlas Tools"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:12 89e1e4b62d5c476b96d2202ed2bf6da1
+msgid ""
+"**Configuration File**: ``expression_atlas_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:16 2fe26888306e4786b27eec2ef1a70798
+msgid ""
+"This page contains all tools defined in the "
+"``expression_atlas_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:19 74532b0491594eb3ab345890814238de
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:22 3ba11ab6c64c4ca182cfc926d36f5f2a
+msgid "**ExpressionAtlas_get_baseline** (Type: ExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:24 92f8c2728a604e38b545b0c5829d1cc1
+msgid ""
+"Get baseline gene expression experiments from EBI Expression Atlas. Shows"
+" which tissues/cell type..."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst dcf6d8236f154e1c90764742bdc345ff
+msgid "ExpressionAtlas_get_baseline tool specification"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:28
+#: ../../tools/expression_atlas_tools.rst:62
+#: ../../tools/expression_atlas_tools.rst:93
+#: ../../tools/expression_atlas_tools.rst:129 08d8f64c59ce4eebbbd141017b249518
+#: 32f78d5949c047a2b58d45eb009a6efa 7fd749ae996447b792ae1bd7d4ab25b2
+#: f9e2f64e97ec457ba2ab2d2201b034e2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:30 e2b159f75ca743eca6d618c3bba1014e
+msgid "**Name**: ``ExpressionAtlas_get_baseline``"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:31
+#: ../../tools/expression_atlas_tools.rst:65
+#: ../../tools/expression_atlas_tools.rst:96
+#: ../../tools/expression_atlas_tools.rst:132 51c6740bbd8e4de7a3fb4c5edba1d422
+#: 79c1591602df4603a2dfdbeadfee48e2 a199401e3a8a4ea0b08f30792f9b1d82
+#: a78664abcf684c0fb1b0a01ae3635069
+msgid "**Type**: ``ExpressionAtlasTool``"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:32 883336e6469f43a3b2db0ee241817c0d
+msgid ""
+"**Description**: Get baseline gene expression experiments from EBI "
+"Expression Atlas. Shows which tissues/cell types express a gene under "
+"normal conditions. Complements GTEx and HPA. No API key needed. Query by "
+"gene symbol or Ensembl ID."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:34
+#: ../../tools/expression_atlas_tools.rst:68
+#: ../../tools/expression_atlas_tools.rst:99
+#: ../../tools/expression_atlas_tools.rst:135 2fba7d2222f347728f7edba0f473ca7d
+#: 639336884ff24959a4f4aed313821cdc 9376263067c4410a87101e96504600f5
+#: 9a49f5eb67784370bc48444db3070a88
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:36 bfcf23e96a37460b9c314180fb89e32d
+msgid ""
+"``gene`` (string) (required) Gene symbol (e.g., 'TP53', 'WDR7') or "
+"Ensembl ID (e.g., 'ENSG00000141510')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:39 60e032feec804eafaf15242f1412a87e
+msgid ""
+"``species`` (string) (optional) Species name (default: 'homo sapiens'). "
+"Also supports 'mus musculus', 'rattus norvegicus', etc."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:42
+#: ../../tools/expression_atlas_tools.rst:73
+#: ../../tools/expression_atlas_tools.rst:110
+#: ../../tools/expression_atlas_tools.rst:146 02eb049658964e1b9a2fab5d5bf36b0d
+#: 41b67459b3a7473a8cda958f4c849702 71639296258649b899f36713cd9b020c
+#: c42a4a42bf97457187cb6fc2826f6771
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:56 cfa8ad6512304a6497b0abe3fdd42124
+msgid "**ExpressionAtlas_get_experiment** (Type: ExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:58 142eea4cc0e64e6b942afe3035c24ebb
+msgid ""
+"Get detailed metadata for a specific Expression Atlas experiment by "
+"accession (e.g., E-MTAB-2836)..."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst 68f43fe8c4d34b4990a3633f8872c5d6
+msgid "ExpressionAtlas_get_experiment tool specification"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:64 158ac4b179034641aaaed7300e555c9a
+msgid "**Name**: ``ExpressionAtlas_get_experiment``"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:66 d94c568bd7984b41a24f066cb337b182
+msgid ""
+"**Description**: Get detailed metadata for a specific Expression Atlas "
+"experiment by accession (e.g., E-MTAB-2836). Returns experiment design, "
+"species, technology, contrasts, PubMed references, and number of assays."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:70 5ac48b39e35f4bcd9a23e3e61fa12bba
+msgid ""
+"``accession`` (string) (required) Expression Atlas experiment accession "
+"(e.g., 'E-MTAB-2836', 'E-GEOD-26284')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:87 7604e5164f484aca8c692e83cd2db546
+msgid "**ExpressionAtlas_search_differential** (Type: ExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:89 39f9d3fb897d4a41854b483e8b09510f
+msgid ""
+"Search for differential expression experiments from EBI Expression Atlas."
+" Find experiments where ..."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst 8b027cf5966247c3a19872b489994d71
+msgid "ExpressionAtlas_search_differential tool specification"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:95 1d80377b9344431f8c3af10e08b777b2
+msgid "**Name**: ``ExpressionAtlas_search_differential``"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:97 e269d1647bf045bdbf7b76f189f53352
+msgid ""
+"**Description**: Search for differential expression experiments from EBI "
+"Expression Atlas. Find experiments where a gene is differentially "
+"expressed in disease vs. normal, treated vs. untreated, etc. Supports "
+"disease-context expression analysis."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:101 19a5b7ab0a9d4043bda8b20be1018221
+msgid ""
+"``gene`` (string) (optional) Gene symbol or Ensembl ID (e.g., 'TP53', "
+"'ENSG00000141510')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:104 11395eb2372d46e79890542e34403a2b
+msgid ""
+"``condition`` (string) (optional) Condition/disease to filter by (e.g., "
+"'cancer', 'inflammation', 'breast')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:107 c56e83d2a0624f91954bfbc387d01411
+msgid "``species`` (string) (optional) Species name (default: 'homo sapiens')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:123 a9aa866b48a14887915aca41a4477449
+msgid "**ExpressionAtlas_search_experiments** (Type: ExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:125 df19d2e7cb1042408dc7fcfe02d169b7
+msgid ""
+"Search all EBI Expression Atlas experiments (baseline + differential) by "
+"gene and/or condition. R..."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst 4a35fc966bce4aa78f030e96fc59d7a8
+msgid "ExpressionAtlas_search_experiments tool specification"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:131 c2764982a67a4089a2f34314882e0c89
+msgid "**Name**: ``ExpressionAtlas_search_experiments``"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:133 d6056e7c18ed436f949e5a3288fb7eee
+msgid ""
+"**Description**: Search all EBI Expression Atlas experiments (baseline + "
+"differential) by gene and/or condition. Returns experiment accessions, "
+"types, descriptions, and assay counts. Use to find relevant expression "
+"datasets."
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:137 95b14a16630645689028c38037e0138d
+msgid "``gene`` (string) (optional) Gene symbol or Ensembl ID"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:140 798c0a29273d4ed7829ace1d3a4aacb4
+msgid ""
+"``condition`` (string) (optional) Biological condition or tissue (e.g., "
+"'brain', 'cancer', 'kidney')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:143 5b8683088314411e9951773156dfa698
+msgid ""
+"``species`` (string) (optional) Species name (optional, e.g., 'homo "
+"sapiens')"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:159 4e390591ae4846b8a152082487ea168d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:161 adb1ac6ee06d47c3b13c571daabb278d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/expression_atlas_tools.rst:162 a73c6c459d474acfbda6d42547ba692f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

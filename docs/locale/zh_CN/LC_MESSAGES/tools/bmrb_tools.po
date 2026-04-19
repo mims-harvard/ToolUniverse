@@ -1,0 +1,251 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bmrb_tools.rst:10 bc4a67ab27304e60bea3c237aae2bbb0
+msgid "Bmrb Tools"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:12 8a2eea073bff49668fb1d73c374cd80d
+msgid ""
+"**Configuration File**: ``bmrb_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:16 65fb12ee878c4e82982f3de3ab55cceb
+msgid ""
+"This page contains all tools defined in the ``bmrb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:19 d58b754f794041cfb285163f93b98257
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:22 6932d0ff8d1b4c8bb94b241928477dfe
+msgid "**BMRB_get_entries_by_pdb_id** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:24 e3c2dd7d64c940e4b2ae4d90b61e3448
+msgid ""
+"Find BMRB NMR entries associated with a PDB structure. Returns BMRB entry"
+" IDs linked to a given P..."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst e04df96cd30d4aaaa10aba03b1c4feb4
+msgid "BMRB_get_entries_by_pdb_id tool specification"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:28 ../../tools/bmrb_tools.rst:59
+#: ../../tools/bmrb_tools.rst:90 ../../tools/bmrb_tools.rst:121
+#: ../../tools/bmrb_tools.rst:152 10419cebd62e4106a7147fafe52aad15
+#: 1b7cf235e24d4994a2815803b66075ff 4e1d454ed9c64d0b92e724281b8c04ee
+#: 85c21167dbe94e3db230efd2041a44f5 e1d8205591e44c788a971143879957ca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:30 5c1dfcab18d4488a91b8621986a2c5e7
+msgid "**Name**: ``BMRB_get_entries_by_pdb_id``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:31 ../../tools/bmrb_tools.rst:62
+#: ../../tools/bmrb_tools.rst:93 ../../tools/bmrb_tools.rst:124
+#: ../../tools/bmrb_tools.rst:155 20490b784d6d4d62875b3fcfd5851bb9
+#: 52c127e4b1d1461bb8fbbb6d0721b27c 542cd890099f4eb9b7055c8096ab7176
+#: 9ba3e7124b9c403d83aa294cfcea7105 ac641335bcc745a5b52865ca0c611221
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:32 ed717364e33f4ced902323a835a5b2a0
+msgid ""
+"**Description**: Find BMRB NMR entries associated with a PDB structure. "
+"Returns BMRB entry IDs linked to a given PDB accession, with match type "
+"(BLAST or author-provided). Useful for finding NMR chemical shift data "
+"for a protein with known crystal structure."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:34 ../../tools/bmrb_tools.rst:65
+#: ../../tools/bmrb_tools.rst:96 ../../tools/bmrb_tools.rst:127
+#: ../../tools/bmrb_tools.rst:158 12e9add80955408981545203c3a33a8f
+#: 3165e342d4bf4ee78cc5d9b24847de21 3c0ad17d89984df2acd294091289189a
+#: 5ffc29a040dd45bd9ad1afcc974adf90 6140b28363314e049124be3608ae5783
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:36 b6efa094760b4412a066df3a41256dcf
+msgid "``pdb_id`` (string) (required) PDB entry ID (e.g., '1ubq', '1d3z', '2k39')"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:39 ../../tools/bmrb_tools.rst:70
+#: ../../tools/bmrb_tools.rst:101 ../../tools/bmrb_tools.rst:132
+#: ../../tools/bmrb_tools.rst:166 4c85c4426d2547cd8bfa585c193b24ca
+#: 582871200c334a1891abfd558e33e29a 87514a4a4cc344fbafcd10bc5440b3b8
+#: dff014ba53034ea2b91d2a8675a3f83e ff136effc7a249c5ae8f210a1e7b72d7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:53 e876cbbeaa4a471f834da2b386c1afd4
+msgid "**BMRB_get_entries_by_uniprot** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:55 10a79befa325403886da4c61e3fdd5ab
+msgid ""
+"Find BMRB NMR entries for a protein using its UniProt accession. Returns "
+"NMR data entries associa..."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst e0afe0ca849a4741a5892b7e59c6027f
+msgid "BMRB_get_entries_by_uniprot tool specification"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:61 ac49e8f3130448f4922e404edf40e428
+msgid "**Name**: ``BMRB_get_entries_by_uniprot``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:63 00284d22e2454c2bb50772a1a797587a
+msgid ""
+"**Description**: Find BMRB NMR entries for a protein using its UniProt "
+"accession. Returns NMR data entries associated with the protein, allowing"
+" cross-referencing between sequence databases and NMR spectroscopy data."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:67 066c790ed07648ddbc388fba0c2d1409
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession (e.g., 'P62988' for "
+"ubiquitin, 'P0DTD1' for SARS-CoV-2 polyprotein)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:84 1f76a472df9e42278e71064941ca98c8
+msgid "**BMRB_get_entry** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:86 27ecc4faf04040308a89524df0607355
+msgid ""
+"Get NMR data entry from the Biological Magnetic Resonance Data Bank "
+"(BMRB). Returns the full NMR-..."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst 46850a83b7244079afd1bfe25ae3b185
+msgid "BMRB_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:92 1b378789dae54c52bf18698a65579021
+msgid "**Name**: ``BMRB_get_entry``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:94 ad29a872350343f48a65226c35dd0fd2
+msgid ""
+"**Description**: Get NMR data entry from the Biological Magnetic "
+"Resonance Data Bank (BMRB). Returns the full NMR-STAR data for a BMRB "
+"entry including chemical shifts, coupling constants, relaxation data, "
+"structure restraints, and experimental conditions. BMRB archives NMR "
+"spectroscopy data for biological macromolecules (proteins, nucleic acids,"
+" carbohydrates) and small molecules. Entry IDs are integers (e.g., 15000 "
+"for villin headpiece, 4020 for ubiquitin)."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:98 4ec2189819bd476ebde93763ff804387
+msgid ""
+"``entry_id`` (string) (required) BMRB entry ID (e.g., '15000', '4020', "
+"'11086')"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:115 3f3d7369c13a4379a588a7c97219566f
+msgid "**BMRB_get_entry_citation** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:117 f8de0ccda8b24b8dbfe1a7d3db1cffb9
+msgid ""
+"Get the citation/publication information for a BMRB NMR entry in BibTeX "
+"format. Returns author li..."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst 2b6fed0c6b704a148766557c269ebe82
+msgid "BMRB_get_entry_citation tool specification"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:123 2793fa1fb4ed4b07a13f6728c8f82fb6
+msgid "**Name**: ``BMRB_get_entry_citation``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:125 3b5fd7668f0940e7aa79ae01d713b32a
+msgid ""
+"**Description**: Get the citation/publication information for a BMRB NMR "
+"entry in BibTeX format. Returns author list, title, journal, DOI, and "
+"year. Useful for citing NMR data sources."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:129 b944655765274a368545595986955d17
+msgid "``entry_id`` (string) (required) BMRB entry ID (e.g., '15000', '4020')"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:146 828677fb2aba46d9a95780b6b2348396
+msgid "**BMRB_search_by_keyword** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:148 429520d6684c4812a474a6abde4c447e
+msgid ""
+"Search BMRB (Biological Magnetic Resonance Data Bank) entries by keyword "
+"or molecule name. Return..."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst 66d8787ab36344fc94c997bee1fdd19a
+msgid "BMRB_search_by_keyword tool specification"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:154 7eab238b9cc7460ba51a1608882ec4f5
+msgid "**Name**: ``BMRB_search_by_keyword``"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:156 0d17c8d71fb54469a13906db3cd889c4
+msgid ""
+"**Description**: Search BMRB (Biological Magnetic Resonance Data Bank) "
+"entries by keyword or molecule name. Returns matching BMRB entries with "
+"their IDs and summary information. Use the 'database' parameter to search"
+" either macromolecules (proteins, nucleic acids) or metabolomics small "
+"molecules."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:160 fba586bb8832432ebfa3c325806d6d78
+msgid ""
+"``term`` (string) (required) Search term (protein name, molecule name, or"
+" keyword). Examples: 'ubiquitin', 'calmodulin', 'insulin'"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:163 9186e87c6b364d048aed9f56940a0403
+msgid ""
+"``database`` (string, null) (optional) Database to search: "
+"'macromolecules' (proteins/nucleic acids) or 'metabolomics' (small "
+"molecules). Default searches both."
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:180 3a65d684f7794edabeb874ecbf1ab016
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:182 cce09fe2ffe74672a3781e88b402f094
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bmrb_tools.rst:183 2e9643adbf8940c8932b49cad555afaf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

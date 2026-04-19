@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mesh_tools.rst:10 6fe61eb880a4472081adb8adb047cf89
+msgid "Mesh Tools"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:12 926c71c22de2454f9067c6b9c160c457
+msgid ""
+"**Configuration File**: ``mesh_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:16 5d943feb589f4c4798ac15817ef48831
+msgid ""
+"This page contains all tools defined in the ``mesh_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:19 c1d5d78604314db69a404a7ebef9f5e0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:22 bca6d12aab2e4c39afc7b09fc5a1f682
+msgid "**MeSH_get_descriptor** (Type: MeSHTool)"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:24 8143aa9b03f04e6a89a169f55377d666
+msgid ""
+"Get detailed information for a MeSH descriptor by its ID. Returns the "
+"descriptor's label, type, a..."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst 22cba5c373ef4074850d2a2c9ccc94ba
+msgid "MeSH_get_descriptor tool specification"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:28 ../../tools/mesh_tools.rst:59
+#: ../../tools/mesh_tools.rst:96 2376ca8151044f2aa0b54d11d235cacc
+#: b481ab0163e647379bb3de0af0cc7b48 e16155c2403540b4a8f7acd2402b26c7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:30 018cf737e3c248b1a7dee932e132e080
+msgid "**Name**: ``MeSH_get_descriptor``"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:31 ../../tools/mesh_tools.rst:62
+#: ../../tools/mesh_tools.rst:99 4453709c871240c985fb2b5dc8edf307
+#: 448885b56c4549a79f1502c04e6c0401 ea77b732df534c9e922e1b92e1561e1e
+msgid "**Type**: ``MeSHTool``"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:32 c82c55c0a6ca417fae497ee76fbdd6f0
+msgid ""
+"**Description**: Get detailed information for a MeSH descriptor by its "
+"ID. Returns the descriptor's label, type, annotation, tree numbers (for "
+"hierarchical browsing), date of introduction, and related terms. MeSH "
+"tree numbers encode the hierarchical position in the 16 MeSH categories "
+"(A=Anatomy, B=Organisms, C=Diseases, D=Chemicals, E=Analytical, etc.). "
+"Example: D009369 returns 'Neoplasms' with tree number C04, annotation "
+"about cancer terminology, and 'considerAlso' cross-references."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:34 ../../tools/mesh_tools.rst:65
+#: ../../tools/mesh_tools.rst:102 0ca25f6132ed42418bc58f3f85c9ea0f
+#: 5285e691631f40b895e666c78273fd31 9211d5fd378f4fe9b403d97ba51585b5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:36 7aa33ffecf404eee86d7cbdfff2e1a1b
+msgid ""
+"``descriptor_id`` (string) (required) MeSH descriptor ID. Examples: "
+"'D009369' (Neoplasms), 'D003920' (Diabetes Mellitus), 'D001241' "
+"(Aspirin), 'D001921' (Brain), 'D000998' (Antiviral Agents)."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:39 ../../tools/mesh_tools.rst:76
+#: ../../tools/mesh_tools.rst:113 44527231d877437198f7e08eb92b58e9
+#: e18803c088b842e09587655893d9eddd f305cb8efb484ccda27cf0a17e3174ad
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:53 062bdd732c0b41a29acdab1390483112
+msgid "**MeSH_search_descriptors** (Type: MeSHTool)"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:55 ee346cdc42f14df0b298ffbac2d0d3b6
+msgid ""
+"Search MeSH (Medical Subject Headings) descriptors by label. MeSH is "
+"NLM's controlled vocabulary ..."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst 7349a9193e07427f8cefb299c9d1e118
+msgid "MeSH_search_descriptors tool specification"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:61 17b11ae41bbc4dc381a2b8fc97092171
+msgid "**Name**: ``MeSH_search_descriptors``"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:63 ada0185fac0641d791fd82d3d251cdc8
+msgid ""
+"**Description**: Search MeSH (Medical Subject Headings) descriptors by "
+"label. MeSH is NLM's controlled vocabulary for indexing biomedical "
+"literature in PubMed. Descriptors are the main headings in MeSH that "
+"represent biomedical concepts including diseases, drugs, anatomy, "
+"organisms, and procedures. Supports exact and contains matching. Example:"
+" searching 'Neoplasms' with exact match returns descriptor D009369."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:67 43ebf5d6f8ac480eb31e54af493cb8d2
+msgid ""
+"``query`` (string) (required) Descriptor label to search for. Examples: "
+"'Neoplasms', 'Diabetes Mellitus', 'Aspirin', 'Brain', 'Escherichia coli'."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:70 ../../tools/mesh_tools.rst:107
+#: 50658fcb6c434b67b37a232ca1cd61a1 85f1c8a9d3bd4f73b3ae82652290b284
+msgid ""
+"``match`` (string, null) (optional) Match type: 'exact' for exact match, "
+"'contains' for partial match (default), 'startswith' for prefix match."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:73 ../../tools/mesh_tools.rst:110
+#: 90d13f14891b4e62bd346ec8e6de3f91 bab3f9981417490ab6ad74eb39242fdd
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results (default: "
+"20, max: 50)."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:90 b70c87d73b1b41238e8d198757edf9a3
+msgid "**MeSH_search_terms** (Type: MeSHTool)"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:92 c28f1af373eb419f89be188ebeb59e0b
+msgid ""
+"Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the"
+" preferred descriptor na..."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst 7d7a34e18e9f4651b5e4e09d4edaa371
+msgid "MeSH_search_terms tool specification"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:98 d54c04602d054c469f991a09dcb53769
+msgid "**Name**: ``MeSH_search_terms``"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:100 8a4efffc9a194e9e85696f3116a919de
+msgid ""
+"**Description**: Search MeSH terms (entry terms/synonyms) by label. MeSH "
+"terms include the preferred descriptor names as well as alternative entry"
+" terms, synonyms, and common names. This is broader than descriptor "
+"search and can find terms like 'heart attack' that map to the descriptor "
+"'Myocardial Infarction'. Supports exact, contains, and startswith "
+"matching. Example: searching 'tumor' returns terms like 'Tumors', 'Tumor "
+"Growth', 'Tumors, Neoplastic'."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:104 4513d5cb6bae4024957f2c31ccfa5a12
+msgid ""
+"``query`` (string) (required) Term label to search for. Examples: "
+"'tumor', 'heart attack', 'aspirin', 'blood pressure', 'DNA repair'."
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:127 63feb93c76f44db8861d6f6dbeca08cb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:129 ebecb7b417ea493f827f0bae0389a8c5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mesh_tools.rst:130 8ebccca1e3894886b77c5551cf5bc2eb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

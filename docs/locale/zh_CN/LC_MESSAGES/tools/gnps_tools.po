@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gnps_tools.rst:10 b1aa1a4e06974b7d8d6eb710f2f70957
+msgid "Gnps Tools"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:12 5b39d32ed95f49bd89fc073e58d981af
+msgid ""
+"**Configuration File**: ``gnps_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:16 11f2edbc9e344d3a96d3abb093646273
+msgid ""
+"This page contains all tools defined in the ``gnps_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:19 cf0ceb4efa0846f48bb9c944ea8d36ec
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:22 68970e64ca3145e095c8959c7791bef8
+msgid "**GNPS_compare_spectra** (Type: GNPSTool)"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:24 8deb51b6389c4609b636ba20e11d3f1a
+msgid ""
+"Compare two MS/MS spectra from the GNPS spectral library using Universal "
+"Spectrum Identifiers (US..."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst e6d9bb074ee74eaea90d28dbf9a50226
+msgid "GNPS_compare_spectra tool specification"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:28 ../../tools/gnps_tools.rst:63
+#: 7f647d8e93d3427ab4b72a49a3258e58 871c4024d77d400bb6fd7a64b126f7aa
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:30 efd1ccc5ed99466c98c436510f3b8b2e
+msgid "**Name**: ``GNPS_compare_spectra``"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:31 ../../tools/gnps_tools.rst:66
+#: 4e6fb4cb05644bf291e73040c7355083 fb2919a928d14dd5981c3f931720075e
+msgid "**Type**: ``GNPSTool``"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:32 6c243b26808444dcbc2f6bc51455217f
+msgid ""
+"**Description**: Compare two MS/MS spectra from the GNPS spectral library"
+" using Universal Spectrum Identifiers (USIs). Returns metadata for both "
+"spectra (precursor m/z, peak counts) and a link to the interactive mirror"
+" plot visualization. Useful for assessing spectral similarity between "
+"known and unknown compounds in metabolomics workflows."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:34 ../../tools/gnps_tools.rst:69
+#: 298498a20113463e8e9c26e6adb696fe a36a95e1572b481998d07676c5e77e12
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:36 7057b21545dc43db800ef88096d42a13
+msgid ""
+"``usi1`` (string) (required) First spectrum USI. Example: 'mzspec:GNPS"
+":GNPS-LIBRARY:accession:CCMSLIB00005435737'."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:39 d4a58f2309d64256a371070a6cf14a88
+msgid ""
+"``usi2`` (string) (required) Second spectrum USI. Example: 'mzspec:GNPS"
+":GNPS-LIBRARY:accession:CCMSLIB00000579622'."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:42 ../../tools/gnps_tools.rst:74
+#: c042882574b54327acce9e8a81a074f0 fa5c586b59b94e27bc529151c4e0fb99
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:57 4d0b71207a794941806b2856bcc74e0d
+msgid "**GNPS_get_spectrum** (Type: GNPSTool)"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:59 1b0b9504ebd64689b86748b07402dd04
+msgid ""
+"Retrieve a mass spectrometry (MS/MS) reference spectrum from the GNPS "
+"spectral library using a Un..."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst 20136b2896544986b2bcaab2db382798
+msgid "GNPS_get_spectrum tool specification"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:65 30f5ab9def7e4df9ad6cd3ef46afd630
+msgid "**Name**: ``GNPS_get_spectrum``"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:67 4d36752e78b34ea5a86b9262d7dd7a25
+msgid ""
+"**Description**: Retrieve a mass spectrometry (MS/MS) reference spectrum "
+"from the GNPS spectral library using a Universal Spectrum Identifier "
+"(USI). Returns precursor m/z, charge, number of peaks, m/z range, and the"
+" top 20 peaks by intensity. GNPS is the world's largest community-curated"
+" spectral library for metabolomics and natural products research. "
+"Example: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737' "
+"retrieves a reference spectrum with precursor m/z 405.264 and 83 peaks."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:71 bdf829c501ff4808b4c8bb202b0e64c3
+#, python-brace-format
+msgid ""
+"``usi`` (string) (required) Universal Spectrum Identifier. Format: "
+"'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB{id}'. Example: 'mzspec:GNPS"
+":GNPS-LIBRARY:accession:CCMSLIB00005435737'."
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:88 f7624c7fcb034b7983adbbefd028b8b1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:90 ab9b324f734f4ec18e3e3b29e4cf4c67
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gnps_tools.rst:91 d88e1a7fae0347478f798e77c4dfea53
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

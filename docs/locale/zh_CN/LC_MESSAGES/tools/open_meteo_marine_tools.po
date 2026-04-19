@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/open_meteo_marine_tools.rst:10 b3632a4f27264f08b1bf927bf2392246
+msgid "Open Meteo Marine Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:12 2c72920dc58741438fbd1527c038090b
+msgid ""
+"**Configuration File**: ``open_meteo_marine_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:16 34a8671888b74d2f86de5ae29fd60dd4
+msgid ""
+"This page contains all tools defined in the "
+"``open_meteo_marine_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:19 3f83ce70eb514cb69e0a6ff9e69c76ca
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:22 57b55ded6f544ba5811f0d241036247c
+msgid "**OpenMeteo_get_marine_forecast** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:24 4034cc6254f34082b31495e69e0e60c5
+msgid ""
+"Get marine/ocean weather forecast for any coastal or offshore location "
+"using Open-Meteo (free, no..."
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst a3730bb32a334e0795304a31616de0f0
+msgid "OpenMeteo_get_marine_forecast tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:28 2da5b9def0b4441899ef81fd3fd7fc62
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:30 1ae528ca9f574fa5a2decd17cfe03a18
+msgid "**Name**: ``OpenMeteo_get_marine_forecast``"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:31 63e7dc9d307041ca82d64a8763387d5a
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:32 89060539518a49bc981c00bafe6d9589
+msgid ""
+"**Description**: Get marine/ocean weather forecast for any coastal or "
+"offshore location using Open-Meteo (free, no API key). Returns wave "
+"height, wave direction, wave period, swell wave height, swell direction, "
+"swell period, wind wave height, and ocean temperature. Data sourced from "
+"NOAA GFS Wave, DWD ICON Wave, and ECMWF WAM models with global 0.25 "
+"degree resolution. Useful for surfing, sailing, fishing, offshore "
+"operations, and maritime safety. Latitude/longitude required (use "
+"OpenMeteo\\_geocode\\_location for coordinates)."
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:34 25a00024a78c47d797e42b13a8c274ea
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:36 c6b7119cd928470085f67c0ec27e8f60
+msgid ""
+"``latitude`` (number) (required) Latitude in decimal degrees (e.g., 52.0 "
+"for North Sea, 21.3 for Hawaii, -33.9 for Sydney coast)"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:39 5a88117c3d0249a4bda388f54314a0e1
+msgid ""
+"``longitude`` (number) (required) Longitude in decimal degrees (e.g., 4.0"
+" for North Sea, -157.8 for Hawaii, 151.2 for Sydney coast)"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:42 e682b9fa251e4f898023e75bda3e2ce5
+msgid ""
+"``hourly`` (string, null) (optional) Comma-separated hourly marine "
+"variables. Options: wave\\_height, wave\\_direction, wave\\_period, "
+"wind\\_wave\\_height, wind\\_wave\\_direction, wind\\_wave\\_period, "
+"wind\\_wave\\_peak\\_period, swell\\_wave\\_height, "
+"swell\\_wave\\_direction, swell\\_wave\\_period, "
+"swell\\_wave\\_peak\\_period, ocean\\_current\\_velocity, "
+"ocean\\_current\\_direction. Default: wave\\_height if not specified."
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:45 4a132a2f76f84b4e8ed3fa215b875811
+msgid ""
+"``daily`` (string, null) (optional) Comma-separated daily marine "
+"variables. Options: wave\\_height\\_max, wave\\_direction\\_dominant, "
+"wave\\_period\\_max, wind\\_wave\\_height\\_max, "
+"wind\\_wave\\_direction\\_dominant, wind\\_wave\\_period\\_max, "
+"wind\\_wave\\_peak\\_period\\_max, swell\\_wave\\_height\\_max, "
+"swell\\_wave\\_direction\\_dominant, swell\\_wave\\_period\\_max, "
+"swell\\_wave\\_peak\\_period\\_max."
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:48 c7261827b8a84292aaa3e2e511921eef
+msgid ""
+"``forecast_days`` (integer, null) (optional) Number of forecast days "
+"(1-16, default 7)"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:51 6d6136246236451e9459a9420706d364
+msgid ""
+"``timezone`` (string, null) (optional) Timezone for local time (e.g., "
+"'Europe/London', 'Pacific/Honolulu', 'auto')"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:54 254d74254a9c4a85ade9dddb8f2588cf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:69 7d33088db51749a9a529f7f87cf3888e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:71 0097f7eea7c5428c93490e03c1f0a992
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/open_meteo_marine_tools.rst:72 e2b7c4c2ef654a5f9ec54e96b20a10d7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/powo_tools.rst:10 7a7266e9e45147d08fdbccb2a39957de
+msgid "Powo Tools"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:12 0bc7cfd2902a4df3b13e7ed0ef2492b3
+msgid ""
+"**Configuration File**: ``powo_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:16 69da4191c06c458d85e67ed68090813d
+msgid ""
+"This page contains all tools defined in the ``powo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/powo_tools.rst:19 dbb87f79175342b0a90e9665111e9042
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:22 d7d7be8ea2364a21b6296d023b4b6fe8
+msgid "**POWO_get_taxon** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:24 40cf616517324dfea720f7be6916ef8c
+msgid ""
+"Get detailed taxonomic information for a specific plant species from "
+"Plants of the World Online (..."
+msgstr ""
+
+#: ../../tools/powo_tools.rst 76544fe6fad54033842825341abeef22
+msgid "POWO_get_taxon tool specification"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:28 ../../tools/powo_tools.rst:59
+#: 3e91a8a8c48d4d7cad48129ff52b9acf 768369f34c714a8fb8e6dd3643f48106
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:30 f0ada3d4c5cc435788a4c557d329d5ea
+msgid "**Name**: ``POWO_get_taxon``"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:31 ../../tools/powo_tools.rst:62
+#: 4947fef4213f494b8a1999ea097fc5b9 dffd51b90b2f47929d0cac49735dd9de
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:32 f0a85b39ebca4935b063195537cc3f49
+msgid ""
+"**Description**: Get detailed taxonomic information for a specific plant "
+"species from Plants of the World Online (POWO). Returns comprehensive "
+"data including taxonomic classification, accepted name, synonyms, "
+"geographic distribution by region, morphological descriptions, and "
+"images. Use POWO\\_search\\_plants to find the fqId (fully qualified ID) "
+"first."
+msgstr ""
+
+#: ../../tools/powo_tools.rst:34 ../../tools/powo_tools.rst:65
+#: 573ed99524b24ef8954f84fa8929cf9e bbf62a248d2042b2ab06e4f6e269a266
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:36 8429c437e313418181238ff3eefd9c37
+msgid ""
+"``fqId`` (string) (required) Fully qualified taxon ID from POWO. Format: "
+"'urn:lsid:ipni.org:names:XXXXXXX-X'. Example: "
+"'urn:lsid:ipni.org:names:717960-1' (Rosa canina). Obtained from "
+"POWO\\_search\\_plants results."
+msgstr ""
+
+#: ../../tools/powo_tools.rst:39 ../../tools/powo_tools.rst:79
+#: 6322a46414d64216bc910dc385ba4f11 9beef6c7be534356a9500441b38d0d6e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:53 a9e0b7e035474a3d9dac37e708b5f69f
+msgid "**POWO_search_plants** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:55 48d7b551be1048b29ab945d67e655954
+msgid ""
+"Search the Plants of the World Online (POWO) database maintained by the "
+"Royal Botanic Gardens, Ke..."
+msgstr ""
+
+#: ../../tools/powo_tools.rst ab72a46e3af9447b8c67d9d04a43c97a
+msgid "POWO_search_plants tool specification"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:61 5dbd1613e28d48bf850602eefea14e0c
+msgid "**Name**: ``POWO_search_plants``"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:63 9d258ca108b14ac894c2589d20bb038b
+msgid ""
+"**Description**: Search the Plants of the World Online (POWO) database "
+"maintained by the Royal Botanic Gardens, Kew. POWO is the most "
+"comprehensive global checklist of vascular plants with 1.3+ million names"
+" and 350,000+ accepted species. Search by plant name, genus, family, or "
+"common name. Returns taxonomic information including accepted names, "
+"synonyms, distribution, and images. Essential for plant taxonomy, botany,"
+" and biodiversity research."
+msgstr ""
+
+#: ../../tools/powo_tools.rst:67 346676af473848759c808b787bf85ab7
+msgid ""
+"``q`` (string) (required) Search query. Can be scientific name, common "
+"name, genus, or family. Examples: 'rosa canina', 'orchid', 'Asteraceae', "
+"'oak'"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:70 3bd530bf534f4c08bbc6d3486b7423b8
+msgid ""
+"``f`` (string, null) (optional) Filter facets (comma-separated). Common "
+"filters: 'species\\_f:true' (species only), 'accepted\\_names:true' (only"
+" accepted names). Example: 'species\\_f:true'"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:73 3b784feb730e4ccba2fce0b40157f881
+msgid ""
+"``perPage`` (integer, null) (optional) Results per page (default 24, max "
+"500)"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:76 72ca7ef1d16c4a4baae9cc271e61cdd3
+msgid ""
+"``cursor`` (string, null) (optional) Pagination cursor from previous "
+"response"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:93 3ed9819adf084c0e844d420b45a8d59e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:95 d0f26c5e074243bcb85422db26ccd37c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/powo_tools.rst:96 e80c7bf9edb14fc3ac749915d5dc545d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

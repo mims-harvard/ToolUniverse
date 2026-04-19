@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mirna_tools.rst:10 44509f11aca643dfaba752ec5d7e5aac
+msgid "Mirna Tools"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:12 fab07067c28d47dea7b6310f70e148e1
+msgid ""
+"**Configuration File**: ``mirna_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 4"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:16 0b30a2597984470cb1f42d6f5f345beb
+msgid ""
+"This page contains all tools defined in the ``mirna_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:19 9952c543e57d46beb50d9fb0133f9059
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:22 d9aefc71d28c448c8eb7c73f78b46bff
+msgid "**miRBase_get_mirna** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:24 78d5dd3da23541b3bbe36602bfe5c2c1
+msgid ""
+"Get detailed miRNA information from RNAcentral including full RNA "
+"sequence, species, RNA type, ge..."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst 1d5a1a0ebe374ad0aeef1fa97adf78df
+msgid "miRBase_get_mirna tool specification"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:28 ../../tools/mirna_tools.rst:62
+#: ../../tools/mirna_tools.rst:96 ../../tools/mirna_tools.rst:130
+#: 7c78fe959583414e8afe276238cd6db7 859a02ba23be4fc1ac20d055e2a7d61b
+#: b15721de915a40208ccc4aa2098fae4a d9e3f518952348c5b54c066a2f763eda
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:30 21f9263df6164edeac799e64a6eceef1
+msgid "**Name**: ``miRBase_get_mirna``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:31 ../../tools/mirna_tools.rst:65
+#: ../../tools/mirna_tools.rst:99 21b9200cfde3406aac1d2ef9606c27b7
+#: 76646f1758984ef0b1e3f6bc4f825d66 dc803b1c5794446fafcd9202a05d8d8b
+msgid "**Type**: ``miRNAGetTool``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:32 a98bf754e8c34847b33d85aeab2d0ebd
+msgid ""
+"**Description**: Get detailed miRNA information from RNAcentral including"
+" full RNA sequence, species, RNA type, gene associations, publication "
+"count, and source databases. Use a species-specific RNAcentral ID "
+"(format: URS\\_TAXID, e.g., 'URS000039ED8D\\_9606' for human hsa-"
+"miR-21-5p) or a base URS ID with optional taxid parameter. Key miRNA IDs:"
+" URS000039ED8D\\_9606 (hsa-miR-21-5p), URS0000D54CAD\\_9606 (hsa-"
+"miR-155-5p), URS0000416056\\_9606 (hsa-let-7a-5p), URS000039ED8D\\_10090 "
+"(mmu-miR-21a-5p)."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:34 ../../tools/mirna_tools.rst:68
+#: ../../tools/mirna_tools.rst:102 ../../tools/mirna_tools.rst:136
+#: 96defaf79b15424a82f37ac7cabe83ad e5206fef2ba640a28aa3992c59b9cedf
+#: ea5ce2cd93654dc491d8847719b89090 f73de7ec9e0547839f4887ce3ea873b3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:36 c09020783d9749c7b2ef0d0d169fc7bb
+msgid ""
+"``rnacentral_id`` (string) (required) RNAcentral URS identifier. Use "
+"species-specific format 'URS\\_TAXID' (e.g., 'URS000039ED8D\\_9606') or "
+"base URS ID (e.g., 'URS000039ED8D') with taxid parameter."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:39 ec42d07ffef449308b6c28cda11d33ea
+msgid ""
+"``taxid`` (integer) (optional) NCBI Taxonomy ID for species-specific "
+"lookup (e.g., 9606 for human, 10090 for mouse). Optional if "
+"rnacentral\\_id already includes taxid."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:42 ../../tools/mirna_tools.rst:76
+#: ../../tools/mirna_tools.rst:110 ../../tools/mirna_tools.rst:147
+#: 629726acf268499aa4d1cb0f63d2d2dd 672a5da92384448dbb0d0a808d89baa5
+#: 833536d8364c43969a68b5f7c34befb8 e8d90a6efed74c38bfcf24ae700d0dbe
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:56 255249042ea640599feda47269c566ac
+msgid "**miRBase_get_mirna_publications** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:58 4a9e10ac1a964292990dea0d8caf66e5
+msgid ""
+"Retrieve publications associated with a microRNA from RNAcentral. Returns"
+" publication titles, aut..."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst 8ca23c7cea704428b5aa0251bd60e8ad
+msgid "miRBase_get_mirna_publications tool specification"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:64 dbf08c0f1031473c80bd04ed8f07e5d2
+msgid "**Name**: ``miRBase_get_mirna_publications``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:66 9a826117ba3c4b7d9338482a45adf329
+msgid ""
+"**Description**: Retrieve publications associated with a microRNA from "
+"RNAcentral. Returns publication titles, authors, PubMed IDs, DOIs, and "
+"journal information. miR-21-5p (URS000039ED8D) has 344+ publications, "
+"making it one of the most-studied miRNAs. Use after "
+"miRBase\\_search\\_mirna to get the RNAcentral ID, then retrieve "
+"associated literature."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:70 ../../tools/mirna_tools.rst:104
+#: 5f1392cff51a4849906ba568fc9e0f3c fea2a1ed87e645d4b07b80b2ac8ccf17
+msgid ""
+"``rnacentral_id`` (string) (required) RNAcentral URS identifier (e.g., "
+"'URS000039ED8D' for hsa-miR-21-5p). Use base URS ID without taxid suffix."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:73 253f28ade2df4cfebe6730a5bfc6ba2b
+msgid ""
+"``page_size`` (integer) (optional) Number of publications to return "
+"(1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:90 27818fa08a8a45ada4c3ebb0dcf2f791
+msgid "**miRBase_get_mirna_xrefs** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:92 8d08841f10564cb7923f2549ecef93d2
+msgid ""
+"Get cross-references (xrefs) for a microRNA from RNAcentral. Returns "
+"database links from miRBase,..."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst 325739b9ccbb4f1190cc90a0d730240d
+msgid "miRBase_get_mirna_xrefs tool specification"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:98 1e2f7d48c89b43b39ad36457e255ff33
+msgid "**Name**: ``miRBase_get_mirna_xrefs``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:100 badfd59fee604bfe9d423c76bd6a8edc
+msgid ""
+"**Description**: Get cross-references (xrefs) for a microRNA from "
+"RNAcentral. Returns database links from miRBase, TarBase, ENA, RefSeq, "
+"piRBase, LncBase, and other sources. Includes external accession IDs, "
+"expert database URLs, species information, and miRBase-specific fields "
+"(mature products, precursor links). Essential for mapping miRNA IDs "
+"across databases and finding target interaction data."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:107 9c6cdac97ee44c91a9ab7886a56290d4
+msgid ""
+"``page_size`` (integer) (optional) Number of cross-references to return "
+"(1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:124 006f434aaa7a41ea836fde00ebe8c7d4
+msgid "**miRBase_search_mirna** (Type: miRNASearchTool)"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:126 6ed18b335b8a4710ae6bad6cfc85ce0f
+msgid ""
+"Search for microRNAs (miRNAs) by name, accession, or keyword using EBI "
+"Search over RNAcentral. RN..."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst 73745817795f4cd68a4c470b8fb7debc
+msgid "miRBase_search_mirna tool specification"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:132 6b73f32491ee4fdbb7d2c8033f69258d
+msgid "**Name**: ``miRBase_search_mirna``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:133 b035c6de148944eab8848275664cd930
+msgid "**Type**: ``miRNASearchTool``"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:134 1163f29396164726a1a8d67365e2f2f9
+msgid ""
+"**Description**: Search for microRNAs (miRNAs) by name, accession, or "
+"keyword using EBI Search over RNAcentral. RNAcentral aggregates miRNA "
+"data from miRBase, TarBase, LncBase, and 50+ other databases. Supports "
+"filtering by species (e.g., 'Homo sapiens', 'Mus musculus') and RNA type."
+" Returns RNAcentral IDs, descriptions, sequence lengths, and source "
+"databases. Use this to find miRNAs like hsa-miR-21-5p, let-7, miR-155, or"
+" search by miRBase accession (e.g., MIMAT0000076). Examples: search 'hsa-"
+"miR-21' for human miR-21 family, 'let-7 AND TAXONOMY:Homo sapiens' for "
+"human let-7 family members."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:138 42b85afc17944f86b8796068a4ca934d
+msgid ""
+"``query`` (string) (required) Search query: miRNA name (e.g., 'hsa-"
+"miR-21-5p'), miRBase accession (e.g., 'MIMAT0000076'), gene name, or "
+"keyword. Supports AND/OR operators."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:141 9766a406987745d49fa69883f18f9d78
+msgid ""
+"``species`` (string) (optional) Species name filter (e.g., 'Homo "
+"sapiens', 'Mus musculus', 'Drosophila melanogaster'). Leave empty for all"
+" species."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:144 72096ea3a814486a91f3f027690af67b
+msgid ""
+"``size`` (integer) (optional) Number of results to return (1-100). "
+"Default: 10."
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:161 3f2a280a0510435b9d97329e61496df2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:163 8bfb9f29f7ee4fd88f12f3727e47e273
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mirna_tools.rst:164 e31628296320475db8ed15459f410a0d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

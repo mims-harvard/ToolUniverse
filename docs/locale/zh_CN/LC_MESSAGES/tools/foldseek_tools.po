@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/foldseek_tools.rst:10 df2157a1c3a44b328ce86ada50b33ba8
+msgid "Foldseek Tools"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:12 8fa3b780156545d0a0a78f216a6bf8f3
+msgid ""
+"**Configuration File**: ``foldseek_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:16 b4296db896f2438fb156fe7adf0a8227
+msgid ""
+"This page contains all tools defined in the ``foldseek_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:19 0b24aeba9a5147e7b400f6780c01c22a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:22 34892779f3ac44e3aee27eef20fd2da9
+msgid "**Foldseek_get_result** (Type: FoldseekTool)"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:24 f8d0e985624c45bfbea6f4d954dc4b28
+msgid ""
+"Get results for a previously submitted Foldseek structure search job by "
+"ticket ID. Use this if a ..."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst ff2c9469a9cb469db4d656b486ee7c00
+msgid "Foldseek_get_result tool specification"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:28 ../../tools/foldseek_tools.rst:62
+#: 4a5fe93652ca48628adf0459e34c7c37 6224b3c01f9c4c478a2ea069419da118
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:30 82007dc2312a4d3eab44870ddc574913
+msgid "**Name**: ``Foldseek_get_result``"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:31 ../../tools/foldseek_tools.rst:65
+#: e83d581917804100a2e1c662f81584ce ff496967b2df42c785d3ba3637930f7b
+msgid "**Type**: ``FoldseekTool``"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:32 529a390e7dc74e97b3ef620206f514d5
+msgid ""
+"**Description**: Get results for a previously submitted Foldseek "
+"structure search job by ticket ID. Use this if a search was submitted but"
+" results were not yet available. Returns structural alignments if the job"
+" is complete, or the current job status if still running."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:34 ../../tools/foldseek_tools.rst:68
+#: 2a5553c8681d4f1197c21cf9e40e4d9c 4a332855b0874c9bb48d4b195f96a878
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:36 0e0cf079140947aea5a93738e9198cbf
+msgid ""
+"``ticket_id`` (string) (required) Foldseek job ticket ID returned from a "
+"previous search submission."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:39 ../../tools/foldseek_tools.rst:85
+#: 26b2703e1d324d9eb91b9b7d0b3f022d f0bbdbb86c08431abda4b48b67a778d2
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default 10, max 50)."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:42 ../../tools/foldseek_tools.rst:88
+#: 550bfd23ba3443ad9b19a7ee2df5f0f0 a0cbaaed3f204e7abc6f4953d666f91f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:56 fceae34659a6421cb7565d2a3a2f5365
+msgid "**Foldseek_search_structure** (Type: FoldseekTool)"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:58 2777cfa8042c49f881335960ec77763d
+msgid ""
+"Search for structurally similar proteins using Foldseek. Given a PDB ID, "
+"downloads the structure ..."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst 8be83bda9df140ed975e417e366cfb50
+msgid "Foldseek_search_structure tool specification"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:64 0cd2e24e448c4834a0d6abfa74f00fce
+msgid "**Name**: ``Foldseek_search_structure``"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:66 0b26928301ea4515b765c76d49ac8983
+msgid ""
+"**Description**: Search for structurally similar proteins using Foldseek."
+" Given a PDB ID, downloads the structure from RCSB and searches against "
+"AlphaFold DB (afdb50), PDB100, or other structure databases. Returns "
+"structural alignments ranked by e-value. This is an async operation that "
+"submits a job and polls for results (typically 10-60 seconds). Example: "
+"pdb\\_id='4HHB' finds proteins with similar 3D fold to hemoglobin."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:70 49ed7bd77ed047459c6b177608411e96
+msgid ""
+"``pdb_id`` (string) (optional) PDB ID to search (e.g., '4HHB', '1CRN'). "
+"The structure will be fetched from RCSB PDB."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:73 d6126897f51e4445bd86894d180d920a
+msgid ""
+"``sequence`` (string) (optional) Amino acid sequence to search "
+"(alternative to pdb\\_id). For sequence-based structure search. Alias: "
+"'query'."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:76 02231ee0f3664218a96b8ed9715aaa37
+msgid ""
+"``query`` (string) (optional) Amino acid sequence to search (alias for "
+"sequence)."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:79 9aa0f7f67a334fa582703456cfd116e7
+#, python-format
+msgid ""
+"``database`` (string) (optional) Database to search against. Options: "
+"'afdb50' (AlphaFold DB 50% clustered, default), 'afdb-swissprot' "
+"(AlphaFold SwissProt), 'afdb-proteome' (AlphaFold proteomes), 'pdb100' "
+"(PDB), 'gmgcl\\_id' (GMGC), 'bfmd' (ESMAtlas), 'cath50' (CATH), "
+"'mgnify\\_esm30' (MGnify ESM)."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:82 d6df8b0881504d3bb2d9017948b1fad9
+msgid ""
+"``mode`` (string) (optional) Search mode: 'tmalign' (fast 3Di+AA, "
+"default), 'tmalign' (TM-align, slower but more sensitive)."
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:101 a3fdc7f4e31d4086989857f108ff6e35
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:103 c4969b2e2b844ee9a8072224f05ab37a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/foldseek_tools.rst:104 0d31dcafd7164c1f8eb188bbcfb7b4cf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

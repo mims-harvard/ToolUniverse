@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/meta_analysis_tools.rst:10 4bf9ffe173ed432eacf914dcdc591f66
+msgid "Meta Analysis Tools"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:12 286c314c60ef4b4bad89fcdc401ffef7
+msgid ""
+"**Configuration File**: ``meta_analysis_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:16 959390f6992f49fda35188feb7497e35
+msgid ""
+"This page contains all tools defined in the ``meta_analysis_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:19 f090059b93ec4a1da73eef9336c31ed2
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:22 05144c8d7b2e4d04b58b9e2515f54d80
+msgid "**MetaAnalysis_run** (Type: MetaAnalysisTool)"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:24 7ea3e62146604ce7a2873d9f497c6415
+msgid ""
+"Run a fixed-effects or random-effects meta-analysis from a set of effect "
+"sizes and standard error..."
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst 0790d4d55f12437d8499ac4d03311e23
+msgid "MetaAnalysis_run tool specification"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:28 2b76dcaac3d94e2799c92adbd4679c24
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:30 fb96bc9bc13745b9b9ed9c93b36c5be9
+msgid "**Name**: ``MetaAnalysis_run``"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:31 bf75c5572b254d428db41998e1295870
+msgid "**Type**: ``MetaAnalysisTool``"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:32 ec933875d42a463db28cb711c4fadf31
+msgid ""
+"**Description**: Run a fixed-effects or random-effects meta-analysis from"
+" a set of effect sizes and standard errors. Uses inverse-variance "
+"weighting for fixed effects and the DerSimonian-Laird estimator for "
+"random effects. Returns pooled effect size with 95% CI, p-value, "
+"heterogeneity statistics (Cochran Q, I-squared, tau-squared), per-study "
+"weights, and a text interpretation. Pure local computation -- no external"
+" API calls. Useful for combining results from multiple studies in "
+"systematic reviews."
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:34 18cb96de91724c80933f14026a09f260
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:36 d6ed2216bbf34960b9aa583f5f29eda1
+msgid ""
+"``studies`` (array) (required) List of studies, each with name, "
+"effect\\_size, se, and optional n."
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:39 fd281f6282514a03ac27672bcd6cf02e
+msgid ""
+"``method`` (string, null) (optional) Meta-analysis method: 'fixed' for "
+"fixed-effects (inverse-variance), 'random' for random-effects "
+"(DerSimonian-Laird). Default: 'random'."
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:42 0e97181a7d2640ad803106b3d9696f4e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:56 40088b3f5bca40119afe2c93701917bd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:58 1747601921874a5f964b981bc6b84876
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/meta_analysis_tools.rst:59 14b4cf45ed824f508cf405ddda03d901
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

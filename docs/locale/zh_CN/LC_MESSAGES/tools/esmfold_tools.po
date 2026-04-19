@@ -1,0 +1,106 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/esmfold_tools.rst:10 04832a0e26374a4c89a3ade5931a0944
+msgid "Esmfold Tools"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:12 c8a52af176894964bca838513be4b3a6
+msgid ""
+"**Configuration File**: ``esmfold_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:16 af68aab0c7c54ddf93b00b94bf2d1931
+msgid ""
+"This page contains all tools defined in the ``esmfold_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:19 b6ac7884d11b4145ad3bcdb12bf8c63e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:22 4549224b9cc2461da37ee220d4e1072f
+msgid "**ESMFold_predict_structure** (Type: ESMFoldTool)"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:24 9eef4f519cc94e65a48187cd23894f9c
+msgid ""
+"Predict protein 3D structure from amino acid sequence using ESMFold "
+"(Meta's ESM-2 language model)..."
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst 2fe87d53c5db4c1ba8ea489e4cfb6a55
+msgid "ESMFold_predict_structure tool specification"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:28 13f7d153870846f987758a13f1fc8e55
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:30 45a831b4f8194374822323ebbbc0c8c5
+msgid "**Name**: ``ESMFold_predict_structure``"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:31 b59a22a9f5f142c981f9ebaa6ce792fa
+msgid "**Type**: ``ESMFoldTool``"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:32 dc1e85954c21409aba0843379ad38d38
+msgid ""
+"**Description**: Predict protein 3D structure from amino acid sequence "
+"using ESMFold (Meta's ESM-2 language model). Returns per-residue pLDDT "
+"confidence scores (0-1 scale, higher=better) and summary statistics. Also"
+" returns the predicted PDB coordinate text. Fast single-sequence "
+"prediction (no MSA needed). Best for sequences under 400 residues. No "
+"authentication required."
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:34 fbb7635d01f340ae97156a6c98670126
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:36 4606e90b7a394e71b821f2eb404612b3
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code. Example: "
+"'MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH'. FASTA headers and "
+"whitespace are stripped. Max ~400 residues recommended for fast results."
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:39 5441a0aa78f042b294a355f7f46c5f17
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:53 3289d3a2b2ae459e80e0bd8b8b98c5ef
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:55 b872f9c6c6414ef5901d6fd4c04bcbf6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/esmfold_tools.rst:56 c81db3d250a04d3386af8707af27f867
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

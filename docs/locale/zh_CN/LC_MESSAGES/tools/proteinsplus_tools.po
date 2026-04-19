@@ -1,0 +1,399 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/proteinsplus_tools.rst:10 0d45b307cbcc4c11acbd0f874a9c856e
+msgid "Proteinsplus Tools"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:12 cc20faaf006a48db9ac6c71cfce86708
+msgid ""
+"**Configuration File**: ``proteinsplus_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:16 b8b361b2f3eb45ac8f7ee372bbfd5ab0
+msgid ""
+"This page contains all tools defined in the ``proteinsplus_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:19 5c54edc5fde24e3dbc5f431597d28634
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:22 7cbae9f54cce48b8941081095571ea11
+msgid ""
+"**ProteinsPlus_analyze_binding_site_similarity** (Type: "
+"ProteinsPlusRESTTool)"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:24 2f67a3b1dcd642df8d95a9f46ee4d5ed
+msgid ""
+"Analyze binding site similarity and generate structural ensembles using "
+"SIENA (Structural Interac..."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst 1f30a60d57234726a830d2cb7ff6cc94
+msgid "ProteinsPlus_analyze_binding_site_similarity tool specification"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:28 ../../tools/proteinsplus_tools.rst:87
+#: ../../tools/proteinsplus_tools.rst:122
+#: ../../tools/proteinsplus_tools.rst:158
+#: ../../tools/proteinsplus_tools.rst:204 050c11ffd3e64a279925a48625ab0679
+#: 4fb806d2a2bb46d5a6067c778e83d06b 61b76663dd054e5a90cc492857bf7bd3
+#: 650ae573cc7d4669893375b8816de864 711e9c47451f410694336364860972ed
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:30 735e0847507e407ea84582bf9279e7a5
+msgid "**Name**: ``ProteinsPlus_analyze_binding_site_similarity``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:31 ../../tools/proteinsplus_tools.rst:90
+#: ../../tools/proteinsplus_tools.rst:125
+#: ../../tools/proteinsplus_tools.rst:161
+#: ../../tools/proteinsplus_tools.rst:207 17cfb8af3b5242a8940940eebb8d8e56
+#: 408cf308cc154f28b703c2bd9d334aab bee0c922074649cea0e6d16c9c5693bf
+#: e7bb36a71581464e83a8eec858ec6a90 ed67b57f26f4418a9b1f7b499ae4f17f
+msgid "**Type**: ``ProteinsPlusRESTTool``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:32 80e649050cf349699e2ac560a83bc7af
+msgid ""
+"**Description**: Analyze binding site similarity and generate structural "
+"ensembles using SIENA (Structural Interaction fingerprint for ENsemble "
+"Analysis). Performs comprehensive binding site comparison across multiple"
+" protein structures to identify similar pockets for ensemble docking, "
+"virtual screening, or mutation analysis. Supports multiple modes: "
+"flexibility analysis (compare conformations), docking preparation (build "
+"ensemble), screening (find similar sites), mutation analysis (assess "
+"tolerance), and ligand pose comparison (compare binding modes). Returns "
+"aligned structures, binding site similarity scores, and structural "
+"ensembles. Critical for accounting for protein flexibility in structure-"
+"based drug design, understanding conformational diversity, and improving "
+"docking accuracy through ensemble approaches. Example: Use 'screening' "
+"mode on 1KZK to find proteins with similar ATP-binding sites."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:34 ../../tools/proteinsplus_tools.rst:93
+#: ../../tools/proteinsplus_tools.rst:128
+#: ../../tools/proteinsplus_tools.rst:164
+#: ../../tools/proteinsplus_tools.rst:210 2520933329944b0797ece6d3466c8b3f
+#: 372e95e2eea647b699964a9b03b9556a 5398ae6be05b482fb87cbf8005ee77b1
+#: bca1a116045c45cd8d254e8af09024b4 f5b0335b49684759990298510578c5ee
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:36 ../../tools/proteinsplus_tools.rst:95
+#: ../../tools/proteinsplus_tools.rst:166
+#: ../../tools/proteinsplus_tools.rst:212 594d9fa6775844d18a256a288e21bbd9
+#: 99b86cbbce77416cb321a4755b5381fb 9cef9e5821564d968c0e8f17a4f92f21
+#: d02e3b4f1a4547d39bc0d71863be8fae
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (e.g., '1KZK', '2OZR', "
+"'4HHB'). Required."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:39 543e84d03be84d8bb110a60fbe7d8d43
+msgid ""
+"``mode`` (string) (required) Analysis mode: 'flexibility\\_analysis' "
+"(compare protein conformations), 'docking' (prepare ensemble for "
+"docking), 'screening' (find similar binding sites for virtual screening),"
+" 'mutation\\_analysis' (assess mutation tolerance), or "
+"'ligand\\_pose\\_comparison' (compare binding poses). Required. Example: "
+"Use 'screening' for hit discovery across protein families."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:42 13c55f86bd27484e8013fb70d87d55f4
+msgid ""
+"``ligand`` (string) (optional) Ligand identifier in format "
+"'residue\\_name\\_residue\\_chain\\_residue\\_number' (e.g., "
+"'JE2\\_A\\_701'). Mutually exclusive with pocket."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:45 18cf60f5cd6f421085ead7bc72a3c4bb
+msgid ""
+"``pocket`` (string) (optional) Pocket definition for analysis "
+"(alternative to ligand). Example: Define custom pocket region. Mutually "
+"exclusive with ligand."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:48 e031f6ed047c48f09e45fe426c4eaedb
+msgid ""
+"``fragment_length`` (integer) (optional) Fragment length for analysis "
+"(3-15). Default: 9. Longer fragments = more specific matching. Example: "
+"Use 12 for strict similarity."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:51 9fe4df4ddc794a3cb33773fff9cefa40
+msgid ""
+"``flexibility_sensitivity`` (number) (optional) Sensitivity for "
+"flexibility detection (0.0-1.0). Default: 0.5. Higher = more flexible "
+"regions detected. Example: Use 0.7 for highly dynamic proteins."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:54 7432f3c08c62465aa90554829ff36948
+msgid ""
+"``site_radius`` (number) (optional) Radius around ligand to define "
+"binding site (3-15 Angstroms). Requires ligand. Default: 6.5. Example: "
+"Use 8.0 for larger binding sites."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:57 761652f700a643f9ac99ed16175dabcd
+msgid ""
+"``minimal_site_identity`` (number) (optional) Minimum binding site "
+"sequence identity threshold (0.3-1.0). Default: 0.6. Higher = stricter "
+"matching. Example: Use 0.8 for closely related proteins."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:60 8c566bda78fa4c66b0ca36fdca7c2b98
+msgid ""
+"``minimal_site_coverage`` (number) (optional) Minimum binding site "
+"coverage required (0.3-1.0). Default: 0.8. Higher = more complete binding"
+" site overlap required. Example: Use 0.9 for stringent matches."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:63 4d54ecb64113466fa9f70489a1192f39
+msgid ""
+"``maximum_mutations`` (integer) (optional) Maximum number of mutations "
+"allowed in mutation analysis mode (0-10). Default: 3. Example: Use 5 for "
+"permissive mutation screening."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:66 ../../tools/proteinsplus_tools.rst:101
+#: ../../tools/proteinsplus_tools.rst:139
+#: ../../tools/proteinsplus_tools.rst:184
+#: ../../tools/proteinsplus_tools.rst:218 0707aead619d44d29cfb9650ad1c37f6
+#: 0a2ede0a754d4d549fef3106e71226b5 25e95bd192a842a2a7ea3f9af1313bd3
+#: 638204115a3c48978bb899930c4430d4 bb516a98eef74f7e8cede9ce8028fa15
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:81 3a88dd2a84754d67a385521e272ad981
+msgid "**ProteinsPlus_generate_interaction_diagram** (Type: ProteinsPlusRESTTool)"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:83 2ef6f5264c2e494aa93c7acab93330df
+msgid ""
+"Generate 2D protein-ligand interaction diagrams using PoseView. Creates "
+"publication-quality visua..."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst fc7b3092885b42a8b026edbdee3bf8ea
+msgid "ProteinsPlus_generate_interaction_diagram tool specification"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:89 58e1f81c951f4337898e708a4a2cdc36
+msgid "**Name**: ``ProteinsPlus_generate_interaction_diagram``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:91 ca7c73fd52d94550b5f143f5d6d24340
+msgid ""
+"**Description**: Generate 2D protein-ligand interaction diagrams using "
+"PoseView. Creates publication-quality visualizations showing detailed "
+"interactions between proteins and small molecules including hydrogen "
+"bonds, hydrophobic contacts, pi-stacking, and salt bridges. Input "
+"requires a PDB ID and ligand identifier. Returns interaction diagrams in "
+"multiple formats (PNG, PDF, SVG) suitable for publications, "
+"presentations, and reports. Essential for visualizing and communicating "
+"binding mode analysis, structure-activity relationships, and molecular "
+"recognition patterns in drug discovery projects. Example: Generate "
+"interaction diagram for 1KZK with ligand JE2\\_A\\_701 to visualize "
+"kinase inhibitor binding mode."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:98 c61a85d197ba407aa404e8151a304682
+msgid ""
+"``ligand`` (string) (required) Ligand identifier in format "
+"'residue\\_name\\_residue\\_chain\\_residue\\_number' (e.g., "
+"'JE2\\_A\\_701'). Required."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:116 851b8ea0b2fe4300a338d6da8e22fc93
+msgid "**ProteinsPlus_predict_binding_sites** (Type: ProteinsPlusRESTTool)"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:118 97a9b39353794d0cad1e6fcc9ba0df1b
+msgid ""
+"Predict druggable binding sites and pockets in protein structures using "
+"DoGSiteScorer algorithm. ..."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst 961a20f939284d8aab995654c4ba0fa0
+msgid "ProteinsPlus_predict_binding_sites tool specification"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:124 a7a34623cfcb42c185b7c3bb27f835f5
+msgid "**Name**: ``ProteinsPlus_predict_binding_sites``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:126 0573799587c3451bb048bdb38cf85f55
+msgid ""
+"**Description**: Predict druggable binding sites and pockets in protein "
+"structures using DoGSiteScorer algorithm. Input can be a PDB ID (e.g., "
+"'1A2B') or uploaded PDB file content. Returns predicted binding pockets "
+"with druggability scores, volume, surface area, and residue composition. "
+"Essential for identifying potential drug binding sites before docking or "
+"screening. Complements crystal structure data by identifying potential "
+"cryptic pockets and ranking sites by druggability."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:130 bbbe28d53c7a4738b8417eb91fa8904c
+msgid ""
+"``pdb_id`` (string) (optional) PDB identifier (e.g., '1A2B', '4HHB'). Use"
+" either pdb\\_id or pdb\\_content, not both."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:133 c2bb648f104d412fa8c21a199b776e3e
+msgid ""
+"``pdb_content`` (string) (optional) Raw PDB file content as string "
+"(multi-line text starting with 'HEADER'). Use either pdb\\_id or "
+"pdb\\_content, not both. Example: Upload custom structures not in PDB."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:136
+#: ../../tools/proteinsplus_tools.rst:169 2413232cad634fe188ef76834c29994c
+#: d108e7603c9f4e87bc6ce85110bbb20e
+msgid ""
+"``chain`` (string) (optional) Specific chain to analyze (e.g., 'A'). "
+"Optional - if not provided, all chains analyzed."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:152 a6973b8db29b47a9ad264e425be278a1
+msgid "**ProteinsPlus_predict_binding_sites_v3** (Type: ProteinsPlusRESTTool)"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:154 88c4ade1c18f41a2adcf16c79b3c1cdb
+msgid ""
+"Predict druggable binding sites using DoGSite3 algorithm with ligand-"
+"biased grid option. Enhanced..."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst 6c1ce6b392ad442bb1c645bf317de792
+msgid "ProteinsPlus_predict_binding_sites_v3 tool specification"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:160 734a0b63ce8e433292ba94f8e5cb16db
+msgid "**Name**: ``ProteinsPlus_predict_binding_sites_v3``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:162 a1152a5ece8749f88863a941dbee6752
+msgid ""
+"**Description**: Predict druggable binding sites using DoGSite3 algorithm"
+" with ligand-biased grid option. Enhanced version of DoGSiteScorer with "
+"improved binding site detection. Input can be a PDB ID with optional "
+"reference ligand for biased grid calculations. Returns predicted pockets "
+"with druggability scores, geometric properties, and detailed subpocket "
+"analysis. Supports ligand-based grid biasing to focus predictions around "
+"known binding sites. Useful for comprehensive binding site "
+"characterization and structure-based drug design workflows. Example: "
+"Analyze 1KZK with ligand JE2\\_A\\_701 to identify druggable sites near "
+"the co-crystallized ligand."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:172 6499128d37b042698560ef49bbdeb569
+msgid ""
+"``ligand`` (string) (optional) Reference ligand identifier in format "
+"'residue\\_name\\_residue\\_chain\\_residue\\_number' (e.g., "
+"'JE2\\_A\\_701'). Optional - used for ligand-biased grid calculations."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:175 5e5fa133c0a7467daaac780b06d2b879
+msgid ""
+"``ligand_bias`` (boolean) (optional) Enable ligand-biased grid "
+"calculations (true) or standard detection (false). Requires ligand "
+"parameter. Default: false. Example: Use true to focus detection around "
+"known binding site."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:178 bbd77e5b083745d3a5257fb1452bc1c9
+msgid ""
+"``analysis_detail`` (string) (optional) Analysis level: '0' for pockets "
+"only (faster), '1' for pockets and subpockets (comprehensive). Default: "
+"'1'. Example: Use '1' for detailed analysis, '0' for quick screening."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:181 2fca8bf545e4431e9a63e0b39a6581f1
+msgid ""
+"``druggability`` (string) (optional) Prediction granularity: '0' for "
+"geometric properties only, '1' for properties and druggability scores. "
+"Default: '1'. Example: Use '1' for drug discovery (includes "
+"druggability), '0' for structure analysis only."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:198 f9f2c0550c2f4f4683c54cb6dddf28a7
+msgid "**ProteinsPlus_profile_structure_quality** (Type: ProteinsPlusRESTTool)"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:200 9e535f586a5a4a658a40f5011645aec8
+msgid ""
+"Comprehensive protein structure quality assessment and protein-ligand "
+"complex profiling using Str..."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst cce1ebc7e57145ada265ac2494f3e546
+msgid "ProteinsPlus_profile_structure_quality tool specification"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:206 3fbef981929541408c964d5f0f40456b
+msgid "**Name**: ``ProteinsPlus_profile_structure_quality``"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:208 772d62d9ae3d4b6999fd7760af2c6a8d
+msgid ""
+"**Description**: Comprehensive protein structure quality assessment and "
+"protein-ligand complex profiling using StructureProfiler. Performs "
+"thorough validation of protein structures including geometry checks, "
+"stereochemistry analysis, clash detection, and ligand binding site "
+"quality assessment. Supports multiple validation settings: 'astex' (Astex"
+" diverse set criteria), 'iridium' (Iridium validation), 'platinum' "
+"(PlatinumQuality set), or 'combined' (comprehensive analysis). Returns "
+"detailed quality reports covering protein structure integrity, active "
+"site geometry, ligand binding quality, and structural anomalies. "
+"Essential for validating structures before molecular modeling, "
+"identifying potential artifacts, and ensuring reliability of structure-"
+"based drug design results. Example: Use 'combined' setting on 1KZK to "
+"assess overall structure quality before docking studies."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:215 f0f50e2ffaae4f57b1eebad84ff686df
+msgid ""
+"``setting`` (string) (optional) Validation setting: 'astex' (Astex "
+"diverse set criteria), 'iridium' (Iridium validation rules), 'platinum' "
+"(PlatinumQuality standards), or 'combined' (all checks). Default: "
+"'combined'. Example: Use 'combined' for thorough validation, 'astex' for "
+"docking benchmark standards."
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:232 8976f24134544a308cb4e26eb254ce07
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:234 fb8e0b92c261467898584e3eb3c54f83
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/proteinsplus_tools.rst:235 af5f16ba326341219c5022e0802187d7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

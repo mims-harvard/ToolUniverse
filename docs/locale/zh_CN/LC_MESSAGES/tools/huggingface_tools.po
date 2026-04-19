@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/huggingface_tools.rst:10 3896be78878d479491b7ab2a554e3e06
+msgid "Huggingface Tools"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:12 50012c1d93fe4b27a81045ed24af7b0f
+msgid ""
+"**Configuration File**: ``huggingface_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:16 640c1fe5af7542e89e06ff96010f49c8
+msgid ""
+"This page contains all tools defined in the ``huggingface_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:19 ebd1cb0e2eb346ca968155f6a42a352d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:22 31fdb0aaba5f4201b10c5e37c14605f6
+msgid "**HuggingFace_get_model** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:24 fe5b9ba4bbdb48c59cbd289477a76f5f
+msgid ""
+"Get detailed metadata for a specific model on HuggingFace Hub by its "
+"author and model name. Retur..."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst a6f6c2e55957400580a830460fdc28ba
+msgid "HuggingFace_get_model tool specification"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:28 ../../tools/huggingface_tools.rst:63
+#: ../../tools/huggingface_tools.rst:97 4ede1a0719a14bc1a1ee406b5c31ee86
+#: 711a0e1b96fe4874b359af7c10713089 b3b3457417214b64801f2c583cd80bb2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:30 fbdcb86ff4244957b5f5f5d8ae79a011
+msgid "**Name**: ``HuggingFace_get_model``"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:31 ../../tools/huggingface_tools.rst:66
+#: ../../tools/huggingface_tools.rst:100 018cb30285e04270864a43dcd05b4f0c
+#: 16a7585b5c584e98b7d4c334486524bd 311c24d977154c8dbdc9bddc4043d3e1
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:32 210fdccdfba442a48c0b804c736d519a
+msgid ""
+"**Description**: Get detailed metadata for a specific model on "
+"HuggingFace Hub by its author and model name. Returns comprehensive "
+"information including model architecture, tags, download/like counts, "
+"creation date, license, widget data for interactive testing, and card "
+"metadata. Model IDs on HuggingFace follow the 'author/model-name' format;"
+" provide the author and model\\_name as separate parameters. Use "
+"HuggingFace\\_search\\_models to find model IDs (the 'id' field returns "
+"'author/model-name')."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:34 ../../tools/huggingface_tools.rst:69
+#: ../../tools/huggingface_tools.rst:103 1eae39de698648318f72a632361da176
+#: 4566329f897c43ba8d3f2f31008ebc42 b3e7993574d9441abaaa53e34e97ea16
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:36 53310709e4ff4442a6287140bd89ad2b
+msgid ""
+"``author`` (string) (required) Model author or organization (e.g., "
+"'facebook', 'openai-community', 'google-bert', 'meta-llama')"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:39 41e644fa03aa45adbab1e1dda86e26f9
+msgid ""
+"``model_name`` (string) (required) Model name within the author's "
+"namespace (e.g., 'esm2\\_t33\\_650M\\_UR50D', 'gpt2', 'bert-base-"
+"uncased')"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:42 ../../tools/huggingface_tools.rst:77
+#: ../../tools/huggingface_tools.rst:117 0e335604c7404e4f9621ac0c69e972e4
+#: 30d4f4fe04f6495daaac612d88df9381 941f77f40872469db2813a230e58e3c3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:57 d0df67a33f7c41c3a37dad357d8b304e
+msgid "**HuggingFace_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:59 7273ffbbc4544d4ca1b7a1bd08b1c777
+msgid ""
+"Search HuggingFace Hub for machine learning datasets by keyword. "
+"HuggingFace hosts 100,000+ open ..."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst 3eafb6789d9d4f63a07a325d703f6eaf
+msgid "HuggingFace_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:65 b71411cd6bd14b1d9b01f52790073e64
+msgid "**Name**: ``HuggingFace_search_datasets``"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:67 102eefd0106247909e787410a5ac64f0
+msgid ""
+"**Description**: Search HuggingFace Hub for machine learning datasets by "
+"keyword. HuggingFace hosts 100,000+ open datasets spanning text, image, "
+"audio, tabular, and biological sequence data. Returns dataset IDs, "
+"authors, download counts, likes, tags (including format, modality, size "
+"category), and descriptions. Use this to find training/evaluation "
+"datasets for ML models, benchmark datasets, or domain-specific datasets "
+"(e.g., protein sequences, medical images, genomics)."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:71 b386ca0da50e4b40b79c3e655be8a51f
+msgid ""
+"``search`` (string) (required) Search query for dataset name or topic "
+"(e.g., 'protein sequence', 'medical imaging', 'sentiment analysis', "
+"'genomics')"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:74 ../../tools/huggingface_tools.rst:108
+#: 9dd22b7197924780bd5839e3914c1535 e69dbcdab4994a6497e8849d2ae35847
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 20, max 1000)"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:91 2af2a8804934476fa1638d375a58591b
+msgid "**HuggingFace_search_models** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:93 7531bee2e4a84e32811455235784c501
+msgid ""
+"Search the HuggingFace Hub for machine learning models by keyword, task "
+"type, or ML framework. Hu..."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst abadc7c3265949aea1090aa018310c8d
+msgid "HuggingFace_search_models tool specification"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:99 3a2fb4171dbc4a309ac1b8bd497963cd
+msgid "**Name**: ``HuggingFace_search_models``"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:101 ba94e3a8adac4816b76b61a77d73a7b8
+msgid ""
+"**Description**: Search the HuggingFace Hub for machine learning models "
+"by keyword, task type, or ML framework. HuggingFace Hub hosts 500,000+ "
+"open-source models spanning NLP, computer vision, audio, protein language"
+" models, and more. Returns model IDs, download counts, likes, tags, "
+"pipeline task, and library information. Filter by pipeline\\_tag (e.g., "
+"'fill-mask', 'text-classification', 'token-classification', 'image-"
+"classification', 'feature-extraction') and by library (e.g., "
+"'transformers', 'diffusers', 'timm'). Use HuggingFace\\_get\\_model for "
+"full details on a specific model."
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:105 a0340edd7ea143c180a7082a9f7430f2
+msgid ""
+"``search`` (string) (required) Search query for model name, task, or "
+"topic (e.g., 'protein language model', 'bert', 'image segmentation', "
+"'drug discovery')"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:111 6d8c67930a0a4fc09a79c1ee83a8adbc
+msgid ""
+"``pipeline_tag`` (string, null) (optional) Filter by ML task type. Common"
+" values: 'text-classification', 'token-classification', 'fill-mask', "
+"'text-generation', 'image-classification', 'object-detection', 'feature-"
+"extraction', 'question-answering', 'summarization', 'translation', 'text-"
+"to-image', 'automatic-speech-recognition'"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:114 4629577cbd2641a887cf428217b12ade
+msgid ""
+"``library`` (string, null) (optional) Filter by ML framework/library. "
+"Common values: 'transformers', 'diffusers', 'timm', 'sentence-"
+"transformers', 'spacy', 'flair', 'allennlp', 'adapter-transformers'"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:131 5b6f9c938e504562a35921f77e6603aa
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:133 4c1cb48a292b45a48adebfafe78422c3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/huggingface_tools.rst:134 beb705fe9a694205aaab809af7766cca
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

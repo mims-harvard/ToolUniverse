@@ -7,141 +7,213 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/hooks/hook_configuration.rst:2 960af1e1539f47569055e1c338dddb64
+#: ../../guide/hooks/hook_configuration.rst:2 94cb3a0be34d4062b01fa346c4ac4ac6
 msgid "Hook Configuration"
 msgstr "钩子配置"
 
-#: ../../guide/hooks/hook_configuration.rst:4 e1e47c138a3642a88b675ed29a9f8749
+#: ../../guide/hooks/hook_configuration.rst:4 2466d9afc4594c06bde7fb8cd4bfe1c9
 msgid "**Advanced configuration and customization for hooks**"
 msgstr "**钩子的高级配置与自定义**"
 
-#: ../../guide/hooks/hook_configuration.rst:6 bb6c952560f44e70bff374d25d6dcfcf
-msgid ""
-"This Tutorial covers advanced configuration options for the ToolUniverse "
-"hooks system, including custom settings, tool-specific configurations, and "
-"performance optimization."
-msgstr "本教程涵盖了 ToolUniverse 钩子系统的高级配置选项，包括自定义设置、工具特定配置以及性能优化。"
-
-#: ../../guide/hooks/hook_configuration.rst:9 957f4ec68f914f5bbb32a71c1d39e390
+#: ../../guide/hooks/hook_configuration.rst:7 9d8e378114fc40bab52ef88a688a421f
 msgid "Configuration Approaches"
 msgstr "配置方法"
 
-#: ../../guide/hooks/hook_configuration.rst:11
-#: af554092c70e44eba496c26d16616e51
+#: ../../guide/hooks/hook_configuration.rst:9 9ef3effc1ee040a8bef5ecc5a606a4e3
 msgid "**Simple Configuration (Recommended)**"
 msgstr "**简单配置（推荐）**"
 
-#: ../../guide/hooks/hook_configuration.rst:13
-#: e05fe11d933c4a8cad5983b0f102db24
+#: ../../guide/hooks/hook_configuration.rst:11 7a8a58a66a44422cab11e1f568ed3744
 msgid "Use `hook_type` for easy selection:"
 msgstr "使用 `hook_type` 以便轻松选择："
 
-#: ../../guide/hooks/hook_configuration.rst:28
-#: b9b17aba9aeb4609b070f8617521f86b
+#: ../../guide/hooks/hook_configuration.rst:26 b8e49a7f833642f2afc0ccd2985b31f0
 msgid "**Advanced Configuration**"
 msgstr "**高级配置**"
 
-#: ../../guide/hooks/hook_configuration.rst:30
-#: 211bacd449b14c0d97c227bdc0ba1a7c
+#: ../../guide/hooks/hook_configuration.rst:28 87e63982ebd349a386dc44977d5d01e6
 msgid "Use `hook_config` for detailed control:"
 msgstr "使用 `hook_config` 进行详细控制："
 
-#: ../../guide/hooks/hook_configuration.rst:49
-#: 6899b3ac7590446d83ed5365eac56eb8
+#: ../../guide/hooks/hook_configuration.rst:47 3cc7f5493d3a41a2b500b2851f30fbd9
 msgid "**Configuration Precedence**"
 msgstr "**配置优先级**"
 
-#: ../../guide/hooks/hook_configuration.rst:51
-#: 503055333d504ba59b05120d319ef0da
+#: ../../guide/hooks/hook_configuration.rst:49 695989be293343d8a3a037a1ff23dc96
 msgid ""
-"When both `hook_type` and `hook_config` are provided, `hook_config` takes "
-"precedence."
+"When both `hook_type` and `hook_config` are provided, `hook_config` takes"
+" precedence."
 msgstr "当同时提供 `hook_type` 和 `hook_config` 时，以 `hook_config` 为准。"
 
-#: ../../guide/hooks/hook_configuration.rst:54
-#: fc5f2c0ba582450c84ec2898f683f8d2
+#: ../../guide/hooks/hook_configuration.rst:52 63bda895f13141ea92324afeec8b2da2
+msgid "Excluding Tools from Hook Processing"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:54 09e5c4b53b484d4085ee4ec0ec694e3a
+#, fuzzy
+msgid "**exclude_tools Configuration**"
+msgstr "**工具特定配置**"
+
+#: ../../guide/hooks/hook_configuration.rst:56 fbad0a1bd9e042b6a42886b31a0749f8
+msgid ""
+"Use `exclude_tools` to prevent specific tools from being processed by "
+"hooks. This is useful for excluding tool discovery tools (like Tool_RAG) "
+"and other special tools that shouldn't be summarized."
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:58 31e78987caa74608b99c0a581cb94a2c
+msgid "**Default Excluded Tools**"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:60 67dc0d12386f40ce9adeeeded8855277
+msgid "The default configuration excludes these tools:"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:62 df324c55abd2460bb425b30f8d3af33f
+msgid "`Tool_RAG` - Embedding-based tool finder"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:63 6f2f386f219247c59eabe490b6ff4e70
+msgid "`ToolFinderEmbedding` - Tool discovery tool"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:64 77334c4e6dce451fbda685c06f4100ce
+msgid "`ToolFinderLLM` - LLM-based tool finder"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:65 a5d5379f35ff4ace87f1fcc6172492dc
+msgid "`ToolOutputSummarizer` - Hook tool (always excluded)"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:66 3702054b5c7e4c0c9f2999bcbf9bb072
+msgid "`OutputSummarizationComposer` - Hook tool (always excluded)"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:68 c73d2bfa71d042d69c737c7415c7be56
+msgid "**Custom Exclude Tools**"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:82 89aa0c033be247a7ab68153efd4be00a
+msgid "**Wildcard Patterns**"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:84 24a365fff42248f18e2457b735436d46
+msgid "You can use wildcard patterns to exclude multiple tools:"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:96 e0aad33ed7704c8598e56dcf288ab68d
+#, fuzzy
+msgid "**Python Configuration**"
+msgstr "**缓存配置**"
+
+#: ../../guide/hooks/hook_configuration.rst:115
+#: 704f73d22e7c414a9e3c845b92a50dd8
+msgid "**Why Exclude Tools?**"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:117
+#: 6c353744c07248f8811a3ee659c3b2cb
+msgid ""
+"**Prevent Recursive Processing**: Hook tools themselves are excluded to "
+"avoid infinite loops"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:118
+#: 65caedecbb7f43309f3438645e7b50cc
+msgid "**Performance**: Skip unnecessary processing for tool discovery tools"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:119
+#: 8a750fbb793440378f35011ca555ce84
+msgid ""
+"**Correctness**: Some tools produce outputs that shouldn't be summarized "
+"(e.g., tool lists)"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:122
+#: a920d34806e84f7487c5e9ed521cc69b
 msgid "Configuration Structure"
 msgstr "配置结构"
 
-#: ../../guide/hooks/hook_configuration.rst:56
-#: 61bc58560e0f4af49bb6b362b8958c5c
+#: ../../guide/hooks/hook_configuration.rst:124
+#: 81f4eb518311431097a26fe667dd45e8
 msgid "**Global Settings**"
 msgstr "**全局设置**"
 
-#: ../../guide/hooks/hook_configuration.rst:69
-#: d8433480c4a349dd8dfc6ec2f78b8a90
+#: ../../guide/hooks/hook_configuration.rst:142
+#: dea4bc04be1944088371d1fbdcfb625e
 msgid "**Hook Type Defaults**"
 msgstr "**钩子类型默认值**"
 
-#: ../../guide/hooks/hook_configuration.rst:91
-#: 595c8678841d48179bfbef8b0d0bac56
+#: ../../guide/hooks/hook_configuration.rst:164
+#: c69150fbb4294e399f27f2c79992729c
 msgid "**Individual Hook Configuration**"
 msgstr "**单独钩子配置**"
 
-#: ../../guide/hooks/hook_configuration.rst:118
-#: 1c4b508551ff4ef98034f6ba4df5cf2e
+#: ../../guide/hooks/hook_configuration.rst:191
+#: 2827a6b925724fbaa7d4b4fca26706da
 msgid "Configuration Levels"
 msgstr "配置级别"
 
-#: ../../guide/hooks/hook_configuration.rst:120
-#: 29dfe078c3644acba86dd465b9da3786
+#: ../../guide/hooks/hook_configuration.rst:193
+#: ca6f44fdc3674646b7500ce3691024bb
 msgid "**Global Hooks**"
 msgstr "**全局钩子**"
 
-#: ../../guide/hooks/hook_configuration.rst:122
-#: e209e7c7d7a642bbb95e9598752d5785
+#: ../../guide/hooks/hook_configuration.rst:195
+#: 79838de3dac8460899bc5b029391b679
 msgid "Apply to all tools:"
 msgstr "适用于所有工具："
 
-#: ../../guide/hooks/hook_configuration.rst:139
-#: dc2a4b7028864c5f9f86c67b92321772
+#: ../../guide/hooks/hook_configuration.rst:212
+#: 51ff652f91e84a0cb8c35f475554aa0a
 msgid "**Tool-Specific Hooks**"
 msgstr "**工具特定钩子**"
 
-#: ../../guide/hooks/hook_configuration.rst:141
-#: 90234fb833ce4ddbb37a78365cc539e8
+#: ../../guide/hooks/hook_configuration.rst:214
+#: 3e07836c7704407c93bfc5f232643d4d
 msgid "Apply to specific tools:"
 msgstr "适用于特定工具："
 
-#: ../../guide/hooks/hook_configuration.rst:167
-#: acf51dbdb4d64e46b0e2da03fd0214ac
+#: ../../guide/hooks/hook_configuration.rst:240
+#: 820d0ec49c23406889c8e3d787ddcd85
 msgid "**Category-Specific Hooks**"
 msgstr "**类别特定钩子**"
 
-#: ../../guide/hooks/hook_configuration.rst:169
-#: 835160911512432ba1b5bcd0cc6151fb
+#: ../../guide/hooks/hook_configuration.rst:242
+#: 692489a4433645c3801ad93c7758e8e2
 msgid "Apply to tool categories:"
 msgstr "适用于工具类别："
 
-#: ../../guide/hooks/hook_configuration.rst:196
-#: c826c342d4f6408e8f416e21b489261a
+#: ../../guide/hooks/hook_configuration.rst:269
+#: e3a0dd93a9a34dd69ceb38fa7c4bb2f0
 msgid "Condition Types"
 msgstr "条件类型"
 
-#: ../../guide/hooks/hook_configuration.rst:198
-#: 1d40861ea3e74d15a477b3198b3076f0
+#: ../../guide/hooks/hook_configuration.rst:271
+#: 44bdea17440f44bfa609c653c13ef3f5
 msgid "**Output Length Conditions**"
 msgstr "**输出长度条件**"
 
-#: ../../guide/hooks/hook_configuration.rst:211
-#: 9b2ca7c6e7e54a07a01263491510513e
+#: ../../guide/hooks/hook_configuration.rst:284
+#: fd730f9c7a8f4ccdbff320a7005dcb84
 msgid ""
-"**Available Operators:** - `>`: Greater than - `>=`: Greater than or equal -"
-" `<`: Less than - `<=`: Less than or equal - `==`: Equal to - `!=`: Not "
-"equal to"
+"**Available Operators:** - `>`: Greater than - `>=`: Greater than or "
+"equal - `<`: Less than - `<=`: Less than or equal - `==`: Equal to - "
+"`!=`: Not equal to"
 msgstr ""
 "**可用运算符：**  \n"
 "- `>`：大于  \n"
@@ -151,255 +223,280 @@ msgstr ""
 "- `==`：等于  \n"
 "- `!=`：不等于"
 
-#: ../../guide/hooks/hook_configuration.rst:219
-#: 6b236746b0ba4dc8827f1f2534b42af5
+#: ../../guide/hooks/hook_configuration.rst:292
+#: 5fcba9ca234d4f9cb778fa1f6fa8c70a
 msgid "**Tool Name Conditions**"
 msgstr "**工具名称条件**"
 
-#: ../../guide/hooks/hook_configuration.rst:232
-#: 19169242cdf14dcfaa25912fb8b05037
+#: ../../guide/hooks/hook_configuration.rst:305
+#: af531f68f0654b6491ff47244d2eae4e
 msgid "**Multiple Conditions**"
 msgstr "**多个条件**"
 
-#: ../../guide/hooks/hook_configuration.rst:250
-#: f0dab5b2cebb4734ae6a856c69da1aab
+#: ../../guide/hooks/hook_configuration.rst:323
+#: e3052306d23a4ea99e745e272160a764
 msgid "Performance Optimization"
 msgstr "性能优化"
 
-#: ../../guide/hooks/hook_configuration.rst:252
-#: dd66849aa9594068886c11c3cd75825d
+#: ../../guide/hooks/hook_configuration.rst:325
+#: c7c78dafa9c248419ce066c023a49477
 msgid "**Tool-Specific Configuration**"
 msgstr "**工具特定配置**"
 
-#: ../../guide/hooks/hook_configuration.rst:254
-#: c03188e9dca44f5baac521b441abe11e
+#: ../../guide/hooks/hook_configuration.rst:327
+#: 18d671d5a43f478e89ed3adf3de560b9
 msgid "Use tool-specific hooks for better performance:"
 msgstr "使用特定工具的钩子以提升性能："
 
-#: ../../guide/hooks/hook_configuration.rst:276
-#: 8a286099d0434b23bdd10a0a5390a6d7
+#: ../../guide/hooks/hook_configuration.rst:349
+#: 293c3a2516af444b89619a3ffd4b9e96
 msgid "**Appropriate Thresholds**"
 msgstr "**适当的阈值**"
 
-#: ../../guide/hooks/hook_configuration.rst:278
-#: f1ee20d4dd1d459999b3f1fb7de8d1b0
+#: ../../guide/hooks/hook_configuration.rst:351
+#: 81ab1d1544c04124bd085b4620b8d9dd
 msgid "Set thresholds to avoid unnecessary processing:"
 msgstr "设置阈值以避免不必要的处理："
 
-#: ../../guide/hooks/hook_configuration.rst:291
-#: 72f25148365f4459a9ba2f6b48a288b6
+#: ../../guide/hooks/hook_configuration.rst:364
+#: 8cde183fc618491f8ce3ea818c11c682
 msgid "**Caching Configuration**"
 msgstr "**缓存配置**"
 
-#: ../../guide/hooks/hook_configuration.rst:293
-#: b89a87b097ea4d65848b7822044a3ed7
+#: ../../guide/hooks/hook_configuration.rst:366
+#: 1bafa9557ae24f6985a9052f6b70daae
 msgid "Enable caching for better performance:"
 msgstr "启用缓存以提升性能："
 
-#: ../../guide/hooks/hook_configuration.rst:303
-#: c74748c5b4624ed2bb66fc8e1686a91b
+#: ../../guide/hooks/hook_configuration.rst:376
+#: ee231caa2ce649148d169c0b97577af2
+msgid "**Excluding Tools**"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:378
+#: 3435e2116f74479ba2dff4288193428a
+msgid "Exclude tool discovery and special tools:"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:390
+#: 5d7f915dabe44f95918ce28c1c42c6c7
+msgid "This prevents unnecessary processing and avoids recursive hook calls."
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:392
+#: 1b3efb48f2e346fbb251f6dcd4d7a313
 msgid "**Auto-Cleanup**"
 msgstr "**自动清理**"
 
-#: ../../guide/hooks/hook_configuration.rst:305
-#: 2436feca786d4501ae711454e2e70c75
+#: ../../guide/hooks/hook_configuration.rst:394
+#: efbe9e64235b4847b1e993d17ce855e2
 msgid "Enable auto-cleanup for file-based hooks:"
 msgstr "启用基于文件的钩子自动清理功能："
 
-#: ../../guide/hooks/hook_configuration.rst:317
-#: d8708aaa40d84928a3e9b7e828033ebf
+#: ../../guide/hooks/hook_configuration.rst:406
+#: e707c74d55c040a4813f0e2422f32f94
 msgid "Best Practices"
 msgstr "最佳实践"
 
-#: ../../guide/hooks/hook_configuration.rst:319
-#: 96d5c65312e84ee49d656742f7131c7d
+#: ../../guide/hooks/hook_configuration.rst:408
+#: 8dcf9dfceeac4ebcb471c7e26397cd4e
 msgid "**Configuration Management**"
 msgstr "**配置管理**"
 
-#: ../../guide/hooks/hook_configuration.rst:321
-#: 07781d7561f6498091a480b04ad6c488
+#: ../../guide/hooks/hook_configuration.rst:410
+#: fe0ef95a08e949aca88a2249afda6742
 msgid "**Start Simple**: Use `hook_type` for basic needs"
 msgstr "**从简单开始**：使用 `hook_type` 满足基本需求"
 
-#: ../../guide/hooks/hook_configuration.rst:322
-#: 645d80c556be4fe78dd273cd31f8bc1a
+#: ../../guide/hooks/hook_configuration.rst:411
+#: eaf8deed12ad4835bf6d25dc75d3aef0
 msgid "**Gradual Complexity**: Add `hook_config` for specific requirements"
 msgstr "**逐步复杂化**：添加 `hook_config` 以满足特定需求"
 
-#: ../../guide/hooks/hook_configuration.rst:323
-#: 36c7b55646f14027b208437a49f0c79b
+#: ../../guide/hooks/hook_configuration.rst:412
+#: 732702f6d1fd410dad3d7fc127e71d43
 msgid "**Test Incrementally**: Test each configuration change"
 msgstr "**逐步测试**：测试每项配置更改"
 
-#: ../../guide/hooks/hook_configuration.rst:324
-#: bd71aed709bf45c58a7853a83a235f7e
+#: ../../guide/hooks/hook_configuration.rst:413
+#: 6ef96fe07daa4f7a9f0d3626ced28171
 msgid "**Document Settings**: Keep track of custom configurations"
 msgstr "**文档设置**：记录自定义配置"
 
-#: ../../guide/hooks/hook_configuration.rst:326
-#: 15c237fb9d064a7f94734b2e1d536c34
+#: ../../guide/hooks/hook_configuration.rst:415
+#: bc20db9907ba4b0381ce65bc45d0d48c
 msgid "**Performance Tips**"
 msgstr "**性能优化提示**"
 
-#: ../../guide/hooks/hook_configuration.rst:328
-#: ad2f95f566b34de3b3ce0e81ba16ea4f
+#: ../../guide/hooks/hook_configuration.rst:417
+#: b2c4f6901db94aa78ca27c7ea9486ae8
 msgid "**Use Tool-Specific Hooks**: More efficient than global hooks"
 msgstr "**使用特定工具的挂钩**：比全局挂钩更高效"
 
-#: ../../guide/hooks/hook_configuration.rst:329
-#: dba2d7b6bcc0433da05c6070521db0c7
+#: ../../guide/hooks/hook_configuration.rst:418
+#: 15f90cdc79f1476996a73a14485ae66c
 msgid "**Set Appropriate Thresholds**: Avoid unnecessary processing"
 msgstr "**设置适当的阈值**：避免不必要的处理"
 
-#: ../../guide/hooks/hook_configuration.rst:330
-#: e996df5f2416470e88fc116157339fac
+#: ../../guide/hooks/hook_configuration.rst:419
+#: b1737076177248df9d09b5073b9f0e8e
 msgid "**Enable Caching**: Reduce redundant operations"
 msgstr "**启用缓存**：减少冗余操作"
 
-#: ../../guide/hooks/hook_configuration.rst:331
-#: 49dfb0b4606344e9b28a590ccc57b947
+#: ../../guide/hooks/hook_configuration.rst:420
+#: 480cb844f0514db4853169219deb49d4
 msgid "**Monitor Resource Usage**: Track memory and disk usage"
 msgstr "**监控资源使用情况**：跟踪内存和磁盘使用情况"
 
-#: ../../guide/hooks/hook_configuration.rst:333
-#: db5b1c9b3bd24306b3130faeea2c958d
+#: ../../guide/hooks/hook_configuration.rst:421
+#: 6cae493f86004f0c9d1a5e5e9407c668
+msgid ""
+"**Exclude Unnecessary Tools**: Use `exclude_tools` to skip tool discovery"
+" tools"
+msgstr ""
+
+#: ../../guide/hooks/hook_configuration.rst:423
+#: 76524634ef904c77ab587ba801ddd609
 msgid "**Error Handling**"
 msgstr "**错误处理**"
 
-#: ../../guide/hooks/hook_configuration.rst:335
-#: 9870450d405f47b8aef22571500650b5
+#: ../../guide/hooks/hook_configuration.rst:425
+#: ccb38eac51154933b283495d1edf45f6
 msgid "**Validate Configurations**: Check JSON syntax and structure"
 msgstr "**验证配置**：检查 JSON 语法和结构"
 
-#: ../../guide/hooks/hook_configuration.rst:336
-#: d21262c1872344d3baf2a087cb0f5b82
+#: ../../guide/hooks/hook_configuration.rst:426
+#: fa43f5f3b90143fbb620bc6e009affc6
 msgid "**Handle Missing Tools**: Ensure required tools are available"
 msgstr "**处理缺失工具**：确保所需工具可用"
 
-#: ../../guide/hooks/hook_configuration.rst:337
-#: e3af001886294d0a8f8499703e54d3c9
+#: ../../guide/hooks/hook_configuration.rst:427
+#: 4b12c1b01c464e95a7c5aeb199daf515
 msgid "**Graceful Degradation**: Provide fallback options"
 msgstr "**优雅降级**：提供后备选项"
 
-#: ../../guide/hooks/hook_configuration.rst:338
-#: 089234df7ae34ccd9881be5f90fb2878
+#: ../../guide/hooks/hook_configuration.rst:428
+#: 6dbaf1ce74a54bc59a525137c13d8c2d
 msgid "**Logging**: Enable detailed logging for debugging"
 msgstr "**日志记录**：启用详细日志以便调试"
 
-#: ../../guide/hooks/hook_configuration.rst:340
-#: c9b395fbb279420a8204d0044491d8f9
+#: ../../guide/hooks/hook_configuration.rst:430
+#: 413d5def17c247a0a120f434a514d12d
 msgid "**Security Considerations**"
 msgstr "**安全注意事项**"
 
-#: ../../guide/hooks/hook_configuration.rst:342
-#: 4bffa07e094b425faf1c06bdaa26d80b
+#: ../../guide/hooks/hook_configuration.rst:432
+#: 0ba001e40f434896881a2cb2792d100c
 msgid "**File Permissions**: Ensure proper file access controls"
 msgstr "**文件权限**：确保适当的文件访问控制"
 
-#: ../../guide/hooks/hook_configuration.rst:343
-#: 3d617a6ef3f94f1ab44603571075fe55
+#: ../../guide/hooks/hook_configuration.rst:433
+#: 54079d266d2747a58c16f23d8005a0b1
 msgid "**Temporary Files**: Use secure temporary directories"
 msgstr "**临时文件**：使用安全的临时目录"
 
-#: ../../guide/hooks/hook_configuration.rst:344
-#: 0d66e7e989054389b8cf9da2a8beba1e
+#: ../../guide/hooks/hook_configuration.rst:434
+#: 0a825013a6fb4df1896a0075d882ce49
 msgid "**Data Privacy**: Consider sensitive data handling"
 msgstr "**数据隐私**：考虑敏感数据的处理"
 
-#: ../../guide/hooks/hook_configuration.rst:345
-#: 1272464896714c90857922e200aee459
+#: ../../guide/hooks/hook_configuration.rst:435
+#: 1963913d557e40baa097bcf57e493208
 msgid "**Cleanup**: Regular cleanup of temporary files"
 msgstr "**清理**：定期清理临时文件"
 
-#: ../../guide/hooks/hook_configuration.rst:348
-#: b60c5469f64d44e59e250cce1f14f259
+#: ../../guide/hooks/hook_configuration.rst:438
+#: 09d179fb131b4706b5ce796f1fd9dc30
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../guide/hooks/hook_configuration.rst:350
-#: dc8631c6b488410483e457b84f8cfa2c
+#: ../../guide/hooks/hook_configuration.rst:440
+#: 34f7ea53fd214a0abee18a969f9ac63d
 msgid "**Configuration Validation**"
 msgstr "**配置验证**"
 
-#: ../../guide/hooks/hook_configuration.rst:364
-#: 032459772d424a039ec285b746007b22
+#: ../../guide/hooks/hook_configuration.rst:454
+#: 42aa3b4de2be427b974d0ec9acf66f14
 msgid "**Debug Configuration**"
 msgstr "**调试配置**"
 
-#: ../../guide/hooks/hook_configuration.rst:376
-#: 3f055a0d4ee44a449d145989a3926e71
+#: ../../guide/hooks/hook_configuration.rst:466
+#: 00581d8dceca49a29bd173d2c08c3047
 msgid "**Common Issues**"
 msgstr "**常见问题**"
 
-#: ../../guide/hooks/hook_configuration.rst:378
-#: 256ede5fea1041449ac4abd8bb8247c7
+#: ../../guide/hooks/hook_configuration.rst:468
+#: 6d3008dbb02a4d2b851ad6fe35e64b95
+#, fuzzy
 msgid ""
-"**Hook Not Triggering** - Check threshold settings - Verify hook is enabled "
-"- Confirm tool name matching - Review condition parameters"
+"**Hook Not Triggering** - Check threshold settings - Verify hook is "
+"enabled - Confirm tool name matching - Review condition parameters - "
+"Check if tool is in `exclude_tools` list (excluded tools won't trigger "
+"hooks)"
 msgstr "**钩子未触发** - 检查阈值设置 - 确认钩子已启用 - 核实工具名称匹配 - 审查条件参数"
 
-#: ../../guide/hooks/hook_configuration.rst:384
-#: 53efe36cfbdb4126b5787c6249c5ffee
+#: ../../guide/hooks/hook_configuration.rst:475
+#: 91490386d99143ccb7f2583bba6bda4a
 msgid ""
 "**Performance Problems** - Use tool-specific hooks - Set appropriate "
 "thresholds - Enable caching - Monitor resource usage"
 msgstr "**性能问题** - 使用特定工具的钩子 - 设置适当的阈值 - 启用缓存 - 监控资源使用情况"
 
-#: ../../guide/hooks/hook_configuration.rst:390
-#: f64b1fcc16b2414ab97aa5e076c59dc9
+#: ../../guide/hooks/hook_configuration.rst:481
+#: d20477a8d1b8471d956c0a0076508ffa
 msgid ""
 "**File Permission Errors** - Check directory permissions - Use absolute "
 "paths - Verify file access rights"
 msgstr "**文件权限错误** - 检查目录权限 - 使用绝对路径 - 验证文件访问权限"
 
-#: ../../guide/hooks/hook_configuration.rst:396
-#: c3040bc752584056806bd033f94365f0
+#: ../../guide/hooks/hook_configuration.rst:487
+#: 5ad4bd7d54df4aaab56e7fd6d8d8440e
 msgid "Next Steps"
 msgstr "下一步"
 
-#: ../../guide/hooks/hook_configuration.rst:398
-#: 613d4446d5934243ada4389831467208
-msgid "**Learn More**"
-msgstr "**了解更多**"
-
-#: ../../guide/hooks/hook_configuration.rst:400
-#: e0cac0c427a34e20b7bc075f2f7aefb7
-msgid ""
-"**SummarizationHook** → :doc:`summarization_hook` - AI-powered output "
-"summarization"
+#: ../../guide/hooks/hook_configuration.rst:491
+#: bab0bfa37c3a495bb092295a876bd876
+#, fuzzy
+msgid ":doc:`summarization_hook` - AI-powered output summarization"
 msgstr "**SummarizationHook** → :doc:`summarization_hook` - 基于 AI 的输出摘要功能"
 
-#: ../../guide/hooks/hook_configuration.rst:401
-#: f7a961797cd1420eb4c1765dd7ba6246
-msgid ""
-"**FileSaveHook** → :doc:`file_save_hook` - File-based output processing"
+#: ../../guide/hooks/hook_configuration.rst:492
+#: 393b61b4e653415db8149f730d49444f
+#, fuzzy
+msgid ":doc:`file_save_hook` - File-based output processing"
 msgstr "**FileSaveHook** → :doc:`file_save_hook` - 基于文件的输出处理"
 
-#: ../../guide/hooks/hook_configuration.rst:402
-#: 11d382a5118b4279b10a245505ed3da5
-msgid "**Hooks Overview** → :doc:`index` - Complete hooks system Tutorial"
+#: ../../guide/hooks/hook_configuration.rst:493
+#: 9198c100a54b400c82a4d9b0912170f7
+#, fuzzy
+msgid ":doc:`index` - Complete hooks system overview"
 msgstr "**Hooks 概述** → :doc:`index` - 完整的钩子系统教程"
 
-#: ../../guide/hooks/hook_configuration.rst:404
-#: 353ed06fa8ee474ca7c63ed00e3e44f5
-msgid "**Related Topics**"
-msgstr "**相关主题**"
-
-#: ../../guide/hooks/hook_configuration.rst:406
-#: 9043c11175504bb5a130f57ff7e8a9e5
-msgid ""
-"**Tool Composition** → :doc:`../tool_composition` - Chain tools into "
-"workflows"
+#: ../../guide/hooks/hook_configuration.rst:494
+#: 99865a656b7f4d44bb5452019fd278c8
+#, fuzzy
+msgid ":doc:`../tool_composition` - Chain tools into workflows"
 msgstr "**工具组成** → :doc:`../tool_composition` - 将工具串联成工作流"
 
-#: ../../guide/hooks/hook_configuration.rst:407
-#: 0299e7e5fe014bf690203a7e6a8a316a
-msgid ""
-"**Best Practices** → :doc:`../best_practices` - Performance optimization "
-"tips"
-msgstr "**最佳实践** → :doc:`../best_practices` - 性能优化建议"
+#~ msgid ""
+#~ "This Tutorial covers advanced configuration"
+#~ " options for the ToolUniverse hooks "
+#~ "system, including custom settings, tool-"
+#~ "specific configurations, and performance "
+#~ "optimization."
+#~ msgstr "本教程涵盖了 ToolUniverse 钩子系统的高级配置选项，包括自定义设置、工具特定配置以及性能优化。"
 
-#: ../../guide/hooks/hook_configuration.rst:408
-#: fb5793886e8e45b3a914a62e857cb3ea
-msgid "**Examples** → :doc:`../examples` - More usage examples"
-msgstr "**示例** → :doc:`../examples` - 更多使用示例"
+#~ msgid "**Learn More**"
+#~ msgstr "**了解更多**"
+
+#~ msgid "**Related Topics**"
+#~ msgstr "**相关主题**"
+
+#~ msgid ""
+#~ "**Best Practices** → :doc:`../best_practices` "
+#~ "- Performance optimization tips"
+#~ msgstr "**最佳实践** → :doc:`../best_practices` - 性能优化建议"
+
+#~ msgid "**Examples** → :doc:`../examples` - More usage examples"
+#~ msgstr "**示例** → :doc:`../examples` - 更多使用示例"
+

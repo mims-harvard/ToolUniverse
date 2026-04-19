@@ -1,0 +1,526 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dna_tools.rst:10 31697246b50a4a33a7ba1f66ec0d245d
+msgid "Dna Tools"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:12 248b7fc112fb419a8b6249204e885d27
+msgid ""
+"**Configuration File**: ``dna_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 10"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:16 c83b3a57513d451a9b0ef196947d55bb
+msgid ""
+"This page contains all tools defined in the ``dna_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:19 f3120c4f372e4945b8abd103bfc00f53
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:22 3c4e7dfc74094422935c0bc73b1380a9
+msgid "**DNA_calculate_gc_content** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:24 3bb782c3f7f649d18c00ae84ecb3ca93
+msgid ""
+"Calculate GC content percentage and full nucleotide composition of a DNA "
+"sequence. Returns GC%, A..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst fe0db188a3c849299c70e1a62e0b1022
+msgid "DNA_calculate_gc_content tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:28 ../../tools/dna_tools.rst:63
+#: ../../tools/dna_tools.rst:101 ../../tools/dna_tools.rst:142
+#: ../../tools/dna_tools.rst:180 ../../tools/dna_tools.rst:218
+#: ../../tools/dna_tools.rst:256 ../../tools/dna_tools.rst:306
+#: ../../tools/dna_tools.rst:341 ../../tools/dna_tools.rst:379
+#: 1d6a3bf8cf804e118e9aabaca6568344 2f6bdb4b292d4230b1c6486d848c7ff0
+#: 5407b38c02c843ed9e5f13092a7d3182 5c5c79af5b0743079b241fe6c0f09695
+#: 6270ce4682fa4388b847419d0b7dc658 7684f6bbc8dc4b94b00121895783b33d
+#: 8a75503026624514b81c57225dd8dddc a953a32542554622b573674dfb0b6a7e
+#: e0d58c2d3c0e4d438c18d5a84afc280e ecf2e616d2ed4fe1b6dc36d956aa3b30
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:30 a20c9157b922452293405f5adf45dcc6
+msgid "**Name**: ``DNA_calculate_gc_content``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:31 ../../tools/dna_tools.rst:66
+#: ../../tools/dna_tools.rst:104 ../../tools/dna_tools.rst:145
+#: ../../tools/dna_tools.rst:183 ../../tools/dna_tools.rst:221
+#: ../../tools/dna_tools.rst:259 ../../tools/dna_tools.rst:309
+#: ../../tools/dna_tools.rst:344 ../../tools/dna_tools.rst:382
+#: 0c315c2046c840548e44bee4d13dd085 12a9c7f6c2f6499d82faf6e15da7875a
+#: 31958b0d77bb463c8f499634c972efc1 38096a56a3144f5fa0b8c5bcf788c68a
+#: 39f004a4047e4bafb42b23ce6f40bae9 6f1edc9df1bf40faabd3c0c35dc784c8
+#: a678d50881024e82931be9fafae6c421 d02a46b32b344fd79b99e4253d3f6b31
+#: d577453ea5f54d3c92924587188f6986 f1bd4d51a07d4176bfcd5bb59133b7c2
+msgid "**Type**: ``DNATool``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:32 bc9f1bd8148d4e34b929925d3f10fd72
+msgid ""
+"**Description**: Calculate GC content percentage and full nucleotide "
+"composition of a DNA sequence. Returns GC%, AT%, individual base counts "
+"(A, T, G, C, N), and interpretation (low/normal/high GC). Useful for "
+"primer design quality checks, cloning efficiency prediction, and sequence"
+" characterization. High GC (>60%) sequences may require special PCR "
+"conditions."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:34 ../../tools/dna_tools.rst:69
+#: ../../tools/dna_tools.rst:107 ../../tools/dna_tools.rst:148
+#: ../../tools/dna_tools.rst:186 ../../tools/dna_tools.rst:224
+#: ../../tools/dna_tools.rst:262 ../../tools/dna_tools.rst:312
+#: ../../tools/dna_tools.rst:347 ../../tools/dna_tools.rst:385
+#: 5d6c7160df8f45b48b43a1750ba0b6a9 6dcbd9f5e99043b1b225f0f7dcb3b9c6
+#: 778f598e2f87418c86ee20b70ecc0fe9 7ba90c9285c945cd8f4f9220ded7a6df
+#: 8901972bda3c46059146a5b4cc9c15b9 934a835db55c4dccb09c6eb078fc4b5c
+#: b8af3305d6eb45038d23c0695e07b172 c42b416a52d543609e9f5e0289c6e130
+#: c490a1c48b9e44468f3c0afa769f2b0a eaf2401b639f42708d6b32be4e2b5776
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:36 ../../tools/dna_tools.rst:71
+#: ../../tools/dna_tools.rst:109 ../../tools/dna_tools.rst:150
+#: ../../tools/dna_tools.rst:188 ../../tools/dna_tools.rst:226
+#: ../../tools/dna_tools.rst:264 ../../tools/dna_tools.rst:314
+#: ../../tools/dna_tools.rst:349 ../../tools/dna_tools.rst:387
+#: 087120c75eab4960ab8948b14e5dd7a1 0ad4a030d7e84950b894dba92a21e207
+#: 989bc888acb84af7b7dc4ff86d89d23d a59f0174012749f39c2c2107334eac00
+#: b265b84d8eb742749b1ce9fdb2bd07a6 cf57edc57a8f46b5a289027d9be78345
+#: d57ffcea155b41219f0ff91c0b46b994 e0c2b3474fea4e799537724dba827ad6
+#: ef50a160e24f4bdcb338a6fc0f7aa623 f4a997d94efb4d49ad2b1932869f49fd
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:39 ../../tools/dna_tools.rst:317
+#: ../../tools/dna_tools.rst:390 1366ba6ad9ba467aa6fa0c1bcae292c0
+#: bd4e03f9022d419fb411a6c7390e00b4 d4bf76819971411a8236c52fbb858834
+msgid ""
+"``sequence`` (string) (required) DNA sequence (A, T, G, C, N only). Case "
+"insensitive."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:42 ../../tools/dna_tools.rst:80
+#: ../../tools/dna_tools.rst:121 ../../tools/dna_tools.rst:159
+#: ../../tools/dna_tools.rst:197 ../../tools/dna_tools.rst:235
+#: ../../tools/dna_tools.rst:285 ../../tools/dna_tools.rst:320
+#: ../../tools/dna_tools.rst:358 ../../tools/dna_tools.rst:399
+#: 1a0cc03e04dd4e959fd2876549a52f26 28b5e365df2c4199b276c8bbcb6e2672
+#: 3bd9e4d8377946119851361601a056ed 5ff91d684e044f3bb6838436d0007bc3
+#: 759b816735c04119bd4ef1e1b149ba6d ad6d4ac9d2fa40358c39e089e819b4a6
+#: b4731a8e148b4a52b07a6464d9de9963 c19da63acca542e6aeffdd4419cefab8
+#: dd6907fe557041f7ae40fa2a530512d6 e51f68ea97b148fbba6528025ea174af
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:57 899b33755adb43d499ec7ae4eb9c8a65
+msgid "**DNA_codon_optimize** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:59 990c1e08543b414494cd9b91e1c5ac52
+msgid ""
+"Codon-optimize an amino acid sequence for expression in a target species "
+"(human, ecoli, mouse, or..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst 6c76c2ed98db4132bc673fb27b3487ad
+msgid "DNA_codon_optimize tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:65 398c353961ea45bcb3a4cf34be0c518e
+msgid "**Name**: ``DNA_codon_optimize``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:67 0aaed421179a43febbe88cc82ad424b6
+msgid ""
+"**Description**: Codon-optimize an amino acid sequence for expression in "
+"a target species (human, ecoli, mouse, or yeast) using species-specific "
+"codon frequency tables. Returns the optimized DNA sequence, GC content, "
+"Codon Adaptation Index (CAI), and sequence length. Use for: synthetic "
+"gene design, heterologous protein expression, improving codon usage for a"
+" target host organism."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:74 505035b1d1f94c60906cd3024069e402
+msgid ""
+"``sequence`` (string) (required) Amino acid sequence in single-letter "
+"code (e.g., 'MEPVDDLPL'). Stop codon (\\*) is optional at the end."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:77 1bd7c709d29a4998a180aa4a305d9673
+msgid ""
+"``species`` (string, null) (optional) Target expression organism. "
+"Options: 'human' (default), 'ecoli', 'mouse', 'yeast'."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:95 07ee756441fd4001b862554ac20644b2
+msgid "**DNA_find_orfs** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:97 98e6aa14056a492b8c1394af9ba80aae
+msgid ""
+"Find open reading frames (ORFs) in a DNA sequence by scanning for ATG "
+"start codons followed by st..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst c0d412b03dec464e8ce51a1fffdacbe2
+msgid "DNA_find_orfs tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:103 686abce0daec4fe2bd4c82949acbe336
+msgid "**Name**: ``DNA_find_orfs``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:105 b8d469d180ca4443a5ee36ff1a6094d3
+msgid ""
+"**Description**: Find open reading frames (ORFs) in a DNA sequence by "
+"scanning for ATG start codons followed by stop codons (TAA, TAG, TGA). "
+"Returns ORFs sorted by length with positions, strand, and reading frame. "
+"Supports forward strand, reverse strand, or both. Use for: gene "
+"prediction, identifying protein-coding regions, analyzing synthetic "
+"sequences."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:112 18fb535575eb48be96acd43198ea060b
+msgid "``sequence`` (string) (required) DNA sequence (A, T, G, C, N only)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:115 ca5c6549105d4b26b813dda3c9e8a160
+msgid ""
+"``min_length`` (integer) (optional) Minimum ORF length in nucleotides "
+"(default: 100 nt = ~33 amino acids)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:118 6bb588c349eb4d9db42056b4f9fd82bd
+msgid ""
+"``strand`` (string, null) (optional) Which strand to search: 'forward', "
+"'reverse', or 'both' (default)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:136 c2aed73b1ed94e16acd241efcd88cfb9
+msgid "**DNA_find_restriction_sites** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:138 d4cdde62e26b4883880fe794bf1bb584
+msgid ""
+"Find restriction enzyme recognition sites in a DNA sequence using the NEB"
+" enzyme library (24 comm..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst de44b433663e42b78661667f1c294aa8
+msgid "DNA_find_restriction_sites tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:144 f03679a96d204bf88e063a04e3056772
+msgid "**Name**: ``DNA_find_restriction_sites``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:146 6bb1e82d842640ac802619f648df6c43
+msgid ""
+"**Description**: Find restriction enzyme recognition sites in a DNA "
+"sequence using the NEB enzyme library (24 common enzymes including EcoRI,"
+" BamHI, HindIII, NotI, etc.). Returns positions, recognition sequences, "
+"and cut counts for each enzyme that has sites. Use for: cloning strategy "
+"design, vector linearization planning, molecular biology workflows."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:153 beead912d646480ea65124393665e093
+msgid ""
+"``sequence`` (string) (required) DNA sequence (A, T, G, C, N only). Case "
+"insensitive. Spaces and newlines are ignored."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:156 aab665aa97c148939e1af99e7a600abc
+msgid ""
+"``enzymes`` (array, null) (optional) Optional list of specific enzyme "
+"names to check (e.g., ['EcoRI', 'BamHI']). If null, checks all 24 NEB "
+"enzymes."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:174 70574df5dbed4929b7c586faa4b52266
+msgid "**DNA_gibson_design** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:176 0b16a95e8ae84ab8a554b5733858079f
+msgid ""
+"Design Gibson Assembly overlaps for seamless DNA fragment assembly. For "
+"each fragment, computes t..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst ae0ec84442284ec294e6902bb5be110d
+msgid "DNA_gibson_design tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:182 e27ebd4961114623a62de7888011a758
+msgid "**Name**: ``DNA_gibson_design``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:184 a68da2b6b347439eb46920387d060f32
+msgid ""
+"**Description**: Design Gibson Assembly overlaps for seamless DNA "
+"fragment assembly. For each fragment, computes the 5' overhang (from the "
+"previous fragment's 3' end) and 3' overhang (from the next fragment's 5' "
+"end) based on the specified overlap length (default 20 bp). Returns the "
+"modified fragment sequences ready for Gibson Assembly cloning. Use for: "
+"seamless cloning, multi-fragment assembly, vector backbone insertion."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:191 0573eb1b6ae64918819b33cfda2fa942
+msgid ""
+"``fragments`` (array) (required) List of DNA fragment sequences (at least"
+" 2). Each must be longer than overlap\\_length."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:194 a315277857c6436cab451fb445df3993
+msgid ""
+"``overlap_length`` (integer, null) (optional) Overlap length in bp for "
+"Gibson Assembly (default: 20 bp). Must be at least 1."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:212 e5a4b44ca1c6431fb39dd00c68415057
+msgid "**DNA_golden_gate_design** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:214 aaf7c0988579442683536f6c0ba9afbb
+msgid ""
+"Design Golden Gate Assembly parts with Type IIS restriction enzyme sites "
+"(BsaI or BbsI). Assigns ..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst 2ef8f419217c4fe8b0389fbe6684dc14
+msgid "DNA_golden_gate_design tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:220 c0a2d3fe2f434cdda7fd9efac485ef9c
+msgid "**Name**: ``DNA_golden_gate_design``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:222 0f2d1c639c474105bc15db5a19d9569a
+msgid ""
+"**Description**: Design Golden Gate Assembly parts with Type IIS "
+"restriction enzyme sites (BsaI or BbsI). Assigns unique non-palindromic "
+"4-bp overhangs to each junction and builds the full synthetic part "
+"sequences including enzyme recognition sites. Use for: scarless multi-"
+"part assembly, modular cloning (MoClo), Golden Gate cloning workflows."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:229 c213f4df1f444484a3378415e355bb31
+msgid ""
+"``parts`` (array) (required) List of DNA part sequences to assemble (at "
+"least 2). A, T, G, C only."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:232 244346944836470b94ecc5705d52c20c
+msgid ""
+"``enzyme`` (string, null) (optional) Type IIS restriction enzyme to use. "
+"Options: 'BsaI' (default) or 'BbsI'."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:250 9f4815cadd5e4154b6f30def24f2dff3
+msgid "**DNA_primer_design** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:252 4ec2b87f0db34e4987795c0dc6b7fb49
+msgid ""
+"Design forward and reverse PCR primers for a target DNA region using the "
+"SantaLucia 1998 nearest-..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst 6d59be373ff845eeabaa4905ada57981
+msgid "DNA_primer_design tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:258 eed4d4d2292a4548acd6ff2de277701a
+msgid "**Name**: ``DNA_primer_design``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:260 76e797f2708f4bd68c4020a63d24f791
+msgid ""
+"**Description**: Design forward and reverse PCR primers for a target DNA "
+"region using the SantaLucia 1998 nearest-neighbor thermodynamic model. "
+"Selects primers with Tm closest to the target (default 60°C), GC content "
+"40-60%, length 18-25 bp, and no 3'-end repeats. Use for: PCR "
+"amplification, genotyping, diagnostic assay design, amplicon sequencing."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:267 b73b601584524aacbb2f2ed310787e91
+msgid ""
+"``sequence`` (string) (required) DNA template sequence (A, T, G, C, N "
+"only). Must be at least 200 bp for good primer design."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:270 e69f87a9cec8461ca4fc8a35118d28d5
+msgid ""
+"``target_start`` (integer, null) (optional) 0-based start position of the"
+" target region to amplify. Defaults to 0."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:273 5be7bca5c25846be8c1c95d7313efa1e
+msgid ""
+"``target_end`` (integer, null) (optional) 0-based end position of the "
+"target region to amplify. Defaults to sequence length."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:276 607e9211857d4d2a9c5eea77f6ca5227
+msgid ""
+"``tm_target`` (number, null) (optional) Target melting temperature in "
+"Celsius (default: 60.0°C)."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:279 ada4cfe630db4d11afd5ca6ac4849ed7
+msgid ""
+"``product_size_min`` (integer, null) (optional) Minimum acceptable PCR "
+"product size in bp (default: 100)."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:282 69110d7ac12c4aa9ae04296c5cfa657b
+msgid ""
+"``product_size_max`` (integer, null) (optional) Maximum acceptable PCR "
+"product size in bp (default: 1000)."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:300 c37c8e5059e34ac39c32427be4649ab6
+msgid "**DNA_reverse_complement** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:302 31499f12294a4fcebc2ba5866187cc24
+msgid ""
+"Generate the reverse complement of a DNA sequence. Complements each base "
+"(A↔T, G↔C) then reverses..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst 50af103abe264a91bc025ad25fb5da34
+msgid "DNA_reverse_complement tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:308 77c8f97936f04b1c93cd30675cea4a8f
+msgid "**Name**: ``DNA_reverse_complement``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:310 10fab47d960046389398e005bdc50dc0
+msgid ""
+"**Description**: Generate the reverse complement of a DNA sequence. "
+"Complements each base (A↔T, G↔C) then reverses the sequence. Essential "
+"for: designing reverse primers, understanding antisense strand, "
+"converting sequences between conventions. N bases are preserved as N in "
+"the reverse complement."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:335 dcc6d33065ca4e6aa483f60625b69075
+msgid "**DNA_translate_sequence** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:337 b144e87bba4b4dc48de3ff9d5914aeb9
+msgid ""
+"Translate a DNA coding sequence to protein using the standard genetic "
+"code (NCBI Code 1). Returns..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst fdb1335b4cb24711993588cb48826d53
+msgid "DNA_translate_sequence tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:343 93f8a6aabe34429fbc2df267dfd281e5
+msgid "**Name**: ``DNA_translate_sequence``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:345 ecfdf3e016e545f893df50da496e1f16
+msgid ""
+"**Description**: Translate a DNA coding sequence to protein using the "
+"standard genetic code (NCBI Code 1). Returns protein sequence (single-"
+"letter amino acids), stop codon positions, and protein length. Trims at "
+"first stop codon by default. Use for: checking synthetic gene constructs,"
+" verifying reading frames, predicting protein sequence from genomic DNA."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:352 efb68c2f0500480e971386ace1421b90
+msgid ""
+"``sequence`` (string) (required) DNA coding sequence starting with ATG "
+"(A, T, G, C only). Should be in-frame."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:355 af344d12323c420bb81c9be1a0d0b786
+msgid ""
+"``codon_table`` (string, null) (optional) Genetic code to use. Currently "
+"only 'standard' (NCBI Code 1) is supported."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:373 f5121268876049d1b135c7625db8dea6
+msgid "**DNA_virtual_digest** (Type: DNATool)"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:375 7810a5da6f26493d9ea81db8b8ae5b82
+msgid ""
+"Perform a virtual restriction enzyme digest on a DNA sequence using the "
+"NEB enzyme library (24 en..."
+msgstr ""
+
+#: ../../tools/dna_tools.rst 89f2dc1373e74ffa8aaaed53c98feb92
+msgid "DNA_virtual_digest tool specification"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:381 0a2c6a4d7ebb438eaa5124dad2dc721f
+msgid "**Name**: ``DNA_virtual_digest``"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:383 ed33e296db5c4953ba85bea558dd1191
+msgid ""
+"**Description**: Perform a virtual restriction enzyme digest on a DNA "
+"sequence using the NEB enzyme library (24 enzymes). Returns all resulting"
+" fragments with their sequences, lengths, and positions, plus a list of "
+"cut sites. Supports both linear and circular DNA. Use for: cloning "
+"planning, gel electrophoresis prediction, verifying construct integrity."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:393 db3674898c9e4702ac1398c0e71da040
+msgid ""
+"``enzymes`` (array, null) (optional) List of enzyme names to use for "
+"digestion (e.g., ['EcoRI', 'BamHI']). If null, uses all 24 NEB enzymes."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:396 e7aab28e418343589b5ca72a59e67a5c
+msgid ""
+"``circular`` (boolean, null) (optional) Treat sequence as circular DNA "
+"(e.g., plasmid). Default: false (linear)."
+msgstr ""
+
+#: ../../tools/dna_tools.rst:414 acf5931e164d420b8a8bb5edbafeceff
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:416 6671477ef0314c70becd2fc1d6ede06f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dna_tools.rst:417 caf15f20d96b4040ad8413dd5292db66
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

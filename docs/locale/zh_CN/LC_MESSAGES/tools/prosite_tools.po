@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/prosite_tools.rst:10 863cd3afa8cb4efa83b03c4d44edf628
+msgid "Prosite Tools"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:12 eb0c2c2b8f794a41b5cd11d543e805cb
+msgid ""
+"**Configuration File**: ``prosite_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:16 207f6bc6a3cb4560a0b4fedda9fe1e75
+msgid ""
+"This page contains all tools defined in the ``prosite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:19 831527972bd94c7985933d5dfccac688
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:22 4364e6e293594abfad37f50c330de51a
+msgid "**PROSITE_get_entry** (Type: PROSITETool)"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:24 ea6660d628c54000990dbd2a37cd81ba
+msgid ""
+"Retrieve a PROSITE protein motif/domain entry by its accession number. "
+"Returns the entry name, de..."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst 98279c936079428d92395dabc42ee66e
+msgid "PROSITE_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:28 ../../tools/prosite_tools.rst:59
+#: ../../tools/prosite_tools.rst:93 5ba786c20eba4ab988555bfda043907d
+#: 8b5f6a3f7974480f8fffe8540b6e1685 9f0f6879e6164760831f1ab9154b3ee4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:30 edc24dade97b47eb81c505f263145c8b
+msgid "**Name**: ``PROSITE_get_entry``"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:31 ../../tools/prosite_tools.rst:62
+#: ../../tools/prosite_tools.rst:96 121f6410c135485c86c260fdbcc16da0
+#: 3f919a1f5e234a2c99d1e06279f0149f 56af118b0a3e42eb8ed2d20983987bfa
+msgid "**Type**: ``PROSITETool``"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:32 25266a3b364943078f052174ad83d0f9
+msgid ""
+"**Description**: Retrieve a PROSITE protein motif/domain entry by its "
+"accession number. Returns the entry name, description, type (PATTERN or "
+"MATRIX/profile), consensus pattern, functional site annotations, cross-"
+"references to UniProt proteins, and documentation links. PROSITE "
+"(ExPASy/SIB) contains 1,800+ patterns and profiles describing protein "
+"domains, families, and functional sites. Pattern accessions start with "
+"PS000xx (e.g., PS00001 for N-glycosylation, PS00028 for zinc finger "
+"C2H2). Use this to understand what a PROSITE motif means after finding it"
+" via ScanProsite\\_scan\\_protein."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:34 ../../tools/prosite_tools.rst:65
+#: ../../tools/prosite_tools.rst:99 47b3c77bcf034a0aadad594258c62c2a
+#: b41f90661b7b419d8764457d629cdea3 d3a19e7e0503437fb69d930a9d8974df
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:36 e241e9e2969e4bd898b1f05d2b7bc052
+msgid ""
+"``accession`` (string) (required) PROSITE accession number starting with "
+"'PS'. Examples: 'PS00001' (N-glycosylation site), 'PS00028' (zinc finger "
+"C2H2 signature), 'PS00348' (p53 tumor suppressor family), 'PS51420' (Rho "
+"GTPase domain profile), 'PS00262' (insulin family signature)."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:39 ../../tools/prosite_tools.rst:73
+#: ../../tools/prosite_tools.rst:107 382ff24cacdc4eb497ac187115aed3c9
+#: b333c9882a3b4c0d92b0b8843a5d1180 cbe02bbba5db4d28a695975db9b3f489
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:53 836583f656254b53a878f083fcbe9216
+msgid "**PROSITE_scan_sequence** (Type: PROSITETool)"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:55 8bd55a15ee334f68a90e49f266f69143
+msgid ""
+"Scan a raw protein amino acid sequence against all PROSITE patterns and "
+"profiles to find matching..."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst 7abaf00821fd49e79a6c23bb680c7e32
+msgid "PROSITE_scan_sequence tool specification"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:61 a1be124761f844f88172d22f0150bc72
+msgid "**Name**: ``PROSITE_scan_sequence``"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:63 7863a230920d40038ee9e82bf21f366e
+msgid ""
+"**Description**: Scan a raw protein amino acid sequence against all "
+"PROSITE patterns and profiles to find matching motifs and domains. "
+"Returns PROSITE signature accessions, names, positions, and confidence "
+"scores. This is the sequence-based alternative to "
+"ScanProsite\\_scan\\_protein (which accepts UniProt accessions). Use this"
+" when you have a novel or modified sequence not in UniProt. By default, "
+"skips frequent/low-information patterns (like N-glycosylation); set "
+"skip\\_frequent=false to include all matches."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:67 b7819c914e8549b09c210e62d7387ce8
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code (e.g., 'MKTAYIAKQRQ...'). Must contain only standard amino "
+"acid letters."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:70 08ddb31f8c8c47188c0b702c357916b4
+msgid ""
+"``skip_frequent`` (boolean) (optional) If true (default), skip frequent "
+"low-information patterns like glycosylation sites. Set to false to "
+"include all matches."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:87 f25560b1be894bf5a256b5304ec3f7ad
+msgid "**PROSITE_search** (Type: PROSITETool)"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:89 10d2958b201b4145b3de147bc9fdb4a8
+msgid ""
+"Search the PROSITE database for protein motifs, domains, and functional "
+"site patterns by keyword...."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst 628dfeab6bb447b8846c3217c1bf6171
+msgid "PROSITE_search tool specification"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:95 fe2ff591ee8e487fa84edf7649d2abb5
+msgid "**Name**: ``PROSITE_search``"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:97 f5e47ef106df439eb70ab6f7b73a2f6d
+msgid ""
+"**Description**: Search the PROSITE database for protein motifs, domains,"
+" and functional site patterns by keyword. Uses the EBI InterPro API which"
+" indexes all PROSITE entries. Returns accession numbers, names, types, "
+"and InterPro cross-references. Useful for finding PROSITE patterns "
+"related to a biological function (e.g., 'kinase', 'zinc finger', "
+"'glycosylation'). Follow up with PROSITE\\_get\\_entry to get full "
+"details of any result."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:101 cbf8037ccdae4230af777be464f486ca
+msgid ""
+"``query`` (string) (required) Search keyword(s) for PROSITE entries. "
+"Examples: 'zinc finger', 'kinase', 'glycosylation', 'insulin', 'p53', "
+"'EGF-like domain'."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:104 13a2a075a9304823a630472402d1a39b
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:121 3feeaa06c3a24e1aaf23f44b37f7e429
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:123 fd5d4a7bd5e8408d8e8141f751ea64f9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/prosite_tools.rst:124 7ee86924764f47b09e44f29c76ddef39
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

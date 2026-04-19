@@ -7,384 +7,311 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 16:01-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:2
-#: ../../expand_tooluniverse/local_tools/index.rst:233
-#: 2272351f892441c28fa94426d342bc6e
+#: ../../expand_tooluniverse/local_tools/index.rst:6
+#: fdada3057b0145e7b34e5d14e9a4040f
 msgid "Local Tools"
 msgstr "本地工具"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:4
-#: 7033435bb1b147e89d753b4c18a8112e
+#: 2a80991329f74c1ea9e587f18aa4cb50
+#, fuzzy
 msgid ""
-"Local tools are Python classes that run within the ToolUniverse process. "
-"They provide high performance and easy integration for custom functionality."
+"Python classes that run within ToolUniverse for high-performance custom "
+"functionality."
 msgstr "本地工具是运行在 ToolUniverse 进程中的 Python 类。它们提供高性能并且易于集成自定义功能。"
 
-#: ../../expand_tooluniverse/local_tools/index.rst:7
-#: ece86b60f115485dbbf31cfe791b182d
-msgid "What are Local Tools?"
-msgstr "什么是本地工具？"
+#~ msgid ""
+#~ "🔍 **Compare**: :doc:`../reference/comparison` - "
+#~ "Compare with remote tools"
+#~ msgstr "🔍 **比较**: :doc:`../reference/comparison` - 与远程工具进行比较"
 
-#: ../../expand_tooluniverse/local_tools/index.rst:9
-#: a228ed90371c4ad0aa747097531eb0ee
-msgid ""
-"Local tools extend ToolUniverse with custom Python functionality. They run "
-"in the same process as ToolUniverse and provide:"
-msgstr "本地工具通过自定义 Python 功能扩展 ToolUniverse。它们与 ToolUniverse 在同一进程中运行，并提供："
-
-#: ../../expand_tooluniverse/local_tools/index.rst:11
-#: 2417256ffb2b44fd8e2d07235d98a81b
-msgid "**High Performance**: No network overhead"
-msgstr "**高性能**：无网络开销"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:12
-#: 78b93ee90bdb42c9b10b71e7d7154a42
-msgid "**Easy Development**: Simple Python classes"
-msgstr "**轻松开发**：简单的 Python 类"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:13
-#: eb46b7a3b3ca4e6f88355ec569a43089
-msgid "**Automatic Discovery**: Tools auto-register with decorators"
-msgstr "**自动发现**：工具通过装饰器自动注册"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:14
-#: dd430ca550c94b1c97c76a7449dd075c
-msgid "**Full Integration**: Access to all ToolUniverse features"
-msgstr "**完全集成**：访问所有 ToolUniverse 功能"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:16
-#: a98dc2867450440b9d8b61185ec3d79f
-msgid ""
-"**Best for:** - Data processing and analysis - File manipulation utilities -"
-" Simple API wrappers - Computational tools"
-msgstr ""
-"**最佳用途：**  \n"
-"- 数据处理与分析  \n"
-"- 文件操作工具  \n"
-"- 简单的 API 封装程序  \n"
-"- 计算工具"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:23
-#: a0350fe98a024bc08d86cfe796c7589e
-msgid "Quick Start"
-msgstr "快速入门"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:25
-#: 105500d02b71486ea234861b5a76163e
-msgid ""
-"**I want to quickly try creating a local tool:** → :doc:`../quick_start` - "
-"5-minute tutorial to create your first tool"
-msgstr "**我想快速尝试创建一个本地工具：** → :doc:`../quick_start` - 5分钟教程，帮助您创建第一个工具"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:28
-#: 69173e6deaed4e898e2cd67fa91b4639
-msgid ""
-"**I want to learn local tool development:** → :doc:`tutorial` - "
-"Comprehensive guide with examples"
-msgstr "**我想学习本地工具开发：** → :doc:`教程` - 包含示例的全面指南"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:31
-#: 3a5e708d04784685a420c40f5b7614ec
-msgid ""
-"**I want to contribute a local tool:** → :doc:`../contributing/local_tools` "
-"- Submit your tool to ToolUniverse"
-msgstr ""
-"**我想贡献一个本地工具：** → :doc:`../contributing/local_tools` - 将您的工具提交到 ToolUniverse"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:34
-#: c7af5c412a4d4003813990387ffee416
-msgid ""
-"**I want to understand advanced features:** → :doc:`advanced_features` - "
-"Learn BaseTool capabilities"
-msgstr "**我想了解高级功能：** → :doc:`advanced_features` - 了解 BaseTool 的功能"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:38
-#: d7ef5bd0aad14eb9911c918aaa6195ec
-msgid "Key Concepts"
-msgstr "关键概念"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:40
-#: f6525cef7bb64851a91b83fca34236a1
-msgid ""
-"**Tool Registration** - Use ``@register_tool`` decorator to register your "
-"tool - Tools are automatically discovered by ToolUniverse - Configuration "
-"can be inline or in separate JSON files"
-msgstr ""
-"**工具注册** - 使用 ``@register_tool`` 装饰器注册您的工具 - 工具会被 ToolUniverse 自动发现 - "
-"配置可以内联或存储在单独的 JSON 文件中"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:45
-#: e8eb4f49cb0046219cd6fdbf574db21c
-msgid ""
-"**BaseTool Class** - All local tools must inherit from ``BaseTool`` - "
-"Implement the ``run()`` method with your tool logic - Add "
-"``validate_input()`` for parameter validation"
-msgstr ""
-"**BaseTool 类** - 所有本地工具必须继承自 ``BaseTool`` - 使用您的工具逻辑实现 ``run()`` 方法 - 添加 "
-"``validate_input()`` 进行参数验证"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:50
-#: 7ababdf98f3c40d89177faddd8c9c956
-msgid ""
-"**Configuration** - Define tool parameters using JSON Schema - Specify "
-"required and optional parameters - Add examples and descriptions"
-msgstr "**配置** - 使用 JSON Schema 定义工具参数 - 指定必需和可选参数 - 添加示例和描述"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:55
-#: e5d4e7ba05dd4247b63b8567bcea47cf
-msgid ""
-"**Self-Use vs Contribution** - **Self-Use**: Config in decorator, no "
-"``__init__.py`` changes - **Contribution**: Config in JSON file, must modify"
-" ``__init__.py``"
-msgstr ""
-"**自用与贡献** - **自用**：在装饰器中配置，无需修改``__init__.py`` - "
-"**贡献**：在JSON文件中配置，必须修改``__init__.py``"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:60
-#: b8a63d3a8e004876865d868b19520a0d
-msgid "Examples"
-msgstr "示例"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:63
-#: ffc31c652c26441092603664e8e34223
-msgid "Simple Calculator"
-msgstr "简单计算器"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:104
-#: 4173efd6461d43b78d886d713c0294a6
-msgid "API Wrapper"
-msgstr "API 包装器"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:158
-#: 249e8abd3b244da4a5549ff858e5dd56
-msgid "Common Patterns"
-msgstr "常见模式"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:160
-#: 32671189f1004ed28e8831fd19d6cdcc
-msgid "**Input Validation** .. code-block:: python"
-msgstr "**输入验证** .. code-block:: python"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:163
-#: 44ac4655563043ef8d16dc7069a7d072
-msgid "def validate_input(self, **kwargs):"
-msgstr ""
-"```python\n"
-"def validate_input(self, **kwargs):\n"
-"```"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:164
-#: 501b866d1d454f71a042c0a9109fccb2
-msgid "\"\"\"Validate input parameters.\"\"\" if \"required_param\" not in kwargs:"
-msgstr "\"\"\"验证输入参数。\"\"\" 如果 \"required_param\" 不在 kwargs 中："
-
-#: ../../expand_tooluniverse/local_tools/index.rst:166
-#: 972341d87c6b4df1ae7f003cebecc91c
-msgid "raise ValueError(\"required_param is required\")"
-msgstr "raise ValueError(\"必须提供 required_param\")"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:168
-#: 145da1f779c442e0a430da2b33a5fc84
-msgid "if not isinstance(kwargs[\"required_param\"], str):"
-msgstr "如果不是 isinstance(kwargs[\"required_param\"], str):"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:169
-#: 2061f8232d6549f798bdf8231071b97f
-msgid "raise ValueError(\"required_param must be a string\")"
-msgstr "raise ValueError(\"required_param 必须是字符串\")"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:171
-#: 2d9d4dd9bb0f4b939ddc7b99af82f4ab
-msgid "**Error Handling** .. code-block:: python"
-msgstr "**错误处理** .. code-block:: python"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:174
-#: 67c074a9f20941feb2b067b0b762e90b
-msgid "def run(self, arguments):"
-msgstr ""
-
-#: ../../expand_tooluniverse/local_tools/index.rst:175
-#: 396b8fe554554a73bd0e74eb3df55e2f
-msgid "try:"
-msgstr "尝试："
-
-#: ../../expand_tooluniverse/local_tools/index.rst:176
-#: d54601e3d7ce49b7928aaf9449298049
-#, python-brace-format
-msgid ""
-"# Your tool logic here result = self.process_data(arguments) return "
-"{\"result\": result, \"success\": True}"
-msgstr ""
-"# 您的工具逻辑在此  \n"
-"result = self.process_data(arguments)  \n"
-"return {\"result\": result, \"success\": True}"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:179
-#: b2353352d3a94fa4b66d129f1e607745
-msgid "except ValueError as e:"
-msgstr ""
-
-#: ../../expand_tooluniverse/local_tools/index.rst:180
-#: ca43846664614af19df24f4ba8b0af30
-#, python-brace-format
-msgid "return {\"error\": f\"Invalid input: {str(e)}\", \"success\": False}"
-msgstr "return {\"error\": f\"输入无效：{str(e)}\", \"success\": False}"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:181
-#: bdde936d66e640a6b54314b54800f231
-msgid "except Exception as e:"
-msgstr ""
-"except Exception as e:  \n"
-"除非发生异常 Exception 并赋值给变量 e："
-
-#: ../../expand_tooluniverse/local_tools/index.rst:182
-#: 98fb47157aa74c8a90daacd9b43e2a21
-#, python-brace-format
-msgid "return {\"error\": f\"Unexpected error: {str(e)}\", \"success\": False}"
-msgstr "return {\"error\": f\"意外错误: {str(e)}\", \"success\": False}"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:184
-#: 2fcb1968c27f4cf0a2595552f355e026
-msgid "**Using Environment Variables** .. code-block:: python"
-msgstr "**使用环境变量** .. code-block:: python"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:187
-#: baaa479142fa40269c0856f565575405
-msgid "def __init__(self, tool_config=None):"
-msgstr ""
-"```python\n"
-"def __init__(self, tool_config=None):\n"
-"```"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:188
-#: d8701df2c7d344ac9ff73ebb94924cf7
-#, python-brace-format
-msgid ""
-"super().__init__(tool_config) self.api_key = self.config.get(\"settings\", "
-"{}).get(\"api_key\")"
-msgstr ""
-"super().__init__(tool_config)  \n"
-"self.api_key = self.config.get(\"settings\", {}).get(\"api_key\")"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:191
-#: 44a81a4b7ba647c7aa73d499864252bd
-msgid "**Caching Results** .. code-block:: python"
-msgstr "**缓存结果** .. code-block:: python"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:194
-#: 770fc0270bf545f1801fc5b2c20e4eb0
-msgid "from functools import lru_cache"
-msgstr "从 functools 导入 lru_cache"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:196
-#: e36d11a6d4304fefb7da7cfd9e1d8c29
-msgid "@lru_cache(maxsize=100) def expensive_calculation(self, n):"
-msgstr ""
-"@lru_cache(maxsize=100)  \n"
-"def expensive_calculation(self, n):"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:198
-#: 4b05df17973b4da5b2317c5efe8aeee4
-msgid "# Expensive computation here return result"
-msgstr "# 复杂计算在此处返回结果"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:202
-#: b80b5302b3ba412f8ff989e0f57bc4f1
-msgid "Troubleshooting"
-msgstr "故障排除"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:204
-#: ebd32443edfb4a55968a860a88168f73
-msgid ""
-"**Tool not found** - Check if tool is imported - Verify ``@register_tool`` "
-"decorator - Ensure ToolUniverse is instantiated after import"
-msgstr ""
-"**工具未找到** - 检查工具是否已导入 - 验证 ``@register_tool`` 装饰器 - 确保在导入后实例化 ToolUniverse"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:209
-#: bee39e534df7410cae5ae25a2ec6a049
-msgid ""
-"**Parameter errors** - Check parameter definitions in config - Verify "
-"required parameters are listed - Ensure parameter types are correct"
-msgstr "**参数错误** - 检查配置中的参数定义 - 验证是否列出了必需的参数 - 确保参数类型正确"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:214
-#: b04d1d25b7824df78d223b75bbe3a0de
-msgid ""
-"**Execution failures** - Verify class inherits from ``BaseTool`` - Check "
-"``__init__`` calls ``super().__init__(tool_config)`` - Ensure ``run()`` "
-"returns dict with ``\"success\"`` field"
-msgstr ""
-"**执行失败** - 验证类是否继承自``BaseTool`` - "
-"检查``__init__``是否调用``super().__init__(tool_config)`` - "
-"确保``run()``返回包含``\"success\"``字段的字典"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:219
-#: dfb3802348ac43778ace03a90a1c11f4
-msgid ""
-"**Import errors** - Check module name matches file name - Verify class name "
-"matches exactly - Ensure all dependencies are installed"
-msgstr "**导入错误** - 检查模块名称是否与文件名匹配 - 验证类名是否完全一致 - 确保所有依赖项已安装"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:225
-#: 4e978cd41cb2481899c94267c6d71d6e
-msgid "Next Steps"
-msgstr "下一步"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:227
-#: 023629fa1f2341bfa9b8131f1e202eff
-msgid ""
-"🚀 **Quick Start**: :doc:`../quick_start` - Create your first tool in 5 "
-"minutes"
-msgstr "🚀 **快速开始**: :doc:`../quick_start` - 在5分钟内创建您的第一个工具"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:228
-#: 65d53a003b0e419182e5006f75424698
-msgid "📚 **Tutorial**: :doc:`tutorial` - Learn local tool development"
-msgstr "📚 **教程**: :doc:`tutorial` - 学习本地工具开发"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:229
-#: 41db26a2447e41a4beee803e23388701
-msgid ""
-"🎁 **Contributing**: :doc:`../contributing/local_tools` - Submit tools to "
-"ToolUniverse"
-msgstr "🎁 **贡献**: :doc:`../contributing/local_tools` - 向 ToolUniverse 提交工具"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:230
-#: 3d1d9355f65a43ed9950166e294ec6b7
-msgid ""
-"🔧 **Advanced**: :doc:`advanced_features` - Learn advanced BaseTool "
-"capabilities"
-msgstr "🔧 **高级**：:doc:`advanced_features` - 了解 BaseTool 的高级功能"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:231
-#: 52a8496a23cd427b920d853ddfdb1ada
-msgid ""
-"🔍 **Compare**: Review the tool type comparison table in "
-":doc:`../contributing/index`"
-msgstr "🔍 **比较**：请查看 :doc:`../contributing/index` 中的工具类型对比表"
-
-#: ../../expand_tooluniverse/local_tools/index.rst:241
-#: fd122891c1274ad5bd8cc133f8ec465e
-msgid ""
-"**Getting Started**: We recommend starting with the quick start tutorial to "
-"understand the basics, then following the comprehensive tutorial for "
-"detailed development guidance."
-msgstr "**入门指南**：我们建议先从快速入门教程开始，以了解基础内容，然后再参考综合教程以获得详细的开发指导。"
+#~ msgid "What are Local Tools?"
+#~ msgstr "什么是本地工具？"
 
 #~ msgid ""
-#~ "🔍 **Compare**: :doc:`../reference/comparison` - Compare with remote tools"
-#~ msgstr "🔍 **比较**: :doc:`../reference/comparison` - 与远程工具进行比较"
+#~ "Local tools extend ToolUniverse with "
+#~ "custom Python functionality. They run in"
+#~ " the same process as ToolUniverse and"
+#~ " provide:"
+#~ msgstr "本地工具通过自定义 Python 功能扩展 ToolUniverse。它们与 ToolUniverse 在同一进程中运行，并提供："
+
+#~ msgid "**High Performance**: No network overhead"
+#~ msgstr "**高性能**：无网络开销"
+
+#~ msgid "**Easy Development**: Simple Python classes"
+#~ msgstr "**轻松开发**：简单的 Python 类"
+
+#~ msgid "**Automatic Discovery**: Tools auto-register with decorators"
+#~ msgstr "**自动发现**：工具通过装饰器自动注册"
+
+#~ msgid "**Full Integration**: Access to all ToolUniverse features"
+#~ msgstr "**完全集成**：访问所有 ToolUniverse 功能"
+
+#~ msgid ""
+#~ "**Best for:** - Data processing and "
+#~ "analysis - File manipulation utilities -"
+#~ " Simple API wrappers - Computational "
+#~ "tools"
+#~ msgstr ""
+#~ "**最佳用途：**  \n"
+#~ "- 数据处理与分析  \n"
+#~ "- 文件操作工具  \n"
+#~ "- 简单的 API 封装程序  \n"
+#~ "- 计算工具"
+
+#~ msgid "Quick Start"
+#~ msgstr "快速入门"
+
+#~ msgid ""
+#~ "**I want to quickly try creating a"
+#~ " local tool:** → :doc:`../quick_start` -"
+#~ " 5-minute tutorial to create your "
+#~ "first tool"
+#~ msgstr "**我想快速尝试创建一个本地工具：** → :doc:`../quick_start` - 5分钟教程，帮助您创建第一个工具"
+
+#~ msgid ""
+#~ "**I want to learn local tool "
+#~ "development:** → :doc:`tutorial` - "
+#~ "Comprehensive guide with examples"
+#~ msgstr "**我想学习本地工具开发：** → :doc:`教程` - 包含示例的全面指南"
+
+#~ msgid ""
+#~ "**I want to contribute a local "
+#~ "tool:** → :doc:`../contributing/local_tools` - "
+#~ "Submit your tool to ToolUniverse"
+#~ msgstr ""
+#~ "**我想贡献一个本地工具：** → :doc:`../contributing/local_tools` "
+#~ "- 将您的工具提交到 ToolUniverse"
+
+#~ msgid ""
+#~ "**I want to understand advanced "
+#~ "features:** → :doc:`advanced_features` - Learn"
+#~ " BaseTool capabilities"
+#~ msgstr "**我想了解高级功能：** → :doc:`advanced_features` - 了解 BaseTool 的功能"
+
+#~ msgid "Key Concepts"
+#~ msgstr "关键概念"
+
+#~ msgid ""
+#~ "**Tool Registration** - Use ``@register_tool``"
+#~ " decorator to register your tool -"
+#~ " Tools are automatically discovered by "
+#~ "ToolUniverse - Configuration can be "
+#~ "inline or in separate JSON files"
+#~ msgstr ""
+#~ "**工具注册** - 使用 ``@register_tool`` 装饰器注册您的工具 "
+#~ "- 工具会被 ToolUniverse 自动发现 - 配置可以内联或存储在单独的"
+#~ " JSON 文件中"
+
+#~ msgid ""
+#~ "**BaseTool Class** - All local tools "
+#~ "must inherit from ``BaseTool`` - "
+#~ "Implement the ``run()`` method with your"
+#~ " tool logic - Add ``validate_input()`` "
+#~ "for parameter validation"
+#~ msgstr ""
+#~ "**BaseTool 类** - 所有本地工具必须继承自 ``BaseTool`` "
+#~ "- 使用您的工具逻辑实现 ``run()`` 方法 - 添加 "
+#~ "``validate_input()`` 进行参数验证"
+
+#~ msgid ""
+#~ "**Configuration** - Define tool parameters "
+#~ "using JSON Schema - Specify required "
+#~ "and optional parameters - Add examples"
+#~ " and descriptions"
+#~ msgstr "**配置** - 使用 JSON Schema 定义工具参数 - 指定必需和可选参数 - 添加示例和描述"
+
+#~ msgid ""
+#~ "**Self-Use vs Contribution** - "
+#~ "**Self-Use**: Config in decorator, no "
+#~ "``__init__.py`` changes - **Contribution**: "
+#~ "Config in JSON file, must modify "
+#~ "``__init__.py``"
+#~ msgstr ""
+#~ "**自用与贡献** - **自用**：在装饰器中配置，无需修改``__init__.py`` - "
+#~ "**贡献**：在JSON文件中配置，必须修改``__init__.py``"
+
+#~ msgid "Examples"
+#~ msgstr "示例"
+
+#~ msgid "Simple Calculator"
+#~ msgstr "简单计算器"
+
+#~ msgid "API Wrapper"
+#~ msgstr "API 包装器"
+
+#~ msgid "Common Patterns"
+#~ msgstr "常见模式"
+
+#~ msgid "**Input Validation** .. code-block:: python"
+#~ msgstr "**输入验证** .. code-block:: python"
+
+#~ msgid "def validate_input(self, **kwargs):"
+#~ msgstr ""
+#~ "```python\n"
+#~ "def validate_input(self, **kwargs):\n"
+#~ "```"
+
+#~ msgid ""
+#~ "\"\"\"Validate input parameters.\"\"\" if "
+#~ "\"required_param\" not in kwargs:"
+#~ msgstr "\"\"\"验证输入参数。\"\"\" 如果 \"required_param\" 不在 kwargs 中："
+
+#~ msgid "raise ValueError(\"required_param is required\")"
+#~ msgstr "raise ValueError(\"必须提供 required_param\")"
+
+#~ msgid "if not isinstance(kwargs[\"required_param\"], str):"
+#~ msgstr "如果不是 isinstance(kwargs[\"required_param\"], str):"
+
+#~ msgid "raise ValueError(\"required_param must be a string\")"
+#~ msgstr "raise ValueError(\"required_param 必须是字符串\")"
+
+#~ msgid "**Error Handling** .. code-block:: python"
+#~ msgstr "**错误处理** .. code-block:: python"
+
+#~ msgid "def run(self, arguments):"
+#~ msgstr ""
+
+#~ msgid "try:"
+#~ msgstr "尝试："
+
+#~ msgid ""
+#~ "# Your tool logic here result ="
+#~ " self.process_data(arguments) return {\"result\": "
+#~ "result, \"success\": True}"
+#~ msgstr ""
+#~ "# 您的工具逻辑在此  \n"
+#~ "result = self.process_data(arguments)  \n"
+#~ "return {\"result\": result, \"success\": True}"
+
+#~ msgid "except ValueError as e:"
+#~ msgstr ""
+
+#~ msgid "return {\"error\": f\"Invalid input: {str(e)}\", \"success\": False}"
+#~ msgstr "return {\"error\": f\"输入无效：{str(e)}\", \"success\": False}"
+
+#~ msgid "except Exception as e:"
+#~ msgstr ""
+#~ "except Exception as e:  \n"
+#~ "除非发生异常 Exception 并赋值给变量 e："
+
+#~ msgid "return {\"error\": f\"Unexpected error: {str(e)}\", \"success\": False}"
+#~ msgstr "return {\"error\": f\"意外错误: {str(e)}\", \"success\": False}"
+
+#~ msgid "**Using Environment Variables** .. code-block:: python"
+#~ msgstr "**使用环境变量** .. code-block:: python"
+
+#~ msgid "def __init__(self, tool_config=None):"
+#~ msgstr ""
+#~ "```python\n"
+#~ "def __init__(self, tool_config=None):\n"
+#~ "```"
+
+#~ msgid ""
+#~ "super().__init__(tool_config) self.api_key = "
+#~ "self.config.get(\"settings\", {}).get(\"api_key\")"
+#~ msgstr ""
+#~ "super().__init__(tool_config)  \n"
+#~ "self.api_key = self.config.get(\"settings\", {}).get(\"api_key\")"
+
+#~ msgid "**Caching Results** .. code-block:: python"
+#~ msgstr "**缓存结果** .. code-block:: python"
+
+#~ msgid "from functools import lru_cache"
+#~ msgstr "从 functools 导入 lru_cache"
+
+#~ msgid "@lru_cache(maxsize=100) def expensive_calculation(self, n):"
+#~ msgstr ""
+#~ "@lru_cache(maxsize=100)  \n"
+#~ "def expensive_calculation(self, n):"
+
+#~ msgid "# Expensive computation here return result"
+#~ msgstr "# 复杂计算在此处返回结果"
+
+#~ msgid "Troubleshooting"
+#~ msgstr "故障排除"
+
+#~ msgid ""
+#~ "**Tool not found** - Check if tool"
+#~ " is imported - Verify ``@register_tool``"
+#~ " decorator - Ensure ToolUniverse is "
+#~ "instantiated after import"
+#~ msgstr ""
+#~ "**工具未找到** - 检查工具是否已导入 - 验证 "
+#~ "``@register_tool`` 装饰器 - 确保在导入后实例化 "
+#~ "ToolUniverse"
+
+#~ msgid ""
+#~ "**Parameter errors** - Check parameter "
+#~ "definitions in config - Verify required"
+#~ " parameters are listed - Ensure "
+#~ "parameter types are correct"
+#~ msgstr "**参数错误** - 检查配置中的参数定义 - 验证是否列出了必需的参数 - 确保参数类型正确"
+
+#~ msgid ""
+#~ "**Execution failures** - Verify class "
+#~ "inherits from ``BaseTool`` - Check "
+#~ "``__init__`` calls ``super().__init__(tool_config)`` "
+#~ "- Ensure ``run()`` returns dict with "
+#~ "``\"success\"`` field"
+#~ msgstr ""
+#~ "**执行失败** - 验证类是否继承自``BaseTool`` - "
+#~ "检查``__init__``是否调用``super().__init__(tool_config)`` - "
+#~ "确保``run()``返回包含``\"success\"``字段的字典"
+
+#~ msgid ""
+#~ "**Import errors** - Check module name"
+#~ " matches file name - Verify class "
+#~ "name matches exactly - Ensure all "
+#~ "dependencies are installed"
+#~ msgstr "**导入错误** - 检查模块名称是否与文件名匹配 - 验证类名是否完全一致 - 确保所有依赖项已安装"
+
+#~ msgid "Next Steps"
+#~ msgstr "下一步"
+
+#~ msgid ""
+#~ "🚀 **Quick Start**: :doc:`../quick_start` - "
+#~ "Create your first tool in 5 "
+#~ "minutes"
+#~ msgstr "🚀 **快速开始**: :doc:`../quick_start` - 在5分钟内创建您的第一个工具"
+
+#~ msgid "📚 **Tutorial**: :doc:`tutorial` - Learn local tool development"
+#~ msgstr "📚 **教程**: :doc:`tutorial` - 学习本地工具开发"
+
+#~ msgid ""
+#~ "🎁 **Contributing**: :doc:`../contributing/local_tools` "
+#~ "- Submit tools to ToolUniverse"
+#~ msgstr "🎁 **贡献**: :doc:`../contributing/local_tools` - 向 ToolUniverse 提交工具"
+
+#~ msgid ""
+#~ "🔧 **Advanced**: :doc:`advanced_features` - "
+#~ "Learn advanced BaseTool capabilities"
+#~ msgstr "🔧 **高级**：:doc:`advanced_features` - 了解 BaseTool 的高级功能"
+
+#~ msgid ""
+#~ "🔍 **Compare**: Review the tool type "
+#~ "comparison table in :doc:`../contributing/index`"
+#~ msgstr "🔍 **比较**：请查看 :doc:`../contributing/index` 中的工具类型对比表"
+
+#~ msgid ""
+#~ "**Getting Started**: We recommend starting "
+#~ "with the quick start tutorial to "
+#~ "understand the basics, then following "
+#~ "the comprehensive tutorial for detailed "
+#~ "development guidance."
+#~ msgstr "**入门指南**：我们建议先从快速入门教程开始，以了解基础内容，然后再参考综合教程以获得详细的开发指导。"
+

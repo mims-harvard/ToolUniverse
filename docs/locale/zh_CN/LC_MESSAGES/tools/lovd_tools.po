@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/lovd_tools.rst:10 f16dea2bb6c843868bd4340075033f03
+msgid "Lovd Tools"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:12 a051d6a7ae9f4f8883823b6f6234d7dd
+msgid ""
+"**Configuration File**: ``lovd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:16 615260574f124443848f6dfdad95c690
+msgid ""
+"This page contains all tools defined in the ``lovd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:19 cde1907006cb42b28f4d33a5ba493c24
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:22 2b13f4db571c463a960700ef6de193e6
+msgid "**LOVD_get_gene** (Type: LOVDTool)"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:24 af3fd15afb954a63a15beec2d59972cf
+msgid ""
+"Get gene information from LOVD (Leiden Open Variation Database). Returns "
+"HGNC ID, Entrez ID, chro..."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst 44602eb6bdd942debb6492ce7624b8bd
+msgid "LOVD_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:28 ../../tools/lovd_tools.rst:59
+#: ../../tools/lovd_tools.rst:90 0914b84684884d5a986e89e18c490f6a
+#: ec6b20af017a4c42819e480f5375171b f2bbd028154a42d9a6f48d6a734ea32b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:30 6ab238f36d3a4a3a8e3e5b796e413ddc
+msgid "**Name**: ``LOVD_get_gene``"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:31 ../../tools/lovd_tools.rst:62
+#: ../../tools/lovd_tools.rst:93 95163dccd3434acfaad7967e2d64d8ff
+#: 9b76d207e2cd4cb9849aee3b565b246d b45ae501d92f459e873669ac3c11ff57
+msgid "**Type**: ``LOVDTool``"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:32 3ab85078dc054ed4bb1ca45226e1ea66
+msgid ""
+"**Description**: Get gene information from LOVD (Leiden Open Variation "
+"Database). Returns HGNC ID, Entrez ID, chromosomal location, RefSeq "
+"transcript(s), genomic build, curation details, and dates. LOVD hosts "
+"curated variant databases for over 23,000 genes used in clinical "
+"diagnostics."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:34 ../../tools/lovd_tools.rst:65
+#: ../../tools/lovd_tools.rst:96 2f8755078a9944f0974aeb7519001de4
+#: 58f863100669416ba051a741504ce7a0 7c0676cd510b473a9189925582c81d98
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:36 07c2e9230a7741e4866478512ac03bae
+msgid ""
+"``gene_symbol`` (string) (required) HGNC gene symbol (e.g., 'TP53', "
+"'BRCA1', 'BRCA2', 'EGFR')."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:39 ../../tools/lovd_tools.rst:70
+#: ../../tools/lovd_tools.rst:107 a6e1de26be19409eb046478c08464f23
+#: b497ff5155fd4fe0a7219a02cedf983d dbb232892f0443c6bb1ec0bcc1fbe62f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:53 ba740962a0e1423389b76b309476e8f3
+msgid "**LOVD_get_variants** (Type: LOVDTool)"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:55 6299065ba0854a7fbb99b4b3cf3ef15c
+msgid ""
+"Get all curated variants for a gene from LOVD. Returns variant details "
+"including HGVS DNA/RNA/pro..."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst d0e807ad6dae41f5b723f6a20baf8deb
+msgid "LOVD_get_variants tool specification"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:61 87e6ccf3481b4ac3a90d8d7751492e07
+msgid "**Name**: ``LOVD_get_variants``"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:63 227ac5b4771a44c79c05845a3398329e
+msgid ""
+"**Description**: Get all curated variants for a gene from LOVD. Returns "
+"variant details including HGVS DNA/RNA/protein notation, genomic "
+"positions (hg19), LOVD variant DBID, and reporting count. Note: some "
+"genes may have hundreds or thousands of variants."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:67 ../../tools/lovd_tools.rst:98
+#: 14c2ebd46fbc4226a3e0c0d6a9da1594 85dc8515e13d422b8be70a9d148edba5
+msgid ""
+"``gene_symbol`` (string) (required) HGNC gene symbol (e.g., 'TP53', "
+"'BRCA1')."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:84 1a700dbfae05410fbffffd83e8dc08fe
+msgid "**LOVD_search_variants** (Type: LOVDTool)"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:86 34eb273b232f4535ab7e2cd862f8437c
+msgid ""
+"Search variants in LOVD by DBID or HGVS DNA notation. Use variant\\_dbid "
+"for exact LOVD variant ID..."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst ea744603d5f645a7bedc2c2d294fef35
+msgid "LOVD_search_variants tool specification"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:92 a86fe99e319a4a3dac5ee9d5dea80c4f
+msgid "**Name**: ``LOVD_search_variants``"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:94 ea6953fbce714295bb7a98e659bc5f37
+msgid ""
+"**Description**: Search variants in LOVD by DBID or HGVS DNA notation. "
+"Use variant\\_dbid for exact LOVD variant IDs (e.g., 'TP53\\_010464') or "
+"dna\\_notation for HGVS notation without RefSeq prefix (e.g., "
+"'c.\\*2609C>A'). At least one search parameter is required."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:101 0062643802c2491fbf46e889bc7a3402
+msgid ""
+"``variant_dbid`` (string) (optional) LOVD variant DBID (e.g., "
+"'TP53\\_010464'). Unique identifier assigned by LOVD."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:104 fabc6a7902884d32ae3aecb9575932e6
+msgid ""
+"``dna_notation`` (string) (optional) HGVS DNA notation without RefSeq "
+"prefix (e.g., 'c.\\*2609C>A', 'c.742C>T'). Use coding 'c.' notation."
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:121 1fcf9a0e4818472580678461a33b67a8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:123 342db8cecca14b9894ee9cbe3d6a974b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/lovd_tools.rst:124 9ce967fd15b44e64911d361c9ba1b20f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

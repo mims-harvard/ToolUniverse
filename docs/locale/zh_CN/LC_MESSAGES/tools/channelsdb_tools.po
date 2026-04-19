@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/channelsdb_tools.rst:10 a8ff087309214f979531bb8573d61596
+msgid "Channelsdb Tools"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:12 233eaa4d05614a19a4a97944c33d98dc
+msgid ""
+"**Configuration File**: ``channelsdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:16 cdfe91ee50fc4c419ce9a5387c3c9b8e
+msgid ""
+"This page contains all tools defined in the ``channelsdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:19 c8c1c26393b441b9bd92a801fa249ff7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:22 850d58181b174baa9041bc45c9bd3397
+msgid "**ChannelsDB_get_channels_cofactor** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:24 d8e9ad0e00e04261bd650f5522e5ca8c
+msgid ""
+"Get cofactor access tunnel data for a PDB structure from ChannelsDB. "
+"Specifically detects tunnels..."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst 14bfaf9cb3084f3d9230f14694e8d25f
+msgid "ChannelsDB_get_channels_cofactor tool specification"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:28 ../../tools/channelsdb_tools.rst:59
+#: 0b268520532c4ecdb820b3f7ddcd679a 31188841af634264b4cf499e0addcaa9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:30 dfa92ecb37814c0e8b69a56d502371d5
+msgid "**Name**: ``ChannelsDB_get_channels_cofactor``"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:31 ../../tools/channelsdb_tools.rst:62
+#: a89d6e29a87545758f9b6a743b8588a2 c92039d4a6f448d184ebde07a6ef324f
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:32 0788eac492e348ec889de5c84cbdf7c6
+msgid ""
+"**Description**: Get cofactor access tunnel data for a PDB structure from"
+" ChannelsDB. Specifically detects tunnels that provide access pathways "
+"for cofactors and small molecules to reach enzyme active sites or binding"
+" pockets. Each channel includes geometric profile data (radius along the "
+"path, 3D coordinates), physicochemical properties (charge, "
+"hydrophobicity, polarity), and the residue layers that line the tunnel. "
+"Use ChannelsDB\\_get\\_channels\\_pdb for a complete view of all channel "
+"types including transmembrane pores and reviewed channels."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:34 ../../tools/channelsdb_tools.rst:65
+#: 866a982088cf4e5782ce700ae18a114e a81765fc6e3f4865a223d47afbf4666a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:36 075abc4b0324437aac1d472dc02c7d0a
+msgid ""
+"``pdb_id`` (string) (required) PDB structure identifier (4-character "
+"code). Examples: '5i6x' (MscL), '3sn6' (GPCR-Gs complex)."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:39 ../../tools/channelsdb_tools.rst:70
+#: bbc105b851ad4a87a3fbbdae214f4aa5 e004ca99e44b4f3fab63d4a7bfe59555
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:53 c59decc22a8a4cc0835124e8521460c3
+msgid "**ChannelsDB_get_channels_pdb** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:55 86784894bf1f4186839be9d1054b4562
+msgid ""
+"Get protein channel, tunnel, and pore data for a PDB structure from "
+"ChannelsDB. ChannelsDB is a c..."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst bb7b954342ea458bb6c2c5572aa36379
+msgid "ChannelsDB_get_channels_pdb tool specification"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:61 ee69526d441b4a289b529fd93f45c47e
+msgid "**Name**: ``ChannelsDB_get_channels_pdb``"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:63 ef9e77bf29c3446f9d296afada996607
+msgid ""
+"**Description**: Get protein channel, tunnel, and pore data for a PDB "
+"structure from ChannelsDB. ChannelsDB is a comprehensive database of "
+"channels (tunnels, pores, and voids) found in biomacromolecular "
+"structures deposited in the Protein Data Bank. Returns channel geometry "
+"profiles (radius, distance along path, 3D coordinates), physicochemical "
+"properties (charge, hydrophobicity, polarity, mutability), residue layers"
+" lining each channel, and expert annotations when available. Useful for "
+"studying transport pathways in membrane proteins, enzyme active site "
+"access tunnels, and ion channels. Example: get channels for aquaporin "
+"structure 1ymg or hemoglobin 4hhb."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:67 72d89eb1439d4736a0a66e9c1adaf783
+msgid ""
+"``pdb_id`` (string) (required) PDB structure identifier (4-character "
+"code, case-insensitive). Examples: '1ymg' (aquaporin), '3sn6' "
+"(beta2-adrenergic receptor-Gs complex), '4hhb' (hemoglobin), '5i6x' (MscL"
+" mechanosensitive channel)."
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:84 7638047cd3f3434c94f5b474b02ceb4b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:86 82a91b280066472cac276490dee0fe3e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/channelsdb_tools.rst:87 1243b803fee9499387a9acc9360a9c2b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

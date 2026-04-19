@@ -1,0 +1,215 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/enrichr_ext_tools.rst:10 567c0ce02127454797dd0ff06c5917bc
+msgid "Enrichr Ext Tools"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:12 99a62663511740f28557e2d2fb222075
+msgid ""
+"**Configuration File**: ``enrichr_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:16 1e327aefd3554feca582634a114977f0
+msgid ""
+"This page contains all tools defined in the ``enrichr_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:19 6b427b15881b424baaeaa61bedf0ace9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:22 82857c0e7e5a4ee78f3a8fbae310845b
+msgid "**Enrichr_enrich** (Type: EnrichrExtTool)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:24 9b28586b408546c5ad8c2e10117a13c4
+msgid ""
+"Perform gene set enrichment analysis using Enrichr. Submit a list of "
+"genes and get enriched terms..."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst 274687b2df3a4fd68d3ba85a1498402b
+msgid "Enrichr_enrich tool specification"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:28 ../../tools/enrichr_ext_tools.rst:68
+#: ../../tools/enrichr_ext_tools.rst:108 d7a2affcf91643dd89626abadd26d811
+#: f0a8560ac2ef4f65b05bcfd48789824a f5865c08ba9d4e43997b44851d30f34e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:30 8352a5e059af4978853aa16529d7c82d
+msgid "**Name**: ``Enrichr_enrich``"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:31 ../../tools/enrichr_ext_tools.rst:71
+#: ../../tools/enrichr_ext_tools.rst:111 080894e0b8184a3ea3e997999b28c652
+#: dbd7c7f1191a4fbe83a6d16e8c445435 f1a0d192457749ab9f03dc09fafc45a5
+msgid "**Type**: ``EnrichrExtTool``"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:32 ce6777af1a784bfe82a877cfe092ea0a
+msgid ""
+"**Description**: Perform gene set enrichment analysis using Enrichr. "
+"Submit a list of genes and get enriched terms from a specific library. "
+"Returns ranked terms with p-values, z-scores, combined scores, and "
+"overlapping genes. No authentication required."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:34 ../../tools/enrichr_ext_tools.rst:74
+#: ../../tools/enrichr_ext_tools.rst:114 23368c72f4604c7a8e1d18841927a42e
+#: 602bfd0686e743fb81ceccbb535e49c6 b0dbaf2cd1734a3eb9acac9f1471fba2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:36 096109f2787c48458b92537fb7b5bfb5
+msgid "``operation`` (string) (optional) Operation type (fixed: enrich)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:39 bb7b0de94e254636bff2da6c1d887844
+msgid ""
+"``gene_list`` (array) (required) List of gene symbols (e.g., ['TP53', "
+"'BRCA1', 'EGFR']). Minimum 1 gene."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:42 23aeba2ed7a645b091ff472b050f1798
+msgid ""
+"``library`` (string) (optional) Enrichr library name (default: "
+"GO\\_Biological\\_Process\\_2023). Common: "
+"GO\\_Biological\\_Process\\_2023, KEGG\\_2021\\_Human, Reactome\\_2022, "
+"WikiPathways\\_2024\\_Human, MSigDB\\_Hallmark\\_2020"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:45 f18b0d3f6afd44e9b22aafbb97135639
+msgid ""
+"``top_n`` (integer) (optional) Number of top enriched terms to return "
+"(default: 10)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:48 ../../tools/enrichr_ext_tools.rst:88
+#: ../../tools/enrichr_ext_tools.rst:122 1b5bb6b082354f2b86240a0830c759c3
+#: 32a46f02f24344e9941219d604415f50 5e2cf84a21d440099a19a48213d87abe
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:62 f43e5a6bf1484ce59a9899a3b58b4ed8
+msgid "**Enrichr_get_top_enriched** (Type: EnrichrExtTool)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:64 67d4acc485ed4e0fae6cda39cd449aa4
+msgid ""
+"Get top enriched terms across multiple libraries simultaneously. Submit a"
+" gene list and get the m..."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst 2cd7e1bdebc64d789d38949f73fbe884
+msgid "Enrichr_get_top_enriched tool specification"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:70 8e0099201cdf464bb1543e9e783a466e
+msgid "**Name**: ``Enrichr_get_top_enriched``"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:72 dd2b2dab8d43413ab989e8c6efd77bda
+msgid ""
+"**Description**: Get top enriched terms across multiple libraries "
+"simultaneously. Submit a gene list and get the most significant pathways,"
+" processes, and functions from GO, KEGG, Reactome, and WikiPathways in "
+"one call. Ideal for quick functional annotation overview."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:76 a8c5aef50007452fa3a02e94e0977833
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_top\\_enriched)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:79 a50f9fe6ea044353a45d51fd1c7c5deb
+msgid ""
+"``gene_list`` (array) (required) List of gene symbols (e.g., ['TP53', "
+"'BRCA1', 'EGFR'])"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:82 4bbc0d34f2be44fb9cbe1600f6497dcb
+msgid ""
+"``libraries`` (array) (optional) Libraries to query (default: "
+"GO\\_Biological\\_Process\\_2023, KEGG\\_2021\\_Human, Reactome\\_2022, "
+"WikiPathways\\_2024\\_Human)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:85 89afa0289af5405ba01553d712e0f43c
+msgid ""
+"``top_n`` (integer) (optional) Number of top terms per library (default: "
+"5)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:102 676519fe11254c179c8257240146bd36
+msgid "**Enrichr_list_libraries** (Type: EnrichrExtTool)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:104 ef28583548714aa18dbbb4fbd1e6a4bf
+msgid ""
+"List all available Enrichr gene set libraries with statistics. Enrichr "
+"has 225+ libraries coverin..."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst 0b7657e9fd9749a7a6e5fa3474370206
+msgid "Enrichr_list_libraries tool specification"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:110 fa52f76f3dca458686954d144b325c4c
+msgid "**Name**: ``Enrichr_list_libraries``"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:112 05384cc633ce4664bfbc572cead7e269
+msgid ""
+"**Description**: List all available Enrichr gene set libraries with "
+"statistics. Enrichr has 225+ libraries covering pathways (KEGG, Reactome,"
+" WikiPathways), gene ontology (GO), transcription factors, diseases, "
+"drugs, and more. Optionally filter by keyword in library name."
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:116 ced416cd937d4ca98c286cb34c013ccc
+msgid "``operation`` (string) (optional) Operation type (fixed: list\\_libraries)"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:119 15eff66f29274d2c9ab31bf12a297284
+msgid ""
+"``category`` (string) (optional) Optional keyword to filter libraries "
+"(e.g., 'GO', 'KEGG', 'Reactome', 'disease', 'drug')"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:135 a514356fb031446b9d1edf2518cd5843
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:137 bc967da3154f4915a7e6d829614d82ef
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/enrichr_ext_tools.rst:138 957753db04b74ecf9855a00ec78a3bb4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

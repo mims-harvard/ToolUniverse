@@ -24,31 +24,50 @@ Understanding the differences between local and remote tools helps you choose th
 
 **Key Differences:**
 
-| Aspect | Local Tools | Remote Tools |
-|--------|-------------|--------------|
-| **Performance** | High (no network overhead) | Lower (network latency) |
-| **Development** | Simple Python classes | MCP servers or API wrappers |
-| **Deployment** | Part of ToolUniverse | Independent servers |
-| **Scalability** | Limited by process | Highly scalable |
-| **Integration** | Full ToolUniverse access | Limited to MCP/API |
-| **Contribution** | Requires ``__init__.py`` changes | No code changes needed |
+.. list-table::
+   :header-rows: 1
+
+   * - Aspect
+     - Local Tools
+     - Remote Tools
+   * - Performance
+     - High (no network overhead)
+     - Lower (network latency)
+   * - Development
+     - Simple Python classes
+     - MCP servers or API wrappers
+   * - Deployment
+     - Part of ToolUniverse
+     - Independent servers
+   * - Scalability
+     - Limited by process
+     - Highly scalable
+   * - Integration
+     - Full ToolUniverse access
+     - Limited to MCP/API
+   * - Contribution
+     - Requires ``__init__.py`` changes
+     - No code changes needed
 
 **When to Use Local Tools:**
+
 - Data processing and analysis
 - File manipulation utilities
 - Simple API wrappers
 - Tools that need full ToolUniverse integration
 
 **When to Use Remote Tools:**
+
 - External service integration
 - Heavy computational tasks
 - Microservice architecture
 - Tools in different programming languages
 
 Architecture Details
--------------------
+--------------------
 
 **ToolUniverse Core Components:**
+
 - **Tool Registry**: Manages tool discovery and registration
 - **Execution Engine**: Handles tool execution and error management
 - **Configuration System**: Manages tool parameters and settings
@@ -62,6 +81,7 @@ Architecture Details
 5. **Response**: Results are returned to the caller
 
 **Error Handling:**
+
 - Input validation at multiple levels
 - Graceful error recovery
 - Comprehensive error reporting
@@ -71,6 +91,7 @@ Best Practices
 --------------
 
 **Local Tools:**
+
 - Keep tools focused and single-purpose
 - Use proper error handling
 - Implement input validation
@@ -78,6 +99,7 @@ Best Practices
 - Document all parameters clearly
 
 **Remote Tools:**
+
 - Implement proper authentication
 - Use circuit breakers for resilience
 - Add retry logic for transient failures
@@ -85,6 +107,7 @@ Best Practices
 - Provide clear deployment documentation
 
 **General:**
+
 - Follow naming conventions
 - Use descriptive parameter names
 - Provide clear error messages

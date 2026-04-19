@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clingen_dosage_api_tools.rst:10 1587379706a74e6d90cd90c046742659
+msgid "Clingen Dosage Api Tools"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:12 54c0bf4a135c4333a8b1219fff592183
+msgid ""
+"**Configuration File**: ``clingen_dosage_api_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:16 bce6f018abb5457e8d3b96ae29cda5d9
+msgid ""
+"This page contains all tools defined in the "
+"``clingen_dosage_api_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:19 d6fd9f3f652f48599c6fc4c3890ccb2e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:22 a6cc366b1e2b4f29b672f5e7b546c005
+msgid "**ClinGen_dosage_by_gene** (Type: ClinGenDosageTool)"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:24 967c824d96bf47e7a4ae000f78dab832
+msgid ""
+"Get ClinGen dosage sensitivity curation for a specific gene using the "
+"JSON API. Returns haploinsu..."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst c63e5ba23e544829b83cfd498413e42f
+msgid "ClinGen_dosage_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:28
+#: ../../tools/clingen_dosage_api_tools.rst:59 d7c22e6bc8a14e04a571ebf3c420aee5
+#: edb5cb535773436baa375ffd4b43e5e1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:30 d7195e9f7f824901be203eaa5285efdb
+msgid "**Name**: ``ClinGen_dosage_by_gene``"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:31
+#: ../../tools/clingen_dosage_api_tools.rst:62 2ff746aa12904fcbac4ec9e83687bf4f
+#: de1d8eac81ba4fb797b24570fff65d56
+msgid "**Type**: ``ClinGenDosageTool``"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:32 a83f994117964c6c8902fd3004c5c871
+msgid ""
+"**Description**: Get ClinGen dosage sensitivity curation for a specific "
+"gene using the JSON API. Returns haploinsufficiency (HI) and "
+"triplosensitivity (TS) assertion scores with genomic coordinates in both "
+"GRCh37 and GRCh38. Scores: 0=No evidence, 1=Little evidence, 2=Emerging "
+"evidence, 3=Sufficient evidence, 30=Gene associated with autosomal "
+"recessive phenotype, 40=Dosage sensitivity unlikely. Also includes pLI "
+"score, HI prediction score, and associated diseases with MONDO IDs."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:34
+#: ../../tools/clingen_dosage_api_tools.rst:65 40d2df658c3e45efa87f79f1c0ce5660
+#: b0066c21cf6f40a1b15b3ad21792cab0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:36 9cbf70b1a4434347bb2a0e778d3f78cd
+msgid ""
+"``gene`` (string) (required) Gene symbol to search for (e.g., 'BRCA1', "
+"'MECP2', 'TP53'). Case-insensitive."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:39
+#: ../../tools/clingen_dosage_api_tools.rst:79 6cb45b22ffd64c3589b5c893aca87f07
+#: c8254086b9264b079626a65836c58870
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:53 46fa57dfdbbf499e8e226f635f4c369f
+msgid "**ClinGen_dosage_region_search** (Type: ClinGenDosageTool)"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:55 8b448d91d70c4a57a01c055e1d4a467a
+msgid ""
+"Search ClinGen dosage sensitivity curations by genomic region. Returns "
+"all genes and recurrent CN..."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst 5332ea918a334e8cbf31eeae296218c1
+msgid "ClinGen_dosage_region_search tool specification"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:61 9092980fa3694d7a90147fcefa591f4d
+msgid "**Name**: ``ClinGen_dosage_region_search``"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:63 eb961b2cf2fb451aa18b7d6e89128caf
+msgid ""
+"**Description**: Search ClinGen dosage sensitivity curations by genomic "
+"region. Returns all genes and recurrent CNV regions with dosage "
+"sensitivity curations overlapping the specified chromosomal coordinates. "
+"Supports both GRCh37 and GRCh38. Results include haploinsufficiency and "
+"triplosensitivity scores. Useful for interpreting the clinical "
+"significance of deletions and duplications detected by chromosomal "
+"microarray."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:67 0bb6a8fddd134f79a0c3df6224baa71e
+msgid "``chromosome`` (string) (required) Chromosome (e.g., '17', 'X')."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:70 2fcb868c1a6946e0bfdbfc633a15c721
+msgid "``start`` (integer) (required) Start position."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:73 cd0f4c369b0a4dcd9b62117cc100bc7a
+msgid "``end`` (integer) (required) End position."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:76 567f3a0922dc40f1b2c1a542b68be771
+msgid "``assembly`` (string) (optional) Genome assembly version."
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:95 78d361429c054ce0ac0a696c7364cde9
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:97 d5c1d27fd62a4d848fd4248dcab17b52
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clingen_dosage_api_tools.rst:98 7ce914e714ba47b8901c0708935baf16
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

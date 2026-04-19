@@ -1,0 +1,252 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/reactome_interactors_tools.rst:10
+#: 016f2f1f62a44f40ada3f11340d2db34
+msgid "Reactome Interactors Tools"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:12
+#: 78b27ce9b5f640758183c853fbb56a2e
+msgid ""
+"**Configuration File**: ``reactome_interactors_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:16
+#: 5ebe7f1deb8c4b88870ecf79709cd2cc
+msgid ""
+"This page contains all tools defined in the "
+"``reactome_interactors_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:19
+#: 364d56b382574f2d8a377c8a300ea650
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:22
+#: 7d5b1fe2e97c4da18cf603111b75fd0a
+msgid ""
+"**ReactomeInteractors_get_entity_pathways** (Type: "
+"ReactomeInteractorsTool)"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:24
+#: 40eca2858af54c139a042c4a6d1d248b
+msgid ""
+"Find Reactome biological pathways that contain a specific molecular "
+"entity. Returns pathway stabl..."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst ce4e9a33a2734f3089e43ec0bc784b8d
+msgid "ReactomeInteractors_get_entity_pathways tool specification"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:28
+#: ../../tools/reactome_interactors_tools.rst:62
+#: ../../tools/reactome_interactors_tools.rst:96
+#: 3cf4704fe8c44989a0a40cb0241935e3 6baef54baa8a414f85c5adcfc49a4f64
+#: 991b0719b58842b39c51e2c58e5bf687
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:30
+#: f45b46e14e334494adb3cf0a6cbcf065
+msgid "**Name**: ``ReactomeInteractors_get_entity_pathways``"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:31
+#: ../../tools/reactome_interactors_tools.rst:65
+#: ../../tools/reactome_interactors_tools.rst:99
+#: a66ff07f893a4911b23d6a538df8857b aef208836e06440b87a50f90c5f85fbe
+#: cd9702efc6674eae8495d73b60905abf
+msgid "**Type**: ``ReactomeInteractorsTool``"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:32
+#: 401a3e7a25e043879943965935fd1c23
+msgid ""
+"**Description**: Find Reactome biological pathways that contain a "
+"specific molecular entity. Returns pathway stable IDs, names, and whether"
+" they are disease-associated. Use Reactome stable IDs (e.g., R-HSA-199420"
+" for PTEN) obtained from ReactomeInteractors\\_search\\_entity. Example: "
+"R-HSA-199420 (PTEN) participates in 10 pathways including PI3K/AKT "
+"signaling, PTEN regulation, and TCR signaling."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:34
+#: ../../tools/reactome_interactors_tools.rst:68
+#: ../../tools/reactome_interactors_tools.rst:102
+#: 27efaed8d090409bae4ab2d8820981d9 50c0e54de14a49b7826e330fa9ce6091
+#: b826f30162f64fd89af6bbc715afc558
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:36
+#: 9fb1af15b5194fc181dd631d42cc4135
+msgid ""
+"``entity_id`` (string) (required) Reactome stable identifier for the "
+"entity. Use ReactomeInteractors\\_search\\_entity to find IDs. Examples: "
+"'R-HSA-199420' (PTEN), 'R-HSA-69541' (TP53 tetramer), 'R-HSA-8869337' "
+"(TP53)."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:39
+#: d0319e65bef44597868def7824116d67
+msgid ""
+"``species`` (integer, null) (optional) NCBI taxonomy ID for species "
+"filter (default: 9606 for human). Examples: 9606 (human), 10090 (mouse)."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:42
+#: ../../tools/reactome_interactors_tools.rst:76
+#: ../../tools/reactome_interactors_tools.rst:113
+#: 2411fc67ed394753af13bebc4437ddc5 b531b5038ef047208f1db482b0015374
+#: d95c992659cd4b69a518492ff1ad36bb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:56
+#: dd2e1e21a0da446a9fec81232e684449
+msgid ""
+"**ReactomeInteractors_get_protein_interactors** (Type: "
+"ReactomeInteractorsTool)"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:58
+#: 033041c9f95d4a3d9168b7bc9b94874d
+msgid ""
+"Get protein-protein interaction partners for a specific protein from "
+"Reactome's IntAct-derived in..."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst 053fac4277734ed18c1e2f90969a7e2c
+msgid "ReactomeInteractors_get_protein_interactors tool specification"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:64
+#: 82917862baa945b498ff06856618166f
+msgid "**Name**: ``ReactomeInteractors_get_protein_interactors``"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:66
+#: fd16da0b09df49f2afcab7d7764f888a
+msgid ""
+"**Description**: Get protein-protein interaction partners for a specific "
+"protein from Reactome's IntAct-derived interaction data. Returns "
+"interactor accessions, gene names, confidence scores, and evidence "
+"counts. Interactions are curated from experimental data with molecular "
+"interaction (MI) scores. Example: get interactors for P04637 (TP53) "
+"returns 248 interactors including MDM2 (score 0.995, 119 evidences), "
+"EP300 (score 0.976), BRCA1 (score 0.944); for Q04206 (NF-kB p65/RELA) "
+"returns 105 interactors."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:70
+#: b8a1d8fe0d3a4184995cfc6d3b4c1983
+msgid ""
+"``accession`` (string) (required) UniProt accession number for the query "
+"protein. Examples: 'P04637' (TP53), 'Q04206' (NF-kB p65), 'P00533' "
+"(EGFR), 'P38398' (BRCA1)."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:73
+#: 24deaba4cc124a3ebeefcb9b00bf01b8
+msgid ""
+"``page_size`` (integer, null) (optional) Maximum number of interactors to"
+" return (default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:90
+#: ccf7f572e937487f993b82074fcbcd73
+msgid "**ReactomeInteractors_search_entity** (Type: ReactomeInteractorsTool)"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:92
+#: f5cab4d9e12a435f9181b346ff381676
+msgid ""
+"Search Reactome for biological entities (proteins, complexes, reactions, "
+"pathways) by name or ide..."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst 132eb8589d294bfe8d664dcf8c2b73bd
+msgid "ReactomeInteractors_search_entity tool specification"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:98
+#: c6a910d816cc4e9ea2c9fa78b802012d
+msgid "**Name**: ``ReactomeInteractors_search_entity``"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:100
+#: f651d24a52494877a2556d59a1a974c4
+msgid ""
+"**Description**: Search Reactome for biological entities (proteins, "
+"complexes, reactions, pathways) by name or identifier. Returns Reactome "
+"stable IDs, entity names, types, and species. Use this to find Reactome "
+"IDs for proteins before querying their interactors or pathways. Results "
+"are grouped by entity type (Protein, Complex, Reaction, Pathway). "
+"Example: search 'TP53' returns TP53 protein entities with stable IDs like"
+" R-HSA-69488; search 'apoptosis' returns apoptosis-related reactions and "
+"pathways."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:104
+#: ffc059461d054146a07553aa2899841c
+msgid ""
+"``query`` (string) (required) Search query - gene name, protein name, "
+"pathway name, or Reactome ID. Examples: 'TP53', 'BRCA1', 'apoptosis', "
+"'insulin signaling', 'cell cycle'."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:107
+#: 1783ac64af6f487192e1c99710ac3842
+msgid ""
+"``species`` (string, null) (optional) Species name filter (default: 'Homo"
+" sapiens'). Examples: 'Homo sapiens', 'Mus musculus', 'Rattus "
+"norvegicus'."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:110
+#: d97ae45cf9ba416680ded59eac305a17
+msgid ""
+"``types`` (string, null) (optional) Entity type filter. Options: "
+"'Protein', 'Complex', 'Reaction', 'Pathway', 'SmallMolecule'. If null, "
+"returns all types."
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:127
+#: f159e684bdaa4a00b3e92b1b6b305a1d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:129
+#: 52caaa4abcb44411b54348fa813530cd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/reactome_interactors_tools.rst:130
+#: b5f867d040f443ccb5a6ede4efb37d25
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,485 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:10
+#: 407cbc312ca8422ebd427318b155df84
+msgid "Fda Drug Adverse Event Detail Tools"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:12
+#: fb709da100674a9b93277d270ac5c844
+msgid ""
+"**Configuration File**: ``fda_drug_adverse_event_detail_tools.json`` "
+"**Tool Type**: Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:16
+#: b58fbd5be0344f30a8f8ab7e1cf033fd
+msgid ""
+"This page contains all tools defined in the "
+"``fda_drug_adverse_event_detail_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:19
+#: 9110e39b2cbd43a8ab78a9d966cff924
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:22
+#: 9d5fb70b122b4ee5b6045abbb54f95ba
+msgid ""
+"**FAERS_search_adverse_event_reports** (Type: "
+"FDADrugAdverseEventDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:24
+#: 19e84c223c16409f803c87085565e126
+msgid ""
+"Search and retrieve detailed adverse event reports from FAERS. Returns "
+"individual case reports wi..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: ae8b88627eba4204a7d245552b999a9f
+msgid "FAERS_search_adverse_event_reports tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:28
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:80
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:129
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:178
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:228
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:274
+#: 34e2cae1ff8b44c49c4fc79fdeb41495 43b8f222e58b4e0cb261ef577b66a20c
+#: a143912a6f5b49e591dfce24223d504c b8105209e1594d018e8264b57dacd316
+#: eb72786cb834485696161e10e0d46f12 ef80056ac0c74979afa548c7b3fe9e9d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:30
+#: 25fa9a58e72549b7bdf1b47c757489e5
+msgid "**Name**: ``FAERS_search_adverse_event_reports``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:31
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:83
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:132
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:181
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:277
+#: 20c3a5aca9f348d0aefc70e6d8a952a3 51744284015e4fa7bf90919fa306cc18
+#: 62078b295d2146778b8bf9634a622387 83f154c0b49740fb907ad9c29ce5ef16
+#: f6086342742e4122bab6b2895c6fa395
+msgid "**Type**: ``FDADrugAdverseEventDetailTool``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:32
+#: 7e9cbf9a92914efe9c3d5454f912cba1
+msgid ""
+"**Description**: Search and retrieve detailed adverse event reports from "
+"FAERS. Returns individual case reports with patient information, adverse "
+"event details, drug information, and report metadata. Only "
+"medicinalproduct is required; all other parameters (limit, skip, "
+"patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are"
+" optional. Use filters sparingly to avoid overly restrictive searches. "
+"Data source: FDA Adverse Event Reporting System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:34
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:86
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:135
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:184
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:234
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:280
+#: 0f6619a74cdf4ffc97128c0dfcbc023c 24c9b47a86c44f80893cc9f6acd39d8f
+#: 4e9ba012b7a74c2bb43a4089166a128c c684cd67bb834b8b9064d018f52ca49c
+#: e3fa3d834e814338b3445ed2511dbe77 fa06e8f63c6e4da884664f917c7e5aa0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:36
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:88
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:137
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:186
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:282
+#: 78dabf33acc7478fbaaf44e46dfc91b8 99e93be118c942e9bd78821c33302898
+#: b72dbc5612794aa394d7dc43e6559837 d13f84981dd94103bde7342c86218aff
+#: dd5b29458fb4440fb745e6e329ba0935
+msgid "``medicinalproduct`` (string) (required) Drug name (required)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:39
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:94
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:143
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:192
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:239
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:297
+#: 1657c2021b304ddb9978daf64def90d0 18715da17d4d4135975ccd91892b2d82
+#: 40bd999befff4f1f94f97786c4373596 449954d268bb484c8facd58627eddf3e
+#: 96e0e9f88c1d403e853e8cde4cf78f2d cc958d1f1e65448b89cc5c3fb2ba0d44
+msgid ""
+"``limit`` (integer) (optional) Maximum number of reports to return. Must "
+"be between 1 and 100."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:42
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:97
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:146
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:195
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:242
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:300
+#: 44407e076f9c48abb7b59aad15a4719f 5845491a7dec4bab8f979480a79c350c
+#: 6900a07b826245fe8e5cf52426672fe8 6fa8bc4651164d54aad4ad6314fd8778
+#: ce46213f242b4ade9eec91c6d2ae6812 eca40017b5414fb8860af290b031a7dc
+msgid ""
+"``skip`` (integer) (optional) Number of reports to skip for pagination. "
+"Must be non-negative."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:45
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:100
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:149
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:198
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:245
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:303
+#: 55347b440c084cd6a448ffcf9607f3cf 5b66e5576ff54433b26573d769927cab
+#: 8bc6af87f0df4926984b263b7c0a9516 b6f0c77ce02a4abe9622588aa49c3960
+#: ec42b40e82a1409b8d25aee1fe223bc4 f66fbd638d734dc98fb98d1bdbaacfab
+msgid ""
+"``patientsex`` (string) (optional) Optional: Filter by patient sex. Omit "
+"this parameter if you don't want to filter by sex."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:48
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:103
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:152
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:201
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:248
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:306
+#: 13636b82f4f248e09a5ad0f02984c386 512a43cc72a245808c60b7574e448643
+#: 6e23daf622ba40269c71da17dc1882ee 908105f1cd4348539c808d2f2edfebae
+#: 908ddc7658f14d16a9d9685d406af2e4 c65e9c2a9a4047baa05adc44c662110c
+msgid ""
+"``patientagegroup`` (string) (optional) Optional: Filter by patient age "
+"group. Omit this parameter if you don't want to filter by age."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:51
+#: 2184bf8c445049a0832adbbd071e95e4
+msgid ""
+"``occurcountry`` (string) (optional) Optional: Filter by country where "
+"event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you "
+"don't want to filter by country."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:54
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:106
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:155
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:204
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:251
+#: 156166c520274e09bdc90a1418944cb2 1a308501d32c4a4790e20ea1d1d6ef88
+#: 460a07f96ee547e4ba20c5717dc220af d669d13a75ce43989ee90e9242cb6ce7
+#: ff14d86e55e44377855d4a38b8a7a733
+msgid ""
+"``serious`` (string) (optional) Optional: Filter by event seriousness. "
+"Omit this parameter if you don't want to filter by seriousness."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:57
+#: 430599cc8e7c40e2b58f682210ba3115
+msgid ""
+"``seriousnessdeath`` (string) (optional) Optional: Pass 'Yes' to filter "
+"for reports where death was an outcome. Omit this parameter to include "
+"all reports regardless of death outcome."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:60
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:109
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:158
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:207
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:254
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:309
+#: 0e68d8616d3646c8b662adb482b74294 0eb94264811d474bb13d2027bc5931a1
+#: 11c075f545154827abac5718c1e7c69e 168e1d9466e04c92a8546ddda87431a4
+#: e22ab102dbdc46fba9208412b70a9c7d e81b6c1438d44c71925b12e23bdbefbf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:74
+#: e67882dab81f45d1ac14938125be3ba2
+msgid ""
+"**FAERS_search_reports_by_drug_and_indication** (Type: "
+"FDADrugAdverseEventDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:76
+#: 223a6226fbca4c91979d3298a6b2bf45
+msgid ""
+"Search and retrieve detailed adverse event reports for a specific drug "
+"and indication. Returns in..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: c5dea620565a4e1ea862b9640d1e682d
+msgid "FAERS_search_reports_by_drug_and_indication tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:82
+#: e116f1708aa1473e814c5f0f7cfda830
+msgid "**Name**: ``FAERS_search_reports_by_drug_and_indication``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:84
+#: 03ea9ee7a17043d383b9f336303ac720
+msgid ""
+"**Description**: Search and retrieve detailed adverse event reports for a"
+" specific drug and indication. Returns individual case reports with "
+"patient information, adverse event details, drug information, and report "
+"metadata. Only medicinalproduct is required; all other parameters "
+"(drugindication, limit, skip, patientsex, patientagegroup, serious) are "
+"optional. Data source: FDA Adverse Event Reporting System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:91
+#: d8065e2672854d8db21bdc3ebb868d32
+msgid ""
+"``drugindication`` (string) (optional) Optional: Filter by drug "
+"indication (e.g., 'Dementia Alzheimer\\\\'s type', 'Alzheimer disease'). "
+"Omit this parameter if you don't want to filter by indication."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:123
+#: ed9e3982469b4271b0678e9784fde664
+msgid ""
+"**FAERS_search_reports_by_drug_and_outcome** (Type: "
+"FDADrugAdverseEventDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:125
+#: ad71d2a2018a412c8e67c91cb5152b3c
+msgid ""
+"Search and retrieve detailed adverse event reports for a specific drug "
+"filtered by reaction outco..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: 890d1235b7c848e8a0d5d314ad07a0fc
+msgid "FAERS_search_reports_by_drug_and_outcome tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:131
+#: a29c73df6dde4891a4d1940ed8da51dd
+msgid "**Name**: ``FAERS_search_reports_by_drug_and_outcome``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:133
+#: 08ac6a744ddb4a4895d0008bca0000f6
+msgid ""
+"**Description**: Search and retrieve detailed adverse event reports for a"
+" specific drug filtered by reaction outcome. Returns individual case "
+"reports with patient information, adverse event details, drug "
+"information, and report metadata. Only medicinalproduct is required; all "
+"other parameters (reactionoutcome, limit, skip, patientsex, "
+"patientagegroup, serious) are optional. Data source: FDA Adverse Event "
+"Reporting System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:140
+#: 316647864eb64b128dea72747a36c854
+msgid ""
+"``reactionoutcome`` (string) (optional) Optional: Filter by reaction "
+"outcome. Omit this parameter if you don't want to filter by outcome."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:172
+#: d70fb3b1fda64820818bf2cbd39a9713
+msgid ""
+"**FAERS_search_reports_by_drug_and_reaction** (Type: "
+"FDADrugAdverseEventDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:174
+#: ec308a46d18a452988d9b70e524f32c3
+msgid ""
+"Search and retrieve detailed adverse event reports for a specific drug "
+"and reaction type. Returns..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: 8fa0e0685b2d44a28d05404c91a3eff9
+msgid "FAERS_search_reports_by_drug_and_reaction tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:180
+#: d18a4814dc684c9cb26eaaac46be54dd
+msgid "**Name**: ``FAERS_search_reports_by_drug_and_reaction``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:182
+#: 35c09eca49194153b64e87d667ea62f6
+msgid ""
+"**Description**: Search and retrieve detailed adverse event reports for a"
+" specific drug and reaction type. Returns individual case reports with "
+"patient information, adverse event details, drug information, and report "
+"metadata. Only medicinalproduct and reactionmeddrapt are required; all "
+"other parameters (limit, skip, patientsex, patientagegroup, serious) are "
+"optional. Data source: FDA Adverse Event Reporting System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:189
+#: 69e17ab54dde48978c9d795a65cfc298
+msgid ""
+"``reactionmeddrapt`` (string) (required) MedDRA preferred term for the "
+"adverse reaction (required). Example: 'INFUSION RELATED REACTION', "
+"'DYSPNOEA'."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:222
+#: 7aad4f95435647b49e01e8e4c433d564
+msgid ""
+"**FAERS_search_reports_by_drug_combination** (Type: "
+"FDADrugInteractionDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:224
+#: 392690a561a149088b3ae9222d4cbb32
+msgid ""
+"Search and retrieve detailed adverse event reports involving multiple "
+"drugs (drug interactions). ..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: 387f40c56515401dbcf09c4778c7c3b0
+msgid "FAERS_search_reports_by_drug_combination tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:230
+#: 7b6e9959e20441bb8704624c55d82326
+msgid "**Name**: ``FAERS_search_reports_by_drug_combination``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:231
+#: b605408df11e4539a1cd5d4ee939a125
+msgid "**Type**: ``FDADrugInteractionDetailTool``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:232
+#: d4dabe501481426aa9a23d4f59a1f060
+msgid ""
+"**Description**: Search and retrieve detailed adverse event reports "
+"involving multiple drugs (drug interactions). Returns individual case "
+"reports where all specified drugs are present. Only medicinalproducts "
+"(list of at least 2 drug names) is required; all other parameters (limit,"
+" skip, patientsex, patientagegroup, serious) are optional. Data source: "
+"FDA Adverse Event Reporting System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:236
+#: 64c1e8a7b8024d8bb527abe7e75c79b4
+msgid ""
+"``medicinalproducts`` (array) (required) List of at least 2 drug names "
+"(required). Reports will include cases where all specified drugs are "
+"present."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:268
+#: 3cfb2cfa36fc4f0db797f07e8aabf43f
+msgid ""
+"**FAERS_search_serious_reports_by_drug** (Type: "
+"FDADrugAdverseEventDetailTool)"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:270
+#: 1cd11dc838d3400ba6f7bbc11c391c42
+msgid ""
+"Search and retrieve detailed reports of serious adverse events for a "
+"specific drug. Returns indiv..."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst
+#: ec836acd87be483c8b9393c63267e77a
+msgid "FAERS_search_serious_reports_by_drug tool specification"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:276
+#: 88cd17267d1c465d88640d5add213ea5
+msgid "**Name**: ``FAERS_search_serious_reports_by_drug``"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:278
+#: 3d15f926e1ca4a50aa76668bc3e114d2
+msgid ""
+"**Description**: Search and retrieve detailed reports of serious adverse "
+"events for a specific drug. Returns individual case reports with patient "
+"information, adverse event details, drug information, and report "
+"metadata. Only medicinalproduct is required; all other parameters (limit,"
+" skip, seriousnessdeath, seriousnesshospitalization, "
+"seriousnesslifethreatening, seriousnessdisabling, patientsex, "
+"patientagegroup) are optional. Data source: FDA Adverse Event Reporting "
+"System (FAERS)."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:285
+#: 3afa9a70c5c047ecb1314d89588f2976
+msgid ""
+"``seriousnessdeath`` (string) (optional) Optional: Filter for reports "
+"where death was reported. Set to 'Yes' to include only fatal cases."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:288
+#: 01c6db603a524009b941b8b8298350bf
+msgid ""
+"``seriousnesshospitalization`` (string) (optional) Optional: Filter for "
+"reports where hospitalization was required. Set to 'Yes' to include only "
+"cases requiring hospitalization."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:291
+#: 047beef240b54f8086e9464e1875ae11
+msgid ""
+"``seriousnesslifethreatening`` (string) (optional) Optional: Filter for "
+"reports where the event was life-threatening. Set to 'Yes' to include "
+"only life-threatening cases."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:294
+#: 2e5587e3558846c68c33341c3b4f9824
+msgid ""
+"``seriousnessdisabling`` (string) (optional) Optional: Filter for reports"
+" where the event was disabling. Set to 'Yes' to include only disabling "
+"cases."
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:323
+#: c0b699c4f24e4654858111dfa495e547
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:325
+#: ee6f9324d8d64ec4a59a282af9774a5d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fda_drug_adverse_event_detail_tools.rst:326
+#: 59f611f6450c474a87fad31d549f5d20
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/tcdb_tools.rst:10 57cd118ad4a445c2a9e6f8ae999988f9
+msgid "Tcdb Tools"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:12 c5ff3c40c3d74bb6bfebced49f291833
+msgid ""
+"**Configuration File**: ``tcdb_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:16 fa409e117a3c42bd9ebb723c6cd4fa92
+msgid ""
+"This page contains all tools defined in the ``tcdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:19 ee18652a00304ea89b374f192eb14f20
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:22 a485501267a84160993a3debabc452db
+msgid "**TCDB_get_transporter** (Type: TCDBTool)"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:24 13a8d11a3b0b446c886d4b3b86ad3459
+msgid ""
+"Look up a membrane transporter protein in TCDB (Transporter "
+"Classification Database) by UniProt a..."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst d3837bafef4447359fc7fa9a7fd358f9
+msgid "TCDB_get_transporter tool specification"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:28 ../../tools/tcdb_tools.rst:55
+#: ../../tools/tcdb_tools.rst:82 7011621c0d13475eb93ac7262d0be843
+#: 7af483d9f8404860b968576f9752c566 7c2f23ee0d094c66a6f8075ac877fdf8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:30 df47640922e9476eba07c417ae8362c2
+msgid "**Name**: ``TCDB_get_transporter``"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:31 ../../tools/tcdb_tools.rst:58
+#: ../../tools/tcdb_tools.rst:85 5886c09cc6d34a96bca32544ddf04ac9
+#: a565428ee5754ea0954cd62b1e99f1c0 b96a62d6807c46d1a31e23179c1bd797
+msgid "**Type**: ``TCDBTool``"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:32 8f2e2296dfc84023bab96dfc86cf4617
+msgid ""
+"**Description**: Look up a membrane transporter protein in TCDB "
+"(Transporter Classification Database) by UniProt accession. Returns TC "
+"classification number(s), family description, associated PDB structures, "
+"and human gene info if applicable. TC# format: "
+"class.subclass.family.subfamily.protein (e.g., 2.A.1.1.28 for human "
+"GLUT1)."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:34 ../../tools/tcdb_tools.rst:61
+#: ../../tools/tcdb_tools.rst:88 014b738507d04200873a17e17e6ede09
+#: 39d91277ac7b459c88459f50c1a0322f 54c506ed29a6434db777a8a68dde85cf
+msgid "**Parameters:** No parameters required."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:36 ../../tools/tcdb_tools.rst:63
+#: ../../tools/tcdb_tools.rst:90 561eb1c06b734f27b8cb622034ff9056
+#: a00e3fb2603342d3969c290ce6fcc382 f5865e3205ab4bf7bd3928b57c8c1900
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:49 74393536fc534c0489501a90134b9f8e
+msgid "**TCDB_search_by_substrate** (Type: TCDBTool)"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:51 8ebe1888c33947d1a418059ce3704c90
+msgid ""
+"Search TCDB for transporters that transport a given substrate. Returns TC"
+" numbers, family descrip..."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst 4992f09670ba490d9e3ef89310ec8ee2
+msgid "TCDB_search_by_substrate tool specification"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:57 6bf493ec51a54b6cba438ad1405ad4e3
+msgid "**Name**: ``TCDB_search_by_substrate``"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:59 0cffbab5a12643daac1c47804a30b4f8
+msgid ""
+"**Description**: Search TCDB for transporters that transport a given "
+"substrate. Returns TC numbers, family descriptions, and matching "
+"substrate ChEBI IDs. Useful for finding which transporters handle a "
+"specific molecule (e.g., glucose, sodium, chloride, ATP)."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:76 55ffa2acf62f4a589e9a98b9b6ccbe39
+msgid "**TCDB_search_family** (Type: TCDBTool)"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:78 e9c6f7b315de49d0ab26285bb9e126d0
+msgid ""
+"Search TCDB transporter families by TC family ID prefix or family name "
+"text. Returns matching fam..."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst ec0aa5a3acf54d00906d9cc8e3e794a2
+msgid "TCDB_search_family tool specification"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:84 7730a6c8d9f843ff8cf89396497ff2f0
+msgid "**Name**: ``TCDB_search_family``"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:86 2495d56c99c3475598f47ae243288112
+msgid ""
+"**Description**: Search TCDB transporter families by TC family ID prefix "
+"or family name text. Returns matching family descriptions and member "
+"counts. Use family\\_id for hierarchical browsing (e.g., '2.A.1' for MFS "
+"superfamily, '1.A' for all alpha-type channels) or family\\_name for text"
+" search (e.g., 'Major Facilitator', 'ABC')."
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:103 fd1e664bf1d04838bbeec756fe3da91f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:105 49c7a09a2dea41d9a8a5d7e0d812397f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/tcdb_tools.rst:106 b3bc3a600f404bc5a71e23f0742044bf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

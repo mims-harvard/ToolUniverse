@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/go_api_tools.rst:10 d264268e03334f03b8e57e506a7c6823
+msgid "Go Api Tools"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:12 5eceb4896a844affbd655094e9eb9bf8
+msgid ""
+"**Configuration File**: ``go_api_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:16 560daa71ef6e4362b1b1f1d1498b23d3
+msgid ""
+"This page contains all tools defined in the ``go_api_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:19 54f43b76b7bd4bac8675e5dc4295f0bb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:22 e3125306c9554503b906e5ae86b52ad6
+msgid "**GOAPI_get_gene_functions** (Type: GOAPITool)"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:24 57af1960a1d64c81ba29d9f29659e85f
+msgid ""
+"Get Gene Ontology (GO) annotations for a specific gene, showing its known"
+" biological processes, m..."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst 1ed021ae6d8c489d9675026aa6aa7fef
+msgid "GOAPI_get_gene_functions tool specification"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:28 ../../tools/go_api_tools.rst:65
+#: ../../tools/go_api_tools.rst:102 22a7320525da440ba7d486c870ae0387
+#: 2fc62e5a0e7f4ad4b01e24005981f166 7e94339089ff404f93ff03f3626a13b6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:30 8fb54843ddaf4709b8278b92d795a11f
+msgid "**Name**: ``GOAPI_get_gene_functions``"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:31 ../../tools/go_api_tools.rst:68
+#: ../../tools/go_api_tools.rst:105 55df4812bf6145b58d66f99f7b8b7be5
+#: 7f861e3cd4a84e1fbeb3284426b1ad4a a9869bcf62ac44bc8aafce035a4b4ee3
+msgid "**Type**: ``GOAPITool``"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:32 1114cc55b28544a8b5442f5e909abbd1
+msgid ""
+"**Description**: Get Gene Ontology (GO) annotations for a specific gene, "
+"showing its known biological processes, molecular functions, and cellular"
+" components. Returns GO terms with evidence types (IDA=direct assay, "
+"IMP=mutant phenotype, ISS=sequence similarity, etc.) and literature "
+"references. Input is a gene CURIE identifier. Example: HGNC:11998 (TP53) "
+"returns annotations like 'apoptotic process', 'DNA binding', 'nucleus'."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:34 ../../tools/go_api_tools.rst:71
+#: ../../tools/go_api_tools.rst:108 444121b8822e4450811c7c1eb8ab51e2
+#: 9029faf32ff1462a9f13f7d3ef10ae18 df1945d71e26423096e769b2f97d4528
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:36 3ce51161a8f7476aab46e0c6d8248921
+msgid ""
+"``gene_id`` (string) (required) Gene identifier as a CURIE. Examples: "
+"'HGNC:11998' (TP53), 'UniProtKB:P04637' (p53 protein), 'HGNC:1100' "
+"(BRCA1), 'MGI:MGI:98834' (Trp53 mouse). For human genes, use HGNC prefix."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:39 4e3750941c1441648ef81427e627c778
+msgid ""
+"``rows`` (integer) (optional) Maximum number of annotations to return "
+"(default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:42 c044771aec3f4e2d8583a0e39b0f4a55
+msgid ""
+"``aspect`` (string) (optional) Filter by GO aspect: 'P' (Biological "
+"Process), 'F' (Molecular Function), 'C' (Cellular Component). Default: "
+"all aspects."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:45 ../../tools/go_api_tools.rst:82
+#: ../../tools/go_api_tools.rst:113 64aa55fcacd54eddb2d0c33f8be25181
+#: 863d71e9e41343da8b0f837ab2dc5cff aa09439b111d4c0aad74f12805c328b8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:59 e422148531ef429ebebc3af6f903677b
+msgid "**GOAPI_get_genes_by_function** (Type: GOAPITool)"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:61 d043ce3ddc5a4ea1bb1591ed59f290e1
+msgid ""
+"Get genes annotated with a specific Gene Ontology (GO) term. Find all "
+"genes/proteins that have be..."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst a81c176c1e7143c69eaf2aefc0824779
+msgid "GOAPI_get_genes_by_function tool specification"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:67 49994258e8054b57be7da05fcf356fd9
+msgid "**Name**: ``GOAPI_get_genes_by_function``"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:69 af5e5d08ae4e429ea8a307a7a781831c
+msgid ""
+"**Description**: Get genes annotated with a specific Gene Ontology (GO) "
+"term. Find all genes/proteins that have been experimentally or "
+"computationally associated with a biological process, molecular function,"
+" or cellular component. Optionally filter by taxon. Example: GO:0006915 "
+"(apoptotic process) returns genes like TP53, BAX, BCL2 that function in "
+"apoptosis."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:73 352dbede900d4393842378363545ab2f
+msgid ""
+"``go_id`` (string) (required) Gene Ontology term ID. Examples: "
+"'GO:0006915' (apoptotic process), 'GO:0003677' (DNA binding), "
+"'GO:0005634' (nucleus)."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:76 22f719344b224ebdbfb7a30ebe17169a
+msgid ""
+"``rows`` (integer) (optional) Maximum number of gene annotations to "
+"return (default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:79 05d966547f1440a68bf86aa383c9d35e
+msgid ""
+"``taxon`` (string) (optional) Filter by taxon. Format: NCBITaxon:ID. "
+"Examples: 'NCBITaxon:9606' (human), 'NCBITaxon:10090' (mouse), "
+"'NCBITaxon:7227' (Drosophila)."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:96 7b288e34e2bb4f87854f217092c0bde0
+msgid "**GOAPI_get_term** (Type: GOAPITool)"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:98 3b8ff0bee68d45ec989d0a4b060755b6
+msgid ""
+"Get detailed information about a Gene Ontology (GO) term by its GO ID. "
+"Returns the term label, fu..."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst 50946ffc651e40ecaa4f4ec3d9e2b414
+msgid "GOAPI_get_term tool specification"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:104 c43ae390044043d48fcb37723e34cec0
+msgid "**Name**: ``GOAPI_get_term``"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:106 ea12b7fb1dcd48019d6dc0d66399e1d1
+msgid ""
+"**Description**: Get detailed information about a Gene Ontology (GO) term"
+" by its GO ID. Returns the term label, full definition, synonyms, cross-"
+"references, and alternative IDs. GO terms describe gene product "
+"attributes across three domains: Biological Process (BP), Molecular "
+"Function (MF), and Cellular Component (CC). Example: GO:0006915 returns "
+"'apoptotic process' with its definition and related terms."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:110 be5cd8dde64145f682905327a38b0e25
+msgid ""
+"``go_id`` (string) (required) Gene Ontology term ID. Format: GO:NNNNNNN. "
+"Examples: 'GO:0006915' (apoptotic process), 'GO:0008285' (negative "
+"regulation of cell population proliferation), 'GO:0005634' (nucleus), "
+"'GO:0003677' (DNA binding)."
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:127 7da762c54e23478eb0228b668780a57c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:129 6e287d1052b8401381f415c5c8970e66
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/go_api_tools.rst:130 18f1a7121f814b6aacad024875587537
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

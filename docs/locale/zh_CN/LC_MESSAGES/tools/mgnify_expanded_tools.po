@@ -1,0 +1,373 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mgnify_expanded_tools.rst:10 c9463939eabc4311ac7132e6b14bba0d
+msgid "Mgnify Expanded Tools"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:12 cfbab865b71e4862be8e7caff86d20dd
+msgid ""
+"**Configuration File**: ``mgnify_expanded_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:16 c473c0287fe9497da762f0d958fa6ea5
+msgid ""
+"This page contains all tools defined in the "
+"``mgnify_expanded_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:19 0b361be28db846488422331c9cc4eb35
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:22 30f4ea550f1c47d49b01a3976ea62a01
+msgid "**MGnify_get_genome** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:24 c28f6f68d6c846c897e23791865b773c
+msgid ""
+"Get detailed genome information from the MGnify genome catalog. Returns "
+"assembly quality metrics ..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 721c988551be433098eb09390246523c
+msgid "MGnify_get_genome tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:28
+#: ../../tools/mgnify_expanded_tools.rst:59
+#: ../../tools/mgnify_expanded_tools.rst:93
+#: ../../tools/mgnify_expanded_tools.rst:127
+#: ../../tools/mgnify_expanded_tools.rst:158
+#: ../../tools/mgnify_expanded_tools.rst:195
+#: ../../tools/mgnify_expanded_tools.rst:231 03bbbe9632ea4555a9ce823b4237a98f
+#: 474beac20f8a4ae583f190aa00e5b5fb 65d6ef1c8c2142218a8885344d4f7c30
+#: a8a9964f1bfe48fe9c6a7ab8a68663d5 b6bc79da89f84334a31e8b2ba4112ccf
+#: ce333f1bee014f3f89dd5a932e78912f fbe078d327774c6f8b1b1b1e478170c5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:30 ca37d23e38a04ea1a4a49cbf9658c2ab
+msgid "**Name**: ``MGnify_get_genome``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:31
+#: ../../tools/mgnify_expanded_tools.rst:62
+#: ../../tools/mgnify_expanded_tools.rst:96
+#: ../../tools/mgnify_expanded_tools.rst:130
+#: ../../tools/mgnify_expanded_tools.rst:161
+#: ../../tools/mgnify_expanded_tools.rst:198
+#: ../../tools/mgnify_expanded_tools.rst:234 11e209e5450a44d5ae72efbed467c7a0
+#: 1cae44e0a10f435d9657b2d70345b40d 553e9fa928d34ed99db6228f3c0dcbe1
+#: 58773000eca84f94b8f0ea03ac8bfb01 6bdc1957ffbf45dd90ac2d1d2f8665e8
+#: 8109d1a2f3df464a8ee71ed62a04e107 e3644601f71246ca94225134f34ed94a
+msgid "**Type**: ``MGnifyExpandedTool``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:32 c8336558ad7e4ce9959701b53e6931d5
+#, python-format
+msgid ""
+"**Description**: Get detailed genome information from the MGnify genome "
+"catalog. Returns assembly quality metrics (completeness, contamination, "
+"N50), taxonomy, geographic origin, rRNA counts, protein count, pangenome "
+"statistics, and cross-references to ENA. Example: MGYG000000001 returns a"
+" high-quality Firmicutes isolate genome with 98.6% completeness."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:34
+#: ../../tools/mgnify_expanded_tools.rst:65
+#: ../../tools/mgnify_expanded_tools.rst:99
+#: ../../tools/mgnify_expanded_tools.rst:133
+#: ../../tools/mgnify_expanded_tools.rst:164
+#: ../../tools/mgnify_expanded_tools.rst:201
+#: ../../tools/mgnify_expanded_tools.rst:237 18970ac49a9842de9a4f6574eadb1d51
+#: 28c7bce03c314981821f1d2798cda37d 3817e0a869c249f6b4327e15168cd734
+#: 5a5625298fb94dc49565ac54e51fa672 e3db1760bd1e4bcdbed27a836080714e
+#: f347a3fbd9cd43cca7cecc3e3b391f66 fddb389bf0114828914179ab158a5f70
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:36 5ce9e7ca5b4f418992cb80f35475fd0d
+msgid ""
+"``genome_id`` (string) (required) MGnify genome accession. Examples: "
+"'MGYG000000001', 'MGYG000535630'."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:39
+#: ../../tools/mgnify_expanded_tools.rst:73
+#: ../../tools/mgnify_expanded_tools.rst:107
+#: ../../tools/mgnify_expanded_tools.rst:138
+#: ../../tools/mgnify_expanded_tools.rst:175
+#: ../../tools/mgnify_expanded_tools.rst:212
+#: ../../tools/mgnify_expanded_tools.rst:251 2ce77773ee01448bbfbbba1509560999
+#: 4f65893184304113b88d3dbb6ffa9609 57b72f0b7f1c4be587befc8288ce9a48
+#: 6161e8e1db1e408c82d5c20e8bfd6474 92c9b6b5a6e14b1e85c5cfba94a69742
+#: a3598b8b53b94f949eee7dd64a2d9170 fa58a40bc143493e99c70c0f2f2a74e3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:53 541c09ce133f424c8a712df58a887a17
+msgid "**MGnify_get_go_terms** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:55 443ccc7863bd42ffa67a7490ffc9f5a9
+msgid ""
+"Get Gene Ontology (GO) functional annotations from a MGnify metagenomics "
+"analysis. Returns GO ter..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 0f9e558c824a42baa99610f762be5e1a
+msgid "MGnify_get_go_terms tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:61 963a514d2fcd48a79d2a6af5fee8f0ff
+msgid "**Name**: ``MGnify_get_go_terms``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:63 3cd031ef5d164b26b0831a02e1e2d4ac
+msgid ""
+"**Description**: Get Gene Ontology (GO) functional annotations from a "
+"MGnify metagenomics analysis. Returns GO terms with their accession, "
+"description, gene count, and category (biological\\_process, "
+"molecular\\_function, or cellular\\_component). Use to understand the "
+"functional capacity of a microbial community. Example: MGYA00585482 "
+"returns GO:0055114 oxidation-reduction process (count=1507)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:67
+#: ../../tools/mgnify_expanded_tools.rst:101
+#: ../../tools/mgnify_expanded_tools.rst:166 dc25da960bf14a18944630e908a7f0fa
+#: e9ad4c4fb3e04081b34c271e44e3c1df fc31921e95e44a48875dc54b5e59e660
+msgid ""
+"``analysis_id`` (string) (required) MGnify analysis accession (e.g., "
+"'MGYA00585482'). Find IDs via MGnify\\_list\\_analyses."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:70 b088304b1f57407491cf8e6d591de2c2
+msgid ""
+"``page_size`` (integer) (optional) Number of GO terms to return per page "
+"(default 25, max 100)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:87 8b3813884f42460e8f6c95bbc8f444d4
+msgid "**MGnify_get_interpro** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:89 348d4a9781954968a0e1ddab6759ca03
+msgid ""
+"Get InterPro protein domain annotations from a MGnify metagenomics "
+"analysis. Returns InterPro ide..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 8f15f519807644c0ba1adfaa6a6ae621
+msgid "MGnify_get_interpro tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:95 ce45434cc3274cf59242375b20fdefce
+msgid "**Name**: ``MGnify_get_interpro``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:97 184c5496c7174ace8df08fa10243adbe
+msgid ""
+"**Description**: Get InterPro protein domain annotations from a MGnify "
+"metagenomics analysis. Returns InterPro identifiers with description and "
+"gene counts, ranked by abundance. Useful for understanding the protein "
+"family composition of a microbial community. Example: MGYA00585482 "
+"returns IPR036388 Winged helix-like DNA-binding domain (count=360)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:104 3f0972ad0a514574b2f417e5827d3f75
+msgid ""
+"``page_size`` (integer) (optional) Number of InterPro entries to return "
+"per page (default 25, max 100)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:121 72dac11f8ec8445d979a21654a945860
+msgid "**MGnify_get_study_detail** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:123 40482bb74dc74334a2a6c6b43576082c
+msgid ""
+"Get detailed information about a specific MGnify metagenomics study. "
+"Returns study name, abstract..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 620f1cbdbf104d259e5d0fdc780923db
+msgid "MGnify_get_study_detail tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:129 f0ffa346942b488cb16743585eb5e8fd
+msgid "**Name**: ``MGnify_get_study_detail``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:131 22e5ae36ceaa4c94bb505fd9c04c1d22
+msgid ""
+"**Description**: Get detailed information about a specific MGnify "
+"metagenomics study. Returns study name, abstract, associated BioProject, "
+"centre, biomes, and counts of analyses/downloads. Complementary to "
+"MGnify\\_search\\_studies which lists studies. Example: MGYS00002008 is a"
+" Tara Oceans marine metagenomics study."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:135 b07b8f52f92c45a78d0bae2ad7248688
+msgid ""
+"``study_accession`` (string) (required) MGnify study accession. Examples:"
+" 'MGYS00002008', 'MGYS00005292'."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:152 5d7e620bbf844847b1d9eea51c5d57c4
+msgid "**MGnify_get_taxonomy** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:154 01d209c6c0c34665a537b5a3ce0a2f78
+msgid ""
+"Get taxonomic composition from a MGnify metagenomics analysis. Returns "
+"organisms detected with th..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 8c8efc7c0cde4b3abad30e65a305a2e5
+msgid "MGnify_get_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:160 cdcf70bfe43540d09792eaaa79af3b1b
+msgid "**Name**: ``MGnify_get_taxonomy``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:162 7ee44e1d7ff647ddbaec68728f931459
+msgid ""
+"**Description**: Get taxonomic composition from a MGnify metagenomics "
+"analysis. Returns organisms detected with their abundance counts, "
+"taxonomic lineage (domain/phylum/class/order/family/genus/species), and "
+"rank. Supports SSU (16S/18S) and LSU (23S/28S) rRNA marker genes. Use "
+"MGnify\\_list\\_analyses to find analysis IDs for a study. Example: "
+"MGYA00585482 returns Bacteria, Proteobacteria, Firmicutes lineages with "
+"counts."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:169 718161df76e64de89fdc467c28e0e217
+msgid ""
+"``rna_type`` (string) (optional) rRNA marker type: 'ssu' for 16S/18S "
+"(default) or 'lsu' for 23S/28S."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:172 886a967ae70b4098ac63a6a575b5ed65
+msgid ""
+"``page_size`` (integer) (optional) Number of taxa to return per page "
+"(default 25, max 100)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:189 1f03de66047a4d94811bf35feb6678fe
+msgid "**MGnify_list_biomes** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:191 7c3a3417a85e45bfb957a20ed0a930ff
+msgid ""
+"Browse the MGnify biome hierarchy. Returns biome identifiers, names, and "
+"sample counts. Biomes ra..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 62888f1d49d64e328d34b353184eb27c
+msgid "MGnify_list_biomes tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:197 7e58fedf1cf74b61a46137640f4bc26d
+msgid "**Name**: ``MGnify_list_biomes``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:199 4a6000511b2940c9ac2b85ff70ff8f17
+msgid ""
+"**Description**: Browse the MGnify biome hierarchy. Returns biome "
+"identifiers, names, and sample counts. Biomes range from engineered "
+"environments (bioreactors) to natural habitats (ocean, soil, host-"
+"associated). Useful for discovering what metagenomic data is available "
+"for specific environments."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:203 f1ea45319cb8478aac02a163de4bfa3c
+msgid ""
+"``depth`` (integer) (optional) Hierarchy depth to filter by (1=root, "
+"2=second level, etc.)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:206
+#: ../../tools/mgnify_expanded_tools.rst:245 4e72127c640c4024950990f4046fb860
+#: cb835402a11746ea9a7f54d8eeecaf89
+msgid "``page`` (integer) (optional) Page number (default 1)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:209
+#: ../../tools/mgnify_expanded_tools.rst:248 1fb86f1c68e24d37a10b72857d653db0
+#: 39bdf384a45f45eb98f360213f6e814e
+msgid "``page_size`` (integer) (optional) Results per page (default 25, max 100)."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:225 f4de00c517c14357a31c39518ba5d7cd
+msgid "**MGnify_search_genomes** (Type: MGnifyExpandedTool)"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:227 3df96bb0d5b54a51afb9c87ec3f4690d
+msgid ""
+"Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) "
+"and isolate genomes. Fil..."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst 83dbb6c1e4964407b1e3b6851b7b2b00
+msgid "MGnify_search_genomes tool specification"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:233 113025026937470fbf1524c88d199162
+msgid "**Name**: ``MGnify_search_genomes``"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:235 a4f4d3492e844b698ae2232e9e584e85
+msgid ""
+"**Description**: Search the MGnify genome catalog for metagenome-"
+"assembled genomes (MAGs) and isolate genomes. Filter by taxonomy lineage "
+"or genome type. Returns quality metrics, taxonomy, and protein counts. "
+"Useful for finding reference genomes from specific microbial lineages."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:239 e9845ef5dd504d268946ee88dd2c38dd
+msgid ""
+"``taxonomy`` (string) (optional) Taxonomy lineage filter. Examples: "
+"'Firmicutes', 'Bacteroidetes', 'Proteobacteria'."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:242 e85d16cde9c344099b7283523b5696f8
+msgid ""
+"``genome_type`` (string) (optional) Filter by genome source type. "
+"Options: 'Isolate', 'MAG'."
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:264 5973864d7dfc4938a822e3715042051b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:266 426d72a2c3664e709ce2a79b1ad9dcda
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mgnify_expanded_tools.rst:267 3c6c5a7c5c014af0aaf2cc1b1de17e5d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

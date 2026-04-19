@@ -7,116 +7,202 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 21:40-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/arxiv_tools.rst:2 c9d34b76431b489593eb0f5c4bb23ba4
+#: ../../tools/arxiv_tools.rst:10 b4ba075c99bb4f3d84de6511df410645
 msgid "Arxiv Tools"
 msgstr "Arxiv 工具"
 
-#: ../../tools/arxiv_tools.rst:4 52c84129dd7b4054bc54ac9a53ac4638
+#: ../../tools/arxiv_tools.rst:12 96833ea7d9a14dba8f4e3575dddc7b37
+#, fuzzy
 msgid ""
-"**Configuration File**: ``arxiv_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 1"
+"**Configuration File**: ``arxiv_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 2"
 msgstr ""
 "**配置文件**：``arxiv_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/arxiv_tools.rst:8 bfd1369bc1134948912b6dfebe9daf19
+#: ../../tools/arxiv_tools.rst:16 7776262da8e84b21917aa76dd16879d5
 msgid ""
 "This page contains all tools defined in the ``arxiv_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``arxiv_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/arxiv_tools.rst:11 7723c614ea10463c9b93b93ced3cd576
+#: ../../tools/arxiv_tools.rst:19 1b43ec33320a4140ad710c096f2ce7fe
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/arxiv_tools.rst:14 9f9bfc76916847e6b247260b744e8318
+#: ../../tools/arxiv_tools.rst:22 51ac1d049e564201ad94691a902b5e6c
+#, fuzzy
+msgid "**ArXiv_get_pdf_snippets** (Type: ArXivPDFSnippetsTool)"
+msgstr "**ArXiv_search_papers**（类型：ArXiv工具）"
+
+#: ../../tools/arxiv_tools.rst:24 24b9bc87a83f4a5a88243a96c6fd546e
+msgid ""
+"Fetch an arXiv paper's PDF and return bounded text snippets around "
+"provided terms. Uses markitdow..."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst bb62fb41fa004ebf81fef537ffe0445b
+#, fuzzy
+msgid "ArXiv_get_pdf_snippets tool specification"
+msgstr "ArXiv_search_papers 工具规格说明"
+
+#: ../../tools/arxiv_tools.rst:28 ../../tools/arxiv_tools.rst:74
+#: dc37b6fa0fb040d2b8969063a4936909 fc63e29553144a2bbc93bf24c3b3de7d
+msgid "**Tool Information:**"
+msgstr "**工具信息：**"
+
+#: ../../tools/arxiv_tools.rst:30 92518820ee4744729f2b51a4f69e1f16
+#, fuzzy
+msgid "**Name**: ``ArXiv_get_pdf_snippets``"
+msgstr "**名称**：``ArXiv_search_papers``"
+
+#: ../../tools/arxiv_tools.rst:31 3e2d9cbba845498e8246e20f32008cf2
+#, fuzzy
+msgid "**Type**: ``ArXivPDFSnippetsTool``"
+msgstr "**类型**：``ArXivTool``"
+
+#: ../../tools/arxiv_tools.rst:32 a98fed91336b4f7dae481f4269b5df07
+msgid ""
+"**Description**: Fetch an arXiv paper's PDF and return bounded text "
+"snippets around provided terms. Uses markitdown to convert PDF to "
+"markdown. All arXiv papers are freely available (no paywall). Useful when"
+" key details are in the full text rather than abstract."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:34 ../../tools/arxiv_tools.rst:80
+#: 350467a0f71a4d1da4d2aa1791387ff4 fe3069e4c75641fb82b41ef3f891f81e
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/arxiv_tools.rst:36 72d1ba792a3d4570b7b20e3cc2173143
+msgid ""
+"``arxiv_id`` (string) (optional) arXiv paper ID (e.g., '2301.12345' or "
+"'arXiv:2301.12345'). The tool will build the PDF URL automatically."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:39 7cb87a9d821a4008947163bae0fda8fb
+msgid ""
+"``pdf_url`` (string) (optional) Direct PDF URL (e.g., "
+"'https://arxiv.org/pdf/2301.12345.pdf')."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:42 57d15ae60d44433fb4dac9c1020fc4dc
+msgid ""
+"``terms`` (array) (required) Terms to search for in the extracted full "
+"text (case-insensitive)."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:45 2b4487d11d144569bfb4bdbbe961dd5f
+msgid ""
+"``window_chars`` (integer) (optional) Context window size (characters) "
+"before and after each match."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:48 2e2f901e65d145cb9e036935794a664f
+msgid ""
+"``max_snippets_per_term`` (integer) (optional) Maximum number of snippets"
+" returned per term."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:51 f015b26f86fa4e34a02fa2eb40294b17
+msgid ""
+"``max_total_chars`` (integer) (optional) Hard cap on total characters "
+"returned across all snippets."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:54 ../../tools/arxiv_tools.rst:100
+#: 69bb1d8911c94042bc3f372b4cb1b9ac 7011cc67c51b48fc9e739101208c610d
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/arxiv_tools.rst:68 de291a9c9557425191bc61a111dfd609
 msgid "**ArXiv_search_papers** (Type: ArXivTool)"
 msgstr "**ArXiv_search_papers**（类型：ArXiv工具）"
 
-#: ../../tools/arxiv_tools.rst:16 46e1036229ca4265a824a018339635fb
+#: ../../tools/arxiv_tools.rst:70 01ad2e2431694cb9b3146f4d95dc709e
 msgid ""
 "Search arXiv for papers by keyword using the public arXiv API. Returns "
 "papers with title, abstrac..."
 msgstr "使用公共 arXiv API 根据关键词搜索 arXiv 论文。返回包含标题、摘要的论文信息..."
 
-#: ../../tools/arxiv_tools.rst 90dec235a4614bccae09bb460d311d7e
+#: ../../tools/arxiv_tools.rst aa9be2be031341048f0ece0b84d23e69
 msgid "ArXiv_search_papers tool specification"
 msgstr "ArXiv_search_papers 工具规格说明"
 
-#: ../../tools/arxiv_tools.rst:20 c0d941704e4044c299334576c107776b
-msgid "**Tool Information:**"
-msgstr "**工具信息：**"
-
-#: ../../tools/arxiv_tools.rst:22 f277ca3b4d6947d3bab1ddc23803b9c5
+#: ../../tools/arxiv_tools.rst:76 a25f54dfd399475a8a7689c01bc477ac
 msgid "**Name**: ``ArXiv_search_papers``"
 msgstr "**名称**：``ArXiv_search_papers``"
 
-#: ../../tools/arxiv_tools.rst:23 0c3711bcb8054e5999674929eda237a0
+#: ../../tools/arxiv_tools.rst:77 cfbc2e76697d4238bad2e6fbf6c93977
 msgid "**Type**: ``ArXivTool``"
 msgstr "**类型**：``ArXivTool``"
 
-#: ../../tools/arxiv_tools.rst:24 8847b0d7bc434697bed6c7f6bb656fdd
+#: ../../tools/arxiv_tools.rst:78 884ec9efb588489e9ed8ea53579a0901
 msgid ""
-"**Description**: Search arXiv for papers by keyword using the public arXiv "
-"API. Returns papers with title, abstract, authors, publication date, "
-"category, and URL."
+"**Description**: Search arXiv for papers by keyword using the public "
+"arXiv API. Returns papers with title, abstract, authors, publication "
+"date, category, and URL."
 msgstr "**描述**：使用公共 arXiv API 根据关键词搜索 arXiv 论文。返回包含标题、摘要、作者、发布日期、分类及链接的论文信息。"
 
-#: ../../tools/arxiv_tools.rst:26 59aff00597884133a38a01c61c19b69f
-msgid "**Parameters:**"
-msgstr "**参数：**"
-
-#: ../../tools/arxiv_tools.rst:28 865ac16abe1d47768071e58f9c3af485
+#: ../../tools/arxiv_tools.rst:82 c2cfc9a520b6416bac759e41285bc181
 msgid ""
-"``query`` (string) (required) Search query for arXiv papers. Use keywords "
-"separated by spaces to refine your search."
+"``query`` (string) (required) Search query for arXiv papers. Use keywords"
+" separated by spaces to refine your search."
 msgstr "``query``（字符串）（必填）用于搜索arXiv论文的查询词。使用空格分隔的关键词以细化搜索结果。"
 
-#: ../../tools/arxiv_tools.rst:31 38a38957fca243fe858b6c410a5b9977
+#: ../../tools/arxiv_tools.rst:85 38eabec7ca7f412e92a954e7f246ad8f
 msgid ""
 "``limit`` (integer) (optional) Number of papers to return. This sets the "
 "maximum number of papers retrieved from arXiv."
 msgstr "``limit``（整数）（可选）返回的论文数量。此参数设置从arXiv检索的论文最大数量。"
 
-#: ../../tools/arxiv_tools.rst:34 985a57624f8545b997ff1c5793fd0e9e
+#: ../../tools/arxiv_tools.rst:88 7f60308a031d4892a17937e367eefc49
 msgid ""
 "``sort_by`` (string) (optional) Sort order for results. Options: "
 "'relevance', 'lastUpdatedDate', 'submittedDate'"
-msgstr ""
-"``sort_by``（字符串）（可选）结果的排序方式。选项包括：'relevance'（相关性）、'lastUpdatedDate'（最后更新日期）、'submittedDate'（提交日期）"
+msgstr "``sort_by``（字符串）（可选）结果的排序方式。选项包括：'relevance'（相关性）、'lastUpdatedDate'（最后更新日期）、'submittedDate'（提交日期）"
 
-#: ../../tools/arxiv_tools.rst:37 85afc4211cf44d47a4fcc669dac7e222
+#: ../../tools/arxiv_tools.rst:91 abfd54f4204b4ceb90b7bb716421bc43
 msgid ""
 "``sort_order`` (string) (optional) Sort direction. Options: 'ascending', "
 "'descending'"
 msgstr "``sort_order``（字符串）（可选）排序方向。选项：‘ascending’、‘descending’"
 
-#: ../../tools/arxiv_tools.rst:40 1cedbddd0f0d498580d0bc8d2ace4e34
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
+#: ../../tools/arxiv_tools.rst:94 460c5b0190744f0eb3695c9d3d3085c4
+msgid ""
+"``date_from`` (string) (optional) Filter results from this date (format: "
+"YYYY-MM-DD). Uses submittedDate range."
+msgstr ""
 
-#: ../../tools/arxiv_tools.rst:54 497ce0298986459d805034b1ffefedea
+#: ../../tools/arxiv_tools.rst:97 df8017fcfe5b4ebc81635682299c4083
+msgid ""
+"``date_to`` (string) (optional) Filter results up to this date (format: "
+"YYYY-MM-DD). Uses submittedDate range."
+msgstr ""
+
+#: ../../tools/arxiv_tools.rst:114 b66aa6281ca24c2ea089c783350af9d2
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/arxiv_tools.rst:56 132e7a01646e4353b5d1a203a79f7b05
+#: ../../tools/arxiv_tools.rst:116 cf31fffc95d54372a5ce8ec5e9c8d2c3
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/arxiv_tools.rst:57 d3446a27a50b48ddbf87a254339b3ec2
+#: ../../tools/arxiv_tools.rst:117 29b74d4c26464f32801e27317b2caa30
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+

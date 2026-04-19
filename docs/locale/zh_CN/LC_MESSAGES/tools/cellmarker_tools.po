@@ -1,0 +1,268 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cellmarker_tools.rst:10 ada8a78fcb6f41a1ba3440cb3f535485
+msgid "Cellmarker Tools"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:12 32e47a64acea49d5866c77454e32a419
+msgid ""
+"**Configuration File**: ``cellmarker_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:16 b26042a9674e4093afd70946f47cb88a
+msgid ""
+"This page contains all tools defined in the ``cellmarker_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:19 c73cbf4ce2144c0e83166397f4dfcd28
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:22 2057298cf9aa496aaf80f3baf94830a6
+msgid "**CellMarker_list_cell_types** (Type: CellMarkerTool)"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:24 5fdae8dcf96b4c05bbc773baf0cb7e78
+msgid ""
+"List available cell types in the CellMarker 2.0 database for a given "
+"tissue and species. Returns ..."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst 036748edef434fb89c80facf4f7d230d
+msgid "CellMarker_list_cell_types tool specification"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:28 ../../tools/cellmarker_tools.rst:68
+#: ../../tools/cellmarker_tools.rst:109 ../../tools/cellmarker_tools.rst:150
+#: 546fa286f874489fb892fb64836212d7 b30cd64ceaf0467bb66bec999f8660ce
+#: efa1a753527945e78897751bf335ec34 f2a08371c4914c33bdc238eab01a3592
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:30 ec68ef53e9de462e8cae4a13146f656b
+msgid "**Name**: ``CellMarker_list_cell_types``"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:31 ../../tools/cellmarker_tools.rst:71
+#: ../../tools/cellmarker_tools.rst:112 ../../tools/cellmarker_tools.rst:153
+#: 5295f19b6e6e40a68099e92170870ce5 e22165c3063548eba95da96544837c39
+#: fd96438e79cd4d4ab90976ed64157c4e fe2627c48f724c5ca0803665d0e1e255
+msgid "**Type**: ``CellMarkerTool``"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:32 4da97d33e4324e309e1811e4c589d303
+msgid ""
+"**Description**: List available cell types in the CellMarker 2.0 database"
+" for a given tissue and species. Returns all annotated cell types found "
+"in that tissue context. Use this to explore what cell types have been "
+"characterized in a specific tissue, or to get an overview of CellMarker's"
+" coverage. Supports both normal and cancer cell contexts."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:34 ../../tools/cellmarker_tools.rst:74
+#: ../../tools/cellmarker_tools.rst:115 ../../tools/cellmarker_tools.rst:156
+#: 2df4a7776c6a4d7e9437cfaafb31b0b8 494e2f7432d9448fbb1aeb0878b7d077
+#: 77a7b1ca1afe4ac8b1653bbc6a2ad4ad a9c697a7d8d841e19eb07a12051ebf71
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:36 ../../tools/cellmarker_tools.rst:76
+#: ../../tools/cellmarker_tools.rst:117 ../../tools/cellmarker_tools.rst:158
+#: 0e1c6f3993b040a5965349e2ebfcf579 7e839dad034a4375a2510fb9992db6c8
+#: 921b7019c8a2472f8eeb76624b036619 c8e127b5ec734d1799b62f066c9aca91
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:39 5099baf7d7404c57bef02fe4a7d8c3b6
+msgid ""
+"``tissue_type`` (string) (optional) Tissue type to list cell types for "
+"(e.g., 'Blood', 'Lung', 'Brain', 'Liver'). If omitted, returns a global "
+"list."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:42 992c8ce6b8c74b2e98da93c27e7fd264
+msgid "``species`` (string) (optional) Species to query (default: 'Human')"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:45 a8d452162ce04c0786cf2dd31da8ee87
+msgid ""
+"``cell_class`` (string) (optional) Cell class filter: 'all' for "
+"normal+cancer (default), 'cancer' for cancer cells only"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:48 ../../tools/cellmarker_tools.rst:88
+#: ../../tools/cellmarker_tools.rst:129 ../../tools/cellmarker_tools.rst:170
+#: 16074630e17345ebba25f99527f05c6c 8560cd993cad46a2bbd0b2cbd56e8eaa
+#: c439bdf6bb5e4ef89a5772130bb93f38 d665ac7164024348b20ec8eec662d1d0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:62 8be20c5823da4ae4811dbf7ca5335008
+msgid "**CellMarker_search_by_cell_type** (Type: CellMarkerTool)"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:64 a549f36fbfe646d8b24d3e4be86a2d6b
+msgid ""
+"Search the CellMarker 2.0 database for marker genes of a specific cell "
+"type. Returns curated list..."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst b1b7c7a85709428e9b440852ffda9c36
+msgid "CellMarker_search_by_cell_type tool specification"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:70 dfdc1eccfe4c448a846c5ab0ba3c9651
+msgid "**Name**: ``CellMarker_search_by_cell_type``"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:72 d830610aca1e4f719f3ca8436038492f
+msgid ""
+"**Description**: Search the CellMarker 2.0 database for marker genes of a"
+" specific cell type. Returns curated lists of marker genes that define a "
+"cell type, sourced from single-cell RNA-seq studies and experimental "
+"literature. Use this to find canonical markers for cell type annotation, "
+"or to build gene sets for cell scoring. Example: 'T cell' returns CD3D, "
+"CD3E, CD3G, etc. 'Macrophage' returns CD68, CD163, MARCO, etc."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:79 ad158a8f4f654b29b0b95596c1dd0099
+msgid ""
+"``cell_name`` (string) (required) Cell type name to search for (e.g., 'T "
+"cell', 'Macrophage', 'B cell', 'Fibroblast')"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:82 74b85e68c0a54374b46f191281f0e2e2
+msgid ""
+"``species`` (string) (optional) Species filter. If omitted, searches both"
+" species."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:85 ../../tools/cellmarker_tools.rst:126
+#: a134aeaeda1d484e9175d785d6f22e75 a13b3da9eb01403abc914ffc0bffa1d0
+msgid ""
+"``tissue_type`` (string) (optional) Filter results by tissue type (e.g., "
+"'Blood', 'Lung', 'Brain'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:103 2427b46a41934ad0b5e291c358afcd40
+msgid "**CellMarker_search_by_gene** (Type: CellMarkerTool)"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:105 ca6e6b9b08fc498a93c1d19c88510061
+msgid ""
+"Search the CellMarker 2.0 database for cell types that express a given "
+"marker gene. Returns curat..."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst 69c569b6b7454e1db5c6fcbe62f4f0b3
+msgid "CellMarker_search_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:111 9bb70d7e009f4da799587132c0d9999e
+msgid "**Name**: ``CellMarker_search_by_gene``"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:113 8c65cf80521e4f10b52b8898d05eb8d3
+msgid ""
+"**Description**: Search the CellMarker 2.0 database for cell types that "
+"express a given marker gene. Returns curated cell type annotations from "
+"single-cell RNA-seq studies and experimental literature. CellMarker 2.0 "
+"covers >500 cell types across >400 tissue types in human and mouse. Use "
+"this to identify which cell types a gene marks, enabling cell type "
+"annotation in scRNA-seq analysis. Example: CD3D marks T cells, CD68 marks"
+" macrophages, EPCAM marks epithelial cells."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:120 da95f43434dd4c30a3f753fc7a53c49b
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol to search for (e.g., "
+"'CD3D', 'CD68', 'EPCAM', 'MS4A1')"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:123 295a9e5400f9497ba18aef5b3af30229
+msgid ""
+"``species`` (string) (optional) Species filter: 'Human' or 'Mouse'. If "
+"omitted, searches both species."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:144 646daa6c045f486dad9a4c691d8d1949
+msgid "**CellMarker_search_cancer_markers** (Type: CellMarkerTool)"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:146 7d4f9b8cee3d485e9a992dab9b326240
+msgid ""
+"Search the CellMarker 2.0 database for cancer-specific cell markers. "
+"Returns marker genes and cel..."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst e512a63ed7b5452a80090631a446d27b
+msgid "CellMarker_search_cancer_markers tool specification"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:152 70e263b352d04052899c245f27c87b87
+msgid "**Name**: ``CellMarker_search_cancer_markers``"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:154 8f845fd3a96647c48b34261054d7fbdf
+msgid ""
+"**Description**: Search the CellMarker 2.0 database for cancer-specific "
+"cell markers. Returns marker genes and cell types found in cancer tissue "
+"contexts. Use this to identify tumor-specific markers, immune cell "
+"markers in the tumor microenvironment, or cancer stem cell markers. "
+"Filters results to 'Cancer cell' annotations only. At least one search "
+"parameter is required: cancer\\_type (tissue), gene\\_symbol, or "
+"cell\\_type."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:161 02897b7df199423a8901562edf909411
+msgid ""
+"``cancer_type`` (string) (optional) Cancer tissue type (e.g., 'Breast', "
+"'Lung', 'Brain', 'Liver'). Filters by tissue where cancer occurs."
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:164 588c78b027754cbcb8580c90b9c4535d
+msgid ""
+"``gene_symbol`` (string) (optional) Marker gene to search in cancer "
+"context (e.g., 'CD274' for PD-L1, 'EPCAM')"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:167 2b285ccc61854da9abb0e17d70133f78
+msgid ""
+"``cell_type`` (string) (optional) Cancer cell type to search for (e.g., "
+"'Cancer stem cell', 'T cell', 'Macrophage')"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:184 e29464670205447cb03f92f9ccc11d60
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:186 c7464bd5c79a4a4fbbce1402f18ba413
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cellmarker_tools.rst:187 f6c620ae391549a6a5695d946a2ca487
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

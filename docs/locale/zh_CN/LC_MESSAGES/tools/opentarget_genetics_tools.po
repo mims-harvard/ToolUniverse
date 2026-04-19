@@ -1,0 +1,388 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/opentarget_genetics_tools.rst:10
+#: 690821e93a75482b8b00021cf15d7f43
+msgid "Opentarget Genetics Tools"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:12
+#: a61de9b264dc4c77964bc9d7f1a33e8c
+msgid ""
+"**Configuration File**: ``opentarget_genetics_tools.json`` **Tool Type**:"
+" Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:16
+#: e9a3df8e81a34e1897961e1d38ff608b
+msgid ""
+"This page contains all tools defined in the "
+"``opentarget_genetics_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:19
+#: b305e97a15e7494680d3a2cf799bccf6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:22
+#: 12c79319e5e64c6da6d742ee0dbfaf02
+msgid "**OpenTargets_get_credible_set_detail** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:24
+#: f1b5c9caa723463c8e86f9b2963770ef
+msgid ""
+"Get detailed information about a specific GWAS credible set (fine-mapped "
+"locus) from Open Targets..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst 9a84303c5abb48a6ac8f2ab397e973cd
+msgid "OpenTargets_get_credible_set_detail tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:28
+#: ../../tools/opentarget_genetics_tools.rst:59
+#: ../../tools/opentarget_genetics_tools.rst:90
+#: ../../tools/opentarget_genetics_tools.rst:127
+#: ../../tools/opentarget_genetics_tools.rst:161
+#: ../../tools/opentarget_genetics_tools.rst:192
+#: 0cbc408b9bb346d4a7fbee82c4d36d0a 3486efb3773145c19b140da60ce6594e
+#: 4345016467d740aaa1064be3076d1133 8d65b5001bcc4bafa1d7e55361234bfe
+#: 939bca5e2fb44843bb43ca9c760f85a3 b8c57af66a4a4f8997750d7c7916c736
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:30
+#: 064e1d97a4e1451c9cef91898a330a16
+msgid "**Name**: ``OpenTargets_get_credible_set_detail``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:31
+#: ../../tools/opentarget_genetics_tools.rst:62
+#: ../../tools/opentarget_genetics_tools.rst:93
+#: ../../tools/opentarget_genetics_tools.rst:130
+#: ../../tools/opentarget_genetics_tools.rst:164
+#: ../../tools/opentarget_genetics_tools.rst:195
+#: 3876c28bd7584f0e857546d0fdf700ce 4ad1411aa6e44c6495aed1f49ddaa0b8
+#: 4d5ccb47ff6e4a84be5d75e78a9d6647 56e3573940e44fd8a294eaedbf8b907d
+#: 73b5a7f03cf843e3bdafa7df4086697d ef7ab6d043f44adfbeacb113677c0290
+msgid "**Type**: ``OpenTarget``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:32
+#: 04227dc617b74f5fbe59d55ea0e42415
+msgid ""
+"**Description**: Get detailed information about a specific GWAS credible "
+"set (fine-mapped locus) from Open Targets. Returns the lead variant, "
+"associated study, fine-mapping method, statistical significance, locus-"
+"to-gene (L2G) predictions mapping the signal to likely causal genes, and "
+"colocalization evidence with QTLs."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:34
+#: ../../tools/opentarget_genetics_tools.rst:65
+#: ../../tools/opentarget_genetics_tools.rst:96
+#: ../../tools/opentarget_genetics_tools.rst:133
+#: ../../tools/opentarget_genetics_tools.rst:167
+#: ../../tools/opentarget_genetics_tools.rst:198
+#: 0114f9dfb7164dd0895775dd2ff0befb 965c5b8c79b3478580e54e569fe935ce
+#: afbc671f345741df9cf50ccbe986de20 b68ab37a6b4e46cbb83aafdc13b173cc
+#: c92804a1438d4ea682f8c39cb84d997b d463677a6a9d465c9bed50f489c65609
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:36
+#: 13eaf8615cda4b3fad8a3dea942983bf
+msgid ""
+"``studyLocusId`` (string) (required) Credible set identifier "
+"(studyLocusId), a 32-character hash (e.g., "
+"'b758d8fb10924f5338cbad8d27c7dee8'). Obtain from variant credible sets or"
+" study credible sets queries."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:39
+#: ../../tools/opentarget_genetics_tools.rst:70
+#: ../../tools/opentarget_genetics_tools.rst:107
+#: ../../tools/opentarget_genetics_tools.rst:141
+#: ../../tools/opentarget_genetics_tools.rst:172
+#: ../../tools/opentarget_genetics_tools.rst:215
+#: 1ac090d82cc84a0096fd3624e603e8a2 1e73fd8c7541476f8f6ecc03c5c0f51b
+#: 2a95f835752f4c41ad5cf44dd3d363ee 6258386c094f459ab56a758e32ffca58
+#: 9689b32fd9c841caa2f05b9fc7f4c894 b0c3cc48aa0844a8929ba7cb1748b654
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:53
+#: a0eba5358fea4dc19ee9a88cb322bb58
+msgid "**OpenTargets_get_gwas_study** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:55
+#: 6852135ac7fa4940b35a550113c8b0f5
+msgid ""
+"Get detailed metadata for a GWAS study from Open Targets Platform, "
+"including trait information, s..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst ffbc219f253b4a5499d2fab0426cf527
+msgid "OpenTargets_get_gwas_study tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:61
+#: 0b11639632534776adfeac1702f63f60
+msgid "**Name**: ``OpenTargets_get_gwas_study``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:63
+#: be1990fb4ce442a2be02dc428140e51e
+msgid ""
+"**Description**: Get detailed metadata for a GWAS study from Open Targets"
+" Platform, including trait information, sample sizes, publication "
+"details, disease mappings, cohorts, LD population structure, and "
+"availability of summary statistics. Use GCST accession IDs."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:67
+#: 9940014fd6454b3184964a521d2f5a70
+msgid ""
+"``studyId`` (string) (required) GWAS study accession ID (e.g., "
+"'GCST000392' for T1D Barrett et al., 'GCST90029024' for T2D Loh et al.)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:84
+#: 571b6530712341b792cbab89759eb28b
+msgid "**OpenTargets_get_study_credible_sets** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:86
+#: b120b88ab4a244f4abe217f00da3d543
+msgid ""
+"Get all credible sets (fine-mapped GWAS loci) for a specific GWAS study "
+"from Open Targets. Return..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst e2279fb869774e79bd08a47bf3f3a746
+msgid "OpenTargets_get_study_credible_sets tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:92
+#: e6d2352ca99a4e8f8eaa58410f8b2838
+msgid "**Name**: ``OpenTargets_get_study_credible_sets``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:94
+#: d40ff697f2e04a4992bebc112d6a8e96
+msgid ""
+"**Description**: Get all credible sets (fine-mapped GWAS loci) for a "
+"specific GWAS study from Open Targets. Returns the lead variants, fine-"
+"mapping details, p-values, effect sizes, and locus-to-gene (L2G) "
+"predictions for each locus in the study. Use this to explore all "
+"significant loci discovered in a GWAS."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:98
+#: 468a3cf882b84d7bb3a84509716157f1
+msgid ""
+"``studyIds`` (array) (required) GWAS study accession IDs (e.g., "
+"['GCST000392'])"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:101
+#: b4f7a94700c242ea9efabe09f97e91d5
+msgid ""
+"``size`` (integer) (optional) Number of credible sets to return (default "
+"20)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:104
+#: 225b2bed90e44c92b8cbfcfd25630bfe
+msgid ""
+"``index`` (integer) (optional) Page index for pagination (0-based, "
+"default 0)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:121
+#: f5415d9351ed412aa6874f0350517779
+msgid "**OpenTargets_get_variant_credible_sets** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:123
+#: fca74905b62148319523443c6d0f5e87
+msgid ""
+"Get GWAS credible sets (fine-mapped loci) associated with a genetic "
+"variant from Open Targets. Re..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst dbccee0e1d8241d79f2a42393a79df17
+msgid "OpenTargets_get_variant_credible_sets tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:129
+#: 267774f8ea194dc2b4e070e729c657c2
+msgid "**Name**: ``OpenTargets_get_variant_credible_sets``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:131
+#: fffbf816deea41529a6c5a80df70a830
+msgid ""
+"**Description**: Get GWAS credible sets (fine-mapped loci) associated "
+"with a genetic variant from Open Targets. Returns studies where this "
+"variant appears in a fine-mapped credible set, with locus-to-gene (L2G) "
+"predictions, p-values, effect sizes, and the fine-mapping method used. "
+"Essential for understanding which GWAS signals a variant is part of and "
+"which genes it likely affects."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:135
+#: 9e90c890f89c41008fef42ff16047284
+msgid ""
+"``variantId`` (string) (required) Open Targets variant ID in format "
+"chr\\_position\\_ref\\_alt (e.g., '10\\_112998590\\_C\\_T' for rs7903146)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:138
+#: deb52a2a38054655bbd2f88c67a5fff0
+msgid ""
+"``size`` (integer) (optional) Number of credible sets to return (default "
+"10)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:155
+#: d7c4d4142902415580381299c566a96a
+msgid "**OpenTargets_get_variant_info** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:157
+#: a23e6b0c7d094b7cbbae03fba6af9d12
+msgid ""
+"Get detailed information about a genetic variant from Open Targets "
+"Platform, including genomic co..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst 8a63d4da72214bf598b98984e38f972e
+msgid "OpenTargets_get_variant_info tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:163
+#: 263bc050b1a84b198d5c5061fb6877f2
+msgid "**Name**: ``OpenTargets_get_variant_info``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:165
+#: b850c1df9d0f4e5fb97c87074e43455c
+msgid ""
+"**Description**: Get detailed information about a genetic variant from "
+"Open Targets Platform, including genomic coordinates, rsIDs, allele "
+"frequencies across populations (gnomAD), functional consequence, "
+"transcript consequences, and HGVS notation. Useful for GWAS variant "
+"annotation and population genetics."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:169
+#: 65f0bc632a6145548168ceeee5a575bd
+msgid ""
+"``variantId`` (string) (required) Open Targets variant ID in format "
+"chr\\_position\\_ref\\_alt (e.g., '10\\_112998590\\_C\\_T' for rs7903146,"
+" '19\\_44908684\\_T\\_C' for rs429358). Use the search tool to find "
+"variant IDs from rsIDs."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:186
+#: bb8690d02aee4670aae1c1b8b3b15466
+msgid "**OpenTargets_search_gwas_studies_by_disease** (Type: OpenTarget)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:188
+#: fa389755b6684c01a8a1a42dcce3e693
+msgid ""
+"Search for GWAS studies associated with a disease or trait in Open "
+"Targets. Takes disease ontolog..."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst 92e568d13e954b6d9df60342ea4c88fb
+msgid "OpenTargets_search_gwas_studies_by_disease tool specification"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:194
+#: 10a363d261c6421dbe366478d235b29f
+msgid "**Name**: ``OpenTargets_search_gwas_studies_by_disease``"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:196
+#: 5b872824a1b44cca8384ada8194dee92
+msgid ""
+"**Description**: Search for GWAS studies associated with a disease or "
+"trait in Open Targets. Takes disease ontology IDs (EFO, MONDO) and "
+"returns matching GWAS studies with their metadata including sample sizes,"
+" traits, publications, and associated diseases. Use enableIndirect=true "
+"to include child disease terms."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:200
+#: 8061218712c0458fa16b5f214343cbb8
+msgid ""
+"``diseaseIds`` (array) (optional) Disease ontology IDs (e.g., "
+"['MONDO\\_0005148'] for type 2 diabetes, ['MONDO\\_0004975'] for "
+"Alzheimer disease)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:203
+#: 9d7a399f509c4caea85b2e13ba082a0e
+msgid ""
+"``enableIndirect`` (boolean) (optional) Include studies for child disease"
+" terms (default true)"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:206
+#: fed3132f8c9a40f6ba1bb4ec60696f0d
+msgid ""
+"``disease_name`` (string) (optional) Disease or trait name for auto-"
+"resolution (e.g., 'type 2 diabetes'). Resolved to diseaseIds "
+"automatically."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:209
+#: b91283504aff463a808032d2c51177bb
+msgid "``disease`` (string) (optional) Alias for disease\\_name."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:212
+#: 0f522dea02574a3fb3ddd6713d06c7d9
+msgid "``trait`` (string) (optional) Alias for disease\\_name."
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:228
+#: 725846f7111540169d341d0e0e86c9da
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:230
+#: f325b5255d0542679be98fc6c76b882b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/opentarget_genetics_tools.rst:231
+#: 942fdc6fd66b4cae9a4648d71821fa8b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

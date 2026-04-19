@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/synbiohub_tools.rst:10 a891323fbae3441a852aee9e07fbcd64
+msgid "Synbiohub Tools"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:12 3d635072111549c881153bbd49cdd940
+msgid ""
+"**Configuration File**: ``synbiohub_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:16 736ae31e752d454cab1c41c2169a05ab
+msgid ""
+"This page contains all tools defined in the ``synbiohub_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:19 d52e5f15a8fc4d14bb0ace822a236fa1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:22 7380a395251646a4bc9c1d769d4ff7c1
+msgid "**SynBioHub_get_collections** (Type: SynBioHubTool)"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:24 de92886884784f72b480d83c7aa7faf6
+msgid ""
+"List all public collections available on SynBioHub. Collections are "
+"curated sets of genetic parts..."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst f3d0391fe63e4a49a807f484b75e03a7
+msgid "SynBioHub_get_collections tool specification"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:28 ../../tools/synbiohub_tools.rst:57
+#: ../../tools/synbiohub_tools.rst:90 5509f66269c841b29e16a81d08207fbf
+#: 8af3fa99f16d4b4db7f160bdc987b70a aa5a00b544be462ba7a74c4182e706ef
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:30 4a9c831a046649498bb9bc971e84952e
+msgid "**Name**: ``SynBioHub_get_collections``"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:31 ../../tools/synbiohub_tools.rst:60
+#: ../../tools/synbiohub_tools.rst:93 2029464b4e214fb28ce4ae7d86db622a
+#: 2e789e262f794efab34e8e3645107259 d665901c22da4797be45c7911be91e0d
+msgid "**Type**: ``SynBioHubTool``"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:32 44b3d5bf198745bcb9fad8d59b4782db
+msgid ""
+"**Description**: List all public collections available on SynBioHub. "
+"Collections are curated sets of genetic parts and designs, including the "
+"iGEM Parts Registry, CIDAR Lab parts, Free Genes feature libraries, and "
+"organism-specific collections. Returns collection names, descriptions, "
+"URIs, and member counts. Use this to discover available part libraries "
+"before searching for specific parts."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:34 ../../tools/synbiohub_tools.rst:63
+#: ../../tools/synbiohub_tools.rst:96 15f445f39dfc4614aa9b3136f43a064e
+#: 21218108e6334dd7853acd9a701d180f da60b52acd76409d9a01256a0388e248
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:36 618740a0e0d244cb9285a0b952d6b6ad
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:38 ../../tools/synbiohub_tools.rst:71
+#: ../../tools/synbiohub_tools.rst:107 33f6312d0f034e9bb20e4382e2da2711
+#: c9fe9fd406e845a0b4dcd8f536c34bb2 fc50a19bc1de45e09a4e81b836a062c4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:51 2eb9dbe73a554a5a986932680ef966f8
+msgid "**SynBioHub_get_part** (Type: SynBioHubTool)"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:53 32aa318a22254aa3b582ab865d5005bb
+msgid ""
+"Get detailed SBOL (Synthetic Biology Open Language) information for a "
+"specific genetic part from ..."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst 11ea0697dc144b27ad245c4bb0068189
+msgid "SynBioHub_get_part tool specification"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:59 b7463e7a16ec455abcad149cbca776f8
+msgid "**Name**: ``SynBioHub_get_part``"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:61 ac455acda10a4b6faf6c6212b4a5e35e
+msgid ""
+"**Description**: Get detailed SBOL (Synthetic Biology Open Language) "
+"information for a specific genetic part from SynBioHub. Returns the "
+"part's title, description, DNA sequence, sequence length, functional "
+"roles, creation date, and provenance. Can look up by full URI or by iGEM "
+"BioBrick display ID (e.g., BBa\\_E0040 for GFP). Example: get details for"
+" BBa\\_E0040 (GFP coding sequence, 720bp) including its full DNA "
+"sequence."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:65 550d65c241d2494ba1db2638fd679bd4
+msgid ""
+"``display_id`` (string, null) (optional) BioBrick/part display ID from "
+"the iGEM collection. Examples: 'BBa\\_E0040' (GFP), 'BBa\\_R0010' (lac "
+"promoter), 'BBa\\_B0034' (RBS). If not from iGEM, use part\\_uri instead."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:68 12784a2886194eb7b8a57b273321c031
+msgid ""
+"``part_uri`` (string, null) (optional) Full SynBioHub URI for the part "
+"(from search results). Example: "
+"'https://synbiohub.org/public/igem/BBa\\_E0040/1'. Use this for parts not"
+" in iGEM collection."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:84 6d968a96b9dd4a4d91cffc2edcf42a65
+msgid "**SynBioHub_search_parts** (Type: SynBioHubTool)"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:86 8354ae1c87b8468d8ec68d14fb17fc36
+msgid ""
+"Search the SynBioHub synthetic biology parts repository for genetic parts"
+" and designs by keyword...."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst 85580d370741410f95ea767dc46baa8d
+msgid "SynBioHub_search_parts tool specification"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:92 e764de0b3895437ca4c4dbfc5f874cfa
+msgid "**Name**: ``SynBioHub_search_parts``"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:94 452004150ed54af495338e8f8bbd7647
+msgid ""
+"**Description**: Search the SynBioHub synthetic biology parts repository "
+"for genetic parts and designs by keyword. SynBioHub hosts the iGEM "
+"Registry of Standard Biological Parts (20,000+ BioBricks) and other "
+"public SBOL collections. Parts include promoters, coding sequences "
+"(CDS/genes), terminators, ribosome binding sites (RBS), reporters (GFP, "
+"RFP, LacZ), regulatory elements, and composite genetic devices. Returns "
+"part IDs, names, descriptions, SBOL types, and functional roles. Example:"
+" search 'GFP' finds green fluorescent protein parts; search 'lac "
+"promoter' finds lac operon regulatory parts."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:98 256bff2cc778497790f1f9088cacb0c3
+msgid ""
+"``query`` (string) (required) Search query for finding genetic parts. Can"
+" include gene names, part functions, BioBrick IDs, or biological "
+"descriptions. Examples: 'GFP', 'lac promoter', 'BBa\\_E0040', "
+"'terminator', 'riboswitch', 'CRISPR', 'T7 promoter'."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:101 eb0fa3463bb6432295fb08b062422457
+msgid "``offset`` (integer, null) (optional) Offset for pagination (default: 0)."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:104 3bdcbc60b6f74da9807f3c84b937a737
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:121 6f95607e5be5482fb90b787fb572ea2b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:123 cd367ad110c4456f91473942fc3514d9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/synbiohub_tools.rst:124 4c336dd4f4ef401c95ad4dbc122b7ef2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fda_gsrs_tools.rst:10 ec6f8283609246deb777933709ea2850
+msgid "Fda Gsrs Tools"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:12 352f650be00246c09860ef5441b3833b
+msgid ""
+"**Configuration File**: ``fda_gsrs_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:16 c64cac9829a94d15894d84a7d2a82886
+msgid ""
+"This page contains all tools defined in the ``fda_gsrs_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:19 0c01cfe5b6c3418aad78e19933419592
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:22 b4257c0c29d745d28d856eab67310dfb
+msgid "**FDAGSRS_get_structure** (Type: FDAGSRSTool)"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:24 3ca1b37d119f4c528b8e1e55405cabf0
+msgid ""
+"Get chemical structure data for an FDA-regulated substance by UNII code. "
+"Returns SMILES, molecula..."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst a8ee6ab96b754dfcb0d3356360d6c0cc
+msgid "FDAGSRS_get_structure tool specification"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:28 ../../tools/fda_gsrs_tools.rst:59
+#: ../../tools/fda_gsrs_tools.rst:90 41b1129cac5a4ed6ad417d9c8ea54974
+#: 6e96a3adb8174962b24e6875d6adf065 b5d3ac8eaece42b684978749b3ab65e5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:30 410d49cc2f3a4947b61d1f58c1b5ef19
+msgid "**Name**: ``FDAGSRS_get_structure``"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:31 ../../tools/fda_gsrs_tools.rst:62
+#: ../../tools/fda_gsrs_tools.rst:93 5a90f8b04d60472987ec9fdf1dabcd97
+#: c5c1a3ffe9a6494ea48648688eb97ab6 fb85591f0fe34844bc53c1ac6ed946e6
+msgid "**Type**: ``FDAGSRSTool``"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:32 d36830d9437e4714af73f4f81a64bdb3
+msgid ""
+"**Description**: Get chemical structure data for an FDA-regulated "
+"substance by UNII code. Returns SMILES, molecular formula, InChIKey, "
+"molfile, molecular weight, stereochemistry, and optical activity. No API "
+"key required. Only works for chemical substances; returns error for "
+"proteins, mixtures, or non-chemical substances. Example: UNII "
+"'R16CO5Y76E' (aspirin) -> SMILES 'CC(=O)Oc1ccccc1C(O)=O'."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:34 ../../tools/fda_gsrs_tools.rst:65
+#: ../../tools/fda_gsrs_tools.rst:96 0cea64be2f354cefac11b2c27c35653f
+#: 8d1662a6e6244399a32bd535846c261c ed0bcf1ebf6d47efa965bcf353fa897a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:36 87aa80ab85e540c7a97ab0d0e06a9771
+msgid ""
+"``unii`` (string) (required) FDA UNII code for the chemical substance. "
+"Examples: 'R16CO5Y76E' (aspirin), '9100L32L2N' (ibuprofen), '4T6H12BN9U' "
+"(metformin), 'IY9XDZ35W2' (cisplatin)."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:39 ../../tools/fda_gsrs_tools.rst:70
+#: ../../tools/fda_gsrs_tools.rst:107 31dabaab64a5470488577fd42a32e8ef
+#: 641a4d8531614ecf93843006c1babb2e 85619224ea62400f81015c3558e239ee
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:53 f0025f8ca12e44b38df41152f786e888
+msgid "**FDAGSRS_get_substance** (Type: FDAGSRSTool)"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:55 28c59baaf1084b11bcdb85c121a0a736
+msgid ""
+"Get full FDA substance record by UNII (Unique Ingredient Identifier) "
+"code. Returns complete subst..."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst 285068e9364c4c468205f1ef290dc0db
+msgid "FDAGSRS_get_substance tool specification"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:61 d439e12ebd154e74b8db953073abbf7d
+msgid "**Name**: ``FDAGSRS_get_substance``"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:63 fb053e77d0894affbb9e0701c7284b19
+msgid ""
+"**Description**: Get full FDA substance record by UNII (Unique Ingredient"
+" Identifier) code. Returns complete substance data including all names, "
+"cross-references (DrugBank, WHO-ATC, CAS, EC number, CFR), structure, and"
+" approval status. No API key required. UNII is the official FDA "
+"identifier for all regulated substances. Example: UNII 'R16CO5Y76E' = "
+"aspirin."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:67 bd3bd4351ab64be097d1ff680ef11b04
+msgid ""
+"``unii`` (string) (required) FDA UNII (Unique Ingredient Identifier) "
+"code. 10-character alphanumeric string. Examples: 'R16CO5Y76E' (aspirin),"
+" '9100L32L2N' (ibuprofen), '4T6H12BN9U' (metformin), '57GNO57U7G' "
+"(semaglutide)."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:84 129ea29957f644ea8b02feffbfdd0274
+msgid "**FDAGSRS_search_substances** (Type: FDAGSRSTool)"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:86 fb4ed7c5bc1146bb9646fcbd0a04b8af
+msgid ""
+"Search FDA GSRS (Global Substance Registration System) for substances by "
+"name, UNII code, InChIKe..."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst 7787bbf129724efc873715572d51d5b6
+msgid "FDAGSRS_search_substances tool specification"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:92 4369e72921044245ad171552dab3a9e6
+msgid "**Name**: ``FDAGSRS_search_substances``"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:94 0713b8e89dae46d39e2620bea66af1b4
+msgid ""
+"**Description**: Search FDA GSRS (Global Substance Registration System) "
+"for substances by name, UNII code, InChIKey, or formula. Returns official"
+" FDA substance records with UNII identifiers, substance class, structure,"
+" and cross-references (DrugBank, WHO-ATC, CAS, EC/EINECS, CFR). No API "
+"key required. Example: 'aspirin' -> UNII R16CO5Y76E, chemical, approved."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:98 457680fb74ce41fca936033c63edee07
+msgid ""
+"``query`` (string) (required) Search query: drug/chemical name, UNII "
+"code, InChIKey, or molecular formula. Examples: 'aspirin', 'semaglutide',"
+" 'R16CO5Y76E', 'C9H8O4', 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N'."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:101 6a3e3ce6dc964eeab3067330e703447f
+msgid ""
+"``substance_class`` (string, null) (optional) Filter by substance class. "
+"Options: 'chemical', 'protein', 'mixture', 'polymer', 'nucleicAcid', "
+"'structurallyDiverse', 'specifiedSubstanceG1'. Default: no filter (all "
+"classes)."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:104 b51f90f7beb44a1db10816a6fe707f0e
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(1-50, default 10)."
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:121 bbc17ee2723b46bfb95858b0ad026ea6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:123 58d42e7d0a4c4642b18a688c556a58b7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fda_gsrs_tools.rst:124 f613607ddccd4de6bd14aff7dc0ab3e6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

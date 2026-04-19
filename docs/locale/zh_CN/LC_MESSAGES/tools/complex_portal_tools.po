@@ -1,0 +1,153 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/complex_portal_tools.rst:10 9cae393bee734c51a1d29c96d5318849
+msgid "Complex Portal Tools"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:12 d86a0e2234be44468ca27a4c29e18e4d
+msgid ""
+"**Configuration File**: ``complex_portal_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:16 63f802f33fd94b07afdeb040517358ba
+msgid ""
+"This page contains all tools defined in the ``complex_portal_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:19 37a26f9aad38402e93fc5b6b89c8f93f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:22 9893731ceae0426881c2e62f2070717d
+msgid "**ComplexPortal_get_complex** (Type: ComplexPortalTool)"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:24 e19519c3ee214cf3985547195ac18bd0
+msgid ""
+"Get detailed information for a specific protein complex by Complex Portal"
+" ID (e.g., CPX-1234). Re..."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst d2c83226780d4c109b37a2931b9955db
+msgid "ComplexPortal_get_complex tool specification"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:28
+#: ../../tools/complex_portal_tools.rst:59 7537018abb4d4c3abb04f99fce86dee6
+#: 89a5ca9c595f475aa5473bccf6f5ae87
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:30 28af479ea1b14e60a6ca4171788c4288
+msgid "**Name**: ``ComplexPortal_get_complex``"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:31
+#: ../../tools/complex_portal_tools.rst:62 4b644a922d40473c8fd8add9141ce463
+#: 4d3d0d8fe2aa479da19a760001d52b24
+msgid "**Type**: ``ComplexPortalTool``"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:32 f8794527adaf49199419daffb7287095
+msgid ""
+"**Description**: Get detailed information for a specific protein complex "
+"by Complex Portal ID (e.g., CPX-1234). Returns full subunit composition "
+"with stoichiometry, function description, disease associations, GO "
+"annotations, and cross-references to PDB/Reactome."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:34
+#: ../../tools/complex_portal_tools.rst:65 33a1a4042efb41759258541c347cfd98
+#: 51d6da78938e42f5a09b5bc2dffa88be
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:36 db6a4305c4f8469fb570fe073408ad7f
+msgid ""
+"``complex_id`` (string) (required) Complex Portal accession ID (e.g., "
+"'CPX-1', 'CPX-6512')"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:39
+#: ../../tools/complex_portal_tools.rst:76 447c8288d9f743898a2882ac3f60f4d7
+#: fbeae4b3231b4432b887808c2d1e0ed2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:53 2d751871c18b4631ae2ffe578c60b92c
+msgid "**ComplexPortal_search_complexes** (Type: ComplexPortalTool)"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:55 499ef4557f944608be9809db24fba7bc
+msgid ""
+"Search for curated protein complexes by gene/protein name from the EBI "
+"Complex Portal (includes C..."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst eae0b2ab4eda451982748b581ce4cda9
+msgid "ComplexPortal_search_complexes tool specification"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:61 177bf90e3b44454da175759f9593d20d
+msgid "**Name**: ``ComplexPortal_search_complexes``"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:63 daf400cfa8404a098c34fb0df9c72b94
+msgid ""
+"**Description**: Search for curated protein complexes by gene/protein "
+"name from the EBI Complex Portal (includes CORUM mammalian complexes). "
+"Returns complex names, subunit compositions, and cross-references. Use to"
+" find which protein complexes a target participates in."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:67 90ec553e23704f839e5d92244a1cd93b
+msgid ""
+"``query`` (string) (required) Gene symbol, protein name, or complex name "
+"to search (e.g., 'WDR7', 'RAVE complex', 'proteasome')"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:70 cbe00fa62f62427196faf74ab4f851e0
+msgid ""
+"``species`` (string) (optional) NCBI taxonomy ID to filter by species "
+"(default: '9606' for human). Use '10090' for mouse, '10116' for rat, '' "
+"for all species."
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:73 9a05c04c941d4220b5a209c33a4a7c33
+msgid "``number`` (integer) (optional) Maximum complexes to return (default: 25)"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:90 5ee50420f31547ebaa0d9ad8b3253e88
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:92 a9ee7f295b4a4cebbb00a5b29c670dde
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/complex_portal_tools.rst:93 03a2aea1e22e45209c77703b00b463d5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wikipathways_ext_tools.rst:10 a358926304e04d98ba56a2ff56856219
+msgid "Wikipathways Ext Tools"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:12 c9ba8afc03bb4957a14af71cb751561a
+msgid ""
+"**Configuration File**: ``wikipathways_ext_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:16 20eaf4deeff84d86b288415da254ca4c
+msgid ""
+"This page contains all tools defined in the "
+"``wikipathways_ext_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:19 ffbac31c7df2429f87643baed2306025
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:22 5d9fc156788c4aa69d4599cdcf7f82ab
+msgid "**WikiPathways_find_pathways_by_gene** (Type: WikiPathwaysExtTool)"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:24 e062792e2d70405386776b1b53cc9bee
+msgid ""
+"Find all WikiPathways pathways containing a specific gene. Takes a gene "
+"identifier (HGNC symbol, ..."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst ec09a5beb636496e869728a5d650f9a7
+msgid "WikiPathways_find_pathways_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:28
+#: ../../tools/wikipathways_ext_tools.rst:62 70b0e5c5c7e449c5ad1468d01f94e9b7
+#: f5a07c07fbbd43dd9f6a571d79ba6953
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:30 1043daaa79834746b975eb16319fde67
+msgid "**Name**: ``WikiPathways_find_pathways_by_gene``"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:31
+#: ../../tools/wikipathways_ext_tools.rst:65 28995dc8869942b5a0410374d674a66b
+#: 56af260620534b0b82b2b71d0dfae2d0
+msgid "**Type**: ``WikiPathwaysExtTool``"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:32 56ff334f432c485db6ce5112fc0ed0ca
+msgid ""
+"**Description**: Find all WikiPathways pathways containing a specific "
+"gene. Takes a gene identifier (HGNC symbol, Entrez ID, or Ensembl ID) and"
+" returns all pathways in which that gene appears. Useful for "
+"understanding the biological context of a gene across curated pathway "
+"databases. Example: searching for 'TP53' returns multiple pathways "
+"including WP254 (Apoptosis), WP179 (Cell Cycle), and others. Supports "
+"multiple species."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:34
+#: ../../tools/wikipathways_ext_tools.rst:68 584842c0d7ff49fd804dbedfd9e7e931
+#: a89fe58b30fa48f6972ac35067891d40
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:36 68288381c24c482982501ea74aae92ba
+msgid ""
+"``gene`` (string) (required) Gene identifier to search. Examples: 'TP53',"
+" 'BRCA1', 'EGFR', '7157' (Entrez), 'ENSG00000141510' (Ensembl)."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:39 f53949d78e4242e9878aacfcb2dfd1d1
+msgid ""
+"``species`` (string) (optional) Species to filter results. Default: 'Homo"
+" sapiens'. Other options: 'Mus musculus', 'Rattus norvegicus', 'Danio "
+"rerio'."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:42
+#: ../../tools/wikipathways_ext_tools.rst:76 979bd801ef6c45a1b225b2c1def99bc2
+#: f06cd1f4fc594bc4a4616c7b731890dd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:56 2a05e546c1d243c7811019f64f9545c2
+msgid "**WikiPathways_get_pathway_genes** (Type: WikiPathwaysExtTool)"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:58 d018d6d5d989467faf51bfbebbecec96
+msgid ""
+"Get all genes (as gene symbols) involved in a WikiPathways pathway. "
+"Returns the list of HGNC gene..."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst 0f463d99e06c436caae3242eaf103195
+msgid "WikiPathways_get_pathway_genes tool specification"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:64 864a0d4ae6604a578f298cc377486389
+msgid "**Name**: ``WikiPathways_get_pathway_genes``"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:66 c57fc0fcb81d47049b2510b866d3a6e2
+msgid ""
+"**Description**: Get all genes (as gene symbols) involved in a "
+"WikiPathways pathway. Returns the list of HGNC gene symbols for human "
+"pathways, or equivalent organism-specific gene identifiers. Useful for "
+"extracting gene sets from curated pathways for enrichment analysis or "
+"network building. Example: WP254 (Apoptosis) returns 88 genes including "
+"AKT1, APAF1, BAD, BAK1, BAX, BCL2, BCL2L1, BID, CASP3, CASP8, CASP9, "
+"CFLAR, CYCS, DIABLO, FADD, FAS, NFKB1, TP53, TRAF1, XIAP, and more."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:70 7c98aff681ea4417941d047f86be1816
+msgid ""
+"``pathway_id`` (string) (required) WikiPathways pathway identifier. "
+"Examples: 'WP254' (Apoptosis, 88 genes), 'WP179' (Cell cycle, 100+ "
+"genes), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' "
+"(Type II diabetes mellitus)."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:73 abd0950d92754db38d59dcb76fb98b2c
+msgid ""
+"``code`` (string) (optional) Identifier system code for returned genes. "
+"Options: 'H' (HGNC symbols, default), 'En' (Ensembl), 'S' (UniProt), 'L' "
+"(Entrez Gene), 'Ce' (ChEBI for metabolites)."
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:90 c1d0f9bd1fbf4b72a643a30e659756fa
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:92 7e231a6527824d74b1e14c15a221f05a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wikipathways_ext_tools.rst:93 2382030997d04fc989704a95e417ee2d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,298 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ncbi_sra_tools.rst:10 98fb0b72c1124d80801f86fc4f7e066e
+msgid "Ncbi Sra Tools"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:12 df3f9d7d6e6c49cb9748a8c638a5c694
+msgid ""
+"**Configuration File**: ``ncbi_sra_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:16 981f0d39f21e4ddca4463c4ef8075bfe
+msgid ""
+"This page contains all tools defined in the ``ncbi_sra_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:19 ee2747034d4e4599825ce463c34adeb3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:22 4409e7d403124bdd9357da62a6c43c29
+msgid "**NCBI_SRA_get_download_urls** (Type: NCBISRATool)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:24 1150f049288046b8a2637bc6d7fc7bda
+msgid ""
+"Get FTP and cloud storage URLs for downloading FASTQ sequencing data from"
+" SRA runs. Returns multi..."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst 81d1b6a62a294ae18f4f6247125b3653
+msgid "NCBI_SRA_get_download_urls tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:28 ../../tools/ncbi_sra_tools.rst:62
+#: ../../tools/ncbi_sra_tools.rst:96 ../../tools/ncbi_sra_tools.rst:130
+#: 1e95d27b4c4c4e07bd096a35acf6111b 29b935a9ab1941b986a3a4063d2bdacf
+#: 685731a501dc44a29056e1ce43a05724 cd96224bf0114b3f906dee1ac7dff8f6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:30 5912612572f442c3b9234d3878e0346a
+msgid "**Name**: ``NCBI_SRA_get_download_urls``"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:31 ../../tools/ncbi_sra_tools.rst:65
+#: ../../tools/ncbi_sra_tools.rst:99 ../../tools/ncbi_sra_tools.rst:133
+#: 05f1da5d79084912a6a13f3f4d239873 0cfe8ae3b6744d1d9627063c1f037d12
+#: 734cd471dbbb4ae5b797bb34800de5d3 8ddec6aa12fd4c5f86f7710249440410
+msgid "**Type**: ``NCBISRATool``"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:32 73e975fd30d8497bafac0e0a32a4c12a
+msgid ""
+"**Description**: Get FTP and cloud storage URLs for downloading FASTQ "
+"sequencing data from SRA runs. Returns multiple access methods: NCBI FTP "
+"URLs for direct .sra file download, AWS S3 URLs for cloud-based access "
+"(faster for large-scale analysis), and NCBI web URLs for browser access. "
+"Note: Downloaded .sra files require SRA Toolkit (fastq-dump or fasterq-"
+"dump) to convert to standard FASTQ format. Essential for programmatic "
+"access to petabytes of public sequencing data. Works with SRR (NCBI), ERR"
+" (ENA), and DRR (DDBJ) accessions."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:34 ../../tools/ncbi_sra_tools.rst:68
+#: ../../tools/ncbi_sra_tools.rst:102 ../../tools/ncbi_sra_tools.rst:136
+#: 3a9d4004c0f74a658aef838ad7062382 57729458ea414fb0aa56807fbff692a2
+#: 7382b240283b4124800fd0fb2a0486b7 fe9c738f488e4e80b7822f21e58dd97b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:36 5a7c09544b234b6781b3eeb8508bf2b5
+msgid ""
+"``operation`` (unknown) (optional) Operation type (fixed: "
+"get\\_download\\_urls)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:39 e7c8450e5d0a442a859e7d5b8a78b8c5
+msgid ""
+"``accessions`` (unknown) (required) SRA run accession(s) (e.g., "
+"'SRR000001', 'ERR000001', 'DRR000001'). Can be single accession or array "
+"of accessions."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:42 ../../tools/ncbi_sra_tools.rst:76
+#: ../../tools/ncbi_sra_tools.rst:110 ../../tools/ncbi_sra_tools.rst:165
+#: 0383d9f41d2c4d1d8c10cb085feb41e2 6b42510ff1d24c4abc914aab6d1f3eea
+#: 7cdc15082e234087aa0aeacad7f86c3c 9364f4eeba704de8b6188f2906a343a3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:56 7a5ff2a252f042fc90ecddbb7de86e61
+msgid "**NCBI_SRA_get_run_info** (Type: NCBISRATool)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:58 70a7fb7eb21d4fe68ffc2a966b0a327d
+msgid ""
+"Get detailed metadata for SRA run accessions including sequencing "
+"platform (ILLUMINA, Oxford Nano..."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst a91266f0c7544821983a3ec3f5c54d12
+msgid "NCBI_SRA_get_run_info tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:64 e4b1b5c7e1844ecaac23f3ac5582b236
+msgid "**Name**: ``NCBI_SRA_get_run_info``"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:66 3d6ae5c9effa4e75a3e374b496afb9d5
+msgid ""
+"**Description**: Get detailed metadata for SRA run accessions including "
+"sequencing platform (ILLUMINA, Oxford Nanopore), instrument model, "
+"library strategy (RNA-Seq, WGS), library source (genomic, "
+"transcriptomic), library layout (paired/single), sample information, "
+"study details, organism, and data statistics (total spots, bases). "
+"Essential for understanding experimental design and data characteristics "
+"before downloading large FASTQ files. Use SRA run accessions (SRR000001, "
+"ERR000001, DRR000001) from NCBI\\_SRA\\_search\\_runs or known "
+"accessions."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:70 312023e3896b4933ad5c61a8821968ea
+msgid ""
+"``operation`` (unknown) (optional) Operation type (fixed: "
+"get\\_run\\_info)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:73 490c26d12c7048db9f7a4627a3890854
+msgid ""
+"``accessions`` (unknown) (required) SRA run accession(s) (e.g., "
+"'SRR000001', 'ERR000001', 'DRR000001'). Can be single accession or array "
+"of accessions. Use SRR for NCBI, ERR for ENA, DRR for DDBJ."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:90 e5d783cd33e54b128534a3332a75acbd
+msgid "**NCBI_SRA_link_to_biosample** (Type: NCBISRATool)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:92 9180a458580f4d40a4d96006350bd13d
+msgid ""
+"Link SRA sequencing runs to their associated BioSample records to access "
+"biological sample metada..."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst 97c37c8c0b6c4ab6bfdba4ccb83ac45c
+msgid "NCBI_SRA_link_to_biosample tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:98 a786249abd294fa8a18f27d1ea246c9e
+msgid "**Name**: ``NCBI_SRA_link_to_biosample``"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:100 3c6f503352e54f7687e2bc4ba34b8c67
+msgid ""
+"**Description**: Link SRA sequencing runs to their associated BioSample "
+"records to access biological sample metadata including sample attributes,"
+" tissue type, cell line, treatment conditions, donor information, and "
+"collection details. BioSample provides rich contextual information about "
+"the biological specimens used in sequencing experiments. Essential for "
+"understanding experimental context and sample provenance. Returns "
+"BioSample UIDs which can be used with NCBI BioSample API to retrieve "
+"detailed sample metadata. Works with SRA UIDs from "
+"NCBI\\_SRA\\_search\\_runs."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:104 c844140429384f0db1797f9c1df0a6c9
+msgid ""
+"``operation`` (unknown) (optional) Operation type (fixed: "
+"link\\_to\\_biosample)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:107 5b478813df8d4479801cb6ba796c86aa
+msgid ""
+"``accessions`` (unknown) (required) SRA UID(s) from "
+"NCBI\\_SRA\\_search\\_runs. Can be single UID or array of UIDs. These are"
+" NCBI internal IDs (numeric), not SRR accessions."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:124 de80fcfdffc94d6fa70d60511c86b742
+msgid "**NCBI_SRA_search_runs** (Type: NCBISRATool)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:126 798c38c838e543519795647f9fe3cb62
+msgid ""
+"Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs "
+"by study accession, organ..."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst ead363aa043a4a8da99d895b49fa4b8c
+msgid "NCBI_SRA_search_runs tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:132 65e07b8a91b047feb2e481695377b1d0
+msgid "**Name**: ``NCBI_SRA_search_runs``"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:134 baa3442986dc47a0b57d4038380a8b10
+msgid ""
+"**Description**: Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq "
+"sequencing runs by study accession, organism, sequencing strategy (RNA-"
+"Seq, WGS, ChIP-Seq), platform (ILLUMINA, OXFORD\\_NANOPORE), or library "
+"source. Returns SRA UIDs which can be used with other SRA tools to "
+"retrieve metadata and download links. Essential for discovering high-"
+"throughput sequencing data from public repositories. Use this to find "
+"relevant sequencing experiments before accessing the actual FASTQ data "
+"files."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:138 3e87fef6790847a5ae9f8ca1734bd809
+msgid "``operation`` (unknown) (optional) Operation type (fixed: search)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:141 00d5f7e3829f42148b8f650ffc3660cc
+msgid ""
+"``study`` (string) (optional) Study accession to search (e.g., "
+"'SRP000001', 'ERP000001', 'DRP000001'). Searches in [Study] field."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:144 9ffc8ce431de4a2c9e5bfaca49f3ebbd
+msgid ""
+"``organism`` (string) (optional) Organism name to filter (e.g., 'Homo "
+"sapiens', 'Mus musculus', 'SARS-CoV-2'). Searches in [Organism] field."
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:147 7071c28ce42c4c3c9cc64a1893121489
+msgid ""
+"``strategy`` (string) (optional) Sequencing strategy to filter. Common "
+"values: 'RNA-Seq' (transcriptomics), 'WGS' (whole genome), 'WXS' (exome),"
+" 'ChIP-Seq' (chromatin), 'ATAC-Seq' (accessibility), 'Bisulfite-Seq' "
+"(methylation), 'AMPLICON' (targeted), 'Hi-C' (3D genome)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:150 501af7204e80417f9503aeadcf61a105
+msgid ""
+"``platform`` (string) (optional) Sequencing platform to filter. Common "
+"values: 'ILLUMINA', 'OXFORD\\_NANOPORE', 'PACBIO\\_SMRT', "
+"'ION\\_TORRENT', 'BGISEQ'"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:153 39007386d85f430485b438b70b1e9218
+msgid ""
+"``source`` (string) (optional) Library source to filter. Common values: "
+"'GENOMIC' (DNA), 'TRANSCRIPTOMIC' (RNA), 'METAGENOMIC', "
+"'METATRANSCRIPTOMIC', 'SYNTHETIC', 'VIRAL\\_RNA'"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:156 f6f8bdfe8e3343c2a54fea8e86444eff
+msgid ""
+"``query`` (string) (optional) Free-form search query if not using "
+"structured filters. Use NCBI query syntax (e.g., '(Homo "
+"sapiens[Organism]) AND (RNA-Seq[Strategy])')"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:159 9ec3c2f349e546bea970f3cec8e1b71c
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:162 3a04c3feb2e74c6089b40c03c675577d
+msgid "``sort`` (string) (optional) Sort order for results (default: relevance)"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:178 bfd3bfd35e4e43f89c6a72546a95487c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:180 35ec8ad8e81843b0bf25143daa32bdfb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ncbi_sra_tools.rst:181 5a222918f75b40a6a7f8a36d7aebb6ed
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

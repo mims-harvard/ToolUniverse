@@ -7,409 +7,630 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../help/troubleshooting.rst:2 6b45fe1968fe46728a7d8d10b884615f
+#: ../../help/troubleshooting.rst:2 87283291f3394cb287cee3656cf4930d
 msgid "Troubleshooting Tutorial"
 msgstr "故障排除教程"
 
-#: ../../help/troubleshooting.rst:4 6f59714d02f846228661f218d9352b52
-msgid ""
-"This Tutorial helps you diagnose and resolve common issues with "
-"ToolUniverse."
-msgstr "本教程将帮助您诊断并解决 ToolUniverse 的常见问题。"
-
-#: ../../help/troubleshooting.rst:7 1d5ca95aefd84788bc993a5eea4ed6f3
+#: ../../help/troubleshooting.rst:5 12519f6d74364341a4a60e10b43e9953
 msgid "Quick Diagnostic"
 msgstr "快速诊断"
 
-#: ../../help/troubleshooting.rst:9 4ec33b8402524b7da5f0c578500288b6
+#: ../../help/troubleshooting.rst:7 7433ca9c55ce4c5d8d2aa3e0d7131793
 msgid "Run this diagnostic script to check your ToolUniverse installation:"
 msgstr "运行此诊断脚本以检查您的 ToolUniverse 安装情况："
 
-#: ../../help/troubleshooting.rst:25 ../../help/troubleshooting.rst:42
-#: 83cdeff1e6c2462e84822e9d6af62359 93cdec08667c45b1af813d971412867d
+#: ../../help/troubleshooting.rst:23 ../../help/troubleshooting.rst:40
+#: 34bdca5c657f4b4dbf21f5005cbac1f4 b24e1e23d36d4550909afb7bb18bf569
 msgid "Installation Issues"
 msgstr "安装问题"
 
-#: ../../help/troubleshooting.rst:27 717cd1b494574a648af3f275db2e4ed6
+#: ../../help/troubleshooting.rst:25 181ff2ba8cd8490fb27933d43aa76a0f
 msgid "Most common installation problems and solutions."
 msgstr "最常见的安装问题及解决方案。"
 
-#: ../../help/troubleshooting.rst:29 ../../help/troubleshooting.rst:116
-#: 3e4fea5ad485460ba8c019ca7e6d52ac f6ca76361f2347bab17e282fffe5e739
+#: ../../help/troubleshooting.rst:27 ../../help/troubleshooting.rst:114
+#: 7b564eeba05843e0b2117cd56eac97f4 d93a70d1e76d4899b750940fa1a8ddb9
 msgid "Runtime Errors"
 msgstr "运行时错误"
 
-#: ../../help/troubleshooting.rst:31 4ef98484dc524c1f996f49f76068ccea
+#: ../../help/troubleshooting.rst:29 c4a00e1b07934dc0aaefd3ebbeb6e6d5
 msgid "Errors that occur during tool execution."
 msgstr "工具执行过程中发生的错误。"
 
-#: ../../help/troubleshooting.rst:33 ../../help/troubleshooting.rst:328
-#: 50a3f30bc5074a3b8a45d7707190383e bdd71bcd01314c7eb549a6f9acd29554
+#: ../../help/troubleshooting.rst:31 ../../help/troubleshooting.rst:399
+#: 5336c94b80464bd7992693d384b780ca f010f3aa9b0247f1a61e4a66d00f8343
 msgid "Performance Issues"
 msgstr "性能问题"
 
-#: ../../help/troubleshooting.rst:35 f5e31d7bf0be42018be6abe6faa3855e
+#: ../../help/troubleshooting.rst:33 15cd96b5dc324bc3a130006b15c9a27a
 msgid "Slow queries and optimization tips."
 msgstr "慢查询及优化建议。"
 
-#: ../../help/troubleshooting.rst:37 61400f771176426593bfa3735589b51d
+#: ../../help/troubleshooting.rst:35 bb9199427da2480797cf5e8f38ba3574
 msgid "API Connectivity"
 msgstr "API 连接"
 
-#: ../../help/troubleshooting.rst:39 9c2265acb200456d8ccf052cb3bdc427
+#: ../../help/troubleshooting.rst:37 9115031c5ad04af7abb0631937349886
 msgid "Network and API-related problems."
 msgstr "网络和API相关问题"
 
-#: ../../help/troubleshooting.rst:45 92424cd5a0c04ea894d5749502b058b7
+#: ../../help/troubleshooting.rst:43 a25545e2f5fc4ba8a5a52c4f9e809367
 msgid "ImportError: No module named 'tooluniverse'"
 msgstr "ImportError: 未找到名为 'tooluniverse' 的模块"
 
-#: ../../help/troubleshooting.rst:47 fe351fabb918404bac33e0407f6dcacb
+#: ../../help/troubleshooting.rst:45 cb7195daa6c14d6483f132324c35ed1e
 msgid "**Symptom:** Python can't find the ToolUniverse module."
 msgstr "**症状：** Python 无法找到 ToolUniverse 模块。"
 
-#: ../../help/troubleshooting.rst:49 ../../help/troubleshooting.rst:123
-#: ../../help/troubleshooting.rst:171 ../../help/troubleshooting.rst:222
-#: ../../help/troubleshooting.rst:267 ../../help/troubleshooting.rst:333
-#: ../../help/troubleshooting.rst:393 ../../help/troubleshooting.rst:437
-#: ../../help/troubleshooting.rst:470 20ee2f8040414f68bd152b969dd01344
-#: 229b7f61c0884c4a8db31e392e877909 2e8fb64fd7ae4ba8b754c31c997fe51f
-#: 3a03cbae0db048c3821b7e022fc364b3 5cb90fb8aa5145fd8e5eb5902afb8b9b
-#: 62e544e30f0145d6a2cca943870f43d3 7a7de5a8cc1849ada02134e3b0dab4ab
-#: d0119793edb9486a90b8018f106fcd68 d2ba70cf4d814cc1a8ed2282dae32b0e
+#: ../../help/troubleshooting.rst:47 ../../help/troubleshooting.rst:121
+#: ../../help/troubleshooting.rst:200 ../../help/troubleshooting.rst:338
+#: ../../help/troubleshooting.rst:404 ../../help/troubleshooting.rst:467
+#: ../../help/troubleshooting.rst:511 ../../help/troubleshooting.rst:544
+#: 160771d4c8dd463a8135cbd54ba4c3ba 1c7e4fab98164efbb9a7c64bfc3c9fa6
+#: 55ca974b15c84cb09d85a1fc3b810ee8 69215557956d49c2baba37559e1eceda
+#: 8c65cc78f77a474293af0fedac3f14ed 94fe5a607e8646d5be8625ea5984d1b0
+#: ff79c23b60f44ce4adb93277846e6da4 ffa3e8113e2e4fab953f698179a8342c
 msgid "**Diagnosis:**"
 msgstr "**诊断：**"
 
-#: ../../help/troubleshooting.rst:55 ../../help/troubleshooting.rst:93
-#: ../../help/troubleshooting.rst:137 ../../help/troubleshooting.rst:188
-#: ../../help/troubleshooting.rst:232 ../../help/troubleshooting.rst:280
-#: ../../help/troubleshooting.rst:308 ../../help/troubleshooting.rst:404
-#: ../../help/troubleshooting.rst:444 ../../help/troubleshooting.rst:482
-#: 47c5ad898104444cbad57fcd9f00dc05 52b1f68edf6542d2b8bfb2d4a9c044c1
-#: 77fa688b6cda4c1fb194d6c23be91448 7d4cffea1181487eac82e3afe92ba10f
-#: 87392b62267949a5b660d0eaf45d2f89 88a6c2ad8c96416d988e7fbb0ef449a5
-#: 93202a808e2a49f384b19ea4ed161969 bac710633ad441909fc518e133a53a9f
-#: c41c643a568343df9f259329f894c91f ded5cbfff42047eb92ca7a8c1599934f
+#: ../../help/troubleshooting.rst:53 ../../help/troubleshooting.rst:91
+#: ../../help/troubleshooting.rst:135 ../../help/troubleshooting.rst:221
+#: ../../help/troubleshooting.rst:295 ../../help/troubleshooting.rst:351
+#: ../../help/troubleshooting.rst:379 ../../help/troubleshooting.rst:478
+#: ../../help/troubleshooting.rst:518 ../../help/troubleshooting.rst:556
+#: 5b64f80fb325473e9e145653a7f42c64 6a708a7dcf5a44eaa1358346b2a62cb9
+#: 6ea255d2c7da41a387b46a4f3c0cdfeb 7ff92a79a94f4c9bb6ee2a61b7737b66
+#: 972d7d18485340ad8ade453e7d634184 9c0a6ae5d9544720a5442dc7a3dcfb97
+#: 9dcd5db970934e15870e25d407ef41a5 c3401c893dfd4e0a9549c56a42f079ec
+#: ca82c08364f347699d36b4cae38c3dd0 fb9f23a90902406492c16741089ba9a0
 msgid "**Solutions:**"
 msgstr "**解决方案：**"
 
-#: ../../help/troubleshooting.rst:59 948d3ee916ca4e9090745efb1cb4cce4
+#: ../../help/troubleshooting.rst:57 8470d727c81e445284956a942762dfff
 msgid "Standard Installation"
 msgstr "标准安装"
 
-#: ../../help/troubleshooting.rst:65 1fe014c8bd0449eb933ce254c50a6cc3
+#: ../../help/troubleshooting.rst:63 667d4471a0f54d50be4a4ae3fc158f1c
 msgid "Development Installation"
 msgstr "开发安装"
 
-#: ../../help/troubleshooting.rst:73 e67ec33845fc4322b7956ed4c13474dc
+#: ../../help/troubleshooting.rst:71 8374e02e972444d0b790f9dd09e52af7
 msgid "Virtual Environment"
 msgstr "虚拟环境"
 
-#: ../../help/troubleshooting.rst:83 d6855ad70b654974870f61bb9e0e264b
+#: ../../help/troubleshooting.rst:81 d08c2c7c0f3e4260a651bcc0675342f9
 msgid "Dependency conflicts"
 msgstr "依赖冲突"
 
-#: ../../help/troubleshooting.rst:85 88604c9b55684547800dcf2d474a7bcd
+#: ../../help/troubleshooting.rst:83 4ba0aac5f40347eb8d8ef21b64c1409e
 msgid "**Symptom:** Conflicting package versions during installation."
 msgstr "**症状：** 安装过程中出现软件包版本冲突。"
 
-#: ../../help/troubleshooting.rst:87 5df7aee8cf554ff8a2f25150af1c7a05
+#: ../../help/troubleshooting.rst:85 afa81c9adde74bb7a3fb9d714ba2f4bd
 msgid "**Check dependencies:**"
 msgstr "**检查依赖项：**"
 
-#: ../../help/troubleshooting.rst:95 aa8a7cdf9bf04ab9827772465dcaf020
+#: ../../help/troubleshooting.rst:93 5fd8ac9aad724161a78c6496e12254e2
 msgid "**Create clean environment:**"
 msgstr "**创建清洁环境：**"
 
-#: ../../help/troubleshooting.rst:103 2755c41c42d04ae48a133beadb192bf6
+#: ../../help/troubleshooting.rst:101 db17ccc352594a2780ce7efcd891ec95
 msgid "**Update conflicting packages:**"
 msgstr "**更新冲突的程序包：**"
 
-#: ../../help/troubleshooting.rst:109 8f0678231002438ba2ab8895e2e053ea
+#: ../../help/troubleshooting.rst:107 48c0b917235342009ffcd6474cf37cfc
 msgid "**Install specific versions:**"
 msgstr "**安装特定版本：**"
 
-#: ../../help/troubleshooting.rst:119 522c1247c1dd4ee08efe8fa125e05749
+#: ../../help/troubleshooting.rst:117 48ba532a544e4e36a8d3bc64207d5f2a
 msgid "Tool not found errors"
 msgstr "工具未找到错误"
 
-#: ../../help/troubleshooting.rst:121 607b347c9e1742b8a6a646e6dc9dd3e0
+#: ../../help/troubleshooting.rst:119 628035924774455c9fb612a313eaba73
 msgid "**Symptom:** ``ToolNotFoundError: Tool 'XYZ' not found``"
 msgstr "**症状：** ``ToolNotFoundError: 未找到工具 'XYZ'``"
 
-#: ../../help/troubleshooting.rst:139 8087204159ed4c888a1fabd58fe2a4d0
+#: ../../help/troubleshooting.rst:137 83b2287b9313452d888c87e747065319
 msgid "**Check tool name spelling:**"
 msgstr "**检查工具名称拼写：**"
 
-#: ../../help/troubleshooting.rst:150 eaa272b4ab9a4226aaaf6148834a79dc
+#: ../../help/troubleshooting.rst:148 2a12aae770a54057afe6831b2e05bc99
 msgid "**Verify tool is loaded:**"
 msgstr "**验证工具已加载：**"
 
-#: ../../help/troubleshooting.rst:158 91d0b4352547486b93537680de73d114
+#: ../../help/troubleshooting.rst:156 50cb84d0592d49ab879ac0837c38394d
 msgid "**Manual tool loading:**"
 msgstr "**手动工具装载：**"
 
-#: ../../help/troubleshooting.rst:167 9c42ab059ba84cee9093978220bdf4de
+#: ../../help/troubleshooting.rst:165 0e26f79904c04f13a1649e02d6025a8c
 msgid "API Authentication errors"
 msgstr "API 认证错误"
 
-#: ../../help/troubleshooting.rst:169 0cc1db05b93a46ccba29b2dd2f2d2b79
-msgid "**Symptom:** ``401 Unauthorized`` or ``403 Forbidden`` errors."
+#: ../../help/troubleshooting.rst:167 48e1c9a899f5445db4f527c8fc63ed92
+#, fuzzy
+msgid ""
+"**Symptom:** ``401 Unauthorized``, ``403 Forbidden``, or \"API key "
+"required\" errors."
 msgstr "**症状：** ``401 未授权`` 或 ``403 禁止访问`` 错误。"
 
-#: ../../help/troubleshooting.rst:190 efdf13b935b6492d81c0f18ad5c42140
-msgid "**Set API keys:**"
-msgstr "**设置 API 密钥：**"
+#: ../../help/troubleshooting.rst:170 ec2ceb905e744c5eab136868c87470a3
+msgid "Common API Error Codes"
+msgstr ""
 
-#: ../../help/troubleshooting.rst:197 dc68cf91525a4d098bf6c82cc678b9b7
-msgid "**In Python:**"
-msgstr "**在 Python 中：**"
+#: ../../help/troubleshooting.rst:172 d11d7494e3fc44399e9964633db54941
+msgid "When you encounter API errors, check this reference table:"
+msgstr ""
 
-#: ../../help/troubleshooting.rst:204 4f6d43ef13704ab2975da21af5031c9c
-msgid "**Use .env file:**"
+#: ../../help/troubleshooting.rst:178 27583d0a849d48a48e1bbc0062a00f6e
+msgid "Error Code"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:179 ec0a7c2c06c341839d44a3205163e853
+msgid "Meaning"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:180 2faf592feff346d6a205133476d7f923
+#, fuzzy
+msgid "Solution"
+msgstr "**解决方案：**"
+
+#: ../../help/troubleshooting.rst:181 7e186f6826cf4c0c984f71212dfa3054
+msgid "**401 Unauthorized**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:182 e208b158d97c425cb34b27b5bc057940
+msgid "Invalid or missing API key"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:183 68387e129a5a42059b010cda4a3a49da
+msgid ""
+"Verify API key is correct and environment variable is set correctly. "
+"Check with ``echo $API_KEY_NAME``"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:184 388668671c9c4c6ea73b5e6f6fd65d47
+msgid "**403 Forbidden**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:185 7543776e8c6d4df4b49b59c0867efaed
+msgid "Valid key but insufficient permissions"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:186 05224a8f59b042419060ed01ac8c57da
+msgid ""
+"Check account subscription level. May need to upgrade or request "
+"additional access from API provider."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:187 5f1df86733a14476b71e6d64899eedcc
+msgid "**429 Too Many Requests**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:188 a538e14cfceb425ab149a6cda6ae0047
+#, fuzzy
+msgid "Rate limit exceeded"
+msgstr "速率限制错误"
+
+#: ../../help/troubleshooting.rst:189 cda0f18c2709493bb6ee69321fa77107
+msgid ""
+"Add API key for higher limits, enable caching with ``use_cache=True``, or"
+" add delays. See :doc:`../guide/cache_system`."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:190 acc6901c5992419c9432c5886c1e4c72
+msgid "**404 Not Found**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:191 8d1e454fb83643108e62ab1901e4cd4b
+msgid "Invalid resource identifier"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:192 335b81109a1244e2a94d8f4a542a4789
+msgid ""
+"Verify ID format (e.g., UniProt accession \"P05067\", ChEMBL ID "
+"\"CHEMBL25\"). Check :doc:`../reference/glossary` for ID formats."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:193 efea5da33b9c4fbc99cebe4c0c30a7cd
+msgid "**502 Bad Gateway**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:194 e57cdadf219949a5a4bad6713fdcd788
+msgid "Service temporarily unavailable"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:195 79c52458b69d4f10af5079e4a839128e
+msgid ""
+"Wait 30-60 seconds and retry. Check API provider's status page if error "
+"persists."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:196 24c34550b6fd4f618df35d9561c3909a
+msgid "**503 Service Unavailable**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:197 53ae3e61b4114edf9ec32629d1393222
+msgid "API endpoint overloaded or maintenance"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:198 5355ed6ab8f54dd2a13263d09a2d1292
+msgid ""
+"Retry with exponential backoff (wait 2s, 4s, 8s...). Check provider "
+"status page."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:223 71f1207e8267419184afe7ddf5b7ba23
+msgid "**Identify which API key you need:**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:225 c1af96f96b44490dafe695b7677a105f
+msgid ""
+"See :doc:`../guide/api_keys` for a complete list of which tools require "
+"which API keys and how to obtain them."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:227 8a7b9b4d565d47bc81d89174f2415cc8
+#, fuzzy
+msgid "**Set API keys in environment:**"
+msgstr "**创建清洁环境：**"
+
+#: ../../help/troubleshooting.rst:241 f8b2de54c6154585b6bd0a644e150cf9
+#, fuzzy
+msgid "**Use .env file (recommended):**"
 msgstr "**使用 .env 文件：**"
 
-#: ../../help/troubleshooting.rst:218 dfd22817afd74c909522b77916f924a0
+#: ../../help/troubleshooting.rst:254 ac6ee912b1a643fab840f22215e78b0f
+#, fuzzy
+msgid "**In Python code:**"
+msgstr "**在 Python 中：**"
+
+#: ../../help/troubleshooting.rst:262 0b70e0b360fd40c6b92a6c512d1aa0d7
+#, fuzzy
+msgid "**Common API key issues:**"
+msgstr "**设置 API 密钥：**"
+
+#: ../../help/troubleshooting.rst:264 32a1496e8dab41a6943e09e85d35d31c
+msgid ""
+"**Key is expired or invalid**: Regenerate the key from the provider's "
+"dashboard"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:265 11ff97a019e5479aab048e267d5fadf5
+msgid ""
+"**Key has insufficient permissions**: Check that the key has the "
+"necessary scopes/permissions"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:266 3deb26fc49904375adb9fba596570c7d
+msgid ""
+"**Key not loaded**: Ensure environment variables are set before importing"
+" ToolUniverse"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:267 8c7e39c379054d9ba16bfadc54f43b8d
+msgid ""
+"**Typo in variable name**: Double-check spelling (e.g., "
+"``NVIDIA_API_KEY`` not ``NVIDIA_KEY``)"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:270 1116407b35be4d7c9d0099b846afc765
 msgid "Rate limiting errors"
 msgstr "速率限制错误"
 
-#: ../../help/troubleshooting.rst:220 e80caecf4c1249bb8f12077fa305c39b
+#: ../../help/troubleshooting.rst:272 443557d7754648fbbe119bcfd2b4113f
 msgid "**Symptom:** ``429 Too Many Requests`` or ``RateLimitExceeded``"
 msgstr "**症状：** ``429 请求过多`` 或 ``RateLimitExceeded``"
 
-#: ../../help/troubleshooting.rst:234 c0de769d70b54c4381d4220361cca422
+#: ../../help/troubleshooting.rst:274 466eb6ddf57b496ab1ae070138ce3895
+msgid "**Understanding Rate Limits:**"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:276 360eb9261c074020904fddecfa9b17e0
+msgid ""
+"Many services limit how many requests you can make per second/minute. API"
+" keys typically provide much higher limits:"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:282 0b98b8a2f4384b9ca1ae4b2e06df1f8b
+msgid "Service"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:283 f7ffc88386224ca79ad406e97773fa1e
+msgid "Without API Key"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:284 d468cef73508487a82cd92863d8a0bc9
+#, fuzzy
+msgid "With API Key"
+msgstr "**设置 API 密钥：**"
+
+#: ../../help/troubleshooting.rst:285 634b40268cac402590230c04c08ecc5b
+msgid "NCBI E-utilities"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:286 56e3d6dba46f45c4a9570dd018b178f5
+msgid "3 req/sec"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:287 06158f9b5e484b0e8f2bab27ce5318e5
+msgid "10 req/sec (3x faster, set NCBI_API_KEY)"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:288 d2da1cd878f6451e983c58abc9042d87
+msgid "Semantic Scholar"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:289 812e7f5dff1c4052ae4b1090fe8e3e61
+msgid "1 req/sec"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:290 8dd13ea88c824def9829636aa26055cd
+msgid "100 req/sec (100x faster, set SEMANTIC_SCHOLAR_API_KEY)"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:291 887b28d0a9b24d9985676bc218fabda2
+msgid "OpenFDA"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:292 29c93d23c87a4f9c972c8749be680561
+msgid "40 req/min"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:293 198fc6b1e9e647bdb98545bcece17f8c
+msgid "240 req/min (6x faster, set FDA_API_KEY)"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:297 c30780c123194dd5b14f4171ee0de9ce
+#, fuzzy
+msgid "**Get an API key for higher limits:**"
+msgstr "**获取 API 密钥以提升限额：**"
+
+#: ../../help/troubleshooting.rst:299 8bb1eff3d3f94038b426e988143a18c1
+msgid "See :doc:`../guide/api_keys` for how to obtain API keys for each service."
+msgstr ""
+
+#: ../../help/troubleshooting.rst:301 3067cd66185e49fe9ed32f60bcf520b2
 msgid "**Add delays between requests:**"
 msgstr "**在请求之间添加延迟：**"
 
-#: ../../help/troubleshooting.rst:244 f42e109428574475a6b0f93228d2de65
+#: ../../help/troubleshooting.rst:311 f080a515fea847eeaede1090d6546fd8
 msgid "**Use batch processing:**"
 msgstr "**使用批处理：**"
 
-#: ../../help/troubleshooting.rst:255 8be190cd06834c25ba99d8843fecb5d0
-msgid "**Get API keys for higher limits:**"
-msgstr "**获取 API 密钥以提升限额：**"
+#: ../../help/troubleshooting.rst:322 0654f5b3585146bf9dc6a9964b959bec
+msgid "**Enable caching to avoid redundant requests:**"
+msgstr ""
 
-#: ../../help/troubleshooting.rst:257 3f5dc8f6e8c34075941d3b8926a7f2fc
-msgid "Most services offer higher rate limits with API keys."
-msgstr "大多数服务通过 API 密钥提供更高的速率限制。"
-
-#: ../../help/troubleshooting.rst:260 5c23c0e842b4454d8dca93b3290d5561
+#: ../../help/troubleshooting.rst:331 0b0d6143a622495eb6ca9c967d5c59aa
 msgid "Network & Connectivity"
 msgstr "网络与连接"
 
-#: ../../help/troubleshooting.rst:263 9d0d43074eb644a5b1d072f98e5ac3ce
+#: ../../help/troubleshooting.rst:334 2f1dfaf875ae4ef48c69423f2d688754
 msgid "Connection timeouts"
 msgstr "连接超时"
 
-#: ../../help/troubleshooting.rst:265 a7740fc6896648c089a5b7415ebd2584
+#: ../../help/troubleshooting.rst:336 e5bca20f3f8c48fa9dddc7278c138267
 msgid "**Symptom:** ``ConnectionTimeout`` or ``ReadTimeout`` errors."
 msgstr "**症状：** ``ConnectionTimeout`` 或 ``ReadTimeout`` 错误。"
 
-#: ../../help/troubleshooting.rst:282 6526d5cb060b41f6bbc72890e7bb4c0a
+#: ../../help/troubleshooting.rst:353 7e9c3cc7741449f9b74f18c5fc3d973e
 msgid "**Increase timeout:**"
 msgstr "**增加超时时间：**"
 
-#: ../../help/troubleshooting.rst:288 f97942838d4347df9918ed396ca7e56e
+#: ../../help/troubleshooting.rst:359 0bc71e07c724444cb6627d31222fc9b5
 msgid "**Check network connection:**"
 msgstr "**检查网络连接：**"
 
-#: ../../help/troubleshooting.rst:295 4561918a606c4e74bd5c93b991870220
+#: ../../help/troubleshooting.rst:366 a4e4a418ae0e4ed79935fff26bb61088
 msgid "**Configure proxy (if needed):**"
 msgstr "**配置智能体（如有需要）：**"
 
-#: ../../help/troubleshooting.rst:304 aae64908c88d404289bc8095242727ca
+#: ../../help/troubleshooting.rst:375 d08e5a539e804d038ddddf89eb7af669
 msgid "SSL Certificate errors"
 msgstr "SSL 证书错误"
 
-#: ../../help/troubleshooting.rst:306 09cb655de2354086a97be6e3ed59316b
+#: ../../help/troubleshooting.rst:377 0ebb2fcd66af446f983c4e1aa6a10ae6
 msgid "**Symptom:** ``SSLError`` or certificate verification failures."
 msgstr "**症状：** ``SSLError`` 或证书验证失败。"
 
-#: ../../help/troubleshooting.rst:310 e4afaeccb3764c399d4fa354eb332ce2
+#: ../../help/troubleshooting.rst:381 c8c7bf1f7cda4d11ab5367b7d4493fea
 msgid "**Update certificates:**"
 msgstr "**更新证书：**"
 
-#: ../../help/troubleshooting.rst:316 646889e4a1e74da2bafed327feae4c3e
+#: ../../help/troubleshooting.rst:387 141da1ee142c45bdb2cbffe534e0a0db
 msgid "**Temporary bypass (not recommended for production):**"
 msgstr "**临时绕过（不建议用于生产环境）：**"
 
-#: ../../help/troubleshooting.rst:323 6086a6ef46a84817b347adced4826e04
+#: ../../help/troubleshooting.rst:394 67b8e26324aa4023b8b3a07d179fd37f
 msgid "**Corporate firewall:**"
 msgstr "**企业防火墙：**"
 
-#: ../../help/troubleshooting.rst:325 3178ab157a8e47d78155f0581fe8514d
+#: ../../help/troubleshooting.rst:396 013cca8a387f416db6f50839435f0bfc
 msgid "Contact your IT department for proper certificate configuration."
 msgstr "请联系您的IT部门以正确配置证书。"
 
-#: ../../help/troubleshooting.rst:331 b184d040e991417d9088fab54c2f1007
+#: ../../help/troubleshooting.rst:402 102e755163004c3e9feda904a2241248
 msgid "Slow query performance"
 msgstr "查询性能缓慢"
 
-#: ../../help/troubleshooting.rst:349 e70af987758746f5be89b0c9ca10b9be
+#: ../../help/troubleshooting.rst:420 1facb1a879d14c0e8d1ae4cd4bc46511
 msgid "**Optimization strategies:**"
 msgstr "**优化策略：**"
 
-#: ../../help/troubleshooting.rst:351 b0e8a03398b94462b84d6bef2c038e5a
+#: ../../help/troubleshooting.rst:422 409011eb8ad048e2af6c449ef7eecb64
 msgid "**Enable caching:**"
 msgstr "**启用缓存：**"
 
-#: ../../help/troubleshooting.rst:357 7845751335574708b3775fa2effacdf5
+#: ../../help/troubleshooting.rst:431 db024f3811994073aae9be5abed36103
 msgid "**Use async operations:**"
 msgstr "**使用异步操作：**"
 
-#: ../../help/troubleshooting.rst:368 06503f97e03e4a539644d0d72144e27c
+#: ../../help/troubleshooting.rst:442 726c6f971bf5461c995168c7ddfd6cc8
 msgid "**Batch similar queries:**"
 msgstr "**批量处理相似查询：**"
 
-#: ../../help/troubleshooting.rst:389 dc5c4a2ed8054157b39b7275a2dc3b16
+#: ../../help/troubleshooting.rst:463 553ed54bda484b039dd834a8bd89b045
 msgid "Memory usage issues"
 msgstr "内存使用问题"
 
-#: ../../help/troubleshooting.rst:391 2026818a67f34d98b502f982f1a23811
+#: ../../help/troubleshooting.rst:465 51266f8babbb405088f595345f34c4a2
 msgid "**Symptom:** High memory consumption or ``MemoryError``."
 msgstr "**症状：** 高内存消耗或``MemoryError``。"
 
-#: ../../help/troubleshooting.rst:406 c65f3a9a58a74d719695f0dee211e347
+#: ../../help/troubleshooting.rst:480 3d255ca9a95a446f81c0b03d495820d1
 msgid "**Process data in chunks:**"
 msgstr "**分块处理数据：**"
 
-#: ../../help/troubleshooting.rst:415 830f0bba580c43aaa2e664c4415f180b
+#: ../../help/troubleshooting.rst:489 f856d76e35b349dc9bd9ccace616ffea
 msgid "**Clear cache periodically:**"
 msgstr "**定期清理缓存：**"
 
-#: ../../help/troubleshooting.rst:421 8eb6bb25dbf345368dbb1a1d848afdcb
+#: ../../help/troubleshooting.rst:495 198467aea1de48d8918dbf02583ffcbc
 msgid "**Use generators for large results:**"
 msgstr "**对于大量结果，使用生成器：**"
 
-#: ../../help/troubleshooting.rst:430 76d1835d7b51492cb0cc20f311c19175
+#: ../../help/troubleshooting.rst:504 337bc896b50547e6897c92676af6a1e8
 msgid "MCP Server Issues"
 msgstr "MCP 服务器问题"
 
-#: ../../help/troubleshooting.rst:433 5dd6652502474763ba1a859d7774ad55
+#: ../../help/troubleshooting.rst:507 cd508f70250045a0b049a2b3a85b5820
 msgid "MCP server won't start"
 msgstr "MCP 服务器无法启动"
 
-#: ../../help/troubleshooting.rst:435 b4714acc211d426ca8755367f437e48b
+#: ../../help/troubleshooting.rst:509 1f8c7418ba584270859954a377814e95
 msgid "**Symptom:** Server fails to start or crashes immediately."
 msgstr "**症状：** 服务器无法启动或立即崩溃。"
 
-#: ../../help/troubleshooting.rst:446 48d7fbe0f4924de384a8789f86dc6428
+#: ../../help/troubleshooting.rst:520 71a1fd1d88644f2097ce0bcecb9ea699
 msgid "**Check port availability:**"
 msgstr "**检查端口可用性：**"
 
-#: ../../help/troubleshooting.rst:454 e1882624346b4ecc8b1649e85df1c26f
+#: ../../help/troubleshooting.rst:528 c9af04e6a7174b258864cb82efd219d0
 msgid "**Use different port:**"
 msgstr "**使用不同端口：**"
 
-#: ../../help/troubleshooting.rst:460 9048aab3ad6e45cdbdeec12044f47570
+#: ../../help/troubleshooting.rst:534 2ca2080dca4e4668aa979d1c051b6202
 msgid "**Check permissions:**"
 msgstr "**检查权限：**"
 
-#: ../../help/troubleshooting.rst:468 4629c9705ca84b7db165d61614bfc43d
+#: ../../help/troubleshooting.rst:542 069b3d14efa74306b5b18f11063ce377
 msgid "Claude/AI assistant not finding tools"
 msgstr "Claude/AI 助手未找到工具"
 
-#: ../../help/troubleshooting.rst:472 fc4748efeb634a96a3ebfa9a53fc8da8
+#: ../../help/troubleshooting.rst:546 10be707939274c58898f9811a55f7e67
 msgid "**Verify MCP server is running:**"
 msgstr "**验证 MCP 服务器是否正在运行：**"
 
-#: ../../help/troubleshooting.rst:478 77a16f360adf47c196dfb7093b9c5329
+#: ../../help/troubleshooting.rst:552 dd4bbadc9cd045c29987b437b72ea7fe
 msgid "**Check Claude configuration:**"
 msgstr "**检查 Claude 配置：**"
 
-#: ../../help/troubleshooting.rst:480 6d5e8fe160a446ad92b3535893733826
+#: ../../help/troubleshooting.rst:554 a1014f42463e438d826512b54065cbf2
 msgid "Ensure MCP server is properly configured in Claude Desktop settings."
 msgstr "确保在 Claude Desktop 设置中正确配置 MCP 服务器。"
 
-#: ../../help/troubleshooting.rst:484 aeba443c0814400ebfae924b6fc6006a
+#: ../../help/troubleshooting.rst:558 76e8cc60bab44e00815e138ff6543be6
 msgid "**Restart both server and Claude**"
 msgstr "**重启服务器和 Claude**"
 
-#: ../../help/troubleshooting.rst:485 9703245097054be48732e2279a36043f
+#: ../../help/troubleshooting.rst:559 b593b1d7a25e47038399525f0c629e5e
 msgid "**Check Claude logs** for connection errors"
 msgstr "**检查 Claude 日志** 以排查连接错误"
 
-#: ../../help/troubleshooting.rst:486 d7a943329ea1407198ccf1c5fffb276b
+#: ../../help/troubleshooting.rst:560 cb1f72b4ba0f431ca64c0282a295071b
 msgid "**Verify tool registration:**"
 msgstr "**验证工具注册：**"
 
-#: ../../help/troubleshooting.rst:495 41e0f46db1434a7b8bac2a3f05f68434
+#: ../../help/troubleshooting.rst:569 3e63c13a7d734d569f951eecdc165cb9
 msgid "Advanced Debugging"
 msgstr "高级调试"
 
-#: ../../help/troubleshooting.rst:498 07f1c1915fa14a939e641ab4e4575188
+#: ../../help/troubleshooting.rst:572 4b65e5253c1e44a797faa488820e4177
 msgid "Enable debug logging"
 msgstr "启用调试日志记录"
 
-#: ../../help/troubleshooting.rst:513 0fbf922ccaa146d3bf566a60e9f756ba
+#: ../../help/troubleshooting.rst:587 c65d190dd5c744e78409c3f8217a1019
 msgid "Capture detailed error information"
 msgstr "捕获详细的错误信息"
 
-#: ../../help/troubleshooting.rst:528 9810a116882d47cbabcac66eac713a2b
+#: ../../help/troubleshooting.rst:602 7c271ef7219d4b588e0b897c0f46a4c5
 msgid "Profile performance bottlenecks"
 msgstr "分析性能瓶颈"
 
-#: ../../help/troubleshooting.rst:551 d4619d9d2a104189bb29c82df4a4e52b
+#: ../../help/troubleshooting.rst:625 c8effe7495574e96bfbe833c2ca1913b
 msgid "Getting Help"
 msgstr "获取帮助"
 
-#: ../../help/troubleshooting.rst:553 860d50cca6ad47c99e75388fc7fc60bf
+#: ../../help/troubleshooting.rst:627 f4dc01b2a2e6453fb2baacb4aa2e3d3f
 msgid "If none of these solutions work:"
 msgstr "如果以上解决方案均无效："
 
-#: ../../help/troubleshooting.rst:555 422f0bf3c5804a39be26803d55e5a812
+#: ../../help/troubleshooting.rst:629 1e3fc66f290b4605b8667dd73ea18169
 msgid "**Check the FAQ**: :doc:`faq`"
 msgstr "**查看常见问题解答**：:doc:`faq`"
 
-#: ../../help/troubleshooting.rst:556 36d95d0cd7ff4bfebf59b08f7e9c2f8a
+#: ../../help/troubleshooting.rst:630 aaf7d62d39a44893b2b0302e07eee9a9
 msgid ""
-"**Search GitHub issues**: `Issues "
-"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
+"**Search GitHub issues**: `Issues <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
 msgstr ""
-"**搜索 GitHub 问题**：`Issues "
-"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
+"**搜索 GitHub 问题**：`Issues <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
 
-#: ../../help/troubleshooting.rst:557 5251fd407586454d9bdc10ed296b3a45
+#: ../../help/troubleshooting.rst:631 c4f7da2ef3634bf584f8c066842a8e4b
 msgid "**Create a bug report** with:"
 msgstr "**创建缺陷报告**，内容包括："
 
-#: ../../help/troubleshooting.rst:559 2ab828da6a594af8a1c137b938e8ee9f
+#: ../../help/troubleshooting.rst:633 1ad23d215a774ae19019ecb91ec42391
 msgid "ToolUniverse version: ``tooluniverse.__version__``"
 msgstr "ToolUniverse 版本：``tooluniverse.__version__``"
 
-#: ../../help/troubleshooting.rst:560 b8b5e01580ae444d997987b3ef48086b
+#: ../../help/troubleshooting.rst:634 03deae1997ff4923b072318542e6f9c8
 msgid "Python version: ``python --version``"
 msgstr "Python 版本：``python --version``"
 
-#: ../../help/troubleshooting.rst:561 6f03414ae54d46d5ac2ccb1b9a207033
+#: ../../help/troubleshooting.rst:635 15e907372678460383ef43b296e3598e
 msgid "Operating system"
 msgstr "操作系统"
 
-#: ../../help/troubleshooting.rst:562 36cadec62a6b467aa7b74349d4ad8456
+#: ../../help/troubleshooting.rst:636 7a717d4aad4a4ddd9bd5aaaae96b13e5
 msgid "Full error message and traceback"
 msgstr "完整错误信息及追踪记录"
 
-#: ../../help/troubleshooting.rst:563 935eba5bdefd4ab38db50aa1f6005b4f
+#: ../../help/troubleshooting.rst:637 c79f42f44f46483a8483935c27bcd976
 msgid "Minimal code example that reproduces the issue"
 msgstr "重现该问题的最简代码示例"
 
-#: ../../help/troubleshooting.rst:565 925d88c83a93473fba969e663703c243
+#: ../../help/troubleshooting.rst:639 1480295ee8524281ab6bfb8aadae7796
 msgid "**Join our community**: Discord server link"
 msgstr "**加入我们的社区**：Discord 服务器链接"
 
-#: ../../help/troubleshooting.rst:576 4578e9cf8ea94682934d0b970df9932f
+#: ../../help/troubleshooting.rst:642 bcc58f2201b4493484cc06a3e3aa49d3
+msgid "When reporting issues, please run the diagnostic script first:"
+msgstr ""
+
+#: ../../help/troubleshooting.rst:649 d48534c588c345d0ac897996cb0ff7cc
 msgid "Include this output in your bug report."
 msgstr "请在您的错误报告中包含此输出。"
+
+#~ msgid ""
+#~ "This Tutorial helps you diagnose and "
+#~ "resolve common issues with ToolUniverse."
+#~ msgstr "本教程将帮助您诊断并解决 ToolUniverse 的常见问题。"
+
+#~ msgid "Most services offer higher rate limits with API keys."
+#~ msgstr "大多数服务通过 API 密钥提供更高的速率限制。"
+

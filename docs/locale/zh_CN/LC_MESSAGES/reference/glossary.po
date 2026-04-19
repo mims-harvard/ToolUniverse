@@ -1,0 +1,443 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../reference/glossary.rst:2 0e33e075d10b472182c39f3136af7d4b
+msgid "Glossary"
+msgstr ""
+
+#: ../../reference/glossary.rst:4 5cb8a9a1c3d04064907c65fa982ff6b3
+msgid "Technical terms and concepts used throughout ToolUniverse documentation."
+msgstr ""
+
+#: ../../reference/glossary.rst:7 95c6d41f1fc646caa99c8ed396070daf
+msgid "AI Scientist"
+msgstr ""
+
+#: ../../reference/glossary.rst:9 f1d021b070c14185a04e71ba62b7f4ab
+msgid ""
+"An AI system (LLM, agent, or reasoning model) enhanced with ToolUniverse "
+"capabilities to autonomously perform scientific research tasks including "
+"literature search, data analysis, and experimental design."
+msgstr ""
+
+#: ../../reference/glossary.rst:10 1234877bd0c74c4abeed923a99b6db56
+msgid "AI-Tool Interaction Protocol"
+msgstr ""
+
+#: ../../reference/glossary.rst:12 2a56a1321c4a47a781b15c8cc8ca17c9
+msgid ""
+"Standardized interface governing how AI scientists issue tool requests "
+"and receive structured results. Ensures compatibility across different "
+"LLM providers and tool implementations."
+msgstr ""
+
+#: ../../reference/glossary.rst:13 72912a3f6d4b40e8893a581ab1479567
+msgid "Agentic Tool"
+msgstr ""
+
+#: ../../reference/glossary.rst:15 44e88889fd35497fbada37447598b138
+msgid ""
+"A tool that uses LLM capabilities internally to perform complex tasks "
+"like summarization, extraction, or intelligent search. Examples: "
+"Tool_Finder_LLM, summarization hooks."
+msgstr ""
+
+#: ../../reference/glossary.rst:16 b6f9ce5c20254a8f97e82666505fce92
+msgid "ChEMBL"
+msgstr ""
+
+#: ../../reference/glossary.rst:18 ef544a18d02e45ddb4e1eb352ad6132e
+msgid ""
+"European Molecular Biology Laboratory's database of bioactive drug-like "
+"small molecules. ChEMBL IDs are identifiers like \"CHEMBL25\" for "
+"aspirin."
+msgstr ""
+
+#: ../../reference/glossary.rst:19 39e1860c76584269912ca7b40521054d
+msgid "ChEMBL ID"
+msgstr ""
+
+#: ../../reference/glossary.rst:21 ffa50c36f3be4a41bffa8385829055d1
+msgid ""
+"Unique identifier for chemical compounds in the ChEMBL database (e.g., "
+"CHEMBL25 for aspirin)."
+msgstr ""
+
+#: ../../reference/glossary.rst:22 13bd8a5620814e3fba55a0ae82401857
+msgid "Compact Mode"
+msgstr ""
+
+#: ../../reference/glossary.rst:24 564db2ebdc204f49a3fd495bfe9c6618
+msgid ""
+"Context window optimization mode that exposes only 4-5 core discovery "
+"tools instead of 1000+ tools. Reduces context usage by 99% while "
+"maintaining full functionality through the ``execute_tool`` tool."
+msgstr ""
+
+#: ../../reference/glossary.rst:25 fc455dbb98d14a069927c0be2d0ebbe8
+msgid "EFO"
+msgstr ""
+
+#: ../../reference/glossary.rst:26 31cb4d74e2f640fd96f026b05d036898
+msgid "EFO ID"
+msgstr ""
+
+#: ../../reference/glossary.rst:28 e02856598d2043f8942b9df29b15e8e8
+msgid ""
+"Experimental Factor Ontology - A standardized disease classification "
+"system used in biomedical research. EFO IDs are identifiers like "
+"\"EFO_0000537\" for hypertension."
+msgstr ""
+
+#: ../../reference/glossary.rst:29 891ab5d9a8664379ab6b5aca017d4b2e
+msgid "Embedding"
+msgstr ""
+
+#: ../../reference/glossary.rst:30 e127b11820b549b3aa25b43c5ff23ced
+msgid "Embedding Search"
+msgstr ""
+
+#: ../../reference/glossary.rst:32 30c0f0f692684290b0f0fb20fa98feda
+msgid ""
+"Vector-based semantic search where text is converted to numerical "
+"vectors. Similar concepts have similar vectors, enabling \"meaning-"
+"based\" search beyond keyword matching. Used in Tool_Finder for "
+"intelligent tool discovery."
+msgstr ""
+
+#: ../../reference/glossary.rst:33 6cd7bb5a49414348807c27204a89ff18
+msgid "Hook"
+msgstr ""
+
+#: ../../reference/glossary.rst:35 1416de39eed446bf8bcfbe0e8a1788ea
+msgid ""
+"Output processing function that transforms or enhances tool results. "
+"Examples: SummarizationHook (AI-powered summaries), FileSaveHook "
+"(automatic file saving)."
+msgstr ""
+
+#: ../../reference/glossary.rst:36 197239ee6ebf47e69be9191a51060c95
+msgid "MCP"
+msgstr ""
+
+#: ../../reference/glossary.rst:37 07f6e00ac6f74abe96ff8b2ced7f7f8a
+msgid "Model Context Protocol"
+msgstr ""
+
+#: ../../reference/glossary.rst:39 433ff1d154ef49578a806cb4f09713f8
+msgid ""
+"Open standard protocol enabling AI assistants to securely connect to "
+"external tools and data sources. Think of it as \"USB for AI tools\" - a "
+"standardized connection interface."
+msgstr ""
+
+#: ../../reference/glossary.rst:40 97569e3df4dc4573bc913c0ae7046411
+msgid "SMCP"
+msgstr ""
+
+#: ../../reference/glossary.rst:41 749126384dcb451393ee094e9f664251
+msgid "Scientific Model Context Protocol"
+msgstr ""
+
+#: ../../reference/glossary.rst:43 af23ceb5d9334f08aed8a5aa5a676708
+msgid ""
+"ToolUniverse's implementation of MCP, optimized for scientific workflows."
+" Extends standard MCP with scientific domain features, intelligent tool "
+"discovery, and hooks system."
+msgstr ""
+
+#: ../../reference/glossary.rst:44 32823e84450442b5826ec828a1b957ed
+msgid "Profile"
+msgstr ""
+
+#: ../../reference/glossary.rst:45 2914282e77814595bb2aa8e4ec3be41a
+msgid "Toolspace"
+msgstr ""
+
+#: ../../reference/glossary.rst:47 8f854d6479e644749a25490c70e3dba0
+msgid ""
+"YAML configuration file (``profile.yaml``) declaring which tools to load,"
+" cache settings, LLM config, and hooks. Profiles can be loaded from "
+"GitHub, local files, or URLs using ``--load`` parameter."
+msgstr ""
+
+#: ../../reference/glossary.rst:48 9263ffab3aef408f92e2a40a8e32d6eb
+msgid "STDIO Transport"
+msgstr ""
+
+#: ../../reference/glossary.rst:50 94084d7df8c942698f417980bbc1cfba
+msgid ""
+"Communication method where data flows through standard input/output "
+"streams. Used by desktop applications like Claude Desktop to communicate "
+"with MCP servers."
+msgstr ""
+
+#: ../../reference/glossary.rst:51 ac96e6437ba840f7a9f0c84fe5735612
+msgid "Tool Composition"
+msgstr ""
+
+#: ../../reference/glossary.rst:53 285e55edc6ef4f2689575125b34fe099
+msgid ""
+"Chaining multiple tools together in sequential or parallel workflows. "
+"Example: Search PubMed → Extract abstracts → Summarize findings."
+msgstr ""
+
+#: ../../reference/glossary.rst:54 e2a9ef1db2c34fa5b00513b9ecedbbb2
+msgid "Tool Finder"
+msgstr ""
+
+#: ../../reference/glossary.rst:56 c67db0e30bb84923805bba23ed04e6dc
+msgid ""
+"Family of specialized search tools for discovering relevant ToolUniverse "
+"tools:"
+msgstr ""
+
+#: ../../reference/glossary.rst:58 9fa9b03a40ed4fb891dad7cbd4671403
+msgid "**Tool_Finder_Keyword**: Fast keyword search"
+msgstr ""
+
+#: ../../reference/glossary.rst:59 778ccf5d122c4208a2ca14e5c232b252
+msgid "**Tool_Finder_LLM**: Natural language search using LLM"
+msgstr ""
+
+#: ../../reference/glossary.rst:60 64ec9d4266b14a5098198d7df202bdc7
+msgid "**Tool_Finder**: Semantic embedding search (most powerful)"
+msgstr ""
+
+#: ../../reference/glossary.rst:61 c7a2ac0c66124191b44cbb8afc11dd3f
+msgid "Tool Specification"
+msgstr ""
+
+#: ../../reference/glossary.rst:63 3f20b7b6f7cd49888656f5570d5a6a1c
+msgid ""
+"JSON definition describing a tool's purpose, input parameters, output "
+"format, and execution details. Think of it as the \"instruction manual\" "
+"for each tool."
+msgstr ""
+
+#: ../../reference/glossary.rst:64 e9fdbd37c04c4df28690b875c3ccca2a
+msgid "ToolSpace"
+msgstr ""
+
+#: ../../reference/glossary.rst:66 a348b0b92da04b3485a3b5bb4ebd6e66
+msgid "See :term:`Profile`."
+msgstr ""
+
+#: ../../reference/glossary.rst:67 b9c6d013d6054c108bf1bb19b7351178
+msgid "PubChem CID"
+msgstr ""
+
+#: ../../reference/glossary.rst:69 1433f57c36224d18ade0f45f6bee04ce
+msgid ""
+"PubChem Compound Identifier - unique numerical ID for chemical compounds "
+"in PubChem database (e.g., CID 2244 for aspirin)."
+msgstr ""
+
+#: ../../reference/glossary.rst:70 cda1f4adc14d4ea4a20151fa609d9cdb
+msgid "UniProt Accession"
+msgstr ""
+
+#: ../../reference/glossary.rst:72 6526c46419ba4f78888ae9af6c7f74b4
+msgid ""
+"Unique identifier for protein sequences in UniProt database. Format: 1-6 "
+"characters (e.g., \"P05067\" for amyloid precursor protein)."
+msgstr ""
+
+#: ../../reference/glossary.rst:73 e300a96e98f8410e814a36cf44c196e3
+msgid "FAERS"
+msgstr ""
+
+#: ../../reference/glossary.rst:75 a118da12415d4a27b592c98aaad2411a
+msgid ""
+"FDA Adverse Event Reporting System - Database of adverse drug reactions "
+"reported to FDA. Used for pharmacovigilance and drug safety monitoring."
+msgstr ""
+
+#: ../../reference/glossary.rst:76 772ecc690e4e44d1b43968f5059ee4c4
+msgid "SSE"
+msgstr ""
+
+#: ../../reference/glossary.rst:78 4dd11ca584e84b9fb089c535b6ce8798
+msgid ""
+"Server-Sent Events - HTTP-based protocol for servers to push updates to "
+"clients. One of the transport methods supported by ToolUniverse MCP "
+"servers."
+msgstr ""
+
+#: ../../reference/glossary.rst:79 b0f3c9b91db748929abbf764c80f6175
+msgid "TTL"
+msgstr ""
+
+#: ../../reference/glossary.rst:81 37b7bdac0a504056b30a32e8d083647e
+msgid ""
+"Time To Live - Duration (in seconds) that cached results remain valid "
+"before expiration. Set via ``TOOLUNIVERSE_CACHE_DEFAULT_TTL``."
+msgstr ""
+
+#: ../../reference/glossary.rst:82 c367a9ebbf154801a20b6bfdb0a29887
+msgid "LRU Cache"
+msgstr ""
+
+#: ../../reference/glossary.rst:84 c4f70bb66c4b4a3181e26c837a748a09
+msgid ""
+"Least Recently Used cache - Memory cache that evicts oldest unused "
+"entries when full. ToolUniverse uses LRU for in-memory caching."
+msgstr ""
+
+#: ../../reference/glossary.rst:85 a272effacbaf43b0977db083803fcbd5
+msgid "Rate Limit"
+msgstr ""
+
+#: ../../reference/glossary.rst:87 cceef84b96e444f4862457f4117ba4a9
+msgid ""
+"Maximum number of API requests allowed per time period. Example: NCBI "
+"allows 3 requests/second without API key, 10 requests/second with key."
+msgstr ""
+
+#: ../../reference/glossary.rst:88 682994f07740426e8e4cc498c12b6ff5
+msgid "Tool Category"
+msgstr ""
+
+#: ../../reference/glossary.rst:89 f40e8c95857e4a16ace7ff3695f8c944
+msgid "Tool Type"
+msgstr ""
+
+#: ../../reference/glossary.rst:91 1feee0caacec4f7ea4ef8a14b8d3b91f
+msgid ""
+"Classification of tools by data source or functionality. Examples: "
+"``uniprot``, ``chembl``, ``pubmed``, ``fda``, ``nvidia_nim``. Used for "
+"selective tool loading."
+msgstr ""
+
+#: ../../reference/glossary.rst:92 9a777d06f51745de87d466ed5a169b44
+msgid "Fingerprint"
+msgstr ""
+
+#: ../../reference/glossary.rst:93 df27c7da0a294499bc91175cfd8d7cc4
+msgid "Cache Fingerprint"
+msgstr ""
+
+#: ../../reference/glossary.rst:95 c8ec033c8f3246809988096b22e9b305
+msgid ""
+"Unique hash computed from tool's source code and parameter schema. When "
+"tool implementation changes, fingerprint changes, invalidating old cache "
+"entries."
+msgstr ""
+
+#: ../../reference/glossary.rst:96 b35cd60808da4a96af2220e5cc9dbbd7
+msgid "Workspace Configuration"
+msgstr ""
+
+#: ../../reference/glossary.rst:98 acd9119983574d08bd2bfc8de4331621
+msgid ""
+"YAML or JSON file defining tool selection, hooks, and settings for a "
+"specific research workflow or domain. See :term:`Profile`."
+msgstr ""
+
+#: ../../reference/glossary.rst:99 4f9cbf6f4a7e4521ad51eaf293cba2d2
+msgid "JSON-RPC"
+msgstr ""
+
+#: ../../reference/glossary.rst:101 ee455e997d0f409fac539618b465bdd9
+msgid ""
+"Remote Procedure Call protocol using JSON for data encoding. Some MCP "
+"servers use JSON-RPC for communication."
+msgstr ""
+
+#: ../../reference/glossary.rst:102 f8ca73ab7b384b69a99c79d61163285d
+msgid "OpenTargets"
+msgstr ""
+
+#: ../../reference/glossary.rst:104 094627b701ef4e5db717f1577d0dc695
+msgid ""
+"Open Targets Platform - Database connecting genes to diseases with "
+"evidence scores. Provides target-disease associations for drug discovery."
+msgstr ""
+
+#: ../../reference/glossary.rst:105 0dca04b789554b349cf6308e0d7ca433
+msgid "AlphaFold"
+msgstr ""
+
+#: ../../reference/glossary.rst:106 66c530b1f01d4ba4bfeb6a6b21423819
+msgid "AlphaFold2"
+msgstr ""
+
+#: ../../reference/glossary.rst:108 ad6a146fafaa45f2a6f33a9b0bf76a1f
+msgid ""
+"AI system for predicting 3D protein structures from amino acid sequences."
+" Accessible through ToolUniverse via NVIDIA NIM tools."
+msgstr ""
+
+#: ../../reference/glossary.rst:109 cad9dd5f3d124ab89fe3b443f2d12d48
+msgid "NCBI"
+msgstr ""
+
+#: ../../reference/glossary.rst:111 9c47d34dea9a432a88bd0c54c40307d6
+msgid ""
+"National Center for Biotechnology Information - US government agency "
+"providing biomedical databases including PubMed, GenBank, and protein "
+"databases."
+msgstr ""
+
+#: ../../reference/glossary.rst:112 2bc4824392584112ababdbfeedd67739
+msgid "Ontology"
+msgstr ""
+
+#: ../../reference/glossary.rst:114 672deeffd39b487f9cd3faaeed928882
+msgid ""
+"Structured vocabulary defining terms and relationships in a domain. "
+"Examples: EFO (diseases), Gene Ontology (biological processes), ChEBI "
+"(chemicals)."
+msgstr ""
+
+#: ../../reference/glossary.rst:115 0e3b24ee28f64d778b0aa21e5389156a
+msgid "API Endpoint"
+msgstr ""
+
+#: ../../reference/glossary.rst:117 7f28792cb969481c97e85c9d3b3d6fef
+msgid ""
+"URL path for making API requests to web services. Example: "
+"``/api/search`` or ``https://rest.uniprot.org/uniprotkb/search``."
+msgstr ""
+
+#: ../../reference/glossary.rst:120 4eb5c30a214845c7a1628cb61f9bce09
+msgid "See Also"
+msgstr ""
+
+#: ../../reference/glossary.rst:122 38bb62ae284c4d6f888f97edba64b2f2
+msgid ":doc:`cli_tools` - Command-line tools"
+msgstr ""
+
+#: ../../reference/glossary.rst:123 ea5228c938f042929ff8a006b38ecff2
+msgid ":doc:`environment_variables` - Configuration variables"
+msgstr ""
+
+#: ../../reference/glossary.rst:124 35243f1d545640d9b2feaaa5b08a21b3
+msgid ":doc:`../guide/api_keys` - API key configuration"
+msgstr ""
+
+#: ../../reference/glossary.rst:125 cec2f97aa0de45f998f83e387b82edbc
+msgid ""
+":doc:`../guide/interaction_protocol` - AI-Tool Interaction Protocol "
+"details"
+msgstr ""
+

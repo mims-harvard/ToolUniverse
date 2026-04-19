@@ -7,291 +7,299 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/remote/expert_feedback.md:1 d6ee85fe7765443bafc7c398558ed3b4
+#: ../../tools/remote/expert_feedback.md:1 8d3c24d272f5440dbd96c8b55b5a0ef6
 msgid "Human Expert Feedback System"
 msgstr "人工专家反馈系统"
 
-#: ../../tools/remote/expert_feedback.md:2 1dcd2fd632334d979bd1f6e6e37b0010
+#: ../../tools/remote/expert_feedback.md:2 4ad6e56470a94ad89e3b8d2453090add
 msgid "![Web UI](ui.jpg)"
 msgstr ""
 
-#: ../../tools/remote/expert_feedback.md:2 70220935c2fc442fb8c7d8368b3b07c8
+#: ../../tools/remote/expert_feedback.md:2 dc4e9006f81640f18c6998fb85c87568
 msgid "Web UI"
 msgstr "Web 用户界面"
 
-#: ../../tools/remote/expert_feedback.md:3 9a295ee0bef54d41be253f16f496196f
+#: ../../tools/remote/expert_feedback.md:3 cb3cde6b8aa74d669459a540b7e7269d
 msgid "📖 Overview"
 msgstr "📖 概述"
 
-#: ../../tools/remote/expert_feedback.md:5 ba91e0444e4a459b9bdbb7931a3e9921
+#: ../../tools/remote/expert_feedback.md:5 89ccfab3ce534dd792f4fd46e833e24e
 msgid ""
-"The Human Expert Feedback System is a sophisticated **human-in-the-loop** "
-"consultation platform designed for ToolUniverse. It enables AI systems to "
-"seamlessly consult with human experts when encountering complex decisions, "
-"particularly in medical and scientific domains where expert knowledge is "
-"crucial."
-msgstr ""
-"人体专家反馈系统是一款为ToolUniverse设计的先进**人机协同**咨询平台。该系统使人工智能在面对复杂决策时，能够无缝地与人体专家进行咨询，尤其适用于医学和科学领域，这些领域对专家知识有着极高的依赖。"
+"The Human Expert Feedback System is a sophisticated **human-in-the-loop**"
+" consultation platform designed for ToolUniverse. It enables AI systems "
+"to seamlessly consult with human experts when encountering complex "
+"decisions, particularly in medical and scientific domains where expert "
+"knowledge is crucial."
+msgstr "人体专家反馈系统是一款为ToolUniverse设计的先进**人机协同**咨询平台。该系统使人工智能在面对复杂决策时，能够无缝地与人体专家进行咨询，尤其适用于医学和科学领域，这些领域对专家知识有着极高的依赖。"
 
-#: ../../tools/remote/expert_feedback.md:7 606e7559c3e24cb2b804ba233fd0c329
+#: ../../tools/remote/expert_feedback.md:7 dbb9d568b045472fad0ea3352d62c901
 msgid "🎯 Key Capabilities"
 msgstr "🎯 关键能力"
 
-#: ../../tools/remote/expert_feedback.md:9 490a8189c12f401e96e43c160bf5803f
+#: ../../tools/remote/expert_feedback.md:9 595a6fdbf0604528a065f6ae300b55da
 msgid ""
-"**🔄 Real-time Consultation**: Submit questions to human experts and receive "
-"responses in real-time"
+"**🔄 Real-time Consultation**: Submit questions to human experts and "
+"receive responses in real-time"
 msgstr "**🔄 实时咨询**：向人工专家提交问题，实时获取回复"
 
-#: ../../tools/remote/expert_feedback.md:10 5182dcdb7cc64da9b19ec81c7f8ad9c4
+#: ../../tools/remote/expert_feedback.md:10 719c16e6d04b42beb43be798f99aacd6
 msgid ""
 "**🌐 Modern Web Interface**: Beautiful, responsive dashboard with auto-"
 "refresh for expert interactions"
 msgstr "**🌐 现代网页界面**：美观且响应迅速的仪表盘，支持自动刷新以优化专家交互体验"
 
-#: ../../tools/remote/expert_feedback.md:11 42d2f9f5cccc469394b7d07c0d06458f
+#: ../../tools/remote/expert_feedback.md:11 5c216be7fef249c1a31e24062850bfaf
 msgid ""
 "**⚡ MCP Integration**: Built on Model Context Protocol for seamless "
 "ToolUniverse integration"
 msgstr "**⚡ MCP 集成**：基于模型上下文协议构建，实现与 ToolUniverse 的无缝集成"
 
-#: ../../tools/remote/expert_feedback.md:12 9b2565cd2d944fac89ab4e27a7d044d2
+#: ../../tools/remote/expert_feedback.md:12 a268be5102ad4420ae6f200d08229c52
 msgid ""
 "**🎨 Priority Management**: Support for normal, high, and urgent priority "
 "requests with visual indicators"
 msgstr "**🎨 优先级管理**：支持普通、高优先级及紧急请求，并配有视觉指示器"
 
-#: ../../tools/remote/expert_feedback.md:13 b1621d4d42fb407cab8d9a4c548b89ff
+#: ../../tools/remote/expert_feedback.md:13 63e9e7ae0e3b4ba39ba00baf751b4400
 msgid ""
-"**📱 Multi-Interface**: Web-based and terminal-based interfaces for different"
-" user preferences"
+"**📱 Multi-Interface**: Web-based and terminal-based interfaces for "
+"different user preferences"
 msgstr "**📱 多接口**：基于网页和终端的接口，满足不同用户偏好"
 
-#: ../../tools/remote/expert_feedback.md:14 f83d7b7cd0f14f7e9beefcaaa215058b
+#: ../../tools/remote/expert_feedback.md:14 2f9d4191eedb47cbaac0da685f5f911e
 msgid ""
 "**🔌 Flexible Deployment**: Auto-port discovery and custom configuration "
 "options"
 msgstr "**🔌 灵活部署**：自动端口发现与自定义配置选项"
 
-#: ../../tools/remote/expert_feedback.md:16 84f9100eb9784e22927c7d40c4ac5bdf
+#: ../../tools/remote/expert_feedback.md:16 4b5e8dfcc88a47188471ab4eb90089b0
 msgid "🩺 Use Cases"
 msgstr "🩺 使用案例"
 
-#: ../../tools/remote/expert_feedback.md:18 cf4601b2e4d64648a05333549b48796d
+#: ../../tools/remote/expert_feedback.md:18 35481625410541038941d529317dd845
 msgid "**Medical AI**: Get expert medical opinions for complex patient cases"
 msgstr "**医疗AI**：为复杂患者病例提供专家医疗意见"
 
-#: ../../tools/remote/expert_feedback.md:19 f1c3579b03ea4b469a5e11df2a9e64d0
+#: ../../tools/remote/expert_feedback.md:19 f4af5c0813ca4e0ba19dccedef5421f7
 msgid ""
-"**Scientific Research**: Consult domain experts for research methodology and"
-" analysis"
+"**Scientific Research**: Consult domain experts for research methodology "
+"and analysis"
 msgstr "**科学研究**：请咨询领域专家以获取研究方法和分析"
 
-#: ../../tools/remote/expert_feedback.md:20 8f1b5dd575b94760865b24168db763f1
+#: ../../tools/remote/expert_feedback.md:20 c27b9f7c92b042a19a94c80a5273135d
 msgid ""
 "**Drug Discovery**: Expert review of molecular compounds and drug "
 "interactions"
 msgstr "**药物发现**：分子化合物与药物相互作用的专家评审"
 
-#: ../../tools/remote/expert_feedback.md:21 f091b56d417a4c4eb81e9dfadd829e5c
+#: ../../tools/remote/expert_feedback.md:21 2a24c6f5690b4416bbe3405c81d44ae0
 msgid ""
 "**Clinical Decision Support**: Real-time consultation for treatment "
 "recommendations"
 msgstr "**临床决策支持**：实时咨询以提供治疗建议"
 
-#: ../../tools/remote/expert_feedback.md:22 d5b697f7a9e74d14b5548a8c645f5362
+#: ../../tools/remote/expert_feedback.md:22 3c7e09ed67364e4da1977b1021305233
 msgid ""
-"**Research Validation**: Expert validation of AI-generated hypotheses and "
-"findings"
+"**Research Validation**: Expert validation of AI-generated hypotheses and"
+" findings"
 msgstr "**研究验证**：专家对人工智能生成的假设和发现进行验证"
 
-#: ../../tools/remote/expert_feedback.md:24 4777a76c52b34cf184e334fd1e5cb740
+#: ../../tools/remote/expert_feedback.md:24 53af6ff6463c4799aeefcb1036e71740
 msgid "image"
 msgstr "图像"
 
-#: ../../tools/remote/expert_feedback.md:26 35e73545a73744f3a5d5607857226ce4
+#: ../../tools/remote/expert_feedback.md:26 0481fe7b24e34e30a86f79eb72745bcd
 msgid "🚀 Quick Start"
 msgstr "🚀 快速入门"
 
-#: ../../tools/remote/expert_feedback.md:28 70044c77d8c448cda2d154f651b91009
+#: ../../tools/remote/expert_feedback.md:28 9defb57543d244e68704b4f5972562d7
 msgid "Install Package"
 msgstr "安装软件包"
 
-#: ../../tools/remote/expert_feedback.md:33 f747e3bc0ac141c5bf4b125e7e4cd70c
+#: ../../tools/remote/expert_feedback.md:33 60ca2d302f754c21918dfbe8c34910a8
 msgid "Start Expert Feedback Server"
 msgstr "启动专家反馈服务器"
 
-#: ../../tools/remote/expert_feedback.md:41 2d1ee6b4d663475a9266e949ca42a32f
+#: ../../tools/remote/expert_feedback.md:41 d181c53d04384618991c02a4900638f0
 msgid "Start Web Interface (On Expert Side)"
 msgstr "启动网页界面（专家端）"
 
-#: ../../tools/remote/expert_feedback.md:52 e6372c188ffc4d3bafa4db59721df0ff
+#: ../../tools/remote/expert_feedback.md:52 c3b27272aeba499ca268604b33726926
 msgid "**Interactive Setup Process:**"
 msgstr "**交互式设置过程：**"
 
-#: ../../tools/remote/expert_feedback.md:53 6d6ab97f04124996a9308a483f5bcb0b
+#: ../../tools/remote/expert_feedback.md:53 e82cf84ac1cb4d28a1b5b32bb0135c3d
 msgid "Run `tooluniverse-expert-feedback-web`"
 msgstr "运行 `tooluniverse-expert-feedback-web`"
 
-#: ../../tools/remote/expert_feedback.md:54 212748c0758e4d8b8c65c75994178660
+#: ../../tools/remote/expert_feedback.md:54 9d40d6e05fd044c6998b200d35e46d7e
 msgid "Enter Router-Expert server IP (or press Enter for localhost)"
 msgstr "输入 Router-Expert 服务器 IP（或按 Enter 键以使用本地主机）"
 
-#: ../../tools/remote/expert_feedback.md:55 350bde5cb74f4215be02edfe14f726b9
+#: ../../tools/remote/expert_feedback.md:55 d4c9ca69052f4b5c9825fac7caa9cfe7
 msgid "Enter Router-Expert server port (or press Enter for 9877)"
 msgstr "请输入 Router-Expert 服务器端口（或按 Enter 键使用默认端口 9877）"
 
-#: ../../tools/remote/expert_feedback.md:56 2196d70e21714bb68ae71d66b10376c9
+#: ../../tools/remote/expert_feedback.md:56 0094fa01404242349ee913ec69b0e914
 msgid "Web interface opens automatically at http://localhost:8090"
 msgstr "Web界面会自动打开，地址为：http://localhost:8090"
 
-#: ../../tools/remote/expert_feedback.md:58 bcca69323b2b42df99fe01f148db3a7c
+#: ../../tools/remote/expert_feedback.md:58 00d2c2c68e164a54b987eb99a1a0f6e9
 msgid "🏗️ Architecture"
 msgstr "🏗️ 架构"
 
-#: ../../tools/remote/expert_feedback.md:60 193feb8b787a42c193750c60c6f079e9
+#: ../../tools/remote/expert_feedback.md:60 a2a137da9e164c80b6b8fc8bd3ef8a26
 msgid "**Dual Server Design:**"
 msgstr "**双服务器设计：**"
 
-#: ../../tools/remote/expert_feedback.md:61 ba68eb1dfd4e45b2b3e91adcc201f25d
+#: ../../tools/remote/expert_feedback.md:61 e2ff869033c94405844a4dede6e1c01b
 msgid ""
-"**Router-ToolUniverse Server (Port 9876)**: Handles ToolUniverse tool calls"
+"**Router-ToolUniverse Server (Port 9876)**: Handles ToolUniverse tool "
+"calls"
 msgstr "**Router-ToolUniverse 服务器（端口 9876）**：处理 ToolUniverse 工具调用"
 
-#: ../../tools/remote/expert_feedback.md:62 ea7313d0c5ea4cff9f6ca61fc5531e2c
+#: ../../tools/remote/expert_feedback.md:62 832fb49ae01c46d6b0f82ebe25ddc632
 msgid ""
 "**Router-Expert Server (Port 9877)**: Handles expert web interface "
 "communication"
 msgstr "**Router-Expert 服务器（端口 9877）**：处理专家网页界面通信"
 
-#: ../../tools/remote/expert_feedback.md:63 5e0ceffa44db4cbe8bc5424bed15ec5e
+#: ../../tools/remote/expert_feedback.md:63 e5c6588669634560adc10695cffcf5c4
 msgid "**Shared Data**: Both servers access the same expert system instance"
 msgstr "**共享数据**：两台服务器访问同一专家系统实例"
 
-#: ../../tools/remote/expert_feedback.md:66 8b6b158900ee4426927811970a6159b9
+#: ../../tools/remote/expert_feedback.md:66 efc8c5cc3a8d4179840dc7b4f3ca1a97
 msgid "💻 Usage in ToolUniverse"
 msgstr "💻 在 ToolUniverse 中的使用"
 
-#: ../../tools/remote/expert_feedback.md:68 d2210397b42548ba8ff6823dac4275d7
+#: ../../tools/remote/expert_feedback.md:68 4b493410646247228b1fed572812d589
 msgid "**Set Environment Variable:**"
 msgstr "**设置环境变量：**"
 
-#: ../../tools/remote/expert_feedback.md:70 96fbc683139a49528d7cceff80a41a4a
+#: ../../tools/remote/expert_feedback.md:70 06a3fb8781a74b42baf1bc9ac9e29575
 msgid "In the environment where agent runs tools:"
 msgstr "在智能体运行工具的环境中："
 
-#: ../../tools/remote/expert_feedback.md:92 63e24f19de2c4e14872883caa2ee0387
+#: ../../tools/remote/expert_feedback.md:92 afa31c805ecd4277a7fd39f2e0e9c53f
 msgid "🔧 Available Tools"
 msgstr "🔧 可用工具"
 
-#: ../../tools/remote/expert_feedback.md:24 083e0fc8ea9549ff8eac9fb6582dedc2
+#: ../../tools/remote/expert_feedback.md:24 ede81ab815604adda8e939d2f42fd05d
 msgid "Tool"
 msgstr "工具"
 
-#: ../../tools/remote/expert_feedback.md:24 e0dc71b220ba4026bb676ead5c3b5cea
+#: ../../tools/remote/expert_feedback.md:24 c42423f42dc7444ca2357f1337b83025
 msgid "Purpose"
 msgstr "目的"
 
-#: ../../tools/remote/expert_feedback.md:24 00f6c8f4442549398d59cad809d9a0a0
+#: ../../tools/remote/expert_feedback.md:24 a2a1e8b582b64f09832f862ff56e45b6
 msgid "`consult_human_expert`"
 msgstr "咨询人工专家"
 
-#: ../../tools/remote/expert_feedback.md:24 0b92607d80424c05863a67d95f7c1602
+#: ../../tools/remote/expert_feedback.md:24 d8fee3f333a2479f977150c9f39bbe64
 msgid "Submit questions to experts"
 msgstr "向专家提交问题"
 
-#: ../../tools/remote/expert_feedback.md:24 b4fbb79ef46148ebb752c2f824f1c635
+#: ../../tools/remote/expert_feedback.md:24 a468b8e690c64d9ea56604fe1478b7f6
 msgid "`get_expert_response`"
 msgstr "`获取专家回复`"
 
-#: ../../tools/remote/expert_feedback.md:24 c76afc9439d94a9180440e0d8835f3a0
+#: ../../tools/remote/expert_feedback.md:24 3eed8f3061b74c99996af4e69ca4e420
 msgid "Check for expert responses"
 msgstr "检查专家回复"
 
-#: ../../tools/remote/expert_feedback.md:24 cca85d6b62af4329b4438902f0e92149
+#: ../../tools/remote/expert_feedback.md:24 5ed5308c689a4916a5c684e3bdc75e82
 msgid "`list_pending_expert_requests`"
 msgstr "列出待处理的专家请求"
 
-#: ../../tools/remote/expert_feedback.md:24 ce5918dcae6f4a9aa3cfa67587cf811d
+#: ../../tools/remote/expert_feedback.md:24 c8e1da5418bc4e4f865e3a9eaecb7571
 msgid "View pending requests"
 msgstr "查看待处理请求"
 
-#: ../../tools/remote/expert_feedback.md:24 7c6a02d407724d76b6f787309b05e801
+#: ../../tools/remote/expert_feedback.md:24 870a570fe8824589b279938916c3d2e6
 msgid "`submit_expert_response`"
 msgstr "提交专家回复"
 
-#: ../../tools/remote/expert_feedback.md:24 6b2299afdfc34abca51f7d24a6b82db0
+#: ../../tools/remote/expert_feedback.md:24 da1372fbe1ee4a78ba6e4b172c11b029
 msgid "Submit expert responses"
 msgstr "提交专家回复"
 
-#: ../../tools/remote/expert_feedback.md:24 da1ea1b9ecd44d35b5e5855355ce204b
+#: ../../tools/remote/expert_feedback.md:24 cff1095611aa4718808bf81bd62f179c
 msgid "`get_expert_status`"
 msgstr "获取专家状态"
 
-#: ../../tools/remote/expert_feedback.md:24 e89885cbb6704f489a540424d65a0ec8
+#: ../../tools/remote/expert_feedback.md:24 6d4b474895c2470ca375566169b7f4a9
 msgid "Get system status"
 msgstr "获取系统状态"
 
-#: ../../tools/remote/expert_feedback.md:102 30e53a5140e6459eae6786096391e7e8
+#: ../../tools/remote/expert_feedback.md:102 3743f19be78f4e8b99e85336ee3ff679
 msgid "⚙️ Command Options"
 msgstr "⚙️ 命令选项"
 
-#: ../../tools/remote/expert_feedback.md:115 2c108aafd60e40d4b5d79297b6bd23a8
+#: ../../tools/remote/expert_feedback.md:115 cb4025a5425d4ee38784bc16a591a6b5
 msgid "📁 Files"
 msgstr "📁 文件"
 
-#: ../../tools/remote/expert_feedback.md:117 4074cfa5054c40a3a3b6fc483caa1c2d
+#: ../../tools/remote/expert_feedback.md:117 53828d16dce443bdbdbcb9c9aeeff166
 msgid "**`tooluniverse-expert-feedback`** -  Router server"
 msgstr "**`tooluniverse-expert-feedback`** - 路由服务器"
 
-#: ../../tools/remote/expert_feedback.md:118 4f8cfea8b34d40b5ac04f259c18bb567
+#: ../../tools/remote/expert_feedback.md:118 fbebb3dfeaec45c7ad73b17727dfd007
 msgid ""
-"**`tooluniverse-expert-feedback-web`** - Launcher Router-Expert with auto-"
-"detection"
+"**`tooluniverse-expert-feedback-web`** - Launcher Router-Expert with "
+"auto-detection"
 msgstr "**`tooluniverse-expert-feedback-web`** - 启动器路由器专家，支持自动检测"
 
-#: ../../tools/remote/expert_feedback.md:119 200d62b6d4694f6c81c468f3c4fd1fa9
+#: ../../tools/remote/expert_feedback.md:119 8db71e91a96a40c28a78d2a230951c87
 msgid "**`simple_test.py`** - Basic test script"
 msgstr "**`simple_test.py`** - 基础测试脚本"
 
-#: ../../tools/remote/expert_feedback.md:121 1f32328fb52f4d8494836cb083faba83
+#: ../../tools/remote/expert_feedback.md:121 2cc21c3c74e14444a44912fab9f5bb96
 msgid "🎨 Web Interface Features"
 msgstr "🎨 网络界面功能"
 
-#: ../../tools/remote/expert_feedback.md:123 aac97a539fc040a7974e866787f43c69
+#: ../../tools/remote/expert_feedback.md:123 d87cd9ea086c4123a5326764bde631d6
 msgid "**Modern UI**: Gradient backgrounds, card layouts, responsive design"
 msgstr "**现代界面**：渐变背景、卡片布局、响应式设计"
 
-#: ../../tools/remote/expert_feedback.md:124 d524ee81e86f49b1936996b0ad0f8c01
+#: ../../tools/remote/expert_feedback.md:124 4011b77f833d48ed9526f245310f3a5e
 msgid "**Auto-refresh**: 15-second updates with countdown timer"
 msgstr "**自动刷新**：15秒更新，带倒计时器"
 
-#: ../../tools/remote/expert_feedback.md:125 86f79c37404c4bc38ec885ca817fd3b4
+#: ../../tools/remote/expert_feedback.md:125 1ec8e3df021043a7a6d4e44e9b0fcdae
 msgid ""
-"**Priority colors**: Normal (blue), High (orange), Urgent (red + animation)"
+"**Priority colors**: Normal (blue), High (orange), Urgent (red + "
+"animation)"
 msgstr "**优先级颜色**：普通（蓝色）、高（橙色）、紧急（红色 + 动画）"
 
-#: ../../tools/remote/expert_feedback.md:126 4653caaa013a44d1945569192772ca75
+#: ../../tools/remote/expert_feedback.md:126 99d36c9d03d741459322bba7995b373b
 msgid "**Real-time notifications**: Toast messages for user actions"
 msgstr "**实时通知**：用于用户操作的吐司消息"
 
-#: ../../tools/remote/expert_feedback.md:127 5e69e3f0d29641249e52287327a6080b
+#: ../../tools/remote/expert_feedback.md:127 b204a003c89c4a4a91d1af1121a1977b
 msgid "**Mobile-friendly**: Works on all screen sizes"
 msgstr "**移动友好**：适用于所有屏幕尺寸"
 
-#: ../../tools/remote/expert_feedback.md:131 49569ab0f2674ab0b179b1b475208525
+#: ../../tools/remote/expert_feedback.md:131 81e9156a12744a65a3527b6fafe6dff3
 msgid "*🧑‍⚕️ Built for professionals and AI systems*"
 msgstr "*🧑‍⚕️ 为专业人士和人工智能系统打造*"
+
+#~ msgid "![Web UI](ui.jpg)"
+#~ msgstr ""
+
+#~ msgid "![Web UI](../../_static/expert_feedback_ui.jpg)"
+#~ msgstr ""
+

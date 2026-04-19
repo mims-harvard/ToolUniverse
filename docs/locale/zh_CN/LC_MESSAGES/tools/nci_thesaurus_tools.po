@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nci_thesaurus_tools.rst:10 a1d120d3524e4f63a5d5acf087f514d8
+msgid "Nci Thesaurus Tools"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:12 092b1ebc89ae4de1ab0bd5535baed808
+msgid ""
+"**Configuration File**: ``nci_thesaurus_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:16 32d162d841024ec69629c417eaed7990
+msgid ""
+"This page contains all tools defined in the ``nci_thesaurus_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:19 71971a4fd8614b50b1cb1e3479c3d2e8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:22 da5861f4721c454085c29d7684e1d0f3
+msgid "**NCIThesaurus_get_children** (Type: NCIThesaurusTool)"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:24 0ec08eb3719845e0833346f25600328e
+msgid ""
+"Get the direct child concepts of an NCI Thesaurus concept code. Returns "
+"the immediate subcategori..."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst f7fdbe4cbdc74f4baafbe76ef5b9a2f1
+msgid "NCIThesaurus_get_children tool specification"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:28
+#: ../../tools/nci_thesaurus_tools.rst:59
+#: ../../tools/nci_thesaurus_tools.rst:90 d325f7b5fa054ccdb9e180e2f4d02c40
+#: e790055af3ba41099ff1088fbc542870 fa42d31c0de642a9abfccc48c30d3baa
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:30 99f9d0c95f8e4af6a0b1b7b2785b3d7b
+msgid "**Name**: ``NCIThesaurus_get_children``"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:31
+#: ../../tools/nci_thesaurus_tools.rst:62
+#: ../../tools/nci_thesaurus_tools.rst:93 043f8048f71446ac9378066839487564
+#: 266d9faa65404a21beeedb9c11cf1be8 90898357e93f4eff89ee3a8cf4cd2b58
+msgid "**Type**: ``NCIThesaurusTool``"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:32 aad0a9911bd442f089d64a7d8a934d0d
+msgid ""
+"**Description**: Get the direct child concepts of an NCI Thesaurus "
+"concept code. Returns the immediate subcategories/subtypes of a concept "
+"in the NCI ontology hierarchy. Useful for navigating the cancer "
+"terminology hierarchy and finding more specific terms. Example: C3262 "
+"(Neoplasm) has children C4741 (Neoplasm by Morphology), C3263 (Neoplasm "
+"by Site), C7062 (Neoplasm by Special Category)."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:34
+#: ../../tools/nci_thesaurus_tools.rst:65
+#: ../../tools/nci_thesaurus_tools.rst:96 0cde856ffff743be82beaca02e10b9d4
+#: 743e369561b047b5977a0644f4e606e4 b0855b51b6d14172bdca778b2f417cf1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:36 15204cc8525f409ea2e0814a5c760eb2
+msgid ""
+"``code`` (string) (required) NCI Thesaurus concept code to get children "
+"for. Examples: 'C3262' (Neoplasm), 'C3224' (Melanoma), 'C2991' (Disease "
+"or Disorder), 'C12219' (Nervous System)."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:39
+#: ../../tools/nci_thesaurus_tools.rst:70
+#: ../../tools/nci_thesaurus_tools.rst:104 17f3c2d74a9245dbacb2c811abef4388
+#: 35014392adad417eb237f74653fb3520 dbd72fad4b954baba5874f63c11bceb6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:53 120c5d3895114d38b0b58828c5c637c3
+msgid "**NCIThesaurus_get_concept** (Type: NCIThesaurusTool)"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:55 9165e93348df48e9b1dba77e029468fa
+msgid ""
+"Get detailed information about an NCI Thesaurus concept by its code. "
+"Returns the concept name, de..."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst 00765b5c70ab4580a21ea9bb1c10c306
+msgid "NCIThesaurus_get_concept tool specification"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:61 6f864be423d74cf8a1c10ac58455b727
+msgid "**Name**: ``NCIThesaurus_get_concept``"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:63 c5570d65998f45729b9c087df7b94b17
+msgid ""
+"**Description**: Get detailed information about an NCI Thesaurus concept "
+"by its code. Returns the concept name, definition, synonyms, semantic "
+"types, and cross-references to other terminologies (SNOMED, MedDRA, "
+"CDISC). Useful for understanding standardized cancer terminology and "
+"finding related concepts. Example: C3262 (Neoplasm) returns the "
+"definition, 17 synonyms, and links to ICD-10, SNOMED-CT."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:67 f64eb9467e7e473d82494fdc77d33919
+msgid ""
+"``code`` (string) (required) NCI Thesaurus concept code. Examples: "
+"'C3224' (Melanoma), 'C3262' (Neoplasm), 'C17998' (BRCA1), 'C38009' "
+"(Apoptosis), 'C1909' (Imatinib)."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:84 5b36482f24484d7292d51a766c54d1c4
+msgid "**NCIThesaurus_search** (Type: NCIThesaurusTool)"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:86 612bfbc12dec4fbfa72a2d35d7bde275
+msgid ""
+"Search the NCI Thesaurus (NCIt) for biomedical concepts by term. NCIt is "
+"the National Cancer Inst..."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst d30a1b0b1e2c4293b5cfc63580df2877
+msgid "NCIThesaurus_search tool specification"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:92 e5673e63ddc44b4bae5968b085a761b5
+msgid "**Name**: ``NCIThesaurus_search``"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:94 64fe4a8fc65c4bc4ac870136884b0257
+msgid ""
+"**Description**: Search the NCI Thesaurus (NCIt) for biomedical concepts "
+"by term. NCIt is the National Cancer Institute's reference terminology "
+"covering cancer-related terms, diseases, drugs, anatomy, genes, and "
+"biological processes. Returns matching concepts with NCI codes, names, "
+"and semantic types. Essential for standardized cancer research "
+"vocabulary. Example: searching 'melanoma' returns C3224 (Melanoma) as the"
+" primary concept."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:98 530aba7936074bf0bd1120eb05641203
+msgid ""
+"``term`` (string) (required) Search term for NCI concepts. Examples: "
+"'melanoma', 'breast cancer', 'imatinib', 'BRCA1', 'apoptosis', 'lung "
+"adenocarcinoma'."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:101 d41329cd7d854043a5e4f13a7a7ce2d4
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default 10, max 100)."
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:118 600fe21b721e4cad8e1f6a417834d276
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:120 9dda1c26da724f29875e871dbd1f529c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nci_thesaurus_tools.rst:121 3ac05ef9474c499ba5493a40bbbf6089
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

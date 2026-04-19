@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/kegg_conv_link_tools.rst:10 ca0195de42324b6b8c9147758aa65b0d
+msgid "Kegg Conv Link Tools"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:12 86afbb11a58c439f9508a2124c9afcfb
+msgid ""
+"**Configuration File**: ``kegg_conv_link_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:16 36b8ae49b6cf4cb4a833f8e63a8cd0e6
+msgid ""
+"This page contains all tools defined in the ``kegg_conv_link_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:19 1c18cb05152a43ba9f4c96b51c9c1f71
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:22 5d9020e37abc4444a5d0f5f62a0ccf58
+msgid "**KEGG_convert_ids** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:24 9dd7562779e74aed9faf4f36065f541d
+msgid ""
+"Convert KEGG gene/compound identifiers to external database IDs using the"
+" KEGG /conv API. Maps KE..."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst 5401906ff96c44e7a75fd9bda30d69fd
+msgid "KEGG_convert_ids tool specification"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:28
+#: ../../tools/kegg_conv_link_tools.rst:63 3668f4bcb61341a19487ec6d1fa5015f
+#: f8c2726455f64c48872dc3c36b4ae0d6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:30 505235b7c0be4325a444d80c09423154
+msgid "**Name**: ``KEGG_convert_ids``"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:31
+#: ../../tools/kegg_conv_link_tools.rst:66 01eb2b84a8404025b3951e47a18e2d68
+#: 06ad7934caff499eae1fb66d89b75836
+msgid "**Type**: ``KEGGExtTool``"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:32 f4ee5b522f2545ab9984977ea0502dc0
+msgid ""
+"**Description**: Convert KEGG gene/compound identifiers to external "
+"database IDs using the KEGG /conv API. Maps KEGG gene IDs (e.g., hsa:7157"
+" for TP53) to UniProt, NCBI Gene, NCBI Protein, ChEBI, or PubChem IDs. "
+"Essential for cross-database integration in bioinformatics workflows. "
+"Example: converting hsa:7157 to UniProt returns P04637 (TP53\\_HUMAN)."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:34
+#: ../../tools/kegg_conv_link_tools.rst:69 569140a58bb348d28b6ea42a08f72ebe
+#: 85b3fe05b3f34d7ca09f1de3c4acd4af
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:36 64cdf1f835c04596843f1747d7789be9
+msgid ""
+"``kegg_id`` (string) (required) KEGG entry ID. For genes use format "
+"'organism:gene\\_id' (e.g., 'hsa:7157' for human TP53, 'mmu:22059' for "
+"mouse Trp53). For compounds use 'cpd:C00002' (ATP). Multiple IDs "
+"separated by '+' (e.g., 'hsa:7157+hsa:672')."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:39 ff48ff23243e40cfaac7161520fc5af2
+msgid ""
+"``target_db`` (string) (required) External database to convert to. "
+"Options: 'uniprot' (UniProt accessions), 'ncbi-geneid' (NCBI Gene/Entrez "
+"IDs), 'ncbi-proteinid' (NCBI protein accessions), 'chebi' (ChEBI compound"
+" IDs), 'pubchem' (PubChem substance IDs)."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:42
+#: ../../tools/kegg_conv_link_tools.rst:77 92d3630ca18f40dc91ae1f318d58c3a6
+#: a439bdb891f04b24a68796c983bbaab8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:57 f9961c40e5754754bb18bdc75f3fb624
+msgid "**KEGG_link_entries** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:59 13a8e9bcb8564ccd98292b19c3fa1ed1
+msgid ""
+"Find cross-references between KEGG databases using the KEGG /link API. "
+"Given a KEGG entry (gene, ..."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst 8800d769f698434594de6b46ce8c058a
+msgid "KEGG_link_entries tool specification"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:65 3b5b6294597743cd936c09236bace03b
+msgid "**Name**: ``KEGG_link_entries``"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:67 37f57d67466945b5abadea06ac09a2ec
+msgid ""
+"**Description**: Find cross-references between KEGG databases using the "
+"KEGG /link API. Given a KEGG entry (gene, pathway, disease, drug, "
+"compound), find all linked entries in another KEGG database. Examples: "
+"find all diseases for gene hsa:7157 (TP53), all genes in a pathway, or "
+"all pathways for a compound. Complements KEGG\\_get\\_gene\\_pathways "
+"with more flexible cross-database queries."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:71 fa75f172c4cf4dc8a7c667ca034e50b0
+msgid ""
+"``source`` (string) (required) KEGG entry ID to query. Examples: "
+"'hsa:7157' (gene), 'hsa05200' (pathway), 'H00004' (disease), 'D00279' "
+"(drug), 'C00002' (compound)."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:74 bd68e79416f945b29997f365a87158e4
+msgid ""
+"``target`` (string) (required) Target KEGG database to search for links. "
+"Options: 'pathway', 'disease', 'drug', 'compound', 'ko' (orthology), "
+"'enzyme', 'reaction', 'module'. Can also use organism prefix for genes "
+"(e.g., 'hsa')."
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:92 4fda0fcc18ae478ca17fa5d0fc5346f5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:94 03f0b51bc7674c34af1aba8b2ff0db2b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/kegg_conv_link_tools.rst:95 bae35d685d2349b893933582d4a40243
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,207 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/protvar_tools.rst:10 5eabe171f8b342c7980cc548217ada3a
+msgid "Protvar Tools"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:12 c95019c9da8c4106be79cfac92a1b953
+msgid ""
+"**Configuration File**: ``protvar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:16 88a66fdc1a9248b08bf029ff781c7f68
+msgid ""
+"This page contains all tools defined in the ``protvar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:19 70bba94c178a4c5d9e5ffc85259c4439
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:22 abf9eaca0466478798e26a6e335b9757
+msgid "**ProtVar_get_function** (Type: ProtVarFunctionTool)"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:24 666bc6a3ce454b76b06daf62a3178b2d
+msgid ""
+"Get functional annotations at a specific amino acid position from "
+"ProtVar. Returns annotated UniP..."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst 83c94825e7a84e3faffbf93ed840ec4d
+msgid "ProtVar_get_function tool specification"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:28 ../../tools/protvar_tools.rst:66
+#: ../../tools/protvar_tools.rst:105 1b87d6a9cd6348c182c6d720430109c0
+#: 23d6d2c4d4f445fdb7b1936eed9c5b65 9c3cd114f80c473d8dd0242dd1066a92
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:30 161ee8bb7e5449cf97ac9f94270bc57f
+msgid "**Name**: ``ProtVar_get_function``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:31 e526aba73df4468b93bc9497c897bf01
+msgid "**Type**: ``ProtVarFunctionTool``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:32 7c8051cc01d240cea4abc18511403e3a
+msgid ""
+"**Description**: Get functional annotations at a specific amino acid "
+"position from ProtVar. Returns annotated UniProt features overlapping "
+"that position (domains, active sites, binding sites, PTMs), the protein's"
+" function description, and structural context. Use to understand the "
+"biological importance of a variant site before interpreting pathogenicity"
+" scores. Example: P04637 position 175 returns DNA-binding domain overlap "
+"and TP53 tumor suppressor function."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:34 ../../tools/protvar_tools.rst:72
+#: ../../tools/protvar_tools.rst:111 2eaef364dbb845b697c176761d5b5d54
+#: 4beb36b570d7446e8978f03f505ea55b f9b49c88ec8d49c199744dd107d8c6e3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:36 3477c4947c82472fbc4c4c0956a58cea
+msgid ""
+"``accession`` (string) (required) UniProt accession (e.g. 'P04637' for "
+"TP53)."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:39 ../../tools/protvar_tools.rst:77
+#: 77c26babd0474784b7b5b383a703cc34 cab6dc0729254b3185a1b2cf798e5e7e
+msgid ""
+"``position`` (integer) (required) Amino acid position in the protein "
+"(1-based)."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:42 57b8e373c0314db0b6e027eef4e3ee47
+msgid ""
+"``variant_aa`` (string) (optional) Single-letter code for the variant "
+"amino acid (e.g. 'H' for histidine). Optional but recommended."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:45 ../../tools/protvar_tools.rst:83
+#: ../../tools/protvar_tools.rst:116 30701c80256e40fc9ac65b119172d088
+#: 94c1be53bd6e479c8e9055983a135afc b3845b35ee84483c8b055864dc7b9111
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:60 8e66e0c460334f6caac8ca42a53275d3
+msgid "**ProtVar_get_population** (Type: ProtVarPopulationTool)"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:62 516555f2ff114c74a4b18b8764c63d3f
+msgid ""
+"Get population observation data for a protein variant position from "
+"ProtVar. Returns co-located v..."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst 2faf0afb72254152a730c1f706146199
+msgid "ProtVar_get_population tool specification"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:68 2083138f53ee4cdcb13dd057d2a3a2a9
+msgid "**Name**: ``ProtVar_get_population``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:69 2cf0c47de360488d96289e6c50a26ee4
+msgid "**Type**: ``ProtVarPopulationTool``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:70 76133e67deb04a42883e97f591075c4a
+msgid ""
+"**Description**: Get population observation data for a protein variant "
+"position from ProtVar. Returns co-located variants with population allele"
+" frequencies (gnomAD, 1000Genomes), clinical significance (ClinVar), and "
+"computational predictions (SIFT, PolyPhen)."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:74 ed3e4da6fc7e480d824f266f3d81daf6
+msgid ""
+"``accession`` (string) (required) UniProt accession (e.g. 'P22304' for "
+"IDS)."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:80 ed8f7b02bfcd4e4a84b70a24c02da307
+msgid ""
+"``genomic_location`` (integer) (required) Genomic coordinate (GRCh38) for"
+" the variant. Obtain from ProtVar\\_map\\_variant output."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:99 f25f5315ef364c6992763165d7a0d158
+msgid "**ProtVar_map_variant** (Type: ProtVarTool)"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:101 b3768b276d21440fb00e9aa90c147d8e
+msgid ""
+"Map a human protein variant to genomic coordinates and get pathogenicity "
+"predictions (AlphaMissen..."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst 28d86407574b430893af8415582c0cb9
+msgid "ProtVar_map_variant tool specification"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:107 f074d503b2fb4ebe96d5772985039ad5
+msgid "**Name**: ``ProtVar_map_variant``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:108 f840a397e8b5464abb0c81a1a40ebbe8
+msgid "**Type**: ``ProtVarTool``"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:109 c99befc8af4c4128bd8847156a823f5b
+msgid ""
+"**Description**: Map a human protein variant to genomic coordinates and "
+"get pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). "
+"Accepts three input formats: (1) protein 'ACCESSION CHANGE' e.g. 'P04637 "
+"R175H'; (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF-style genomic 'chr17 "
+"43057065 . T G'. Returns isoform mappings, consequence type, and variant "
+"effect scores."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:113 4649df5f7bdb49299951278a1d1a2ad6
+msgid ""
+"``variant`` (string) (required) Variant identifier in one of three "
+"formats: (1) 'UniProtAccession SingleLetterChange' e.g. 'P04637 R175H' "
+"(TP53 R175H); (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF genomic 'chr17 "
+"43057065 . REF ALT'. Note: colon-separated 'chr:pos:ref:alt' is auto-"
+"converted to VCF format."
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:130 ceae651111a54a0f86f9b2cbc3ce4a01
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:132 6ed8365d70494668b51fecd290ffcb72
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/protvar_tools.rst:133 b9f317deafc24b1885a28c598961b838
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

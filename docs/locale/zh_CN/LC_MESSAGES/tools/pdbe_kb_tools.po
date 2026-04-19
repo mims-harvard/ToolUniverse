@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_kb_tools.rst:10 cfc102dcaa2245849962da5815ac5dcc
+msgid "Pdbe Kb Tools"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:12 ff7199336eb144e2a40571d31653c2dd
+msgid ""
+"**Configuration File**: ``pdbe_kb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:16 e9e29027266d4dceb8ad1712f5d92f4e
+msgid ""
+"This page contains all tools defined in the ``pdbe_kb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:19 73b8194a028b4f1f94152618f4de41a1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:22 c3f701700b784183b6c74f44631dd012
+msgid "**PDBe_KB_get_interface_residues** (Type: PDBe_KB_Tool)"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:24 1bcde64a9d1f421d93e85f272c514f83
+msgid ""
+"Get protein-protein interaction interface residues for a UniProt protein "
+"from PDBe-KB. Returns re..."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst 1fb8837f05054ea5aa6f80268255af82
+msgid "PDBe_KB_get_interface_residues tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:28 ../../tools/pdbe_kb_tools.rst:59
+#: ../../tools/pdbe_kb_tools.rst:90 ../../tools/pdbe_kb_tools.rst:121
+#: 5f77c93472d24118abdff7af41b3a33f 72fcf956fce044b5a3d23dd74cd5bad9
+#: 78b89e656cd740d59eeb1ff276ce588a d33a43d07c7a4b9fa2f0e87aae42952b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:30 77082792d64f4e88ac44eb82fa046d48
+msgid "**Name**: ``PDBe_KB_get_interface_residues``"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:31 ../../tools/pdbe_kb_tools.rst:62
+#: ../../tools/pdbe_kb_tools.rst:93 ../../tools/pdbe_kb_tools.rst:124
+#: 3079758db881460cacff88f2b462ef50 85b4390d1f3b47e4a861baf6a06a8410
+#: acf50832b86e4fd287a6070d43b4f0e4 f020db22d9cf485e9e797828817b32bc
+msgid "**Type**: ``PDBe_KB_Tool``"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:32 d924867079ae4784a1ff58658d007a5b
+msgid ""
+"**Description**: Get protein-protein interaction interface residues for a"
+" UniProt protein from PDBe-KB. Returns residue positions (UniProt "
+"numbering) at interaction interfaces with other proteins, the identity of"
+" interaction partners, and PDB structures where each interface was "
+"observed. Essential for understanding protein complex formation, "
+"designing interface-disrupting mutations, and identifying functional "
+"hotspots. Example: P04637 (TP53) shows interaction interfaces with MDM2, "
+"p53BP2, and DNA."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:34 ../../tools/pdbe_kb_tools.rst:65
+#: ../../tools/pdbe_kb_tools.rst:96 ../../tools/pdbe_kb_tools.rst:127
+#: 2b0f319c34634f37b250dc9de519e812 39dee5f994d74603a3a2d1a1a6acf1b4
+#: a0343438d87a48d28123e3d6fb2360a8 bd435e9131544db48604ad9fbbe30015
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:36 ../../tools/pdbe_kb_tools.rst:67
+#: ../../tools/pdbe_kb_tools.rst:129 2f770d8d142f47968f544c0cc9e92f39
+#: dbe8e051580c4ffbb80401c452804940 f963fcb492684c0889395da70c30bea6
+msgid ""
+"``uniprot_accession`` (string) (required) UniProt accession ID for the "
+"protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:39 ../../tools/pdbe_kb_tools.rst:70
+#: ../../tools/pdbe_kb_tools.rst:101 ../../tools/pdbe_kb_tools.rst:132
+#: 46e720de4ad847c1810e04e23afaa863 6b8ff74755484e188a8f0d80ca5c5bd3
+#: 6fe7939b19024f0f878b5275a2452f23 9073e3342c0a4db5812b75ba26d0c5bc
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:53 7abf7a0d80ee41d7a6ae9a967b0289dc
+msgid "**PDBe_KB_get_ligand_sites** (Type: PDBe_KB_Tool)"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:55 7ae10108fd7449f0950c3425cb030fcd
+msgid ""
+"Get ligand binding site residues for a UniProt protein from PDBe-KB. "
+"Returns all known ligands th..."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst 57811d2feb1e46da9929529acab0acb6
+msgid "PDBe_KB_get_ligand_sites tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:61 1fb33d7a7749406dbdd1e7ba66f95bcd
+msgid "**Name**: ``PDBe_KB_get_ligand_sites``"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:63 ecf9ee0779e743abac1946803d76e161
+msgid ""
+"**Description**: Get ligand binding site residues for a UniProt protein "
+"from PDBe-KB. Returns all known ligands that bind the protein, with the "
+"specific residue positions (UniProt numbering) involved in binding, the "
+"PDB structures where binding was observed, and ligand metadata (scaffold,"
+" cofactor status, drug associations). Essential for understanding protein"
+" function, drug binding, and designing mutagenesis experiments. Example: "
+"P04637 (TP53) shows NAD binding at residue 382, zinc coordination at the "
+"DNA-binding domain."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:84 99e1add22bdd41f893349d3dd3354dbc
+msgid "**PDBe_KB_get_summary_stats** (Type: PDBe_KB_Tool)"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:86 de39bfbc9a654d9b8b05a25ef9b69d00
+msgid ""
+"Get aggregated structural summary statistics for a UniProt protein from "
+"PDBe-KB. Returns the numb..."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst fa1d3a9c3a1841e491181175897f29d2
+msgid "PDBe_KB_get_summary_stats tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:92 94146a6b465542ccb0b3e5f0d0fc0f60
+msgid "**Name**: ``PDBe_KB_get_summary_stats``"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:94 8a02f9e800d24ddabf0ab88ebc4f0e0b
+msgid ""
+"**Description**: Get aggregated structural summary statistics for a "
+"UniProt protein from PDBe-KB. Returns the number of PDB structures, "
+"unique ligands, interaction partners, annotations, and similar proteins "
+"available for the protein. This is a quick way to assess structural "
+"coverage before diving into detailed data. Example: P04637 (TP53) has 296"
+" PDB structures, 121 ligands, and 54 interaction partners."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:98 d21274f3d817444caa790594e3a95caf
+msgid ""
+"``uniprot_accession`` (string) (required) UniProt accession ID for the "
+"protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), "
+"'P01308' (insulin)."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:115 f83304c251fa4de9a15ee9d80353938e
+msgid "**PDBe_KB_get_superposition_clusters** (Type: PDBe_KB_Tool)"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:117 62cdfdc4e1164e63a1eff37101bc5407
+msgid ""
+"Get structural superposition clusters for a UniProt protein from PDBe-KB."
+" Returns protein segment..."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst d31b4ce95060475582f89d0bab8d470c
+msgid "PDBe_KB_get_superposition_clusters tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:123 dff741167e124f5e90e465c46bda7bbc
+msgid "**Name**: ``PDBe_KB_get_superposition_clusters``"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:125 61f9bef436ab4345a52087043a70d5f9
+msgid ""
+"**Description**: Get structural superposition clusters for a UniProt "
+"protein from PDBe-KB. Returns protein segments with structurally aligned "
+"PDB chains grouped into clusters based on 3D structural similarity. Each "
+"cluster has a representative structure and aligned member structures. "
+"Useful for understanding structural coverage across different "
+"conformational states, identifying the best representative structure for "
+"each domain, and comparing structural fragments from different crystal "
+"structures. Example: P04637 (TP53) shows clusters covering residues 1-93 "
+"(transactivation domain) and 94-312 (DNA-binding domain); P00533 (EGFR) "
+"has 5 segments with multiple clusters covering the extracellular and "
+"kinase domains."
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:146 be0171c903434ceb8fc8d0977f83f281
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:148 5f0440a6586f452a8437b9bdd5a46466
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_kb_tools.rst:149 ff0967daea2c46e582d522f572d912f9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

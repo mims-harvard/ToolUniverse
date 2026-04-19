@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/regulomedb_tools.rst:10 e6270f13599849079328bd7e1f564f36
+msgid "Regulomedb Tools"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:12 31df500b44514c3d984123d03eb1787e
+msgid ""
+"**Configuration File**: ``regulomedb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:16 af720a38d36644ec9c63a867caa3cc16
+msgid ""
+"This page contains all tools defined in the ``regulomedb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:19 a433606811a44ea6911aba78f90b2bb9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:22 1953d64e6ac547bea94f988d87fccf05
+msgid "**RegulomeDB_query_variant** (Type: RegulomeDBRESTTool)"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:24 6290587e0e0848f497d930fc1d643bf6
+msgid "Query RegulomeDB for regulatory variant annotations using rsID"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst 71eaed8e52a84f51a032f22c89b00733
+msgid "RegulomeDB_query_variant tool specification"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:28 cb2e79771be34d5f9a60b51f4982e873
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:30 08224e6b8c11420fb34e05c2289488a1
+msgid "**Name**: ``RegulomeDB_query_variant``"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:31 a88338baf8734a9893cc03f470b26351
+msgid "**Type**: ``RegulomeDBRESTTool``"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:32 ee1dc879333743a39ace9856442d5da6
+msgid ""
+"**Description**: Query RegulomeDB for regulatory variant annotations "
+"using rsID"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:34 6edcbbdaf151479e89196694e64ac4bb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:36 454a6c80eaa149dfa562915a813c9811
+msgid "``rsid`` (string) (optional) dbSNP rsID (e.g., 'rs4994', 'rs429358')"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:39 b85917eaabdf450f8a3a0d54b872599d
+msgid ""
+"``variant`` (string) (optional) Alias for rsid. dbSNP rsID (e.g., "
+"'rs7903146', 'rs429358')."
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:42 013c37e698184775b286201e1952716b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:55 b0fb2bbe55524160b3dddea7fd0610a3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:57 8919fce9ded745b7a18d87154b6effec
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/regulomedb_tools.rst:58 568036c2cb44439aa84e67a6afe88b51
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -7,102 +7,152 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 21:40-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/unpaywall_tools.rst:2 35d4c14ea717455f9df3b7fc3ff56ef9
+#: ../../tools/unpaywall_tools.rst:10 b3e8297ae94c477a901cc24c1e03eb36
 msgid "Unpaywall Tools"
 msgstr "Unpaywall 工具"
 
-#: ../../tools/unpaywall_tools.rst:4 5ec9f1a5e0534325ab943846f3830bb2
+#: ../../tools/unpaywall_tools.rst:12 76e22b5970b14a68be69338b0faed32c
+#, fuzzy
 msgid ""
 "**Configuration File**: ``unpaywall_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 1"
+"**Tools Count**: 2"
 msgstr ""
 "**配置文件**：``unpaywall_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/unpaywall_tools.rst:8 a01c958348534239a553f0e899f41383
+#: ../../tools/unpaywall_tools.rst:16 2683c08a90f44f48974fa9aa0bb1bff8
 msgid ""
 "This page contains all tools defined in the ``unpaywall_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``unpaywall_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/unpaywall_tools.rst:11 35ca9d1eac964f9a9ca0e1853eafcdf9
+#: ../../tools/unpaywall_tools.rst:19 245977635723453e945a082163b4796d
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/unpaywall_tools.rst:14 d03e7140f9ca4312991fa2f52c40b89e
+#: ../../tools/unpaywall_tools.rst:22 b42e5709f4234b22a8a688ab31349700
 msgid "**Unpaywall_check_oa_status** (Type: UnpaywallTool)"
 msgstr "**Unpaywall_check_oa_status**（类型：Unpaywall工具）"
 
-#: ../../tools/unpaywall_tools.rst:16 fc7b58ac34d94cd2a0ad62d1a565d4c2
+#: ../../tools/unpaywall_tools.rst:24 c6094e2b83f042bcafe664e0c19d0768
 msgid ""
 "Query Unpaywall by DOI to check open-access status and OA locations. "
 "Requires a contact email for..."
 msgstr "通过 DOI 查询 Unpaywall 以检查开放获取状态和开放获取位置。需要提供联系邮箱以便..."
 
-#: ../../tools/unpaywall_tools.rst d420a7f4d3804614bd858056e6b3eb43
+#: ../../tools/unpaywall_tools.rst ac7f0b013d7d42a784c9a1883f6ecde5
 msgid "Unpaywall_check_oa_status tool specification"
 msgstr "Unpaywall_check_oa_status 工具规范"
 
-#: ../../tools/unpaywall_tools.rst:20 0c19daeb7985449c8db731f6b1b15d76
+#: ../../tools/unpaywall_tools.rst:28 ../../tools/unpaywall_tools.rst:63
+#: c00c84e5e8cf444d984f31bc3c75c04f f31f75664dda411da00c3b4fd3c53f4b
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/unpaywall_tools.rst:22 d476b6aa1634409396e4056564150cf2
+#: ../../tools/unpaywall_tools.rst:30 fe7a887ff41948e4bc0f8c935ac913fd
 msgid "**Name**: ``Unpaywall_check_oa_status``"
 msgstr "**名称**：``Unpaywall_check_oa_status``"
 
-#: ../../tools/unpaywall_tools.rst:23 ee615ede8d9b4a88986b8b769a935d7a
+#: ../../tools/unpaywall_tools.rst:31 ../../tools/unpaywall_tools.rst:66
+#: 593089087f5f4a18b1a5e682bb88534f e6a8a989517b44e8ac410d63623bd72b
 msgid "**Type**: ``UnpaywallTool``"
 msgstr "**类型**：``UnpaywallTool``"
 
-#: ../../tools/unpaywall_tools.rst:24 7d04e653de4c407a9b07bae61559b8d4
+#: ../../tools/unpaywall_tools.rst:32 15c897d8b6f640c7ad2bf06a568e7521
 msgid ""
-"**Description**: Query Unpaywall by DOI to check open-access status and OA "
-"locations. Requires a contact email for API access."
+"**Description**: Query Unpaywall by DOI to check open-access status and "
+"OA locations. Requires a contact email for API access."
 msgstr "**描述**：通过 DOI 查询 Unpaywall 以检查开放获取状态及开放获取位置。API 访问需提供联系邮箱。"
 
-#: ../../tools/unpaywall_tools.rst:26 ea7df491a03f406c9469bd13f9150bb2
+#: ../../tools/unpaywall_tools.rst:34 ../../tools/unpaywall_tools.rst:69
+#: a11853c97c384e69bd0f8258d1510a1f f147a446d78e43c08d687988ab393b94
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/unpaywall_tools.rst:28 b6b1e4829ace48beaf89dd1807c2d674
+#: ../../tools/unpaywall_tools.rst:36 d2e6c6f6f0004fb2bb3aa40134ffc6c1
 msgid ""
-"``doi`` (string) (required) DOI (Digital Object Identifier) of the article "
-"to check for open access status."
+"``doi`` (string) (required) DOI (Digital Object Identifier) of the "
+"article to check for open access status."
 msgstr "``doi``（字符串）（必填）文章的 DOI（数字对象唯一标识符），用于检查开放获取状态。"
 
-#: ../../tools/unpaywall_tools.rst:31 9907da2858a04cb199b3c3e6f687d7c7
+#: ../../tools/unpaywall_tools.rst:39 50e38e9d90a545f0918f0cd5a7d292f9
 msgid ""
-"``email`` (string) (required) Contact email address required by Unpaywall "
-"API for polite usage tracking."
+"``email`` (string) (required) Contact email address required by Unpaywall"
+" API for polite usage tracking."
 msgstr "``email``（字符串）（必填）Unpaywall API 要求提供的联系电子邮件地址，用于礼貌的使用跟踪。"
 
-#: ../../tools/unpaywall_tools.rst:34 77a467cb8b704eaca6f75fe7631e3bf3
+#: ../../tools/unpaywall_tools.rst:42 ../../tools/unpaywall_tools.rst:77
+#: 8f835c3acde541c89935a3a44e0a32e5 f89b95b1431745279b6ec25010b8642d
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/unpaywall_tools.rst:49 cb43277319da4afa96e1bb17b8541c19
+#: ../../tools/unpaywall_tools.rst:57 bf7302d4200d42dc80a58b6e07c4713e
+#, fuzzy
+msgid "**Unpaywall_get_full_text_url** (Type: UnpaywallTool)"
+msgstr "**Unpaywall_check_oa_status**（类型：Unpaywall工具）"
+
+#: ../../tools/unpaywall_tools.rst:59 9d1be66d9e034dcfaf80df9d2ab1148e
+msgid ""
+"Retrieve full-text PDF and landing page URLs for a scholarly article via "
+"its DOI. Returns the bes..."
+msgstr ""
+
+#: ../../tools/unpaywall_tools.rst 22fc6459a0764c65a6d338f75b112ff5
+#, fuzzy
+msgid "Unpaywall_get_full_text_url tool specification"
+msgstr "Unpaywall_check_oa_status 工具规范"
+
+#: ../../tools/unpaywall_tools.rst:65 f2616ad365d1411493538823a72d6661
+#, fuzzy
+msgid "**Name**: ``Unpaywall_get_full_text_url``"
+msgstr "**名称**：``Unpaywall_check_oa_status``"
+
+#: ../../tools/unpaywall_tools.rst:67 b25fdaed1c264e18b80d6f678fa4c509
+msgid ""
+"**Description**: Retrieve full-text PDF and landing page URLs for a "
+"scholarly article via its DOI. Returns the best open-access PDF link, "
+"landing page URL, all available OA locations with their host types "
+"(publisher, repository, etc.), plus basic article metadata (title, "
+"journal, publisher). Use this tool when you need to access the full text "
+"of a paper."
+msgstr ""
+
+#: ../../tools/unpaywall_tools.rst:71 57512fccfefb41f2a277d357c3be54ec
+#, fuzzy
+msgid ""
+"``doi`` (string) (required) DOI (Digital Object Identifier) of the "
+"article, e.g. '10.1038/nature12373'."
+msgstr "``doi``（字符串）（必填）文章的 DOI（数字对象唯一标识符），用于检查开放获取状态。"
+
+#: ../../tools/unpaywall_tools.rst:74 ba18682d65b44e70b7c0d6cb6d4e7f11
+msgid ""
+"``email`` (string) (optional) Contact email for Unpaywall API polite "
+"pool. Defaults to 'tools@tooluniverse.org' if not provided."
+msgstr ""
+
+#: ../../tools/unpaywall_tools.rst:91 7ad38bc08ca04b5ea40937c9de197360
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/unpaywall_tools.rst:51 217a8047122b433890194fa9529b878b
+#: ../../tools/unpaywall_tools.rst:93 bb99dcfc00cf496bb7635d3379e16d66
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/unpaywall_tools.rst:52 4358c8911b194dcda1cca5e6efd10af4
+#: ../../tools/unpaywall_tools.rst:94 ea2ff18f0f3e45819c572a051ad6405a
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+

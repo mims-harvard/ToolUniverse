@@ -1,0 +1,241 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gtopdb_tools.rst:10 48a1524997bc4895bcbcc344d62163a9
+msgid "Gtopdb Tools"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:12 66cd152824434256a73cab59ce5d28d2
+msgid ""
+"**Configuration File**: ``gtopdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:16 a653b877ae34408cada9a83a95aa825a
+msgid ""
+"This page contains all tools defined in the ``gtopdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:19 d7516853818044f18cb845007e3e3218
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:22 fcc8a11adb064f0cb455252bd34bf734
+msgid "**GtoPdb_get_interactions** (Type: GtoPdbRESTTool)"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:24 a8b6b9fb1e934cf3ae4fb0199096f5cd
+msgid ""
+"Get pharmacological interactions between targets and ligands from the "
+"Guide to Pharmacology datab..."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst 52ae5d7a3145431db318f9110f51ca6c
+msgid "GtoPdb_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:28 ../../tools/gtopdb_tools.rst:70
+#: ../../tools/gtopdb_tools.rst:109 1d275576f27540fc9454e1f8d532907f
+#: ae84663ade2744a09c43a01b59da8452 f33435dd65554d6cb9258db3f0cf212b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:30 2528542b05c14b1a83da8e94b51d36e8
+msgid "**Name**: ``GtoPdb_get_interactions``"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:31 ../../tools/gtopdb_tools.rst:73
+#: ../../tools/gtopdb_tools.rst:112 1707854877524b2fbd2d57ca0a640b62
+#: 97c1e2ad44b64d54b94313df10d0f58d 9f540c45fed74efe95427233dd50561e
+msgid "**Type**: ``GtoPdbRESTTool``"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:32 9e8fccf2ed9d494c80f02a55ebd7c017
+msgid ""
+"**Description**: Get pharmacological interactions between targets and "
+"ligands from the Guide to Pharmacology database. Provide gene\\_symbol "
+"(convenience, auto-resolves to targetId), targetId (from "
+"GtoPdb\\_search\\_targets), or ligandId (from GtoPdb\\_search\\_ligands) "
+"to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), "
+"action type (agonist, antagonist, inhibitor, etc.), species, and assay "
+"information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, "
+"nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR"
+" inhibitors) have limited interaction data — use "
+"ChEMBL\\_get\\_drug\\_mechanisms for those instead. No authentication "
+"required."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:34 ../../tools/gtopdb_tools.rst:76
+#: ../../tools/gtopdb_tools.rst:115 1150668f83e4487ba95660fa7f09a415
+#: 16784b949f0b48af929b4658a5cb0bfd bff3cf91b10741b1ae5761c1a42e02f9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:36 5f8711e91e6f49f2bd3ec257a7ab1ec4
+msgid ""
+"``gene_symbol`` (string, null) (optional) Gene symbol convenience "
+"parameter — automatically resolves to GtoPdb targetId. Works for gene-"
+"symbol-named targets (e.g., 'KRAS', 'EGFR', 'BRAF', 'ALK'). Traditional "
+"receptor names like 'DRD2' may not resolve; use GtoPdb\\_search\\_targets"
+" first to confirm. Prefer exact gene symbols over partial names."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:39 cd6d0390905148f582efbf68f05934d8
+msgid ""
+"``targetId`` (integer, null) (optional) GtoPdb target ID. Get from "
+"GtoPdb\\_search\\_targets. Examples: 2486 (dopamine beta-hydroxylase), 20"
+" (5-HT1A receptor). Alias: target\\_id also accepted."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:42 408895c0a3124b579072edbc556d7e0d
+msgid ""
+"``target_id`` (integer, null) (optional) Alias for targetId. GtoPdb "
+"target ID."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:45 3a68aabc872944418e7ce6c5be196e3e
+msgid ""
+"``ligandId`` (integer, null) (optional) GtoPdb ligand ID. Get from "
+"GtoPdb\\_search\\_ligands. Examples: 5765 (aspirin), 7093 (morphine)"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:48 b1a656c752e84fb7a76e1ade3bfc8e53
+msgid ""
+"``species`` (string, null) (optional) Filter by species. Examples: "
+"'Human', 'Mouse', 'Rat'"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:51 ../../tools/gtopdb_tools.rst:90
+#: ../../tools/gtopdb_tools.rst:126 900f48fd1d6440f78c1e0677d1e8a64d
+#: 905089e1ab724c49a9fe01964782c23a 926a9763cf4043378a20df530cc82364
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:64 6d58bf8797654897828e2ac6e9567ed4
+msgid "**GtoPdb_search_ligands** (Type: GtoPdbRESTTool)"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:66 1d6d696915f048838ca6fbeba77327e8
+msgid ""
+"Search the Guide to Pharmacology database for pharmacological ligands "
+"(drugs, natural products, e..."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst ee05a8500e324343be388c17f061bfae
+msgid "GtoPdb_search_ligands tool specification"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:72 b608bda9ff20453b88796d1be9669798
+msgid "**Name**: ``GtoPdb_search_ligands``"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:74 8587562fba2d413585daed339e619f1b
+msgid ""
+"**Description**: Search the Guide to Pharmacology database for "
+"pharmacological ligands (drugs, natural products, endogenous compounds). "
+"Returns ligand details including type, approval status, INN name, WHO "
+"essential medicine status, and whether it is an approved drug. GtoPdb "
+"covers 10,000+ curated ligands with pharmacological activity data. No "
+"authentication required."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:78 37302e76640a469983f4f31305651ec2
+msgid ""
+"``name`` (string, null) (optional) Ligand name or INN to search. "
+"Examples: 'aspirin', 'morphine', 'dopamine', 'caffeine', 'insulin'"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:81 56391c3c63ef40458af2e50d397c9722
+msgid ""
+"``type`` (string, null) (optional) Ligand type filter. Values: "
+"'Approved', 'Synthetic organic', 'Natural product', 'Endogenous peptide',"
+" 'Antibody', 'Inorganic'"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:84 b924d2fbdb824d2db28b8c285aaa7ca4
+msgid ""
+"``approved`` (boolean, null) (optional) Filter to approved drugs only "
+"(true) or all ligands (false/omit)"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:87 ../../tools/gtopdb_tools.rst:123
+#: 4012dd959e8844658f1ba306e5f1eda2 618828cae4ae434f8cc8c0cde5ee991f
+msgid ""
+"``query`` (string, null) (optional) Name/keyword to search for. Alias for"
+" the \"name\" parameter."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:103 4031a85508bc442a88c7dd674df1399d
+msgid "**GtoPdb_search_targets** (Type: GtoPdbRESTTool)"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:105 f3d195f5c43c43e897bbf9e96b2c9d92
+msgid ""
+"Search the Guide to Pharmacology database (GtoPdb) for drug targets "
+"including GPCRs, ion channels..."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst 2106969d5af94279ab2d942821e22769
+msgid "GtoPdb_search_targets tool specification"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:111 a750b86134ef4b69ad05ef560e17d221
+msgid "**Name**: ``GtoPdb_search_targets``"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:113 ba461ff790134d0ea7167d8a30cbd946
+msgid ""
+"**Description**: Search the Guide to Pharmacology database (GtoPdb) for "
+"drug targets including GPCRs, ion channels, nuclear receptors, enzymes, "
+"transporters, and catalytic receptors. Returns target IDs, names, "
+"abbreviations, types, and family classifications. GtoPdb is the "
+"IUPHAR/BPS reference resource for pharmacological drug targets with 3000+"
+" curated targets. No authentication required."
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:117 4e01a9806f994373b9c18853124b57ce
+msgid ""
+"``name`` (string, null) (optional) Target name or gene symbol to search. "
+"Examples: 'dopamine', 'serotonin receptor', 'EGFR', 'beta-adrenoceptor', "
+"'TRPV1'"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:120 82a75775fc064675b92cacc6b0516f45
+msgid ""
+"``type`` (string, null) (optional) Target type filter. Values: 'GPCR', "
+"'Ion channel', 'Nuclear receptor', 'Enzyme', 'Transporter', 'Catalytic "
+"receptor'"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:139 eb52e20970b64740bd66a92e59ad8623
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:141 8c7edc92404b4e2f88a878dc3e379be9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gtopdb_tools.rst:142 372a9987572f4678b81e5c14186be0ee
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

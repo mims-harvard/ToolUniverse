@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_xrefs_tools.rst:10 5586a703150f4670b2e8993392f1fdde
+msgid "Ensembl Xrefs Tools"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:12 fe12a000eb674b28b8ebe1869bb248d2
+msgid ""
+"**Configuration File**: ``ensembl_xrefs_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:16 c48c1a40c0c7477aae3b8389db6f9ef3
+msgid ""
+"This page contains all tools defined in the ``ensembl_xrefs_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:19 0ff564cfe32c45bd9b6c56bd061e7ba0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:22 ab7908bc8fa24fde8956cc6004f30fc8
+msgid "**Ensembl_get_cross_references** (Type: EnsemblXrefsTool)"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:24 0f66cfa5a46f4852aadad79f04fc453e
+msgid ""
+"Get all external database cross-references for an Ensembl stable "
+"identifier. Returns linked recor..."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst 4b606909de0047f689b6c2ddf5df2007
+msgid "Ensembl_get_cross_references tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:28
+#: ../../tools/ensembl_xrefs_tools.rst:62 bfce67a5f32647378b8c68649d7bad97
+#: eda4407037de4522b7d15752accc12c3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:30 94f6139caf30478b825255f42d7dc05b
+msgid "**Name**: ``Ensembl_get_cross_references``"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:31
+#: ../../tools/ensembl_xrefs_tools.rst:65 083d88b85f604e3eb4991cf738ed654e
+#: 703e6efaceac40b9983192a581480fe1
+msgid "**Type**: ``EnsemblXrefsTool``"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:32 16d10b2bdea149b4b169c6b266667844
+msgid ""
+"**Description**: Get all external database cross-references for an "
+"Ensembl stable identifier. Returns linked records from HGNC, EntrezGene, "
+"UniProt, GeneCards, Reactome, MIM/OMIM, ArrayExpress, and other "
+"databases. Essential for mapping between Ensembl and other identifier "
+"systems, discovering related database entries, or building cross-database"
+" links for a gene. Can filter by specific external database. Example: "
+"'ENSG00000141510' (TP53) returns 157 cross-references across 11 databases"
+" including HGNC:11998, EntrezGene:7157, GeneCards:TP53, "
+"MIM\\_GENE:191170, and Reactome pathways."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:34
+#: ../../tools/ensembl_xrefs_tools.rst:68 1f799cbe6869425193fb75fa9f290acf
+#: 44c4be1c6594417e99cf67e2299af70b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:36 69e374d6fa53443592679e20fea9919d
+msgid ""
+"``ensembl_id`` (string) (required) Ensembl stable identifier. Can be gene"
+" (ENSG\\*), transcript (ENST\\*), or translation (ENSP\\*). Examples: "
+"'ENSG00000141510' (TP53 gene), 'ENST00000269305' (TP53 canonical "
+"transcript)."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:39 4869ea9f92004b68803aa062b5858b5f
+msgid ""
+"``external_db`` (string, null) (optional) Optional: filter by external "
+"database name. Examples: 'HGNC', 'EntrezGene', 'Uniprot\\_gn', "
+"'MIM\\_GENE', 'Reactome\\_gene', 'GeneCards'. If not specified, returns "
+"all cross-references."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:42
+#: ../../tools/ensembl_xrefs_tools.rst:79 21a7ec79270048e38cfdd57716af2132
+#: 48c471bcd2344784be4aab0385898393
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:56 11984e10238d4f748dca411e2b71a50e
+msgid "**Ensembl_lookup_gene_by_symbol** (Type: EnsemblXrefsTool)"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:58 9d92ef4246c8444bae459c36e7230c8a
+msgid ""
+"Look up Ensembl gene IDs for a gene symbol across external databases. "
+"Given a gene symbol (e.g., ..."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst cddc7e52b5c14034a31272f34ba167da
+msgid "Ensembl_lookup_gene_by_symbol tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:64 be01ebfb370b4626821cbd4ddf7eaef1
+msgid "**Name**: ``Ensembl_lookup_gene_by_symbol``"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:66 23668778b1ca43f58e66e4e890722aff
+msgid ""
+"**Description**: Look up Ensembl gene IDs for a gene symbol across "
+"external databases. Given a gene symbol (e.g., 'TP53'), returns all "
+"matching Ensembl gene and transcript IDs. Useful for converting gene "
+"symbols to Ensembl stable identifiers for use with other Ensembl APIs. "
+"Example: symbol 'TP53' in human returns ENSG00000141510 (gene) and "
+"related transcript/translation IDs; 'BRCA1' returns ENSG00000012048."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:70 eda89398120a4495ac874a229243682c
+msgid ""
+"``symbol`` (string) (required) Gene symbol to look up. Examples: 'TP53', "
+"'BRCA1', 'EGFR', 'BRAF', 'KRAS'."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:73 1794e7dc6ed046c0a462876cb81d498f
+msgid ""
+"``species`` (string) (optional) Species name. Default: 'human'. Examples:"
+" 'human', 'mouse', 'rat', 'zebrafish'."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:76 2dcdd4db152247a0812f1c580aed50c7
+msgid ""
+"``external_db`` (string, null) (optional) Optional: filter by external "
+"database. Examples: 'HGNC', 'EntrezGene'."
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:93 17ef2b94473c4e9188b289c2d9491e33
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:95 9da79dff91fe4d24b32598322f353ca4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_xrefs_tools.rst:96 08a085f8d00c461292e002a43fdbd8d1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,190 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/opencitations_tools.rst:10 1d4014c335c4420485f6efed73c44691
+msgid "Opencitations Tools"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:12 1d14d952ace44956922d7e6031f82e86
+msgid ""
+"**Configuration File**: ``opencitations_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:16 4f1d5c85ecde417a82849c11a03d39af
+msgid ""
+"This page contains all tools defined in the ``opencitations_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:19 3e2748e14fda444da6fb8195e1b7ef9b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:22 e1c83cf5db574da38291ff2e307044a8
+msgid "**OpenCitations_get_citation_count** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:24 f4c5e373d94b4a5c98250b3e0f6d4cfa
+msgid ""
+"Get the total citation count for a scientific article using OpenCitations"
+" COCI index. Returns the..."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst e0a7a4bcbf6c43899c67fcee803dc2e8
+msgid "OpenCitations_get_citation_count tool specification"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:28
+#: ../../tools/opencitations_tools.rst:59
+#: ../../tools/opencitations_tools.rst:93 33f593e711d940cc8addf49f9ffb342b
+#: 6534c4a912c844af9d93d61ec9fe2e30 699a3bf69dd34c90811688c27dc63069
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:30 1e2b8d78f8794e92b83dc3257e3bb70b
+msgid "**Name**: ``OpenCitations_get_citation_count``"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:31
+#: ../../tools/opencitations_tools.rst:62
+#: ../../tools/opencitations_tools.rst:96 15803069240147f3882a2077de2b2daa
+#: 57dbe8b22eb947188219c4e3995c3718 64425f86a27c4ef0bec06d8f71820672
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:32 3fc26a0a69e145dbafdd23b67da5ca09
+msgid ""
+"**Description**: Get the total citation count for a scientific article "
+"using OpenCitations COCI index. Returns the number of times a paper has "
+"been cited in the OpenCitations database. Faster than retrieving the full"
+" citation list when you only need the count."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:34
+#: ../../tools/opencitations_tools.rst:65
+#: ../../tools/opencitations_tools.rst:99 059156e7610a47b3a29604fb6008d187
+#: 6e1647255f7447c59203b67e462f6b7b 825b795d5bde4f92a2b084cf080aaed8
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:36 595d656c221244a18d2733795d9975f1
+msgid ""
+"``doi`` (string) (required) DOI of the paper to count citations for. Do "
+"not include 'https://doi.org/' prefix. Example: '10.1002/jcc.21224'"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:39
+#: ../../tools/opencitations_tools.rst:73
+#: ../../tools/opencitations_tools.rst:104 a146439231834642aa4c7c6b1cf4568a
+#: d66cdbff49ab48e7b4e6dcbcad09ae7c fd6cc748ebe744b2a6f3458f80c40561
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:53 fcebf50a78774d19afe57914a990d5fa
+msgid "**OpenCitations_get_citations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:55 4b915c98ff2645589b04eb3761da48ad
+msgid ""
+"Get the list of papers that cite a given scientific article (its citation"
+" count and citing papers..."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst 8f22a2c8346546e18925a26f72b5a960
+msgid "OpenCitations_get_citations tool specification"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:61 e36cf78e57904f7eab6c67361b7b745d
+msgid "**Name**: ``OpenCitations_get_citations``"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:63 19376e6542dc44deabf1dedd03247a34
+msgid ""
+"**Description**: Get the list of papers that cite a given scientific "
+"article (its citation count and citing papers) using OpenCitations COCI "
+"index. Returns who has cited the paper since its publication. Useful for "
+"measuring research impact, finding follow-up work, and understanding how "
+"a paper influenced subsequent research."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:67 86b40e4dfd8345bc974bac1bf3188520
+msgid ""
+"``doi`` (string) (required) DOI of the paper to find citations for. Do "
+"not include 'https://doi.org/' prefix. Examples: '10.1038/nature12373', "
+"'10.1002/jcc.21224'"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:70 d8ec772fef5c478a95a3617091913803
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of citations to "
+"return. Highly-cited papers can have 10,000+ citations; use this to avoid"
+" oversized responses."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:87 1b009cc2f05b42b9b2b4c0ae128a0f23
+msgid "**OpenCitations_get_references** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:89 09fcfae26b6b4d8292dba72d9359000f
+msgid ""
+"Get the list of papers cited by a given scientific article (its reference"
+" list) using OpenCitatio..."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst 4360addd2f4b44a782311fcc7f942a62
+msgid "OpenCitations_get_references tool specification"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:95 4f572ba3174948acacded81fe7c48e28
+msgid "**Name**: ``OpenCitations_get_references``"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:97 525325364fa34d1d8e983d9da4caafc9
+msgid ""
+"**Description**: Get the list of papers cited by a given scientific "
+"article (its reference list) using OpenCitations COCI index. "
+"OpenCitations is a free, open scholarly citation database derived from "
+"CrossRef. Returns citation links with DOIs, publication dates, and time "
+"spans between publications. Useful for citation analysis, bibliometrics, "
+"and understanding research impact."
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:101 359e151c600b4112bf7b446de7444e78
+msgid ""
+"``doi`` (string) (required) DOI of the paper to get references for. Do "
+"not include 'https://doi.org/' prefix. Examples: '10.1002/jcc.21224', "
+"'10.1038/nature12373'"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:118 9e3aac72439d41cebaed7147c9d28b32
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:120 45fadd65032e41bd9e8825bb2e417207
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/opencitations_tools.rst:121 eaa9c4684c2f4959a295b24ba2aae54e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

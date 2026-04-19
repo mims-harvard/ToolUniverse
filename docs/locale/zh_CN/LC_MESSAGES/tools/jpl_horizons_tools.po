@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/jpl_horizons_tools.rst:10 a28ce69e396f4e8dba5d5994fb734bd3
+msgid "Jpl Horizons Tools"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:12 846a6794746d4c63b0389f8573d695ab
+msgid ""
+"**Configuration File**: ``jpl_horizons_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:16 691afaae8d1d42b585a46c9041ece69f
+msgid ""
+"This page contains all tools defined in the ``jpl_horizons_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:19 41decfa64d044879825bdf5a4facaa3e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:22 2a325aed4544433e9f8c2620c06e8e83
+msgid "**JPLHorizons_get_body_data** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:24 52a69578e18441b0a84e53c4934fc113
+msgid ""
+"Get physical and orbital data for a solar system body from the JPL "
+"Horizons system. Returns mass,..."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst 5bac23a5cdf94567858914ba5cedb8ad
+msgid "JPLHorizons_get_body_data tool specification"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:28 ../../tools/jpl_horizons_tools.rst:59
+#: 36a8bf78e7ac4adfbee2989e7a5bd6a4 bd0551884e9046539f292c9550673011
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:30 a244dd43d3f24ae9b2acc3990edaa941
+msgid "**Name**: ``JPLHorizons_get_body_data``"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:31 ../../tools/jpl_horizons_tools.rst:62
+#: 47a2ac45b12b439eb366986e4722bebc b10e3e34f9584f91abcaef16ebb97461
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:32 2b355d7c7a3d4630bbecd202fa639d0a
+msgid ""
+"**Description**: Get physical and orbital data for a solar system body "
+"from the JPL Horizons system. Returns mass, radius, density, rotation "
+"period, orbital elements, albedo, and other physical properties. This is "
+"the authoritative source for solar system body parameters. COMMAND "
+"values: major planets use 3-digit codes (199=Mercury, 299=Venus, "
+"399=Earth, 499=Mars, 599=Jupiter, 699=Saturn, 799=Uranus, 899=Neptune), "
+"moons add parent body (301=Moon, 401=Phobos), asteroids use number "
+"(1=Ceres, 433=Eros). Use JPLHorizons\\_lookup\\_object to find the "
+"COMMAND code."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:34 ../../tools/jpl_horizons_tools.rst:65
+#: a2d6cc5f91eb41ae912ea169cb03a553 b423572611a649a79d0b8a89e98135d7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:36 ad887a058db94a978a9193c67dc44604
+msgid ""
+"``COMMAND`` (string) (required) JPL Horizons body ID. Planets: '199' "
+"(Mercury), '299' (Venus), '399' (Earth), '499' (Mars), '599' (Jupiter), "
+"'699' (Saturn), '799' (Uranus), '899' (Neptune). Moon: '301'. Pluto: "
+"'999'. Ceres: '1'. Asteroids by number. Use JPLHorizons\\_lookup\\_object"
+" to find IDs."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:39 ../../tools/jpl_horizons_tools.rst:70
+#: 49a07406591943d482506e3c5a37d1ef f832c020038a463fae71358842a67813
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:53 0bb16fddc35e4494aa90361b6d6099b5
+msgid "**JPLHorizons_lookup_object** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:55 9f30e4b557c5496592e28f8b34df66f4
+msgid ""
+"Search for solar system objects in the JPL Horizons database by name, "
+"partial name, or designatio..."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst 64f7cfcdba7c432c856ed4862f0e9f57
+msgid "JPLHorizons_lookup_object tool specification"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:61 fc26174fa50f4b8f994e062a9905adbd
+msgid "**Name**: ``JPLHorizons_lookup_object``"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:63 03b32a5866a9408dae9f601ccd4cf9d6
+msgid ""
+"**Description**: Search for solar system objects in the JPL Horizons "
+"database by name, partial name, or designation. Returns a list of "
+"matching objects with their SPK IDs (used for ephemeris queries), object "
+"type (planet, asteroid, comet, spacecraft, satellite), and alternate "
+"names/designations. The SPK ID is needed to query ephemerides. Examples: "
+"'Mars' returns planets, spacecraft, and missions; '2020 SO' returns near-"
+"Earth objects; 'Ceres' returns the dwarf planet."
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:67 ddfc25383b014b88a0e54dc0ae516e64
+msgid ""
+"``sstr`` (string) (required) Object name or partial name to search. "
+"Examples: 'Mars', 'Jupiter', 'Ceres', 'Halley', '1P' (Halley's Comet "
+"designation), 'Apophis', 'Voyager', 'Cassini'"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:84 149823a3155b46e7b26c5df20ea7d3d7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:86 75222650f17f43059398bcee9b4c3286
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/jpl_horizons_tools.rst:87 ccbb57460b5c4c6da145486a0d924e15
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

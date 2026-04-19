@@ -1,0 +1,92 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/boltz_mcp_loader_tools.rst:10 4ee7d0cdb7234d8493f43ec82edf8ee5
+msgid "Boltz Mcp Loader Tools"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:12 5e3fa76b2a1642e48e6a02b1c5ee873e
+msgid ""
+"**Configuration File**: ``boltz_mcp_loader_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:16 5bfaf71288b740cfa23ab8a92451f9c6
+msgid ""
+"This page contains all tools defined in the "
+"``boltz_mcp_loader_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:19 4c6669fc3e954097b5f5dc35e5829b2c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:22 107039b102fe47b78d615770a3b54db0
+msgid "**mcp_auto_loader_boltz** (Type: MCPAutoLoaderTool)"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:24 54f57c7b3f274a7f9483aed4d0a41402
+msgid "Run Boltz2 docking and affinity prediction using MCP protocol"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst 6bbff5c5bfc4427e908ea7f40c35ce60
+msgid "mcp_auto_loader_boltz tool specification"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:28 fad81861770c4801905a30409b1d0763
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:30 78211aad9ce9479588d4313104c0f076
+msgid "**Name**: ``mcp_auto_loader_boltz``"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:31 fcb4ed87bc614490a193c358f3cdced4
+msgid "**Type**: ``MCPAutoLoaderTool``"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:32 04cc8cb8600f41c0b69efb5f65ae2661
+msgid ""
+"**Description**: Run Boltz2 docking and affinity prediction using MCP "
+"protocol"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:34 181a001581274012ad9e3665de1b549f
+msgid "**Parameters:** No parameters required."
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:36 4577719a22034597b242c35521662c81
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:49 f5ef4150eac4475aa021dc7b2b663d57
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:51 d35e60f3d8354b959f228d9ff1f28f18
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/boltz_mcp_loader_tools.rst:52 c659bd104a09496698f5a4856779cb70
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

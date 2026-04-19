@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/europepmc_citations_tools.rst:10
+#: d16c46b4cb1f47fda29f2a4e754d4766
+msgid "Europepmc Citations Tools"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:12
+#: 4e1d9c71fe88451197dea38a8fe0ffc1
+msgid ""
+"**Configuration File**: ``europepmc_citations_tools.json`` **Tool Type**:"
+" Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:16
+#: f7ef4334258f46a2bd83ff9256de194c
+msgid ""
+"This page contains all tools defined in the "
+"``europepmc_citations_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:19
+#: a8999b99328a47e39659b5d493ebdd57
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:22
+#: 89c789b142804583b6894332a29e68ab
+msgid "**EPMC_get_citations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:24
+#: d3e2fd9f4edb428cbe4a14a7a53edbc5
+msgid ""
+"Get articles that cite a specific paper from Europe PMC. Given a PubMed "
+"ID (PMID), returns a list..."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst 9509a593844f400193f2a4f911b98138
+msgid "EPMC_get_citations tool specification"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:28
+#: ../../tools/europepmc_citations_tools.rst:65
+#: 1a635f90abd644ab9ba154d07058f184 2ce9a336e24c4c378f111e0e8f6cb2e3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:30
+#: d0bf6b51c6e3472493f166f55f45bb8c
+msgid "**Name**: ``EPMC_get_citations``"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:31
+#: ../../tools/europepmc_citations_tools.rst:68
+#: 1ab075e5da9c4d58b2311e8c9d6615ec 72abfb10c52c43bb885225a439fe2679
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:32
+#: a2e7ff5d9b864ab1932daa64ee8e59d4
+msgid ""
+"**Description**: Get articles that cite a specific paper from Europe PMC."
+" Given a PubMed ID (PMID), returns a list of citing articles with their "
+"titles, authors, journals, publication years, and citation counts. This "
+"enables citation network traversal: find what papers cite a given study "
+"to track research impact, identify follow-up studies, and discover "
+"related work. Essential for systematic reviews and literature mapping. "
+"Use PMID from EuropePMC search results."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:34
+#: ../../tools/europepmc_citations_tools.rst:71
+#: 4d106cbd3613484a8febe4a5ac4bda58 944e7c154c124ea3a1ee3cb05e4e6e13
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:36
+#: 5f2b99ecc87f417894c559b4790fd44e
+msgid ""
+"``pmid`` (string) (required) PubMed ID of the article to find citations "
+"for. Examples: '25378148' (AlphaFold paper), '33234567', '29474920' "
+"(CRISPR review). Find PMIDs using Europe PMC search."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:39
+#: ../../tools/europepmc_citations_tools.rst:76
+#: 10f3f31d954040bf8078b4af51c94ebd 60ccad2fc20840fba23eda1ce2c6b411
+msgid ""
+"``page`` (integer) (optional) Page number for paginated results "
+"(1-based). Default: 1."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:42
+#: 0c81d82bc0d84fb7a73ea74774261319
+msgid ""
+"``pageSize`` (integer) (optional) Number of citing articles to return per"
+" page (1-1000). Default: 25."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:45
+#: ../../tools/europepmc_citations_tools.rst:82
+#: e81665e3231b4d18b70e556f436b5f6a f29913ea036546e8b258022584207177
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:59
+#: f6943c34e7784331b6742faf293e7a7e
+msgid "**EPMC_get_references** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:61
+#: ededdcd0b8ed49898b95de395e3bacf4
+msgid ""
+"Get the reference list (bibliography) of a specific paper from Europe "
+"PMC. Given a PubMed ID (PMI..."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst 7be45cea968e4d47b53a0cbfa8043816
+msgid "EPMC_get_references tool specification"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:67
+#: c9692e46ecbd4332aff979070b035f9c
+msgid "**Name**: ``EPMC_get_references``"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:69
+#: f34cef377e4f432fa88558d6a5884093
+msgid ""
+"**Description**: Get the reference list (bibliography) of a specific "
+"paper from Europe PMC. Given a PubMed ID (PMID), returns all articles "
+"cited BY that paper (its reference list). This is the reverse of "
+"citations: instead of finding who cites a paper, find what papers it "
+"cites. Essential for understanding a paper's intellectual foundations, "
+"finding seminal works, and tracing research lineage. Use PMID from "
+"EuropePMC search results."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:73
+#: 58a9063077eb473b99164af799ff405f
+msgid ""
+"``pmid`` (string) (required) PubMed ID of the article whose references "
+"you want. Examples: '25378148', '33234567', '29474920'. Find PMIDs using "
+"Europe PMC search."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:79
+#: d3a998c20033400bb4231bcdb8b04f13
+msgid ""
+"``pageSize`` (integer) (optional) Number of references to return per page"
+" (1-1000). Default: 25."
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:96
+#: 2ecb1b33638a46409bd605f25148c20e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:98
+#: e736f8d038a340cab531d31696b02c57
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/europepmc_citations_tools.rst:99
+#: 5327ae0e365f4da3a8966cd754313238
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

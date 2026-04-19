@@ -7,26 +7,54 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 14:36-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../api/modules.rst:2 0f52ccbc82114ad4af6092dbb14aa653
+#: ../../api/modules.rst:2 19a48163efff4379ad61afac69fd13e8
 msgid "API Reference"
 msgstr "API参考"
 
-#: ../../api/modules.rst:5 2f542b4b3f7b40088ca9b63b1fb7657c
-msgid "Core Modules"
-msgstr "核心模块"
+#: ../../api/modules.rst:4 d72817d6a743476c93b8dc12c79574c8
+msgid "This section provides the complete Python API reference for ToolUniverse."
+msgstr ""
+
+#: ../../api/modules.rst:7 08434ee73dab4f2983488af6735fe610
+msgid "Core Infrastructure"
+msgstr ""
+
+#: ../../api/modules.rst:16 cf8360740ab9464e81098421e0cd5533
+msgid "Core Classes & Utilities"
+msgstr ""
+
+#: ../../api/modules.rst:30 080e1061272a426bb0e9664ffe095a0a
+msgid "Important Tools"
+msgstr ""
+
+#: ../../api/modules.rst:40 2845f23aa1b1423f9866e0a37273d518
+msgid "Tool Finders"
+msgstr ""
+
+#: ../../api/modules.rst:50 042cca671bb04443be365a50a4a1c2bf
+msgid "MCP Support"
+msgstr ""
+
+#: ../../api/modules.rst:62 bbc80704c26c4582aa18c2060c90b3a9
+msgid "Embedding & Output Management"
+msgstr ""
 
 #~ msgid "tooluniverse"
 #~ msgstr "工具宇宙"
+
+#~ msgid "Core Modules"
+#~ msgstr "核心模块"
+

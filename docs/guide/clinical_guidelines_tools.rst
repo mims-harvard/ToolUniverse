@@ -50,21 +50,31 @@ Quick Start
 Tool Comparison
 ---------------
 
-+---------------------------+----------------------------------+---------------------------------------+
-| Tool | Data Source | Features |
-+===========================+==================================+=======================================+
-| NICE_Clinical_Guidelines | UK NICE official website | Official UK guidelines with summaries |
-+---------------------------+----------------------------------+---------------------------------------+
-| WHO_Guidelines | WHO publications database | International health guidelines |
-+---------------------------+----------------------------------+---------------------------------------+
-| PubMed_Guidelines | NCBI PubMed database | Peer-reviewed with abstracts & PMIDs |
-+---------------------------+----------------------------------+---------------------------------------+
-| EuropePMC_Guidelines | Europe PMC database | European & international research |
-+---------------------------+----------------------------------+---------------------------------------+
-| TRIP_Database | TRIP evidence database | Evidence-based medicine focus |
-+---------------------------+----------------------------------+---------------------------------------+
-| OpenAlex_Guidelines | OpenAlex scholarly database | Comprehensive with citation counts |
-+---------------------------+----------------------------------+---------------------------------------+
+.. list-table::
+   :header-rows: 1
+   :widths: 26 28 46
+
+   * - Tool
+     - Data Source
+     - Features
+   * - ``NICE_Clinical_Guidelines``
+     - UK NICE official website
+     - Official UK guidelines with summaries
+   * - ``WHO_Guidelines``
+     - WHO publications database
+     - International health guidelines
+   * - ``PubMed_Guidelines``
+     - NCBI PubMed database
+     - Peer-reviewed guidance with abstracts and PMIDs
+   * - ``EuropePMC_Guidelines``
+     - Europe PMC database
+     - European and international research coverage
+   * - ``TRIP_Database``
+     - TRIP evidence database
+     - Evidence-based medicine focus
+   * - ``OpenAlex_Guidelines``
+     - OpenAlex scholarly database
+     - Broad coverage with citation counts
 
 Usage Examples
 --------------
@@ -235,4 +245,3 @@ Return Fields
 - ``key_facts``: List of key facts
 - ``metadata``: Publication info
 - ``success``: Boolean status
-

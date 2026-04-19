@@ -1,0 +1,276 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/eol_tools.rst:10 4b99aaae095d48c1ab875bae016ae23f
+msgid "Eol Tools"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:12 86440415b94d4e90b5f1c7c5bea79973
+msgid ""
+"**Configuration File**: ``eol_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:16 17da63e8fa03410184aeef347b0b045b
+msgid ""
+"This page contains all tools defined in the ``eol_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:19 858a46ab923b4b73a54a779bd97d290a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:22 f7c1767f5e9845b481d90071e3e25afe
+msgid "**EOL_get_collection** (Type: EOLTool)"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:24 f90b455e863247819aec28f2c5348f40
+msgid ""
+"Get a curated collection from the Encyclopedia of Life. EOL collections "
+"are user-curated lists of..."
+msgstr ""
+
+#: ../../tools/eol_tools.rst b007c1d0c1424df58ad557d2d9349694
+msgid "EOL_get_collection tool specification"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:28 ../../tools/eol_tools.rst:68
+#: ../../tools/eol_tools.rst:99 ../../tools/eol_tools.rst:145
+#: 1fdcc2daf0c44e25bb21a2a57218e76f 959ef1bf68ae4ed1ade4c0d281fa06c2
+#: a662181179c74da7a745b100eb07fed7 fa94da228cc0428580347fa43d33db27
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:30 02a76ce3c7cc458fa5b065da2fbfbf01
+msgid "**Name**: ``EOL_get_collection``"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:31 ../../tools/eol_tools.rst:71
+#: ../../tools/eol_tools.rst:102 ../../tools/eol_tools.rst:148
+#: 4447b69d21ca4dcb97da81bd486d86bf 549f06f2bfd948e98d8b1c6e40a9aa42
+#: ef2e07c381954df983eefc2588163844 f15034b8ab9a4b2c9e1933c1e297c361
+msgid "**Type**: ``EOLTool``"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:32 9beb5d5e598340fc9c72e6a82e2c26fc
+msgid ""
+"**Description**: Get a curated collection from the Encyclopedia of Life. "
+"EOL collections are user-curated lists of species pages organized by "
+"theme (e.g., endangered species, invasive species, species of a region). "
+"Returns collection name, description, and member items with their page "
+"IDs. Supports pagination and filtering by object type (taxa, articles, "
+"etc.)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:34 ../../tools/eol_tools.rst:74
+#: ../../tools/eol_tools.rst:105 ../../tools/eol_tools.rst:151
+#: 24bae19fcae54a3484ad8b50bc6c7b68 7123c98f37604440829e3c7c8d0af6a5
+#: b29713d8bac7427ca60591f61dff46d5 f3de507478484fe8a4ea5d5ef6fb306b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:36 e0f0225f73f141adab7eacd0cb6cfb64
+msgid ""
+"``collection_id`` (integer) (required) EOL collection ID. Example: 176 "
+"(Fingertip Fauna), 6 (a sample collection)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:39 9b35637c8baf4dba8d0befbf5205cdbc
+msgid "``page`` (integer) (optional) Page number for paginated results."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:42 6fc9c1bfc53147ad93dba540b28c9fad
+msgid "``per_page`` (integer) (optional) Number of items per page (max 500)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:45 8800c3de16054f4e854a912ce2d08c92
+msgid ""
+"``filter`` (string) (optional) Filter items by type: 'taxa', 'text', "
+"'image', 'sound', 'video', 'collection', 'community', 'user'. Leave empty"
+" for all types."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:48 ../../tools/eol_tools.rst:79
+#: ../../tools/eol_tools.rst:125 ../../tools/eol_tools.rst:162
+#: afb39eb39c704292985642da58279233 c70225ae33244e6a96bbfc85707d2e39
+#: ddacd941ff17482c806a8fafe87d1f8b ecc5e74d86ef413fa7f5060c4fc07ad6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:62 fea38b8de2004728bca1d7daaf7312ef
+msgid "**EOL_get_hierarchy_entry** (Type: EOLTool)"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:64 8457b000e4b34b08ad8ecb595ada9fe0
+msgid ""
+"Get taxonomy hierarchy (classification tree) for a species from a "
+"specific classification system ..."
+msgstr ""
+
+#: ../../tools/eol_tools.rst 5c14b447502e4e348e18fbce361771c2
+msgid "EOL_get_hierarchy_entry tool specification"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:70 5f101ac2238d43e99dfb6e921988b3dd
+msgid "**Name**: ``EOL_get_hierarchy_entry``"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:72 1aea91df2c6d4ce2af01e3fec014e1ab
+msgid ""
+"**Description**: Get taxonomy hierarchy (classification tree) for a "
+"species from a specific classification system in the Encyclopedia of "
+"Life. Returns ancestors (full lineage from root to species), children "
+"taxa, synonyms, and source classification (NCBI, GBIF, ITIS, Catalogue of"
+" Life). Use EOL\\_get\\_page first to find hierarchy\\_entry\\_id values "
+"from the classifications list. Example: 70872770 is the NCBI hierarchy "
+"entry for Homo sapiens, showing the complete lineage from root through "
+"Primates to species level."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:76 9539215d5692405e8cd826a4e06c0105
+msgid ""
+"``hierarchy_entry_id`` (integer) (required) EOL hierarchy entry ID from a"
+" specific classification system. Get this from EOL\\_get\\_page "
+"'classifications' field. Examples: 70872770 (Homo sapiens in NCBI), "
+"86685972 (Homo sapiens in GBIF), 147191154 (Homo sapiens in ITIS)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:93 49dd9bf6ee3d4d75ac0248e95977caab
+msgid "**EOL_get_page** (Type: EOLTool)"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:95 fe1b87c561aa4eb08f0c45380113de2b
+msgid ""
+"Get detailed species/taxon information from an Encyclopedia of Life (EOL)"
+" page. Returns scientifi..."
+msgstr ""
+
+#: ../../tools/eol_tools.rst 7ca902ade4574db5bc92a01de0b69d58
+msgid "EOL_get_page tool specification"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:101 637f8b2317344bdab61912c8b409a323
+msgid "**Name**: ``EOL_get_page``"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:103 6dba18c5356e474ba505e46311cea0ba
+msgid ""
+"**Description**: Get detailed species/taxon information from an "
+"Encyclopedia of Life (EOL) page. Returns scientific name, common names in"
+" multiple languages, synonyms, images with URLs, text descriptions, and "
+"available taxonomy classifications from multiple sources (NCBI, GBIF, "
+"ITIS, Catalogue of Life). Use EOL\\_search\\_species first to get "
+"page\\_id. Example: page\\_id 327955 for Homo sapiens, 583954 for "
+"Arabidopsis thaliana, 328672 for Panthera leo."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:107 398dea34e40b4f0bb5b1ac87126fd0d3
+msgid ""
+"``page_id`` (integer) (required) EOL page identifier. Get this from "
+"EOL\\_search\\_species. Examples: 327955 (Homo sapiens), 583954 "
+"(Arabidopsis thaliana), 328672 (Panthera leo), 1045608 (Apis mellifera)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:110 7ab07dbc8a7b4a92bdff5daf845b38e3
+msgid ""
+"``images_per_page`` (integer) (optional) Number of image data objects to "
+"return (0-75)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:113 eff4a9e022f34f99b69a2cae286d513f
+msgid ""
+"``texts_per_page`` (integer) (optional) Number of text description "
+"objects to return (0-75)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:116 ce4bce9b51f3448b94b0f48d666d45a3
+msgid ""
+"``common_names`` (boolean) (optional) Include vernacular/common names in "
+"multiple languages."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:119 5c74fd3665db45cc8de03591bbeebc5c
+msgid "``synonyms`` (boolean) (optional) Include taxonomic synonyms."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:122 7e8ca993509c477c83a0b255399eddd3
+msgid ""
+"``details`` (boolean) (optional) Include detailed data object information"
+" (media, descriptions)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:139 a1f52ea6f088429fbedc08281ca96bbb
+msgid "**EOL_search_species** (Type: EOLTool)"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:141 17b2fe6ee04a40c5b50b8980ce9868b5
+msgid ""
+"Search the Encyclopedia of Life (EOL) for species and taxa by name. "
+"Returns matching EOL page IDs..."
+msgstr ""
+
+#: ../../tools/eol_tools.rst e3f375c78eb84ebc92549f7dbc516277
+msgid "EOL_search_species tool specification"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:147 001e92d3719b48cc80512f811f34af60
+msgid "**Name**: ``EOL_search_species``"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:149 c7be2eaa52544775a778928f281dc658
+msgid ""
+"**Description**: Search the Encyclopedia of Life (EOL) for species and "
+"taxa by name. Returns matching EOL page IDs, scientific names, and name "
+"variants. Use this to find EOL page IDs for detailed lookups with "
+"EOL\\_get\\_page. Supports exact matching. EOL aggregates data from "
+"hundreds of biodiversity databases. Example: searching 'Homo sapiens' "
+"returns page ID 327955."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:153 bf2ef2b702574064bc87c73fbb55879c
+msgid ""
+"``query`` (string) (required) Search string for species or taxon name. "
+"Supports scientific names, common names, and partial matches. Examples: "
+"'Homo sapiens', 'Arabidopsis thaliana', 'Panthera leo', 'honey bee'."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:156 627e44aaca42403c9261ebf3741d81dd
+msgid "``page`` (integer) (optional) Page number for paginated results (1-based)."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:159 aaafeb22b9474d7c88c79a5a7dbd0efe
+msgid "``exact`` (boolean) (optional) If true, only return exact name matches."
+msgstr ""
+
+#: ../../tools/eol_tools.rst:176 d62fb965d4e34ce18abc817a392c0a40
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:178 35257a33b5a9427f8301806127860b21
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/eol_tools.rst:179 5f5275fa75024eb8bc42f0b10325e1a9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

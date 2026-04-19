@@ -1,0 +1,48 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/cline.rst:2
+#: acc8e29843fc497db9a80b8754a87320
+msgid "Cline"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/cline.rst:4
+#: 760542d48fd34685bf3c9eb951492c98
+msgid ""
+"`Download VS Code <https://code.visualstudio.com/>`_ and install the "
+"`Cline extension "
+"<https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-"
+"dev>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/cline.rst:5
+#: 3ed2f62e7d6b4f689d922c9fec369a18
+msgid ""
+"`Official MCP setup guide <https://docs.cline.bot/mcp/configuring-mcp-"
+"servers>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/cline.rst:7
+#: 3cf687e0a2f54a318cdf4abb798fb01d
+msgid "To set up ToolUniverse, open Cline and run:"
+msgstr ""
+

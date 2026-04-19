@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/plant_reactome_tools.rst:10 28fbbc3b28e349f78eb2b0979165acd3
+msgid "Plant Reactome Tools"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:12 de0a7741a2654d4d910074202b5c3953
+msgid ""
+"**Configuration File**: ``plant_reactome_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:16 3256996e3dbd4e1faaaa88b76e632bdc
+msgid ""
+"This page contains all tools defined in the ``plant_reactome_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:19 dfb6ae1972d0494f8bd45faa3e7df987
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:22 7367155c80a245e9ba5a62842cb9c3df
+msgid "**PlantReactome_get_pathway** (Type: PlantReactomeTool)"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:24 3b46b8b26a9342e49d48831cd4b8289c
+msgid ""
+"Get detailed information about a specific Plant Reactome pathway by "
+"stable ID. Returns pathway na..."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst 4caf863c3c7b4465b9ebe7543c012fb6
+msgid "PlantReactome_get_pathway tool specification"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:28
+#: ../../tools/plant_reactome_tools.rst:59
+#: ../../tools/plant_reactome_tools.rst:88 58166c64518c4f1cb91a8925e08ff57d
+#: 64ce746ad19145cc8c1108fab120b88e 9717d1d6fafe445d9ea718046f40c965
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:30 5cab485c48f44aa69b01ba1c61159338
+msgid "**Name**: ``PlantReactome_get_pathway``"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:31
+#: ../../tools/plant_reactome_tools.rst:62
+#: ../../tools/plant_reactome_tools.rst:91 11a09385ade34eea80ee4f16e0576e8b
+#: 1b2d9ec8cb144c408e3e49d1baf949cb de5b65a821434c50aefa9973d6011eff
+msgid "**Type**: ``PlantReactomeTool``"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:32 2335a7b5f604406382d1d3ce8c79f855
+msgid ""
+"**Description**: Get detailed information about a specific Plant Reactome"
+" pathway by stable ID. Returns pathway name, species, sub-events "
+"(reactions), compartments, GO annotations, and cross-references. Example:"
+" 'R-OSA-1119312' returns the Photorespiration pathway in Oryza sativa."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:34
+#: ../../tools/plant_reactome_tools.rst:65
+#: ../../tools/plant_reactome_tools.rst:94 21b7648428bd475e8390137c9e9e8b1b
+#: 4e10d6223d144533be1c74f096ed497c b66a4ea08e62417e9707beadc7f959bb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:36 a1817d9f41674167b528800ef2337650
+#, python-brace-format
+msgid ""
+"``pathway_id`` (string) (required) Plant Reactome stable identifier. "
+"Format: R-{species\\_code}-{number}. Examples: 'R-OSA-1119312' "
+"(Photorespiration in rice), 'R-OSA-1119519' (Calvin cycle in rice)."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:39
+#: ../../tools/plant_reactome_tools.rst:69
+#: ../../tools/plant_reactome_tools.rst:102 0533253b777a4627972b28fe9345c54c
+#: 1d47dc748edf457fa295551b4346a82d c3612f93e8da484a9b331cb5a8c53b07
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:53 39c5cdd59a35415e9c26dbdd011b28e7
+msgid "**PlantReactome_list_species** (Type: PlantReactomeTool)"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:55 0750b60cb8324b96bbffe3d06b458d8b
+msgid ""
+"List all plant species available in Plant Reactome with their taxonomy "
+"IDs. Returns the complete ..."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst f90e9f64eda7438caf26e5c1082474f0
+msgid "PlantReactome_list_species tool specification"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:61 87741a6f970e47e2b36baeeebe1c7f2c
+msgid "**Name**: ``PlantReactome_list_species``"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:63 37a97279c2e543d19f77676fb765635f
+msgid ""
+"**Description**: List all plant species available in Plant Reactome with "
+"their taxonomy IDs. Returns the complete catalog of 140+ plant species "
+"including model organisms and major crop species. Useful for discovering "
+"which species have curated pathway data available."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:67 b50df2e9a36d42e2b50e2b29d4f2158a
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:82 ab7c1f3aead2468c8491edeef3393a12
+msgid "**PlantReactome_search_pathways** (Type: PlantReactomeTool)"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:84 02c70026221f4bde9cac4ac32aa2d6bc
+msgid ""
+"Search for plant biological pathways in Plant Reactome (Gramene). Plant "
+"Reactome is a curated res..."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst c2ef40c226d748f687f215349952a99e
+msgid "PlantReactome_search_pathways tool specification"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:90 43da5b13809d4a69a936636e2a4ecd21
+msgid "**Name**: ``PlantReactome_search_pathways``"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:92 7a5f054c391a41af9ca892028aaee636
+msgid ""
+"**Description**: Search for plant biological pathways in Plant Reactome "
+"(Gramene). Plant Reactome is a curated resource for plant metabolic and "
+"regulatory pathways, covering model and crop species including rice "
+"(Oryza sativa), Arabidopsis thaliana, maize, wheat, and 140+ plant "
+"species. Returns pathways matching the query with their stable IDs and "
+"species. Example: 'photosynthesis' finds photosynthesis-related pathways."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:96 82f1c484d5bd495bb3d2101d53ca9023
+msgid ""
+"``query`` (string) (required) Search query for plant pathways. Examples: "
+"'photosynthesis', 'Calvin cycle', 'flavonoid biosynthesis', 'nitrogen "
+"fixation', 'auxin signaling'."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:99 df91fee6730a4d8599c286d7af753438
+msgid ""
+"``species`` (string, null) (optional) Species name to filter results. "
+"Examples: 'Oryza sativa', 'Arabidopsis thaliana', 'Zea mays'. Default: "
+"all species."
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:116 7d7bf2b6d73c42dba7b45c09d9534ac5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:118 e6e7fdb27ca94c3d914a53ea3369be91
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/plant_reactome_tools.rst:119 078e26cababb4f9d8c40fe18370a4c53
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,381 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:4
+#: 0e42406d71e44f0faf5db84ad1800d7f
+msgid "Compact Mode Guide"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:6
+#: b83915a917f14707bcdabd3c72a296d5
+msgid ""
+"Compact mode exposes only 4-5 core tools instead of 1000+ tools, reducing"
+" context window usage by ~99% while maintaining full functionality."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:9
+#: 8176ade259424b0ea4148c7c9e97c2e3
+msgid "What is Compact Mode?"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:11
+#: 70dbf78c97284f33b9179aae5ded9163
+msgid ""
+"Compact mode is a context window optimization that exposes only 4-5 core "
+"discovery tools instead of listing all 1000+ tools. All tools remain "
+"accessible through the ``execute_tool`` function."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:14
+#: 534eec7a3da3424fbf52d2ee2f3937d0
+msgid "Why Use Compact Mode?"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:16
+#: 585c7f4675e34b69b57913c223838852
+msgid ""
+"**The Problem**: AI assistants have limited context windows. Listing "
+"1000+ tools consumes significant context space, leaving less room for:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:18
+#: 4dcc5e3ac7174006ba6034f65b0f2380
+msgid "Your research questions"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:19
+#: fbe9b750e1bd4f889a15bbf66e2bd674
+msgid "Tool outputs and data"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:20
+#: 6e09418ff6494ae091339a2bc3c1dee1
+msgid "Conversation history"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:21
+#: 9f61caef1da44a168b42c1f3d84ec38d
+msgid "Analysis and reasoning"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:23
+#: 3e832bdca4af435097697425e8de1920
+msgid ""
+"**The Solution**: Compact mode exposes only 4-5 discovery tools. The AI "
+"uses these to find and execute the specific tools it needs."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:25
+#: 6c37ef615b9f43e3832c2e5bb317b5f3
+msgid "**Impact**:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:27
+#: 3eb9a17128414262bff42227356cc913
+#, python-format
+msgid "**99% reduction** in exposed tools (4-5 vs 1000+)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:28
+#: f9aac2ff5bbf43f98dbb9a9e48311f33
+msgid ""
+"**Full functionality** - All 1000+ tools still accessible via "
+"``execute_tool``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:29
+#: 02d25ee66eda41a3935f0c11f3c012ff
+msgid "**Better AI reasoning** - More context available for analysis"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:30
+#: 63896262e3874f3a92d902f94db283a2
+msgid "**Faster responses** - Less token processing overhead"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:32
+#: f657f3906a0c4ec48e4b82f667ed2b17
+msgid "**When to use**:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:34
+#: 8158e461d17c468a8f69f981d96255fc
+msgid ""
+"**Always recommended** for MCP integration with Claude, Cursor, ChatGPT "
+"AI agent workflows with long conversations Complex multi-step research "
+"tasks Working with large datasets or outputs"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:39
+#: cd4e9fb9579141a683f36c28527b0735
+msgid "**When to skip**:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:41
+#: 6c5c2fd7b9f54ec2ad9052d9d2037385
+msgid ""
+"Python API usage (context windows don't apply) Single-use scripts or "
+"batch processing When you need to see all available tools at once"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:46
+#: 6f202179a8604e73a94fb351d46c4d0d
+msgid "Core Tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:48
+#: 3795ca7e913047f2a708c1eedcc86db5
+msgid ""
+"Compact mode exposes 4 core discovery tools, plus optionally "
+"``find_tools`` if search is enabled (default):"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:50
+#: 279678cedb8f47e79e9c745573d6cd2f
+msgid "**``list_tools``** - List available tools (names, categories, etc.)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:51
+#: 3fbc1803d7df47b2befc5408bc6d0db4
+msgid "**``grep_tools``** - Search tools by text/regex pattern"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:52
+#: ee02205145ed434a9313b48597c03ec1
+msgid ""
+"**``get_tool_info``** - Get tool information (description or full "
+"definition)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:53
+#: cbff0d2bf39b4d44b9a488795c15e92f
+msgid "**``execute_tool``** - Execute any ToolUniverse tool by name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:54
+#: 8715e22237c242c392ba2a73acfa36c3
+msgid ""
+"**``find_tools``** - AI-powered tool discovery using natural language "
+"queries (optional, enabled by default via ``search_enabled=True``)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:57
+#: 2b0530a437b944948d329201dd52ec70
+msgid "Quick Start"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:60
+#: 6e3fa4c32f2f444bb35b8ad666eb8a92
+msgid "Command Line"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:71
+#: 4793f69b555f4aa38f9d772282e9d280
+msgid "Claude Desktop Configuration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:73
+#: 6ef31deb42b74d719ae65c4295221ed8
+msgid ""
+"Add to ``~/Library/Application "
+"Support/Claude/claude_desktop_config.json``:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:95
+#: edc54509e29049f88715f8ee81a4297a
+msgid "Gemini CLI Configuration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:97
+#: 894f614031384f2cbed471e677e00853
+msgid "Add to ``~/.gemini/settings.json`` or project ``.gemini/settings.json``:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:116
+#: bcf55225190348b0be407472a6d242b5
+msgid "**Why Compact Mode for Gemini CLI?**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:118
+#: cc1762c0771f4a0cbdff5f497e1f6da6
+msgid "**500 tool limit**: Gemini CLI has a 500 tool limit per MCP server"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:119
+#: 89f8e69f325d4a5fa0988ffb353952b3
+msgid ""
+"**Minimal context usage**: Compact mode exposes only 4-5 tools, well "
+"within limits"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:120
+#: 87581dba56f14ed6adacd2a88c173544
+msgid ""
+"**Full functionality**: All 1000+ tools still accessible via "
+"``execute_tool``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:121
+#: 4fd82918f6e64ee194b12af7ab0a2db2
+msgid ""
+"**Progressive disclosure**: Discover tools on demand using "
+"``list_tools``, ``grep_tools``, and ``get_tool_info``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:124
+#: 9be18d9a26074ee7bed128edd99d4498
+msgid "Usage"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:126
+#: e774159ee7014a53b73707fa2cd1ff33
+msgid ""
+"In Claude Desktop, just configure the server and start using tools. "
+"Claude will automatically discover and call them."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:128
+#: ee1e0a29bee342459c7f7be1047f60c0
+#, python-brace-format
+msgid ""
+"**Typical workflow:** 1. Use ``list_tools(mode=\"names\")`` to see "
+"available tools 2. Use ``grep_tools(pattern=\"...\")`` to search for "
+"tools 3. Use ``get_tool_info(tool_names=\"...\")`` to get details 4. Use "
+"``execute_tool(tool_name=\"...\", arguments={...})`` to execute tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:135
+#: bb94eecbba3e4ac68fce442b5fca77c8
+msgid "Comparison"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:141
+#: 2fbb8c8cc36d4c2d9522d2e11bb83384
+msgid "Feature"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:142
+#: b4454515a882402a9d19071ed238d6e6
+msgid "Normal Mode"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:143
+#: d8d05e3361a840309c5e7d1099a9db0a
+msgid "Compact Mode"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:144
+#: 82d5fd28dccc420a9a8a96317a0f5fea
+msgid "Tools Exposed"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:145
+#: 9562c1b146a9468b9bbc898744dd6926
+msgid "~1000 tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:146
+#: c02245a72056480e9766cfbc213eaad5
+msgid "4-5 tools (4 core + find_tools if search enabled)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:147
+#: 424d0ef6ba01426c80fd61366b38a537
+msgid "Context Usage"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:148
+#: 16575e93c4ff4cf89f42e266cf07503e
+msgid "High"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:149
+#: 987da8925e0945be9f38514459e7f05d
+#, python-format
+msgid "Low (99% reduction)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:150
+#: 7416121cec5c4698a9b0579f53237509
+msgid "Functionality"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:151
+#: ab546f1088ee4505b2dc99ed7f5ba27a
+msgid "Full"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:152
+#: 66b4a78ec05d4916b46e33c57cd07484
+msgid "Full (via execute_tool)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:155
+#: 7787b5830e3249d3b6135044cdf3d78b
+msgid "When to Use"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:157
+#: c137b7338ecf48faac81494e9ed0f3dc
+msgid ""
+"**Use Compact Mode when:** - Working with AI agents (Claude Desktop, "
+"Gemini CLI, etc.) - Context window is limited - Working with Gemini CLI "
+"(500 tool limit) - You want minimal context usage"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:163
+#: 187bbd49ed5044f78007c9e7bb4a755a
+msgid ""
+"**Use Normal Mode when:** - Context window is not a concern - You want "
+"direct access to all tools - Working with platforms without tool limits"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:169
+#: ffc37c1bf7fa4b50802e7ff626e5f8d1
+msgid "Examples"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:171
+#: e11d4fb1dc184ddf8b732f1f31bf458c
+msgid "See ``examples/compact_mode/`` for complete examples."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:174
+#: 40e450c9c3854bb0beafb79cd2f6592b
+msgid "Related Documentation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:176
+#: 61dd2c0ea01c4db38f60151bbed348cf
+msgid ":doc:`mcp_support` - General MCP support"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:177
+#: cb2c82f14bed43c2a805819a6197984f
+msgid ":doc:`claude_desktop` - Claude Desktop integration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/compact_mode.rst:178
+#: 1f27ff00e34e438ea6554b68084cfbd9
+msgid ":doc:`gemini_cli` - Gemini CLI integration with profile configuration"
+msgstr ""
+

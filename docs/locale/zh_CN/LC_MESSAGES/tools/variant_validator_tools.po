@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/variant_validator_tools.rst:10 f22747ddf1af4b0b80012b657ce906dc
+msgid "Variant Validator Tools"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:12 256823889dd34ca88e67a7cf3b7cabcf
+msgid ""
+"**Configuration File**: ``variant_validator_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:16 d7ded1652d2646e98b4865767daf0d5a
+msgid ""
+"This page contains all tools defined in the "
+"``variant_validator_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:19 85276c5f284d469a9f678f6ccea51edc
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:22 7a41b5f4c3fd4e42baad1ea62d53dc60
+msgid "**VariantValidator_gene2transcripts** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:24 d8f1ee54fd4f448abd84a63a1868ca6e
+msgid ""
+"Get all transcripts for a gene using VariantValidator. Returns MANE "
+"Select and MANE Plus Clinical..."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst 57aae7559d2342fc9822f9b1b2dbb532
+msgid "VariantValidator_gene2transcripts tool specification"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:28
+#: ../../tools/variant_validator_tools.rst:71 6607db44b40b4af2821610d354488745
+#: 965224b42187441b9a955de78afbbcc8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:30 ba1770396f644beb80dd43c9e70a6881
+msgid "**Name**: ``VariantValidator_gene2transcripts``"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:31
+#: ../../tools/variant_validator_tools.rst:74 17b01e64e19f4a01b3a6b197efb1537a
+#: 21735326064a4fa59bb9bf62d033cafa
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:32 1ceb144da504456ab73046f734302323
+msgid ""
+"**Description**: Get all transcripts for a gene using VariantValidator. "
+"Returns MANE Select and MANE Plus Clinical transcript annotations, "
+"Ensembl and RefSeq transcript identifiers, genomic coordinates, and "
+"cross-references. Useful for identifying the correct transcript for "
+"variant annotation. Supports filter for MANE transcripts only or all "
+"transcripts."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:34
+#: ../../tools/variant_validator_tools.rst:77 05eab04fae8541aab1adbb61aeb64623
+#: 3b86bd0a85d2482d9a10eea2b05c461b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:36 74dd2123f2654a0badd0ffd241e41ada
+msgid ""
+"``gene_symbol`` (string) (required) HGNC gene symbol (e.g., 'TP53', "
+"'BRCA1', 'EGFR'). Aliases: gene, gene\\_name."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:39 3cbe0d86275c48bdb21ee3f9cb3826ca
+msgid "``gene`` (string) (optional) Alias for gene\\_symbol."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:42 d05a8dba8d104659a2011c4c644cc9f1
+msgid "``gene_name`` (string) (optional) Alias for gene\\_symbol."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:45 586ac94cd869459abda7824569edcf0b
+msgid ""
+"``transcript_set`` (string) (optional) Transcript filter: 'mane' for MANE"
+" Select/Plus Clinical only, 'refseq' for RefSeq transcripts, 'ensembl' "
+"for Ensembl, 'all' for everything"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:48 64dcff0d3c3e403b83108fa683b2b78f
+msgid ""
+"``genome_build`` (string) (optional) Reference genome assembly: 'GRCh37' "
+"or 'GRCh38' (default: GRCh38)"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:51
+#: ../../tools/variant_validator_tools.rst:88 2ed087bc9f1e4c288edb4108ff1e2937
+#: ec0f9dd972144d08bc8b090222786f0e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:65 25b9f17c96714ff9af51124102de053f
+msgid "**VariantValidator_validate_variant** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:67 db5c47aadd8647849618152d44ccc1b2
+msgid ""
+"Validate and convert genetic variant descriptions using VariantValidator."
+" Takes HGVS-formatted va..."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst b24888421543461591686cd3b8e54470
+msgid "VariantValidator_validate_variant tool specification"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:73 af3e6d0976a94ef1905a9eb26b2bd6df
+msgid "**Name**: ``VariantValidator_validate_variant``"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:75 d5d26a5296c0402791bbfe4cb387ac2d
+msgid ""
+"**Description**: Validate and convert genetic variant descriptions using "
+"VariantValidator. Takes HGVS-formatted variant notation and returns "
+"validated variant descriptions with genomic context, transcript context, "
+"protein consequence, and cross-references. Validates variant nomenclature"
+" against current RefSeq sequences and LOVD syntax checker. Supports "
+"substitutions, deletions, insertions, duplications, inversions. Reference"
+" assemblies: GRCh37 (hg19) or GRCh38 (hg38)."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:79 82f2f2499cf840b1afeaddf9ea6003a3
+msgid ""
+"``genome_build`` (string) (required) Reference genome assembly: 'GRCh37' "
+"(hg19) or 'GRCh38' (hg38)"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:82 76bb79c8f6474aa4a9268609c21e629d
+msgid ""
+"``variant_description`` (string) (required) HGVS variant description "
+"(e.g., 'NM\\_007294.4:c.5266dup' for BRCA1 c.5266dupC, "
+"'NM\\_000179.3:c.943C>T', 'chr17:g.43092919del')"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:85 67dfcef98351426da729ee0b2e692508
+msgid ""
+"``select_transcripts`` (string) (required) Transcript to validate against"
+" (e.g., 'NM\\_007294.4'). Use 'all' to get all transcripts for a genomic "
+"variant."
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:104 2c6cec2ce3a14093bcd5ebc6a55a302a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:106 dac3046ba9694fe2a8e7c470c6da0102
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/variant_validator_tools.rst:107 d26844e2b1bb4258bf87265d5fb268e1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

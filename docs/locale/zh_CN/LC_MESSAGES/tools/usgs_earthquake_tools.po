@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/usgs_earthquake_tools.rst:10 08d795b36b5a41838b40721bcea67ed3
+msgid "Usgs Earthquake Tools"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:12 6d9fce517c0c4388889ff2c90791cba5
+msgid ""
+"**Configuration File**: ``usgs_earthquake_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:16 fc334df45f754668b3d7265f4e0edb15
+msgid ""
+"This page contains all tools defined in the "
+"``usgs_earthquake_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:19 8c7003b09adb48a0b41c25151059e1e9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:22 ccd3e7d1acc64824b83e9e8d46a5cfd1
+msgid "**USGS_get_earthquake_feed** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:24 c433391ae4c54a2d90ac71cd653d5be4
+msgid ""
+"Get recent USGS earthquake data feeds in GeoJSON format. Returns "
+"earthquakes based on magnitude t..."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst c0acf4b580c6479fbd483ea97fdedc5d
+msgid "USGS_get_earthquake_feed tool specification"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:28
+#: ../../tools/usgs_earthquake_tools.rst:63 6c54fe253d304d3eb23b3bbbcb3e16fa
+#: 958c979b526347e38b52c6f3405db1e2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:30 9c189016c0b14972921f13986a333bb8
+msgid "**Name**: ``USGS_get_earthquake_feed``"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:31
+#: ../../tools/usgs_earthquake_tools.rst:66 28a8902d497741229064bee45982bcf9
+#: d9185c1af57f4886be3379b6fa9f39de
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:32 2092b3f081bf451d91ab6fc2bfecccb8
+msgid ""
+"**Description**: Get recent USGS earthquake data feeds in GeoJSON format."
+" Returns earthquakes based on magnitude threshold and time period. Data "
+"includes magnitude, location, depth, coordinates, and impact metrics. "
+"Feeds are updated in real-time. Use for monitoring seismic activity, "
+"disaster response planning, and geological research."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:34
+#: ../../tools/usgs_earthquake_tools.rst:69 6bf440b86b444c6a8c694b1492b2933e
+#: 7380e65f6a8844b4b4574f1cb94d0f5e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:36 e91ebfec8e1f400da009c040c9d1d19b
+msgid ""
+"``magnitude`` (string) (required) Minimum magnitude filter: 'significant'"
+" (felt widely), '4.5', '2.5', '1.0', 'all' (includes micro-earthquakes). "
+"Higher magnitude = fewer but larger events."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:39 7323351b4f31497890717c929b132b8e
+msgid ""
+"``period`` (string) (required) Time period: 'hour' (past 1 hour), 'day' "
+"(past 24 hours), 'week' (past 7 days), 'month' (past 30 days)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:42
+#: ../../tools/usgs_earthquake_tools.rst:98 5cec75e7bb9349278d9c84fb68b1070e
+#: dccf9cd2ab704dc692c66d56d7080244
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:57 c751121cae884062b53943b8a0511546
+msgid "**USGS_query_earthquakes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:59 3b95b1e26efe4a59a61c928c22fdfb58
+msgid ""
+"Query the USGS FDSN earthquake database with custom parameters to search "
+"historical and recent se..."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst bd35e3a818084045b13ea837f4fbe0a4
+msgid "USGS_query_earthquakes tool specification"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:65 fd2b08b808e34001ab1f338d595b22b7
+msgid "**Name**: ``USGS_query_earthquakes``"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:67 a2903c3e903243b2845bfeea0e1873c1
+msgid ""
+"**Description**: Query the USGS FDSN earthquake database with custom "
+"parameters to search historical and recent seismic events. Filter by "
+"magnitude, time range, location (bounding box or radial search), and "
+"depth. Returns detailed GeoJSON for all matching earthquakes. Useful for "
+"historical seismicity analysis, regional earthquake studies, and risk "
+"assessment."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:71 6466b66233414952a3199d682428c33d
+msgid ""
+"``minmagnitude`` (number, null) (optional) Minimum earthquake magnitude "
+"(e.g., 5.0, 6.5, 7.0)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:74 d70dad864a314497a41afc4116b0641f
+msgid "``maxmagnitude`` (number, null) (optional) Maximum earthquake magnitude"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:77 6b6db1c9b4944c6db69965a75a1d7999
+msgid ""
+"``starttime`` (string, null) (optional) Start time in ISO 8601 format "
+"(e.g., '2024-01-01', '2020-01-01T00:00:00')"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:80 d846410629de42aa84cced52bbe7676c
+msgid ""
+"``endtime`` (string, null) (optional) End time in ISO 8601 format (e.g., "
+"'2024-12-31'). Defaults to current time."
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:83 6bf69330ca9e4e8f94ea4dd805268c1f
+msgid ""
+"``minlatitude`` (number, null) (optional) Minimum latitude for bounding "
+"box search (-90 to 90)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:86 fb566845358c4a70a092a7d96ed66486
+msgid ""
+"``maxlatitude`` (number, null) (optional) Maximum latitude for bounding "
+"box search"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:89 7840c87e011447c49fafd1c23b305831
+msgid "``minlongitude`` (number, null) (optional) Minimum longitude (-180 to 360)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:92 d680193052274aa39a6dcc3afa2d1b20
+msgid "``maxlongitude`` (number, null) (optional) Maximum longitude"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:95 938cec92ba384db1aa12ac6768dff081
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of events (default "
+"20000, max 20000)"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:111 0e52bbe098944b33bcc7ac3407ee425e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:113 f201f2a9d1264eec9a31403f92c99f28
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/usgs_earthquake_tools.rst:114 80060fb90d4f46a3a844cdf3c7007bd7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

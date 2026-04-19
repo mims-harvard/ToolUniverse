@@ -1,0 +1,116 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/screen_tools.rst:10 9f85c89e99eb4f3888e70996f00fcfcd
+msgid "Screen Tools"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:12 cfb004b1649545f78dda1d9b1506f30f
+msgid ""
+"**Configuration File**: ``screen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:16 ea9778e11e804b1db85424718c1547d8
+msgid ""
+"This page contains all tools defined in the ``screen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/screen_tools.rst:19 3e64192ae88143569df627bccadf3bc1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:22 d04580c062e74d77860662f63fcfdcda
+msgid "**SCREEN_get_regulatory_elements** (Type: SCREENRESTTool)"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:24 c6d41c6a317f428dac2805162f0d8a0e
+msgid ""
+"Get candidate cis-regulatory elements (cCREs) from SCREEN database for "
+"specific genomic regions"
+msgstr ""
+
+#: ../../tools/screen_tools.rst 2a68728f70da4a6f82b66a0e39d79560
+msgid "SCREEN_get_regulatory_elements tool specification"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:28 6157e505d1804deb8f7cbe1c3725d4e1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:30 ce7530fa70b349acb84816fd55ab3511
+msgid "**Name**: ``SCREEN_get_regulatory_elements``"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:31 9f9e43e6138f4fa5ad3ce7fbe0fd88dd
+msgid "**Type**: ``SCREENRESTTool``"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:32 c65a1b9a0a1b4fb5974f166a1f38d033
+msgid ""
+"**Description**: Get candidate cis-regulatory elements (cCREs) from "
+"SCREEN database for specific genomic regions"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:34 667898e29cbd4fed84c71752cca021ef
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:36 30feb372e6ea4d4fafb5092b8a0a7390
+msgid ""
+"``gene_name`` (string) (optional) Gene symbol to search for regulatory "
+"elements (e.g., BRCA1, TP53). Alias: 'query'."
+msgstr ""
+
+#: ../../tools/screen_tools.rst:39 1d2878111ea8491c8a3269b093a0f28b
+msgid ""
+"``query`` (string) (optional) Gene symbol to search for regulatory "
+"elements (alias for gene\\_name)."
+msgstr ""
+
+#: ../../tools/screen_tools.rst:42 1d3e6afb2fe941599cc15e923f2df98c
+msgid ""
+"``element_type`` (string) (optional) Type of regulatory element "
+"(promoter, enhancer, insulator)"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:45 fab14602c90643c7a52263a7de9e8c3f
+msgid "``limit`` (integer) (optional) Number of results to return"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:48 8ac4999dcfb7429fb6f056889a7e6806
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:61 fc5919d9ed3f4b2090c34867371478a6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:63 42a967ad37c74c5ab0648fdc6a1eb6a6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/screen_tools.rst:64 72546cbc853f4e9e9ce2d51a9d949c25
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/open_meteo_climate_tools.rst:10 af94e0fff963449a9e4f36787775274e
+msgid "Open Meteo Climate Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:12 56c56e4602ef448587677a7f12cbe3a2
+msgid ""
+"**Configuration File**: ``open_meteo_climate_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:16 16b6a794665e45d1acfd1750cf5ce3e4
+msgid ""
+"This page contains all tools defined in the "
+"``open_meteo_climate_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:19 7c1af91078fb444199b5af391040f720
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:22 14a496e24e8c4abc91184872b16a61a7
+msgid "**OpenMeteo_get_historical_climate** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:24 a8457489e5af4f4298a1cbe1a05484a6
+msgid ""
+"Get historical daily climate data for any location on Earth using the "
+"Open-Meteo Climate Change A..."
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst 6077ff0f88b94c7b8265eb1afa98007c
+msgid "OpenMeteo_get_historical_climate tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:28 4d01cc88367a4c38b7fb895efbfa81cd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:30 53fc5809fac14cc3867dd36d0fbde1c2
+msgid "**Name**: ``OpenMeteo_get_historical_climate``"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:31 52037861fc754c11be0a1b15b6f1b486
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:32 6b08309b512247838ac609776a075553
+msgid ""
+"**Description**: Get historical daily climate data for any location on "
+"Earth using the Open-Meteo Climate Change API. Returns daily temperature,"
+" precipitation, wind, humidity, and other variables from climate "
+"reanalysis models (ERA5, EC-Earth3P\\_HR, CMIP6). Data available from "
+"1950 onwards. No authentication required. Useful for climate research, "
+"trend analysis, and historical weather studies."
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:34 ffdc5edd30924cefba23965dfc0e1165
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:36 12ae23226aa244cc99b1732a958130b0
+msgid ""
+"``latitude`` (number) (required) Location latitude (-90 to 90). Examples:"
+" 52.52 (Berlin), 40.71 (NYC), 48.85 (Paris)"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:39 b56d5d9e0f2b4a8db795484b601227a6
+msgid ""
+"``longitude`` (number) (required) Location longitude (-180 to 180). "
+"Examples: 13.41 (Berlin), -74.01 (NYC), 2.35 (Paris)"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:42 051d1ef6282a475eab371452ab448248
+msgid ""
+"``start_date`` (string) (required) Start date in YYYY-MM-DD format. Data "
+"available from 1950-01-01. Examples: '1980-01-01', '2000-06-01', "
+"'2020-01-01'"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:45 b66af769bdef4015a293e629ca172a8a
+msgid ""
+"``end_date`` (string) (required) End date in YYYY-MM-DD format. Examples:"
+" '1980-12-31', '2000-06-30', '2023-12-31'"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:48 6e5118d3d15744c186bb36245d60ca2b
+msgid ""
+"``daily`` (string, null) (optional) Comma-separated daily variables. "
+"Values: 'temperature\\_2m\\_mean', 'temperature\\_2m\\_max', "
+"'temperature\\_2m\\_min', 'precipitation\\_sum', 'rain\\_sum', "
+"'snowfall\\_sum', 'wind\\_speed\\_10m\\_max', "
+"'et0\\_fao\\_evapotranspiration'. Default: "
+"temperature\\_2m\\_mean,precipitation\\_sum"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:51 1195564fcd8e45eb9cba9edd6fa4a504
+msgid ""
+"``models`` (string, null) (optional) Climate model. Values: "
+"'EC\\_Earth3P\\_HR' (Europe, high res), 'MPI\\_ESM1\\_2\\_XR', "
+"'FGOALS\\_f3\\_H', 'CMCC\\_CM2\\_VHR4'. Default: EC\\_Earth3P\\_HR"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:54 b00714868ab54d43bbfa202737feb111
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:71 3b22576d1ded402ea982f75b7eba7201
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:73 77a8b011a1e64469b0d6955c2fa6b144
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/open_meteo_climate_tools.rst:74 608c01705f374b06ace8b20da954dbb9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

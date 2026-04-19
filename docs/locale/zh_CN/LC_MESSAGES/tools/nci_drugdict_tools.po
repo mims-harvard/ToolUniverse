@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nci_drugdict_tools.rst:10 0be923770f634ad5b1b949e93de8f992
+msgid "Nci Drugdict Tools"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:12 da66a65b41ab4c1f88d9ad961656401f
+msgid ""
+"**Configuration File**: ``nci_drugdict_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:16 d623ce7b7fa84a0ca933fc06bfbbcd13
+msgid ""
+"This page contains all tools defined in the ``nci_drugdict_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:19 d4c1378896214064b15d0760e63111e6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:22 447517f8cf37413f978b93db7cf3378e
+msgid "**NCIDrugDict_get_drug** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:24 a9296bb9a771479c81eae27fda62797f
+msgid ""
+"Get detailed information for a specific drug from the NCI Drug Dictionary"
+" by its term ID. Returns..."
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst b1d2de16b47d45d8bc6dffe7167d380c
+msgid "NCIDrugDict_get_drug tool specification"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:28 ../../tools/nci_drugdict_tools.rst:59
+#: a6138b1282de4470925d17d239a1f27f d22d72feb896485eb6b3f8c7f80db00a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:30 c97edd4f946843e4a421666b94ae3f0f
+msgid "**Name**: ``NCIDrugDict_get_drug``"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:31 ../../tools/nci_drugdict_tools.rst:62
+#: d98b731efcb342e4afd2c99e31dfb93f ecd8a8ae5d2c4c81978b02790f011821
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:32 eb937bc5f3c34df6852a7929e8ca6039
+msgid ""
+"**Description**: Get detailed information for a specific drug from the "
+"NCI Drug Dictionary by its term ID. Returns the drug definition, NCI "
+"concept ID, all aliases (brand names, code names, chemical names, CAS "
+"registry numbers, NSC numbers), and link to drug information summary "
+"page. Use NCIDrugDict\\_search first to find term IDs."
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:34 ../../tools/nci_drugdict_tools.rst:65
+#: 3b98fda8e17943749b01e49dee163299 3ff6ab14d0ed45d2b81e8f0f94a9ca5b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:36 e453dfd003e04f12982711990abf51d5
+msgid ""
+"``term_id`` (integer) (required) NCI Drug Dictionary term ID (e.g., 37862"
+" for imatinib mesylate, 695789 for pembrolizumab)"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:39 ../../tools/nci_drugdict_tools.rst:76
+#: 5e49f2967a0944af9f8e22c780454e6e de0c85da7dcc420a9896ea2bf0c018df
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:53 cf091274fb70466eabe436c8045efa84
+msgid "**NCIDrugDict_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:55 b724f0e50996485cbee68187dc92ef99
+msgid ""
+"Search the NCI (National Cancer Institute) Drug Dictionary for cancer "
+"drugs, agents, and therapeu..."
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst 91287a2148d9426ba956046553cb9957
+msgid "NCIDrugDict_search tool specification"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:61 37ab25d1925241f99902456f6e2070e7
+msgid "**Name**: ``NCIDrugDict_search``"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:63 d8345f9a9e8143bba7157b70a321110b
+msgid ""
+"**Description**: Search the NCI (National Cancer Institute) Drug "
+"Dictionary for cancer drugs, agents, and therapeutic compounds. Returns "
+"drug names, definitions, NCI concept IDs, drug aliases (brand names, code"
+" names, chemical names), and links to drug information summaries. "
+"Supports searching by drug name, brand name, or chemical name. The NCI "
+"Drug Dictionary contains over 9000 drug entries used in cancer treatment "
+"and clinical trials."
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:67 260bf956400e47f58f2c17eacd89c3f9
+msgid ""
+"``query`` (string) (required) Drug name to search for (e.g., 'imatinib', "
+"'pembrolizumab', 'tamoxifen', 'cisplatin')"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:70 431f708793fc47e6bd8a19939ac65ba2
+msgid ""
+"``matchType`` (string) (optional) Match type: 'Begins' (starts with) or "
+"'Contains' (default: Begins)"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:73 2ae45e915687419d83460276aa218549
+msgid "``size`` (integer) (optional) Number of results to return (default 10)"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:90 c8f56de406ca4394a4873fac39481c55
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:92 0ed40174969845af82c3b03000f57dab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nci_drugdict_tools.rst:93 9f49674ed3584d098a5f88efc8c4e3b4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

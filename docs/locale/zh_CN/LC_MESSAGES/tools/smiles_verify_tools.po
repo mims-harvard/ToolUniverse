@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/smiles_verify_tools.rst:10 7b2f3f4b341844d6928bbdfaf504b8bc
+msgid "Smiles Verify Tools"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:12 064f19d60e8546108da45f53c26d929d
+msgid ""
+"**Configuration File**: ``smiles_verify_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:16 fe3a25675fe54baa98495c79715e7265
+msgid ""
+"This page contains all tools defined in the ``smiles_verify_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:19 22b258b208294a448f23b4a076e407b5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:22 244cecd091bb4f66b65b55a3fa00153e
+msgid "**SMILES_verify** (Type: SMILESVerifyTool)"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:24 33db8857a3334cdda2fcf743d57ad3c9
+msgid ""
+"Parse a SMILES string without RDKit and compute molecular properties: "
+"molecular weight, molecular..."
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst 413c9508ac5047f08f883cb2f9e6bda9
+msgid "SMILES_verify tool specification"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:28 3a939611658c41eaa53e8095159d5bd9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:30 4f13ae2ea5184cf7859c0891e2a06dce
+msgid "**Name**: ``SMILES_verify``"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:31 3fa443ffe3fb4648a07cc8cf7e7af8db
+msgid "**Type**: ``SMILESVerifyTool``"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:32 e4cf35293ca14168856b70b40c17cd70
+msgid ""
+"**Description**: Parse a SMILES string without RDKit and compute "
+"molecular properties: molecular weight, molecular formula, heavy atom "
+"count, total atom count, valence electron count, formal charge, ring "
+"count, and degrees of unsaturation. Optionally verify computed values "
+"against expected constraints (MW, heavy atoms, valence electrons, "
+"formula). Supports organic subset atoms (C, N, O, S, P, F, Cl, Br, I), "
+"bracket atoms with charges and explicit H, aromatic notation (lowercase),"
+" and ring closures. Useful for SMILES validation, property verification, "
+"and lightweight cheminformatics without RDKit."
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:34 435e893e44714f9da9c2e3dcc71115c9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:36 f30839862963424580d980b97fb76126
+msgid ""
+"``smiles`` (string) (required) SMILES string to parse and verify (e.g., "
+"'c1ccccc1' for benzene, 'CC(=O)O' for acetic acid)"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:39 69f57e1203e647a687c82f788b9a0229
+msgid ""
+"``expected_mw`` (number) (optional) Optional expected molecular weight to"
+" verify against (tolerance +/- 0.5 Da)"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:42 6fe08a4487ca4827b87485963fa4c96b
+msgid ""
+"``expected_heavy_atoms`` (integer) (optional) Optional expected heavy "
+"atom count to verify against"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:45 f4aa99716e98429a9d035a53569001cb
+msgid ""
+"``expected_valence_electrons`` (integer) (optional) Optional expected "
+"total valence electron count to verify against"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:48 6644729882b9486d80f9f3905144c945
+msgid ""
+"``expected_formula`` (string) (optional) Optional expected molecular "
+"formula string to verify against (e.g., 'C6H6')"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:51 01415357edaa4dc29e39d4e9646a2512
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:65 e21420aee5dd447e8d69cae63c9e6dc6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:67 6cbf49585d31400b93d1c56a551b6b2c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/smiles_verify_tools.rst:68 f95d07e781b244099eeddc72aa5ae536
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

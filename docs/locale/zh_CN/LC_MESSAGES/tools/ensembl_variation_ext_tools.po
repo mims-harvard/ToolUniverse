@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_variation_ext_tools.rst:10
+#: 40c3578365bf442b95b9c572bc6abd51
+msgid "Ensembl Variation Ext Tools"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:12
+#: f6a0dea093cd4f16b59e3d600343598c
+msgid ""
+"**Configuration File**: ``ensembl_variation_ext_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:16
+#: 5ac484a740b1472da4a72850e3412eb4
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_variation_ext_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:19
+#: a288326b4f8d45f8aa6d1e09c6e93777
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:22
+#: 9b06f46dfeab467887db94eceab67675
+msgid "**EnsemblVar_get_population_frequencies** (Type: EnsemblVariationExtTool)"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:24
+#: 09947d3cbcc94979bb128984908f6b31
+msgid ""
+"Get allele frequency data for a variant (SNP/indel) across global "
+"populations from gnomAD and 100..."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst c51841e2d1f34463b5a380f5463f9772
+msgid "EnsemblVar_get_population_frequencies tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:28
+#: ../../tools/ensembl_variation_ext_tools.rst:62
+#: babe919bfa864253ab9486a64fdb37a7 e93f47d2b36b4e859fbb578c1e59fbfe
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:30
+#: 1efefae5f97446209e6c61f321aa4f92
+msgid "**Name**: ``EnsemblVar_get_population_frequencies``"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:31
+#: ../../tools/ensembl_variation_ext_tools.rst:65
+#: 271f5b00a28a4a089e9518b13f3766b0 cdbd0da2270348518fe4a36022b02b11
+msgid "**Type**: ``EnsemblVariationExtTool``"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:32
+#: a3c9cfddeccc49bb95984480bf9be6b2
+#, python-format
+msgid ""
+"**Description**: Get allele frequency data for a variant (SNP/indel) "
+"across global populations from gnomAD and 1000 Genomes via Ensembl. "
+"Returns allele frequencies broken down by population (e.g., gnomADe:ALL, "
+"gnomADe:nfe, 1000GENOMES:phase\\_3:CEU, etc.). Essential for assessing "
+"variant rarity in different ethnic groups, interpreting clinical "
+"significance, and population genetics studies. Example: rs429358 (APOE "
+"epsilon-4 allele) shows C allele frequency of 14.8% globally (gnomAD), "
+"22.7% in African populations, 9.8% in East Asian populations."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:34
+#: ../../tools/ensembl_variation_ext_tools.rst:68
+#: 452d463612994f1d953d7d53ff494030 bb12dc17f572492791eae190718c0c92
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:36
+#: ../../tools/ensembl_variation_ext_tools.rst:70
+#: 86d3f591b91e4155afb27d7512ddf66a bc08b851bdf246a9a536d7610995f3ef
+msgid ""
+"``variant_id`` (string) (required) dbSNP rsID of the variant. Examples: "
+"'rs429358' (APOE), 'rs7903146' (TCF7L2), 'rs1042779'."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:39
+#: ../../tools/ensembl_variation_ext_tools.rst:73
+#: 71f401c817224aacabf71d67a43abfe4 9af82e3594444a8092a4f4348d8f67cb
+msgid ""
+"``species`` (string) (optional) Species name. Default 'human'. Examples: "
+"'human', 'homo\\_sapiens'."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:42
+#: ../../tools/ensembl_variation_ext_tools.rst:76
+#: 3d802b43171141ea8fb5a8fffa4c4c7a ad40f450138a461f96c554d12fd68389
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:56
+#: 5c9cb04cb88c4cf393df463211983ed6
+msgid "**EnsemblVar_get_variant_consequences** (Type: EnsemblVariationExtTool)"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:58
+#: 0415e6253c36438085d5aa0e3153ee68
+msgid ""
+"Get detailed variant information including consequence type, clinical "
+"significance, synonyms, evi..."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst 8a37d581236f4e7d88250029fd6fd05a
+msgid "EnsemblVar_get_variant_consequences tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:64
+#: cce501c30d0b4208ad1f6f0c1bab12a4
+msgid "**Name**: ``EnsemblVar_get_variant_consequences``"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:66
+#: 79c1c4362dfd44bfa0f80cff815f65ff
+msgid ""
+"**Description**: Get detailed variant information including consequence "
+"type, clinical significance, synonyms, evidence attributes, and allele "
+"mappings from Ensembl. More comprehensive than VEP - returns the full "
+"variant record with all known synonyms, mapped positions, ancestral "
+"allele, and minor allele data. Example: rs429358 returns "
+"most\\_severe\\_consequence='missense\\_variant', 27 synonyms, mapped to "
+"chr19:44908684 (GRCh38), and is classified as a missense\\_variant "
+"affecting APOE."
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:90
+#: a2f1f7e8c5cb41faac028f0660356f61
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:92
+#: ff05829c247244ebabe18d2d3cd14658
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_variation_ext_tools.rst:93
+#: 56d22d6d7798499db8c13a4cf904b474
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

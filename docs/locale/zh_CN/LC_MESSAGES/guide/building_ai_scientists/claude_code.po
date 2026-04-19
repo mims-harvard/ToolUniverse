@@ -7,632 +7,536 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../guide/building_ai_scientists/claude_code.rst:2
-#: 95413725dd13468e9e0039d7ae9b1e6a
+#: 629d22f19a4e4c57b513500a37b098fa
 msgid "Claude Code"
 msgstr "Claude 代码"
 
 #: ../../guide/building_ai_scientists/claude_code.rst:4
-#: 613b3f282b8944f69cf5ba9316dd5e54
-msgid "**Building AI Scientists with Claude Code and ToolUniverse**"
-msgstr "**使用 Claude Code 和 ToolUniverse 构建 AI 科学家**"
+#: f08b77dd577a410bb96c758099f81d56
+msgid "Install: ``npm install -g @anthropic-ai/claude-code``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/claude_code.rst:5
+#: e59253fca9f94043833ebd4b7af03241
+#, fuzzy
+msgid ""
+"`Official MCP setup guide <https://docs.anthropic.com/en/docs/claude-"
+"code/mcp>`_"
+msgstr ""
+"详情请参见：`Anthropic — 设置 Claude Code <https://docs.anthropic.com/en/docs"
+"/claude-code/setup>`_。"
 
 #: ../../guide/building_ai_scientists/claude_code.rst:7
-#: ecd8965055ea4f619076f6ca0624ab17
-msgid "Overview"
-msgstr "概述"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:9
-#: f70d4a5253ae4eeb9cc2587ac0878989
-msgid ""
-"Claude Code integration enables powerful IDE- or terminal-based scientific "
-"research through the Model Context Protocol (MCP). This approach provides a "
-"developer-friendly interface for research while leveraging Claude's advanced"
-" reasoning and ToolUniverse's 1000+ scientific tools."
+#: 174359e4ab7746ca9ec63197ddf0db00
+msgid "To set up ToolUniverse, open Claude Code and run:"
 msgstr ""
-"Claude Code 集成通过模型上下文协议（MCP）实现了强大的基于 IDE 或终端的科学研究。该方法为研究人员提供了友好的开发接口，同时充分利用了"
-" Claude 的先进推理能力和 ToolUniverse 超过 600 种科学工具。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:29
-#: d6ef9bd534fe4fc18419cd0e0c4eae44
-msgid "**Benefits of Claude Code Integration**:"
-msgstr "**Claude 代码集成的优势**："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:31
-#: be003dfdf3e7499b890fd341a413b222
-msgid ""
-"**Developer Workflow**: Use Claude inside VS Code/JetBrains or terminal"
-msgstr "**开发者工作流程**：在 VS Code/JetBrains 或终端中使用 Claude"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:32
-#: 3c5dbf1923284939b565723d7c6b2e61
-msgid "**Advanced Reasoning**: Claude's strong multi-step reasoning"
-msgstr "**高级推理**：Claude 强大的多步骤推理能力"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:33
-#: ee66d59a53554559a6be9fd88df612bb
-msgid "**Comprehensive Tools**: Access to 1000+ ToolUniverse tools"
-msgstr "**全面工具**：可访问600多个ToolUniverse工具"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:34
-#: d8c93717a6ff496cad7c92cbe4c06087
-msgid ""
-"**Automated Execution**: Natural-language to tools, directly in your editor"
-msgstr "**自动执行**：自然语言转工具，直接在您的编辑器中操作"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:35
-#: c3afcbdcf3314acc9bfd893c76994507
-msgid "**Batch & Iteration**: Run multi-step research loops effectively"
-msgstr "**批处理与迭代**：高效执行多步骤研究循环"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:38
-#: 0d0004af5b1642a2ba2f7532f8ce7ec8
-msgid "Prerequisites"
-msgstr "先决条件"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:40
-#: 4e4711ed48244624b0aa6b47dedd4c7b
-msgid "Before setting up Claude Code integration, ensure you have:"
-msgstr "在设置 Claude Code 集成之前，请确保您已具备以下条件："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:42
-#: 26b5b02a858c443fad0da06e07b6ccc1
-msgid "**Claude Code**: Installed in your IDE or CLI"
-msgstr "**Claude Code**：安装在您的 IDE 或命令行界面（CLI）中"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:43
-#: 78eb761545c64eb88f7ea9a6eb80294f
-msgid "**ToolUniverse**: Installed"
-msgstr "**ToolUniverse**：已安装"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:44
-#: 910224b31dd4450eae4d3fc93f130409
-msgid "**UV Package Manager**: For running the MCP server"
-msgstr "**UV 包管理器**：用于运行 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:45
-#: 8ab5d63491e943a0b7b94fcafee97f2b
-msgid "**System Requirements**: macOS, Windows, or Linux with Python 3.10+"
-msgstr "**系统要求**：支持 macOS、Windows 或 Linux，需安装 Python 3.10 及以上版本"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:46
-#: 439b9a1642d1415f97663a019d86699c
-msgid ""
-"**API Keys**: For specific tools or optional hooks (e.g., Azure OpenAI for "
-"summarization)"
-msgstr "**API 密钥**：用于特定工具或可选钩子（例如，用于摘要的 Azure OpenAI）"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:49
-#: cca85cb0c28044339c3b6ce53c683386
-msgid "Installation and Setup"
-msgstr "安装与设置"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:52
-#: 040de615e3eb4a48a18842f612e198c5
-msgid "Step 0: Install Claude Code"
-msgstr "第0步：安装Claude代码"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:54
-#: 0f76f6c9d2cf4ce39cefd9be3743b664
-msgid "Install Claude Code in your terminal (any OS with Node.js 18+):"
-msgstr "在终端中安装 Claude Code（适用于任何安装了 Node.js 18 及以上版本的操作系统）："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:61
-#: 935d641302cc42b8833843f40bf18827
-msgid "Verify and diagnose your installation:"
-msgstr "验证并诊断您的安装情况："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:67
-#: d4120f7b065d4ba4a30e3c79adf40f85
-msgid "Native installer (beta) alternatives:"
-msgstr "本地安装程序（测试版）替代方案："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:76
-#: 57adab25021b4e02800f3d07fea66a73
-msgid "On Windows PowerShell:"
-msgstr "在 Windows PowerShell 中："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:82
-#: c9d683e120cb49cdb98be0c5ead72828
-msgid "After installation, you can start Claude Code in a project:"
-msgstr "安装完成后，您可以在项目中启动 Claude Code："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:89
-#: 7552f0e7691845d99536be5693215e5e
-msgid ""
-"For details, see: `Anthropic — Set up Claude Code "
-"<https://docs.anthropic.com/en/docs/claude-code/setup>`_."
-msgstr ""
-"详情请参见：`Anthropic — 设置 Claude Code "
-"<https://docs.anthropic.com/en/docs/claude-code/setup>`_。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:91
-#: 9c7f6e0da63d429b925a445ca8dbc6d7
-msgid ""
-"For Windows installation, see: `Anthropic — Windows setup "
-"<https://docs.anthropic.com/en/docs/claude-code/setup#windows-setup>`_."
-msgstr ""
-"有关 Windows 安装，请参阅：`Anthropic — Windows 设置 "
-"<https://docs.anthropic.com/en/docs/claude-code/setup#windows-setup>`_。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:94
-#: 69aab2b0b5d54166a475db6fd7bcd8b1
-msgid "Step 1: Install uv and ToolUniverse"
-msgstr "步骤 1：安装 uv 和 ToolUniverse"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:96
-#: 6d1ee5faaeee4020a8d11bbee65d9403
-msgid "Install uv package manager:"
-msgstr "安装 uv 包管理器："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:106
-#: 83407cd27a3f426186a4a6eea4919261
-msgid ""
-"For Windows installation and other methods, see: `uv installation Tutorial "
-"<https://docs.astral.sh/uv/getting-started/installation/>`_."
-msgstr ""
-"有关 Windows 安装及其他方法，请参见：`uv 安装教程 <https://docs.astral.sh/uv/getting-"
-"started/installation/>`_。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:108
-#: 9b0b98dd91c446d793520ff712753503
-msgid "Set up a dedicated uv environment and install ToolUniverse:"
-msgstr "建立专用的 uv 环境并安装 ToolUniverse："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:122
-#: 90b9fbd4ffa24252843e42d65679bfe5
-msgid "Step 2: Test ToolUniverse MCP server"
-msgstr "步骤 2：测试 ToolUniverse MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:124
-#: 2bd296e2299e4d2babcfb2124f9e86b2
-msgid "Test that the ToolUniverse MCP server works:"
-msgstr "测试 ToolUniverse MCP 服务器是否正常运行："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:132
-#: 6f3654b7abf44001a9a646113b935173
-msgid "Step 3: Add ToolUniverse MCP server"
-msgstr "步骤 3：添加 ToolUniverse MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:134
-#: afbf002f7d834a44aafb7cbb41619fe1
-msgid ""
-"Use Claude Code's built-in command to add ToolUniverse as an MCP server:"
-msgstr "使用Claude Code的内置命令将ToolUniverse添加为MCP服务器："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:141
-#: 4ee4ce54a067408d8381fda1332959c0
-msgid "**Alternative scope options:**"
-msgstr "**替代范围选项：**"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:143
-#: 28590d794c20479c8b66d434c97947d0
-msgid ""
-"``--scope local`` (default): Available only in current project directory"
-msgstr "``--scope local``（默认值）：仅在当前项目目录中可用"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:144
-#: c46c8c3dfc474e57b3ad093b4e9eec95
-msgid ""
-"``--scope project``: Shared across project team via ``.claude/.mcp.json``"
-msgstr "``--scope project``：通过``.claude/.mcp.json``在项目团队中共享"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:145
-#: aa878bb1a29942e2abe5b9003fe15cbc
-msgid "``--scope user``: Available across all your projects"
-msgstr "``--scope user``：适用于您所有的项目"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:147
-#: 36cd8f678e374e77a1cf94f5360f09be
-msgid "**Environment variables (optional):**"
-msgstr "**环境变量（可选）：**"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:149
-#: 182af353d4934518a28915951b93f34e
-msgid ""
-"Add ``--env`` flags only if you need summarization hooks or tools requiring "
-"API keys:"
-msgstr "仅在需要摘要挂钩或需要 API 密钥的工具时添加 ``--env`` 标志："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:156
-#: f61614d99f9a476b8fcf9d60b74ddc98
-msgid "**Optimized Configuration for Research Users (Recommended):**"
-msgstr "**针对研究用户的优化配置（推荐）：**"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:163
-#: 84c757daf1484f779e76a2a2eb6afdf2
-msgid "**Configuration Benefits:**"
-msgstr "**配置优势：**"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:165
-#: 0a9dd5bbde814ff2b421a16e7c1e71d3
-msgid ""
-"``--exclude-tool-types PackageTool``: Removes package management tools to "
-"save context window space if you don't have coding needs"
-msgstr "``--exclude-tool-types PackageTool``：移除软件包管理工具，以节省上下文窗口空间（如果您没有编码需求）。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:166
-#: 3184a49f52fd418c821044d29601ecee
-msgid ""
-"``--hook-type SummarizationHook``: Provides summary of the output that is "
-"too long to fit in the context window"
-msgstr "``--hook-type SummarizationHook``：提供输出内容的摘要，用于处理超出上下文窗口长度的情况"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:167
-#: 2126bed171284e0c86276f3d4bdb46c2
-msgid ""
-"``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``: Required for "
-"SummarizationHook functionality"
-msgstr ""
-"``AZURE_OPENAI_API_KEY`` 和 ``AZURE_OPENAI_ENDPOINT``：SummarizationHook 功能所必需"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:169
-#: c73984472a9e46679cd1010781119ddc
-msgid "**Verify the server was added:**"
-msgstr "**验证服务器是否已添加：**"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:179
-#: 30099909d48f44a1af8645f33b51513d
-msgid ""
-"See: `Claude Code MCP documentation "
-"<https://docs.anthropic.com/en/docs/claude-code/mcp>`_ for advanced "
-"configuration options."
-msgstr ""
-"请参阅：`Claude Code MCP 文档 <https://docs.anthropic.com/en/docs/claude-"
-"code/mcp>`_，了解高级配置选项。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:181
-#: eafb06056e7b4493b33d1e7e13ac9def
-msgid ""
-"For MCP scope management, see: `MCP installation scopes "
-"<https://docs.anthropic.com/en/docs/claude-code/mcp#mcp-installation-"
-"scopes>`_."
-msgstr ""
-"有关 MCP 范围管理，请参阅：`MCP 安装范围 <https://docs.anthropic.com/en/docs/claude-"
-"code/mcp#mcp-installation-scopes>`_。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:184
-#: 1b4f0c491e9f4fadbbb3d88c6009d229
-msgid "Step 4: Verify in IDE/CLI"
-msgstr "步骤4：在IDE/CLI中验证"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:186
-#: 34693a1b9f4e4891bc9d71df4d3ff4ae
-msgid "After saving the configuration, verify connectivity:"
-msgstr "保存配置后，验证连接："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:188
-#: 90f16a902e2840fdbfea2ebed368db1b
-msgid "Terminal (Claude Code CLI) - Launch in your project:"
-msgstr "终端（Claude Code CLI）- 在您的项目中启动："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:196
-#: 6e1d78fe5d214005ba88e4273d4c5824
-msgid "In the chat, ask: \"What ToolUniverse tools are available?\""
-msgstr "在聊天中，询问：“有哪些 ToolUniverse 工具可用？”"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:197
-#: cfcc47776cde4310b2bc3ee27a7a6e2f
-msgid "If issues occur, run diagnostics:"
-msgstr "如遇问题，请运行诊断程序："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:203
-#: c2aaa106f638475e8357494a4e2901a7
-msgid ""
-"For terminal configuration, see: `Claude Code CLI reference "
-"<https://docs.anthropic.com/en/docs/claude-code/cli-reference>`_"
-msgstr ""
-"有关终端配置，请参见：`Claude Code CLI 参考 <https://docs.anthropic.com/en/docs/claude-"
-"code/cli-reference>`_"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:205
-#: f499be7f85144010a69c8325266858d1
-msgid ""
-"VS Code - Restart VS Code, then open Command Palette and run: \"Claude: Open"
-" Chat\" - Ask: \"What ToolUniverse tools are available?\" - If tools don't "
-"appear, check `.claude/settings.local.json` and reload window - For VS Code "
-"setup, see: `Add Claude Code to your IDE "
-"<https://docs.anthropic.com/en/docs/claude-code/add-claude-code-to-your-"
-"ide>`_"
-msgstr ""
-"VS Code - 重启 VS Code，然后打开命令面板并运行：“Claude: Open Chat” - 询问：“有哪些 ToolUniverse "
-"工具可用？” - 如果工具未显示，请检查 `.claude/settings.local.json` 并重新加载窗口 - 有关 VS Code "
-"设置，请参见：`将 Claude 代码添加到您的 IDE <https://docs.anthropic.com/en/docs/claude-"
-"code/add-claude-code-to-your-ide>`_"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:211
-#: 28e139e38c5643b1a6940ff548b4bb37
-msgid ""
-"JetBrains (IntelliJ/PyCharm/etc.) - Restart IDE → open the Claude tool "
-"window - Ask: \"What ToolUniverse tools are available?\" - If tools don't "
-"appear, review Tools → Claude Code → MCP Servers settings - For JetBrains "
-"setup, see: `Add Claude Code to your IDE "
-"<https://docs.anthropic.com/en/docs/claude-code/add-claude-code-to-your-"
-"ide>`_"
-msgstr ""
-"JetBrains（IntelliJ/PyCharm 等）- 重启 IDE → 打开 Claude 工具窗口 - 询问：“有哪些 "
-"ToolUniverse 工具可用？” - 如果工具未显示，请检查 工具 → Claude Code → MCP 服务器 设置 - 有关 "
-"JetBrains 配置，请参阅：`将 Claude Code 添加到您的 IDE "
-"<https://docs.anthropic.com/en/docs/claude-code/add-claude-code-to-your-"
-"ide>`_"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:218
-#: e97325a338414c2bbae6e46ed1518e24
-msgid "Scientific Research Capabilities"
-msgstr "科学研究能力"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:221
-#: 01345ebe80fc4a5d98268cee32e6e340
-msgid "Drug Discovery and Development"
-msgstr "药物发现与开发"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:223
-#: 2bf7fc485d2b428eab9fb21384d821d7
-msgid ""
-"Claude Code with ToolUniverse enables comprehensive drug discovery "
-"workflows:"
-msgstr "Claude Code 与 ToolUniverse 搭配，实现全面的药物发现工作流程："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:225
-#: 95880f3a4be746a0bd70acd94797eb5c
-msgid ""
-"**Target Identification**: - Disease analysis and EFO ID lookup - Target "
-"discovery and validation - Literature-based target assessment"
-msgstr ""
-"**靶点识别**：  \n"
-"- 疾病分析及EFO ID查询  \n"
-"- 靶点发现与验证  \n"
-"- 基于文献的靶点评估"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:230
-#: 37ff82fdd5c644b4961d4e0de0d820b9
-msgid ""
-"**Drug Analysis**: - Drug information retrieval from multiple databases - "
-"Safety profile analysis - Drug interaction checking - Clinical trial data "
-"access"
-msgstr ""
-"**药物分析**：  \n"
-"- 从多个数据库检索药物信息  \n"
-"- 安全性分析  \n"
-"- 药物相互作用检查  \n"
-"- 临床试验数据访问"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:237
-#: 0d0ad249ea504eefb53df3225e346a1a
-msgid "Genomics and Molecular Biology"
-msgstr "基因组学与分子生物学"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:239
-#: 57b6fcd666f74a3cbc0bf2461be2281b
-msgid "Access comprehensive genomics tools for molecular research:"
-msgstr "访问全面的基因组学工具以支持分子研究："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:241
-#: 1f50bb310a2d4cdf9f9a5951f0d90db7
-msgid ""
-"**Gene Analysis**: - Gene information from UniProt - Protein structure "
-"analysis - Expression pattern analysis - Pathway involvement"
-msgstr ""
-"**基因分析**：  \n"
-"- 来自 UniProt 的基因信息  \n"
-"- 蛋白质结构分析  \n"
-"- 表达模式分析  \n"
-"- 途径参与情况"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:247
-#: 9c309ec4a09c4c97a10b7b7771644190
-msgid ""
-"**Molecular Interactions**: - Protein-protein interactions - Drug-target "
-"interactions - Pathway analysis - Functional annotation"
-msgstr ""
-"**分子相互作用**：  \n"
-"- 蛋白质-蛋白质相互作用  \n"
-"- 药物-靶点相互作用  \n"
-"- 通路分析  \n"
-"- 功能注释"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:254
-#: 3296cd7aa2bc41028d1e1a0849a9eb74
-msgid "Literature Research and Analysis"
-msgstr "文献调研与分析"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:256
-#: 8ecdb9b9dde0496daebd3037790b96f0
-msgid "Comprehensive literature search and analysis capabilities:"
-msgstr "全面的文献检索与分析能力："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:258
-#: aa65d62fda16446e9804f66979e348a8
-msgid ""
-"**Literature Search**: - PubMed, Europe PMC, and Semantic Scholar - Citation"
-" analysis and trend detection"
-msgstr ""
-"**文献检索**：  \n"
-"- PubMed、Europe PMC 及 Semantic Scholar  \n"
-"- 引文分析与趋势检测"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:262
-#: 1b5865493d584c4ba60593aada4aff10
-msgid ""
-"**Content Analysis**: - Abstract summarization - Key finding extraction - "
-"Gap identification"
-msgstr ""
-"**内容分析**：  \n"
-"- 摘要总结  \n"
-"- 关键发现提取  \n"
-"- 缺口识别"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:268
-#: cf8529bb7b4b442da5394734cef4ddbd
-msgid "Multi-Step Research Workflows"
-msgstr "多步骤研究工作流程"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:270
-#: f96ff750be7640b384d391cc76da1542
-msgid "Claude Code excels at complex, multi-step research workflows:"
-msgstr "Claude Code 擅长处理复杂的多步骤研究工作流程："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:272
-#: 59f253aaf7954f21910ed9576f9b144b
-msgid ""
-"**Hypothesis-Driven Research**: 1. Formulate a hypothesis 2. Design an "
-"approach and select tools 3. Gather supporting evidence 4. Validate findings"
-" 5. Generate conclusions"
-msgstr "**假设驱动的研究**：1. 制定假设 2. 设计方法并选择工具 3. 收集支持证据 4. 验证研究结果 5. 得出结论"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:280
-#: c3a9f5cd5593454db89508158bba7869
-msgid "Settings and Configuration"
-msgstr "设置与配置"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:283
-#: 26aaec8c16344e08a7956a279d9e1786
-msgid "Tool Selection Strategies"
-msgstr "工具选择策略"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:285
-#: a1699f98fa654f1f8781e2642aa226a4
-msgid "Optimize tool usage for better performance:"
-msgstr "优化工具使用以提升性能："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:287
-#: 4ff391c9567e4910a439d182c82ac261
-msgid ""
-"**Selective Tool Loading**: - Load only relevant tools for specific research"
-" domains - Reduce context usage and improve response times"
-msgstr ""
-"**选择性工具加载**：  \n"
-"- 仅加载特定研究领域相关的工具  \n"
-"- 减少上下文使用，提升响应速度"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:291
-#: 03ea38c874ba4f06911507d9d4cc9f74
-msgid "**Example Tool Selection**:"
-msgstr "**示例工具选择**："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:302
-#: bd076838dcda42a69c7485b1a8d186a5
-msgid "Multiple MCP Servers"
-msgstr "多台 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:304
-#: a098a06f6356414abb0e2665a3276694
-msgid "Run multiple ToolUniverse instances for different purposes:"
-msgstr "运行多个 ToolUniverse 实例以满足不同需求："
-
-#: ../../guide/building_ai_scientists/claude_code.rst:321
-#: a81edae95d1f422fb87548bfb149758b
-msgid "Troubleshooting"
-msgstr "故障排除"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:324
-#: c9f52c51bdc64b3d927faf80c66ce6a5
-msgid "Common Issues and Solutions"
-msgstr "常见问题及解决方案"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:326
-#: 998cba9a356c4919a16fda563ef51faa
-msgid ""
-"**MCP Server Not Loading**: - Verify ToolUniverse installation path and "
-"absolute paths - Check UV package manager installation - Run `claude mcp "
-"list` to see current servers - Check server logs with `claude mcp get "
-"tooluniverse` - For troubleshooting, see: `Claude Code troubleshooting "
-"<https://docs.anthropic.com/en/docs/claude-code/troubleshooting>`_"
-msgstr ""
-"**MCP 服务器未加载**：  \n"
-"- 验证 ToolUniverse 安装路径及绝对路径  \n"
-"- 检查 UV 包管理器安装情况  \n"
-"- 运行 `claude mcp list` 查看当前服务器列表  \n"
-"- 使用 `claude mcp get tooluniverse` 检查服务器日志  \n"
-"- 如需排查问题，请参阅：`Claude Code 排查指南 <https://docs.anthropic.com/en/docs/claude-code/troubleshooting>`_"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:333
-#: 75e3744d26084d7498c3f4f9cff87670
-msgid ""
-"**No Tools Discovered**: - Verify the ToolUniverse MCP server command runs "
-"locally - Check if your tool filters are too restrictive - Ensure all "
-"ToolUniverse dependencies are installed - Use `claude doctor` for system "
-"diagnostics"
-msgstr ""
-"**未发现工具**：  \n"
-"- 验证 ToolUniverse MCP 服务器命令是否在本地运行  \n"
-"- 检查您的工具筛选条件是否过于严格  \n"
-"- 确保已安装所有 ToolUniverse 依赖项  \n"
-"- 使用 `claude doctor` 进行系统诊断"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:339
-#: 3022019490f84cacb360c80bc4c568ee
-msgid ""
-"**Tools Not Executing**: - Provide required API keys via `--env` flags when "
-"adding the server - Verify network connectivity to external APIs - Check MCP"
-" output limits, see: `MCP output limits "
-"<https://docs.anthropic.com/en/docs/claude-code/mcp#mcp-output-limits-and-"
-"warnings>`_"
-msgstr ""
-"**工具未执行**：  \n"
-"- 添加服务器时通过 `--env` 标志提供所需的 API 密钥  \n"
-"- 验证与外部 API 的网络连接  \n"
-"- 检查 MCP 输出限制，详见：`MCP 输出限制 <https://docs.anthropic.com/en/docs/claude-code/mcp#mcp-output-limits-and-warnings>`_"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:345
-#: ebd1c0c52a924b55a43bf851c9a6e86e
-msgid "Tips"
-msgstr "提示"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:347
-#: 90be581c61d143cfb74aad55603c372a
-msgid ""
-"**Tool Selection**: Use `--include-tools` to load only the tools you need "
-"for better performance."
-msgstr "**工具选择**：使用 `--include-tools` 仅加载所需工具，以提升性能。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:349
-#: 4d483359e16b410f89fa2326f7397ebe
-msgid ""
-"**Status Check**: Use `claude mcp list` and `claude mcp get <server>` to "
-"inspect MCP servers."
-msgstr ""
-"**状态检查**：使用 `claude mcp list` 和 `claude mcp get <server>` 来检查 MCP 服务器。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:351
-#: 71a0655743f94e2098aaf5a6b994ba77
-msgid ""
-"**Keep Paths Absolute**: Avoid relative paths in MCP config to prevent "
-"resolution issues."
-msgstr "**保持路径为绝对路径**：避免在 MCP 配置中使用相对路径，以防止解析问题。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:353
-#: 25175ac6a6784ce2b0879bce95533f4f
-msgid ""
-"**Authentication**: For OAuth-based MCP servers, use `/mcp` command in "
-"Claude Code chat for secure authentication."
-msgstr "**认证**：对于基于 OAuth 的 MCP 服务器，请在 Claude Code 聊天中使用 `/mcp` 命令进行安全认证。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:355
-#: 3f67f660193749fca34a1bde0657917a
-msgid ""
-"**Resources**: Reference external resources with `@server:protocol://path` "
-"syntax in your prompts."
-msgstr "**资源**：在提示中使用 `@server:protocol://path` 语法引用外部资源。"
-
-#: ../../guide/building_ai_scientists/claude_code.rst:357
-#: 66f43be1e26742f1857411e94e42e31c
-msgid ""
-"For comprehensive documentation, see: `Claude Code documentation "
-"<https://docs.anthropic.com/en/docs/claude-code/>`_."
-msgstr ""
-"有关完整文档，请参见：`Claude Code 文档 <https://docs.anthropic.com/en/docs/claude-"
-"code/>`_。"
+
+#~ msgid "**Building AI Scientists with Claude Code and ToolUniverse**"
+#~ msgstr "**使用 Claude Code 和 ToolUniverse 构建 AI 科学家**"
+
+#~ msgid "Overview"
+#~ msgstr "概述"
+
+#~ msgid ""
+#~ "Claude Code integration enables powerful "
+#~ "IDE- or terminal-based scientific "
+#~ "research through the Model Context "
+#~ "Protocol (MCP). This approach provides a"
+#~ " developer-friendly interface for research"
+#~ " while leveraging Claude's advanced "
+#~ "reasoning and ToolUniverse's 1000+ scientific"
+#~ " tools."
+#~ msgstr ""
+#~ "Claude Code 集成通过模型上下文协议（MCP）实现了强大的基于 IDE "
+#~ "或终端的科学研究。该方法为研究人员提供了友好的开发接口，同时充分利用了 Claude 的先进推理能力和 "
+#~ "ToolUniverse 超过 600 种科学工具。"
+
+#~ msgid "**Benefits of Claude Code Integration**:"
+#~ msgstr "**Claude 代码集成的优势**："
+
+#~ msgid "**Developer Workflow**: Use Claude inside VS Code/JetBrains or terminal"
+#~ msgstr "**开发者工作流程**：在 VS Code/JetBrains 或终端中使用 Claude"
+
+#~ msgid "**Advanced Reasoning**: Claude's strong multi-step reasoning"
+#~ msgstr "**高级推理**：Claude 强大的多步骤推理能力"
+
+#~ msgid "**Comprehensive Tools**: Access to 1000+ ToolUniverse tools"
+#~ msgstr "**全面工具**：可访问600多个ToolUniverse工具"
+
+#~ msgid ""
+#~ "**Automated Execution**: Natural-language to"
+#~ " tools, directly in your editor"
+#~ msgstr "**自动执行**：自然语言转工具，直接在您的编辑器中操作"
+
+#~ msgid "**Batch & Iteration**: Run multi-step research loops effectively"
+#~ msgstr "**批处理与迭代**：高效执行多步骤研究循环"
+
+#~ msgid "Prerequisites"
+#~ msgstr "先决条件"
+
+#~ msgid "Before setting up Claude Code integration, ensure you have:"
+#~ msgstr "在设置 Claude Code 集成之前，请确保您已具备以下条件："
+
+#~ msgid "**Claude Code**: Installed in your IDE or CLI"
+#~ msgstr "**Claude Code**：安装在您的 IDE 或命令行界面（CLI）中"
+
+#~ msgid "**ToolUniverse**: Installed"
+#~ msgstr "**ToolUniverse**：已安装"
+
+#~ msgid "**UV Package Manager**: For running the MCP server"
+#~ msgstr "**UV 包管理器**：用于运行 MCP 服务器"
+
+#~ msgid "**System Requirements**: macOS, Windows, or Linux with Python 3.10+"
+#~ msgstr "**系统要求**：支持 macOS、Windows 或 Linux，需安装 Python 3.10 及以上版本"
+
+#~ msgid ""
+#~ "**API Keys**: For specific tools or "
+#~ "optional hooks (e.g., Azure OpenAI for"
+#~ " summarization)"
+#~ msgstr "**API 密钥**：用于特定工具或可选钩子（例如，用于摘要的 Azure OpenAI）"
+
+#~ msgid "Installation and Setup"
+#~ msgstr "安装与设置"
+
+#~ msgid "Step 0: Install Claude Code"
+#~ msgstr "第0步：安装Claude代码"
+
+#~ msgid "Install Claude Code in your terminal (any OS with Node.js 18+):"
+#~ msgstr "在终端中安装 Claude Code（适用于任何安装了 Node.js 18 及以上版本的操作系统）："
+
+#~ msgid "Verify and diagnose your installation:"
+#~ msgstr "验证并诊断您的安装情况："
+
+#~ msgid "Native installer (beta) alternatives:"
+#~ msgstr "本地安装程序（测试版）替代方案："
+
+#~ msgid "On Windows PowerShell:"
+#~ msgstr "在 Windows PowerShell 中："
+
+#~ msgid "After installation, you can start Claude Code in a project:"
+#~ msgstr "安装完成后，您可以在项目中启动 Claude Code："
+
+#~ msgid ""
+#~ "For Windows installation, see: `Anthropic "
+#~ "— Windows setup <https://docs.anthropic.com/en/docs"
+#~ "/claude-code/setup#windows-setup>`_."
+#~ msgstr ""
+#~ "有关 Windows 安装，请参阅：`Anthropic — Windows "
+#~ "设置 <https://docs.anthropic.com/en/docs/claude-code/setup"
+#~ "#windows-setup>`_。"
+
+#~ msgid "Step 1: Install uv and ToolUniverse"
+#~ msgstr "步骤 1：安装 uv 和 ToolUniverse"
+
+#~ msgid "Install uv package manager:"
+#~ msgstr "安装 uv 包管理器："
+
+#~ msgid ""
+#~ "For Windows installation and other "
+#~ "methods, see: `uv installation Tutorial "
+#~ "<https://docs.astral.sh/uv/getting-started/installation/>`_."
+#~ msgstr ""
+#~ "有关 Windows 安装及其他方法，请参见：`uv 安装教程 "
+#~ "<https://docs.astral.sh/uv/getting-started/installation/>`_。"
+
+#~ msgid "Set up a dedicated uv environment and install ToolUniverse:"
+#~ msgstr "建立专用的 uv 环境并安装 ToolUniverse："
+
+#~ msgid "Step 2: Test ToolUniverse MCP server"
+#~ msgstr "步骤 2：测试 ToolUniverse MCP 服务器"
+
+#~ msgid "Test that the ToolUniverse MCP server works:"
+#~ msgstr "测试 ToolUniverse MCP 服务器是否正常运行："
+
+#~ msgid "Step 3: Add ToolUniverse MCP server"
+#~ msgstr "步骤 3：添加 ToolUniverse MCP 服务器"
+
+#~ msgid ""
+#~ "Use Claude Code's built-in command "
+#~ "to add ToolUniverse as an MCP "
+#~ "server:"
+#~ msgstr "使用Claude Code的内置命令将ToolUniverse添加为MCP服务器："
+
+#~ msgid "**Alternative scope options:**"
+#~ msgstr "**替代范围选项：**"
+
+#~ msgid ""
+#~ "``--scope local`` (default): Available only"
+#~ " in current project directory"
+#~ msgstr "``--scope local``（默认值）：仅在当前项目目录中可用"
+
+#~ msgid ""
+#~ "``--scope project``: Shared across project "
+#~ "team via ``.claude/.mcp.json``"
+#~ msgstr "``--scope project``：通过``.claude/.mcp.json``在项目团队中共享"
+
+#~ msgid "``--scope user``: Available across all your projects"
+#~ msgstr "``--scope user``：适用于您所有的项目"
+
+#~ msgid "**Environment variables (optional):**"
+#~ msgstr "**环境变量（可选）：**"
+
+#~ msgid ""
+#~ "Add ``--env`` flags only if you "
+#~ "need summarization hooks or tools "
+#~ "requiring API keys:"
+#~ msgstr "仅在需要摘要挂钩或需要 API 密钥的工具时添加 ``--env`` 标志："
+
+#~ msgid "**Optimized Configuration for Research Users (Recommended):**"
+#~ msgstr "**针对研究用户的优化配置（推荐）：**"
+
+#~ msgid "**Configuration Benefits:**"
+#~ msgstr "**配置优势：**"
+
+#~ msgid ""
+#~ "``--exclude-tool-types PackageTool``: Removes"
+#~ " package management tools to save "
+#~ "context window space if you don't "
+#~ "have coding needs"
+#~ msgstr "``--exclude-tool-types PackageTool``：移除软件包管理工具，以节省上下文窗口空间（如果您没有编码需求）。"
+
+#~ msgid ""
+#~ "``--hook-type SummarizationHook``: Provides "
+#~ "summary of the output that is too"
+#~ " long to fit in the context "
+#~ "window"
+#~ msgstr "``--hook-type SummarizationHook``：提供输出内容的摘要，用于处理超出上下文窗口长度的情况"
+
+#~ msgid ""
+#~ "``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``:"
+#~ " Required for SummarizationHook functionality"
+#~ msgstr ""
+#~ "``AZURE_OPENAI_API_KEY`` 和 "
+#~ "``AZURE_OPENAI_ENDPOINT``：SummarizationHook 功能所必需"
+
+#~ msgid "**Verify the server was added:**"
+#~ msgstr "**验证服务器是否已添加：**"
+
+#~ msgid ""
+#~ "See: `Claude Code MCP documentation "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/mcp>`_ for"
+#~ " advanced configuration options."
+#~ msgstr ""
+#~ "请参阅：`Claude Code MCP 文档 "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/mcp>`_，了解高级配置选项。"
+
+#~ msgid ""
+#~ "For MCP scope management, see: `MCP "
+#~ "installation scopes <https://docs.anthropic.com/en/docs"
+#~ "/claude-code/mcp#mcp-installation-scopes>`_."
+#~ msgstr ""
+#~ "有关 MCP 范围管理，请参阅：`MCP 安装范围 "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/mcp#mcp-"
+#~ "installation-scopes>`_。"
+
+#~ msgid "Step 4: Verify in IDE/CLI"
+#~ msgstr "步骤4：在IDE/CLI中验证"
+
+#~ msgid "After saving the configuration, verify connectivity:"
+#~ msgstr "保存配置后，验证连接："
+
+#~ msgid "Terminal (Claude Code CLI) - Launch in your project:"
+#~ msgstr "终端（Claude Code CLI）- 在您的项目中启动："
+
+#~ msgid "In the chat, ask: \"What ToolUniverse tools are available?\""
+#~ msgstr "在聊天中，询问：“有哪些 ToolUniverse 工具可用？”"
+
+#~ msgid "If issues occur, run diagnostics:"
+#~ msgstr "如遇问题，请运行诊断程序："
+
+#~ msgid ""
+#~ "For terminal configuration, see: `Claude "
+#~ "Code CLI reference "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/cli-"
+#~ "reference>`_"
+#~ msgstr ""
+#~ "有关终端配置，请参见：`Claude Code CLI 参考 "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/cli-"
+#~ "reference>`_"
+
+#~ msgid ""
+#~ "VS Code - Restart VS Code, then"
+#~ " open Command Palette and run: "
+#~ "\"Claude: Open Chat\" - Ask: \"What "
+#~ "ToolUniverse tools are available?\" - If"
+#~ " tools don't appear, check "
+#~ "`.claude/settings.local.json` and reload window "
+#~ "- For VS Code setup, see: `Add "
+#~ "Claude Code to your IDE "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/add-"
+#~ "claude-code-to-your-ide>`_"
+#~ msgstr ""
+#~ "VS Code - 重启 VS "
+#~ "Code，然后打开命令面板并运行：“Claude: Open Chat” - 询问：“有哪些"
+#~ " ToolUniverse 工具可用？” - 如果工具未显示，请检查 "
+#~ "`.claude/settings.local.json` 并重新加载窗口 - 有关 VS"
+#~ " Code 设置，请参见：`将 Claude 代码添加到您的 IDE "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/add-"
+#~ "claude-code-to-your-ide>`_"
+
+#~ msgid ""
+#~ "JetBrains (IntelliJ/PyCharm/etc.) - Restart "
+#~ "IDE → open the Claude tool window"
+#~ " - Ask: \"What ToolUniverse tools are"
+#~ " available?\" - If tools don't "
+#~ "appear, review Tools → Claude Code "
+#~ "→ MCP Servers settings - For "
+#~ "JetBrains setup, see: `Add Claude Code"
+#~ " to your IDE <https://docs.anthropic.com/en/docs"
+#~ "/claude-code/add-claude-code-to-your-"
+#~ "ide>`_"
+#~ msgstr ""
+#~ "JetBrains（IntelliJ/PyCharm 等）- 重启 IDE → "
+#~ "打开 Claude 工具窗口 - 询问：“有哪些 ToolUniverse"
+#~ " 工具可用？” - 如果工具未显示，请检查 工具 → Claude "
+#~ "Code → MCP 服务器 设置 - 有关 "
+#~ "JetBrains 配置，请参阅：`将 Claude Code 添加到您的 "
+#~ "IDE <https://docs.anthropic.com/en/docs/claude-code"
+#~ "/add-claude-code-to-your-ide>`_"
+
+#~ msgid "Scientific Research Capabilities"
+#~ msgstr "科学研究能力"
+
+#~ msgid "Drug Discovery and Development"
+#~ msgstr "药物发现与开发"
+
+#~ msgid ""
+#~ "Claude Code with ToolUniverse enables "
+#~ "comprehensive drug discovery workflows:"
+#~ msgstr "Claude Code 与 ToolUniverse 搭配，实现全面的药物发现工作流程："
+
+#~ msgid ""
+#~ "**Target Identification**: - Disease analysis"
+#~ " and EFO ID lookup - Target "
+#~ "discovery and validation - Literature-"
+#~ "based target assessment"
+#~ msgstr ""
+#~ "**靶点识别**：  \n"
+#~ "- 疾病分析及EFO ID查询  \n"
+#~ "- 靶点发现与验证  \n"
+#~ "- 基于文献的靶点评估"
+
+#~ msgid ""
+#~ "**Drug Analysis**: - Drug information "
+#~ "retrieval from multiple databases - "
+#~ "Safety profile analysis - Drug "
+#~ "interaction checking - Clinical trial "
+#~ "data access"
+#~ msgstr ""
+#~ "**药物分析**：  \n"
+#~ "- 从多个数据库检索药物信息  \n"
+#~ "- 安全性分析  \n"
+#~ "- 药物相互作用检查  \n"
+#~ "- 临床试验数据访问"
+
+#~ msgid "Genomics and Molecular Biology"
+#~ msgstr "基因组学与分子生物学"
+
+#~ msgid "Access comprehensive genomics tools for molecular research:"
+#~ msgstr "访问全面的基因组学工具以支持分子研究："
+
+#~ msgid ""
+#~ "**Gene Analysis**: - Gene information "
+#~ "from UniProt - Protein structure "
+#~ "analysis - Expression pattern analysis -"
+#~ " Pathway involvement"
+#~ msgstr ""
+#~ "**基因分析**：  \n"
+#~ "- 来自 UniProt 的基因信息  \n"
+#~ "- 蛋白质结构分析  \n"
+#~ "- 表达模式分析  \n"
+#~ "- 途径参与情况"
+
+#~ msgid ""
+#~ "**Molecular Interactions**: - Protein-protein"
+#~ " interactions - Drug-target interactions"
+#~ " - Pathway analysis - Functional "
+#~ "annotation"
+#~ msgstr ""
+#~ "**分子相互作用**：  \n"
+#~ "- 蛋白质-蛋白质相互作用  \n"
+#~ "- 药物-靶点相互作用  \n"
+#~ "- 通路分析  \n"
+#~ "- 功能注释"
+
+#~ msgid "Literature Research and Analysis"
+#~ msgstr "文献调研与分析"
+
+#~ msgid "Comprehensive literature search and analysis capabilities:"
+#~ msgstr "全面的文献检索与分析能力："
+
+#~ msgid ""
+#~ "**Literature Search**: - PubMed, Europe "
+#~ "PMC, and Semantic Scholar - Citation "
+#~ "analysis and trend detection"
+#~ msgstr ""
+#~ "**文献检索**：  \n"
+#~ "- PubMed、Europe PMC 及 Semantic Scholar  \n"
+#~ "- 引文分析与趋势检测"
+
+#~ msgid ""
+#~ "**Content Analysis**: - Abstract summarization"
+#~ " - Key finding extraction - Gap "
+#~ "identification"
+#~ msgstr ""
+#~ "**内容分析**：  \n"
+#~ "- 摘要总结  \n"
+#~ "- 关键发现提取  \n"
+#~ "- 缺口识别"
+
+#~ msgid "Multi-Step Research Workflows"
+#~ msgstr "多步骤研究工作流程"
+
+#~ msgid "Claude Code excels at complex, multi-step research workflows:"
+#~ msgstr "Claude Code 擅长处理复杂的多步骤研究工作流程："
+
+#~ msgid ""
+#~ "**Hypothesis-Driven Research**: 1. Formulate"
+#~ " a hypothesis 2. Design an approach"
+#~ " and select tools 3. Gather "
+#~ "supporting evidence 4. Validate findings "
+#~ "5. Generate conclusions"
+#~ msgstr "**假设驱动的研究**：1. 制定假设 2. 设计方法并选择工具 3. 收集支持证据 4. 验证研究结果 5. 得出结论"
+
+#~ msgid "Settings and Configuration"
+#~ msgstr "设置与配置"
+
+#~ msgid "Tool Selection Strategies"
+#~ msgstr "工具选择策略"
+
+#~ msgid "Optimize tool usage for better performance:"
+#~ msgstr "优化工具使用以提升性能："
+
+#~ msgid ""
+#~ "**Selective Tool Loading**: - Load only"
+#~ " relevant tools for specific research "
+#~ "domains - Reduce context usage and "
+#~ "improve response times"
+#~ msgstr ""
+#~ "**选择性工具加载**：  \n"
+#~ "- 仅加载特定研究领域相关的工具  \n"
+#~ "- 减少上下文使用，提升响应速度"
+
+#~ msgid "**Example Tool Selection**:"
+#~ msgstr "**示例工具选择**："
+
+#~ msgid "Multiple MCP Servers"
+#~ msgstr "多台 MCP 服务器"
+
+#~ msgid "Run multiple ToolUniverse instances for different purposes:"
+#~ msgstr "运行多个 ToolUniverse 实例以满足不同需求："
+
+#~ msgid "Troubleshooting"
+#~ msgstr "故障排除"
+
+#~ msgid "Common Issues and Solutions"
+#~ msgstr "常见问题及解决方案"
+
+#~ msgid ""
+#~ "**MCP Server Not Loading**: - Verify "
+#~ "ToolUniverse installation path and absolute"
+#~ " paths - Check UV package manager "
+#~ "installation - Run `claude mcp list` "
+#~ "to see current servers - Check "
+#~ "server logs with `claude mcp get "
+#~ "tooluniverse` - For troubleshooting, see: "
+#~ "`Claude Code troubleshooting "
+#~ "<https://docs.anthropic.com/en/docs/claude-"
+#~ "code/troubleshooting>`_"
+#~ msgstr ""
+#~ "**MCP 服务器未加载**：  \n"
+#~ "- 验证 ToolUniverse 安装路径及绝对路径  \n"
+#~ "- 检查 UV 包管理器安装情况  \n"
+#~ "- 运行 `claude mcp list` 查看当前服务器列表  \n"
+#~ "- 使用 `claude mcp get tooluniverse` 检查服务器日志  \n"
+#~ "- 如需排查问题，请参阅：`Claude Code 排查指南 "
+#~ "<https://docs.anthropic.com/en/docs/claude-"
+#~ "code/troubleshooting>`_"
+
+#~ msgid ""
+#~ "**No Tools Discovered**: - Verify the"
+#~ " ToolUniverse MCP server command runs "
+#~ "locally - Check if your tool "
+#~ "filters are too restrictive - Ensure "
+#~ "all ToolUniverse dependencies are installed"
+#~ " - Use `claude doctor` for system "
+#~ "diagnostics"
+#~ msgstr ""
+#~ "**未发现工具**：  \n"
+#~ "- 验证 ToolUniverse MCP 服务器命令是否在本地运行  \n"
+#~ "- 检查您的工具筛选条件是否过于严格  \n"
+#~ "- 确保已安装所有 ToolUniverse 依赖项  \n"
+#~ "- 使用 `claude doctor` 进行系统诊断"
+
+#~ msgid ""
+#~ "**Tools Not Executing**: - Provide "
+#~ "required API keys via `--env` flags "
+#~ "when adding the server - Verify "
+#~ "network connectivity to external APIs -"
+#~ " Check MCP output limits, see: `MCP"
+#~ " output limits <https://docs.anthropic.com/en/docs"
+#~ "/claude-code/mcp#mcp-output-limits-and-"
+#~ "warnings>`_"
+#~ msgstr ""
+#~ "**工具未执行**：  \n"
+#~ "- 添加服务器时通过 `--env` 标志提供所需的 API 密钥  \n"
+#~ "- 验证与外部 API 的网络连接  \n"
+#~ "- 检查 MCP 输出限制，详见：`MCP 输出限制 "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/mcp#mcp-"
+#~ "output-limits-and-warnings>`_"
+
+#~ msgid "Tips"
+#~ msgstr "提示"
+
+#~ msgid ""
+#~ "**Tool Selection**: Use `--include-tools` "
+#~ "to load only the tools you need"
+#~ " for better performance."
+#~ msgstr "**工具选择**：使用 `--include-tools` 仅加载所需工具，以提升性能。"
+
+#~ msgid ""
+#~ "**Status Check**: Use `claude mcp list`"
+#~ " and `claude mcp get <server>` to "
+#~ "inspect MCP servers."
+#~ msgstr "**状态检查**：使用 `claude mcp list` 和 `claude mcp get <server>` 来检查 MCP 服务器。"
+
+#~ msgid ""
+#~ "**Keep Paths Absolute**: Avoid relative "
+#~ "paths in MCP config to prevent "
+#~ "resolution issues."
+#~ msgstr "**保持路径为绝对路径**：避免在 MCP 配置中使用相对路径，以防止解析问题。"
+
+#~ msgid ""
+#~ "**Authentication**: For OAuth-based MCP "
+#~ "servers, use `/mcp` command in Claude"
+#~ " Code chat for secure authentication."
+#~ msgstr "**认证**：对于基于 OAuth 的 MCP 服务器，请在 Claude Code 聊天中使用 `/mcp` 命令进行安全认证。"
+
+#~ msgid ""
+#~ "**Resources**: Reference external resources "
+#~ "with `@server:protocol://path` syntax in your"
+#~ " prompts."
+#~ msgstr "**资源**：在提示中使用 `@server:protocol://path` 语法引用外部资源。"
+
+#~ msgid ""
+#~ "For comprehensive documentation, see: `Claude"
+#~ " Code documentation <https://docs.anthropic.com/en/docs"
+#~ "/claude-code/>`_."
+#~ msgstr ""
+#~ "有关完整文档，请参见：`Claude Code 文档 "
+#~ "<https://docs.anthropic.com/en/docs/claude-code/>`_。"
+

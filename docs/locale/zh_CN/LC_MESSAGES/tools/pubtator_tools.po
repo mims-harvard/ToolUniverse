@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/pubtator_tools.rst:2 528e693b8dea4af6aced6b84f1a7e49f
+#: ../../tools/pubtator_tools.rst:10 25f692d5a58d4f38b577a9a3e259ba2a
 msgid "Pubtator Tools"
 msgstr "Pubtator 工具"
 
-#: ../../tools/pubtator_tools.rst:4 243c4bea09e94958bbe31129acdc47e8
+#: ../../tools/pubtator_tools.rst:12 0f82a517efee4051941c133c38e321c7
 msgid ""
 "**Configuration File**: ``pubtator_tools.json`` **Tool Type**: Local "
 "**Tools Count**: 2"
@@ -33,45 +33,45 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：2"
 
-#: ../../tools/pubtator_tools.rst:8 3af709840dff454eae0585df35650d37
+#: ../../tools/pubtator_tools.rst:16 724a8cb607f84d3f844406cd246ac502
 msgid ""
 "This page contains all tools defined in the ``pubtator_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``pubtator_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/pubtator_tools.rst:11 3aa8490096bf4c2584f50fa6a739a903
+#: ../../tools/pubtator_tools.rst:19 ca63bb7f9c074459af941052e843df3f
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/pubtator_tools.rst:14 59906cee1dec4b90839202d6b6b56651
+#: ../../tools/pubtator_tools.rst:22 370abb7eee4c46c18d74999fc7eefc43
 msgid "**PubTator3_EntityAutocomplete** (Type: PubTatorTool)"
 msgstr "**PubTator3_EntityAutocomplete**（类型：PubTator工具）"
 
-#: ../../tools/pubtator_tools.rst:16 69c86d65edf4428b87b36f42476bd18e
+#: ../../tools/pubtator_tools.rst:24 940aa626b0da4b588cd6059ec0a2cb8c
 msgid ""
 "Provides suggestions for the best‐matching standardized PubTator IDs for "
 "a partial biomedical ter..."
 msgstr "提供与部分生物医学术语最佳匹配的标准化 PubTator ID 建议..."
 
-#: ../../tools/pubtator_tools.rst a9f6d5cf59ad4397b6b3354bcd111ebb
+#: ../../tools/pubtator_tools.rst b1ea2ab2f2d94db280416f01d2f6bf9c
 msgid "PubTator3_EntityAutocomplete tool specification"
 msgstr "PubTator3_实体自动完成工具规范"
 
-#: ../../tools/pubtator_tools.rst:20 ../../tools/pubtator_tools.rst:59
-#: 1996accf38ac44f0bf989a625ecfe6a7 ff2390a7adfe4a1b9f39743496958c52
+#: ../../tools/pubtator_tools.rst:28 ../../tools/pubtator_tools.rst:65
+#: 9cab2573c14e4aac96d943f1031297e4 ccc2bff45c024c98b0588b99a6dcc91f
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/pubtator_tools.rst:22 1608d2e727684236b3e479bee41e771c
+#: ../../tools/pubtator_tools.rst:30 634d956be2b042e882ba66e089fb3776
 msgid "**Name**: ``PubTator3_EntityAutocomplete``"
 msgstr "**名称**：``PubTator3_EntityAutocomplete``"
 
-#: ../../tools/pubtator_tools.rst:23 ../../tools/pubtator_tools.rst:62
-#: 0c83361cda574ba58696782006c143ee 776d62abe064446496e4578054d0f3c2
+#: ../../tools/pubtator_tools.rst:31 ../../tools/pubtator_tools.rst:68
+#: 270eb11dca144f89bd3e2c4b7d9ce579 3644d52ada9546b5b2d57d1ecbe8ed89
 msgid "**Type**: ``PubTatorTool``"
 msgstr "**类型**：``PubTatorTool``"
 
-#: ../../tools/pubtator_tools.rst:24 4fba0196cec34b27872d6c8cde34baba
+#: ../../tools/pubtator_tools.rst:32 01a5cfb8343c4e5b98c6a3961feb6b33
 msgid ""
 "**Description**: Provides suggestions for the best‐matching standardized "
 "PubTator IDs for a partial biomedical term (gene, disease, chemical, or "
@@ -81,92 +81,103 @@ msgstr ""
 "**描述**：提供与部分生物医学术语（基因、疾病、化学物质或变异）最匹配的标准化 PubTator ID "
 "的建议。首先使用此工具将自由文本名称转换为其他 PubTator API 所需的稳定 @ID。"
 
-#: ../../tools/pubtator_tools.rst:26 ../../tools/pubtator_tools.rst:65
-#: 50e7639236a444428c0496dbf07ed0e0 fb5f2c9ed3604e37972f14fbddd8854c
+#: ../../tools/pubtator_tools.rst:34 ../../tools/pubtator_tools.rst:71
+#: 8d948e6ef4ec45ff940c6f2413b417fe cad8b4c1bec048c5976194068dad29b4
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/pubtator_tools.rst:28 f2849cd23e244dea933454b81c6bcf4e
+#: ../../tools/pubtator_tools.rst:36 dcd4209e3154419b8ec91372082573b2
 msgid ""
 "``text`` (string) (required) A few characters or the full name of the "
 "biomedical concept you are trying to look up (e.g. “BRAF V6”)."
 msgstr "``text``（字符串）（必填）您要查询的生物医学概念的几个字符或完整名称（例如：“BRAF V6”）。"
 
-#: ../../tools/pubtator_tools.rst:31 d99bfe3045f84c8591e16d85341db876
+#: ../../tools/pubtator_tools.rst:39 e6f276f638f14a31bef271a8739372c8
 #, fuzzy
 msgid ""
-"``entity_type`` (string) (required) Optional filter to restrict "
+"``entity_type`` (string) (optional) Optional filter to restrict "
 "suggestions to a single category such as GENE, DISEASE, CHEMICAL, or "
 "VARIANT."
 msgstr "``entity_type``（字符串）（可选）可选过滤器，用于将建议限制为单一类别，例如基因（GENE）、疾病（DISEASE）、化学物质（CHEMICAL）或变体（VARIANT）。"
 
-#: ../../tools/pubtator_tools.rst:34 5e83e1d76f434708b2d024c26b60d698
+#: ../../tools/pubtator_tools.rst:42 83ef0217645d4835bfe96cf433cf39a2
 #, fuzzy
 msgid ""
-"``max_results`` (integer) (required) Maximum number of suggestions to "
+"``max_results`` (integer) (optional) Maximum number of suggestions to "
 "return (1 - 50, default = 10)."
 msgstr "``max_results``（整数）（可选）返回建议的最大数量（1 - 50，默认值 = 10）。"
 
-#: ../../tools/pubtator_tools.rst:37 ../../tools/pubtator_tools.rst:76
-#: 2a858b5b659a4eb1acb4217ec47558db bc5b019bfe084bffae7dab9c542a26f7
+#: ../../tools/pubtator_tools.rst:45 ../../tools/pubtator_tools.rst:85
+#: 6c421c6128f843fc807ec9426ee4cb2d 7c70b798435e4656b41cd20981313c7d
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/pubtator_tools.rst:53 fe45eeed5c754f9885241785b9d64096
+#: ../../tools/pubtator_tools.rst:59 30b95aec7e3540bdaec5dbaf7f8dfee1
 msgid "**PubTator3_LiteratureSearch** (Type: PubTatorTool)"
 msgstr "**PubTator3_LiteratureSearch**（类型：PubTator工具）"
 
-#: ../../tools/pubtator_tools.rst:55 29bc5f0eca284c128a389c7e9cbf53ba
+#: ../../tools/pubtator_tools.rst:61 5944c8113f2d49e19ee44c2fc1a0861d
+#, fuzzy
 msgid ""
 "Find PubMed articles that match a keyword, a PubTator entity ID (e.g. "
-"“@GENE_BRAF”), or an entity..."
+"“@GENE\\_BRAF”), or an entit..."
 msgstr "查找与关键词、PubTator实体ID（例如“@GENE_BRAF”）或实体匹配的PubMed文章..."
 
-#: ../../tools/pubtator_tools.rst 5157197d8621460ca9593d8c711db95e
+#: ../../tools/pubtator_tools.rst 2611ce7a3142417fa47f3891254cbba7
 msgid "PubTator3_LiteratureSearch tool specification"
 msgstr "PubTator3_LiteratureSearch 工具规格"
 
-#: ../../tools/pubtator_tools.rst:61 54d28261ab3e466e937691e1b7aaa0be
+#: ../../tools/pubtator_tools.rst:67 e5eba376b4494c65b99d52e8d710b3db
 msgid "**Name**: ``PubTator3_LiteratureSearch``"
 msgstr "**名称**: ``PubTator3_LiteratureSearch``"
 
-#: ../../tools/pubtator_tools.rst:63 552f73a148ba46ebbf986400f4da40ad
+#: ../../tools/pubtator_tools.rst:69 6e8ff5bfdfac46aa9f6a0ad49246c14f
+#, fuzzy
 msgid ""
 "**Description**: Find PubMed articles that match a keyword, a PubTator "
-"entity ID (e.g. “@GENE_BRAF”), or an entity-to-entity relation expression"
-" (e.g. “relations:treat|@CHEMICAL_Doxorubicin|@DISEASE_Neoplasms”)."
+"entity ID (e.g. “@GENE\\_BRAF”), or an entity-to-entity relation "
+"expression (e.g. "
+"“relations:treat\\|@CHEMICAL\\_Doxorubicin\\|@DISEASE\\_Neoplasms”)."
 msgstr "**描述**：查找与关键词、PubTator实体ID（例如“@GENE_BRAF”）或实体与实体关系表达式（例如“relations:treat|@CHEMICAL_Doxorubicin|@DISEASE_Neoplasms”）匹配的PubMed文章。"
 
-#: ../../tools/pubtator_tools.rst:67 f2e674a809964dd0acb48bf1e38266ad
+#: ../../tools/pubtator_tools.rst:73 740948c8f9a340a8a6082f1dab316574
 msgid ""
 "``query`` (string) (required) What you want to search for. This can be "
 "plain keywords, a single PubTator ID, or the special relation syntax "
 "shown above."
 msgstr "``query``（字符串）（必填）您想要搜索的内容。可以是普通关键词、单个 PubTator ID，或上述显示的特殊关系语法。"
 
-#: ../../tools/pubtator_tools.rst:70 a9d4a32262884c839ea2fbf381c8af75
+#: ../../tools/pubtator_tools.rst:76 9e7198b549f94374a6e69f95cbde15b5
 #, fuzzy
 msgid ""
-"``page`` (integer) (required) Zero-based results page (optional; default "
+"``page`` (integer) (optional) Zero-based results page (optional; default "
 "= 0)."
 msgstr "``page``（整数）（可选）以零为基的结果页面（可选；默认值 = 0）。"
 
-#: ../../tools/pubtator_tools.rst:73 46d402bb09c94b5ba0ab5a5a070c351d
+#: ../../tools/pubtator_tools.rst:79 d46bb7407d064d7e9494d1632dcb8552
 #, fuzzy
 msgid ""
-"``page_size`` (integer) (required) How many PMIDs to return per page "
-"(optional; default = 20, maximum = 200)."
+"``page_size`` (integer) (optional) How many PMIDs to return per page "
+"(optional; default = 10; note: the PubTator3 API always returns 10 per "
+"page regardless of this value)."
 msgstr "``page_size``（整数）（可选）每页返回的PMID数量（可选；默认值=20，最大值=200）。"
 
-#: ../../tools/pubtator_tools.rst:92 5e7d801de21e4be6a620a2d237bd09d1
+#: ../../tools/pubtator_tools.rst:82 e75a7f3e260842f8bbf512d50b14d6f9
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(applied client-side). The PubTator3 API returns 10 results per page; "
+"this parameter truncates the results to the requested count."
+msgstr ""
+
+#: ../../tools/pubtator_tools.rst:99 e665165e2ecc4b6ab369290b29c52bda
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/pubtator_tools.rst:94 4ada1a18e7224b4a8a023ac959aff52a
+#: ../../tools/pubtator_tools.rst:101 26cbba0f675b4ec7a1d87f893c797700
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/pubtator_tools.rst:95 ac52d3c36d924f068d186d04c843f581
+#: ../../tools/pubtator_tools.rst:102 dcc6796c58ce4ab2b23ed157e17f748f
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cellpainting_tools.rst:10 ad035fd30188425f8ed5e37e5aad4b6b
+msgid "Cellpainting Tools"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:12 67612ea51f4c4f8aa0f3bcd396ef13cb
+msgid ""
+"**Configuration File**: ``cellpainting_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:16 225237ed9a0146448680866f24f8b6cf
+msgid ""
+"This page contains all tools defined in the ``cellpainting_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:19 00d1b1467bdd4eeba38c53fa0b7a029c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:22 93d7cd64eab043a5bb0dfb5042b8be65
+msgid "**CellPainting_get_screen_plates** (Type: CellPaintingTool)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:24 6282d3d689cf4ca1990c2b132b3e21bd
+msgid ""
+"Get the list of plates in a Cell Painting screen from the Image Data "
+"Resource (IDR). Returns plat..."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst 7c6d5793d09042e7b81ec099bfc28f35
+msgid "CellPainting_get_screen_plates tool specification"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:28 ../../tools/cellpainting_tools.rst:63
+#: ../../tools/cellpainting_tools.rst:101 4546cb306e09498c99bdd5f07ddd968d
+#: a7a623068361446b94677a4b89a32c33 c71cc58377d8463291be9498cbdc5767
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:30 86726c4d4449425db9472d162377142d
+msgid "**Name**: ``CellPainting_get_screen_plates``"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:31 ../../tools/cellpainting_tools.rst:66
+#: ../../tools/cellpainting_tools.rst:104 91919f800642413790ab4add577b8958
+#: 95f2470c87204db9aff93099b61d38f4 db322d1a5d39489aab288cceca7b9bcf
+msgid "**Type**: ``CellPaintingTool``"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:32 87c334f3ac534c2fad91749b7b8fceae
+msgid ""
+"**Description**: Get the list of plates in a Cell Painting screen from "
+"the Image Data Resource (IDR). Returns plate IDs and names for the given "
+"screen. Use CellPainting\\_search\\_screens first to find valid screen "
+"IDs. Example: Get all plates in idr0016 screenA (screen\\_id=1251)."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:34 ../../tools/cellpainting_tools.rst:69
+#: ../../tools/cellpainting_tools.rst:107 d9837f4e1fc9436ba9a513025335e545
+#: e87e8273b035452088d80477686cd0b8 eed7e23c43834a2db60f3d643989206b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:36 ../../tools/cellpainting_tools.rst:71
+#: ../../tools/cellpainting_tools.rst:109 5b2848332df7498a84af034ba78e6767
+#: b126681e9e9d4cd88b5ecc05d75676bc cc866e5eca064dd29492df70a3f32229
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:39 defe0684866145678d4fd12eaa36c337
+msgid ""
+"``screen_id`` (integer) (required) IDR screen identifier (e.g., 1251 for "
+"idr0016 screenA)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:42 ../../tools/cellpainting_tools.rst:80
+#: ../../tools/cellpainting_tools.rst:115 89334515e6284dce8e3dada7510f2768
+#: bd9d8ab20b894f288f80c7673ed6fe64 fd19a07491ec46c4af2222c4cc7d336a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:57 53d7bca9141a49d7840049a2957a1f4c
+msgid "**CellPainting_get_well_data** (Type: CellPaintingTool)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:59 c68ae48af5f84df7a3da183cb19d0cd8
+msgid ""
+"Get well-level metadata and image links for a specific plate in a Cell "
+"Painting experiment from t..."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst 9f91858507ee456e9f4cd2cb1527fb96
+msgid "CellPainting_get_well_data tool specification"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:65 e4eeb84a8e40430f944033dc068f46ab
+msgid "**Name**: ``CellPainting_get_well_data``"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:67 dff29833ab4048089e1c2130b1840275
+msgid ""
+"**Description**: Get well-level metadata and image links for a specific "
+"plate in a Cell Painting experiment from the Image Data Resource (IDR). "
+"Returns well IDs, row/column positions, well URLs, and links to "
+"microscopy images. Use CellPainting\\_get\\_screen\\_plates to find valid"
+" plate IDs. Example: Get the first 5 wells of plate 5104 from idr0016."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:74 6f8790b2e57e4bf5bf073c421add8430
+msgid ""
+"``plate_id`` (integer) (required) IDR plate identifier (e.g., 5104 for a "
+"plate in idr0016 screenA)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:77 e79fff80200940b590c4befa94929242
+msgid ""
+"``limit`` (integer) (optional) Maximum number of wells to return (default"
+" 20)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:95 b5dfdfa6d4ea472388bcfdb20dd02e84
+msgid "**CellPainting_search_screens** (Type: CellPaintingTool)"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:97 5f09dd35adb64f548088450a6d4763bc
+msgid ""
+"List available Cell Painting screens/studies in the Image Data Resource "
+"(IDR). Returns screen nam..."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst 9f3c753515a144619017d0c98a53a120
+msgid "CellPainting_search_screens tool specification"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:103 a84a810ce1d140a290f93ed3a2637348
+msgid "**Name**: ``CellPainting_search_screens``"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:105 d90e759451e24da5bfbfe8405116cbd7
+msgid ""
+"**Description**: List available Cell Painting screens/studies in the "
+"Image Data Resource (IDR). Returns screen names, IDs, descriptions, and "
+"URLs. Automatically filters to Cell Painting and morphological profiling "
+"studies (e.g. idr0016 Wawer ~30,000 compounds, JUMP-CP). Use the optional"
+" query parameter to further filter by keyword. Example: Discover which "
+"Cell Painting datasets are available in IDR."
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:112 8634afcbac3447078fec2c0c29fecfeb
+msgid ""
+"``query`` (string, null) (optional) Optional keyword to filter screens by"
+" name or description (e.g., 'JUMP', 'U2OS', 'wawer')"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:129 ae640ceab1c64677bbb3a9af72c20b2c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:131 a670e3c36f0847569952395b65724f86
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cellpainting_tools.rst:132 702b2af8f47c4c33803a0b38f3e07542
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

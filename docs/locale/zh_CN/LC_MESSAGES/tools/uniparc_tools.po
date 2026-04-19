@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniparc_tools.rst:10 e56a95616c7944cf8d6d3e10f900e51e
+msgid "Uniparc Tools"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:12 3d7c1e4bcb114d6fb39803d059a06d78
+msgid ""
+"**Configuration File**: ``uniparc_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:16 ad4e27ba909644d98e71793db5a4876a
+msgid ""
+"This page contains all tools defined in the ``uniparc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:19 84b06d62b09f46b4b2bc3f17aa29117c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:22 897e37b847e84ac489f4abd02c6c70bf
+msgid "**UniParc_get_entry** (Type: UniParcTool)"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:24 ac03e567a1624876abae0185b04d047e
+msgid ""
+"Get a UniProt UniParc entry by its stable UPI identifier. UniParc is the "
+"most comprehensive, non-..."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst 22be73dc1a7f44e994866d31fe9da50a
+msgid "UniParc_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:28 ../../tools/uniparc_tools.rst:59
+#: e41dc2e0ce0f4f5a9218845f341f2d5b fc9db981c41d4ddf8015fc58d661e85b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:30 d60b19cf2eea4c3ebc9b0f09694e201c
+msgid "**Name**: ``UniParc_get_entry``"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:31 ../../tools/uniparc_tools.rst:62
+#: 15537044310641f585da5c3f022812b8 22a02e720ab94a84868e439a517b1086
+msgid "**Type**: ``UniParcTool``"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:32 d747e325e326431f9902c3088c33e7da
+msgid ""
+"**Description**: Get a UniProt UniParc entry by its stable UPI "
+"identifier. UniParc is the most comprehensive, non-redundant protein "
+"sequence archive, storing every unique sequence ever seen across all "
+"major databases (UniProtKB, RefSeq, Ensembl, PDB, EMBL/GenBank, EPO "
+"patents, etc.). Each unique sequence gets a permanent UPI ID. Returns all"
+" active database cross-references (with gene name, protein name, "
+"organism), InterPro domain annotations, and full sequence with "
+"length/weight/checksums. Essential for tracking a protein sequence across"
+" databases and finding all records with an identical sequence. Example: "
+"UPI000002ED67 is TP53 (p53), active in Swiss-Prot (P04637), TrEMBL, "
+"RefSeq, Ensembl, PDB with 551 total cross-references."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:34 ../../tools/uniparc_tools.rst:65
+#: 9c22bf17730b432e9c93aac155f1b3f5 b209d24b839f43eda0628a3b2851e432
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:36 429186dc653e4e2b84a505849b3e2f5a
+msgid ""
+"``upi`` (string) (required) UniParc identifier (e.g., 'UPI000002ED67' for"
+" TP53/P04637). Find UPIs via UniParc\\_search or from UniProt protein "
+"pages."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:39 ../../tools/uniparc_tools.rst:73
+#: 7419b14b15f5451bae0118df7c698cbc ebec3f8b77e84bf4aa15ae8c459f5247
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:53 9a1ee326eb4c4940a0a98277b36dbee5
+msgid "**UniParc_search** (Type: UniParcTool)"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:55 8f0e9153accd44959329dae9721bb14d
+msgid ""
+"Search UniProt UniParc sequence archive by gene name, organism, or "
+"database membership. Finds all..."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst b6d6241308064a9dbb6746ca5d2d4f30
+msgid "UniParc_search tool specification"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:61 8e896b27c27f4b5dbd626ee11065d207
+msgid "**Name**: ``UniParc_search``"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:63 111ac247f6d549e99b5c16d5644f9c18
+msgid ""
+"**Description**: Search UniProt UniParc sequence archive by gene name, "
+"organism, or database membership. Finds all unique protein sequences "
+"matching the query, returning UPI identifiers, UniProt accessions, "
+"organisms, gene names, and creation dates. Useful for finding all "
+"sequence variants of a gene across species, or identifying sequences "
+"present in specific databases (PDB, RefSeq, Ensembl). Supports Lucene "
+"query syntax: 'gene:TP53 AND organism\\_id:9606' for human TP53 "
+"sequences, 'database:PDB AND gene:BRCA1' for BRCA1 sequences with PDB "
+"structures. Example: gene:TP53 AND organism\\_id:9606 returns multiple "
+"UniParc entries including the canonical p53 and splice variants."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:67 4270970dc9d442e2963960d708f1dece
+msgid ""
+"``query`` (string) (required) Search query in Lucene syntax. Examples: "
+"'gene:TP53 AND organism\\_id:9606', 'database:PDB AND gene:BRCA1', "
+"'accession:P04637'. Fields: gene, organism\\_id, organism\\_name, "
+"database, accession, upi, checksum."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:70 c829c2f073df42749b6e777aebd8e015
+msgid ""
+"``size`` (integer) (optional) Number of results to return (default 5, max"
+" 10)."
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:87 126cc1a134c647f9927ade9237fe6d0f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:89 ac12cb4c23f2420698bc55ad645df56e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniparc_tools.rst:90 90c234af91ee44d6a92689903ff4816c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

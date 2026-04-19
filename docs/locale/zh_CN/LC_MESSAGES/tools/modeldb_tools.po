@@ -1,0 +1,269 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/modeldb_tools.rst:10 fbecc3ffb4ba4f49a4930c320f7c57da
+msgid "Modeldb Tools"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:12 a4b86da628104eafb8fb91952e581b68
+msgid ""
+"**Configuration File**: ``modeldb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:16 77b2b188fe1e49cb950d15f6cce2f5a8
+msgid ""
+"This page contains all tools defined in the ``modeldb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:19 45e2d1245a7c4366b5bf4adfc844e05c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:22 0c9a92cd3dbd4960a3e5418cdfcb7dce
+msgid "**ModelDB_get_celltype** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:24 2b5f3ba2c8a24075a06ff2cbb53e67f0
+msgid ""
+"Get details about a specific neuron/cell type from ModelDB by its cell "
+"type ID. Returns the cell ..."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst 75874f7875be416393b3c1947c7b3746
+msgid "ModelDB_get_celltype tool specification"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:28 ../../tools/modeldb_tools.rst:59
+#: ../../tools/modeldb_tools.rst:90 ../../tools/modeldb_tools.rst:121
+#: ../../tools/modeldb_tools.rst:150 5f03c6cca69a4229bb1e917af261b513
+#: b347c408c418481a864e170c5333ba65 c9bb6c07adaa467fa03f7bc281904d8a
+#: c9f1ef3cdf914beb8762674e48d908b7 d4c8af03b840458c85c751ca96a60897
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:30 a952706392e94cf7999e065bf95a3cdd
+msgid "**Name**: ``ModelDB_get_celltype``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:31 ../../tools/modeldb_tools.rst:62
+#: ../../tools/modeldb_tools.rst:93 ../../tools/modeldb_tools.rst:124
+#: ../../tools/modeldb_tools.rst:153 034d50cf16a34bf5ae345552bb409e4f
+#: 2f95148bac4144f1b9ee8ca92ea2f62d 57e2db324a944f5cacc222d31ed95499
+#: 6ff98f3fcec14cd28207ccd1aab332a2 e015e03cf1564d658e083ea23aa563a5
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:32 f11095ff7f294fecac9ba8935c2b0d4c
+msgid ""
+"**Description**: Get details about a specific neuron/cell type from "
+"ModelDB by its cell type ID. Returns the cell type name (e.g., "
+"'Hippocampus CA3 pyramidal GLU cell', 'Cerebellum Purkinje GABA cell'), "
+"creation date, and version info. Cell type IDs can be obtained from "
+"ModelDB\\_list\\_celltypes or from the neurons field of "
+"ModelDB\\_get\\_model results. This is useful for understanding what "
+"neuron types are modeled in computational neuroscience."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:34 ../../tools/modeldb_tools.rst:65
+#: ../../tools/modeldb_tools.rst:96 ../../tools/modeldb_tools.rst:127
+#: ../../tools/modeldb_tools.rst:156 1c80e6b360b740568cc4957548449697
+#: 29f26583e15748198ce8253de6476c29 50d1cfc7790840409b421738f09c06be
+#: a5925ab8b36a42c290b069f4264c7c95 f4de7baa87154eb28246c75a98ca4759
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:36 2ce848a517984822a40c616ee75032f4
+msgid ""
+"``celltype_id`` (string) (required) Cell type ID from ModelDB. Examples: "
+"'259' (Hippocampus CA3 pyramidal GLU cell), '258' (Hippocampus CA1 "
+"pyramidal GLU cell), '263' (Cerebellum Purkinje GABA cell). Find IDs "
+"using ModelDB\\_list\\_celltypes."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:39 ../../tools/modeldb_tools.rst:70
+#: ../../tools/modeldb_tools.rst:101 ../../tools/modeldb_tools.rst:131
+#: ../../tools/modeldb_tools.rst:161 3bb6d97bd5e84e9ea1862eaa8572b4d4
+#: 3f3a4cb864aa4d99ad4bf390b14720e9 7198388f984a4fbc91f7fe9a3c85a808
+#: a277143c17b14fa28de84a297cd511ae ba9953c255134951b079ed539f91d2d7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:53 ea3beb49d1a045a89e400dc084b6820c
+msgid "**ModelDB_get_model** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:55 82337e82548042dca8785b243f75f26f
+msgid ""
+"Get detailed information about a specific computational neuroscience "
+"model from ModelDB by its nu..."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst f19e201251d941bca4299cc5ffe89470
+msgid "ModelDB_get_model tool specification"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:61 afc7c852339847d2a0d5eded98a16a81
+msgid "**Name**: ``ModelDB_get_model``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:63 e78403111116447987f9ae29a5526c4c
+msgid ""
+"**Description**: Get detailed information about a specific computational "
+"neuroscience model from ModelDB by its numeric ID. Returns the model "
+"name, description (notes), neuron types, ion currents, model type, model "
+"concepts, modeling application (simulator), associated papers with "
+"citations, genes, receptors, transmitters, brain region, and "
+"creation/version dates. ModelDB is a curated repository of published "
+"computational neuroscience models hosted by Yale/SenseLab. Use model IDs "
+"from ModelDB\\_list\\_models or from the ModelDB website (e.g., model "
+"3263 is CA3 Pyramidal Neuron by Migliore et al 1995)."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:67 e07b8f42b0204ee0ac0084412a5c2212
+msgid ""
+"``model_id`` (integer) (required) Numeric model ID from ModelDB. "
+"Examples: 3263 (CA3 pyramidal neuron), 2487 (Purkinje cell), 279 (squid "
+"axon), 87284 (cerebellar granule cell). Find IDs using "
+"ModelDB\\_list\\_models."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:84 029a46f2ff3e4a9fad2b328d6ab08cad
+msgid "**ModelDB_get_paper** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:86 372639d5ebc546a8b421772e3d63211c
+msgid ""
+"Get details of a scientific paper referenced in ModelDB by its paper ID. "
+"Returns the paper title,..."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst 911b73ba7a1949cba761866bb9e46bbc
+msgid "ModelDB_get_paper tool specification"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:92 b14e8095a4f442eda980335721fc4ad5
+msgid "**Name**: ``ModelDB_get_paper``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:94 3e869232566e4b9cba1d6940dca34f18
+msgid ""
+"**Description**: Get details of a scientific paper referenced in ModelDB "
+"by its paper ID. Returns the paper title, full citation name, references,"
+" and associated models. Papers in ModelDB are linked to computational "
+"neuroscience models and represent the publications describing those "
+"models. Use paper IDs found in ModelDB\\_get\\_model results (in the "
+"model\\_paper field). Example: paper 4307 is 'Migliore et al 1995' "
+"describing CA3 hippocampal neuron simulations."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:98 af81157f850f482cba2a14833d4579e8
+msgid ""
+"``paper_id`` (integer) (required) Numeric paper ID from ModelDB. "
+"Examples: 4307 (Migliore et al 1995), 3860 (Hodgkin-Huxley classic). Find"
+" IDs from model\\_paper field in ModelDB\\_get\\_model results."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:115 70f435504efa44e19d57c0130370912e
+msgid "**ModelDB_list_celltypes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:117 70527035e4cb42e783254510405c1d5d
+msgid ""
+"List all neuron/cell type IDs available in ModelDB. Returns an array of "
+"cell type IDs that can be..."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst 516ece05ec2f4196a1ee1b9b8638252b
+msgid "ModelDB_list_celltypes tool specification"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:123 7bfce282dd974fffb53900c897f73a74
+msgid "**Name**: ``ModelDB_list_celltypes``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:125 1925b80f901e4d2b9c86b3118337c94c
+msgid ""
+"**Description**: List all neuron/cell type IDs available in ModelDB. "
+"Returns an array of cell type IDs that can be used with "
+"ModelDB\\_get\\_celltype for full details including name and morphology. "
+"ModelDB categorizes computational models by the neuron types they "
+"simulate, such as hippocampal pyramidal cells, Purkinje cells, cortical "
+"interneurons, etc. This is useful for finding what cell types have "
+"computational models available."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:129 392bf26094ba47229488af58c522ade0
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:144 1b9efd662e0a490080df8d7d501fa4f8
+msgid "**ModelDB_list_models** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:146 1c7cced06d8448cbb94ba1ccabd8be25
+msgid ""
+"List all computational neuroscience model IDs from ModelDB, optionally "
+"filtered by simulation env..."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst 5c77e1d871da4fafaca38060a958ebeb
+msgid "ModelDB_list_models tool specification"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:152 4f92aacec16940348705895a1d051c90
+msgid "**Name**: ``ModelDB_list_models``"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:154 a469b31cd8e44573a5624d3108b5fd55
+msgid ""
+"**Description**: List all computational neuroscience model IDs from "
+"ModelDB, optionally filtered by simulation environment. ModelDB is a "
+"curated repository of published computational neuroscience models. "
+"Returns an array of model IDs that can be used with ModelDB\\_get\\_model"
+" for full details. Filter by modeling application name (e.g., 'NEURON', "
+"'GENESIS', 'Python', 'MATLAB', 'Brian'). Without a filter, returns all "
+"model IDs (1000+). Use this to discover models for a specific simulator "
+"or to get an overview of available models."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:158 b42eb9e6eabb493caa9feffb3544f75b
+msgid ""
+"``modeling_application`` (string) (optional) Filter by simulation "
+"environment name. Case-sensitive. Common values: 'NEURON', 'GENESIS', "
+"'Python', 'MATLAB', 'Brian', 'NEST', 'XPP', 'C or C++'. Omit to get all "
+"models."
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:174 816970251e374a33b59f0bba358ddbd6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:176 05d2bac4d11a42fdb64bfa1f5cdbed09
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/modeldb_tools.rst:177 6bafd673d680430294599d82ede4e1f0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,201 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mgi_tools.rst:10 ecf600a4dd2647de93af5f71697a6f2b
+msgid "Mgi Tools"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:12 31afaf87555640f0ac142235c255ef12
+msgid ""
+"**Configuration File**: ``mgi_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:16 e92dd82304cd4f1f873901a98520e65d
+msgid ""
+"This page contains all tools defined in the ``mgi_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:19 63955f9dfb014835b3687aa4a91ebc0f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:22 d5bcc01a6b834547a96066169db3ddab
+msgid "**MGI_get_gene** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:24 60ddaf38bd9f4335a8ed4cc3fa877078
+msgid ""
+"Get detailed information about a mouse gene from MGI (Mouse Genome "
+"Informatics) by its MGI identi..."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst 6750b10073c44ea4b5cd675b75c82bfc
+msgid "MGI_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:28 ../../tools/mgi_tools.rst:59
+#: ../../tools/mgi_tools.rst:96 14c5bbef5b1f4b4dbcfa4856da33d42d
+#: 59bf0b6c48da4896a0e44c7f3fb2fe55 f759ef5255194640b6fc001e8a788d8e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:30 ffb72ab372fc4b02bbc685eaa606fdfe
+msgid "**Name**: ``MGI_get_gene``"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:31 ../../tools/mgi_tools.rst:62
+#: ../../tools/mgi_tools.rst:99 1868597370ec49409cb998d000ea9dd8
+#: 4d88d4f39a814634b51bd168e1017212 c4c978d6097145e4914fd39688dc6095
+msgid "**Type**: ``AllianceGenomeTool``"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:32 28fa19491eab44ebab95523f4151a302
+msgid ""
+"**Description**: Get detailed information about a mouse gene from MGI "
+"(Mouse Genome Informatics) by its MGI identifier. Returns gene symbol, "
+"full name, species info, gene synopsis (curated and automated), synonyms,"
+" genomic location (GRCm39 assembly), SO term, and cross-references to "
+"UniProt, NCBI, Ensembl, etc. Powered by the Alliance of Genome Resources "
+"API which integrates MGI curated data. Example: 'MGI:98834' returns Trp53"
+" (transformation related protein 53) details."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:34 ../../tools/mgi_tools.rst:65
+#: ../../tools/mgi_tools.rst:102 602966cfe7374fac832c92ddb220a25f
+#: 9c96a099e7b14cd49605a6e24daece48 d8e407638e754bcbbe22e1f1ce48bc7d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:36 00a1f57cb10b4470920efa547279908c
+msgid ""
+"``gene_id`` (string) (required) MGI gene identifier with 'MGI:' prefix. "
+"Examples: 'MGI:98834' (Trp53/p53), 'MGI:104537' (Brca1), 'MGI:96677' "
+"(Kit), 'MGI:88039' (Apoe), 'MGI:88276' (Braf)."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:39 ../../tools/mgi_tools.rst:76
+#: ../../tools/mgi_tools.rst:110 1f5b192330f84cc6b84c96e1db3152ae
+#: 9cb7329047674a788ee62555e393d301 f8cc82f8302b4b89af8fc9bc61ef5b98
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:53 d2d5f340daf74ba49fdc26021bba06ff
+msgid "**MGI_get_phenotypes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:55 2d1a45855ee94b548a99c9b80ffabea4
+msgid ""
+"Get phenotype annotations for a mouse gene from MGI (Mouse Genome "
+"Informatics). Returns Mammalian..."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst 131ce0f39ec244c48341e4a2d1a2cd82
+msgid "MGI_get_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:61 9db86b719a1d49e4b14303a9ba3c89a0
+msgid "**Name**: ``MGI_get_phenotypes``"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:63 e4b253428bb74f02b94576dfe4c47058
+msgid ""
+"**Description**: Get phenotype annotations for a mouse gene from MGI "
+"(Mouse Genome Informatics). Returns Mammalian Phenotype (MP) ontology "
+"annotations including phenotype statements derived from mutant allele "
+"studies. Uses Alliance of Genome Resources API which integrates MGI "
+"phenotype curation data. Useful for understanding mouse gene function "
+"through loss-of-function and gain-of-function phenotypes. Example: "
+"'MGI:98834' returns Trp53 phenotypes including tumor susceptibility, "
+"apoptosis defects, etc."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:67 17edc2be11014ac0b363cf0948244ea0
+msgid ""
+"``gene_id`` (string) (required) MGI gene identifier with 'MGI:' prefix. "
+"Examples: 'MGI:98834' (Trp53), 'MGI:104537' (Brca1), 'MGI:96677' (Kit)."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:70 7ba72d7d4f67447a825ab7a3a1941557
+msgid ""
+"``limit`` (integer) (optional) Number of phenotype annotations to return "
+"per page (default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:73 6d1385dbe9ae438eb6ef5615be2efb6a
+msgid "``page`` (integer) (optional) Page number for pagination (default: 1)."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:90 1eca7116f6084232bb021f776a7b5086
+msgid "**MGI_search_genes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:92 ddce8c8122be4d7d9ef35f14eb29461b
+msgid ""
+"Search for mouse (Mus musculus) genes in MGI (Mouse Genome Informatics) "
+"by gene symbol, name, or ..."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst 14b0f12651754eee94d879ae48e5aa5b
+msgid "MGI_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:98 d344f76b25744f3ea1ad4861df2495a1
+msgid "**Name**: ``MGI_search_genes``"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:100 981a0d9f2e954210a7f8a8254cf214a1
+msgid ""
+"**Description**: Search for mouse (Mus musculus) genes in MGI (Mouse "
+"Genome Informatics) by gene symbol, name, or keyword. Returns matching "
+"mouse gene symbols, names, and MGI identifiers. Powered by the Alliance "
+"of Genome Resources API which integrates MGI data. Use this to find mouse"
+" gene IDs before calling MGI\\_get\\_gene or MGI\\_get\\_phenotypes. "
+"Examples: 'Trp53' (tumor protein p53), 'Brca1', 'insulin', 'Notch'."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:104 358a0c4fe13641489b37bf8051606384
+msgid ""
+"``query`` (string) (required) Gene search query: mouse gene symbol (e.g.,"
+" 'Trp53', 'Brca1', 'Sox9'), gene name keyword (e.g., 'insulin', 'tumor'),"
+" or MGI ID (e.g., 'MGI:98834')."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:107 72b5af2863da45a58c7a6898486e6757
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:124 8a4b92a7c28f44d8b967588c5161516c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:126 ff64f8077cd54ee398474114b5ec8e8e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mgi_tools.rst:127 eff15fd655ea49fc81b8bc72df09f5be
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

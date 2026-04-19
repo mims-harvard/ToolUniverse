@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/medgen_tools.rst:10 f5c7dc598ac24d10b1669e2c45b53bb5
+msgid "Medgen Tools"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:12 312e0785eaac466d913363340548d2e8
+msgid ""
+"**Configuration File**: ``medgen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:16 aa0e104c997c4185837db58e07bb5eea
+msgid ""
+"This page contains all tools defined in the ``medgen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:19 8607b02e751c4653be83b6120f8d0d07
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:22 e6b2118b2a1245f98257bf2e002fb562
+msgid "**MedGen_get_clinical_features** (Type: MedGenTool)"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:24 8da3a4e5e62f4680833c79080c13d8ef
+msgid ""
+"Get HPO clinical features (phenotypes) associated with a genetic "
+"condition from NCBI MedGen. Retu..."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst 61bbd12751424f02b4305eee12a65220
+msgid "MedGen_get_clinical_features tool specification"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:28 ../../tools/medgen_tools.rst:64
+#: ../../tools/medgen_tools.rst:100 3826d2ee5a6f4c37abe46ee4a1f2f907
+#: 48da6b956a17430595e67d25915058d8 bfb143f24a1a4e6d8f556dd47cad4695
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:30 a063777f6d4041e2b87a25b64dc74c60
+msgid "**Name**: ``MedGen_get_clinical_features``"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:31 ../../tools/medgen_tools.rst:67
+#: ../../tools/medgen_tools.rst:103 6563b7a13baf4da89cfee5c9e1bc002e
+#: 8ea17483ea364b858e87eb2bbb508197 ee6fe1efebfe43deb748b2849ea31033
+msgid "**Type**: ``MedGenTool``"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:32 19dae0e1301143e0b7aed7098df99725
+msgid ""
+"**Description**: Get HPO clinical features (phenotypes) associated with a"
+" genetic condition from NCBI MedGen. Returns feature names, HPO IDs, UMLS"
+" CUIs, and definitions. Useful for phenotype-driven diagnosis. Example: "
+"uid='41393' (cystic fibrosis) returns bronchiectasis, meconium ileus, "
+"male infertility, etc."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:34 ../../tools/medgen_tools.rst:70
+#: ../../tools/medgen_tools.rst:106 13fb327a06014b789517ceef2038fecf
+#: 61d7c8d53b0146e48436902df18dc6f4 644ba88c695f43b4aaa7020be47ffcf1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:36 507cfa45946946a89d1a23b4578ffda9
+msgid ""
+"``uid`` (string) (optional) MedGen UID (e.g., '41393' for cystic "
+"fibrosis)."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:39 655896d6e37145b29a38d446678e2eba
+msgid ""
+"``cui`` (string) (optional) UMLS CUI (e.g., 'C0010674' for cystic "
+"fibrosis). Alternative to uid."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:42 ../../tools/medgen_tools.rst:78
+#: 88641f5383ee4b559933a05fd88d4ff7 e5edb0a8993b456292a1e6bd9df7304f
+msgid ""
+"``concept_id`` (string, null) (optional) Alias for cui. UMLS CUI "
+"identifier (e.g., \"C0017205\" for Gaucher disease)."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:45 ../../tools/medgen_tools.rst:81
+#: ../../tools/medgen_tools.rst:114 0763edb10c8a4636a61962df3de38b75
+#: 2876242babe346ccaf4f8c1111356877 e82cd132a2994e63a4b487380c3a7eb3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:58 1aa631be47ca4f3fa086150abe7d0a8b
+msgid "**MedGen_get_condition** (Type: MedGenTool)"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:60 d229712a3c864820a30b96c9cf93f6aa
+msgid ""
+"Get detailed information about a specific genetic condition from NCBI "
+"MedGen by UID or UMLS CUI. ..."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst e0c5e2777bcf4aebad7f733e6cc318d2
+msgid "MedGen_get_condition tool specification"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:66 7e27484801904d55af9bddd7b8339f2e
+msgid "**Name**: ``MedGen_get_condition``"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:68 4265e77f2e964b3982dda0d1d1802610
+msgid ""
+"**Description**: Get detailed information about a specific genetic "
+"condition from NCBI MedGen by UID or UMLS CUI. Returns full definition, "
+"associated genes, OMIM IDs, synonyms, modes of inheritance, and clinical "
+"features (HPO phenotypes). Example: uid='41393' returns cystic fibrosis "
+"with CFTR/TGFB1/FCGR2A genes, autosomal recessive inheritance, 30+ "
+"clinical features."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:72 bd3f37a062ad452186b618e18788e097
+msgid ""
+"``uid`` (string) (optional) MedGen UID (e.g., '41393' for cystic "
+"fibrosis). Get from MedGen\\_search\\_conditions."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:75 a7e8d0cd65164ce0bfe056d183ef6e47
+msgid ""
+"``cui`` (string) (optional) UMLS Concept Unique Identifier (e.g., "
+"'C0010674' for cystic fibrosis). Alternative to uid."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:94 7e64fd7b3601437bbaaba1b359a0f094
+msgid "**MedGen_search_conditions** (Type: MedGenTool)"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:96 ae42790f350e47db8ed1f22972d456b6
+msgid ""
+"Search NCBI MedGen for genetic conditions, diseases, or syndromes by "
+"keyword. Returns condition n..."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst dd7e709abf0c401c9a2d4cf4f65c9472
+msgid "MedGen_search_conditions tool specification"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:102 ad188b3ee4e24f4db948b3e54406c0bd
+msgid "**Name**: ``MedGen_search_conditions``"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:104 d3b8e0db3e4a4df29e12b6570b51b99f
+msgid ""
+"**Description**: Search NCBI MedGen for genetic conditions, diseases, or "
+"syndromes by keyword. Returns condition names, definitions, OMIM IDs, and"
+" associated genes. MedGen aggregates data from OMIM, Orphanet, ClinVar, "
+"HPO, GTR, and GeneReviews. Example: query='cystic fibrosis' returns CF "
+"entry with CFTR gene, OMIM 219700."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:108 b3c9533b41b042a2a47c6e068941ca03
+msgid ""
+"``query`` (string) (required) Search term (e.g., 'cystic fibrosis', "
+"'BRCA1', 'Marfan syndrome', 'autosomal recessive')."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:111 a610b34e895a40fb93ec0aff99e2e65c
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results (default "
+"10, max 50)."
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:128 93bfaf14c76946618b2f0ccc653b0be7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:130 942ae1d06d564a5a85d16dd2d661c3e1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/medgen_tools.rst:131 072de796a639435792fcc9f2e6b41858
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

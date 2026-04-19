@@ -59,8 +59,11 @@ def register_tool(tool_type_name=None, config=None):
     """
     Decorator to automatically register tool classes and their configs.
 
-    Usage:
-        @register_tool('CustomToolName', config={...})
+    Example:
+
+    .. code-block:: python
+
+        @register_tool("CustomToolName", config={...})
         class MyTool:
             pass
     """

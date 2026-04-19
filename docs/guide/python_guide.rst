@@ -55,8 +55,8 @@ Check that ToolUniverse is installed correctly:
    print("✅ Installation successful!")
 
 .. success:: **Installation Complete**
- 
- You're ready to start using ToolUniverse!
+
+   You're ready to start using ToolUniverse!
 
 Quick Start
 -----------
@@ -64,9 +64,9 @@ Quick Start
 Get your first scientific query running in 5 minutes:
 
 .. card:: Step 1: Initialize ToolUniverse
- :class-card: step-card completed
+   :class-card: step-card completed
 
- Create a ToolUniverse instance:
+   Create a ToolUniverse instance:
 
    .. code-block:: python
 
@@ -76,7 +76,7 @@ Get your first scientific query running in 5 minutes:
       tu = ToolUniverse()
 
 .. card:: Step 2: Load Tools
- :class-card: step-card completed
+   :class-card: step-card completed
 
  Load the scientific tools ecosystem:
 
@@ -171,15 +171,15 @@ Tool Finders
 ToolUniverse has **three ways** to find tools. Don't browse 1000+ tools manually—use Tool Finder!
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Keyword Search
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Keyword Search
+      :class-card: hover-lift
+      :shadow: md
 
- **Fast text matching**
- 
- Best for: Exact terms you know
+      **Fast text matching**
+
+      Best for: Exact terms you know
 
       .. code-block:: python
 
@@ -451,47 +451,47 @@ Advanced Features
 -----------------
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Tool Composition
- :link: tool_composition
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Tool Composition
+      :link: tool_composition
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Chain multiple tools into scientific workflows
+      Chain multiple tools into scientific workflows
 
- .. grid-item-card:: Hooks System
- :link: hooks/index
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Hooks System
+      :link: hooks/index
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Intelligent output processing and summarization
+      Intelligent output processing and summarization
 
- .. grid-item-card:: Cache System
- :link: cache_system
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Cache System
+      :link: cache_system
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Optimize performance with smart caching
+      Optimize performance with smart caching
 
- .. grid-item-card:: HTTP API
- :link: http_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: HTTP API
+      :link: http_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Deploy ToolUniverse as a remote service
+      Deploy ToolUniverse as a remote service
 
- .. grid-item-card:: ChatGPT API
- :link: chatgpt_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: ChatGPT API
+      :link: chatgpt_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Use ToolUniverse tools as OpenAI function calls
+      Use ToolUniverse tools as OpenAI function calls
 
 .. button-ref:: tooluniverse_case_study
  :color: primary
@@ -532,4 +532,3 @@ Need Help?
 - **Issues**: `GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
 - **Community**: `Slack Channel <https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_
 - **FAQ**: :doc:`../help/faq`
-

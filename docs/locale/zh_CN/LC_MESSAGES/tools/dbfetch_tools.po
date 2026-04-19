@@ -1,0 +1,219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dbfetch_tools.rst:10 f561b8f40534484cafe2ac64ce04a1e2
+msgid "Dbfetch Tools"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:12 264ffaa4c6eb44e5acce0829e4ac9c19
+msgid ""
+"**Configuration File**: ``dbfetch_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:16 7046cdd71fa740e6a68b445415a2bbe2
+msgid ""
+"This page contains all tools defined in the ``dbfetch_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:19 d20eb845e70a49b784ceafed2d1fd6b5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:22 01cdb81115bb40a4b4bed31ebefc68a9
+msgid "**dbfetch_fetch_batch** (Type: DbfetchRESTTool)"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:24 ca12ca06bfcf426f96012f21b85048bb
+msgid ""
+"Fetch multiple database entries by IDs in batch. Supports comma-separated"
+" IDs or list of IDs. Ret..."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst d5fb92cd19c942c5a6eb5108182cb0a7
+msgid "dbfetch_fetch_batch tool specification"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:28 ../../tools/dbfetch_tools.rst:66
+#: ../../tools/dbfetch_tools.rst:104 ../../tools/dbfetch_tools.rst:133
+#: 736e902769334ec88e30dd96443bdd43 b8f057e4a331445a87095df0b3596366
+#: e93bf58d3d3f4510b0e709b8d2e72b6d f9b190dd40e640b590c06e203a1807f3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:30 de29f22aaff24553954da9592857b4a0
+msgid "**Name**: ``dbfetch_fetch_batch``"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:31 ../../tools/dbfetch_tools.rst:69
+#: ../../tools/dbfetch_tools.rst:107 ../../tools/dbfetch_tools.rst:136
+#: 3e0b353b1adc4d0582b3cf12ac6491c9 cc74a52c47ac45fcb40440782695f357
+#: d29d9a01f4da479a81cdc0bbba5a1074 f3072366f9a04155b5761ba1a74cc785
+msgid "**Type**: ``DbfetchRESTTool``"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:32 5c2ca12c2a4949b09f5634e68b0839c2
+msgid ""
+"**Description**: Fetch multiple database entries by IDs in batch. "
+"Supports comma-separated IDs or list of IDs. Returns entries in specified"
+" format."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:34 ../../tools/dbfetch_tools.rst:72
+#: ../../tools/dbfetch_tools.rst:110 ../../tools/dbfetch_tools.rst:139
+#: 63aec76795014df9961426de512a2bdf 65b8a5bdc852461386b1f510f0f0f54c
+#: 6ef1cae286254a53b6961816bd085ebe 9f78e789de0947cdbfad2f8d3af16268
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:36 ../../tools/dbfetch_tools.rst:141
+#: b8445dc2696540bd9ae6d9152be90f4f c87403b94b1144c6b5f40f56d1f3a215
+msgid "``db`` (string) (required) Database name"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:39 4baf5bffb22c4f51a1071ab32a7d8e50
+msgid ""
+"``ids`` (string, array) (required) Comma-separated IDs or list of IDs "
+"(e.g., 'P05067,P04637' or ['P05067', 'P04637'])"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:42 5269487b7b5f4978b6d09ae46d4e7114
+msgid "``format`` (string) (optional) Output format (default: 'fasta')"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:45 ../../tools/dbfetch_tools.rst:83
+#: ../../tools/dbfetch_tools.rst:114 ../../tools/dbfetch_tools.rst:144
+#: 62a97daf2e7647ee9cc9e8ce18b93c86 688dfccf55004b38a9a1a67816ac6481
+#: 84ba505f3c694527a5b1dbdedb0a5e4c 9a55245ab7574491982f4543c83cdd7c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:60 c7a37bdb54e84f60a877121dca9c5966
+msgid "**dbfetch_fetch_entry** (Type: DbfetchRESTTool)"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:62 b8d308f5411d429799cfe97ad05b064a
+msgid ""
+"Fetch a single database entry by ID from various databases (UniProt, PDB,"
+" etc.) in specified form..."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst b62170123b9f43c09b4b85f4467e8a9f
+msgid "dbfetch_fetch_entry tool specification"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:68 f881a6676b534bca8ff6ac14a863898f
+msgid "**Name**: ``dbfetch_fetch_entry``"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:70 f0ac65689c2f43eeab43a6da9bbc768e
+msgid ""
+"**Description**: Fetch a single database entry by ID from various "
+"databases (UniProt, PDB, etc.) in specified format. Supports FASTA, XML, "
+"JSON, and other formats."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:74 db472cd7d01e465f9d1cbaebbec13eb2
+msgid ""
+"``db`` (string) (required) Database name (e.g., 'uniprotkb', 'pdb', "
+"'embl', 'ensembl')"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:77 820397094fb2483eae3c977adec6845e
+msgid ""
+"``id`` (string) (required) Entry ID (e.g., UniProt accession 'P05067', "
+"PDB ID '1A2B')"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:80 1da630d4e37448ab803fee6c9a2b13eb
+msgid ""
+"``format`` (string) (optional) Output format (e.g., 'fasta', 'xml', "
+"'json', 'txt'). Default: 'fasta'"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:98 2f9c77bf2b89409983be505f0bcf3eab
+msgid "**dbfetch_list_databases** (Type: DbfetchRESTTool)"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:100 1e9066a6d55c4e3d8f74b442728aa2f1
+msgid ""
+"List all available databases in Dbfetch service. Note: This returns a "
+"static list of common datab..."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst e63215efe0984e2db36b981073e05f68
+msgid "dbfetch_list_databases tool specification"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:106 2f9221dcfa4940fcbfd7d6d86d7c4e62
+msgid "**Name**: ``dbfetch_list_databases``"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:108 d8b760e3e5654f0db6ca405525306b6c
+msgid ""
+"**Description**: List all available databases in Dbfetch service. Note: "
+"This returns a static list of common database names as the API endpoint "
+"for listing is web-only."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:112 c172da5fccc143d39a422581d3e7968c
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:127 c6ef48987a814c75b09775a6f8bdd308
+msgid "**dbfetch_list_formats** (Type: DbfetchRESTTool)"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:129 c9c9922c8b9e4fb9858c6826117a47d2
+msgid ""
+"List available output formats for a specific database. Note: This returns"
+" common format names as ..."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst e23e4ce86794441dacc79807395ea5cb
+msgid "dbfetch_list_formats tool specification"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:135 42ec96bec72942d0bc4cc2124269b3bb
+msgid "**Name**: ``dbfetch_list_formats``"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:137 d0d39376f73a4812ac7af5127bc71a63
+msgid ""
+"**Description**: List available output formats for a specific database. "
+"Note: This returns common format names as the API endpoint for listing is"
+" web-only."
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:158 c4ee3df19772480eaa85c95f53c1d865
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:160 6b95bf38fa6e4385a15b5ed94494991d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dbfetch_tools.rst:161 6bef0ce0f2194c0aa53a7a317f393e59
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

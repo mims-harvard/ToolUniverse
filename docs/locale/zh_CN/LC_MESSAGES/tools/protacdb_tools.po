@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/protacdb_tools.rst:10 289be4c60c2345f3a19e878af016d428
+msgid "Protacdb Tools"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:12 58ec56bacd47493a99b5a9c9c4ae4a18
+msgid ""
+"**Configuration File**: ``protacdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:16 c4bfff4827b74327a3fa9886f38d1634
+msgid ""
+"This page contains all tools defined in the ``protacdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:19 091ef04a8ab947d7b624eb829d58b265
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:22 316712614e344e269a55a48ff39ad94a
+msgid "**ProtacDB_get_protac** (Type: ProtacDBTool)"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:24 e53cba2d8ce44e009145f3ddf2958e50
+msgid ""
+"Get detailed information about a specific PROTAC compound by its PROTAC-"
+"DB ID. Returns full recor..."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst c75c43f67f924b309cebefef721b18e8
+msgid "ProtacDB_get_protac tool specification"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:28 ../../tools/protacdb_tools.rst:63
+#: ../../tools/protacdb_tools.rst:103 9a927be11f4f47d796160eb2bfb59d6a
+#: a3c092a320c64cf99f66fb847ddbdfe3 e3d2a4e66e304d6898210aa0d6821aad
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:30 9b53e38efc2048eca8f2e278215b87e8
+msgid "**Name**: ``ProtacDB_get_protac``"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:31 ../../tools/protacdb_tools.rst:66
+#: ../../tools/protacdb_tools.rst:106 47cf5d816e0b4d32875ea78d26ad3d2d
+#: 57a547786f424430aeb3915e55714c93 f579c2418c064ddc966776d49f9dee88
+msgid "**Type**: ``ProtacDBTool``"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:32 3e55f7b8b8eb418686cba91b356469c1
+msgid ""
+"**Description**: Get detailed information about a specific PROTAC "
+"compound by its PROTAC-DB ID. Returns full record including SMILES "
+"structure, warhead canonical SMILES, linker, E3 ligand, target protein, "
+"DC50 values, Dmax, cell lines tested, and literature references (DOI, "
+"journal)."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:34 ../../tools/protacdb_tools.rst:69
+#: ../../tools/protacdb_tools.rst:109 d2d041b832584231a3104c529b30b68f
+#: d709c171804f4f5ea6c0c74558063bf4 f757cfc31d8847e5a97739a333e4aec4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:36 ../../tools/protacdb_tools.rst:71
+#: ../../tools/protacdb_tools.rst:111 331aa9460c7447b0a38a3099df6741f7
+#: af0f201e2cf04da3a11fd4517425294e f9d642cd27324f10b4bb5ebe449ea17e
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:39 7b09f85f2e6a4eebbe3f78b16d9a74d8
+msgid ""
+"``protac_id`` (string) (required) PROTAC-DB compound ID (e.g., '1', '42',"
+" '100')"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:42 ../../tools/protacdb_tools.rst:83
+#: ../../tools/protacdb_tools.rst:120 254642e65d1d47958d166a100aa1edf5
+#: 58455e9dea0e4b4ea4a7be27171fb7ec e38cb69e031643b69ad74b57f9f05e5d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:57 78828d301fbc4176824f5ca5f1d5bb40
+msgid "**ProtacDB_search_protacs** (Type: ProtacDBTool)"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:59 d00b03c49690497aa1e6a73ec200049a
+msgid ""
+"Search PROTAC-DB 3.0 for PROTAC (Proteolysis Targeting Chimera) "
+"compounds. Filter by target prote..."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst a6b0bdd1e4424ee39f22fe69edbde084
+msgid "ProtacDB_search_protacs tool specification"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:65 a75d5e11a56a4e6a9236916757914be2
+msgid "**Name**: ``ProtacDB_search_protacs``"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:67 314bc8f51af247609efe580a3168520c
+msgid ""
+"**Description**: Search PROTAC-DB 3.0 for PROTAC (Proteolysis Targeting "
+"Chimera) compounds. Filter by target protein and/or E3 ligase. Returns "
+"PROTAC structures with DC50, Dmax, SMILES, cell line, and pharmacological"
+" data. At least one of target or e3\\_ligase is required. Use for: "
+"finding PROTACs targeting BRD4, KRAS, AR; comparing CRBN vs VHL-based "
+"PROTACs."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:74 918470e622784b9aaa354d7644caf654
+msgid ""
+"``target`` (string, null) (optional) Target protein name or gene symbol "
+"(e.g., 'BRD4', 'KRAS', 'AR', 'BCL2'). At least one of target or "
+"e3\\_ligase required."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:77 19642ff582264a2badc3225030e1098d
+msgid ""
+"``e3_ligase`` (string, null) (optional) E3 ubiquitin ligase (e.g., "
+"'CRBN', 'VHL', 'MDM2', 'XIAP'). At least one of target or e3\\_ligase "
+"required."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:80 13472471a55141faa3726914600542d9
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of compounds to "
+"return (default 50, max 100)"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:97 55aac92526f541859ee628e07e638c19
+msgid "**ProtacDB_search_targets** (Type: ProtacDBTool)"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:99 7bcf8ccac65b4537963b8ea64940f331
+msgid ""
+"Search PROTAC target proteins in PROTAC-DB 3.0. Returns target protein "
+"names (short and long). Ov..."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst 338801d91ee8497482a0d8f75c7e08c4
+msgid "ProtacDB_search_targets tool specification"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:105 986a1b17e4e64137b6c016867e35004d
+msgid "**Name**: ``ProtacDB_search_targets``"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:107 b45695706d89447c9fc8aba22bddf7e9
+msgid ""
+"**Description**: Search PROTAC target proteins in PROTAC-DB 3.0. Returns "
+"target protein names (short and long). Over 446 unique targets available."
+" Use for: discovering what proteins can be targeted by PROTACs, finding "
+"targets by gene symbol or protein name."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:114 12e1847a9bb843859c0df5676efd2251
+msgid ""
+"``target_name`` (string, null) (optional) Target protein name or gene "
+"symbol (e.g., 'BRD4', 'KRAS'). Returns all targets if omitted."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:117 a3ed6d5580db4b469b8d041e792ab002
+msgid ""
+"``uniprot_id`` (string, null) (optional) UniProt accession ID (e.g., "
+"'O60885' for BRD4). Mutually exclusive with target\\_name."
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:134 7803095f67614cc1a32858f78d11b228
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:136 92e9a5c14b794e47b50788d31fab7fb7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/protacdb_tools.rst:137 db16fe5a1fa94a54803c854683d25447
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,285 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/alliance_genome_tools.rst:10 874d40e5b8f440e98ed2400bb612d911
+msgid "Alliance Genome Tools"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:12 8323924f2914469dbf7b8b2d0c2677c3
+msgid ""
+"**Configuration File**: ``alliance_genome_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:16 6f3f4653ef2348d8a0a3821f99d35ffe
+msgid ""
+"This page contains all tools defined in the "
+"``alliance_genome_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:19 84d9bf25f0e24e0badc4e2d5e6d8d888
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:22 19b27eafe1d14b2aa0e022339736fff0
+msgid "**Alliance_get_disease** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:24 4a2de2ab6cec4f15b4e8310accec74de
+msgid ""
+"Get disease summary information from the Alliance of Genome Resources by "
+"Disease Ontology (DO) ID..."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst 42c794ba315d49f0bb41558abd7d8525
+msgid "Alliance_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:28
+#: ../../tools/alliance_genome_tools.rst:59
+#: ../../tools/alliance_genome_tools.rst:96
+#: ../../tools/alliance_genome_tools.rst:127
+#: ../../tools/alliance_genome_tools.rst:164 9489cd9707774ba0a9a266aca62448e9
+#: 9870fbbdf2424cd7bae213ac6279f252 9de74cdf83ef42a6a5ed316ffaaf21c9
+#: a1647061f1ae4c96b9da1695e6927b97 e31b44cc0eff4118b6fb2a64075bdd11
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:30 d389b4596ba44d5fae20187d1d4e779c
+msgid "**Name**: ``Alliance_get_disease``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:31
+#: ../../tools/alliance_genome_tools.rst:62
+#: ../../tools/alliance_genome_tools.rst:99
+#: ../../tools/alliance_genome_tools.rst:130
+#: ../../tools/alliance_genome_tools.rst:167 17278d288e6b413690d6c29fd4657f13
+#: 3430579bf72943f88d195667aa884e21 539de0a49c414d4e94961e69e3a94c97
+#: c5b49f5fdab348c493ff234d1a19246e d67d2461bc8b495687554817fc8cb067
+msgid "**Type**: ``AllianceGenomeTool``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:32 d83b2f943b8a4d8385efb413e84743af
+msgid ""
+"**Description**: Get disease summary information from the Alliance of "
+"Genome Resources by Disease Ontology (DO) ID. Returns disease name, "
+"definition, synonyms, and classification. The Alliance integrates disease"
+" annotations from multiple model organism databases. Example: 'DOID:162' "
+"returns cancer with definition and synonyms like 'malignant neoplasm'."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:34
+#: ../../tools/alliance_genome_tools.rst:65
+#: ../../tools/alliance_genome_tools.rst:102
+#: ../../tools/alliance_genome_tools.rst:133
+#: ../../tools/alliance_genome_tools.rst:170 12b1eb6035a84a31b9c4abb07d635145
+#: 3bd6fb94f124499890fc1737b8257ab5 5853f7c8d1f44650a73df1ba19ca0201
+#: 5a6f500f6dfe44f78e096768c37d7a68 b36e33f375214880a286448e09950cb2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:36
+#: ../../tools/alliance_genome_tools.rst:67 0d1b35bf28b74d66b6229053905aacab
+#: 71351532772d4b1d93d4ceb040c56e63
+msgid ""
+"``disease_id`` (string) (required) Disease Ontology (DO) ID. Examples: "
+"'DOID:162' (cancer), 'DOID:10652' (Alzheimer's disease), 'DOID:9351' "
+"(diabetes mellitus), 'DOID:1612' (breast cancer)."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:39
+#: ../../tools/alliance_genome_tools.rst:76
+#: ../../tools/alliance_genome_tools.rst:107
+#: ../../tools/alliance_genome_tools.rst:144
+#: ../../tools/alliance_genome_tools.rst:178 0c9bf5fe7be646849d15ca251bbc0c51
+#: 728428f1af19436a96730f59b9956773 7342baefff224b5baa1d20428b2cccc6
+#: c75d64d58dec44508c9c816b15a4fbb3 cfde98663eff4ce888004df7c44ae1fa
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:53 869973ba69e24022942ecd46f599ae4b
+msgid "**Alliance_get_disease_genes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:55 298ab74290db4c1185b1610c7ebc61b3
+msgid ""
+"Get genes associated with a disease across all model organisms from the "
+"Alliance of Genome Resour..."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst 825f69d540a84424b28818d376165eef
+msgid "Alliance_get_disease_genes tool specification"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:61 695b772b182749a9a0eb91c4e6496d8c
+msgid "**Name**: ``Alliance_get_disease_genes``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:63 79424bb91ce94922a77d7fb6f26d128a
+msgid ""
+"**Description**: Get genes associated with a disease across all model "
+"organisms from the Alliance of Genome Resources. Uses Disease Ontology "
+"(DO) IDs to find genes linked to a disease from human, mouse, rat, "
+"zebrafish, fly, worm, and other organisms. Includes both direct "
+"annotations and inferred associations from model organism phenotypes. "
+"Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:70 27a38a7a134c461d92f1f744b75111a6
+msgid ""
+"``limit`` (integer) (optional) Maximum number of gene associations to "
+"return (1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:73
+#: ../../tools/alliance_genome_tools.rst:141 6aa0834c071d4d7f893f005cd6e79212
+#: c4bbb9d26d7b45668f33f265e9ccd3b6
+msgid "``page`` (integer) (optional) Page number for pagination. Default: 1."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:90 58c9cf26b66c452f82e96d0e96ba41cc
+msgid "**Alliance_get_gene** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:92 86d24339da1c4b008102b1ab989075f3
+msgid ""
+"Get detailed gene information from the Alliance of Genome Resources, "
+"which integrates data from 7..."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst 9df62d7926b846b4aa42ecb5864b4ff3
+msgid "Alliance_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:98 d2830ecd88b84a9994429e3e65d2a697
+msgid "**Name**: ``Alliance_get_gene``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:100 ded50dd5cd094049b256f722875ffda6
+msgid ""
+"**Description**: Get detailed gene information from the Alliance of "
+"Genome Resources, which integrates data from 7 model organism databases "
+"(SGD, FlyBase, WormBase, ZFIN, RGD, MGI, Xenbase) plus human. Returns "
+"gene symbol, name, species, synopsis, synonyms, genomic location, and "
+"cross-references. Example: 'HGNC:6081' returns insulin gene info."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:104 693706eb07bf45aea087db6399142b22
+msgid ""
+"``gene_id`` (string) (required) Alliance gene ID with source prefix. "
+"Examples: 'HGNC:6081' (human INS), 'MGI:98834' (mouse Trp53), "
+"'FB:FBgn0003996' (fly w), 'SGD:S000000259' (yeast GAL4), 'ZFIN:ZDB-"
+"GENE-990415-8' (zebrafish pax2a), 'WB:WBGene00006763' (worm unc-13)."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:121 b8883e46917e4d4fae0d1aec4eccdf53
+msgid "**Alliance_get_gene_phenotypes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:123 0ac37e8b57bb4721954884daa17a6bb3
+msgid ""
+"Get phenotype annotations for a gene from the Alliance of Genome "
+"Resources. Returns phenotypes ob..."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst 446315a2ba4e41bbbcae2e368939e19f
+msgid "Alliance_get_gene_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:129 8b497b04c2e249ccb06969859d53964d
+msgid "**Name**: ``Alliance_get_gene_phenotypes``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:131 86d3b14532e048a084c774582e272274
+msgid ""
+"**Description**: Get phenotype annotations for a gene from the Alliance "
+"of Genome Resources. Returns phenotypes observed when the gene is mutated"
+" or knocked out, aggregated from model organism databases. Supports all "
+"model organisms (yeast, fly, worm, zebrafish, mouse, rat, frog). Example:"
+" 'HGNC:6081' (INS) returns phenotypes like 'Abnormal circulating insulin "
+"concentration'."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:135 9ae69de130264a1b996820f3fd1f0a9f
+msgid ""
+"``gene_id`` (string) (required) Alliance gene ID with source prefix. "
+"Examples: 'HGNC:6081' (human INS), 'MGI:98834' (mouse Trp53), "
+"'FB:FBgn0003996' (fly w)."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:138 0c967a05a65344ccb5b6daa6066caa9d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of phenotypes to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:158 73cc032fdbc744bd80166a3ae69fe980
+msgid "**Alliance_search_genes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:160 57c174e9f1de471e8d536a5cfc274e33
+msgid ""
+"Search for genes across all model organisms in the Alliance of Genome "
+"Resources. Searches by gene..."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst 4345c030698c486da5159113e8920adb
+msgid "Alliance_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:166 c5e0a0a8fca34fc79d9ccb284cbabde6
+msgid "**Name**: ``Alliance_search_genes``"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:168 0fcbf943ef66440b84e2b62af4357ac6
+msgid ""
+"**Description**: Search for genes across all model organisms in the "
+"Alliance of Genome Resources. Searches by gene symbol, name, or keyword "
+"and returns matching genes from human, mouse, rat, zebrafish, fly, worm, "
+"yeast, and frog databases. Provides type-ahead suggestions. Example: "
+"'insulin' returns INS (human), Ins1/Ins2 (mouse), ins (zebrafish), etc."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:172 03bf6ccc5b3f4260b7e2bc8af8d147d6
+msgid ""
+"``query`` (string) (required) Gene name, symbol, or keyword to search "
+"for. Examples: 'insulin', 'tumor protein p53', 'hedgehog', 'notch'."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:175 45ac7619b28d4344b8c6ba9ce47ad3c8
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:192 704c015614484357af7e52da3fba9695
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:194 87cf2cfe345f49b185614a566037c10d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/alliance_genome_tools.rst:195 58e1e2b473a54ea0b752407c9c96758c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biosamples_tools.rst:10 be85495574a441fd8df08a810e86bf7f
+msgid "Biosamples Tools"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:12 bcbd30bdf7be437ca3c20bd99e79c1fc
+msgid ""
+"**Configuration File**: ``biosamples_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:16 fae554cf2d5a4203a6367719a414e5f8
+msgid ""
+"This page contains all tools defined in the ``biosamples_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:19 4c0e1d118b494c54a0fab238abf2cc4a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:22 ea5b2c356d9f4e798395189a3b3ebfe8
+msgid "**BioSamples_get_sample** (Type: BioSamplesTool)"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:24 a70f762e6ee44017ba2d5f8de6c24605
+msgid ""
+"Get detailed metadata for a specific biological sample from the EBI "
+"BioSamples database by access..."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst 15be14bba0a743dba1557908317f5c04
+msgid "BioSamples_get_sample tool specification"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:28 ../../tools/biosamples_tools.rst:59
+#: ../../tools/biosamples_tools.rst:96 132434dd05a64e2b9ea7d64dd736303f
+#: 964aa40a14df45f6b0e2439c98c87627 e3a058069e5e42ada234ac2bd5599449
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:30 51c1a29b4d7c44bbab04acd44774a996
+msgid "**Name**: ``BioSamples_get_sample``"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:31 ../../tools/biosamples_tools.rst:62
+#: ../../tools/biosamples_tools.rst:99 1ffd2ca9c03346b18a2bd21a0d33f5a4
+#: 4d8437c9245f462ba4b58d2e1fffdfb0 d0131fe6e9a040378adc3371731c6259
+msgid "**Type**: ``BioSamplesTool``"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:32 f5ff07c095784a41a2c63523c6f087c3
+msgid ""
+"**Description**: Get detailed metadata for a specific biological sample "
+"from the EBI BioSamples database by accession. Returns sample name, "
+"organism, tissue, disease, experimental context, and links to associated "
+"data archives (ENA, ArrayExpress, EVA). BioSamples contains 60+ million "
+"samples from all major sequence and functional genomics archives. "
+"Example: SAMEA104228123 returns a metagenomic sample from the Qiita "
+"microbiome project."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:34 ../../tools/biosamples_tools.rst:65
+#: ../../tools/biosamples_tools.rst:102 3536073b4f974867bb5a8ae512e62fe6
+#: ab9b7eb7d2ad49a98805ea91be0b10a0 d0600d61fe2848a195db9fd9f59c10ae
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:36 0ba09fda7ca9492f8cf97a9e0dc82009
+msgid ""
+"``accession`` (string) (required) BioSamples accession. Formats: SAMEA\\*"
+" (EBI), SAMN\\* (NCBI), SAMD\\* (DDBJ). Examples: 'SAMEA104228123', "
+"'SAMD00000603'."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:39 ../../tools/biosamples_tools.rst:76
+#: ../../tools/biosamples_tools.rst:113 7eedd1ec1e1446e4b35fe55355fd42ea
+#: 8d359e29046d4d91902fea1b420b6cfe adbd66d6d8094709b0b17fbe304ae295
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:53 2c5efd6e27754c5abed5bbb6e7320fca
+msgid "**BioSamples_search** (Type: BioSamplesTool)"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:55 9e08ba6e17ce414f85ec3cb44368a0b7
+msgid ""
+"Search the EBI BioSamples database by text query across 60+ million "
+"biological samples. Returns m..."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst ef2db51e87dd454d91aac17a47b705e3
+msgid "BioSamples_search tool specification"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:61 4e18c8de57314b83a41fcba220793d65
+msgid "**Name**: ``BioSamples_search``"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:63 9434d10e9c74413cb22db0186bbb4321
+msgid ""
+"**Description**: Search the EBI BioSamples database by text query across "
+"60+ million biological samples. Returns matching samples with accessions,"
+" names, organisms, and key characteristics. Useful for finding source "
+"material metadata for sequencing, proteomics, and other experiments. "
+"Example: searching 'breast cancer' returns thousands of tumor samples "
+"with tissue/disease annotations."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:67 a9abe582d8b64bf7bf08eb4e92b65271
+msgid ""
+"``query`` (string) (required) Free-text search query. Examples: 'breast "
+"cancer', 'liver tissue', 'CRISPR screen', 'Mus musculus brain'."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:70 ../../tools/biosamples_tools.rst:110
+#: 28f27cd86e174c559443f79be4fbd7f9 d2cd8ca6306d458e908f8d3f148fba4e
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (1-50, "
+"default 10)."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:73 8c8a061d4e554524a38289b9fdf8a07a
+msgid "``page`` (integer, null) (optional) Page number (0-indexed, default 0)."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:90 41ec752b3dcc4266b8e78ec1a62b48b2
+msgid "**BioSamples_search_by_filter** (Type: BioSamplesTool)"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:92 dbe9299f805f44e0a57197980ae75958
+msgid ""
+"Search the EBI BioSamples database with structured attribute filters. "
+"More precise than text sear..."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst 5662355e8a0944d1aea9011a25ee03f1
+msgid "BioSamples_search_by_filter tool specification"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:98 02c9325c50834431aefe568750fa4c3f
+msgid "**Name**: ``BioSamples_search_by_filter``"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:100 21fb0c47619747e689286a3961a8a0d8
+msgid ""
+"**Description**: Search the EBI BioSamples database with structured "
+"attribute filters. More precise than text search - filters by specific "
+"metadata fields like organism, tissue, or disease. Example: "
+"attribute='organism', value='Homo sapiens' returns human samples; "
+"attribute='disease', value='melanoma' returns melanoma-specific samples."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:104 418f7dfdc28b431aa029e265f70e3e95
+msgid ""
+"``attribute`` (string) (required) Attribute name to filter on. Common "
+"attributes: 'organism', 'tissue', 'disease', 'cell type', 'sex', 'age'."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:107 531a3b7770d14357959d0fa427f7d11e
+msgid ""
+"``value`` (string) (required) Value to match for the attribute. Examples:"
+" 'Homo sapiens', 'liver', 'melanoma', 'female'."
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:128 29eda365891b4a7ebe1248e44b52934b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:130 b2a30a45ba8e4f59ab04d3e0df1b4673
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biosamples_tools.rst:131 c52f0baee824429db42c302225517a79
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

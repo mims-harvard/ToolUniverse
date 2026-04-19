@@ -99,17 +99,10 @@ class WikipediaSearchTool(BaseTool):
 
 @register_tool("WikipediaContentTool")
 class WikipediaContentTool(BaseTool):
-    """
-    Extract content from Wikipedia articles using MediaWiki API.
+    """Extract article content from Wikipedia via the MediaWiki API.
 
-    Parameters (arguments):
-        title (str): Article title (required)
-        language (str): Wikipedia language code (default: "en")
-        extract_type (str): Type of content - "intro" (first paragraph),
-                           "summary" (first few paragraphs), or "full"
-                           (entire article) (default: "summary")
-        max_chars (int): Maximum characters for summary/extract
-            (default: 2000)
+    Supported arguments are ``title``, ``language``, ``extract_type``, and
+    ``max_chars``.
     """
 
     def __init__(self, tool_config):

@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/addgene_tools.rst:10 44f7ec666e294231a044666fdcf94586
+msgid "Addgene Tools"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:12 a89ff2c1b86b460ea0633750554916e9
+msgid ""
+"**Configuration File**: ``addgene_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:16 cd76790a8aa646daa9d631e71afa76ed
+msgid ""
+"This page contains all tools defined in the ``addgene_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:19 f9c2139f5c824c37b43a215e2fad4395
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:22 23b7dc8ec69146bba776d15cb0e5e3ca
+msgid "**Addgene_get_plasmid** (Type: AddgeneTool)"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:24 9ebd55499eb74a23a5b68562ac75dae5
+msgid ""
+"Get detailed information about a specific Addgene plasmid by its catalog "
+"ID. Returns full record:..."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst 19a0b5a20e904d26a66e77fc629d955e
+msgid "Addgene_get_plasmid tool specification"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:28 ../../tools/addgene_tools.rst:63
+#: ../../tools/addgene_tools.rst:100 a1a94dac06b34c839f390c5b61b8551c
+#: b2a289160eb1486fb12afcfbef671a6d d0492dc4af0d4d8f8c0de25a8cef2ac4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:30 c7d72c0626134733b65517bc3ca2ecbb
+msgid "**Name**: ``Addgene_get_plasmid``"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:31 ../../tools/addgene_tools.rst:66
+#: ../../tools/addgene_tools.rst:103 5320e00ec8f543128c550374b82dcdf7
+#: a0990615b8ad4a76873d657c90749cd5 fa25830f0cd54c3fb048fccfec96d9ed
+msgid "**Type**: ``AddgeneTool``"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:32 df47fada005c473ca5d2869fd15375c4
+msgid ""
+"**Description**: Get detailed information about a specific Addgene "
+"plasmid by its catalog ID. Returns full record: name, description, "
+"cloning details (backbone, promoter, vector types), insert information "
+"(gene, species, tags, mutations), bacterial resistance, growth conditions"
+" (strain, temperature), article references (DOI, PubMed), and depositor "
+"comments. Requires ADDGENE\\_API\\_KEY environment variable."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:34 ../../tools/addgene_tools.rst:69
+#: ../../tools/addgene_tools.rst:106 5cc58e4f0197446686c717a562f825e3
+#: 6237ed044b2f4c16bcb3db4cef10dc1f a9b0a86da2de4094875c1fd009934e95
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:36 ../../tools/addgene_tools.rst:71
+#: ../../tools/addgene_tools.rst:108 26d68a7706bf47989813e36969c113be
+#: 41de210c245d43edb7ac0c3a56ad35e2 dc33a24958cb4008b43473074da6a783
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:39 e2a0d68d8aac4da4be822010ddd68bbb
+msgid ""
+"``plasmid_id`` (integer) (required) Addgene plasmid catalog ID (e.g., "
+"39296 for pSpCas9(BB)-2A-Puro, 48138 for pX330)"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:42 ../../tools/addgene_tools.rst:80
+#: ../../tools/addgene_tools.rst:123 16b7f504fe05415aa2aeac1d7b7faa78
+#: 1e13255f3b63495c929b7559ba88f057 8bcd413fb1cd4791b3f0f4c43e379da8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:57 636de4cfa50248bc9441eb8e7f670c29
+msgid "**Addgene_search_depositors** (Type: AddgeneTool)"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:59 78e188972abd458e830551a966805847
+msgid ""
+"Search for Addgene depositors (PIs / principal investigators) by name or "
+"institution. Returns uni..."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst 3caaf8be60ee48319009df11500289b4
+msgid "Addgene_search_depositors tool specification"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:65 cbb6e2073aff48b08d19cdb89dc4d21e
+msgid "**Name**: ``Addgene_search_depositors``"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:67 c7edf15962804812af283a8e4778cccc
+msgid ""
+"**Description**: Search for Addgene depositors (PIs / principal "
+"investigators) by name or institution. Returns unique depositor names "
+"with their plasmid counts and example plasmids. At least one of name or "
+"institution is required. Requires ADDGENE\\_API\\_KEY environment "
+"variable. Use for: finding plasmids from a specific lab, browsing "
+"depositor contributions."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:74 0773bc3fad4942b780594ba50d42eadc
+msgid ""
+"``name`` (string, null) (optional) PI or depositor name to search (e.g., "
+"'Feng Zhang', 'Jennifer Doudna')"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:77 9c776fd5493244bdab5a1b9274be45c9
+msgid ""
+"``institution`` (string, null) (optional) Institution name to search "
+"(e.g., 'MIT', 'Broad Institute')"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:94 d7d45db30ca249e3b6381e8f1ee5caed
+msgid "**Addgene_search_plasmids** (Type: AddgeneTool)"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:96 8df80bc8d3a9431399b57aac272e8666
+msgid ""
+"Search Addgene's plasmid catalog by name, gene, species, or vector type. "
+"Addgene is a nonprofit g..."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst 9fab930796dc481f90fbfb308dffbdd0
+msgid "Addgene_search_plasmids tool specification"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:102 10ef8fc32b05460fb5aa6b8e5a95adeb
+msgid "**Name**: ``Addgene_search_plasmids``"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:104 9a8d98f1e7f04b9e9ff3b92ed718fb0f
+msgid ""
+"**Description**: Search Addgene's plasmid catalog by name, gene, species,"
+" or vector type. Addgene is a nonprofit global plasmid repository with "
+"100,000+ plasmids. Returns plasmid name, ID, purpose, depositor, genes, "
+"species, vector types, and expression systems. Requires "
+"ADDGENE\\_API\\_KEY environment variable. Use for: finding CRISPR "
+"plasmids, AAV vectors, expression constructs, shRNA libraries."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:111 9b199daee6154b988206a381b1ea6c29
+msgid ""
+"``query`` (string) (required) Plasmid name or keyword to search (e.g., "
+"'pSpCas9', 'GFP', 'lentiviral'). Searches the name field."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:114 b8dc6d382a0f414ca49cab00b6a1c550
+msgid ""
+"``organism`` (string, null) (optional) Filter by organism/species (e.g., "
+"'Human', 'Mouse', 'E. coli'). Maps to the species field."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:117 207832c8ef2a4fa2b8b591491dbe1253
+msgid ""
+"``vector_type`` (string, null) (optional) Filter by vector type (e.g., "
+"'AAV', 'Lentiviral', 'Retroviral', 'Mammalian Expression'). Maps to "
+"vector\\_types field."
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:120 8100a0e5c3974dbf89892f7092fe9b9c
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:138 d88f63f7d5354572b226f6eba644dc6e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:140 2e1712148b404ece91884e0c197f15e8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/addgene_tools.rst:141 99018915cfab4eda9765ca983eb4bfec
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

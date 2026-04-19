@@ -1,0 +1,273 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/datacite_tools.rst:10 9e56839cccf64043aacd8d8e164ad479
+msgid "Datacite Tools"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:12 7442c17818e64c50804edd11c0004782
+msgid ""
+"**Configuration File**: ``datacite_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:16 888b97cbe82d4b7e8985b63f7665ddb6
+msgid ""
+"This page contains all tools defined in the ``datacite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:19 05748568f1d24cedb5ee37175b29c9d3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:22 35a298968abf4125ab92753aebbe1e2f
+msgid "**DataCite_get_dataset** (Type: DataCiteRESTTool)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:24 f5882ad61a2a43c99591cb8dffb37f42
+msgid ""
+"Get detailed metadata for a specific research dataset by its DOI from "
+"DataCite. Returns comprehen..."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst d8c440012cba4170a5a78abb63dd228e
+msgid "DataCite_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:28 ../../tools/datacite_tools.rst:59
+#: ../../tools/datacite_tools.rst:90 ../../tools/datacite_tools.rst:136
+#: 6ba40f1784384210a04742939de6dd5c 9a9961a400a1403db8323fcce8ff3eda
+#: c107717c18674400b8a31ed55977c257 dabddbc01c0f4a9b93b3d5798c4f45c2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:30 370afc8d19b84046aa0e9e291a61cdc9
+msgid "**Name**: ``DataCite_get_dataset``"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:31 ../../tools/datacite_tools.rst:62
+#: ../../tools/datacite_tools.rst:93 ../../tools/datacite_tools.rst:139
+#: 22cc5539ee6143e9bdadb9c81e4a6bc9 2b7e5a52494f4959ba36d5c21fa0ba99
+#: 642fad2460b342f29c6e0614d45bf7cd cc328b6158854cf4a77d7f6943b88732
+msgid "**Type**: ``DataCiteRESTTool``"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:32 3221f08322964eb8b6054091b28390c3
+msgid ""
+"**Description**: Get detailed metadata for a specific research dataset by"
+" its DOI from DataCite. Returns comprehensive metadata including title, "
+"creators with affiliations, description, subjects, publication year, "
+"publisher/repository, resource type, funding references, related "
+"identifiers (linked publications, software, etc.), rights/licenses, and "
+"the landing page URL. Use this to get full details about a dataset found "
+"via DataCite\\_search\\_datasets, or when you have a specific DOI for a "
+"research dataset."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:34 ../../tools/datacite_tools.rst:65
+#: ../../tools/datacite_tools.rst:96 ../../tools/datacite_tools.rst:142
+#: 107454056cbc45ed8376c9e955d15d08 447196cccca94941a9a6d802abe3070c
+#: d3873d61958b402fae89d21a365383d3 f453a77a583f4243a386a6c41a505ea4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:36 47ca640b59ae4e189c319ecf52e614b7
+msgid ""
+"``doi`` (string) (required) DOI of the dataset (e.g., "
+"'10.5281/zenodo.4088438', '10.5061/dryad.234', "
+"'10.6084/m9.figshare.1000050'). Include full DOI without URL prefix (no "
+"'https://doi.org/')."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:39 ../../tools/datacite_tools.rst:70
+#: ../../tools/datacite_tools.rst:116 ../../tools/datacite_tools.rst:156
+#: 5c9c1c550459436d9e75a0d4905f225a 67e3db66b5b04d7fb7ee9fbf21e07b44
+#: 8a5fb47fe93649e284e1ec88307d557d e0ced9cb508941808b6340fb64c99cf3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:53 ce3aa2d0950b4dd7b080321cd9afebc4
+msgid "**DataCite_get_doi** (Type: DataCiteRESTTool)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:55 b5503a237fb646adae5f4c85556694eb
+msgid ""
+"Get metadata for a research dataset or publication by DOI from DataCite. "
+"DataCite is the primary ..."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst 8179f57b797e4972bb31f3787c238ae1
+msgid "DataCite_get_doi tool specification"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:61 ecf86b640bc94af9a6161e9e494bd84b
+msgid "**Name**: ``DataCite_get_doi``"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:63 23b585a35dce4b56860fe113026ff7c1
+msgid ""
+"**Description**: Get metadata for a research dataset or publication by "
+"DOI from DataCite. DataCite is the primary registry for research data "
+"DOIs, covering datasets, software, samples, and other research outputs "
+"deposited in repositories like Zenodo, Dryad, Figshare, and thousands of "
+"institutional repositories. Returns title, creators, affiliations, "
+"publication year, resource type, subjects, funding information, and "
+"related identifiers. Essential for finding research data linked to "
+"publications, understanding data provenance, and discovering datasets in "
+"a field."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:67 0abf9e2da3b9463eaba446b761c7cdbf
+msgid ""
+"``doi`` (string) (required) DOI of the research output (e.g., "
+"'10.5281/zenodo.4088438', '10.5061/dryad.234', "
+"'10.6084/m9.figshare.1000050'). Include full DOI without URL prefix."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:84 aa4e9741075f41a7a739c79107d12b77
+msgid "**DataCite_search_datasets** (Type: DataCiteRESTTool)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:86 f5bb1943e85e4b43ba9c7268bb13d986
+msgid ""
+"Search for research datasets with DOIs across all repositories worldwide "
+"(Zenodo, Figshare, Dryad..."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst ae5052e22eed4fe2b6c0bb821cbbaba2
+msgid "DataCite_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:92 dfcdca562b284006a25b362bf83c4781
+msgid "**Name**: ``DataCite_search_datasets``"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:94 051d76e14b5e426087b9b2d438dfcba3
+msgid ""
+"**Description**: Search for research datasets with DOIs across all "
+"repositories worldwide (Zenodo, Figshare, Dryad, ICPSR, institutional "
+"repositories, and more). This is a dataset-focused search that "
+"automatically filters for resource type 'Dataset'. Returns DOI, title, "
+"description, creators, publisher, publication year, URL, and subjects. "
+"Covers millions of datasets registered via DataCite across thousands of "
+"repositories. Use this to find specific research datasets by topic, or to"
+" discover available data for a research question."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:98 513791519089497fa4fbe789eeb42d7b
+msgid ""
+"``query`` (string) (required) Search query for datasets (e.g., 'iron "
+"intake physical function older adults', 'COVID-19 genomic surveillance', "
+"'soil microbiome diversity'). Searches across titles, descriptions, "
+"subjects, and creator names."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:101 05cd2eb17aec4015a4657a0829b78eb0
+msgid ""
+"``resource_type`` (string, null) (optional) Override resource type "
+"filter. Defaults to 'Dataset'. Other options: 'Software', 'Text', "
+"'Image', 'Collection', 'Workflow', 'Model'."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:104 da6f9f00d84a4051a29fcbdd69a1a432
+msgid ""
+"``publisher`` (string, null) (optional) Filter by publisher/repository "
+"name (e.g., 'Zenodo', 'Dryad', 'figshare'). Note: uses free-text "
+"matching."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:107 c26eca8104324f74b46a851d7a406a7a
+msgid ""
+"``year`` (integer, null) (optional) Filter by publication year (e.g., "
+"2024, 2023). Returns datasets published in that year only."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:110 ../../tools/datacite_tools.rst:150
+#: a5be2177b8e44626b5ba643f01276ad5 ec472ecd72774528accb1497d3d21a91
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results per page "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:113 ../../tools/datacite_tools.rst:153
+#: 475824c4bf4746b1bd9bbca8b6dde841 7bdb9eafdadd4339984531c4cd98cb3b
+msgid ""
+"``page_number`` (integer, null) (optional) Page number for pagination "
+"(default 1)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:130 464eceb91025433c87115a73a51097fc
+msgid "**DataCite_search_dois** (Type: DataCiteRESTTool)"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:132 87094f0110b34de1914da46aabf611fb
+msgid ""
+"Search DataCite for research datasets, software, and other research "
+"outputs by keyword, subject, ..."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst 5df93347167c476ba1d45c5b5862e4f5
+msgid "DataCite_search_dois tool specification"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:138 c8b1a6c98018447daea39c67cace5c70
+msgid "**Name**: ``DataCite_search_dois``"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:140 263e7b3741054866be1a301c4204b0ac
+msgid ""
+"**Description**: Search DataCite for research datasets, software, and "
+"other research outputs by keyword, subject, or creator. Returns metadata "
+"for research outputs registered with DataCite DOIs across repositories "
+"like Zenodo, Dryad, Figshare, and institutional repositories. Useful for "
+"discovering datasets related to a research topic, finding software and "
+"code with DOIs, and exploring research outputs beyond traditional "
+"publications."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:144 8866786c6fde49c2896199334c169176
+msgid ""
+"``query`` (string) (required) Search query (e.g., 'RNA-seq "
+"transcriptomics', 'CRISPR knockout mouse', 'climate change temperature')"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:147 100e5e5a074d45ada542add865d3bf84
+msgid ""
+"``resource_type_general`` (string, null) (optional) Filter by resource "
+"type: 'Dataset', 'Software', 'Text', 'Image', 'Workflow', 'Model', "
+"'PhysicalObject', 'Collection'. Maps to DataCite 'resource-type-id' "
+"parameter."
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:170 2f86912116674deabc0c6cd6a3922c58
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:172 51a83d10257a4447b4838ea10a3e7fcc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/datacite_tools.rst:173 8942c5f98f56460b85b8871be22ee956
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

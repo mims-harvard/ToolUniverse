@@ -1,0 +1,271 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biomodels_tools.rst:10 6075a99ec89341fca2829f9174c3246b
+msgid "Biomodels Tools"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:12 8f1791f2f2f8458d90a7e985a89cc05a
+msgid ""
+"**Configuration File**: ``biomodels_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:16 087e723ad5b74fccbf544512d7839add
+msgid ""
+"This page contains all tools defined in the ``biomodels_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:19 e4babba6872d4980b33d82e10076240e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:22 3a9c5cf260e04596aeb2d08155c88b04
+msgid "**BioModels_download_model** (Type: BioModelsRESTTool)"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:24 1a5a84a0bed642d2a117f42685994c98
+msgid ""
+"Download a specific file from a BioModels entry or get the download URL "
+"for the entire model as a..."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst 30caa982640d4400b5e2db8411e74395
+msgid "BioModels_download_model tool specification"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:28 ../../tools/biomodels_tools.rst:62
+#: ../../tools/biomodels_tools.rst:93 ../../tools/biomodels_tools.rst:124
+#: ../../tools/biomodels_tools.rst:158 06ad5dfae61140b19bf8c650421b1d45
+#: 4a754259fab9447a9b25310240402af7 5273e17bdf4840bbaa9ce9cb108dc196
+#: c45d00960b7d4d3fbc11e237c3d62e95 cc237911fb99457396ef0f5605e8203f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:30 4c5609137aab4e34a2eb7a45a6c79fd4
+msgid "**Name**: ``BioModels_download_model``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:31 ../../tools/biomodels_tools.rst:65
+#: ../../tools/biomodels_tools.rst:96 ../../tools/biomodels_tools.rst:127
+#: ../../tools/biomodels_tools.rst:161 84a6cec04ab74978b75e710d8616c859
+#: 8b41f6c3e52c4a6aaad931436a3051bb b92ef5aa0cd045e5999535c18ba86611
+#: e050eff6683941c5a21bd6cbd68bf521 fc57809c0fe74a99bf968ad23a18e3a1
+msgid "**Type**: ``BioModelsRESTTool``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:32 6f39cf693aa1431c949a36324c15deb2
+msgid ""
+"**Description**: Download a specific file from a BioModels entry or get "
+"the download URL for the entire model as a COMBINE archive. Returns "
+"download URL and file metadata. Use this to access model files for "
+"simulation software (COPASI, CellDesigner, etc.). Specify filename "
+"parameter to download a specific file, or omit to get the COMBINE archive"
+" containing all files. Find model IDs using biomodels\\_search."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:34 ../../tools/biomodels_tools.rst:68
+#: ../../tools/biomodels_tools.rst:99 ../../tools/biomodels_tools.rst:130
+#: ../../tools/biomodels_tools.rst:164 41ef294c87024cca91e602a76eb72f1c
+#: 8ab69ca01fd44b33aa659302f7b3d6ea b779103f80154f8dbcd6cf307c7af2dd
+#: bd668de8ee224a4e838c13bd7ff8e10f f9b301cb66d14e34b97b18d818289091
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:36 ../../tools/biomodels_tools.rst:101
+#: 954a547b41b745e89865d2e7dad92980 d2d302e4819e4f84832c7dfa3bd03c32
+msgid ""
+"``model_id`` (string) (required) BioModels identifier (e.g., "
+"'BIOMD0000000469'). Find IDs using biomodels\\_search."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:39 d7cb698926574bd9b0a4c2b187eed672
+msgid ""
+"``filename`` (string) (optional) Optional specific filename to download. "
+"If not provided, returns COMBINE archive with all files. Use "
+"BioModels\\_list\\_files to see available filenames."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:42 ../../tools/biomodels_tools.rst:73
+#: ../../tools/biomodels_tools.rst:104 ../../tools/biomodels_tools.rst:138
+#: ../../tools/biomodels_tools.rst:172 2aba49aa92b64b2984540b16de15eba4
+#: 7add1d0b20d243c5bf34943f0d219a85 97f57e6583b648ac8bf3a9b069b4a6c0
+#: b11ca38da1d94a35b02b30c9c76b03e7 d72d0b3b29b847eab456d3e6ed6c299d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:56 bb1978def32c4e7191d6f2222c77a78a
+msgid "**BioModels_get_model** (Type: BioModelsRESTTool)"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:58 04549e3c96af4367b94c9ab56cc647db
+msgid ""
+"Get comprehensive metadata for a specific BioModels entry by its model "
+"identifier. Returns detail..."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst 533799a883b9432681decca8ddc44ebf
+msgid "BioModels_get_model tool specification"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:64 581e08dba3f04de48295dec855891de8
+msgid "**Name**: ``BioModels_get_model``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:66 4151ea4a3f444b6dbfeb2ba641faf76b
+msgid ""
+"**Description**: Get comprehensive metadata for a specific BioModels "
+"entry by its model identifier. Returns detailed information including "
+"model name, description, publication references, organism, biological "
+"processes, SBML level/version, creation/modification dates, and curator "
+"annotations. Use this to understand model details, citations, and "
+"biological context before downloading or using a model. Find model IDs "
+"using biomodels\\_search (e.g., 'BIOMD0000000469', 'MODEL1707110000')."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:70 ce9b05a3279f42b48bcb99ca9608420b
+msgid ""
+"``model_id`` (string) (required) BioModels identifier (e.g., "
+"'BIOMD0000000469', 'MODEL1707110000'). Find IDs using biomodels\\_search."
+" Optionally append '.N' for a specific revision (e.g., "
+"'BIOMD0000000469.1')."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:87 e8a936bf0ff045f9876d2dfe8c759f41
+msgid "**BioModels_list_files** (Type: BioModelsRESTTool)"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:89 ae8135361d974b83888eb912e9bfdb6c
+msgid ""
+"Get detailed file listing for a specific BioModels entry including file "
+"names, types, sizes, and ..."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst 32837c8a67c54989bfebefeadd584fbc
+msgid "BioModels_list_files tool specification"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:95 f48842989f744d01a911fa9d2d736785
+msgid "**Name**: ``BioModels_list_files``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:97 abcfcbff8975427abeb44d8f92442a73
+msgid ""
+"**Description**: Get detailed file listing for a specific BioModels entry"
+" including file names, types, sizes, and metadata. Returns information "
+"about all files associated with the model (SBML files, figures, "
+"supplementary data, COMBINE archives). Use this before downloading to see"
+" what files are available and their formats. Requires model ID from "
+"biomodels\\_search or BioModels\\_get\\_model."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:118 c0869da5aa24448984c34f0b31fcdd8d
+msgid "**BioModels_search_parameters** (Type: BioModelsRESTTool)"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:120 c147e7cfaf514e9c8fd07487ffbd937c
+msgid ""
+"Search for specific parameters within BioModels entries. Find models "
+"containing parameters matchi..."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst 8b463baf74c2485e81da7e4cd40b243e
+msgid "BioModels_search_parameters tool specification"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:126 9206a97f6be24ff49851245787e40c69
+msgid "**Name**: ``BioModels_search_parameters``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:128 8419ea8ed19943768c359ed56a6b2df6
+msgid ""
+"**Description**: Search for specific parameters within BioModels entries."
+" Find models containing parameters matching your query (e.g., reaction "
+"rates, initial concentrations, kinetic constants). Returns models with "
+"parameter names, values, and units. Essential for finding models with "
+"specific parameter values or discovering parameter ranges across multiple"
+" models. Use this for comparative analysis or parameter estimation "
+"studies."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:132 9abb3602989a4c7fbec0b3bf890cd3ef
+msgid ""
+"``query`` (string) (required) Search query for parameters (e.g., "
+"parameter name like 'k1', 'Km', or biological term). Search across "
+"parameter names, values, and annotations."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:135 c1dcb12b24a04d0494790233d7b428c1
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 100)."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:152 60db994e2405485d8894ffd84c7a044c
+msgid "**biomodels_search** (Type: BioModelsRESTTool)"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:154 f1ce017a902f47e586a5963b7659932d
+msgid ""
+"Search for computational biological models in the EBI BioModels database "
+"by keyword. Returns mode..."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst 3670f6b51f8d4c4c8a90ae9bb9e6a9fb
+msgid "biomodels_search tool specification"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:160 e0d532231fb6453a96dd95c186959e46
+msgid "**Name**: ``biomodels_search``"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:162 9873edecd25c4e1e96a26e82dc174454
+msgid ""
+"**Description**: Search for computational biological models in the EBI "
+"BioModels database by keyword. Returns models with identifiers, names, "
+"formats (typically SBML), and URLs. Use this to find systems biology "
+"models related to specific biological processes (e.g., 'glycolysis', "
+"'apoptosis', 'cell cycle'), diseases, or pathways. Find model IDs to use "
+"with other BioModels tools for detailed information and downloads."
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:166 94df482e81124c3d82aa0d62d3258e90
+msgid "``query`` (string) (required) Search query for biological models"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:169 437554427e5b43cabb9ec5a249f5f7ce
+msgid "``limit`` (integer) (optional) Maximum number of results to return"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:186 ee9bf1b200ee4fd68086ebf313630b56
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:188 971e12a182504c49b7c7e8b62d2eccd0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biomodels_tools.rst:189 d604fce9fcec4e6fb250726f02087d0c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

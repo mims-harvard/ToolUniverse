@@ -1,0 +1,156 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/disease_sh_ext_tools.rst:10 9047284ea67e49d693e841917bb837a9
+msgid "Disease Sh Ext Tools"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:12 892a9b2e0b01479291561ea903e64df3
+msgid ""
+"**Configuration File**: ``disease_sh_ext_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:16 1e1e577e74df47e4b4fe66201c84da7f
+msgid ""
+"This page contains all tools defined in the ``disease_sh_ext_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:19 2f751de920c74fc7a57aa1eddf3929f9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:22 f65f588324df44969f330dd34d622745
+msgid "**DiseaseSH_get_covid_historical** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:24 b61a9e8cc7714bce94aa9fdaead415fa
+msgid ""
+"Get historical COVID-19 timeline data (cases, deaths, recoveries) for a "
+"country or globally using..."
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst 0eb1848798d1463fadd391a965bb7022
+msgid "DiseaseSH_get_covid_historical tool specification"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:28
+#: ../../tools/disease_sh_ext_tools.rst:61 7cea7dfe41474f14820bb9a6a332206e
+#: fed3ee9c248b437eb42c9e7dbdf6a06c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:30 61d47288e46c43ba8059a19c8f2788b7
+msgid "**Name**: ``DiseaseSH_get_covid_historical``"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:31
+#: ../../tools/disease_sh_ext_tools.rst:64 d647fea8bedf4a91a5ab79eab571889f
+#: ed5d5c040b3743aeb2af664b5644a2d2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:32 670663e7890d46b0bb4e230fbef9b7f2
+msgid ""
+"**Description**: Get historical COVID-19 timeline data (cases, deaths, "
+"recoveries) for a country or globally using the Disease.sh API. Returns "
+"day-by-day counts for the specified time period. No authentication "
+"required. Useful for pandemic trend analysis and epidemiological "
+"research."
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:34
+#: ../../tools/disease_sh_ext_tools.rst:67 685743a3522342b38e2c2c31ed3a28b6
+#: eb7783e0ead44409ac5171d817632504
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:36 d23080f8ebd049a3bfbb6ca2dc495ecc
+msgid ""
+"``country`` (string, null) (optional) Country name or ISO code. Use 'all'"
+" for global data. Examples: 'usa', 'china', 'india', 'uk', 'germany', "
+"'all'"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:39 687adb07443b4eacb1a350898168efc8
+msgid ""
+"``lastdays`` (integer, null) (optional) Number of past days to include. "
+"Use 'all' for full history. Default: 30. Examples: 7, 30, 90, 365"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:42
+#: ../../tools/disease_sh_ext_tools.rst:75 70bb32dbef3c417dada92d23c9840f9b
+#: ba5ac482d8c2442fa511e894287c89ed
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:55 871d4d00919347808e1f9227b07a87e3
+msgid "**DiseaseSH_get_vaccine_coverage** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:57 cb615c0b01a04631a6481952ccc10b6a
+msgid ""
+"Get COVID-19 vaccine coverage data for a country or globally using the "
+"Disease.sh API. Returns ti..."
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst fc2b22c83cfb45bd9422d6ceca5296ab
+msgid "DiseaseSH_get_vaccine_coverage tool specification"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:63 8fceedff12084ad8bd79706228d625d2
+msgid "**Name**: ``DiseaseSH_get_vaccine_coverage``"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:65 45bdcb2cdbfd4cb2840055364d7640e5
+msgid ""
+"**Description**: Get COVID-19 vaccine coverage data for a country or "
+"globally using the Disease.sh API. Returns timeline of total vaccination "
+"doses administered and percentage of population vaccinated. No "
+"authentication required."
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:69 4151a1387b4c4c9c8c596bec97d1de60
+msgid ""
+"``country`` (string, null) (optional) Country name or 'all' for global. "
+"Examples: 'usa', 'uk', 'germany', 'india', 'all'"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:72 72eb3340f5ae4f4c90e08aab1cf7d3a9
+msgid ""
+"``lastdays`` (integer, null) (optional) Number of past days to include. "
+"Default: 30. Examples: 7, 30, 90"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:88 8320beaa775140aaa1fa57965c3c2769
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:90 1824d9245ea34d98863de0577ac80890
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/disease_sh_ext_tools.rst:91 24f04b7c23074d83a24f6de47f192d98
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

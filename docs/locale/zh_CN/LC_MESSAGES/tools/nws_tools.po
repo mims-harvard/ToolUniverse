@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nws_tools.rst:10 aa73423acb0346aca1f00771a5e1b61e
+msgid "Nws Tools"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:12 b8b0920adfa3462886228a04a9d11bae
+msgid ""
+"**Configuration File**: ``nws_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:16 679c59d2000c4aae81e0957136c8b447
+msgid ""
+"This page contains all tools defined in the ``nws_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nws_tools.rst:19 2fe54efe654840d5a7ea67ac7144e81b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:22 f3cd6b821432468b948d8ff28c6a1534
+msgid "**NWS_get_active_alerts** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:24 4ca15f22acdb4218bf774e37db50a810
+msgid ""
+"Get active weather alerts from the National Weather Service. Can be "
+"filtered by US state/territor..."
+msgstr ""
+
+#: ../../tools/nws_tools.rst ce29a72016384d4b8bd6c448c92d1e0b
+msgid "NWS_get_active_alerts tool specification"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:28 ../../tools/nws_tools.rst:64
+#: ../../tools/nws_tools.rst:103 53f72a64cda14ec0ab330ec120719023
+#: a32b32f85b7644cd88083e9ba85fed33 abcc43c07e0d4857b8b42d69426e3bd8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:30 841bc484cdd74c1e8c44828b861da5a5
+msgid "**Name**: ``NWS_get_active_alerts``"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:31 ../../tools/nws_tools.rst:67
+#: ../../tools/nws_tools.rst:106 441cd495d7bf481ba2cee63bc6b1ba1c
+#: cfa50bf49c584612a9cb3b4855818d2b f93d2fde9aef4548bed2370ee42f2d91
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:32 9ce922fe890543d0ac07fcbd516fc4f1
+msgid ""
+"**Description**: Get active weather alerts from the National Weather "
+"Service. Can be filtered by US state/territory. Returns current severe "
+"weather warnings, watches, and advisories including tornado warnings, "
+"flood warnings, winter storm warnings, etc."
+msgstr ""
+
+#: ../../tools/nws_tools.rst:34 ../../tools/nws_tools.rst:70
+#: ../../tools/nws_tools.rst:109 317bf97c13b74b739e6959d7da0a1241
+#: 4ac2ff5cf7e84e648cae83cade27e08d b1aa71fbc5494df997b4e7acb1ee7f87
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:36 486f15d0a48f459a9576217ed7700509
+msgid ""
+"``area`` (string, null) (optional) US state/territory abbreviation to "
+"filter by (e.g., 'CA', 'TX', 'NY'). If not provided, returns all active "
+"alerts."
+msgstr ""
+
+#: ../../tools/nws_tools.rst:39 2e377239b9bf454d9a098838e8fd6b08
+msgid ""
+"``severity`` (string, null) (optional) Filter by severity: Extreme, "
+"Severe, Moderate, Minor, Unknown"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:42 0a75254274f34926a3f34671dc364bcb
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of alerts to return "
+"(default: 50)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:45 ../../tools/nws_tools.rst:81
+#: ../../tools/nws_tools.rst:117 38e1c04215b74179a216a0b4838e1b08
+#: 610c547a680a46cfa538aa4084c3e2d0 c81054b704aa4558a84da4d2564e0ecd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:58 b7d02c8127f94c5f9313bd4e58ea4195
+msgid "**NWS_get_forecast** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:60 cb2c816e9b04459aa133a97035d1f3d1
+msgid ""
+"Get the 7-day weather forecast for a National Weather Service grid point."
+" You need the gridId, gr..."
+msgstr ""
+
+#: ../../tools/nws_tools.rst 558ae1ba08dc42a29414b54f692bd0dc
+msgid "NWS_get_forecast tool specification"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:66 91dcd62f87a44ad58a3c8461ca29bd75
+msgid "**Name**: ``NWS_get_forecast``"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:68 5dbaab7583cc4aeebfff94ec28587914
+msgid ""
+"**Description**: Get the 7-day weather forecast for a National Weather "
+"Service grid point. You need the gridId, gridX, and gridY values from "
+"NWS\\_get\\_point\\_metadata. Returns period-by-period forecast with "
+"temperature, wind, and detailed descriptions."
+msgstr ""
+
+#: ../../tools/nws_tools.rst:72 63f96514015b43eab53f190d87821725
+msgid ""
+"``gridId`` (string) (required) NWS grid office identifier (e.g., 'LWX' "
+"for Washington DC area)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:75 793ae70cadd74ae0a4dbdb4a7f0b9f3d
+msgid "``gridX`` (integer) (required) Grid X coordinate from point metadata"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:78 09c9f03d99a047619e587d7cbf0d640a
+msgid "``gridY`` (integer) (required) Grid Y coordinate from point metadata"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:97 b5fd0fc2732e459cafd28f476b11fa2d
+msgid "**NWS_get_point_metadata** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:99 2be89deccf6945ac9df1a1f42b90d707
+msgid ""
+"Get weather metadata for a geographic point (latitude/longitude) from the"
+" US National Weather Ser..."
+msgstr ""
+
+#: ../../tools/nws_tools.rst 9aac0bc2041348a1961da606b8385cae
+msgid "NWS_get_point_metadata tool specification"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:105 3fe525cc595d4cdf87cfaaf55bcbe74c
+msgid "**Name**: ``NWS_get_point_metadata``"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:107 13e74ed028b648d199b3559c8a7a6101
+msgid ""
+"**Description**: Get weather metadata for a geographic point "
+"(latitude/longitude) from the US National Weather Service. Returns the "
+"forecast office, grid coordinates, and URLs for forecast, hourly "
+"forecast, and observation stations. This is often the first step to get a"
+" weather forecast for a US location."
+msgstr ""
+
+#: ../../tools/nws_tools.rst:111 33eb4b4515104f8583bef98c17ce4544
+msgid ""
+"``latitude`` (number) (required) Latitude of the location (e.g., 38.8894 "
+"for Washington DC)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:114 054210f68ecb4643b2c245a465d8f200
+msgid ""
+"``longitude`` (number) (required) Longitude of the location (e.g., "
+"-77.0352 for Washington DC)"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:132 4a307786c75b40f5beb7ba4f852f826b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:134 a24d65f7693d414eac8eab42e1be3f06
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nws_tools.rst:135 3a30c2fbedc248f891a7295933dd7108
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,243 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sequence_analyze_tools.rst:10 14264438487d4ea69feb3c7d9f761857
+msgid "Sequence Analyze Tools"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:12 885dcb9979d14fb5add57ceb32553b13
+msgid ""
+"**Configuration File**: ``sequence_analyze_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:16 04d24db1780c4f8d9d4ea8df8e9344cf
+msgid ""
+"This page contains all tools defined in the "
+"``sequence_analyze_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:19 3affda9adb074301a1b4433debb8a336
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:22 3ae42b1d34134e189bde42654b7c2033
+msgid "**Sequence_count_residues** (Type: SequenceAnalyzeTool)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:24 e5f276634ba34d27ae66a0797b778123
+msgid ""
+"Count occurrences of a specific amino acid or nucleotide residue in a "
+"sequence. Accepts either a ..."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst 4ec9c05c238d4135ad7f6599c173603b
+msgid "Sequence_count_residues tool specification"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:28
+#: ../../tools/sequence_analyze_tools.rst:69
+#: ../../tools/sequence_analyze_tools.rst:104
+#: ../../tools/sequence_analyze_tools.rst:139 06c94a073e144f3d9bb7814f1333ec3a
+#: 92f15c8ea7a349a69e507745ae0a2b62 c4bb124c02c04b2b8d197e350fd1ad40
+#: c5aa6c3980294b9491e13cda2e2db092
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:30 ff6638de9ec04262adebdfd492f6d31a
+msgid "**Name**: ``Sequence_count_residues``"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:31
+#: ../../tools/sequence_analyze_tools.rst:72
+#: ../../tools/sequence_analyze_tools.rst:107
+#: ../../tools/sequence_analyze_tools.rst:142 055c50d0d99a45de90b444cafb9d767f
+#: 11d71c2527af49299d5c17e74b2ec65f 6535125bb2ab4089b66af6dd1782862b
+#: 8ada85d8cd8740f1b8bf0b6e5e58a81a
+msgid "**Type**: ``SequenceAnalyzeTool``"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:32 64a76802f07944c6a3d526eed0ee8e64
+msgid ""
+"**Description**: Count occurrences of a specific amino acid or nucleotide"
+" residue in a sequence. Accepts either a raw sequence string or a UniProt"
+" accession (fetches protein sequence from UniProt REST API). Reports "
+"count, fraction, percentage, and 1-based positions. Useful for cysteine "
+"counting (disulfide bond estimation), charged residue analysis, or "
+"nucleotide composition."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:34
+#: ../../tools/sequence_analyze_tools.rst:75
+#: ../../tools/sequence_analyze_tools.rst:110
+#: ../../tools/sequence_analyze_tools.rst:145 40bd39d33ce84d22902ff782f5c40198
+#: 72fe5a8090104c94b204c9198ab564bf 7a69091bee424a33942261ed4c99259a
+#: a3655dabdb074f3ba7adbbae3ea5d35b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:36
+#: ../../tools/sequence_analyze_tools.rst:77
+#: ../../tools/sequence_analyze_tools.rst:112
+#: ../../tools/sequence_analyze_tools.rst:147 5b35d90da43c4f41bbde5e66e7c64957
+#: c384cacc28e045e280a68f0329d25ab4 ca162f46784e4618be93d753174b9034
+#: d9dc27d913fe44ec8f886c23b65a511d
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:39 51872deb85eb420992021e57f970aebc
+msgid ""
+"``sequence`` (string) (optional) Sequence string (DNA/RNA/protein). "
+"Optional if uniprot\\_id is provided."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:42 a08afb82afe64b748b18a5792955f33a
+msgid ""
+"``uniprot_id`` (string) (optional) UniProt accession to fetch sequence "
+"from (e.g., 'P00533' for EGFR). Optional if sequence is provided."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:45 967852698a4e4c4bad1d192b16609ac7
+msgid ""
+"``residue`` (string) (required) Single character residue to count (e.g., "
+"'C' for cysteine)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:48
+#: ../../tools/sequence_analyze_tools.rst:83
+#: ../../tools/sequence_analyze_tools.rst:118
+#: ../../tools/sequence_analyze_tools.rst:156 1c7e5a6d08bc4982ad74d6e024763a78
+#: 3be857c22dfd47f693c4bf19b6de3525 ac386cdece5a429ba34ce3592e504d61
+#: dc8e808176ed43ff8b507ec45fbd3382
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:63 f2964b935acc4ba192d30674b3eeaf67
+msgid "**Sequence_gc_content** (Type: SequenceAnalyzeTool)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:65 6d80aec0c116481cb012908587da0384
+msgid ""
+"Calculate GC content of a DNA or RNA sequence. Reports GC count, GC "
+"fraction, GC percentage, and ..."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst ac2b12afe9594c1fbd505d8b6ccad14d
+msgid "Sequence_gc_content tool specification"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:71 969121f43630456abacd9bf71596a691
+msgid "**Name**: ``Sequence_gc_content``"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:73 af38d029b2ed40e18dad7c8d0cfb189f
+msgid ""
+"**Description**: Calculate GC content of a DNA or RNA sequence. Reports "
+"GC count, GC fraction, GC percentage, and full nucleotide composition. "
+"Ambiguous bases (N) are excluded from the denominator. Useful for primer "
+"design, genome characterization, and codon usage analysis."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:80 37c83b0040ab496aa72b2fe56b60a497
+msgid "``sequence`` (string) (required) DNA or RNA sequence string"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:98 f4f341ac52ee4e1f8613904a361b1b3b
+msgid "**Sequence_reverse_complement** (Type: SequenceAnalyzeTool)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:100 b0faf3f6e97b4186816554b569aeab52
+msgid ""
+"Return the reverse complement of a DNA sequence. Supports A, T, C, G, and"
+" N bases. Useful for pri..."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst fb0c3ef4042b4310af9bd45e5c864ea1
+msgid "Sequence_reverse_complement tool specification"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:106 af45a48a55e4429dad7256ee7d266d6a
+msgid "**Name**: ``Sequence_reverse_complement``"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:108 f1ccb247db304b25885331fb053262c8
+msgid ""
+"**Description**: Return the reverse complement of a DNA sequence. "
+"Supports A, T, C, G, and N bases. Useful for primer design, probe design,"
+" and strand orientation analysis."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:115 982c3d80cb5d4d2f89b36feb44732363
+msgid "``sequence`` (string) (required) DNA sequence (A/T/C/G/N only)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:133 7519102ae30045efae3710d1c8d848fa
+msgid "**Sequence_stats** (Type: SequenceAnalyzeTool)"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:135 acab2b559eea49e38947ddf1016ab820
+msgid ""
+"Compute basic statistics for a DNA, RNA, or protein sequence. Auto-"
+"detects sequence type, reports..."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst f460a399d45d4ba185973c45cce7ff5a
+msgid "Sequence_stats tool specification"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:141 3e1658ae3e7846c98c3069da9ca09774
+msgid "**Name**: ``Sequence_stats``"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:143 05733bb82b544eceb3d99fc400417809
+#, python-format
+msgid ""
+"**Description**: Compute basic statistics for a DNA, RNA, or protein "
+"sequence. Auto-detects sequence type, reports length, full composition, "
+"and type-specific metrics (GC% for nucleotides, estimated molecular "
+"weight for proteins). Accepts sequence string or UniProt accession."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:150 984ea2826ed94a69b501c6de2da08a77
+msgid ""
+"``sequence`` (string) (optional) Sequence string. Optional if "
+"uniprot\\_id is provided."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:153 dd99db74323649bcbab29c4cdf5334e9
+msgid ""
+"``uniprot_id`` (string) (optional) UniProt accession to fetch protein "
+"sequence from. Optional if sequence is provided."
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:170 8329f81cd2d14fe39027021f543de697
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:172 71327d72f1b34faaaa6f7d2fd40c21a1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sequence_analyze_tools.rst:173 e937a40c626c4975833183090fffe24e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

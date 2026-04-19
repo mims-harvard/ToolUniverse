@@ -1,0 +1,290 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bioportal_tools.rst:10 3e8c01e5a4584b18838db4af48926293
+msgid "Bioportal Tools"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:12 65c08fb0c9294f0d8f56d37b1faf2f9d
+msgid ""
+"**Configuration File**: ``bioportal_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:16 30a3ab36ee22451db42278e9a5465857
+msgid ""
+"This page contains all tools defined in the ``bioportal_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:19 82993a64629a454481daf12b406c93c6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:22 70db734a495340a0beae0ca89cc47062
+msgid "**BioPortal_annotate_text** (Type: BioPortalTool)"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:24 b665c83883494d989da34e1aaeb38867
+msgid ""
+"Annotate biomedical text with ontology terms using BioPortal's Annotator "
+"(named entity recognitio..."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst cbe5d1c476084fd581c7890595e46418
+msgid "BioPortal_annotate_text tool specification"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:28 ../../tools/bioportal_tools.rst:65
+#: ../../tools/bioportal_tools.rst:100 ../../tools/bioportal_tools.rst:141
+#: 253db1431af54c3689b0b0e46f9c7920 2af0d4d68a3944fea72d3dc4d6282410
+#: 6581318ba185414181eec3b4703fe95c b556c4a65d1f4052990ad05b1826ab63
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:30 a980d0e2b7b649cebe2f23642e308a4e
+msgid "**Name**: ``BioPortal_annotate_text``"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:31 ../../tools/bioportal_tools.rst:68
+#: ../../tools/bioportal_tools.rst:103 ../../tools/bioportal_tools.rst:144
+#: 29a5bb4abca746bc94a07f331de1fc54 51ee50d89d504d30a337a7439e5b5502
+#: 7e2a39fb9ee44fae85d5cdd2d9b8da65 a2fb05f8e89d478e89a1a6fd5ce616c7
+msgid "**Type**: ``BioPortalTool``"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:32 d542f64723b84437885b3eb71c5f2497
+msgid ""
+"**Description**: Annotate biomedical text with ontology terms using "
+"BioPortal's Annotator (named entity recognition). Scans free text and "
+"identifies mentions of biomedical concepts from 900+ ontologies. Useful "
+"for extracting disease mentions, drug names, gene functions, phenotypes, "
+"and anatomical terms from clinical notes, papers, or abstracts. Example: "
+"annotate 'Melanoma is a malignant tumor of melanocytes' to find DOID:1909"
+" (melanoma) and DOID:162 (cancer)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:34 ../../tools/bioportal_tools.rst:71
+#: ../../tools/bioportal_tools.rst:106 ../../tools/bioportal_tools.rst:147
+#: 6226c80311e447fca8e029f0d783206c 6b3895f408f74998b9c1ef352260d908
+#: 829a9d53fb614237a7b228b404758cb1 d6dee635dc3d419a9b1ddc8931f6c1e8
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:36 d59952fd7f584b5a91f4d7d705c73032
+msgid ""
+"``text`` (string) (required) Biomedical text to annotate. Can be a "
+"sentence, abstract, or clinical note. Maximum recommended length: 500 "
+"words."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:39 7fdd362d37684b538ba2b89934783dbd
+msgid ""
+"``ontologies`` (string, null) (optional) Comma-separated ontology "
+"acronyms to restrict annotation. If null, uses all ontologies. Common: "
+"'DOID,HP,CHEBI,GO,NCIT,MESH'."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:42 92ba42470a834cc9921d72f8e454d2f1
+msgid ""
+"``longest_only`` (boolean, null) (optional) If true (default), only "
+"return longest matching spans. Set false for all possible matches."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:45 ../../tools/bioportal_tools.rst:79
+#: ../../tools/bioportal_tools.rst:120 ../../tools/bioportal_tools.rst:161
+#: 7f66f6db68a04c3aa4e8c5f17c9f84da 847fa139372844cb90ec38b4cea9e4a1
+#: 871aeec3cf6b46ceb82efc5288b25aa6 8e606665707143e694609ac710b4ee0c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:59 dd8f3eb075cc42d785ed2c3060afe1f3
+msgid "**BioPortal_get_concept** (Type: BioPortalTool)"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:61 977c299780024d71825f6a63727a2f24
+msgid ""
+"Get detailed information about a specific concept from a BioPortal "
+"ontology, including full defin..."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst 499de562aad645818afbdb39c2a1bb80
+msgid "BioPortal_get_concept tool specification"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:67 440688995ba74b27a47b4548860611a6
+msgid "**Name**: ``BioPortal_get_concept``"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:69 6ae6b47d74334c84b4412741399b0c0a
+msgid ""
+"**Description**: Get detailed information about a specific concept from a"
+" BioPortal ontology, including full definition, synonyms, CUI codes, and "
+"semantic types. Requires knowing the ontology acronym and concept IRI. "
+"Use BioPortal\\_search\\_ontology\\_terms first to find concept IDs, then"
+" use this tool for complete details. Example: get details for DOID:1909 "
+"(melanoma) from the DOID ontology, or GO:0006915 (apoptotic process) from"
+" the GO ontology."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:73 59b41de2c4f042029f9ff4c1a9bd075a
+msgid ""
+"``ontology`` (string) (required) Ontology acronym in BioPortal. Examples:"
+" 'GO', 'HP', 'DOID', 'CHEBI', 'UBERON', 'NCIT', 'MESH', 'SNOMEDCT', "
+"'RXNORM'."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:76 76b952c4613249cf8104126d360eb47d
+msgid ""
+"``concept_id`` (string) (required) Full IRI of the concept. Examples: "
+"'http://purl.obolibrary.org/obo/DOID\\_1909', "
+"'http://purl.obolibrary.org/obo/GO\\_0006915', "
+"'http://purl.obolibrary.org/obo/HP\\_0001250'."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:94 845145a65450408ea10588e574c39a5b
+msgid "**BioPortal_get_hierarchy** (Type: BioPortalTool)"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:96 37a1e8e2242f4a0f991f5ed19ea8f3f7
+msgid ""
+"Get children, parents, or ancestors of a specific concept in a BioPortal "
+"ontology. Enables hierar..."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst 96cff377a6ce4c6787277cf71c5a25dd
+msgid "BioPortal_get_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:102 e8db61ecb5a949acbd2278d87a01dc46
+msgid "**Name**: ``BioPortal_get_hierarchy``"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:104 2d1ef1a936d5453d97216183efa59cd4
+msgid ""
+"**Description**: Get children, parents, or ancestors of a specific "
+"concept in a BioPortal ontology. Enables hierarchical browsing of "
+"ontology term relationships (is-a hierarchy). Use to explore narrower "
+"terms (children), broader terms (parents), or full ancestry path "
+"(ancestors). Example: get children of DOID:9351 (diabetes mellitus) to "
+"find type 1, type 2, gestational diabetes; get ancestors of HP:0001250 "
+"(Seizure) to see the full path to root."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:108 4d689568c9e541a9815b17f5a232133c
+msgid ""
+"``ontology`` (string) (required) Ontology acronym in BioPortal. Examples:"
+" 'GO', 'HP', 'DOID', 'CHEBI', 'UBERON', 'NCIT'."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:111 dee6ecb6acba46ad88d63121e774adf4
+msgid ""
+"``concept_id`` (string) (required) Full IRI of the concept. Example: "
+"'http://purl.obolibrary.org/obo/DOID\\_9351' for diabetes mellitus."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:114 020b977c32314ec38190354585dcd7d2
+msgid ""
+"``direction`` (string, null) (optional) Direction of hierarchy traversal:"
+" 'children' (narrower terms, default), 'parents' (direct broader terms), "
+"or 'ancestors' (all broader terms to root)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:117 70a7e303b28342daba079f4c53e3fb07
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default: 25, max: 100)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:135 3c670872516e41e381453968c352d5d0
+msgid "**BioPortal_search_ontology_terms** (Type: BioPortalTool)"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:137 f72b5b96951445b1832bafc5197fbf69
+msgid ""
+"Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts"
+" matching a query. BioPo..."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst ea67b953d62e4cd98bfdfee3bdc69ac8
+msgid "BioPortal_search_ontology_terms tool specification"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:143 1ccad953e01040dfaf20757f9306abf5
+msgid "**Name**: ``BioPortal_search_ontology_terms``"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:145 ee969c1f7ca441b18f8393ac2898e09e
+msgid ""
+"**Description**: Search across 900+ biomedical ontologies in BioPortal "
+"(NCBO) for concepts matching a query. BioPortal is the world's largest "
+"repository of biomedical ontologies including GO (gene function), HPO "
+"(phenotypes), DOID (diseases), CHEBI (chemicals), UBERON (anatomy), "
+"SNOMED, MeSH, and 900+ more. Returns matching concepts with labels, IDs, "
+"definitions, and synonyms. Optionally filter by specific ontologies. "
+"Example: search 'melanoma' to find disease terms across DOID, NCIT, MESH,"
+" SNOMED; search 'apoptosis' in GO ontology for programmed cell death "
+"terms."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:149 ee9d485331d646059ba47aecb0f63470
+msgid ""
+"``query`` (string) (required) Search query for finding ontology terms. "
+"Can be disease names, gene functions, phenotypes, chemical names, "
+"anatomical terms, etc. Examples: 'melanoma', 'apoptosis', 'seizure', "
+"'aspirin', 'hippocampus'."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:152 31ef47bc80ce40b6bd5d91db3ea9198e
+msgid ""
+"``ontologies`` (string, null) (optional) Comma-separated list of ontology"
+" acronyms to search within. If null, searches all ontologies. Common "
+"ontologies: GO (Gene Ontology), HP (Human Phenotype), DOID (Disease "
+"Ontology), CHEBI (Chemical Entities), UBERON (Anatomy), NCIT (NCI "
+"Thesaurus), MESH (Medical Subject Headings), SNOMEDCT (SNOMED CT), RXNORM"
+" (Drug Names)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:155 d16344811326461cbc412693f2b7e832
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:158 7c3d6188e18a49fbb66b0e0236e166e3
+msgid ""
+"``exact_match`` (boolean, null) (optional) If true, only return exact "
+"matches (default: false)."
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:175 9bce9cc5a36c429a986ee61fd732152b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:177 3bd7b80c304d4a69b5799665b365587d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bioportal_tools.rst:178 f3f4ef28255b4b1b9628c4f7bcd35503
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

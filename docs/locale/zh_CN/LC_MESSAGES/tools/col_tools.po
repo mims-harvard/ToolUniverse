@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/col_tools.rst:10 4c79cf252d72460bba36163f0e8c8597
+msgid "Col Tools"
+msgstr ""
+
+#: ../../tools/col_tools.rst:12 1f61039e36b5413f825d34dd9b00b57f
+msgid ""
+"**Configuration File**: ``col_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/col_tools.rst:16 826c96b3c7534daf9ae8488ec03d330b
+msgid ""
+"This page contains all tools defined in the ``col_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/col_tools.rst:19 f274ff4250834bd3b5f0bd81a370b909
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/col_tools.rst:22 6b034e35968f4ef2a88fe45403461753
+msgid "**CoL_get_children** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/col_tools.rst:24 d91c1065b0884531a219075860d6a439
+msgid ""
+"Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of "
+"Life. For example, get al..."
+msgstr ""
+
+#: ../../tools/col_tools.rst b89f9e7bafb24b7fab31521171f9f704
+msgid "CoL_get_children tool specification"
+msgstr ""
+
+#: ../../tools/col_tools.rst:28 ../../tools/col_tools.rst:65
+#: ../../tools/col_tools.rst:96 affddd847dc44c3398bedb8531bb205a
+#: c634e712bfd141b6a4bd15fc787c569a d584c18ea2a44ae5ae8bbc9972546110
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/col_tools.rst:30 b631ca93b9c3439e8c8918e406a4a69f
+msgid "**Name**: ``CoL_get_children``"
+msgstr ""
+
+#: ../../tools/col_tools.rst:31 ../../tools/col_tools.rst:68
+#: ../../tools/col_tools.rst:99 241671c52a7f4a8d8904c54f053b7be6
+#: 2e3e1e283a844157bd81dad48787e233 89401616a9174b9ba6cdb344c6127f34
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/col_tools.rst:32 71bba4c913fb4c0c9a3e2f3e4a29e613
+msgid ""
+"**Description**: Get child taxa (immediate subtaxa) of a given taxon in "
+"the Catalogue of Life. For example, get all species within a genus, or "
+"all genera within a family. Uses the parentId parameter to list direct "
+"descendants. Returns child taxon names, ranks, IDs, and status. Use "
+"CoL\\_search\\_species or CoL\\_get\\_taxon to find the parent taxon ID "
+"first."
+msgstr ""
+
+#: ../../tools/col_tools.rst:34 ../../tools/col_tools.rst:71
+#: ../../tools/col_tools.rst:102 37eea0068f2f4bd19d3fb0e98e36c7bd
+#: 4473591e437d43e3919c8ed8539abd7a dee079ca9ae64e9282a870a923f3c4a4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/col_tools.rst:36 3c6931296edb4b2ca5ae010e36cd0da4
+msgid ""
+"``parentId`` (string) (required) CoL ID of the parent taxon whose "
+"children to retrieve (e.g., '636X2' for genus Homo, '623RM' for family "
+"Felidae). Obtain from CoL\\_search\\_species or CoL\\_get\\_taxon."
+msgstr ""
+
+#: ../../tools/col_tools.rst:39 67b36c6b01114e41ab9a6e0fa4ad3b86
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of children to return"
+" (default 10, max 1000)"
+msgstr ""
+
+#: ../../tools/col_tools.rst:42 ../../tools/col_tools.rst:113
+#: 0829091c48eb4049b34dd489519c959b 895dd2e95e174c95905055f5741e3c4e
+msgid "``offset`` (integer, null) (optional) Offset for pagination"
+msgstr ""
+
+#: ../../tools/col_tools.rst:45 ../../tools/col_tools.rst:76
+#: ../../tools/col_tools.rst:116 2680ad8fa5474dad99df124a4a2031f4
+#: be2e8471bb3945f3897af284ac42f260 d86eb30e9de049668c8bab51cdc45948
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/col_tools.rst:59 d9c07e9e422a43da8871f4f160d1b1c3
+msgid "**CoL_get_taxon** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/col_tools.rst:61 cd16bb85142940cd86533495f119d5e0
+msgid ""
+"Get detailed taxonomic information for a specific taxon in the Catalogue "
+"of Life by its CoL ID. R..."
+msgstr ""
+
+#: ../../tools/col_tools.rst 71d4397a38ea44b1a1e7cb93c61c1957
+msgid "CoL_get_taxon tool specification"
+msgstr ""
+
+#: ../../tools/col_tools.rst:67 d4cdca226fe4452799a4472eb80b8351
+msgid "**Name**: ``CoL_get_taxon``"
+msgstr ""
+
+#: ../../tools/col_tools.rst:69 c9263704c9144b8db13d8be74d366205
+msgid ""
+"**Description**: Get detailed taxonomic information for a specific taxon "
+"in the Catalogue of Life by its CoL ID. Returns full name details, "
+"accepted status, classification hierarchy, authorship, publication, and "
+"environments. Use CoL\\_search\\_species to find the CoL ID first."
+msgstr ""
+
+#: ../../tools/col_tools.rst:73 2d545097992c4de99ae94c9fe8a5b5fe
+msgid ""
+"``taxon_id`` (string) (required) CoL taxon ID (e.g., '6MB3T' for Homo "
+"sapiens, '64J67' for Panthera leo). Obtain from CoL\\_search\\_species."
+msgstr ""
+
+#: ../../tools/col_tools.rst:90 c98e8f866b0d4499b3e6ad35d7748f9c
+msgid "**CoL_search_species** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/col_tools.rst:92 5c7f9a82439a4f5496ce0c8d59ecba64
+msgid ""
+"Search the Catalogue of Life (CoL) for species and other taxa by "
+"scientific name. CoL is the glob..."
+msgstr ""
+
+#: ../../tools/col_tools.rst 0161fc44694442608fc0aae5bc9e57a8
+msgid "CoL_search_species tool specification"
+msgstr ""
+
+#: ../../tools/col_tools.rst:98 6b7b7ecb44ff40b8bcd0848c9c33840c
+msgid "**Name**: ``CoL_search_species``"
+msgstr ""
+
+#: ../../tools/col_tools.rst:100 8c701ead2aa5487d8d63e7d4534bba6d
+msgid ""
+"**Description**: Search the Catalogue of Life (CoL) for species and other"
+" taxa by scientific name. CoL is the global index of all known species, "
+"compiled from 165+ taxonomic databases covering ~2 million species. "
+"Returns taxon IDs, accepted names, ranks, classification hierarchy, and "
+"taxonomic status. Use rank parameter to filter by taxonomic level "
+"(species, genus, family, order, class, phylum, kingdom)."
+msgstr ""
+
+#: ../../tools/col_tools.rst:104 c11ccf6505544511a6419bdd15e813df
+msgid ""
+"``q`` (string) (required) Scientific name to search for (e.g., 'Homo "
+"sapiens', 'Panthera leo', 'Arabidopsis thaliana')"
+msgstr ""
+
+#: ../../tools/col_tools.rst:107 5a9dc6be9c664c3d8a0f37ae9ea8cc14
+msgid ""
+"``rank`` (string, null) (optional) Filter by taxonomic rank: 'species', "
+"'genus', 'family', 'order', 'class', 'phylum', 'kingdom'"
+msgstr ""
+
+#: ../../tools/col_tools.rst:110 1bae9c87fed74cc7bc39e6aad36cfb4a
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 10, max 1000)"
+msgstr ""
+
+#: ../../tools/col_tools.rst:130 1e686fabf38f4e3eade05b618b8fe85c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/col_tools.rst:132 2356bbad7e9b4406bbb5fcd3564c5fad
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/col_tools.rst:133 7623b401b1d4441db8663ba240dd303e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

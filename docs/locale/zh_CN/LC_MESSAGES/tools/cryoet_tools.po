@@ -1,0 +1,326 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cryoet_tools.rst:10 c0ceba7630c64fd8a650de7aef82792c
+msgid "Cryoet Tools"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:12 ccd2c31e68b647378d4ddecd953fb2ba
+msgid ""
+"**Configuration File**: ``cryoet_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:16 a156114326d14409ad2b415fa62a8893
+msgid ""
+"This page contains all tools defined in the ``cryoet_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:19 fdab05be8d3f4206955a0a374a80e87c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:22 4eea51fbe95347dab836aab7a97a53ea
+msgid "**CryoET_get_dataset** (Type: CryoETTool)"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:24 f750649c4f7441b6972bcc4c0d63671c
+msgid ""
+"Get full metadata for a specific CryoET Data Portal dataset by its "
+"numeric ID. Returns complete d..."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst 77a18d5f9f0e428fbc3d343ad39b9b12
+msgid "CryoET_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:28 ../../tools/cryoet_tools.rst:63
+#: ../../tools/cryoet_tools.rst:107 ../../tools/cryoet_tools.rst:150
+#: ../../tools/cryoet_tools.rst:191 6b99379d8b234a57a4107930b2243624
+#: 6c88e453aa534b4aa168c1ef320823e1 7e3e05a4f57c45ec8a17a7aeda5f09d8
+#: c0d9b52e5a844a909cb87bf26abe149c ce8e4f62c3c44c1084c88d707a842a66
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:30 66f76abed4df4f1ab3ab6f8f12e4f365
+msgid "**Name**: ``CryoET_get_dataset``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:31 ../../tools/cryoet_tools.rst:66
+#: ../../tools/cryoet_tools.rst:110 ../../tools/cryoet_tools.rst:153
+#: ../../tools/cryoet_tools.rst:194 1ed229d96f884bcab5e28faa969713a3
+#: 916e829f70bb498da2a011f8c3e417c2 b523fc8d734d43a8a42c709db2f84805
+#: e62513bcadca484e8e139ba398bd1651 fd11001d3a3d4d9dbeea0055b911c6a5
+msgid "**Type**: ``CryoETTool``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:32 3cdd43b9f2bf47c4a66078a14b7dcdd7
+msgid ""
+"**Description**: Get full metadata for a specific CryoET Data Portal "
+"dataset by its numeric ID. Returns complete dataset information including"
+" organism taxonomy, tissue/cell identifiers, sample preparation details, "
+"publication references, data access paths (S3 and HTTPS), and file size. "
+"Use this after \\`CryoET\\_list\\_datasets\\` to retrieve detailed "
+"information for a specific dataset. The dataset ID is an integer (e.g. "
+"10053, 10174)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:34 ../../tools/cryoet_tools.rst:69
+#: ../../tools/cryoet_tools.rst:113 ../../tools/cryoet_tools.rst:156
+#: ../../tools/cryoet_tools.rst:197 12b9f477b6e04bd6bc68d219a1edc782
+#: 9c6bf8b105044512bd0ef5ce934d8f46 ad4b7ece84674f08a87b45af30cc3763
+#: f5252993a48b4f6c9dcd7b223e53e781 fd9c529860d04392961fa19e5e7b257a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:36 ../../tools/cryoet_tools.rst:71
+#: ../../tools/cryoet_tools.rst:115 ../../tools/cryoet_tools.rst:158
+#: ../../tools/cryoet_tools.rst:199 08745e284b56497281b16df691c85ff7
+#: 2f07a8cb168b4436873fd086c99c09f9 34baab1fd2ac481185080878bb5b32f3
+#: a4e8bae53f284c0bac080c6d4147cd10 e63ffd208ee4459a828c2f08624f504e
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:39 d4329fc1aa55446f93fd3f56b5949fd5
+msgid ""
+"``dataset_id`` (integer) (required) Numeric dataset ID from the CryoET "
+"Data Portal (e.g. 10053, 10174, 10460)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:42 ../../tools/cryoet_tools.rst:86
+#: ../../tools/cryoet_tools.rst:130 ../../tools/cryoet_tools.rst:170
+#: ../../tools/cryoet_tools.rst:211 04d1fc5f91754e84b3cb9ab27c885af6
+#: 9d5831ef2a4243b89ff8f29d522a3b69 bd005786f9a84db19929b5e49e07641c
+#: d8faf416bbd84f2e9d0f203fa2f2101f defad2ae8b014f049804582e5a2445e9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:57 6d98a78c55a2484eac99f7e0b7e04ddd
+msgid "**CryoET_list_annotations** (Type: CryoETTool)"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:59 6b0d3929429f47e29c83117e80f40e2d
+msgid ""
+"List biological annotations (segmentations, point annotations, surface "
+"meshes) for a specific cry..."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst d521be37c29748c58626d7a29d35267c
+msgid "CryoET_list_annotations tool specification"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:65 016a17863d904b8092257e4e0cd4e61e
+msgid "**Name**: ``CryoET_list_annotations``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:67 9b2bd5c7ee7a49c4b47ec1a4c6e8510b
+msgid ""
+"**Description**: List biological annotations (segmentations, point "
+"annotations, surface meshes) for a specific cryo-ET run from the CryoET "
+"Data Portal. Annotations label cellular structures such as membranes, "
+"ribosomes, and organelles. Returns object name (e.g. 'membrane', "
+"'ribosome'), GO/EMDB ontology ID, annotation method description, count of"
+" annotated instances, software used, and metadata paths. Filter by "
+"\\`curator\\_recommended\\_only=true\\` to get curated high-quality "
+"annotations."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:74 ../../tools/cryoet_tools.rst:202
+#: 809ec088846d4ddf84954e5185861f95 eb95f387a20f4c0ea78d6cb4173bd2ca
+msgid ""
+"``run_id`` (integer) (required) Numeric run ID (e.g. 3430). Obtain from "
+"CryoET\\_list\\_runs."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:77 9c77a22d56cf44d2ba7c7c0b817e3cf5
+msgid ""
+"``curator_recommended_only`` (boolean) (optional) If true, return only "
+"curator-recommended high-quality annotations (default: false)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:80 bb7c589cc9bd496193ce4cdb0a2cf7f5
+msgid ""
+"``limit`` (integer) (optional) Maximum number of annotations to return "
+"(default: 20)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:83 bcf4fa17448247af8f48e3fd0535a1c1
+msgid ""
+"``offset`` (integer) (optional) Number of annotations to skip for "
+"pagination (default: 0)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:101 0723d492fde6409eb24e20d68480674a
+msgid "**CryoET_list_datasets** (Type: CryoETTool)"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:103 03f7551a7e96456ba81a39f46f7fe18e
+msgid ""
+"Search and list cryo-electron tomography (cryo-ET) datasets from the CZ "
+"BioHub CryoET Data Portal..."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst 96db4b8d76284d68836fea8e725b10f4
+msgid "CryoET_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:109 da766db4927542a4b9c0466597840f49
+msgid "**Name**: ``CryoET_list_datasets``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:111 d2e2f69f0340429cae05c8485d09af13
+msgid ""
+"**Description**: Search and list cryo-electron tomography (cryo-ET) "
+"datasets from the CZ BioHub CryoET Data Portal "
+"(cryoetdataportal.czscience.com). Returns dataset metadata including "
+"title, description, organism, tissue/cell type, sample type, and S3/HTTPS"
+" data access paths. Supports filtering by organism name or tissue name. "
+"Use for: discovering available cryo-ET datasets, finding datasets by "
+"organism (e.g. 'Homo sapiens', 'Saccharomyces cerevisiae'), filtering by "
+"tissue or cell type. Returns up to \\`limit\\` datasets per call; use "
+"\\`offset\\` for pagination."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:118 381fecc4d9cd4edc8ebe8c20fe47cad0
+msgid ""
+"``organism_name`` (string, null) (optional) Filter by organism name "
+"(case-insensitive substring match). Examples: 'Homo sapiens', "
+"'Saccharomyces cerevisiae', 'Coxiella burnetii'."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:121 750b4e8ca8f9432f9cfd5420fb319bda
+msgid ""
+"``tissue_name`` (string, null) (optional) Filter by tissue or cell type "
+"name (case-insensitive substring match). Examples: 'kidney', "
+"'endothelial', 'prokaryotic cell'."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:124 dcce3cf52c5d4086b5d4a27e50b6752f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of datasets to return "
+"(default: 10, max recommended: 50)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:127 0830e0f560004083a2a706e77f38eb80
+msgid ""
+"``offset`` (integer) (optional) Number of datasets to skip for pagination"
+" (default: 0)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:144 c16750949c8140cf803ec8b45a33ef58
+msgid "**CryoET_list_runs** (Type: CryoETTool)"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:146 a1227ca2404e45fdb8040aa238d438d7
+msgid ""
+"List the experimental tilt-series acquisition runs within a specific "
+"CryoET Data Portal dataset. ..."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst 48e7cfdcf96840728eb7b076a95b1772
+msgid "CryoET_list_runs tool specification"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:152 2b5af9f0653c4891828923585b8f5e4e
+msgid "**Name**: ``CryoET_list_runs``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:154 491b9b4ec2a64562b91d65958f7746d2
+msgid ""
+"**Description**: List the experimental tilt-series acquisition runs "
+"within a specific CryoET Data Portal dataset. Each run corresponds to one"
+" sample grid position with its own tilt series, tomograms, and "
+"annotations. Returns run names and data access paths. Use this after "
+"\\`CryoET\\_get\\_dataset\\` to enumerate the runs for a dataset before "
+"fetching tomograms or annotations."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:161 5b7ed9390ccd47a593b11ce063746005
+msgid "``dataset_id`` (integer) (required) Numeric dataset ID (e.g. 10053)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:164 4ff16d11e32b4f37b798a586be3d2c2c
+msgid ""
+"``limit`` (integer) (optional) Maximum number of runs to return (default:"
+" 20)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:167 a3336be79a574942b1fe60b7795d1150
+msgid ""
+"``offset`` (integer) (optional) Number of runs to skip for pagination "
+"(default: 0)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:185 9a1c588f0e4d4d11860cc5aebbfed3e1
+msgid "**CryoET_list_tomograms** (Type: CryoETTool)"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:187 6b3ceb18894349c2a10af8f997b07658
+msgid ""
+"List tomographic reconstructions for a specific experimental run from the"
+" CryoET Data Portal. Ret..."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst cefe8e2a64e84d4da24b301baeb3e45a
+msgid "CryoET_list_tomograms tool specification"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:193 c085892d4a284e7d8cbe7bf7e5988b92
+msgid "**Name**: ``CryoET_list_tomograms``"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:195 58bc02cc72bb49ce9365f717fc15b6ab
+msgid ""
+"**Description**: List tomographic reconstructions for a specific "
+"experimental run from the CryoET Data Portal. Returns voxel spacing "
+"(Angstroms), tomogram dimensions (sizeX/Y/Z voxels), reconstruction "
+"method (WBP = Weighted Back Projection, SIRT, etc.), processing pipeline,"
+" and download URLs for OME-Zarr (cloud-native) and MRC (traditional) "
+"formats. Use after \\`CryoET\\_list\\_runs\\` to find tomograms; use "
+"\\`isPortalStandard\\` flag to identify quality-controlled tomograms."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:205 88eead2c9e7d4e56b34b637afcd3811d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of tomograms to return "
+"(default: 10)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:208 ca51d0c3cf1e4ca78e38595493ea488c
+msgid ""
+"``offset`` (integer) (optional) Number of tomograms to skip for "
+"pagination (default: 0)."
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:226 8a11269e86fd43d59eae85446479c996
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:228 98ef79cb3fcd4390bb8a3a658bc1974e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cryoet_tools.rst:229 21092b7b569f4b6b949307884c87b603
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

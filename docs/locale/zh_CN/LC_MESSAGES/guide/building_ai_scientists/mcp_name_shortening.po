@@ -1,0 +1,1074 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:3
+#: 52ddcddc25744a498a21040cdd871711
+msgid "MCP Tool Name Shortening"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:5
+#: 57f7335c31904533ae084683cac1d65a
+msgid "**Version:** 1.0 **Status:** Production Ready"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:9
+#: 029c69cfce334c689fc2f09b589bf5f3
+msgid "Overview"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:11
+#: a671d033b50041ef811f4fe8d94015d9
+#, python-brace-format
+msgid ""
+"ToolUniverse includes automatic tool name shortening to ensure "
+"compatibility with the MCP (Model Context Protocol) 64-character tool "
+"name limit. This feature is particularly important for Claude Code and "
+"other MCP clients that construct tool names using the pattern "
+"``mcp__{server_name}__{tool_name}``."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:14
+#: cf29d0b05117475b9fa72075ba475eb9
+msgid "The Problem"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:16
+#: 13c150e006d94187ae8068376ed0324d
+msgid ""
+"The MCP standard specifies that tool names must be **maximum 64 "
+"characters** long. When tool names exceed this limit, tool calls fail "
+"with an API error:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:25
+#: eeb16ebffe8c45a4acec2353633962fa
+msgid "Name Construction Pattern"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:27
+#: 89a72ebdf7274e309bed3c909abd08e6
+#, python-brace-format
+msgid "MCP clients construct tool names as: ``mcp__{server_name}__{tool_name}``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:29
+#: 610b57df9baa4f7aa28d669ac9380cd8
+msgid "**With shortened server name:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:31
+#: a8adacf088c940538098f68659c4367c
+msgid "Server name: ``tu`` (2 chars)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:32
+#: 83a2635c8c6a400a95d9b82f01cb42e9
+msgid "Prefix: ``mcp__tu__`` (9 chars)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:33
+#: 2cafa9acf0e54f5db8188db02ff218fc
+msgid "Available space for tool names: 55 characters"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:34
+#: ec585ff5ddec42cebba7fae72c630bb3
+msgid "**Result**: All tools fit after automatic shortening"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:37
+#: 2291ff92aeea418d8ae8b3f81539e2dc
+msgid "The Solution"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:39
+#: 010f562ec5a34811accb13da8286df47
+msgid "ToolUniverse implements a two-part solution:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:41
+#: bd4f3a3aca7044c781e0e2bdec0e6398
+msgid ""
+"**Shortened Server Name**: Use ``tu`` instead of ``tooluniverse`` in MCP "
+"configuration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:42
+#: 9c1b505cdf084fb58377e724c718657a
+msgid ""
+"**Automatic Name Shortening**: Intelligent word-level truncation when "
+"needed"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:45
+#: 1656766914524f829d0401aa25d5c0d6
+msgid "Shortening Algorithm"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:47
+#: 57086be7605b4cb094bf8b7ff6370ccc
+msgid "The algorithm intelligently truncates tool names by:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:49
+#: 2b4c6dc587bd478c95d7ca13e288e17c
+msgid "**Splitting by underscores** to identify words"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:50
+#: 5078f497be8d4c0ea6ab69dc1ba7c013
+msgid ""
+"**Preserving category prefix** (first word): ``FDA``, ``UniProt``, "
+"``euhealthinfo``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:51
+#: 041b0cdff6b94242b5d39b3412bf6b41
+msgid "**Truncating subsequent words**:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:53
+#: 2e3944b5a6da4cfd97af622765c0766e
+msgid ""
+"Short words (≤3 chars) kept intact: ``by``, ``get``, ``on``, ``or``, "
+"``for``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:54
+#: 2ac374e188814211bd905ad688b10e5f
+msgid "Medium words (4-6 chars): first 4 chars: ``drug`` → ``drug``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:55
+#: 0c65cf6d894b4731a3a0c1e2cd34e122
+msgid "Long words (>6 chars): first 4 chars: ``consultation`` → ``cons``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:57
+#: d01878df6a3740919776fe2a96ee2d2e
+msgid "**Handling collisions**: Appends numeric suffix if shortened names clash"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:60
+#: 97c6ef2b665a4e9fb0faa61ec67c87fa
+msgid "Examples"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:66
+#: 4d3c606e869f4102a993ff363a52cc76
+msgid "Original Name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:67
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:69
+#: 7f1c4eb9503b4e288cd2d75f5b7a1d50 eebf0e90a99a4491a1e1ea4564c9b389
+msgid "Length"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:68
+#: 326533a7aaa04b288da10b94486e8c98
+msgid "Shortened Name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:70
+#: 7ff015124f11456daa986fe918a66e3f
+msgid "``FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:71
+#: 879213737a5f4365b636a4fe56e23423
+msgid "63"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:72
+#: ffe645ac21a042ad9f08b20221d0ea05
+msgid "``FDA_get_info_on_cond_for_doct_cons_by_drug_name``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:73
+#: ac227c109be44f639ab416e83af6c875
+msgid "47"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:74
+#: 332287732ee04c30b681fd0b4dcec9af
+msgid "``euhealthinfo_search_diabetes_mellitus_epidemiology_registry``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:75
+#: 0baa7b84b99847fca3acd3c05b8b65a0
+msgid "59"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:76
+#: b9550a8d78a64439bc38d26087ce1ed2
+msgid "``euhealthinfo_sear_diab_mell_epid_regi``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:77
+#: 3bd40a64dbaf4fe1a4ecaba76b6cd656
+msgid "38"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:78
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:80
+#: 9a3db5e5219d44448cf298e0ceda61c0 e96100d131b24ba2aafe4f1e10cbe340
+msgid "``UniProt_get_function_by_accession``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:79
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:81
+#: 8787206ffb2d4a2eb2d70ed6090a703c f957e90d75c44d3cac8a95f43921238c
+msgid "34"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:84
+#: 5c170fd846694ae6add2cbac46836772
+msgid "When to Use This Feature"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:87
+#: 89eaa005bdb9405ba80e07b7d24f9ea0
+msgid "Use in These Scenarios"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:90
+#: 4584c52225504c539f6c198ba7abd8cb
+msgid "MCP Integration (Automatic)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:92
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:119
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:141
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:156
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:182
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:197
+#: 33769e25b0b342a7ad781eb93f5b4c50 77232b420bbb42069e88ab90937ddeda
+#: 77687e2d0ef548f3a7fca262a6f1b562 8cdd7393e6004d82a3487da79762e8cd
+#: 8f9fe09c23c64f00b6f3493f56f7e9b8 a6d0a4521db444818c644590dff87e1e
+msgid "**When:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:94
+#: 0b0b561af8734882bc81619dd9ce1903
+msgid "Using ToolUniverse through MCP clients (Claude Code, Claude Desktop, etc.)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:95
+#: 69f22af9043f48e9b13f4145fb6b5e38
+msgid "Need compliance with 64-character limit"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:97
+#: 3730e3803a51437e8dd25febbd84da1e
+msgid "**How:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:99
+#: adc88daec7a44b6b9e348987aa531b84
+msgid "Automatically enabled in SMCP"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:100
+#: e60b55d9de624e86939e48f6d11b6400
+msgid "No configuration needed"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:101
+#: 56d17438cc17415198d9ebb721caacf8
+msgid "Works out of the box"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:103
+#: 5613f5454fb949048a359139293e2ccc
+msgid "**Example MCP Configuration:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:117
+#: 0097e72f24d14bb491feb89d40fbf48f
+msgid "Custom MCP Server Implementation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:121
+#: 727d041719e44c5482dd232b1d25771e
+msgid "Building your own MCP server using ToolUniverse"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:122
+#: e4554344984c4550bc44986178ee3b39
+msgid "Need to expose tools with shortened names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:124
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:270
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:292
+#: 4ad183c661504745b29e519665c7f1d7 b5fb38eb5ef040a28c49170d212853b2
+#: c487b2dcf8544f1ba3fdb198089f68e6
+msgid "**Example:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:139
+#: dcea4e1b9d874ba59f6f7cbbf430da59
+msgid "External API Integration with Length Constraints"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:143
+#: d47c3ff4f9454c5b94c8d3a4fb1caecc
+msgid "Integrating with systems that have tool name length limits"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:144
+#: 0b1c35874602452584298a547c0fa718
+msgid "Need to export tool lists with shorter names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:145
+#: 607dddbc4ad441b1b881ec80c546852c
+msgid "Building UIs with limited display space"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:148
+#: b6596a36949c42f88b3a1781f7614673
+msgid "When NOT to Use This Feature"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:151
+#: 59496ac23fd049a69e65310b48b0b534
+msgid "Do Not Use in These Scenarios"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:154
+#: 1c50ba48b0274fc89267fa2b742ec22c
+msgid "Direct Python API Usage (Default)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:158
+#: 9b8f439834084dbcbbcaff8cd06e7b3d
+msgid "Using ToolUniverse directly in Python scripts"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:159
+#: 39cf5091f36b454b8af2a4c18e3c4aa1
+msgid "No external length constraints"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:160
+#: 28e94c42e5664c9bb75e9761da9bee95
+msgid "Want original descriptive names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:162
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:188
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:203
+#: 0acd0837d9514e4cbb99519704e2f16b ab61af0fb350420abfc72df11aeb9c4a
+#: cb23eae04e97415a8bf2d431ab0bec29
+msgid "**Why Not:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:164
+#: b41f6f244ef44a15ac7a30e87f833db6
+msgid "Original names are more readable"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:165
+#: 101d9d19856146a883c16461887a020b
+msgid "No benefit from shortening"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:166
+#: 97ab8605dbf4420bb18a4971bf102395
+msgid "Default behavior (disabled) is correct"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:168
+#: e6896ec16fdd4d53a29b7f5c9f93d64a
+msgid "**Correct Usage:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:180
+#: 1478f324879d4b2eba99cf471c42b4d4
+msgid "Internal Tool Development"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:184
+#: 102b7c6d844246d495566abc57a55a69
+msgid "Developing new tools for ToolUniverse"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:185
+#: 10b2cd65e64d41d1926164fa9d418fd9
+msgid "Writing tool configurations"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:186
+#: 7e486b9b44a74a5b9f38c2c70e97e4b9
+msgid "Creating tool documentation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:190
+#: 18ca886687a94b2991dbbc3e41c2669c
+msgid "Tools should always use full descriptive names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:191
+#: b6c6b9d29aeb4726abef1540ded7cf93
+msgid "Shortening is only for external exposure"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:192
+#: 6b866079299e49949eb526a59c8a4c8a
+msgid "Tool implementations don't need shortened names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:195
+#: 49676d7da88d41a9acc0bfc7146f79d3
+msgid "Tool Discovery and Search"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:199
+#: cf30c9912db84971bfecccbfe49397d6
+msgid "Searching for tools by name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:200
+#: 7ad926c3ce4a46b0a0cdcf3fa62bb2d9
+msgid "Browsing available tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:201
+#: d2bb78dc48dd459d8d742f8cce3863e2
+msgid "Generating tool documentation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:205
+#: 95fcac4449f743099b25c71abffd777c
+msgid "Original names are more meaningful"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:206
+#: ca44795e660649f389483bbc5d104b22
+msgid "Shortened names may be ambiguous"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:207
+#: bd5af8eb70fa49e7a2fb69534c0c876d
+msgid "Discovery should use full descriptive names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:210
+#: 57444e88762247f5870b03a07e3777e0
+msgid "Usage Guide"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:213
+#: a14d581c9237454099ed29284afc7e1c
+msgid "For MCP Users (Automatic)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:215
+#: 987a94b758c04ac189bb815f8d63d3ca
+msgid ""
+"If you're using ToolUniverse through MCP (Claude Desktop, Claude Code, "
+"etc.), name shortening is **automatically enabled**. No configuration "
+"needed!"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:217
+#: d0a2cb1609cc4994a2d38f9332a73ecc
+msgid "**Update your MCP configuration:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:231
+#: 9f851197ae274f508d1f3a10da8f789b
+msgid ""
+"The key ``\"tu\"`` in the configuration becomes the MCP server name in "
+"the prefix ``mcp__tu__``. Change this from ``\"tooluniverse\"`` to "
+"``\"tu\"`` to save 10 characters for tool names!"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:234
+#: 7c65e1b4170c4a29b6f232521aabd76c
+msgid "For Python API Users (Opt-in)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:236
+#: 2d9f194bf30b4db28bd83817f29ac66f
+msgid "If you're using ToolUniverse directly in Python:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:254
+#: 452fa6f585194fddb8571301e94e52bd
+msgid "API Reference"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:257
+#: 91cc94eac9a348938f2a99d13e1372f0
+msgid "ToolUniverse Constructor"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:266
+#: f055df9baa844a02badeafbb2f6af75f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:268
+#: e20e36db3510461482cd5199d03b712b
+msgid ""
+"``enable_name_shortening`` (bool): Enable automatic name shortening. "
+"Default: ``False``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:278
+#: 49379455fa914fa5a88e89ae6eba18db
+msgid "run_one_function()"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:280
+#: 83d2afb976154c6887e78ea7e871e863
+msgid ""
+"Execute a tool function. Automatically accepts both shortened and "
+"original names when shortening is enabled."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:286
+#: e2c2f1111cb340a5bd0d561c71fb6405
+msgid "**Behavior:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:288
+#: 78c8a29821884cc08ef48f631c75eb9c
+msgid ""
+"Accepts both shortened and original names when "
+"``enable_name_shortening=True``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:289
+#: 486278ba74084e4fbe83866ddeaec957
+msgid "Transparently resolves shortened → original"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:290
+#: ed9b6009ce744147838fc493ede1f71c
+msgid "Executes with original name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:313
+#: d6421950227445399891450c3d809a74
+msgid "How It Works"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:316
+#: 754ffa86986443e5adc2c59a3e8f70e8
+msgid "Data Flow"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:318
+#: 26688ea344fd41feaa08592fb90d8d30
+msgid "When you use ToolUniverse with MCP:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:320
+#: 4b527976985c4c2f854af26bc4214f42
+msgid "**User Configuration**: Set server key as ``\"tu\"`` in MCP config"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:321
+#: 105e62b13cbd46558911524f305236d4
+msgid "**SMCP Startup**: Automatically enables shortening"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:322
+#: e8521ed42c21436c98d61676bf9f7338
+msgid "**Tool Exposure**: Each tool name shortened and cached"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:323
+#: 67c4fffe495a494e8667b6cbc15caba6
+msgid ""
+"**MCP Registration**: Tools registered with shortened names (e.g., "
+"``mcp__tu__FDA_get_info_on_cond_for_doct_cons_by_drug_name``)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:324
+#: 2d4cdde585c74056bbffa0c1ba7662c6
+msgid "**User Calls Tool**: MCP client sends full MCP name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:325
+#: 6df2b01e485c46b2a401d355cadb37e4
+msgid "**FastMCP Processing**: Strips prefix, passes shortened name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:326
+#: d6e389d4528444c89b0c652f8721ca7e
+msgid "**Transparent Resolution**: ToolUniverse resolves shortened → original"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:327
+#: f75cf292843644e099d65f722ad699f0
+msgid "**Execution**: Tool executes with original name"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:328
+#: 06796563ae7546cdbf90b2ddc2f6f0c9
+msgid "**Result**: Returns to user"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:331
+#: 56558f5f8b0e4f4bbce20cc2e9ab056a
+msgid "Key Insight"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:334
+#: 04d7badd3256413b95b73196638653a5
+msgid ""
+"**MCP clients see ONLY shortened names**, but **ToolUniverse internally "
+"uses ONLY original names**. Resolution happens transparently in "
+"``run_one_function()``, making the shortening completely invisible to "
+"users!"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:337
+#: 55cfcf3f367b4051ad160dcf39d66e5c
+msgid "Limitations"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:340
+#: ef649609cc884800acde93dca72525e3
+msgid "Known Limitations"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:342
+#: dba9fe5c9a8d4957a1f0eb169f2058ec
+msgid "**Maximum 999 Collisions per Base Name**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:344
+#: 370214099d9e4f248f243112d4d2c0aa
+msgid "Collision handling uses numeric suffixes (``_2``, ``_3``, ..., ``_999``)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:345
+#: 2d964d58beea410281339e95934b0076
+msgid "Extremely unlikely in practice"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:347
+#: 422bd2e490194ae4bd4528d32832e1c3
+msgid "**Shortened Names May Be Ambiguous**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:349
+#: 7f190c65627248668921f1d8c7e38a8c
+msgid "Different full names may shorten to similar results"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:350
+#: 04de90978880433f876f64e649e591eb
+msgid "Collision handling adds suffixes to ensure uniqueness"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:352
+#: 2753b214f4f34b9387a50174fda762dd
+msgid "**No Shortening for Query Methods**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:354
+#: eac5b431011e4abcb7108126ca1b9839
+msgid "Methods like ``get_tool_info()`` still use original names"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:355
+#: fb957ede765a4600a93329f9121b1358
+msgid "No concrete use case for shortened names in queries yet"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:357
+#: 3b57f285fb5c4b25bb3e2115f935c70f
+msgid "**Fixed Shortening Algorithm**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:359
+#: 69da91bb507e4320a8e08e8cc9506e6e
+msgid "Algorithm is deterministic and not customizable per-tool"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:360
+#: 1c3ca5a0a9924a6488013e2759e4309f
+msgid "Designed to preserve meaning while maximizing uniqueness"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:363
+#: 4acd88b9623c466c99b55b8ea2bb3930
+msgid "Edge Cases Handled"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:365
+#: d42e0c4bda1c4e138afd66b4d740a9b4
+msgid ""
+"Collision handling - Numeric suffixes added Very short names - Returned "
+"unchanged Already at limit - Returned unchanged Non-ASCII characters - "
+"Handled correctly Empty strings - Handled gracefully Repeated calls - "
+"Cached for consistency"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:373
+#: 6c9e0cf812a149beb015966569e19d70
+msgid "Performance"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:376
+#: f5823546317643d38bc3a0221184a0ae
+msgid "Time Complexity"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:378
+#: 0b2b32aa81a745279f3df6e572c01542
+msgid "**First shortening:** O(n) where n = name length (~0.001ms)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:379
+#: e066fc81091b4c5bb558f392a84c6706
+msgid "**Cached lookup:** O(1) (~0.0001ms)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:380
+#: 2ea727c36001467e93050a85ed23163c
+msgid "**Resolution:** O(1) dict lookup (~0.0001ms)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:383
+#: 2f6c36452ad24beb945878cef9aba642
+msgid "Space Complexity"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:385
+#: ac909052a69743249f6917e72776ca05
+msgid "**Per mapping:** ~50 bytes"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:386
+#: eaee2ec89cb14df2a6f0d033243abf9c
+msgid "**1000 tools:** ~50KB memory"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:387
+#: aad32bfc78024505b0d1612801ca1a3c
+msgid "**Negligible overhead**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:390
+#: 9bdcf0330c644abda9bc6cb555d72ea0
+msgid "Benchmark Results"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:396
+#: ea148c01f9fc44b2a665ff03f0bf5056
+msgid "Operation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:397
+#: b23ab13cd6b84ddba7753eb8748bafab
+msgid "Time"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:398
+#: af4b26123f604fd08bcf569ac614ecf6
+msgid "Memory"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:399
+#: 77741b695bb848deb5ae3fec3bb41526
+msgid "Shorten tool name (first call)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:400
+#: 2d8c932f80a94e6db98e639857243b0e
+msgid "0.001ms"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:401
+#: dfc89cc28244427d89aa06c051e15ee0
+msgid "50 bytes"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:402
+#: a13662105b244fdc833ff1d3793cdcee
+msgid "Shorten tool name (cached)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:403
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:406
+#: 6987b3bce336471e8374e96555a823e4 cee81f38ec50487998e9662f98836a69
+msgid "0.0001ms"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:404
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:407
+#: 5e125941a83645b8a3c7a754866cd675 81a05c46034949fbb3238a3f4e0f2515
+msgid "0 bytes"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:405
+#: c68383dfe843442e9dc5e1d3039daff3
+msgid "Resolve shortened to original"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:408
+#: c03b023d490c4fda99af558220328e36
+msgid "Total overhead (1000 tools)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:409
+#: 2d3b5b2f7d5c475a91a06ba0e4acdfee
+msgid "<1ms"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:410
+#: 0c0cc475d87e43c29d725a3486f8face
+msgid "<50KB"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:413
+#: fbf616da66f24f78bd34c95461f66ec9
+msgid "Migration Guide"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:416
+#: 277319b8abe84d02bb0fb6659a0d434b
+msgid "For MCP Users"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:418
+#: 73b86d321d2447368fea73850e7f8f1d
+msgid "**Before:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:430
+#: 2200a1b5933847469fe9a7e2751b25fe
+msgid "**After:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:446
+#: c3ad915decfc452db69c7dbede75746a
+msgid "For Python API Users"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:448
+#: fea8b0bc458e494bb0c0511390b3ae60
+msgid ""
+"**No changes required!** Name shortening is opt-in and disabled by "
+"default."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:450
+#: d935b1f30f7b43e69a0c19bbf46d8833
+msgid "**To enable:**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:461
+#: 520b2a6045a3444987a68950f90f019f
+msgid "Testing and Validation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:464
+#: 0a836531418f4c41b9c7d1f7ec6873fa
+msgid "Run Tests"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:471
+#: 90250370c2ea4331b0cd324044523fac
+msgid "Expected Output"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:478
+#: 80f0043dde754ca4a90cf3359fdbe590
+msgid "Validate MCP Compatibility"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:494
+#: a12c8c3ea3c04b6f935990e9c6c4348f
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:497
+#: 07841ac5927f4636bbb45b7d14a7632f
+msgid "Tool Not Found Errors"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:499
+#: 54d9e424ee1e457e898bbfa1df951e93
+msgid "If you get \"tool not found\" errors with shortened names:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:501
+#: 9c4ff6bc766049f589c5625643c99eb4
+msgid "Ensure ``enable_name_shortening=True`` was passed during initialization"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:502
+#: 417e5b1ad1824529b83da9b39a67eb64
+msgid "The tool was loaded (``tu.load_tools()`` called)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:503
+#: a07647ea90a543dcb08a8e57c92516ca
+msgid "The shortened name was generated via ``get_exposed_name()``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:506
+#: db5e4610a03245b5a955e553e40990c1
+msgid "Names Still Too Long"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:508
+#: 2122a8bf41504c8393cc8b4530a45aa3
+msgid "If shortened names still exceed your limit:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:510
+#: c85763ab19274e35891a49e904ca82d9
+msgid "Adjust ``max_length`` parameter in ``get_exposed_name()``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:511
+#: 08227775470e4c9e8b395cb099cee160
+msgid "Consider using a shorter server name in MCP configuration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:512
+#: a04213e0b0684cacba7f31eb977a1b64
+msgid "Check if collision handling added a suffix"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:515
+#: 3f27ea7d1ef345cca4526dc106aac48a
+msgid "Summary"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:518
+#: b9a57e3c1a464397897ba59d6f60f401
+msgid "Key Takeaways"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:520
+#: d7dc4dbdd0e84f5db46e1f4036a167dd
+msgid "**Automatic for MCP** - Works out of the box, no configuration"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:521
+#: 4898d1943ff1439babebb57a36d92bf8
+msgid "**Opt-in for Python** - Enable only when needed"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:522
+#: 45d3a084a7a84227a597e6ea96697f8b
+msgid "**Transparent execution** - Both names work, resolution automatic"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:523
+#: a64769cf8d514ab58c8a962652be430f
+msgid "**Simple implementation** - 380 lines, well-tested"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:524
+#: 556732e8e91c4d6ab0efd8592eeb9675
+msgid "**Production ready** - All tests passing, validated with real tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:527
+#: 372e364da8a64c6e8ed257e55323d2e9
+msgid "When to Use"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:529
+#: b52d6eecc787473cb632de94c9791b4e
+msgid "**MCP integration** (automatic)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:530
+#: 838e1a3cab554eb1aaa28f599cd35bfd
+msgid "**Custom MCP servers** (opt-in)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:531
+#: 22e04f8ed8d64b79b87f89b1ddf13178
+msgid "**External systems with name length limits**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:532
+#: dc11d82d9db64c4bb7ea5d0b089457de
+msgid "**Testing and validation**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:535
+#: 07dee222cc0d4378921ba0927c89b3c7
+msgid "When Not to Use"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:537
+#: 8f64602d2dd64f208c34e09d25cbf546
+msgid "**Direct Python API** (no constraints)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:538
+#: a84d530a4b38494b96da4044e3acee1e
+msgid "**Internal tool development** (use full names)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:539
+#: 5d0d1b39b849445898dfb5fac2e144d4
+msgid "**Tool discovery and search** (full names clearer)"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:540
+#: 69fc767e3d134343b75a449d28609eda
+msgid "**Systems without length constraints**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:543
+#: 06ec4607f73b484cb56b9ea7e5682ea7
+msgid "See Also"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:545
+#: 027c43583f2c47ae9beb03488fea451b
+msgid ":doc:`mcp_support` - Complete MCP integration guide"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:546
+#: 80e8b4c00749412999fc500836abb5e6
+msgid ":doc:`../../api/tooluniverse` - ToolUniverse API reference"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:547
+#: d196259fb4674a508e5dfea8f6812c39
+msgid ":doc:`../tool_caller` - Tool execution documentation"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_name_shortening.rst:550
+#: ce4508c30eda4081b0e60c2b4109bc1d
+msgid ""
+"For complete technical details, see ``NAME_SHORTENING_REPORT.md`` in the "
+"repository root."
+msgstr ""
+

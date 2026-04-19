@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rnacentral_tools.rst:10 a146c856abd34920a1d26520faeb0e79
+msgid "Rnacentral Tools"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:12 1deaf35d340d4eeba1201958480d3642
+msgid ""
+"**Configuration File**: ``rnacentral_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:16 e2b9f7406dfc4bfda0004bdf09af7a3f
+msgid ""
+"This page contains all tools defined in the ``rnacentral_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:19 075bb8b64a45490fa42c3b31ea1562d7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:22 309f5399dd8c4ad99fa6488b90759749
+msgid "**RNAcentral_get_by_accession** (Type: RNAcentralGetTool)"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:24 10ed5f528773486ba7a4aad03ae2cef2
+msgid ""
+"Retrieve a single RNAcentral entry by accession for detailed annotations "
+"and source cross-referen..."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst fe726831404c46ecbc3b7f1b62967e7f
+msgid "RNAcentral_get_by_accession tool specification"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:28 ../../tools/rnacentral_tools.rst:59
+#: e15386b4df264f2091037fa7c838df9d fb41b21a7d024db78fb46eecffd23841
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:30 ff80118aa0784a88a3fd11e28f963587
+msgid "**Name**: ``RNAcentral_get_by_accession``"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:31 74265fe63ee44d79b16f2b3b76f16855
+msgid "**Type**: ``RNAcentralGetTool``"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:32 0860941c6c4443059ca10828932c07fd
+msgid ""
+"**Description**: Retrieve a single RNAcentral entry by accession for "
+"detailed annotations and source cross-references. Use for cross-database "
+"ID mapping and metadata."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:34 ../../tools/rnacentral_tools.rst:65
+#: 07e456064b314d649baa52e5e7447c16 e77e4ca74f974683b50f28a630fb6669
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:36 8d81bf8e890148348411a0ad694e990c
+msgid ""
+"``accession`` (string) (required) RNAcentral accession (e.g., "
+"'URS000075C808')."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:39 ../../tools/rnacentral_tools.rst:73
+#: 3e98ad0331244c1284306b4b87bb57d2 a20cd784877c410eb29e8313e829e05b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:53 242c02e2ecf2478b9e8970515a985f0b
+msgid "**RNAcentral_search** (Type: RNAcentralSearchTool)"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:55 65775226dc574a1dba0d328d26c2aa51
+msgid ""
+"Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across "
+"sources via RNAcentral. Use to..."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst 05f973188a234bf9a1a6d0e67bcfa5f9
+msgid "RNAcentral_search tool specification"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:61 01a407c855b945b983f961ebcc14dcb5
+msgid "**Name**: ``RNAcentral_search``"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:62 d8d8a5cbe2cd4894ac7c5a7632a0ba88
+msgid "**Type**: ``RNAcentralSearchTool``"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:63 df49869b84584d5dbe16d27b8e8756e9
+msgid ""
+"**Description**: Search aggregated ncRNA records (miRNA, rRNA, lncRNA, "
+"etc.) across sources via RNAcentral. Use to find accessions, types, "
+"species, and descriptions for ncRNA analysis."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:67 b1cf1fa817f24d5e95ce527dcffe69af
+msgid ""
+"``query`` (string) (required) Keyword, accession, or sequence-based query"
+" (per RNAcentral API)."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:70 f6777e6b2c6041a8b1ba594dbd7582df
+msgid "``page_size`` (integer) (optional) Number of records per page (1–100)."
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:87 98bddc63f1da4fe6811a404d097a8f8a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:89 04a9350d52774217a2fbf29953fd0070
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rnacentral_tools.rst:90 640d6509f52d431b83153299b07e6448
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

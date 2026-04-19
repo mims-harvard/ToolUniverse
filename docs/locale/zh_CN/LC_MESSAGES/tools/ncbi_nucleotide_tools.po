@@ -1,0 +1,252 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ncbi_nucleotide_tools.rst:10 d90dba2921b14d7791da131f79d27828
+msgid "Ncbi Nucleotide Tools"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:12 70e2385ea53b4e679e47b66b55e6100d
+msgid ""
+"**Configuration File**: ``ncbi_nucleotide_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:16 60fc49d9f7e340369c4ec917a660407b
+msgid ""
+"This page contains all tools defined in the "
+"``ncbi_nucleotide_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:19 31082122e4ed40bbad00aff76d3bf1fa
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:22 b9779a5ddc83449ea68db10d2029b611
+msgid "**NCBI_fetch_accessions** (Type: NCBINucleotideSearchTool)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:24 cc217b1df5b0443c8ab491a715a2240d
+msgid ""
+"Convert GenBank UIDs to accession numbers (U00096, NC\\_045512, etc.). "
+"Takes UIDs from NCBI\\_searc..."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst 82fe46f21c98467bbd690c2646b2dd72
+msgid "NCBI_fetch_accessions tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:28
+#: ../../tools/ncbi_nucleotide_tools.rst:62
+#: ../../tools/ncbi_nucleotide_tools.rst:99 82818a4ea1e2436985afc5e1f99e0269
+#: a507933cb909404f8da3e6a4eac8f82c fca5cdf374aa4910870b1663bbf810de
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:30 687cce4e23874cab8655604049489ea6
+msgid "**Name**: ``NCBI_fetch_accessions``"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:31
+#: ../../tools/ncbi_nucleotide_tools.rst:65
+#: ../../tools/ncbi_nucleotide_tools.rst:102 18cd136878d04faa9eb4f4008d90f4e7
+#: 4c7c5d084349460794d3a64ffc2e48bf 6c95114e333347e5922bb148d8eae24e
+msgid "**Type**: ``NCBINucleotideSearchTool``"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:32 d8caa0073fb344a8bda0bae05b177dbc
+msgid ""
+"**Description**: Convert GenBank UIDs to accession numbers (U00096, "
+"NC\\_045512, etc.). Takes UIDs from NCBI\\_search\\_nucleotide and "
+"returns actual accession numbers that can be used with database tools. "
+"Returns both EMBL/GenBank accessions (U\\*, M\\*, AJ\\*) that work with "
+"ENA Browser tools, and RefSeq accessions (NC\\_\\*, NM\\_\\*) for NCBI "
+"tools. Use this as second step after NCBI\\_search\\_nucleotide to get "
+"usable accession numbers."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:34
+#: ../../tools/ncbi_nucleotide_tools.rst:68
+#: ../../tools/ncbi_nucleotide_tools.rst:105 45c6314f5d9944f19729c8b072bfce50
+#: 858d4305a45b496ca6de3ccbb51a5d1a d3dba4569ffa4a2dbba0e294cc939024
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:36 32b251d603b74500bfc43a2f9f570248
+msgid ""
+"``operation`` (unknown) (optional) Operation type (fixed: "
+"fetch\\_accession)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:39 b484206cbdb446b6b061d92ea665439e
+msgid ""
+"``uids`` (unknown) (required) GenBank UID(s) from "
+"NCBI\\_search\\_nucleotide. Can be single UID or array of UIDs."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:42
+#: ../../tools/ncbi_nucleotide_tools.rst:79
+#: ../../tools/ncbi_nucleotide_tools.rst:134 231adbf912824fd08f6add8cb9f5b9fb
+#: 468a960c0aa945a68d34f662a744250c 5fa8dcf4db7a47c1b3683a97a0937d5a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:56 d50bf5cf35df43458c85690ff1e9ef99
+msgid "**NCBI_get_sequence** (Type: NCBINucleotideSearchTool)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:58 245cbbb6c35b4aa2905c13895123f939
+msgid ""
+"Retrieve DNA/RNA sequence data from NCBI by accession number. Returns "
+"sequences in specified form..."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst b248e3408ee44e46af440ead6ade9789
+msgid "NCBI_get_sequence tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:64 5c3c4235cc3d479ca9015279e3278f45
+msgid "**Name**: ``NCBI_get_sequence``"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:66 078f7d314a624b0695760d20aa8cee0c
+msgid ""
+"**Description**: Retrieve DNA/RNA sequence data from NCBI by accession "
+"number. Returns sequences in specified format (fasta, gb, embl). Works "
+"with both EMBL/GenBank accessions (U00096, M15390) and RefSeq accessions "
+"(NC\\_045512, NM\\_000546). Use this to get actual sequence data after "
+"finding accessions with NCBI\\_search\\_nucleotide. Returns full sequence"
+" with annotations depending on format."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:70 15e4992907f341f1af4826e7944fcc45
+msgid ""
+"``operation`` (unknown) (optional) Operation type (fixed: "
+"fetch\\_sequence)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:73 4fe12ff4d795467da967a8c7b8325425
+msgid ""
+"``accession`` (string) (required) NCBI accession number (e.g., 'U00096', "
+"'NC\\_045512', 'NM\\_000546'). Works with GenBank, EMBL, and RefSeq "
+"accessions."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:76 1aa8cd91cbd44e1cb79e833d8643fdcd
+msgid ""
+"``format`` (string) (optional) Sequence format: 'fasta' for FASTA, 'gb' "
+"for GenBank, 'embl' for EMBL, 'gp' for GenPept protein. Default: fasta"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:93 70ab6f1525c64caca2accb610f7671ed
+msgid "**NCBI_search_nucleotide** (Type: NCBINucleotideSearchTool)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:95 4e12a6155c91455e941350b7f9e91390
+msgid ""
+"Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene "
+"name, or keywords. Return..."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst 92843067d858415192953db70fe6013c
+msgid "NCBI_search_nucleotide tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:101 cf999a02dcac482b80b39cc850091d57
+msgid "**Name**: ``NCBI_search_nucleotide``"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:103 3ced875850ca46c485451398cf6977d6
+msgid ""
+"**Description**: Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by"
+" organism, gene name, or keywords. Returns GenBank UIDs which can be used"
+" to fetch accession numbers. Supports filtering by organism, gene, "
+"strain, sequence type (complete genome, mRNA, RefSeq). Use this to "
+"discover DNA/RNA sequences for specific organisms or genes. Returns both "
+"EMBL/GenBank accessions (U00096, M15390) and RefSeq accessions (NC\\_\\*,"
+" NM\\_\\*). Follow up with NCBI\\_fetch\\_accessions to get actual "
+"accession numbers."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:107 4ee25587337043e19ec4b848f067ff29
+msgid "``operation`` (unknown) (optional) Operation type (fixed: search)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:110 5ff7c621d57b4ea993c3de76b2666ec7
+msgid ""
+"``organism`` (string) (optional) Organism name to search (e.g., "
+"'Escherichia coli', 'Homo sapiens'). Searches in [Organism] field."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:113 f455d8077d4746aa9dee85e34a9b56e7
+msgid ""
+"``gene`` (string) (optional) Gene name to search (e.g., 'BRCA1', 'TP53')."
+" Searches in [Gene] field."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:116 21720adf54db4315966f83268b06f7b1
+msgid ""
+"``strain`` (string) (optional) Strain name to filter (e.g., 'K-12', "
+"'MG1655'). Searches in [Strain] field."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:119 c12c86637d8f43fe9f217c19c62bf104
+msgid ""
+"``keywords`` (string) (optional) Keywords to search in titles (e.g., "
+"'complete genome', 'mitochondrial'). Searches in [Title] field."
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:122 fddc0fdaf8d4473e9e721dda209262fd
+msgid ""
+"``seq_type`` (string) (optional) Sequence type filter: "
+"'complete\\_genome' for complete genomes, 'mrna' for mRNA sequences, "
+"'refseq' for RefSeq curated sequences"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:125 3c3a2ee9c0c141258847e5c950fb9544
+msgid ""
+"``query`` (string) (optional) Free-form search query if not using "
+"structured filters. Use NCBI query syntax (e.g., '(Escherichia "
+"coli[Organism]) AND (K-12[Strain])')"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:128 663972ad2df34ec288162e1f1b0ea390
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:131 7dc3cd43ef20400fb53c1900ab68606b
+msgid "``sort`` (string) (optional) Sort order for results (default: relevance)"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:147 254d9547c90f4c0f97a9ba047c67f0bd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:149 bab442bf063f471d92572746984b046f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ncbi_nucleotide_tools.rst:150 e7bdf33f47b9436c93c478138e3245e7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

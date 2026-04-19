@@ -1,0 +1,442 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/agentic_tools_tutorial.rst:3 991af88c2fb64f36ae855111fda7e53a
+msgid "Agentic Tools Tutorial"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:5 a9b5e179115042aea290a4f89a959455
+msgid "**Learn to build and use AI-powered tools in ToolUniverse**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:8 c8c0868474cf4015ac1b646c72c8ac6b
+msgid "What You'll Learn"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:10 f229324f1b0c427298334695275d32e0
+msgid "By the end of this tutorial, you'll be able to:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:12 662e2f4cf6234f80936e3289be35b0d6
+msgid ""
+"Understand what agentic tools are and when to use them Create your own "
+"agentic tool from scratch Configure LLM settings for optimal performance "
+"Load and execute agentic tools in your workflows Handle errors and "
+"troubleshoot common issues"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:19 d90a305ac34649cc86d9c777e821c6fc
+msgid "What are Agentic Tools?"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:21 607b539275ac4b9799784e348860aeea
+msgid ""
+"**Agentic Tools** are AI-powered tools that use Large Language Models "
+"(LLMs) to perform tasks requiring human-like reasoning, analysis, and "
+"creativity. Unlike traditional computational tools that follow fixed "
+"algorithms, agentic tools use natural language prompts to Tutorial AI "
+"models."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:23 69ec5930f0d24af185b480ddc116958b
+msgid ""
+"**Perfect for**: Text analysis, research synthesis, creative writing, "
+"code review, hypothesis generation"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:25 1b78a807ce524da7aa3e7f55c7f26b8e
+msgid ""
+"**Not suitable for**: Mathematical calculations, API calls, file "
+"processing, deterministic algorithms"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:28 f3bfcfbfc2df4ebfbf67ed3312f14824
+msgid "Step 1: Understand the Components"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:30 816c8a5bd471430faeeceac9d9107fa8
+msgid "Every agentic tool has 5 essential parts:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:32 10e19a9d41a34ff5a4cf4271065d1e8a
+msgid "1️⃣ **Tool Metadata**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:33 138616057d6a43c0b102f7454fc22a1e
+msgid "Name and description"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:34 5c0dbb76fb844d7ca1a850f23510a6b0
+msgid "Tool type identifier"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:36 354b540a11564a60aea9db517b574442
+msgid "2️⃣ **Prompt Template**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:37 b4283ee250d6415eb6c335d774905d83
+msgid "Natural language instructions"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:38 8e6cf71c01fa4348924df367bb6dbcc5
+msgid "Placeholders for user inputs"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:40 1486f8b450a84fdc95772a6b22c7070a
+msgid "3️⃣ **Input Parameters**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:41 852f048e90ae46d497f2efe3a28f662e
+msgid "What users need to provide"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:42 3ddb4376547a417da22272803457d6b2
+msgid "Validation rules and descriptions"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:44 c93f1918303541c28cee9a3ef6d8dfb1
+msgid "4️⃣ **LLM Configuration**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:45 70211fbc84524593888e8446fbd3f485
+msgid "Which AI model to use"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:46 3a5375fc6a3b412e9fb156dddd8179d3
+msgid "Settings like temperature and response length"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:48 7a32edfb724241e8be3e4402595ae420
+msgid "5️⃣ **Response Handling**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:49 6a017531341444b0b4d9766376413502
+msgid "Text or structured JSON output"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:50 89082abf8d9a4638bbcd97dc16e3036f
+msgid "Metadata about execution"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:53 76437d5e17914678a177b0d9ce611975
+msgid "Step 2: Choose Your LLM Provider"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:55 a58cfe43708f4b3d89db52e9ef333946
+msgid "ToolUniverse supports these AI providers:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:57 87cb105e3cbc49bb975e2bd4e95da43d
+msgid "**OpenAI/Azure OpenAI**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:58 0d7ea573d05f4836bb9d5cd43b09d3df
+msgid "Models: GPT-4, GPT-4o, o1-mini, o1-preview"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:59 35f9889ad46a4ccb9032d224beb8c4c6
+msgid "Configuration: Set ``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:61 5f7e015887b842bbb5288d69325cb52d
+msgid "**Google Gemini**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:62 3f2e8dad5a7a4a8b83d0f38e7a1cc6a0
+msgid "Models: Gemini 2.0 Flash, Gemini 2.5 Pro"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:63 781d470a1b5f45bba3a23be62af6f3ed
+msgid "Configuration: Set ``GEMINI_API_KEY``"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:65 d20b55331e8d423583c1b34193b85368
+msgid "**OpenRouter**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:66 ded63b4f7a454dac84ec1cbe3631a1e4
+msgid "Access to multiple providers through one API"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:67 a3b74db161544846a0b4a4427d4ddff6
+msgid "Models: GPT-5, Claude Sonnet 4.5, and more"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:68 45a10d3c57c84f80b94e211d2c24e1e0
+msgid "Configuration: Set ``OPENROUTER_API_KEY``"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:69 4eeb393fc7894edd82d297d284ca72e8
+msgid "See :doc:`../guide/openrouter_support` for details"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:71 ad7532a2e99c40a38549f5fd2ae4a877
+msgid "**vLLM (Self-Hosted)**"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:72 7977e1ed2d7c403bb99fb84b8cff5160
+msgid "Run models on your own infrastructure"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:73 8f4b91666231466fa6f1dd78efcde5df
+msgid "Models: Any model supported by vLLM (Llama, Mistral, Qwen, etc.)"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:74 498dbdcfa5f54ca0ac17208101e6f453
+msgid "Configuration: Set ``VLLM_SERVER_URL``"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:75 6286e76a105348f99218f765a9707a55
+msgid "See :doc:`../guide/openrouter_support` for LLM provider configuration"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:79 67cebfc743354f1783dd6bd80063271f
+msgid "Step 3: Create Your First Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:81 590720ec13184adabed365861d96872b
+msgid "Let's build a scientific text summarizer step by step."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:84 2b3812b9c05a49e1976f40684193cc6b
+msgid "3.1 Start with the Basic Structure"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:86 b1e06578c7c5410f999d81def7b09e08
+msgid "Create a JSON file with this foundation:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:101 c379e1f286544250ab0830bb7e48f646
+msgid "3.2 Add Tool Identification"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:103 595bda1bd3234509ba74dd615ee963e2
+msgid "Fill in the basic tool information:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:114 01d4cc2cc86a4815952d1d74318ab074
+msgid "3.3 Design Your Prompt"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:116 eed46f29773f4571b6fdc58218e70991
+msgid "Create instructions for the AI with placeholders for user inputs:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:124 186176d3305844ea8b405b67dd4c556a
+#, python-brace-format
+msgid ""
+"**Key Tips**: - Use descriptive placeholders: ``{text}``, "
+"``{summary_length}`` - Give specific output instructions"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:129 06fcdb6a8812458688194cac1abfc881
+msgid "3.4 Define Input Parameters"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:131 31e40d303e9d490198e541dcabe96311
+msgid "List what users need to provide:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:140 9ba7ec0780ab40438aa3632ca8d44ae6
+msgid "3.5 Create Parameter Schema"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:142 1e54fc73bea4473da2ed5eb15aba8989
+msgid "Define validation rules and descriptions:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:171 4ab490822b5c4820968b23f4c54cf512
+msgid "3.6 Configure the LLM"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:173 898ae26f25944977af51cdafcf88dfa0
+msgid "Set up AI model settings:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:186 df3ed4484c3844b6844a2ef910e1fa20
+msgid "**Configuration Options**:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:188 15e2c92054384907b953194a0b9d6b63
+msgid "``api_type``: \"CHATGPT\", \"GEMINI\", \"OPENROUTER\", or \"VLLM\""
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:189 449d3794a1a6410895c446f5fa337cf3
+msgid "``model_id``: Choose your model (see Step 2)"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:190 c925a7f214c54a09938222dd696e98b9
+msgid "For vLLM: Must match the model name loaded on your vLLM server"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:191 d9c240dd35a7455aacfaa2acc1e69fe6
+msgid "Set ``VLLM_SERVER_URL`` environment variable when using vLLM"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:192 e502b66415a8434cae917cd55c67d622
+msgid "``temperature``: 0.0-2.0 (higher = more creative)"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:193 17b9c6495adc4f1aba6d931ea1d72630
+msgid "``return_json``: true for structured data, false for text"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:195 23df9cf747b647f0adfe14118dd2b026
+msgid ""
+"**Using vLLM**: Set ``api_type: \"VLLM\"`` and ensure ``VLLM_SERVER_URL``"
+" is set. See :doc:`../guide/vllm_support` for complete setup guide."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:198 422970d39a704f2c947a9f01056533e6
+msgid "3.7 Complete Tool Example"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:200 90417939e4804b66933b4cd0b08573e4
+msgid "Here's your finished tool:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:240 1c53b1cb11d54753a95418f5948eba2a
+msgid "Step 4: Save Your Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:243 91d9278c8c3d445dbe6b591329cf7a58
+msgid "4.1 Save as JSON File"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:245 105df96d7eda491b89eafb3fd4c10f87
+msgid "Save your tool configuration as a `.json` file:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:253 ba4f82bcdc1f4c54bb2b891cc3161f8b
+msgid ""
+"Then create `scientific_summarizer.json` and paste your complete tool "
+"configuration from Step 3.7:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:266 6537f712921e4aebb6b8a1806d13a636
+msgid "4.2 Important Notes"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:268 969e75dc722640ec9f2d18c38fdf6a3f
+msgid ""
+"**Key Point**: When loading from custom config files, you need to specify"
+" which tools to actually load using `include_tools` parameter."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:270 f76d22b4b6254af89d8be594bbeac934
+msgid ""
+"The config file only makes tools *available* - you still need to tell "
+"ToolUniverse which specific tools to load from that file."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:273 311d7de6783c4cc489e31d24bcec8d8d
+msgid "**Alternative**: Add to Built-in Collection"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:275 1474c3021007436da3287423dc74bbc9
+msgid ""
+"You can also add your tool to ToolUniverse's built-in agentic tools "
+"collection:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:283 6a089219a99a403aba4dfd63c4ad10de
+msgid "Step 5: Use Your Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:286 f51bba947aeb4ed982961bb74afd9d6c
+msgid "5.1 Set Up Environment"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:288 d2f2f586d63446e392cc63e159177350
+msgid "First, ensure you have API keys configured:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:300 47d25c25f9734b8f9c17d0554894360c
+msgid "5.2 Load Your Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:302 af07447b581f4989b7ea9d45281e4c2b
+msgid "Import ToolUniverse and load your specific tool from the config file:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:331 9825b0972d8b4f3b8132e58a2f49d153
+msgid "5.3 Prepare Your Input"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:333 048b805c1d31412ea1f063a2284d5d8c
+msgid "Create the arguments dictionary:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:350 5c911896f4c5467ea4d67dc2e11640e9
+msgid "5.4 Execute the Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:352 a61fc27bed5044b89ea599233a0912fb
+msgid "Run your tool and handle the response:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:370 35cf8a6f5bd24910ae0345abc7ce670c
+msgid "Step 6: Handle Common Issues"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:373 f313a34c086c4942ad805e021bc37a09
+msgid "6.1 Check for Missing API Keys"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:375 0b18d7bebe8e4b04b25f1cff2584365f
+msgid "If you get authentication errors:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:388 575cf40b956a4bb3a427891f97a431a8
+msgid "6.2 Debug Response Issues"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:390 4018cf6df1774b51b86a1eb0305764a6
+msgid "If the tool returns unexpected results:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:408 5bd03d28f7004a9db541cc75d092de8f
+msgid "Step 7: Create More Complex Tools"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:411 f1ddaa31db7a4aca8b801a4cf088d2b9
+msgid "7.1 JSON Response Tool"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:413 a8d354d1548440b1b7e43b7006507818
+msgid "Create a tool that returns structured data:"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:442 07b88308859c4ad0bacf4abd0fe8a0a7
+msgid ""
+"**Key difference**: Set ``\"return_json\": true`` for structured "
+"responses."
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:445 f75d9509fe5c465d8a9f780fa92e9b5f
+msgid "7.2 Tool with Optional Parameters"
+msgstr ""
+
+#: ../../guide/agentic_tools_tutorial.rst:447 d6756df778144121bacf99194aae896c
+msgid "Create a tool with both required and optional inputs:"
+msgstr ""
+

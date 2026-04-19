@@ -1,0 +1,235 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ucsc_genome_tools.rst:10 45432599d3214024b07c8ff9d3d838ac
+msgid "Ucsc Genome Tools"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:12 dd670953e65d4cfbabbcf5f23c8a87fd
+msgid ""
+"**Configuration File**: ``ucsc_genome_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:16 2791785eace8450388335232d9631e23
+msgid ""
+"This page contains all tools defined in the ``ucsc_genome_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:19 1f7fa69982d94bd58c201476607c7f18
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:22 013b5abd9e65496783961dd944ac7cb0
+msgid "**UCSC_get_sequence** (Type: UCSCGenomeTool)"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:24 9d62806b42c340308e0f91d80e8c9a84
+msgid ""
+"Get DNA sequence from the UCSC Genome Browser for a specified genomic "
+"region. Returns the nucleot..."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst 138eacb7cc7d402d986ba039356dddfb
+msgid "UCSC_get_sequence tool specification"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:28 ../../tools/ucsc_genome_tools.rst:71
+#: ../../tools/ucsc_genome_tools.rst:121 44454bc9b8334fef8865c21e6f5cac56
+#: 74ffb717c8bf4df0a4f648acfe2bd893 e8968a2d47174d03b14025b48dbb8e10
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:30 c47a76678e404fd6a678ff78c7b6ec97
+msgid "**Name**: ``UCSC_get_sequence``"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:31 ../../tools/ucsc_genome_tools.rst:74
+#: ../../tools/ucsc_genome_tools.rst:124 a72c17afe7b64f4f96c09f82c91c094a
+#: b251483ad9d0412495c8d3522692fb9c ebea2a172e7544a0a543afb3f4e5caa1
+msgid "**Type**: ``UCSCGenomeTool``"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:32 44da8f4c07454791b7b0ef342ebadf0f
+msgid ""
+"**Description**: Get DNA sequence from the UCSC Genome Browser for a "
+"specified genomic region. Returns the nucleotide sequence for a given "
+"chromosome, start, and end position in a genome assembly. Useful for "
+"primer design, sequence analysis, and regulatory element inspection. "
+"Example: hg38, chr17, start=7668421, end=7668521 returns 100bp of TP53 "
+"sequence."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:34 ../../tools/ucsc_genome_tools.rst:77
+#: ../../tools/ucsc_genome_tools.rst:127 2754bd864a014804b4562b54877c38c7
+#: 4e9f74f9f3fb44238741a6623150d05e 60194894543044beb50e2e839fe5d405
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:36 b1f20cb744bc4d9a84f5faa198423e19
+msgid ""
+"``genome`` (string) (required) UCSC genome assembly identifier. Examples:"
+" 'hg38' (human), 'mm39' (mouse), 'dm6' (fly), 'sacCer3' (yeast)."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:39 b071e1634283482dbd98022c50050e3c
+msgid ""
+"``chrom`` (string) (required) Chromosome name. Examples: 'chr1', 'chr17',"
+" 'chrX', 'chrM'."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:42 883216abf596433f90c3968f6b1ca29b
+msgid ""
+"``start`` (integer) (required) 0-based start position (inclusive). "
+"Example: 7668421."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:45 906fb4917f3b4be4a83fb09cb6f4606a
+msgid ""
+"``end`` (integer) (required) End position (exclusive). Must be > start "
+"and span <= 100000 bp. Example: 7668521."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:48 ../../tools/ucsc_genome_tools.rst:97
+#: ../../tools/ucsc_genome_tools.rst:135 52380f10017c4f838d3e952e0c30036f
+#: 542fbbbb19064e74ae608dcc82b301a1 670bacf3713d4a42933ebac82f4b5ecc
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:65 f1ede02900b84e879b99fe20df2156a8
+msgid "**UCSC_get_track** (Type: UCSCGenomeTool)"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:67 9a9e1af4833d4997bf6b1d7b8829fb3f
+msgid ""
+"Get annotation track data from the UCSC Genome Browser for a specified "
+"genomic region. Retrieves ..."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst 0221284bf5bb428fb7519f1dcabdd9c8
+msgid "UCSC_get_track tool specification"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:73 ef99c6d8919044ba9ab4e99f3cb17ae9
+msgid "**Name**: ``UCSC_get_track``"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:75 b150c3123c684c428565acd70e1387a8
+msgid ""
+"**Description**: Get annotation track data from the UCSC Genome Browser "
+"for a specified genomic region. Retrieves features like genes, regulatory"
+" elements, conservation scores, variants, or repeats from any of UCSC's "
+"370+ tracks. Use UCSC\\_search first to find the genomic coordinates of "
+"your gene of interest. Example: track 'knownGene' on hg38 "
+"chr17:7668421-7687490 returns GENCODE gene annotations for the TP53 "
+"region."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:79 970efd4a4a3a4ce88e6f3970ec410171
+msgid ""
+"``genome`` (string) (required) UCSC genome assembly. Examples: 'hg38', "
+"'hg19', 'mm39'."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:82 ac99028fd0594b69a156460770052ade
+msgid ""
+"``track`` (string) (required) Track name. Common tracks: 'knownGene' "
+"(GENCODE genes), 'ncbiRefSeq' (RefSeq), 'snp151' (dbSNP), "
+"'encodeCcreCombined' (ENCODE cCREs), 'phastCons100way' (conservation), "
+"'rmsk' (repeats)."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:85 3e5eba32f7904721b3118d2d24e766aa
+msgid ""
+"``chrom`` (string) (required) Chromosome name. Examples: 'chr1', 'chr17',"
+" 'chrX'."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:88 d4cc9b605c384150843bb7d30cb6a317
+msgid "``start`` (integer) (required) 0-based start position (inclusive)."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:91 2c8833a5600646eb9e510f5da7f3de4c
+msgid "``end`` (integer) (required) End position (exclusive). Must be > start."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:94 ca11ecc09aba426eb18cd803c9c5faf6
+msgid ""
+"``maxItemsOutput`` (integer, null) (optional) Maximum number of items to "
+"return. Default: 100. Set to limit large result sets."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:115 2ae0bcc2f2e54efe873fe580c45d807d
+msgid "**UCSC_search** (Type: UCSCGenomeTool)"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:117 fd5a296042f040b984d542f4fa7accea
+msgid ""
+"Search the UCSC Genome Browser for genes, transcripts, or genomic "
+"features by name. Returns posit..."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst 4dcc1021de1d4f3db7407597e4dfba1c
+msgid "UCSC_search tool specification"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:123 a5a8b4b3f73b47bcab2daf7f383ae899
+msgid "**Name**: ``UCSC_search``"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:125 15ca921cb66644029aa57c4024cc7b9e
+msgid ""
+"**Description**: Search the UCSC Genome Browser for genes, transcripts, "
+"or genomic features by name. Returns position matches across tracks "
+"(MANE, RefSeq, GENCODE, HGNC, etc.) for a given genome assembly. Supports"
+" searching for gene symbols, transcript IDs, SNP rsIDs, or chromosomal "
+"bands. Example: searching 'TP53' in hg38 returns chr17:7668421-7687490 "
+"from MANE Select and other tracks."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:129 6481c3004d954a66b2d3f20bbfbfe5c6
+msgid ""
+"``search_term`` (string) (required) Gene symbol, transcript ID, SNP rsID,"
+" or genomic feature to search. Examples: 'TP53', 'BRCA1', 'rs429358', "
+"'ENST00000269305'."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:132 c238b04ddc59434996ee395de8c6d095
+msgid ""
+"``genome`` (string) (optional) UCSC genome assembly identifier. Default: "
+"'hg38'. Others: 'hg19', 'mm10', 'mm39', 'dm6', 'ce11', 'danRer11', "
+"'sacCer3'."
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:149 56d7e69a7a784e63a08418bf598c69d2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:151 9f2ac110d3354663a31ecc9b6ed568df
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ucsc_genome_tools.rst:152 10905f16dde1448f82b524be0a32f194
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/depmap_tools.rst:2 2dd1625abc0d4428b897b2a7812c34fb
+#: ../../tools/depmap_tools.rst:10 141a6bd150ca4e08834d82bd45fef8c7
 msgid "Depmap Tools"
 msgstr "Depmap 工具"
 
-#: ../../tools/depmap_tools.rst:4 d179937b94d24bde98d056389986304e
+#: ../../tools/depmap_tools.rst:12 ecb27c885af642df878ba25079504acf
 msgid ""
 "**Configuration File**: ``remote_tools/depmap_tools.json`` **Tool Type**:"
 " Remote **Tools Count**: 1"
@@ -33,43 +33,43 @@ msgstr ""
 "**工具类型**：远程  \n"
 "**工具数量**：1"
 
-#: ../../tools/depmap_tools.rst:8 16e4fb575a66447caef16eaf7b823b3b
+#: ../../tools/depmap_tools.rst:16 8f6678a1648c4276a2e31809b6fdf6c7
 msgid ""
 "This page contains all tools defined in the ``depmap_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``depmap_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/depmap_tools.rst:11 899b05eef0614c34a83970e98cfda366
+#: ../../tools/depmap_tools.rst:19 0848e7981b2a42948233d14feb59d9fb
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/depmap_tools.rst:14 0df3a82b5fd74296b1bc06dbbd904777
+#: ../../tools/depmap_tools.rst:22 28c60c5aa41c4b3f81b52d8ef9762bf1
 msgid "**compute_depmap24q2_gene_correlations** (Type: RemoteTool)"
 msgstr "**compute_depmap24q2_gene_correlations**（类型：远程工具）"
 
-#: ../../tools/depmap_tools.rst:16 d195265a6a9a48fbb756ee6a3aeaa578
+#: ../../tools/depmap_tools.rst:24 83e6ea7c853548a3850cc72d353ee599
 msgid ""
 "Analyzes gene-gene correlations from DepMap CRISPR knockout screening "
 "data. This tool validates g..."
 msgstr "分析来自DepMap CRISPR基因敲除筛选数据的基因间相关性。该工具用于验证g..."
 
-#: ../../tools/depmap_tools.rst 558de6b01de84809b0438e95fd970647
+#: ../../tools/depmap_tools.rst a582619baafc44f5b32cf19ce2407055
 msgid "compute_depmap24q2_gene_correlations tool specification"
 msgstr "compute_depmap24q2_gene_correlations 工具规格说明"
 
-#: ../../tools/depmap_tools.rst:20 4c0262077d8545e692c4bdae6410174a
+#: ../../tools/depmap_tools.rst:28 53a65625f79c46c79036b158f47db232
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/depmap_tools.rst:22 059ffe51b5c74145aec82a3a78d7c50d
+#: ../../tools/depmap_tools.rst:30 231cb48ff9664a299e4f045e0e30944f
 msgid "**Name**: ``compute_depmap24q2_gene_correlations``"
 msgstr "**名称**：``compute_depmap24q2_gene_correlations``"
 
-#: ../../tools/depmap_tools.rst:23 e34693680dc242c995844e37df960cab
+#: ../../tools/depmap_tools.rst:31 31056f38979c46e581b450f6bbeb6b1d
 msgid "**Type**: ``RemoteTool``"
 msgstr "**类型**：``RemoteTool``"
 
-#: ../../tools/depmap_tools.rst:24 7dc140830f1c4d6cbe84f8a3570f24ec
+#: ../../tools/depmap_tools.rst:32 591fe4e980314704984c4c5cb2d015d1
 msgid ""
 "**Description**: Analyzes gene-gene correlations from DepMap CRISPR "
 "knockout screening data. This tool validates genetic interactions using "
@@ -81,45 +81,45 @@ msgstr ""
 "**描述**：分析来自DepMap CRISPR敲除筛选数据的基因-基因相关性。本工具使用DepMap "
 "24Q2数据集中1,320多个癌细胞系的实证细胞活力数据验证基因交互作用。它能够判断两个基因的敲除效应是否相关，从而提供关于基因依赖性和合成致死关系的见解。"
 
-#: ../../tools/depmap_tools.rst:26 6b0ac59da2bb4db7b74e13753a8cd1f5
+#: ../../tools/depmap_tools.rst:34 6af00eb4173e496aa1853233f3400732
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/depmap_tools.rst:28 5aaf8ea2719248d898f6d3ba30b645b8
+#: ../../tools/depmap_tools.rst:36 2408d11656e6455ba0c9800e98a5acd8
 msgid ""
 "``gene_a`` (string) (required) First gene symbol for correlation analysis"
 " (e.g., 'BRAF', 'TP53'). Must use standard HUGO gene nomenclature."
 msgstr "``gene_a``（字符串）（必填）用于相关性分析的第一个基因符号（例如：'BRAF'、'TP53'）。必须使用标准的HUGO基因命名法。"
 
-#: ../../tools/depmap_tools.rst:31 122ec370b70c46019b4a18898d9bbe5b
+#: ../../tools/depmap_tools.rst:39 861ff56a3ad244f58db4304563afbb65
 msgid ""
 "``gene_b`` (string) (required) Second gene symbol for correlation "
 "analysis (e.g., 'MAPK1', 'MDM2'). Must use standard HUGO gene "
 "nomenclature."
 msgstr "``gene_b``（字符串）（必填）用于相关性分析的第二个基因符号（例如：'MAPK1'、'MDM2'）。必须使用标准的HUGO基因命名法。"
 
-#: ../../tools/depmap_tools.rst:34 48342c6872084711a48df876d0075c15
+#: ../../tools/depmap_tools.rst:42 6292b856470e4990b4aba6916e7e5a54
 #, fuzzy
 msgid ""
-"``data_dir`` (string) (required) Path to directory containing DepMap "
-"correlation matrices. If None, uses DEPMAP_DATA_PATH/depmap_24q2."
+"``data_dir`` (string) (optional) Path to directory containing DepMap "
+"correlation matrices. If None, uses DEPMAP\\_DATA\\_PATH/depmap\\_24q2."
 msgstr ""
 "``data_dir``（字符串）（可选）包含 DepMap 相关矩阵的目录路径。如果为 None，则使用 "
 "DEPMAP_DATA_PATH/depmap_24q2。"
 
-#: ../../tools/depmap_tools.rst:37 02c52c90f48b4173bc5fb22942709668
+#: ../../tools/depmap_tools.rst:45 a4fa0686c45544aebe38f313623a7f14
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/depmap_tools.rst:53 79ea52e0f58c4a3faa4aa7e1bf523288
+#: ../../tools/depmap_tools.rst:60 770f3f99e5144a949688856be41ccaaa
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/depmap_tools.rst:55 848d69aef0f4457eb877edb590b98cd5
+#: ../../tools/depmap_tools.rst:62 67942f8238c34f82ad42286b06680745
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/depmap_tools.rst:56 87ea7c8e87654f999e954121885fcbf3
+#: ../../tools/depmap_tools.rst:63 04df6575b060412e8bea650398c18640
 msgid ":doc:`remote_tools` - Remote Tools Setup"
 msgstr ":doc:`remote_tools` - 远程工具设置"
 

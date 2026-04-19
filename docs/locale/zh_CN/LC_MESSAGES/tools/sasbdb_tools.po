@@ -1,0 +1,284 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sasbdb_tools.rst:10 a09fced9de0b44768ecb362d2aba9be9
+msgid "Sasbdb Tools"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:12 2eb20a1b2213408885b7c8ee48603198
+msgid ""
+"**Configuration File**: ``sasbdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:16 2cd7b011501b40dc9dbd63cc4baf50f3
+msgid ""
+"This page contains all tools defined in the ``sasbdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:19 297ca5f563d3409f904252bc7e06c6b7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:22 369d18ce8c1a4805bf9bee2d71cc8cbc
+msgid "**SASBDB_get_entries_by_tag** (Type: SASBDBRESTTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:24 c1f859101e25479a99f07634927e7d6f
+msgid ""
+"Find SASBDB small-angle scattering entries associated with a specific tag"
+" shortcode. See https://..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst 4a08f957b0c44339a462bf1343e98a2a
+msgid "SASBDB_get_entries_by_tag tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:28 ../../tools/sasbdb_tools.rst:59
+#: ../../tools/sasbdb_tools.rst:90 ../../tools/sasbdb_tools.rst:121
+#: ../../tools/sasbdb_tools.rst:150 ../../tools/sasbdb_tools.rst:181
+#: 1768380d0e004029845fa54a1a809e42 2eccba3da0474f08bde6b93728c18781
+#: 308ad2700bad4b778b962d0fbeb767b1 70c15ea23d49471a8b026f9e1e6c6350
+#: 8d8227cf91f742d28434cdaeee698b3c b0d87801b23e4613bfdad320f518ca3f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:30 0ed8b3c238884bd8b33b049a7c2c517e
+msgid "**Name**: ``SASBDB_get_entries_by_tag``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:31 ../../tools/sasbdb_tools.rst:62
+#: ../../tools/sasbdb_tools.rst:93 ../../tools/sasbdb_tools.rst:124
+#: 2258bfc722c24a1d8361ca2a853cd363 2ac0792428ed4fbcb4b92c9aeef1f089
+#: 5375e4fe7afe42a6a79e8648b740ac82 7f2d4e92ea47402690ced21fce8576b4
+msgid "**Type**: ``SASBDBRESTTool``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:32 a9028775f1d34a6dbec70537b22bc99e
+msgid ""
+"**Description**: Find SASBDB small-angle scattering entries associated "
+"with a specific tag shortcode. See https://www.sasbdb.org/tags/ for valid"
+" tags."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:34 ../../tools/sasbdb_tools.rst:65
+#: ../../tools/sasbdb_tools.rst:96 ../../tools/sasbdb_tools.rst:127
+#: ../../tools/sasbdb_tools.rst:156 ../../tools/sasbdb_tools.rst:187
+#: 2cc225d4d5f84ebf8562e7629d38fd5d 2cc9c1def4c0435690ee0bb0ab1b89ab
+#: 3d80414ffd2f4acc8809a9074142f99a b01cb986566940d5a0ce28551894d323
+#: c892e105aed64866bec9fc7689b40680 ebf903820eb248c2badfda127bcdec1e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:36 2d3ea3474d9643e39a0018ad1315a56a
+msgid ""
+"``tag`` (string) (required) Tag shortcode to search for (e.g. 'idp' for "
+"intrinsically disordered proteins, 'sans', 'waxs', 'benchmark', "
+"'softmatter')"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:39 ../../tools/sasbdb_tools.rst:70
+#: ../../tools/sasbdb_tools.rst:101 ../../tools/sasbdb_tools.rst:131
+#: ../../tools/sasbdb_tools.rst:161 ../../tools/sasbdb_tools.rst:192
+#: 18264d41e82348b3ab6190c20e48f4a2 214157336cb649178cd9c873dcb5eaa9
+#: 3631f8490cf347bf85130eff93d19a7d ad35f9fd24454bbb88f968bc29bb65a5
+#: d5e6ff89c24c4694ba62808e66a03f9f ed448de23d6b4f178a8d9b49e8eccf75
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:53 0e62c4cb71e249eabbd3cc0f9029b03d
+msgid "**SASBDB_get_entries_by_uniprot** (Type: SASBDBRESTTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:55 10167f2306df4948a2b1bd0abdffd02d
+msgid ""
+"Find SASBDB small-angle scattering entries associated with a UniProt "
+"protein accession. Returns l..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst 92be4f1fc6e14f939d05dfebececdf98
+msgid "SASBDB_get_entries_by_uniprot tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:61 098f418e45464a4b9acc753fd9848ca4
+msgid "**Name**: ``SASBDB_get_entries_by_uniprot``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:63 408d5bee064144ae90d7ff607ed9120a
+msgid ""
+"**Description**: Find SASBDB small-angle scattering entries associated "
+"with a UniProt protein accession. Returns list of matching SASBDB entry "
+"codes."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:67 624a924ae83944ac8294ea6bb9ad67d3
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession (e.g. P00698 for "
+"lysozyme, P68871 for hemoglobin)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:84 946f92500cf7409b93b8b8fffc7ae64e
+msgid "**SASBDB_get_entry** (Type: SASBDBRESTTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:86 46fa5b970abf480d875286bfddb35da9
+msgid ""
+"Get detailed metadata for a SASBDB small-angle scattering entry by its "
+"accession code. Returns ex..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst 2da9cd87f9354c6eb9bbe4e2216b771f
+msgid "SASBDB_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:92 79e8853e429b42d3a1498217e7e1c166
+msgid "**Name**: ``SASBDB_get_entry``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:94 f9053f6f96104159a9b7ea4c129ae806
+msgid ""
+"**Description**: Get detailed metadata for a SASBDB small-angle "
+"scattering entry by its accession code. Returns experimental conditions, "
+"publication info, data file URLs, and analysis results."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:98 62bc188f7dd94345a7e531142cf8f627
+msgid ""
+"``sasbdb_id`` (string) (required) SASBDB accession code (e.g. SASDCZ9, "
+"SASDFZ9)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:115 b3a00350b50b450eb67c7285a21a8112
+msgid "**SASBDB_list_instruments** (Type: SASBDBRESTTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:117 eef3b562a87a4182a1e181d774631d1d
+msgid ""
+"List all beamlines and instruments in the SASBDB database used for small-"
+"angle scattering experim..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst 27cc622812f149c98fac5c7b08879c39
+msgid "SASBDB_list_instruments tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:123 c9fc44cd27094c419904a052c8306a03
+msgid "**Name**: ``SASBDB_list_instruments``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:125 bb858e18edd0495b8008c8a7e1336941
+msgid ""
+"**Description**: List all beamlines and instruments in the SASBDB "
+"database used for small-angle scattering experiments."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:129 02298d17ea534a709843363c5f1816ba
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:144 ce74cd8ae1804be2a51f7ff23320ea7b
+msgid "**SASBDB_search** (Type: SASBDBTextSearchTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:146 8902633da1ae4d5a8995e8be3a7db4e2
+msgid ""
+"Search SASBDB small-angle scattering database by query term or UniProt "
+"accession. Accepts free-te..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst d57da253adff42a881b74dddb21de545
+msgid "SASBDB_search tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:152 ff1c2ffcec4d4dfe81db10434231b5b7
+msgid "**Name**: ``SASBDB_search``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:153 c3438370c0ed4ab89f4332e35702bf21
+msgid "**Type**: ``SASBDBTextSearchTool``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:154 30fe4f479735451e839770d94216dcee
+msgid ""
+"**Description**: Search SASBDB small-angle scattering database by query "
+"term or UniProt accession. Accepts free-text queries (routes to all-"
+"entries listing with guidance) or UniProt IDs (returns matching entries "
+"directly). Use SASBDB\\_get\\_entry with a specific code for full "
+"details."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:158 529a946563b542398789cf3469703feb
+msgid ""
+"``query`` (string) (required) Search query: UniProt accession (e.g., "
+"'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search"
+" API; UniProt accessions are resolved directly."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:175 fd90c6e8a7f148bab43b85146dda8a81
+msgid "**SASBDB_search_entries** (Type: SASBDBSearchTool)"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:177 bb4fdb043a694539a155cb3a0d775b56
+msgid ""
+"Search SASBDB for small-angle scattering entries by molecular type "
+"(protein, rna, dna, heterocomp..."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst defe380a6c86435e896f7146ccafee61
+msgid "SASBDB_search_entries tool specification"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:183 9b451a662d1241b7a8ac84ad40bdb10e
+msgid "**Name**: ``SASBDB_search_entries``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:184 7f54da06fd35426c9f067915caacde00
+msgid "**Type**: ``SASBDBSearchTool``"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:185 7d93268252ad4915a8ca4e4ddcc979e0
+msgid ""
+"**Description**: Search SASBDB for small-angle scattering entries by "
+"molecular type (protein, rna, dna, heterocomplex, other) or list all "
+"entries. Returns entry codes and publication status."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:189 3ad71d531ef840a99ac0a9015e68f145
+msgid ""
+"``molecular_type`` (string, null) (optional) Filter by molecule type: "
+"'protein', 'rna', 'dna', 'heterocomplex', 'other'. Leave null to list all"
+" entries."
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:205 448710f63e6a4e45a014ac7e4d6cd96e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:207 572ad8c564a742e0b8b9ad891ecde400
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sasbdb_tools.rst:208 724a291b49104696b3a9f501a740858a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

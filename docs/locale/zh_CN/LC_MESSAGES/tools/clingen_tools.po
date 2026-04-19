@@ -1,0 +1,346 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clingen_tools.rst:10 a99b596fd93d431a9c7d0af5ab2dfc4f
+msgid "Clingen Tools"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:12 1c10315e7e6e4d50b9f7a1bfdc3afe92
+msgid ""
+"**Configuration File**: ``clingen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:16 437b488486664e73a202953d2f5c9dd9
+msgid ""
+"This page contains all tools defined in the ``clingen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:19 d142ba94888c433d850f54032aba2693
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:22 43b99f1ea3df4741ae056c132a4120b6
+msgid "**ClinGen_get_actionability_adult** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:24 3733016d69274012b7265d3e255ca64d
+msgid ""
+"Get ClinGen clinical actionability curations for adult context. Returns "
+"genes with actionable fin..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst f0d4358d9b2149eeb9d94147d238a181
+msgid "ClinGen_get_actionability_adult tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:28 ../../tools/clingen_tools.rst:58
+#: ../../tools/clingen_tools.rst:88 ../../tools/clingen_tools.rst:121
+#: ../../tools/clingen_tools.rst:151 ../../tools/clingen_tools.rst:184
+#: ../../tools/clingen_tools.rst:215 ../../tools/clingen_tools.rst:246
+#: 348f9d124efb450b89ffb36d249456e7 50bc1e13015744d2a8817e070d9dd1c1
+#: 53e6eaf48ae141809198236ebadc0534 62bb52085f954091a42aabd7e23f9d69
+#: 66aec648df9847b1b5f8fee885a2fb9c 670e093e59124b1d9b8630e36664db63
+#: 6d534b401e2243c2bdc11ccc92b0605c 7868fa9947ea4bd189ded4a03a190804
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:30 5c0ab5f98708480c87d82b8d797003b5
+msgid "**Name**: ``ClinGen_get_actionability_adult``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:31 ../../tools/clingen_tools.rst:61
+#: ../../tools/clingen_tools.rst:91 ../../tools/clingen_tools.rst:124
+#: ../../tools/clingen_tools.rst:154 ../../tools/clingen_tools.rst:187
+#: ../../tools/clingen_tools.rst:218 ../../tools/clingen_tools.rst:249
+#: 03420d63603b4114acb48655960738b0 25a1badfe14e456a9181d0fbd2bf8122
+#: 29a108db1c3a4152912ea98e9feaba80 3642b8986919415eb2dff1dc13df035e
+#: 46bf2bbde9a940bbbe7339175cb7db72 60590715c4554192a8abc21556121dd1
+#: aabf13ea1035493aac598edcd13319e8 fbb6146b3c9047ea8f499e2c5a4e9b1d
+msgid "**Type**: ``ClinGenTool``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:32 d4cb6df1c7b044a1ac1f3df1eae55de2
+msgid ""
+"**Description**: Get ClinGen clinical actionability curations for adult "
+"context. Returns genes with actionable findings, intervention scores, and"
+" outcome scores. Actionability scores help prioritize which incidental "
+"findings to return. Example: BRCA1/2 have high actionability for cancer "
+"screening."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:34 ../../tools/clingen_tools.rst:64
+#: ../../tools/clingen_tools.rst:94 ../../tools/clingen_tools.rst:127
+#: ../../tools/clingen_tools.rst:157 ../../tools/clingen_tools.rst:190
+#: ../../tools/clingen_tools.rst:221 ../../tools/clingen_tools.rst:252
+#: 0e593742adaf4e33b676033209e3fcc3 531eff0efcd545b8aaa1a20a48345a9a
+#: 5e67cd28f777477ebaabd1d8a54d62d3 8deec598c9d247c1a4b1c40300f7303c
+#: c6a6e844094f4d599a11681d35a62a6a ce45381060cb42ca96879f4dd7bf45d0
+#: e484e1050924412984e1ad08c8333cfa f0822047999c475e8587e294c16ee6fa
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:36 ../../tools/clingen_tools.rst:66
+#: ../../tools/clingen_tools.rst:96 ../../tools/clingen_tools.rst:129
+#: ../../tools/clingen_tools.rst:159 08407421a35e4337a3ff67ca97d2925b
+#: 366cea6759f2471cbb71fff43176fcca 3ff2dd96c46844ed95b2b9f5f9b6f813
+#: 96401bc9df5340d9a21c01466e375fea ccd46fbe2b254110ade76f740ab857ec
+msgid "``gene`` (string) (optional) Optional: Filter by gene symbol"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:39 ../../tools/clingen_tools.rst:69
+#: ../../tools/clingen_tools.rst:102 ../../tools/clingen_tools.rst:132
+#: ../../tools/clingen_tools.rst:165 ../../tools/clingen_tools.rst:195
+#: ../../tools/clingen_tools.rst:226 ../../tools/clingen_tools.rst:257
+#: 08cfddf0f26842c3a3966455c203b997 1883e44606024e6ba45ff232d9759c7b
+#: a167cf272e00490f9eb06513d1450b06 a6cfaa64e6a54b16bda19375f8b6e38b
+#: cfc3d7313d064ad88f7d94d7c9a34130 d9459482db64424191b774638d2dff66
+#: fc75183799644e02b07099b99c2a0561 fca7b5e978864f138ea03c51dbdaeba0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:52 fd77ce6fa0aa4777a2a9c97230ce1005
+msgid "**ClinGen_get_actionability_pediatric** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:54 fa8b0214abd345bab2192f37dfee3a09
+msgid ""
+"Get ClinGen clinical actionability curations for pediatric context. "
+"Returns genes with actionable..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst 30916ca888d64f8f95bfb2f3a6ee9534
+msgid "ClinGen_get_actionability_pediatric tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:60 8205b7ad093e47289c14bf88e8819d42
+msgid "**Name**: ``ClinGen_get_actionability_pediatric``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:62 7174ef9e25864b3990ccd9148af5f1e7
+msgid ""
+"**Description**: Get ClinGen clinical actionability curations for "
+"pediatric context. Returns genes with actionable findings in children, "
+"intervention recommendations, and evidence scores. Pediatric curations "
+"may differ from adult context due to age-specific interventions."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:82 f7445d8b3bde41438c73e1ecf8f03537
+msgid "**ClinGen_get_dosage_sensitivity** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:84 c6fef2d836f34a57a4dfb315d03a2b6c
+msgid ""
+"Get all ClinGen dosage sensitivity curations. Returns haploinsufficiency "
+"and triplosensitivity sc..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst 23a35bced16f49098caa990fa17d3ab5
+msgid "ClinGen_get_dosage_sensitivity tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:90 91331e646ed64ae8a95536ae17cbb9e3
+msgid "**Name**: ``ClinGen_get_dosage_sensitivity``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:92 656941dab546447eb65f768738e1a3d7
+msgid ""
+"**Description**: Get all ClinGen dosage sensitivity curations. Returns "
+"haploinsufficiency and triplosensitivity scores for curated genes. Set "
+"include\\_regions=true to also get recurrent CNV regions. Scores: 0=No "
+"evidence, 1=Little, 2=Emerging, 3=Sufficient evidence."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:99 bb949eef88b94a12822779062852aba4
+msgid ""
+"``include_regions`` (boolean) (optional) Include recurrent CNV regions "
+"(default: false)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:115 9d80dc6f912f42c9b830b53013d0d78c
+msgid "**ClinGen_get_gene_validity** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:117 ed9fa2c48129446a82e3965e1bc33fc5
+msgid ""
+"Get all ClinGen gene-disease validity curations. Returns comprehensive "
+"list of gene-disease relat..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst 3702052474174a6a871fdb7d63015fce
+msgid "ClinGen_get_gene_validity tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:123 5e5736d2e88c4a33a575f32d95014cd3
+msgid "**Name**: ``ClinGen_get_gene_validity``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:125 241a4115bf824921ab9e1d6ce2ecfda4
+msgid ""
+"**Description**: Get all ClinGen gene-disease validity curations. Returns"
+" comprehensive list of gene-disease relationships with classifications "
+"(Definitive, Strong, Moderate, Limited). Useful for batch analysis or "
+"exploring curated genes. Optional gene filter available."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:145 2f2404a2bb224179bbd8f410eb902f0b
+msgid "**ClinGen_get_variant_classifications** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:147 cc15cc11485f47cfaf512b4415cb776c
+msgid ""
+"Get variant pathogenicity classifications from ClinGen Evidence "
+"Repository. Returns expert-curate..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst a6f4ce79c11b49ad8eb7b31bd0d9c1cd
+msgid "ClinGen_get_variant_classifications tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:153 566fb5264b19451abc6849d67f44e14b
+msgid "**Name**: ``ClinGen_get_variant_classifications``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:155 c32c8f9819814282b69328d2f7b7a903
+msgid ""
+"**Description**: Get variant pathogenicity classifications from ClinGen "
+"Evidence Repository. Returns expert-curated variant classifications with "
+"supporting evidence. Optional filters by gene or variant. Classifications"
+" follow ACMG/AMP guidelines with expert review."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:162 f32b16fe705c4b588d4eb607d4fee88a
+msgid ""
+"``variant`` (string) (optional) Optional: Filter by variant (HGVS "
+"notation or protein change)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:178 bed1dd021f40453a96c1beb127b230ba
+msgid "**ClinGen_search_actionability** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:180 98621034393546c696b11abd0d39b046
+msgid ""
+"Search ClinGen clinical actionability across both adult and pediatric "
+"contexts by gene. Returns a..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst 52ccdbdd3f4a44989ba2f913dd7fe0b2
+msgid "ClinGen_search_actionability tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:186 217fd165348b49c9bab93bce58843529
+msgid "**Name**: ``ClinGen_search_actionability``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:188 83af70beb7c740bca01fdde700ce8964
+msgid ""
+"**Description**: Search ClinGen clinical actionability across both adult "
+"and pediatric contexts by gene. Returns actionability data from both "
+"contexts for comparison. Useful for comprehensive actionability "
+"assessment of a gene across age groups."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:192 50ad2cf2241643d6b0319290aa34a94f
+msgid ""
+"``gene`` (string) (required) Gene symbol to search (e.g., BRCA1, MLH1, "
+"LDLR)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:209 b8ed8c34dc634fd2aadc1bb009be2ff1
+msgid "**ClinGen_search_dosage_sensitivity** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:211 bd4a539ffb8843fd89d5b7402b1d8e11
+msgid ""
+"Search ClinGen dosage sensitivity curations by gene symbol. Returns "
+"haploinsufficiency (HI) and t..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst ca2a4350c40d417986d28fd0b1ea1577
+msgid "ClinGen_search_dosage_sensitivity tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:217 24c2fc3b838545cab16deecbb8aa6e27
+msgid "**Name**: ``ClinGen_search_dosage_sensitivity``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:219 dbaab0d2e90a46a490bcfeab653e36dd
+msgid ""
+"**Description**: Search ClinGen dosage sensitivity curations by gene "
+"symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores"
+" (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. "
+"Critical for CNV interpretation. Example: MECP2 has HI score of 3."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:223 82e01baa079e44acb8847fffdffd828e
+msgid ""
+"``gene`` (string) (required) Gene symbol to search (e.g., MECP2, PMP22, "
+"RAI1)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:240 10810b8bc6c54ffdb3e4f0eb829c5d20
+msgid "**ClinGen_search_gene_validity** (Type: ClinGenTool)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:242 81a99b8427864ffd8a1b9907626cd2bb
+msgid ""
+"Search ClinGen gene-disease validity curations by gene symbol. Returns "
+"classification (Definitive..."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst a92fe5dcea4241fd98e903271de74f2d
+msgid "ClinGen_search_gene_validity tool specification"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:248 02f42d74da1c4a9883dec40a5508d4b5
+msgid "**Name**: ``ClinGen_search_gene_validity``"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:250 53eba23549564d378be4e94ca8ee74ac
+msgid ""
+"**Description**: Search ClinGen gene-disease validity curations by gene "
+"symbol. Returns classification (Definitive, Strong, Moderate, Limited, "
+"Disputed, Refuted), disease associations, and inheritance patterns. "
+"Essential for ACMG variant classification. Example: BRCA1 returns "
+"validity scores for hereditary breast/ovarian cancer."
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:254 87dfb474b1d84017a10bcda1c51f276c
+msgid ""
+"``gene`` (string) (required) Gene symbol to search (e.g., BRCA1, TP53, "
+"CFTR)"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:271 10e076f9bca3454da7c821f49e3a3e8a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:273 83954adfb12348e485168f6a11c07d27
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clingen_tools.rst:274 3d7ccb27af9c4288aefaf2faa4589bb1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

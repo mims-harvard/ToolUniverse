@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openml_tools.rst:10 6ae7c8043fe0444d88994b776a0670d0
+msgid "Openml Tools"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:12 31429784edcb4df1b177df845bf436ed
+msgid ""
+"**Configuration File**: ``openml_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:16 f80dd16da79d427181889781bd822b07
+msgid ""
+"This page contains all tools defined in the ``openml_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/openml_tools.rst:19 4d43ca9435cf4b458138255c2ed9fde9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:22 50e030eca4fe49d79300b57485e29dad
+msgid "**OpenML_get_dataset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:24 86bb00b194a8434bacf2cf944799e3ae
+msgid ""
+"Get detailed metadata for a specific OpenML dataset by its numeric ID. "
+"Returns comprehensive info..."
+msgstr ""
+
+#: ../../tools/openml_tools.rst f2f2f526f18c4b4eb45cd3bfb928290e
+msgid "OpenML_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:28 ../../tools/openml_tools.rst:59
+#: a3fafd9dd88e47c59c26f9a24153944e e139360c7ff943518e635dd2b0c7268a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:30 6b8aa8ee2f1f4d4fac2604ce7f03e388
+msgid "**Name**: ``OpenML_get_dataset``"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:31 ../../tools/openml_tools.rst:62
+#: 4d9591a0d917484eac59dbed2146d6b9 803440edfb004948aa93523d069b87fe
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:32 026660befa544cb78c852e1868e51f01
+msgid ""
+"**Description**: Get detailed metadata for a specific OpenML dataset by "
+"its numeric ID. Returns comprehensive information including description, "
+"data format, creator, collection date, license, download URLs (ARFF and "
+"Parquet), default target attribute, tags, citation info, and version "
+"history. Well-known dataset IDs include: 61 (iris), 40996 (Fashion-"
+"MNIST), 554 (mnist\\_784), 1169 (airlines), 31 (credit-g), 1590 (adult). "
+"Use OpenML\\_search\\_datasets to discover dataset IDs."
+msgstr ""
+
+#: ../../tools/openml_tools.rst:34 ../../tools/openml_tools.rst:65
+#: 243958c28baf4b2284913463ecb047b6 a0f84ec699794b808942fcd0490ec9fa
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:36 502b0d780d224f19a54a5a81a12b899c
+msgid ""
+"``data_id`` (integer) (required) OpenML dataset ID number (e.g., 61 for "
+"iris, 554 for MNIST, 31 for credit-g). Obtain from "
+"OpenML\\_search\\_datasets."
+msgstr ""
+
+#: ../../tools/openml_tools.rst:39 ../../tools/openml_tools.rst:70
+#: 002cb476cb5741ddbff2dfedff0fe2bc e4b5cbee8fc341f0ae43c700b7579920
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:53 7c600ea9fd5c43ab84074dae7de480b5
+msgid "**OpenML_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:55 d80042776bba4c8b9aad2cddbb822106
+msgid ""
+"Search the OpenML platform for machine learning benchmark datasets. "
+"OpenML hosts thousands of cur..."
+msgstr ""
+
+#: ../../tools/openml_tools.rst 54bee48ac6954dcd8c06e6cd3861e5e0
+msgid "OpenML_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:61 a6328714b04b4fa9b448a2434c73b1d6
+msgid "**Name**: ``OpenML_search_datasets``"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:63 dfdac64a02e3409097c4fd3f2ef28735
+msgid ""
+"**Description**: Search the OpenML platform for machine learning "
+"benchmark datasets. OpenML hosts thousands of curated datasets with "
+"standardized metadata, quality metrics, and associated ML tasks/runs. "
+"Returns dataset IDs, names, versions, formats, and quality statistics "
+"(number of instances, features, classes, missing values). Use this to "
+"discover datasets for benchmarking, AutoML experiments, or finding "
+"datasets by name. Results are paginated; use limit to control page size. "
+"Use OpenML\\_get\\_dataset for full metadata on a specific dataset."
+msgstr ""
+
+#: ../../tools/openml_tools.rst:67 643c40c6bce645b59908703ba4122359
+msgid ""
+"``limit`` (integer) (required) Maximum number of datasets to return "
+"(default 20, max 10000). Controls pagination page size."
+msgstr ""
+
+#: ../../tools/openml_tools.rst:84 fcdbc3a655c745dbae7afcffc31c1e14
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:86 6d911fe77a2c4ae4b4b7fc91c58e6997
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openml_tools.rst:87 56dac893fcb74b5fbfc8373def276cf8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -7,150 +7,261 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 16:01-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../expand_tooluniverse/reference/index.rst:2
-#: 7cc3b6e815eb467396ee3af4c5fd8c7e
+#: ab52d4c4b45e4174a75794e94d8c9539
 msgid "Reference Documentation"
 msgstr "参考文档"
 
 #: ../../expand_tooluniverse/reference/index.rst:4
-#: 308b6f49afdb4afd992ceec97e0fb180
+#: d72bd3581c2947f7a2d9db8e7029588a
 msgid ""
-"This section provides detailed reference information for tool development in"
-" ToolUniverse."
+"This section provides detailed reference information for tool development"
+" in ToolUniverse."
 msgstr "本节提供了有关在ToolUniverse中进行工具开发的详细参考信息。"
 
 #: ../../expand_tooluniverse/reference/index.rst:7
-#: 71dffd33d62b48ac8469ce2c815631c6
+#: 672d8642114a43dfa80d8807937f4db3
 msgid "Architecture"
 msgstr "架构"
 
 #: ../../expand_tooluniverse/reference/index.rst:9
-#: 6d56b6ef74ec48b5a00a5a7ccd1dd3fa
+#: fe183068328d4357ac7a652fba97aa15
 msgid ""
 "Understanding the internal architecture of ToolUniverse helps you build "
 "better tools and integrate more effectively with the system."
 msgstr "了解 ToolUniverse 的内部架构有助于您构建更优质的工具，并更高效地与系统集成。"
 
-#: ../../expand_tooluniverse/reference/index.rst:11
-#: 60e01dfdddd74251860d2cac5137cd72
+#: ../../expand_tooluniverse/reference/index.rst:17
+#: be5f22e50cfa494d97ab29bfa038e10a
 msgid ""
-"**I want to understand the overall architecture:** → :doc:`architecture` - "
-"System architecture and design patterns"
-msgstr "**我想了解整体架构：** → :doc:`architecture` - 系统架构和设计模式"
-
-#: ../../expand_tooluniverse/reference/index.rst:14
-#: e305495dd8074d8893f689c158aa10dc
-msgid ""
-"**I want to compare tool types:** → Review the tool type comparison table in"
-" :doc:`../contributing/index`"
+"**I want to compare tool types:** → Review the tool type comparison table"
+" in :doc:`../contributing/index`"
 msgstr "**我想比较工具类型：** → 请查看 :doc:`../contributing/index` 中的工具类型比较表"
 
-#: ../../expand_tooluniverse/reference/index.rst:18
-#: 5b70381dfacc4e50b755c2350db63adf
+#: ../../expand_tooluniverse/reference/index.rst:21
+#: 22c70337b1ec482aa1a2481475869e58
 msgid "Tool Comparison"
 msgstr "工具比较"
 
-#: ../../expand_tooluniverse/reference/index.rst:20
-#: 290417199f174ce1b0ae51b09bf8197c
+#: ../../expand_tooluniverse/reference/index.rst:23
+#: b1885f46db1a44eb95157f6cb51cf9b0
 msgid ""
 "Understanding the differences between local and remote tools helps you "
 "choose the right approach for your needs."
 msgstr "了解本地工具与远程工具之间的差异，有助于您选择适合需求的正确方法。"
 
-#: ../../expand_tooluniverse/reference/index.rst:22
-#: 4833de53662c41e2bb2e2b15b450645a
+#: ../../expand_tooluniverse/reference/index.rst:25
+#: 12d4613cd3934ae88ddc73dbf382b04b
 msgid "**Key Differences:**"
 msgstr "**主要差异：**"
 
-#: ../../expand_tooluniverse/reference/index.rst:24
-#: 7a233937c671428c8d0d7a96d765230e
-msgid "Aspect | Local Tools | Remote Tools |"
-msgstr "方面 | 本地工具 | 远程工具 |"
+#: ../../expand_tooluniverse/reference/index.rst:30
+#: d43dc00ba8754eabb0777783edb957b6
+msgid "Aspect"
+msgstr "维度"
 
-#: ../../expand_tooluniverse/reference/index.rst:25
-#: 4fd21060366a42fd825b9d75591d25d8
-msgid ""
-"|--------|-------------|--------------| | **Performance** | High (no network"
-" overhead) | Lower (network latency) | | **Development** | Simple Python "
-"classes | MCP servers or API wrappers | | **Deployment** | Part of "
-"ToolUniverse | Independent servers | | **Scalability** | Limited by process "
-"| Highly scalable | | **Integration** | Full ToolUniverse access | Limited "
-"to MCP/API | | **Contribution** | Requires ``__init__.py`` changes | No code"
-" changes needed |"
-msgstr ""
-"|--------|-------------|--------------|  \n"
-"| **性能** | 高（无网络开销） | 较低（存在网络延迟） |  \n"
-"| **开发** | 简单的 Python 类 | MCP 服务器或 API 封装 |  \n"
-"| **部署** | ToolUniverse 的一部分 | 独立服务器 |  \n"
-"| **可扩展性** | 受进程限制 | 高度可扩展 |  \n"
-"| **集成** | 完全访问 ToolUniverse | 仅限 MCP/API |  \n"
-"| **贡献** | 需要修改 ``__init__.py`` | 无需代码修改 |"
+#: ../../expand_tooluniverse/reference/index.rst:31
+#: 11cca63d8bdf4990bcecf4d1cf737db1
+msgid "Local Tools"
+msgstr "本地工具"
+
+#: ../../expand_tooluniverse/reference/index.rst:32
+#: 5465052b40df455584e33d3560f6198a
+msgid "Remote Tools"
+msgstr "远程工具"
 
 #: ../../expand_tooluniverse/reference/index.rst:33
-#: 7716ede3efa24c90b3a47d50bac620b7
-msgid ""
-"**When to Use Local Tools:** - Data processing and analysis - File "
-"manipulation utilities - Simple API wrappers - Tools that need full "
-"ToolUniverse integration"
-msgstr ""
-"**何时使用本地工具：**  \n"
-"- 数据处理与分析  \n"
-"- 文件操作工具  \n"
-"- 简单的 API 封装程序  \n"
-"- 需要完整 ToolUniverse 集成的工具"
+#: 9ce850736c3244619ae64ef56a144aa0
+msgid "Performance"
+msgstr "性能"
+
+#: ../../expand_tooluniverse/reference/index.rst:34
+#: 7316bc316b604b52aff72fb75d5dc68d
+msgid "High (no network overhead)"
+msgstr "高（无网络开销）"
+
+#: ../../expand_tooluniverse/reference/index.rst:35
+#: 52e288a8cc044b9b9b68d13b36a23a04
+msgid "Lower (network latency)"
+msgstr "较低（有网络延迟）"
+
+#: ../../expand_tooluniverse/reference/index.rst:36
+#: 8b2ccc7e9342492ab6a7972a647fd37a
+msgid "Development"
+msgstr "开发"
+
+#: ../../expand_tooluniverse/reference/index.rst:37
+#: 6a5529cdb9044debbd36cc694a61c109
+msgid "Simple Python classes"
+msgstr "简单的 Python 类"
+
+#: ../../expand_tooluniverse/reference/index.rst:38
+#: 5bcff6925f5046b3b6ecd6d11d9fcd32
+msgid "MCP servers or API wrappers"
+msgstr "MCP 服务器或 API 封装"
 
 #: ../../expand_tooluniverse/reference/index.rst:39
-#: c87cb586483f4561b86bd9888344779a
-msgid ""
-"**When to Use Remote Tools:** - External service integration - Heavy "
-"computational tasks - Microservice architecture - Tools in different "
-"programming languages"
-msgstr ""
-"**何时使用远程工具：**  \n"
-"- 外部服务集成  \n"
-"- 高强度计算任务  \n"
-"- 微服务架构  \n"
-"- 不同编程语言的工具"
+#: 7e3111c85a674d689c33ac3b2ba6fdc3
+msgid "Deployment"
+msgstr "部署"
+
+#: ../../expand_tooluniverse/reference/index.rst:40
+#: cf84ebabab3642ce9c713245fe161ea8
+msgid "Part of ToolUniverse"
+msgstr "作为 ToolUniverse 的一部分"
+
+#: ../../expand_tooluniverse/reference/index.rst:41
+#: 65bebc25ba1a4cb0827be81565af0445
+msgid "Independent servers"
+msgstr "独立服务器"
+
+#: ../../expand_tooluniverse/reference/index.rst:42
+#: e660ee1445c243828d95aafeeee600c2
+msgid "Scalability"
+msgstr "可扩展性"
+
+#: ../../expand_tooluniverse/reference/index.rst:43
+#: 4be9bf70ccab474b9949d5d8da1b6d3a
+msgid "Limited by process"
+msgstr "受进程限制"
+
+#: ../../expand_tooluniverse/reference/index.rst:44
+#: 4ace132350244a24ac856c8b2dbe4608
+msgid "Highly scalable"
+msgstr "高度可扩展"
+
+#: ../../expand_tooluniverse/reference/index.rst:45
+#: 2b786cdb68cf4ccab070375dd9807698
+msgid "Integration"
+msgstr "集成能力"
 
 #: ../../expand_tooluniverse/reference/index.rst:46
-#: 46af4e256f3c4cbd8e985135a0caf33a
+#: 3dddf84874cd452a884648f7bd5032da
+msgid "Full ToolUniverse access"
+msgstr "完整访问 ToolUniverse"
+
+#: ../../expand_tooluniverse/reference/index.rst:47
+#: 653f150514e14bcfba01481c4001acaa
+msgid "Limited to MCP/API"
+msgstr "仅限 MCP/API"
+
+#: ../../expand_tooluniverse/reference/index.rst:48
+#: 14d4711516db4f749cfc2831dd7185ee
+msgid "Contribution"
+msgstr "贡献方式"
+
+#: ../../expand_tooluniverse/reference/index.rst:49
+#: 762089c4c9a245ba9c3dd779d372e279
+msgid "Requires ``__init__.py`` changes"
+msgstr "需要修改 ``__init__.py``"
+
+#: ../../expand_tooluniverse/reference/index.rst:50
+#: 352ed1d59c5940cda809c275573fc769
+msgid "No code changes needed"
+msgstr "无需修改主仓代码"
+
+#: ../../expand_tooluniverse/reference/index.rst:52
+#: 6cf9b818b3be4411b0d6d4e4a37eca85
+msgid "**When to Use Local Tools:**"
+msgstr "**何时使用本地工具：**"
+
+#: ../../expand_tooluniverse/reference/index.rst:54
+#: 2b39f03a03934ec2905b1e505302e12a
+msgid "Data processing and analysis"
+msgstr "数据处理与分析"
+
+#: ../../expand_tooluniverse/reference/index.rst:55
+#: 89538cda433f44ec8604b40d47f81b85
+msgid "File manipulation utilities"
+msgstr "文件操作工具"
+
+#: ../../expand_tooluniverse/reference/index.rst:56
+#: 7d841af0011445deadb09876bdaeb2e3
+msgid "Simple API wrappers"
+msgstr "简单的 API 封装"
+
+#: ../../expand_tooluniverse/reference/index.rst:57
+#: bcc83a19a62a4cfba48029bd802ecce6
+msgid "Tools that need full ToolUniverse integration"
+msgstr "需要完整 ToolUniverse 集成的工具"
+
+#: ../../expand_tooluniverse/reference/index.rst:59
+#: 3f1267179d9e4bf593d4b0cbae60c527
+msgid "**When to Use Remote Tools:**"
+msgstr "**何时使用远程工具：**"
+
+#: ../../expand_tooluniverse/reference/index.rst:61
+#: e3e3593a1a534e9d9541aa61fe79ffe2
+msgid "External service integration"
+msgstr "外部服务集成"
+
+#: ../../expand_tooluniverse/reference/index.rst:62
+#: d326dbe3298d4f6180b5eb1ddf6aea29
+msgid "Heavy computational tasks"
+msgstr "高计算量任务"
+
+#: ../../expand_tooluniverse/reference/index.rst:63
+#: 184ad34a518843f1a00dd2d4061f8539
+#, fuzzy
+msgid "Microservice architecture"
+msgstr "微服务架构"
+
+#: ../../expand_tooluniverse/reference/index.rst:64
+#: 6b09de805187478daa4f2c800ca35211
+msgid "Tools in different programming languages"
+msgstr "使用不同编程语言实现的工具"
+
+#: ../../expand_tooluniverse/reference/index.rst:67
+#: 8ef1c02c68e14f5bad4324fe8d738be3
 msgid "Architecture Details"
 msgstr "架构详情"
 
-#: ../../expand_tooluniverse/reference/index.rst:48
-#: 7466e9cb8bf942f0addf283f459dea6a
-msgid ""
-"**ToolUniverse Core Components:** - **Tool Registry**: Manages tool "
-"discovery and registration - **Execution Engine**: Handles tool execution "
-"and error management - **Configuration System**: Manages tool parameters and"
-" settings - **MCP Integration**: Connects with remote tools via MCP protocol"
-msgstr ""
-"**ToolUniverse 核心组件：**  \n"
-"- **工具注册表**：管理工具的发现和注册  \n"
-"- **执行引擎**：处理工具执行和错误管理  \n"
-"- **配置系统**：管理工具参数和设置  \n"
-"- **MCP 集成**：通过 MCP 协议连接远程工具"
+#: ../../expand_tooluniverse/reference/index.rst:69
+#: 50cb61ff12244d208e418bf65ab18943
+msgid "**ToolUniverse Core Components:**"
+msgstr "**ToolUniverse 核心组件：**"
 
-#: ../../expand_tooluniverse/reference/index.rst:54
-#: b1c5be435cd24cd3b05d1b4f7aa152ed
+#: ../../expand_tooluniverse/reference/index.rst:71
+#: 316a51199b76445a954ac030e44639c2
+msgid "**Tool Registry**: Manages tool discovery and registration"
+msgstr "**Tool Registry**：管理工具发现与注册"
+
+#: ../../expand_tooluniverse/reference/index.rst:72
+#: 56ca30831f8744f9ab037cfba5212c80
+msgid "**Execution Engine**: Handles tool execution and error management"
+msgstr "**Execution Engine**：负责工具执行与错误管理"
+
+#: ../../expand_tooluniverse/reference/index.rst:73
+#: 0eb35c28b3344182b2c7e7a2393f53ed
+msgid "**Configuration System**: Manages tool parameters and settings"
+msgstr "**Configuration System**：管理工具参数与配置"
+
+#: ../../expand_tooluniverse/reference/index.rst:74
+#: f8a12d13b0ff4085b0d4f53499563849
+msgid "**MCP Integration**: Connects with remote tools via MCP protocol"
+msgstr "**MCP Integration**：通过 MCP 协议连接远程工具"
+
+#: ../../expand_tooluniverse/reference/index.rst:76
+#: 4248ae0f46b149838c634862f620521e
 msgid ""
-"**Tool Lifecycle:** 1. **Registration**: Tools register with the registry 2."
-" **Discovery**: ToolUniverse discovers available tools 3. **Configuration**:"
-" Tools load their configuration 4. **Execution**: Tools are called with "
-"parameters 5. **Response**: Results are returned to the caller"
+"**Tool Lifecycle:** 1. **Registration**: Tools register with the registry"
+" 2. **Discovery**: ToolUniverse discovers available tools 3. "
+"**Configuration**: Tools load their configuration 4. **Execution**: Tools"
+" are called with parameters 5. **Response**: Results are returned to the "
+"caller"
 msgstr ""
 "**工具生命周期：**  \n"
 "1. **注册**：工具在注册表中进行注册  \n"
@@ -159,82 +270,143 @@ msgstr ""
 "4. **执行**：工具根据参数被调用  \n"
 "5. **响应**：结果返回给调用方"
 
-#: ../../expand_tooluniverse/reference/index.rst:61
-#: 097a492c502c4b8b943e2bb7fe7cf555
-msgid ""
-"**Error Handling:** - Input validation at multiple levels - Graceful error "
-"recovery - Comprehensive error reporting - Timeout management for remote "
-"tools"
-msgstr ""
-"**错误处理：**  \n"
-"- 多层次的输入验证  \n"
-"- 优雅的错误恢复  \n"
-"- 全面的错误报告  \n"
-"- 远程工具的超时管理"
+#: ../../expand_tooluniverse/reference/index.rst:83
+#: 4dc2320678f94c658c472ee55f53812d
+msgid "**Error Handling:**"
+msgstr "**错误处理：**"
 
-#: ../../expand_tooluniverse/reference/index.rst:68
-#: ba7bb6cbaa6b4d33b2bc0f59f1661c50
+#: ../../expand_tooluniverse/reference/index.rst:85
+#: c695222e25644f85a15c65f9f42328f4
+msgid "Input validation at multiple levels"
+msgstr "多层输入校验"
+
+#: ../../expand_tooluniverse/reference/index.rst:86
+#: 381e39c383984fa286ca27ec7594d64a
+msgid "Graceful error recovery"
+msgstr "优雅的错误恢复"
+
+#: ../../expand_tooluniverse/reference/index.rst:87
+#: b43b6db09b094e66801484db02a8cd2d
+msgid "Comprehensive error reporting"
+msgstr "完整的错误报告"
+
+#: ../../expand_tooluniverse/reference/index.rst:88
+#: 5ddbb7839a314b0d82650555158c840c
+msgid "Timeout management for remote tools"
+msgstr "远程工具的超时管理"
+
+#: ../../expand_tooluniverse/reference/index.rst:91
+#: 0f91589f50fd422d9907c4e2243c2069
 msgid "Best Practices"
 msgstr "最佳实践"
 
-#: ../../expand_tooluniverse/reference/index.rst:70
-#: bb81100409a341efb0f392564fe9f236
-msgid ""
-"**Local Tools:** - Keep tools focused and single-purpose - Use proper error "
-"handling - Implement input validation - Add comprehensive tests - Document "
-"all parameters clearly"
-msgstr ""
-"**本地工具：**  \n"
-"- 保持工具专注且单一用途  \n"
-"- 使用适当的错误处理  \n"
-"- 实现输入验证  \n"
-"- 添加全面的测试  \n"
-"- 清晰地记录所有参数"
+#: ../../expand_tooluniverse/reference/index.rst:93
+#: d0a35d0a1ebd4bd999a00517b9e7f60b
+msgid "**Local Tools:**"
+msgstr "**本地工具：**"
 
-#: ../../expand_tooluniverse/reference/index.rst:77
-#: 4b93c9a407574406a8119e89132e8b07
-msgid ""
-"**Remote Tools:** - Implement proper authentication - Use circuit breakers "
-"for resilience - Add retry logic for transient failures - Monitor "
-"performance and errors - Provide clear deployment documentation"
-msgstr ""
-"**远程工具：**  \n"
-"- 实施适当的身份验证  \n"
-"- 使用断路器提高系统弹性  \n"
-"- 为瞬态故障添加重试逻辑  \n"
-"- 监控性能和错误  \n"
-"- 提供清晰的部署文档"
+#: ../../expand_tooluniverse/reference/index.rst:95
+#: 29a4bf1c728342f99f5db417a48bf1a3
+msgid "Keep tools focused and single-purpose"
+msgstr "让工具保持聚焦和单一职责"
 
-#: ../../expand_tooluniverse/reference/index.rst:84
-#: 7bc1a51450ae4fd3abb17a0a8634cf38
-msgid ""
-"**General:** - Follow naming conventions - Use descriptive parameter names -"
-" Provide clear error messages - Include usage examples - Test with real-"
-"world data"
-msgstr ""
-"**通用规则：**  \n"
-"- 遵循命名规范  \n"
-"- 使用具有描述性的参数名称  \n"
-"- 提供清晰的错误信息  \n"
-"- 包括使用示例  \n"
-"- 使用真实数据进行测试"
+#: ../../expand_tooluniverse/reference/index.rst:96
+#: 771af4e25cd94bf4948642679656ca53
+msgid "Use proper error handling"
+msgstr "使用恰当的错误处理"
 
-#: ../../expand_tooluniverse/reference/index.rst:92
-#: 76baaa4fc651425785794080cf5ede7d
+#: ../../expand_tooluniverse/reference/index.rst:97
+#: d4cc3d2305bc46dc9d2453f42b58ab12
+msgid "Implement input validation"
+msgstr "实现输入校验"
+
+#: ../../expand_tooluniverse/reference/index.rst:98
+#: 8de00d8bde6a4b0aa94572d9482a958d
+msgid "Add comprehensive tests"
+msgstr "补充完整测试"
+
+#: ../../expand_tooluniverse/reference/index.rst:99
+#: 38b34a08fd8d48adb878f2d5f3710c51
+msgid "Document all parameters clearly"
+msgstr "清晰记录所有参数"
+
+#: ../../expand_tooluniverse/reference/index.rst:101
+#: d5585a98f89d4f009fc698b9142156fb
+msgid "**Remote Tools:**"
+msgstr "**远程工具：**"
+
+#: ../../expand_tooluniverse/reference/index.rst:103
+#: 46225374f0da47b5b49111f1c0de4fb6
+msgid "Implement proper authentication"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:104
+#: aa51d414cfab4df8a175a20035e2290b
+msgid "Use circuit breakers for resilience"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:105
+#: cc9a2a63d61146f1837a7ba3958dd498
+msgid "Add retry logic for transient failures"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:106
+#: c1dd904104bf48eca1f38f343bfb4390
+msgid "Monitor performance and errors"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:107
+#: 1692db0062ed49e2b96b6cd19973a087
+#, fuzzy
+msgid "Provide clear deployment documentation"
+msgstr "参考文档"
+
+#: ../../expand_tooluniverse/reference/index.rst:109
+#: 8d556abce2fa4824bc93e5b77d86d71e
+msgid "**General:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:111
+#: bc64b3bb788743418abbb465fabcb79c
+msgid "Follow naming conventions"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:112
+#: 2aee83ffc53e49c2b9bbc163e5805f6f
+msgid "Use descriptive parameter names"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:113
+#: c763c55925024bee86b996417298cc0c
+msgid "Provide clear error messages"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:114
+#: c55518b8f9a440e6a1fb187554c0ae96
+msgid "Include usage examples"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:115
+#: 997678561adf4dffa8550422ac7ecd73
+msgid "Test with real-world data"
+msgstr ""
+
+#: ../../expand_tooluniverse/reference/index.rst:118
+#: 7e1a86442c8944fc89b25b4aa3c1f2a8
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../expand_tooluniverse/reference/index.rst:94
-#: 9eab5eb8cb634ce0b1d241900f1d7e9f
+#: ../../expand_tooluniverse/reference/index.rst:120
+#: ea638de4514342e8b4edaac9c4161358
 msgid "**Common Issues:**"
 msgstr "**常见问题：**"
 
-#: ../../expand_tooluniverse/reference/index.rst:96
-#: 94b5d1f342aa4893876afc31ec17af71
+#: ../../expand_tooluniverse/reference/index.rst:122
+#: 35226c538b924e5eba7bac7447ac8727
 msgid ""
 "**Local Tools:** - Tool not found: Check registration and imports - "
-"Parameter errors: Verify JSON schema - Execution failures: Check BaseTool "
-"inheritance - Import errors: Verify module structure"
+"Parameter errors: Verify JSON schema - Execution failures: Check BaseTool"
+" inheritance - Import errors: Verify module structure"
 msgstr ""
 "**本地工具：**  \n"
 "- 工具未找到：检查注册和导入  \n"
@@ -242,12 +414,12 @@ msgstr ""
 "- 执行失败：检查 BaseTool 继承  \n"
 "- 导入错误：验证模块结构"
 
-#: ../../expand_tooluniverse/reference/index.rst:102
-#: a391612cbb1a47a08088a8a80c5b0c92
+#: ../../expand_tooluniverse/reference/index.rst:128
+#: 4973fa3dcfa04dc3b247b025b8e9521c
 msgid ""
 "**Remote Tools:** - Connection errors: Check server URL and network - "
-"Authentication failures: Verify credentials - Timeout issues: Check server "
-"performance - Discovery problems: Verify MCP server status"
+"Authentication failures: Verify credentials - Timeout issues: Check "
+"server performance - Discovery problems: Verify MCP server status"
 msgstr ""
 "**远程工具：**  \n"
 "- 连接错误：检查服务器URL和网络  \n"
@@ -255,12 +427,12 @@ msgstr ""
 "- 超时问题：检查服务器性能  \n"
 "- 发现问题：验证MCP服务器状态"
 
-#: ../../expand_tooluniverse/reference/index.rst:108
-#: 9c95d334d5c34284a127871c37e497e2
+#: ../../expand_tooluniverse/reference/index.rst:134
+#: 8bdb8c0a5fc04802bd30e7f61c896278
 msgid ""
-"**General:** - Configuration errors: Check JSON syntax - Permission issues: "
-"Verify file access - Version conflicts: Check dependencies - Performance "
-"issues: Profile and optimize"
+"**General:** - Configuration errors: Check JSON syntax - Permission "
+"issues: Verify file access - Version conflicts: Check dependencies - "
+"Performance issues: Profile and optimize"
 msgstr ""
 "**常规：**  \n"
 "- 配置错误：检查 JSON 语法  \n"
@@ -268,89 +440,224 @@ msgstr ""
 "- 版本冲突：检查依赖项  \n"
 "- 性能问题：分析并优化"
 
-#: ../../expand_tooluniverse/reference/index.rst:115
-#: 509099f4530240a7adbb8d8ac3ee3afd
+#: ../../expand_tooluniverse/reference/index.rst:141
+#: d6d5100e0c5d49f5b25238098a300491
 msgid "Resources"
 msgstr "资源"
 
-#: ../../expand_tooluniverse/reference/index.rst:117
-#: d519716ff64e40fd86f28a7df43eac5a
+#: ../../expand_tooluniverse/reference/index.rst:143
+#: 574552bb66244a78a47e45ec8e80e5d0
 msgid "**Local Tools Guide**: :doc:`../local_tools/index`"
 msgstr "**本地工具指南**：:doc:`../local_tools/index`"
 
-#: ../../expand_tooluniverse/reference/index.rst:118
-#: 60e1ee53a8364f4bbc7bfb66328e7dde
+#: ../../expand_tooluniverse/reference/index.rst:144
+#: d8198f8d423a4733a714b3d1198283cd
 msgid "**Remote Tools Guide**: :doc:`../remote_tools/index`"
 msgstr "**远程工具指南**：:doc:`../remote_tools/index`"
 
-#: ../../expand_tooluniverse/reference/index.rst:119
-#: 56db88a0f6774ddfa782f9821c945451
+#: ../../expand_tooluniverse/reference/index.rst:145
+#: c5c277c39ea24ef9bee62864dbb12474
 msgid "**Contributing Guide**: :doc:`../contributing/index`"
 msgstr "**贡献指南**：:doc:`../contributing/index`"
 
-#: ../../expand_tooluniverse/reference/index.rst:120
-#: cf2a9830358f45fea3cb194a8dfec7a5
+#: ../../expand_tooluniverse/reference/index.rst:146
+#: cf550648562f4d4fb60391d75fd6f37e
 msgid "**Quick Start**: :doc:`../quick_start`"
 msgstr "**快速开始**：:doc:`../quick_start`"
 
-#: ../../expand_tooluniverse/reference/index.rst:121
-#: 6dcc2f5c8a524369a01b66fe537bc847
+#: ../../expand_tooluniverse/reference/index.rst:147
+#: cf724c28b2bb4393ab4222377ccaf151
 msgid "**Architecture**: :doc:`architecture`"
 msgstr "**架构**：:doc:`architecture`"
 
-#: ../../expand_tooluniverse/reference/index.rst:122
-#: 649559233c7845d2bbd7ee925ccb1b6d
+#: ../../expand_tooluniverse/reference/index.rst:148
+#: 157925deab964b45aa08b28857522198
 msgid ""
-"**Comparison**: Review the comparison table in :doc:`../contributing/index`"
+"**Comparison**: Review the comparison table in "
+":doc:`../contributing/index`"
 msgstr "**比较**：请查看 :doc:`../contributing/index` 中的比较表格"
 
-#: ../../expand_tooluniverse/reference/index.rst:125
-#: 7505172b1ee844f3a35759499f17e44c
+#: ../../expand_tooluniverse/reference/index.rst:151
+#: aa5d2ee15b094a1b9ed7c0876a564862
 msgid "Next Steps"
 msgstr "下一步"
 
-#: ../../expand_tooluniverse/reference/index.rst:127
-#: f4c66cfb2a744357973381d9b1a76510
+#: ../../expand_tooluniverse/reference/index.rst:153
+#: 9889cc7bcf2742488b0f5800abf7fdfb
 msgid "Ready to dive deeper? Choose your focus:"
 msgstr "准备好深入探索了吗？请选择您的重点："
 
-#: ../../expand_tooluniverse/reference/index.rst:129
-#: 132b8bf8746d4c4cb5747878e0faf3ef
-msgid "🏗️ **Architecture**: :doc:`architecture` - Understand system design"
+#: ../../expand_tooluniverse/reference/index.rst:155
+#: 2247d3d3f49444b5bb2509d721a741fd
+#, fuzzy
+msgid "️ **Architecture**: :doc:`architecture` - Understand system design"
 msgstr "🏗️ **架构**：:doc:`architecture` - 了解系统设计"
 
-#: ../../expand_tooluniverse/reference/index.rst:130
-#: fb0f92b10296437590a8b171cb7eb82d
+#: ../../expand_tooluniverse/reference/index.rst:156
+#: 4cb07034852c41e7bf908b1e2d81dfe8
+#, fuzzy
 msgid ""
-"⚖️ **Comparison**: Review the tool type comparison table in "
+"️ **Comparison**: Review the tool type comparison table in "
 ":doc:`../contributing/index`"
 msgstr "⚖️ **比较**：请查看 :doc:`../contributing/index` 中的工具类型比较表。"
 
-#: ../../expand_tooluniverse/reference/index.rst:131
-#: f8c7822ffc094795937f5af3f534df68
+#: ../../expand_tooluniverse/reference/index.rst:157
+#: 0b9dae69eca44d4287e670e3a316edcd
+#, fuzzy
 msgid ""
-"🏠 **Local Tools**: :doc:`../local_tools/index` - Learn local tool "
+"**Local Tools**: :doc:`../local_tools/index` - Learn local tool "
 "development"
 msgstr "🏠 **本地工具**：:doc:`../local_tools/index` - 学习本地工具开发"
 
-#: ../../expand_tooluniverse/reference/index.rst:132
-#: 742190e159ca44aeaecb05435e0523ad
+#: ../../expand_tooluniverse/reference/index.rst:158
+#: 90257c0cbad145878b24e82be7b32143
+#, fuzzy
 msgid ""
-"🔗 **Remote Tools**: :doc:`../remote_tools/index` - Learn remote tool "
+"**Remote Tools**: :doc:`../remote_tools/index` - Learn remote tool "
 "integration"
 msgstr "🔗 **远程工具**：:doc:`../remote_tools/index` - 学习远程工具集成"
 
-#: ../../expand_tooluniverse/reference/index.rst:133
-#: ec6f45defed040ea9de44848a52cf60f
+#: ../../expand_tooluniverse/reference/index.rst:159
+#: 9a47bd5ccdfe47cca6ebc1847d5f2fe5
+#, fuzzy
 msgid ""
-"🎁 **Contributing**: :doc:`../contributing/index` - Submit tools to "
+"**Contributing**: :doc:`../contributing/index` - Submit tools to "
 "ToolUniverse"
 msgstr "🎁 **贡献**：:doc:`../contributing/index` - 向 ToolUniverse 提交工具"
 
-#: ../../expand_tooluniverse/reference/index.rst:136
-#: 9ae76cc3a5124b7eb38e72172b710ea4
+#: ../../expand_tooluniverse/reference/index.rst:162
+#: b9a9b54740a2422082b34e27091173cf
 msgid ""
-"**Reference First**: Understanding the architecture and differences between "
-"tool types will help you make better decisions about which approach to use "
-"for your specific needs."
+"**Reference First**: Understanding the architecture and differences "
+"between tool types will help you make better decisions about which "
+"approach to use for your specific needs."
 msgstr "**参考优先**：了解工具类型的架构和差异将帮助您更好地决定针对特定需求采用哪种方法。"
+
+#~ msgid ""
+#~ "**I want to understand the overall "
+#~ "architecture:** → :doc:`architecture` - System"
+#~ " architecture and design patterns"
+#~ msgstr "**我想了解整体架构：** → :doc:`architecture` - 系统架构和设计模式"
+
+#~ msgid "Aspect | Local Tools | Remote Tools |"
+#~ msgstr "方面 | 本地工具 | 远程工具 |"
+
+#~ msgid ""
+#~ "|--------|-------------|--------------| | **Performance**"
+#~ " | High (no network overhead) | "
+#~ "Lower (network latency) | | "
+#~ "**Development** | Simple Python classes "
+#~ "| MCP servers or API wrappers |"
+#~ " | **Deployment** | Part of "
+#~ "ToolUniverse | Independent servers | |"
+#~ " **Scalability** | Limited by process "
+#~ "| Highly scalable | | **Integration**"
+#~ " | Full ToolUniverse access | Limited"
+#~ " to MCP/API | | **Contribution** |"
+#~ " Requires ``__init__.py`` changes | No "
+#~ "code changes needed |"
+#~ msgstr ""
+#~ "|--------|-------------|--------------|  \n"
+#~ "| **性能** | 高（无网络开销） | 较低（存在网络延迟） |  \n"
+#~ "| **开发** | 简单的 Python 类 | MCP 服务器或 API 封装 |  \n"
+#~ "| **部署** | ToolUniverse 的一部分 | 独立服务器 |  \n"
+#~ "| **可扩展性** | 受进程限制 | 高度可扩展 |  \n"
+#~ "| **集成** | 完全访问 ToolUniverse | 仅限 MCP/API |  \n"
+#~ "| **贡献** | 需要修改 ``__init__.py`` | 无需代码修改 |"
+
+#~ msgid ""
+#~ "**When to Use Local Tools:** - "
+#~ "Data processing and analysis - File "
+#~ "manipulation utilities - Simple API "
+#~ "wrappers - Tools that need full "
+#~ "ToolUniverse integration"
+#~ msgstr ""
+#~ "**何时使用本地工具：**  \n"
+#~ "- 数据处理与分析  \n"
+#~ "- 文件操作工具  \n"
+#~ "- 简单的 API 封装程序  \n"
+#~ "- 需要完整 ToolUniverse 集成的工具"
+
+#~ msgid ""
+#~ "**When to Use Remote Tools:** - "
+#~ "External service integration - Heavy "
+#~ "computational tasks - Microservice "
+#~ "architecture - Tools in different "
+#~ "programming languages"
+#~ msgstr ""
+#~ "**何时使用远程工具：**  \n"
+#~ "- 外部服务集成  \n"
+#~ "- 高强度计算任务  \n"
+#~ "- 微服务架构  \n"
+#~ "- 不同编程语言的工具"
+
+#~ msgid ""
+#~ "**ToolUniverse Core Components:** - **Tool "
+#~ "Registry**: Manages tool discovery and "
+#~ "registration - **Execution Engine**: Handles"
+#~ " tool execution and error management "
+#~ "- **Configuration System**: Manages tool "
+#~ "parameters and settings - **MCP "
+#~ "Integration**: Connects with remote tools "
+#~ "via MCP protocol"
+#~ msgstr ""
+#~ "**ToolUniverse 核心组件：**  \n"
+#~ "- **工具注册表**：管理工具的发现和注册  \n"
+#~ "- **执行引擎**：处理工具执行和错误管理  \n"
+#~ "- **配置系统**：管理工具参数和设置  \n"
+#~ "- **MCP 集成**：通过 MCP 协议连接远程工具"
+
+#~ msgid ""
+#~ "**Error Handling:** - Input validation "
+#~ "at multiple levels - Graceful error "
+#~ "recovery - Comprehensive error reporting "
+#~ "- Timeout management for remote tools"
+#~ msgstr ""
+#~ "**错误处理：**  \n"
+#~ "- 多层次的输入验证  \n"
+#~ "- 优雅的错误恢复  \n"
+#~ "- 全面的错误报告  \n"
+#~ "- 远程工具的超时管理"
+
+#~ msgid ""
+#~ "**Local Tools:** - Keep tools focused"
+#~ " and single-purpose - Use proper "
+#~ "error handling - Implement input "
+#~ "validation - Add comprehensive tests -"
+#~ " Document all parameters clearly"
+#~ msgstr ""
+#~ "**本地工具：**  \n"
+#~ "- 保持工具专注且单一用途  \n"
+#~ "- 使用适当的错误处理  \n"
+#~ "- 实现输入验证  \n"
+#~ "- 添加全面的测试  \n"
+#~ "- 清晰地记录所有参数"
+
+#~ msgid ""
+#~ "**Remote Tools:** - Implement proper "
+#~ "authentication - Use circuit breakers "
+#~ "for resilience - Add retry logic "
+#~ "for transient failures - Monitor "
+#~ "performance and errors - Provide clear"
+#~ " deployment documentation"
+#~ msgstr ""
+#~ "**远程工具：**  \n"
+#~ "- 实施适当的身份验证  \n"
+#~ "- 使用断路器提高系统弹性  \n"
+#~ "- 为瞬态故障添加重试逻辑  \n"
+#~ "- 监控性能和错误  \n"
+#~ "- 提供清晰的部署文档"
+
+#~ msgid ""
+#~ "**General:** - Follow naming conventions "
+#~ "- Use descriptive parameter names - "
+#~ "Provide clear error messages - Include"
+#~ " usage examples - Test with real-"
+#~ "world data"
+#~ msgstr ""
+#~ "**通用规则：**  \n"
+#~ "- 遵循命名规范  \n"
+#~ "- 使用具有描述性的参数名称  \n"
+#~ "- 提供清晰的错误信息  \n"
+#~ "- 包括使用示例  \n"
+#~ "- 使用真实数据进行测试"

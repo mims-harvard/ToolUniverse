@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nhanes_tools.rst:10 e332fbb3600e426aab9a85f8b50796b6
+msgid "Nhanes Tools"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:12 1e03becb2a6d4e68a32e935c2c3baa54
+msgid ""
+"**Configuration File**: ``nhanes_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:16 8bfb50db3a074e56a81b25866b0f6846
+msgid ""
+"This page contains all tools defined in the ``nhanes_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:19 d8fad9746b1947958da870ec74e50112
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:22 68d93d00e8a04f62ad7331f76376d4f8
+msgid "**NHANES_download_and_parse** (Type: NHANESTool)"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:24 489f8bb193a2402a9b41360d540b6d55
+msgid ""
+"Download and parse NHANES XPT data files from CDC into structured JSON "
+"(DataFrame-ready). Bridges..."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst 972e49568e9f4c67939515d3088c945d
+msgid "NHANES_download_and_parse tool specification"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:28 ../../tools/nhanes_tools.rst:78
+#: ../../tools/nhanes_tools.rst:111 0af4f412c307447695496e16e56f0d8c
+#: d386527e9cb04c89a13266b682bfb7e1 dea44e08986945559a46be63f1feb40f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:30 7be631e6a6ae44af86f4c958a676bbce
+msgid "**Name**: ``NHANES_download_and_parse``"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:31 ../../tools/nhanes_tools.rst:81
+#: ../../tools/nhanes_tools.rst:114 2a781cc0152b4fb4a185abfe47482dbd
+#: 4bfae0e3e1c94c50bdf093b348a5a7c0 e4f034c070aa406d9e83b02832bc439c
+msgid "**Type**: ``NHANESTool``"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:32 973ddb531521418196131b3efb6a14ea
+msgid ""
+"**Description**: Download and parse NHANES XPT data files from CDC into "
+"structured JSON (DataFrame-ready). Bridges dataset discovery to analysis "
+"by handling XPT download, parsing, optional variable selection, and age "
+"filtering. For standard components (Demographics, Dietary, "
+"Examination/BodyMeasures, Questionnaire), the tool auto-resolves the "
+"filename from the cycle suffix. For Laboratory data, provide the exact "
+"dataset\\_name (e.g., 'CBC', 'BIOPRO', 'GHB', 'GLU', 'TRIGLY', 'HDL', "
+"'TCHOL'). Returns column metadata, summary statistics, and the first 5000"
+" rows as JSON records. Use nhanes\\_search\\_datasets first to discover "
+"available dataset names if unsure."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:34 ../../tools/nhanes_tools.rst:84
+#: ../../tools/nhanes_tools.rst:117 0bc1c522626e4ad8857359cd2e7e9e26
+#: 24b133b37bec40308001724ec324af29 f002f00742504675a8fdee7fc25df5df
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:36 d61d2af79d044ec5b300d69c99106a9e
+msgid ""
+"``component`` (string) (required) NHANES component category. 'Dietary' = "
+"Day 1 intake totals (DR1TOT), 'DietaryDay2' = Day 2 (DR2TOT), "
+"'BodyMeasures' = BMX, 'Examination' = general exam. For Laboratory, also "
+"provide dataset\\_name."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:39 e06b7808d824477aba95345603461ba2
+msgid ""
+"``cycle`` (string) (required) NHANES survey cycle (e.g., '2017-2018', "
+"'2015-2016', '2013-2014', '2011-2012')"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:42 7c84b4b1c83e4ffc93ea2299ba36c7fa
+msgid ""
+"``dataset_name`` (string) (optional) Exact NHANES dataset filename prefix"
+" (without cycle suffix). Required for Laboratory (e.g., 'CBC', 'BIOPRO', "
+"'GHB', 'GLU', 'TRIGLY', 'HDL', 'TCHOL'). Optional for other components to"
+" override the default filename."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:45 fa5b769576eb411298a74dba57ef7bc0
+msgid ""
+"``variables`` (array) (optional) List of variable names to select (e.g., "
+"['SEQN', 'DR1TIRON', 'DR1TKCAL']). SEQN is always included. If omitted, "
+"all variables are returned."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:48 519f406bdcfd4f02978d6be5ff1a0606
+msgid ""
+"``age_min`` (number) (optional) Minimum age filter (inclusive). Filters "
+"by RIDAGEYR from Demographics. Auto-merges with DEMO file if the "
+"requested component is not Demographics."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:51 c213e6365fe244c2aea23fa97dc7fac7
+msgid ""
+"``age_max`` (number) (optional) Maximum age filter (inclusive). Filters "
+"by RIDAGEYR from Demographics."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:54 3bd35175eb944841b2a198df2a21ab6d
+msgid ""
+"``max_rows`` (integer) (optional) Maximum number of data rows to return "
+"(default: 5000). Set lower for faster responses."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:57 ../../tools/nhanes_tools.rst:92
+#: ../../tools/nhanes_tools.rst:128 6028731ae6a44cd18fb2d3f2e13cd5d3
+#: 90bb9ff06bc043a8815b9a4fba859ec5 bf58bd93b703452c8d1afa5a86662073
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:72 1247187fc41549c9af559e7f8e7c5457
+msgid "**nhanes_get_dataset_info** (Type: NHANESTool)"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:74 e42113986a8b453ebce29c44b7a0306f
+msgid ""
+"Get information about NHANES (National Health and Nutrition Examination "
+"Survey) datasets. NHANES ..."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst 32cd964a59b64e36926abfdce677c36a
+msgid "nhanes_get_dataset_info tool specification"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:80 8879ee6133ad424381fd86cb22f9e3ff
+msgid "**Name**: ``nhanes_get_dataset_info``"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:82 8c3b3571ca2f4db2b492ddf6df6edb76
+msgid ""
+"**Description**: Get information about NHANES (National Health and "
+"Nutrition Examination Survey) datasets. NHANES data is typically "
+"available as downloadable files (SAS, XPT formats) from the CDC website. "
+"This tool provides information about available datasets, years, and "
+"download links. Note: Actual data retrieval may require downloading and "
+"converting files."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:86 ed4c6016ba734423894cdc8eb7247a04
+msgid ""
+"``year`` (string) (optional) NHANES cycle/year (e.g., '2017-2018', "
+"'2015-2016', '2013-2014')"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:89 43de3ff619da46a689428007115f9660
+msgid ""
+"``component`` (string) (optional) Optional component type to filter "
+"datasets"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:105 ddb1ff9f16834136883c97ce5b578a4c
+msgid "**nhanes_search_datasets** (Type: NHANESTool)"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:107 0374284a6a0040a69e20b20b64e31b5f
+msgid ""
+"Search for NHANES datasets by keyword. Returns information about matching"
+" datasets including down..."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst 9b95be8f7a6a45a0984ac3837d8ac7e4
+msgid "nhanes_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:113 76aae585fe7f47c38d7db5c4994a6b11
+msgid "**Name**: ``nhanes_search_datasets``"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:115 37830ffc90434bda832c1f879a5bc17b
+msgid ""
+"**Description**: Search for NHANES datasets by keyword. Returns "
+"information about matching datasets including download links. Note: "
+"NHANES data files are typically in SAS/XPT format and may require "
+"conversion tools."
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:119 663b805350954c57b8e75ae2d842bbc6
+msgid ""
+"``search_term`` (string) (optional) Search term to find datasets (e.g., "
+"'glucose', 'blood pressure', 'diabetes')"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:122 b19d86d2f45949cda82f37495ba8bade
+msgid ""
+"``year`` (string) (optional) Optional NHANES cycle to filter (e.g., "
+"'2017-2018')"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:125 e901c2acf41d460fb32a1310f12417d3
+msgid "``limit`` (integer) (optional) Maximum number of results (default: 20)"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:141 0290f8aca28347e8acdf91551a5d3929
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:143 9e65391dd06d43b6a1417ffb2c666475
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nhanes_tools.rst:144 5d4bc4e1127645ae8d595a427434a4b0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,1079 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_tools.rst:10 3ce84ad5edd14080ac11f089c8fb4722
+msgid "Ensembl Tools"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:12 915d30936c3d4bbabfa8ef8b3ee5d982
+msgid ""
+"**Configuration File**: ``ensembl_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 21"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:16 388226ee7e2f4fab807a9f795fc11108
+msgid ""
+"This page contains all tools defined in the ``ensembl_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:19 08c4e0a8f0b546e2af750c51e5a082ac
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:22 280b867e594641b480e619f9e5cbe09f
+msgid "**ensembl_get_alignment** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:24 307e9ed00ced4633bac078938d23c3e2
+msgid ""
+"Get genomic alignments between species for a genomic region. Returns "
+"multiple alignments showing ..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 502c116e2af849dd9aa9f36630e07af9
+msgid "ensembl_get_alignment tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:28 ../../tools/ensembl_tools.rst:75
+#: ../../tools/ensembl_tools.rst:106 ../../tools/ensembl_tools.rst:149
+#: ../../tools/ensembl_tools.rst:199 ../../tools/ensembl_tools.rst:230
+#: ../../tools/ensembl_tools.rst:264 ../../tools/ensembl_tools.rst:298
+#: ../../tools/ensembl_tools.rst:339 ../../tools/ensembl_tools.rst:377
+#: ../../tools/ensembl_tools.rst:417 ../../tools/ensembl_tools.rst:447
+#: ../../tools/ensembl_tools.rst:485 ../../tools/ensembl_tools.rst:520
+#: ../../tools/ensembl_tools.rst:551 ../../tools/ensembl_tools.rst:588
+#: ../../tools/ensembl_tools.rst:627 ../../tools/ensembl_tools.rst:664
+#: ../../tools/ensembl_tools.rst:701 ../../tools/ensembl_tools.rst:738
+#: ../../tools/ensembl_tools.rst:772 2ea312147f1040c2adc7fd8fe4b6ed56
+#: 3c85c92cac0f4cf2a36496c6cdd626f7 427958a472b54818803eba44c836ff06
+#: 5b7b60df63d040b3b1e15ab3fa23db67 5cca09045c0d49b5aa99a72abf28a9d7
+#: 66323d38f4d547da90cef47d40265cfc 69708bef5fe040ce972ff79196b948d5
+#: 6a18818ca1bb4931ba920e2e56633517 6ef1eec328e745ecb26f6db596fac2e6
+#: 785a57646b7e4cd783b32334fd32f152 7c5d9526dc914a5d8df71eb60697b2a3
+#: 9249adbcde09486bbe9a5ad1fdd62f1b 9a83b9fd7ffd49bdb730bd87c2dce575
+#: 9e5f3ae61919466ba974255869ddadfa b6d302ed30834a8ab5e03c3d276ef0b5
+#: b9562bd39f2f46fc8aba5dff6d1052c5 c47fda3928fe45fbb5954026fe193209
+#: c97d120176944ee4ad23a2fc5db38ccc cbedba53c6cf4ea5be21efbe9068c319
+#: f62d6f2885a44c309fc590c43f98a9b8 fe88327178fc4e07a25e68a82be0af81
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:30 9cb23d1ed45c4f6890799d2345d6d3be
+msgid "**Name**: ``ensembl_get_alignment``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:31 ../../tools/ensembl_tools.rst:78
+#: ../../tools/ensembl_tools.rst:109 ../../tools/ensembl_tools.rst:152
+#: ../../tools/ensembl_tools.rst:202 ../../tools/ensembl_tools.rst:233
+#: ../../tools/ensembl_tools.rst:267 ../../tools/ensembl_tools.rst:301
+#: ../../tools/ensembl_tools.rst:342 ../../tools/ensembl_tools.rst:380
+#: ../../tools/ensembl_tools.rst:420 ../../tools/ensembl_tools.rst:450
+#: ../../tools/ensembl_tools.rst:488 ../../tools/ensembl_tools.rst:523
+#: ../../tools/ensembl_tools.rst:554 ../../tools/ensembl_tools.rst:591
+#: ../../tools/ensembl_tools.rst:630 ../../tools/ensembl_tools.rst:667
+#: ../../tools/ensembl_tools.rst:704 ../../tools/ensembl_tools.rst:741
+#: ../../tools/ensembl_tools.rst:775 16c4ad9a49814dda992abd49e8a1a067
+#: 37d1f7b1dc3441ee8ac352b048ad7ca0 40abe04ef56b46cc89ed40678d9361db
+#: 44d092b7181d4184bb03ba56bfdbdcb9 4585e021f13b4044bc76c4b075fa7a0d
+#: 46711466606f4cee8960de4aa55e9e73 5f2b536e4aad4982b078ee0043201501
+#: 63a47e3c43de4aadb54a18ae7c9ea3c4 69f41fc039c94020847970ff4297826b
+#: 6f08fbe47deb49069148f0c0677b3d44 712d9992eaac47589f14e30fb26dc8cf
+#: 7cb842a7a37c44b5b966116e0ff96158 7cf62c1fcbad469db9b118c748f954a2
+#: 87ac01384c994c9d9102513b6b794055 881e48f749a5494287c6c554be999fe3
+#: bedc70858f2b458996b8e3c694c0b972 d1f57f6d108e48bc978787aac884e73a
+#: e83eded3ca1446bca7b964d366f518c9 e999ccd8f8db48128e2f12c3eaabe415
+#: ee92a454203b49c1aad9ca19e83cc4f8 f2512bf1fdab40c996faee22cdbe0c5e
+msgid "**Type**: ``EnsemblRESTTool``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:32 de54d71a661e45dfa1623a3b4c5ebc76
+msgid ""
+"**Description**: Get genomic alignments between species for a genomic "
+"region. Returns multiple alignments showing conserved sequences across "
+"species groups. Supports EPO and PECAN alignment methods for predefined "
+"species groups (mammals, primates, fish, birds, sauropsids). Useful for "
+"studying sequence conservation."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:34 ../../tools/ensembl_tools.rst:81
+#: ../../tools/ensembl_tools.rst:112 ../../tools/ensembl_tools.rst:155
+#: ../../tools/ensembl_tools.rst:205 ../../tools/ensembl_tools.rst:236
+#: ../../tools/ensembl_tools.rst:270 ../../tools/ensembl_tools.rst:304
+#: ../../tools/ensembl_tools.rst:345 ../../tools/ensembl_tools.rst:383
+#: ../../tools/ensembl_tools.rst:423 ../../tools/ensembl_tools.rst:453
+#: ../../tools/ensembl_tools.rst:491 ../../tools/ensembl_tools.rst:526
+#: ../../tools/ensembl_tools.rst:557 ../../tools/ensembl_tools.rst:594
+#: ../../tools/ensembl_tools.rst:633 ../../tools/ensembl_tools.rst:670
+#: ../../tools/ensembl_tools.rst:707 ../../tools/ensembl_tools.rst:744
+#: ../../tools/ensembl_tools.rst:778 07ec9a40c4e74944a8663d6921633dc3
+#: 0dcea94198f14696ab0e42528b1ee710 2af19b06e3864124b6568d2674e8a42e
+#: 325012ea0da04d5a81fe83e2b14f9181 6ebcbd8b1c184884b842aa34c32a75e3
+#: 6f08688b46ac4ea986a3ff9995784dfe 7b2bf5c6f5484c6c9e35e9b82b2f1aec
+#: 8014953232ee4c77aff4a02bc4e59520 8373c21d30b444b181b3cbaaea167230
+#: 880a448a43974cb8b2ab1657e3b19f88 89e045b236d3429392cb048ddd5d38bf
+#: 9b6e1918b6f94ab18fa8b24f7b19f6d1 9efe0c816f034a588ff95f2d30eea92f
+#: c45a220b4fec4a6ba8a1edf811e879e0 ce84a18377124195b950ed337f3a04d3
+#: d9ad3da84954416daf25caef637f83ff e4b36b973f7148cc80a6a6aa3d2bcfa4
+#: e7e12dfd45154a8ca8a5f48540fc613d e9248dc773f74d8ca67bb195de22da15
+#: f315401b16f2466ca5b2ebbc23c9f412 fe2fae64335046d98d72f2e5acf0b3f6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:36 ../../tools/ensembl_tools.rst:157
+#: 1efc653c3bf94434a25356823dde7e06 98535fb4784747bcbf842cc8f8d8718a
+msgid ""
+"``species`` (string) (required) Source species (e.g., 'human', "
+"'homo\\_sapiens')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:39 8fa9bce2dc3d43ba8ab28175bb6a58cf
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end' (e.g., '2:106000000-106100000')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:42 cd7a20bd91104d47a796c53256768a10
+msgid ""
+"``species_set_group`` (string) (optional) Predefined species group for "
+"multiple alignment. Options: 'mammals', 'primates', 'fish', 'birds', "
+"'sauropsids'. Required for EPO method."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:45 43b938801f2c4c19b0cbf6b37029da91
+msgid ""
+"``method`` (string) (optional) Alignment method: EPO (high quality "
+"multiple), EPO\\_EXTENDED (extended coverage), PECAN (low coverage)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:48 41008c7ada98417f97daceaa6ef21532
+msgid "``compact`` (boolean) (optional) Compact output format"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:51 d4eb1c47cd384a18b2f1a9167ba7790a
+msgid ""
+"``display_species_set`` (string) (optional) Comma-separated list to "
+"filter which species to display in results (optional, e.g., 'mouse,rat')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:54 ../../tools/ensembl_tools.rst:86
+#: ../../tools/ensembl_tools.rst:129 ../../tools/ensembl_tools.rst:178
+#: ../../tools/ensembl_tools.rst:210 ../../tools/ensembl_tools.rst:244
+#: ../../tools/ensembl_tools.rst:278 ../../tools/ensembl_tools.rst:318
+#: ../../tools/ensembl_tools.rst:356 ../../tools/ensembl_tools.rst:397
+#: ../../tools/ensembl_tools.rst:428 ../../tools/ensembl_tools.rst:464
+#: ../../tools/ensembl_tools.rst:499 ../../tools/ensembl_tools.rst:531
+#: ../../tools/ensembl_tools.rst:568 ../../tools/ensembl_tools.rst:608
+#: ../../tools/ensembl_tools.rst:644 ../../tools/ensembl_tools.rst:681
+#: ../../tools/ensembl_tools.rst:718 ../../tools/ensembl_tools.rst:752
+#: ../../tools/ensembl_tools.rst:825 01de0263e77a459fa66bc0b1f310dfe2
+#: 0c93116b92a5440f860f66e7c418997a 10f5346004714f79a17a9a7be625a3dd
+#: 161f899098b849b1a26fc10a44eec9cc 3ff5878191b34b8ba4375607d682ef8f
+#: 428028ce4ffb4637b2f8db6d4405c32d 5d9e5804c5c14592b4258f1b04c5b2aa
+#: 673fe9ca3fbd401ab12bc09be91997bc 70cf8360c4554801b05be93ca90fe5d1
+#: 79e21ac8fe924ac198ecc9a9d6c3bce3 80ac16b9a3934d14a71e69068e3266c6
+#: 81deae219a4546269075e0ecff464c73 891ff050567f4639a19494c7d999ae19
+#: a3b8d77bf17846e8ae65d1a5f56145da a7729fdcf27c4209ab260087c33205d4
+#: ae578d82f972403cbf5f812b1d57aa91 c0df3019b01c48249178ebbe000b09b2
+#: c966801d213a479bac67cd9194e99150 d92592893a9b4dd89f001d34aac99fef
+#: dd7ea57cee3f449188c305575a47f075 e3544adde6d74de099c7e36d455730b2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:69 e624f5b9c5ec4d2a98f5d64bc34c1961
+msgid "**ensembl_get_archive** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:71 a683f06d3adc4f439a59a1cc2f6552d5
+msgid ""
+"Get historical (archived) gene information by stable ID. Returns gene "
+"location and status across ..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 9c38a5ceaac140b484a0441df2e1a540
+msgid "ensembl_get_archive tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:77 5fa133ad5c094cb38014bc3b397cf079
+msgid "**Name**: ``ensembl_get_archive``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:79 be04ebd6fe4240b7843d47f2becd9fba
+msgid ""
+"**Description**: Get historical (archived) gene information by stable ID."
+" Returns gene location and status across all Ensembl releases. Use this "
+"to track gene ID changes, assembly updates, or retrieve information from "
+"older Ensembl versions."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:83 8a7efa78de2145feb08244d3c1a4fe7c
+msgid ""
+"``id`` (string) (required) Ensembl stable ID (gene, transcript, or "
+"protein, e.g., 'ENSG00000139618')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:100 14fc258273014bc5b8cc969468f99831
+msgid "**ensembl_get_genetree** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:102 0c78cd1429cd40cd91dac22e5175299a
+msgid ""
+"Get gene tree (phylogenetic tree) for a gene. Returns evolutionary "
+"relationships showing ortholog..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 4e2ca24b41b74a998f4cc872fbf4e2dc
+msgid "ensembl_get_genetree tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:108 dddaed2dec57498d98d12ce42e2adab8
+msgid "**Name**: ``ensembl_get_genetree``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:110 8c5c5832f2a2440c83568a582712bbc7
+msgid ""
+"**Description**: Get gene tree (phylogenetic tree) for a gene. Returns "
+"evolutionary relationships showing orthologues and paralogues across "
+"species. Use this to study gene evolution and find related genes in other"
+" species. Gene tree IDs can be found in gene lookup responses or by "
+"querying the Compara database."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:114 662c19d7b2774cf3b428445ae2031ffb
+msgid ""
+"``id`` (string) (required) Gene tree ID (e.g., 'ENSGT00390000003602'). "
+"Gene tree IDs can be found in gene lookup responses with expand=1, or by "
+"querying Ensembl Compara database."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:117 cbaee23870204685bd950794693a09e2
+msgid ""
+"``prune_species`` (string) (optional) Prune tree to specific species "
+"(optional, e.g., 'homo\\_sapiens,mus\\_musculus')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:120 c1d1007f565d4adf8e04c294a0a99234
+msgid ""
+"``prune_taxon`` (string) (optional) Prune tree to specific taxon "
+"(optional)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:123 ../../tools/ensembl_tools.rst:175
+#: 14de32c5c23342f2a672420eea1fadb4 6084ac9eb4c949e394079bb80b2ca8d6
+msgid "``aligned`` (boolean) (optional) Return aligned sequences"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:126 3f36673a55e14a43a92b3293d3548c71
+msgid ""
+"``sequence`` (string) (optional) Include sequences in tree (cdna, "
+"protein, or none)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:143 65635d092d854fd3ba9b890091faf42d
+msgid "**ensembl_get_homology** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:145 9d602cd09ec742d6bb001f9e07a47e85
+msgid ""
+"Get homology (orthologues and paralogues) for a gene by symbol across "
+"species. Returns evolutiona..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst d5af391c483e4148bba8721c3c63aade
+msgid "ensembl_get_homology tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:151 99f6309a064a4f1d8bac9125672253ae
+msgid "**Name**: ``ensembl_get_homology``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:153 c998d62738f04416ba1d3cf3d510bb3f
+msgid ""
+"**Description**: Get homology (orthologues and paralogues) for a gene by "
+"symbol across species. Returns evolutionary relationships with gene IDs, "
+"protein IDs, chromosomal locations, and homology types (1-to-1, 1-to-"
+"many, etc). Essential for comparative genomics studies."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:160 4aa578c76c574800901a4a3d92ee02b5
+msgid "``symbol`` (string) (required) Gene symbol (e.g., 'BRCA2', 'TP53')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:163 75a19084b7dd4185b38b0c1e9ab41c30
+msgid ""
+"``target_species`` (string) (optional) Target species to find homologues "
+"in (optional, e.g., 'mouse', 'mus\\_musculus'). Leave empty to search all"
+" species."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:166 e6decf99d1ce4960a3a6265f3f4470c3
+msgid ""
+"``target_taxon`` (string) (optional) Target taxonomic group (optional, "
+"e.g., 'Mammalia', 'Primates')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:169 f73390ec29fc4ae4a0d8591354e4fa80
+msgid ""
+"``type`` (string) (optional) Homology type: 'orthologues' (different "
+"species), 'paralogues' (same species), 'all' (both)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:172 84f1cee07bd34162af577ea0024f57f7
+msgid "``sequence`` (string) (optional) Include sequences in response"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:193 7d85e7d1864141fb90c7bd4196f6a04e
+msgid "**ensembl_get_ontology_ancestors** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:195 93c2f3704eba4555b5de86e983783d1c
+msgid ""
+"Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up"
+" the ontology hierarchy ..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 27b908332e124d5ab3551ab5c33e24d4
+msgid "ensembl_get_ontology_ancestors tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:201 20647cc607334a51bca7b300e0d21101
+msgid "**Name**: ``ensembl_get_ontology_ancestors``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:203 c6541b47dafd4a03ae9e6946003e3601
+msgid ""
+"**Description**: Get ancestor terms for a GO (Gene Ontology) term. "
+"Returns parent terms up the ontology hierarchy showing broader biological"
+" concepts. Use this to understand term relationships and perform "
+"hierarchical analysis."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:207 ../../tools/ensembl_tools.rst:238
+#: 25d5717c30814c4aa9cb4e91244fb7f4 7bce3f4d8b83421ebb7db16bfbf49148
+msgid "``id`` (string) (required) GO term ID (e.g., 'GO:0005737' for cytoplasm)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:224 b45ca5fb11894270aa6b6b33695489e3
+msgid "**ensembl_get_ontology_descendants** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:226 100b76e642984be592c0f62fa2629309
+msgid ""
+"Get descendant terms for a GO (Gene Ontology) term. Returns child terms "
+"down the ontology hierarc..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst efc26df5d31c43f2a82f34e072ecf08b
+msgid "ensembl_get_ontology_descendants tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:232 cab6bc808a9c404cb322cf164a170e7d
+msgid "**Name**: ``ensembl_get_ontology_descendants``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:234 b5fafa4e4b2a4f339648c3dbce8f427f
+msgid ""
+"**Description**: Get descendant terms for a GO (Gene Ontology) term. "
+"Returns child terms down the ontology hierarchy showing more specific "
+"biological concepts. Use this to find related specific terms and expand "
+"queries."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:241 8d62a1ff6f6f45df920b59d1b3791c93
+msgid "``closest_term`` (boolean) (optional) Return only immediate children"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:258 e4a936eed0394dc597c2bd80ca2e58a7
+msgid "**ensembl_get_ontology_term** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:260 688760b5b1e346439bdfae6f20226de9
+msgid ""
+"Get detailed information about a specific ontology term (GO, SO, HPO). "
+"Returns term name, definit..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 58dd0708287042eeb31f66d3789d90cc
+msgid "ensembl_get_ontology_term tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:266 a3f87c5aec7d4ef2a3c02d02c8d823eb
+msgid "**Name**: ``ensembl_get_ontology_term``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:268 d7e4cd5771be4d92a515821724e4367d
+msgid ""
+"**Description**: Get detailed information about a specific ontology term "
+"(GO, SO, HPO). Returns term name, definition, synonyms, and "
+"relationships. Use this to understand biological concepts and validate "
+"term usage."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:272 bea68597ec36421db8a11501dcb5ca4b
+msgid ""
+"``id`` (string) (required) Ontology term ID (e.g., 'GO:0005737', "
+"'SO:0000704', 'HP:0001250')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:275 aa47325589a4462dac294b2817e9e45e
+msgid ""
+"``relation`` (string) (optional) Filter relationships (optional, e.g., "
+"'is\\_a', 'part\\_of', 'regulates')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:292 ff9e972cc10d4fa2a2c4a822619dca51
+msgid "**ensembl_get_overlap_features** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:294 b6483513d2aa4e479060d0b3f7e4bc09
+msgid ""
+"Get genomic features (genes, transcripts, repeats) overlapping a region. "
+"Returns comprehensive an..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 7bbb90f926e1414b84ce61732365a7e0
+msgid "ensembl_get_overlap_features tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:300 2f6e64ef8c7546a7891c369ebcd0779e
+msgid "**Name**: ``ensembl_get_overlap_features``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:302 a2fa4edb07b84252af9036a32f2327c2
+msgid ""
+"**Description**: Get genomic features (genes, transcripts, repeats) "
+"overlapping a region. Returns comprehensive annotations including coding "
+"genes, ncRNAs, pseudogenes, and structural features. Use this for genome "
+"annotation and feature discovery."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:306 ../../tools/ensembl_tools.rst:780
+#: 21f16009dec94e229cc85b5d3d662498 bfb5aa0fb4f4481a9bc19803dfc10318
+msgid "``species`` (string) (required) Species (e.g., 'human', 'homo\\_sapiens')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:309 9c194ead500d4810847827e08aaab533
+msgid ""
+"``region`` (string) (required) Genomic region (e.g., "
+"'7:140424943-140624564')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:312 9435abbd76b74d368a037f2a2d886229
+msgid "``feature`` (string) (optional) Feature type to retrieve"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:315 79e7cea69a964168a73eaf4cd280061c
+msgid ""
+"``biotype`` (string) (optional) Filter by biotype (optional, e.g., "
+"'protein\\_coding', 'lincRNA', 'miRNA')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:333 fd78eb2f0f504c608202a36bfd474763
+msgid "**ensembl_get_regulatory_features** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:335 3e0a91d898d44270b0f2f9c39899234f
+msgid ""
+"Get regulatory features (promoters, enhancers, transcription factor "
+"binding sites) in a genomic r..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst d104b0dcf4ee4d11a2b00ad702f920d7
+msgid "ensembl_get_regulatory_features tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:341 7fc84506e7e94df29e9695fa67ba8a62
+msgid "**Name**: ``ensembl_get_regulatory_features``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:343 4441ef560fa840bd9788b067e8b95ea1
+msgid ""
+"**Description**: Get regulatory features (promoters, enhancers, "
+"transcription factor binding sites) in a genomic region. Returns "
+"regulatory annotations including feature types, positions, and evidence. "
+"Use this to identify regulatory elements that may control gene "
+"expression."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:347 7c0c9e4b5a0846bd9bc3a009bf1f1cb1
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end' (e.g., '1:1000000-2000000')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:350 ../../tools/ensembl_tools.rst:602
+#: ../../tools/ensembl_tools.rst:638 43451fe8bb62468da11e5169742194b9
+#: 6db82ef8bc0a45c989da4ebac18e9933 d058d0342d324f8888a35c5022d294b9
+msgid "``species`` (string) (optional) Species name (default 'human')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:353 feae4ed5dec04777bf61ba4b4bfaef39
+msgid ""
+"``feature`` (string) (required) Feature type (must be 'regulatory' for "
+"this tool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:371 d4e42307322c443aaca30cd013ba4075
+msgid "**ensembl_get_sequence** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:373 b50037df463e42ebbae174518ecf1de6
+msgid ""
+"Get DNA or protein sequence for a gene, transcript, or genomic region. "
+"Returns sequence in JSON f..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst c6e2c7be1a284b0d9896978288ff4c7d
+msgid "ensembl_get_sequence tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:379 b3012f598fe142cca679296c036bf46c
+msgid "**Name**: ``ensembl_get_sequence``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:381 488fd1c6001a46478aa5b41bd0c3816b
+msgid ""
+"**Description**: Get DNA or protein sequence for a gene, transcript, or "
+"genomic region. Returns sequence in JSON format with metadata. Supports "
+"multiple sequence types: genomic, CDS, cDNA, and peptide sequences."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:385 d08a8c966c79493fb25c633d8734f97d
+msgid ""
+"``id`` (string) (required) Ensembl gene/transcript ID (e.g., "
+"'ENSG00000139618' or 'ENST00000380152')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:388 5095fd22610942b89e1b4ea0acab8d8d
+msgid ""
+"``type`` (string) (optional) Sequence type: 'genomic' (genomic DNA), "
+"'cds' (coding sequence), 'cdna' (cDNA), 'peptide' (protein sequence)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:391 ad4edb71602344df9341da0b975d4887
+msgid "``species`` (string) (optional) Species name (optional, defaults to human)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:394 e5598f408e974d518433093ae31665e0
+msgid ""
+"``multiple_sequences`` (boolean) (optional) Return multiple sequences if "
+"available (e.g., all transcripts)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:411 c61f5641b1ee4b54bdd7c11de946faee
+msgid "**ensembl_get_species** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:413 59c57a8bdc9e493da0feeb0e409349f9
+msgid ""
+"Get information about a species or list all available species in Ensembl."
+" Returns scientific name..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 90fddd8287a147ae8003d24d4f40810f
+msgid "ensembl_get_species tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:419 6593ea188e75437aaa5990a90a43ec62
+msgid "**Name**: ``ensembl_get_species``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:421 d932f4e4061f42e2b210569438e5689d
+msgid ""
+"**Description**: Get information about a species or list all available "
+"species in Ensembl. Returns scientific name, common name, assembly "
+"details, and database version. Use without ID to list all species (200+ "
+"available)."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:425 13835f9c22994ce4b98d495630dd969f
+msgid "``division`` (string) (optional) Filter by Ensembl division (optional)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:441 76cd9dcd3dd3465481a20ff5701bdd4d
+msgid "**ensembl_get_structural_variants** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:443 0964a056634040d9b0a199de3fcec771
+msgid ""
+"Get structural variants overlapping a genomic region from Ensembl. "
+"Returns known SVs from DGVa (D..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 4d29abf635b44e5699906f0d3672a61b
+msgid "ensembl_get_structural_variants tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:449 dc029b5ddca6434983bb9490ed3549eb
+msgid "**Name**: ``ensembl_get_structural_variants``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:451 dd7531963cf642ada22ec43c8f985f0d
+msgid ""
+"**Description**: Get structural variants overlapping a genomic region "
+"from Ensembl. Returns known SVs from DGVa (Database of Genomic Variants "
+"archive), ClinGen, and other sources. Each SV includes its ID (nsv/esv "
+"accession), coordinates, and feature type. Use "
+"ensembl\\_get\\_sv\\_detail to get clinical significance, variant class "
+"(CNV, deletion, duplication, inversion), and supporting evidence for "
+"specific variants. Region must be < 5Mb."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:455 ../../tools/ensembl_tools.rst:493
+#: 209578f8841d4ff7aa6735d2b5cd2fca ab4a9415e6c54924ba9773414619c6b8
+msgid ""
+"``species`` (string) (required) Species name (e.g., 'human', "
+"'homo\\_sapiens')."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:458 ee345eafa96e407781372d1536da7a39
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chr:start-end' "
+"(e.g., '17:43044295-43125370'). Maximum 5Mb."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:461 7f02d9035bde43128441a8db41b784de
+msgid ""
+"``feature`` (string) (optional) Feature type to retrieve. Fixed to "
+"'structural\\_variation' for this tool."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:479 f2b5e2b431a149008c0b8118d4a7d5a8
+msgid "**ensembl_get_sv_detail** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:481 d4bdde6799ef40a69184cf985ac37eaf
+msgid ""
+"Get detailed information for a specific structural variant from Ensembl "
+"by its accession (nsv/esv..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst a7cf12365fed4c848aeb29eb4dba3e4a
+msgid "ensembl_get_sv_detail tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:487 2061a4f8cc544e0a805c03538a6eccfd
+msgid "**Name**: ``ensembl_get_sv_detail``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:489 12eaff22ef0b4cb7a0d09d18b26ecb26
+msgid ""
+"**Description**: Get detailed information for a specific structural "
+"variant from Ensembl by its accession (nsv/esv ID). Returns variant class"
+" (CNV, deletion, duplication, inversion, gain, loss), clinical "
+"significance (pathogenic, benign, etc.), source database, supporting "
+"evidence with individual sample observations, study information, and "
+"genomic mappings. Essential for CNV clinical interpretation."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:496 2c8ae35533734ba3b40621aa0d1840e8
+msgid ""
+"``id`` (string) (required) Structural variant accession from Ensembl/DGVa"
+" (e.g., 'nsv2769779', 'esv3647486'). Use "
+"ensembl\\_get\\_structural\\_variants to find IDs."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:514 ddc93851ed874862bb74cf0ec582aff5
+msgid "**ensembl_get_taxonomy** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:516 7c86fedae5b0401e8a5b61f6570fc8eb
+msgid ""
+"Get taxonomic classification for a species. Returns complete lineage from"
+" kingdom to species leve..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 43da9daec47547eba74b9c41bb21cf37
+msgid "ensembl_get_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:522 94d5a793580f45ebbe01c6f39585beb8
+msgid "**Name**: ``ensembl_get_taxonomy``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:524 c9c579f73ca54634844d9709f696b439
+msgid ""
+"**Description**: Get taxonomic classification for a species. Returns "
+"complete lineage from kingdom to species level with scientific names and "
+"taxonomy IDs. Useful for understanding species relationships and "
+"filtering by taxonomic groups."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:528 36c0af9fcd5e427d8c83d1bb750f61c6
+msgid ""
+"``id`` (string) (required) NCBI Taxonomy ID (e.g., '9606' for human, "
+"'10090' for mouse) or species name (e.g., 'homo\\_sapiens')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:545 89deaa2e2e1d4985965428304b280303
+msgid "**ensembl_get_variants** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:547 7b64ca6cd574405f89ec4d336bceb1c6
+msgid ""
+"Get genetic variants (SNPs, indels) in a genomic region. Returns variant "
+"information including po..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 1d173c5b8d834e319db611d2323347fc
+msgid "ensembl_get_variants tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:553 7a636c6b494f4fedb0ba8b186e890785
+msgid "**Name**: ``ensembl_get_variants``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:555 d848172b37be4e5abbe73cc8552ebf1c
+msgid ""
+"**Description**: Get genetic variants (SNPs, indels) in a genomic region."
+" Returns variant information including positions, alleles, and "
+"consequences. Use this to find variants overlapping a specific genomic "
+"region."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:559 3a0a2355a64e4ea0ac143626cae5b68b
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end' (e.g., '13:32315086-32400268' or '1:1000000-2000000')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:562 e85c2e5ce2ee4f1a9029c703267e6c7a
+msgid ""
+"``species`` (string) (optional) Species name (default 'human'). Examples:"
+" 'human', 'mouse', 'rat'"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:565 9fcfb3a4411843d3b55bd50e77f4f832
+msgid ""
+"``feature`` (string) (optional) Feature type to retrieve (default "
+"'variation')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:582 b6102ecc1221460fa25a881702e53ae3
+msgid "**ensembl_get_variation** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:584 c3a60c70d733438b8b895948628559bf
+msgid ""
+"Get detailed information about a specific genetic variation by its ID "
+"(e.g., rs699). Returns vari..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst e7dd07c1374c4e1898e5d7debc93674b
+msgid "ensembl_get_variation tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:590 c4dcd1ede15a458480579aa748c49bf1
+msgid "**Name**: ``ensembl_get_variation``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:592 fcd8d5281bdb43d4ab1a504c6849b9c5
+msgid ""
+"**Description**: Get detailed information about a specific genetic "
+"variation by its ID (e.g., rs699). Returns variation details including "
+"alleles, frequencies, consequences, and evidence. Use "
+"ensembl\\_get\\_variants to find variant IDs in a region."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:596 7270966e360b4df09365184dd4a8a5bb
+msgid ""
+"``id`` (string) (optional) Variation ID (e.g., 'rs699', 'rs1421085'). Use"
+" ensembl\\_get\\_variants to find variant IDs in a genomic region."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:599 3398262b34d54ffcbdede6b6f5c1f3f3
+msgid ""
+"``variant_id`` (string) (optional) Alias for id. dbSNP rsID or Ensembl "
+"variation ID (e.g., 'rs7903146', 'rs699')."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:605 2ff17a7036e040c09f2e083888fa9b82
+msgid ""
+"``phenotypes`` (integer) (optional) Include phenotype associations (0=no,"
+" 1=yes)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:621 c19a1e78606f48668c57e879358c6d94
+msgid "**ensembl_get_variation_phenotypes** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:623 71065b19908540c6bb06c9c760e482ec
+msgid ""
+"Get phenotype associations for a specific genetic variation. Returns "
+"detailed phenotype informati..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst a6468dec48a246c496bbf621b6490c35
+msgid "ensembl_get_variation_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:629 597f678f496b4874be3306d6a57d49e7
+msgid "**Name**: ``ensembl_get_variation_phenotypes``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:631 714febd37b014972aa57f2e0e9b25a41
+msgid ""
+"**Description**: Get phenotype associations for a specific genetic "
+"variation. Returns detailed phenotype information including traits, "
+"studies, and effect sizes. Use this to understand the phenotypic "
+"consequences of a variant."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:635 7b4013d2e79544a0a84d5ca023f08fab
+msgid ""
+"``id`` (string) (required) Variation ID (e.g., 'rs699'). Use "
+"ensembl\\_get\\_variants to find variant IDs in a genomic region."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:641 f92a232f63b44f22973011322d8d15bd
+msgid ""
+"``phenotypes`` (integer) (optional) Include phenotype associations (must "
+"be 1 for this tool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:658 14c61aa63e3449308ad2fbbd1bc27457
+msgid "**ensembl_get_xrefs** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:660 1d026fff799e4a0ebb2fa8e419c100ac
+msgid ""
+"Get cross-references (external database IDs) for an Ensembl gene, "
+"transcript, or protein. Returns..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst aaf189914fe644adab0a0ddb598892a9
+msgid "ensembl_get_xrefs tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:666 7d1ca699ee804bd0b54d47dc774767ed
+msgid "**Name**: ``ensembl_get_xrefs``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:668 62b8aeb3bb2e4e4ca2a043bee07303e8
+msgid ""
+"**Description**: Get cross-references (external database IDs) for an "
+"Ensembl gene, transcript, or protein. Returns mappings to databases like "
+"UniProt, RefSeq, HGNC, MGI, and many others. Use this to convert between "
+"different database identifiers."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:672 2b243772b73f4625aa5109273cdfceae
+msgid ""
+"``id`` (string) (required) Ensembl ID (gene, transcript, or protein ID, "
+"e.g., 'ENSG00000139618', 'ENST00000380152', 'ENSP00000369497')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:675 6d23cf58957345f488f5be6b952f918d
+msgid ""
+"``external_db`` (string) (optional) Filter by external database name "
+"(optional, e.g., 'UniProt', 'RefSeq', 'HGNC')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:678 dc3b8874989d4744993e7f7b761dff34
+msgid ""
+"``object_type`` (string) (optional) Object type filter (optional, e.g., "
+"'gene', 'transcript', 'translation')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:695 e2095e15bab04a538d49b8f11817a4d2
+msgid "**ensembl_get_xrefs_by_name** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:697 a426e7fe79154904bba8c83a35e0f349
+msgid ""
+"Get cross-references for an Ensembl object by its name/symbol. Returns "
+"mappings to external datab..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst cfef7f66552e4d8688644c0d4e3428c4
+msgid "ensembl_get_xrefs_by_name tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:703 9e779b4e0f1449ff99bbe12268d75ae4
+msgid "**Name**: ``ensembl_get_xrefs_by_name``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:705 b8e572d43a4446cca8b41cb47aac3a72
+msgid ""
+"**Description**: Get cross-references for an Ensembl object by its "
+"name/symbol. Returns mappings to external databases. Use this when you "
+"have a gene symbol or name instead of an Ensembl ID."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:709 489752a4403d438a9fa2f0c155d0529c
+msgid "``name`` (string) (required) Gene symbol or name (e.g., 'BRCA1', 'TP53')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:712 d115a67d1814405684338302372fe3ac
+msgid "``species`` (string) (optional) Species name (default 'homo\\_sapiens')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:715 a43e1db663d243c9ae8a1304fdeeaa85
+msgid ""
+"``external_db`` (string) (optional) Filter by external database name "
+"(optional)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:732 721e64e4ce174853a8e8cce01477a30a
+msgid "**ensembl_lookup_gene** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:734 a9e6d50d0e50428e8ffd0d6967fd7a4d
+msgid ""
+"Lookup gene information by Ensembl gene ID or symbol. Returns gene "
+"details including location, de..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 0a4dee1abacc430a9ac37b7cb73f965f
+msgid "ensembl_lookup_gene tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:740 5caeea512dda4d8fa1dd21f6e7003d14
+msgid "**Name**: ``ensembl_lookup_gene``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:742 2ef0296fd932400c88377ef588e6427f
+msgid ""
+"**Description**: Lookup gene information by Ensembl gene ID or symbol. "
+"Returns gene details including location, description, and external "
+"references. Supports both stable IDs (e.g., ENSG00000139618) and gene "
+"symbols (e.g., BRCA1). For gene symbols, species parameter is required."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:746 87a13e2ac455468e8029221899a0a77e
+msgid ""
+"``gene_id`` (string) (required) Ensembl gene ID or symbol (e.g., "
+"'ENSG00000139618' or 'BRCA1'). If using a stable ID, the tool will "
+"automatically route to /lookup/id endpoint."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:749 e992a6f56ca44abaaa1432380534b8f7
+msgid ""
+"``species`` (string) (optional) Species name required for gene symbols "
+"(default 'homo\\_sapiens'). Examples: 'homo\\_sapiens', 'mus\\_musculus',"
+" 'rattus\\_norvegicus'"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:766 f0d335468b484936a2d8439f31eff965
+msgid "**ensembl_vep_region** (Type: EnsemblRESTTool)"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:768 15c34a54dcee44dcabb05f83b4bba801
+msgid ""
+"Variant Effect Predictor (VEP) for genomic variants. Predicts functional "
+"consequences of variants..."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst 5298411083ee4968a0c8988b51428d6b
+msgid "ensembl_vep_region tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:774 8240598040fc4d0da873a084eb2b4d98
+msgid "**Name**: ``ensembl_vep_region``"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:776 4b9482fe4be64cfd8380793f2520ceee
+msgid ""
+"**Description**: Variant Effect Predictor (VEP) for genomic variants. "
+"Predicts functional consequences of variants including impact on genes, "
+"transcripts, and proteins. Returns SIFT/PolyPhen scores, consequence "
+"types, and affected transcripts. Essential for variant interpretation."
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:783 2100f5ff3d8b427c966ee8cfa0d16d1c
+msgid ""
+"``region`` (string) (required) Genomic region with variant (e.g., "
+"'21:25891796-25891796')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:786 19a1ff3505224340a2a28540e9532d47
+msgid "``allele`` (string) (required) Alternative allele (e.g., 'T', 'C')"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:789 59d016ebde6e4c44ba4657190aa15d0c
+msgid ""
+"``AncestralAllele`` (integer) (optional) Include ancestral allele "
+"information"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:792 1a8923a6fe864cefb2d134852b3e975c
+msgid ""
+"``Blosum62`` (integer) (optional) Include BLOSUM62 protein conservation "
+"score"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:795 91136a3b73c94418850bc7e14ea9bc08
+msgid "``CADD`` (integer) (optional) Include CADD scores"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:798 5c847911f1914eedac932feb431a7617
+msgid "``Conservation`` (integer) (optional) Include conservation scores"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:801 d319d8dfec164b259ed8396e169a10c3
+msgid "``DisGeNET`` (integer) (optional) Include DisGeNET disease associations"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:804 365981e442a64381abcd46109ecd785e
+msgid "``GeneSplicer`` (integer) (optional) Include GeneSplicer predictions"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:807 f62b14588a624677ab3dada0f7bbb0bf
+msgid "``GO`` (integer) (optional) Include Gene Ontology terms"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:810 227fb303dfc847f3822b996776f8accf
+msgid "``LoF`` (integer) (optional) Include Loss-of-Function predictions"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:813 143d2a36059349b38caca8b6571fe0c4
+msgid "``MaxEntScan`` (integer) (optional) Include MaxEntScan splice predictions"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:816 d206df076dc34d8a83fccd573bef4ae6
+msgid "``Phenotypes`` (integer) (optional) Include phenotype annotations"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:819 edc90030a0714aaaab10bb6f055e2dcc
+msgid ""
+"``SIFT`` (string) (optional) SIFT prediction: p=prediction, s=score, "
+"b=both"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:822 db697aada5464f9eb39e689699c10a23
+msgid ""
+"``PolyPhen`` (string) (optional) PolyPhen prediction: p=prediction, "
+"s=score, b=both"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:841 3e866010af80490589fd218e2cee7bec
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:843 202b8f35c64047a88633796ef1c258dd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_tools.rst:844 2cf3f0465876439b93114b3cb973c9e1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

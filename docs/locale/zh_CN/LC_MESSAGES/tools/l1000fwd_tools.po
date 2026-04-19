@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/l1000fwd_tools.rst:10 543c20dc69e34114aef7da5004fefaec
+msgid "L1000Fwd Tools"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:12 7ff1daeffab54c539df21f307f222c2a
+msgid ""
+"**Configuration File**: ``l1000fwd_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:16 5ab803b8a2294bab8c5394b7c9d56dc8
+msgid ""
+"This page contains all tools defined in the ``l1000fwd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:19 7fbd966d9ee648cab538d33eea437de3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:22 3d798757bb8f4e5daca8694138b36f56
+msgid "**L1000FWD_sig_search** (Type: L1000FWDTool)"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:24 36f0098a3c764da08a8a97af89e9e0ea
+msgid ""
+"Transcriptomic signature query against the LINCS L1000 Connectivity Map "
+"via the L1000FWD Firework..."
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst 294f06b85a6a4f82a6c15afb1ea3fbc8
+msgid "L1000FWD_sig_search tool specification"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:28 1c3f05f64f83421c8a9e268b4a55371b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:30 078909b1b1a1410fa705bdbe6bf8196b
+msgid "**Name**: ``L1000FWD_sig_search``"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:31 74bb344966c14b3982d299077bec70f2
+msgid "**Type**: ``L1000FWDTool``"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:32 e976c57ab1ac4d008be343ade0b41672
+#, python-brace-format
+msgid ""
+"**Description**: Transcriptomic signature query against the LINCS L1000 "
+"Connectivity Map via the L1000FWD Fireworks REST API "
+"(maayanlab.cloud/L1000FWD). Accepts two gene sets representing "
+"transcriptional changes in a condition of interest: genes increasing and "
+"genes decreasing. Internally issues a POST to /sig\\_search to register "
+"the query, then fetches ranked hits from /result/topn/{result\\_id}. Each"
+" returned hit is an L1000 perturbation record containing sig\\_id, "
+"combined score, p-value, and q-value. mode='similar' retrieves "
+"perturbations that activate the same transcriptional programme (e.g. "
+"disease mimics); mode='opposite' retrieves perturbations that invert it, "
+"the classical computational drug-repurposing approach. No authentication "
+"required."
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:34 255ef98b7bf74bb69091fda817be4b5b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:36 26cffac58ae04f99bec6100443882fd6
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:39 01b88a1df63d4607a1db189503ccf980
+msgid ""
+"``up_genes`` (array) (required) List of up-regulated gene symbols (e.g., "
+"['MYC', 'TP53'])"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:42 2d17d921d1934bc19702233eaf14965a
+msgid ""
+"``down_genes`` (array) (required) List of down-regulated gene symbols "
+"(e.g., ['CDKN1A', 'RB1'])"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:45 b5d9cb2e6139440ab0ca1aa7ad2ffccc
+msgid ""
+"``n_results`` (integer) (optional) Number of top results to return "
+"(default 10)"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:48 9b6dfe1450c442bcbfd6d5046332e1c6
+msgid ""
+"``mode`` (string) (optional) Return signatures 'similar' to or 'opposite'"
+" of the query signature (default: 'similar')"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:51 adf23718074a4330b9b609518404a198
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:67 8023e399418e46edae566e2d2bd863ed
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:69 27dafdd6d1054be5b91cadac37811d0a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/l1000fwd_tools.rst:70 9c5fb27eee534e4a94abb788e354c059
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

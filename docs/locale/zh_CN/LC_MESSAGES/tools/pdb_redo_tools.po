@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdb_redo_tools.rst:10 b6c45c15769d4b27bfd176b305642851
+msgid "Pdb Redo Tools"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:12 9d0bfdc09b4644809aec07fea6df02eb
+msgid ""
+"**Configuration File**: ``pdb_redo_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:16 286a1522f607493ab6705451ce236ceb
+msgid ""
+"This page contains all tools defined in the ``pdb_redo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:19 6a69c0fac960416faccae69c3b5ecff9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:22 241bb71681b94ba3918c7d714dc653eb
+msgid "**PDB_REDO_get_structure_quality** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:24 f627a81895cd498cb8c3e63598b3cd08
+msgid ""
+"Get re-refined structure quality metrics from PDB-REDO for a given PDB "
+"entry. PDB-REDO is a datab..."
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst 1b7221c5990346d4b97644728a662f95
+msgid "PDB_REDO_get_structure_quality tool specification"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:28 ae1bf3bd88e0463187cb4834ca185711
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:30 2cc0684a1a65454bb90bfdb0f58190e8
+msgid "**Name**: ``PDB_REDO_get_structure_quality``"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:31 42cac9e9ba914dfbba70d4c670372bb1
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:32 3f3a0c680a0d480187af83e10452e114
+msgid ""
+"**Description**: Get re-refined structure quality metrics from PDB-REDO "
+"for a given PDB entry. PDB-REDO is a databank of optimized macromolecular"
+" structures: all PDB X-ray structures are re-refined using the latest "
+"crystallographic methods, improving R-factors, geometry, and fit to "
+"electron density. Returns 200+ quality metrics including: R-factor "
+"(RFIN), R-free (RFFIN), resolution (DATARESH), correlation coefficients "
+"(CCFFIN, CCWFIN), Ramachandran Z-score (ZRAMA), packing Z-score "
+"(ZPACKING), B-factor average (BAVER), number of backbone/sidechain flips "
+"(NBBFLIP/NSCFLIP), space group (SPACEGROUP), and unit cell dimensions. "
+"Only available for X-ray crystal structures. Use lowercase PDB IDs."
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:34 b2ce5fae20b84867b9f3d2cca5e16a5f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:36 348dbe6c45fa484c83f986938fbd8391
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID in lowercase. Examples: "
+"'1cbs' (cellular retinoic acid binding protein), '6lu7' (SARS-CoV-2 main "
+"protease), '2hhb' (hemoglobin). Note: not all PDB entries have PDB-REDO "
+"data; mainly X-ray crystal structures."
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:39 c628c91a9673492aa6a6467771ed8457
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:53 4d688c73e6dd47cbbe4c52849d06c14a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:55 0cf22a332caa4a9f9f52bab2b3d6fc21
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdb_redo_tools.rst:56 193b0e27106a46989e8ca617eb925418
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

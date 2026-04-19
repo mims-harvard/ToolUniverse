@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_taxonomy_tools.rst:10 22f32ca2375640debacf538ddc5f7cb7
+msgid "Ebi Taxonomy Tools"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:12 5f1c4e214c784a488a5d4055c5a67c84
+msgid ""
+"**Configuration File**: ``ebi_taxonomy_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:16 7f4e172bfc6b4e668cfd803b7b4340b4
+msgid ""
+"This page contains all tools defined in the ``ebi_taxonomy_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:19 9e6342e25b7347c1a220272d1ea10269
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:22 2f872b9db3c34b82a54569fe96d39b7e
+msgid "**EBITaxonomy_get_by_id** (Type: EBITaxonomyTool)"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:24 a88d95f3c8314af383a8065a619ac302
+msgid ""
+"Get taxonomy classification by NCBI Taxonomy ID from the EBI Taxonomy "
+"service. Returns scientific..."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst 2c864e3598544836bd868fcf5d8d923a
+msgid "EBITaxonomy_get_by_id tool specification"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:28 ../../tools/ebi_taxonomy_tools.rst:59
+#: ../../tools/ebi_taxonomy_tools.rst:90 ../../tools/ebi_taxonomy_tools.rst:121
+#: 13f7cc78497441efbde16b6cff5d6648 30f6f3184eb849de88fa0b82c2b36377
+#: 45d31f3fe89049a493eda689fd842403 aaec2734d4c443a98573aa382cef3de8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:30 66effc7c0f044cb1ac0a7dd6f8b6a970
+msgid "**Name**: ``EBITaxonomy_get_by_id``"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:31 ../../tools/ebi_taxonomy_tools.rst:62
+#: ../../tools/ebi_taxonomy_tools.rst:93 ../../tools/ebi_taxonomy_tools.rst:124
+#: 1f047a64ff34427585678448c486ef68 55fc46707e1c482c85e8cfa83c2ab882
+#: 68c17ed13178483f984d62eeef1ea88c ae6e81d0f9e84b689137fe42b010bec4
+msgid "**Type**: ``EBITaxonomyTool``"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:32 def57bd6fea742718d9541d131b6c573
+msgid ""
+"**Description**: Get taxonomy classification by NCBI Taxonomy ID from the"
+" EBI Taxonomy service. Returns scientific name, common name, rank, "
+"division, full lineage string, genetic codes, authority citation, and "
+"alternative names. Example: tax\\_id 9606 returns Homo sapiens with "
+"lineage from Eukaryota to Homo."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:34 ../../tools/ebi_taxonomy_tools.rst:65
+#: ../../tools/ebi_taxonomy_tools.rst:96 ../../tools/ebi_taxonomy_tools.rst:127
+#: 3c9c47a4782c4cb297b2d2bf6be76711 4e11ab1d5be64c83a0850bc6aae7b61f
+#: 9b46c65d486646e0ba08923d2df988e3 c4e97802717747fca256396747e2d72f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:36 fd85d80e4d0a42a48abdc89b7c1899aa
+msgid ""
+"``tax_id`` (string) (required) NCBI Taxonomy ID (numeric). Examples: "
+"'9606' (human), '10090' (mouse), '562' (E. coli), '3702' (Arabidopsis "
+"thaliana)."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:39 ../../tools/ebi_taxonomy_tools.rst:70
+#: ../../tools/ebi_taxonomy_tools.rst:101
+#: ../../tools/ebi_taxonomy_tools.rst:132 44de6251a37d442c91305268621b6a50
+#: 743cc856954349e89ec7ba8c32ef7be7 77c7006110704320846bb61524bd7ce2
+#: 8e442ca3c87f4e4b9ba2adc462782760
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:53 02640f8adbd8476290ad794a581a1852
+msgid "**EBITaxonomy_get_by_scientific_name** (Type: EBITaxonomyTool)"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:55 78f272b0757b4ccd9513e64848eb9524
+msgid ""
+"Look up taxonomy by scientific (Latin) name using the EBI Taxonomy "
+"service. Returns taxonomy ID, ..."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst 58dd2b396d4b4788b7ac36aefb0f504b
+msgid "EBITaxonomy_get_by_scientific_name tool specification"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:61 2ccca81143a54520a3b94323545e3b7e
+msgid "**Name**: ``EBITaxonomy_get_by_scientific_name``"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:63 1994a26bc86d4c1eb6adb05a81215135
+msgid ""
+"**Description**: Look up taxonomy by scientific (Latin) name using the "
+"EBI Taxonomy service. Returns taxonomy ID, lineage, rank, division, and "
+"genetic codes. Handles subspecies and strain names. Example: 'Escherichia"
+" coli' returns taxId 562 with full bacterial lineage."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:67 79f86c5e73d7435c850a6931800fb894
+msgid ""
+"``scientific_name`` (string) (required) Scientific name of the organism. "
+"Examples: 'Homo sapiens', 'Escherichia coli', 'Drosophila melanogaster', "
+"'Arabidopsis thaliana'."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:84 46e1357db2024af1bed4a1fc40eaadce
+msgid "**EBITaxonomy_search_by_name** (Type: EBITaxonomyTool)"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:86 a2f03e31bb2e4e6cb6029bb1bd32c554
+msgid ""
+"Search for organisms by any name (scientific, common, or synonym) in EBI "
+"Taxonomy. Unlike scienti..."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst f499e9d7f79345f7bf2440a23e641125
+msgid "EBITaxonomy_search_by_name tool specification"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:92 de67738a12c14d1f9293649422bc1ef2
+msgid "**Name**: ``EBITaxonomy_search_by_name``"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:94 38259543f1df4099a693fe37ff396614
+msgid ""
+"**Description**: Search for organisms by any name (scientific, common, or"
+" synonym) in EBI Taxonomy. Unlike scientific name lookup, this accepts "
+"common names like 'mouse', 'fruit fly', or 'baker's yeast'. Returns "
+"matching taxa with their IDs, scientific names, and lineage. Example: "
+"'mouse' returns Mus musculus (10090) and Mus (10088)."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:98 edc9708eafbc4602a2fde02f9e66615c
+msgid ""
+"``name`` (string) (required) Any organism name (common name, scientific "
+"name, or synonym). Examples: 'mouse', 'fruit fly', 'yeast', 'zebrafish', "
+"'E. coli'."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:115 8f1710bb3f54496f82d2ca193a3c3bf5
+msgid "**EBITaxonomy_suggest** (Type: EBITaxonomyTool)"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:117 e2e0b30e0b60430f91425234a2b74c84
+msgid ""
+"Get taxonomy name suggestions matching a partial query from EBI Taxonomy."
+" Type-ahead style search..."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst 8763425382fb485bb0f28e1262ddc96b
+msgid "EBITaxonomy_suggest tool specification"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:123 000a07bdc32d494f9bf62f0f2f371002
+msgid "**Name**: ``EBITaxonomy_suggest``"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:125 2c1f31c95d1b423195b78f26b69325ee
+msgid ""
+"**Description**: Get taxonomy name suggestions matching a partial query "
+"from EBI Taxonomy. Type-ahead style search that returns matching organism"
+" names and taxonomy IDs. Useful for finding the correct taxonomy ID when "
+"you only know part of the organism name. Example: 'human' suggests Homo "
+"sapiens (9606), human metagenome (646099), etc."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:129 9f4346a33be94fe6b59357ff80c2ea32
+msgid ""
+"``query`` (string) (required) Partial organism name to get suggestions "
+"for. Examples: 'human', 'streptococc', 'salmo', 'candida'."
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:146 b72c2d5e6dc2444caa4612175d36e772
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:148 6366f07b231540ce824831c0e47f160a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_taxonomy_tools.rst:149 5f8b7f9347c24cbe9a4b86ce3c3892f7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

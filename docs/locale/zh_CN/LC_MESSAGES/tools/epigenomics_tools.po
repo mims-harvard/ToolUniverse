@@ -1,0 +1,935 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/epigenomics_tools.rst:10 51295a73627b4ce39a382251eacf8c8e
+msgid "Epigenomics Tools"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:12 c32dbca1ecae4a678cdd2b69d485b0e7
+msgid ""
+"**Configuration File**: ``epigenomics_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 17"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:16 968c357b8e304fd9982335389cd285af
+msgid ""
+"This page contains all tools defined in the ``epigenomics_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:19 057c01906ed147f28a57438a81b00404
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:22 1727b61aed2d4a4aa593fbf04db77a27
+msgid "**ENCODE_get_chromatin_state** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:24 f9fc1b6ceb37453fa8467615250abdc8
+msgid ""
+"Search ENCODE chromatin state annotations (ChromHMM segmentations) for "
+"specific biosamples or tis..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 4935e08856014f5fba337f1efb03eb52
+msgid "ENCODE_get_chromatin_state tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:28 ../../tools/epigenomics_tools.rst:64
+#: ../../tools/epigenomics_tools.rst:106 ../../tools/epigenomics_tools.rst:145
+#: ../../tools/epigenomics_tools.rst:184 ../../tools/epigenomics_tools.rst:238
+#: ../../tools/epigenomics_tools.rst:277 ../../tools/epigenomics_tools.rst:313
+#: ../../tools/epigenomics_tools.rst:361 ../../tools/epigenomics_tools.rst:403
+#: ../../tools/epigenomics_tools.rst:434 ../../tools/epigenomics_tools.rst:470
+#: ../../tools/epigenomics_tools.rst:507 ../../tools/epigenomics_tools.rst:544
+#: ../../tools/epigenomics_tools.rst:580 ../../tools/epigenomics_tools.rst:622
+#: ../../tools/epigenomics_tools.rst:664 08d563b494ba4356a1d4423d43669b6a
+#: 1c614b1de62f42cf82c17fde3ebf9948 29f4071940ea4d21bc53ca4ccd39a805
+#: 2a236d8e2d164faea677be885fc816a9 3ead3abdeda34a9b9f977b85eb9218a9
+#: 4260886c91fe414d9ed7e7c9904b7a49 47b365a647df4fe483a5dc88612bddf0
+#: 67ccd68413474f24a3a9640e18dd8db7 6c88c22ff6024c488854c97725ef00bd
+#: 6e5990203012490dbbf83e304856e940 84ec6d1b099a4d67b8e2c6bd3980d3f2
+#: 8753d342973b42fba40905de9a56807f 89f75ab4afce44f2958cd219dbb23589
+#: 8f432c05b2a04a459a2ff5da41f8e7a3 a7ab983709404516bb6f25b257d360b8
+#: ca15c20cb9824298bb24a3ba00256a0a db633927ee0141ccb33a077365796aff
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:30 9e0d89de3afb486bbe280f77f75ea63f
+msgid "**Name**: ``ENCODE_get_chromatin_state``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:31 ../../tools/epigenomics_tools.rst:67
+#: ../../tools/epigenomics_tools.rst:109 ../../tools/epigenomics_tools.rst:148
+#: ../../tools/epigenomics_tools.rst:187 ../../tools/epigenomics_tools.rst:241
+#: ../../tools/epigenomics_tools.rst:280 ../../tools/epigenomics_tools.rst:316
+#: ../../tools/epigenomics_tools.rst:364 ../../tools/epigenomics_tools.rst:406
+#: ../../tools/epigenomics_tools.rst:437 ../../tools/epigenomics_tools.rst:473
+#: ../../tools/epigenomics_tools.rst:510 ../../tools/epigenomics_tools.rst:547
+#: 15c6e830a5c0430aa202e1c30c299e02 25676275f8c840e38d1678ebd1740e31
+#: 2e7d9f03fe7c4d5bb3d54c6114a7298f 37dd81cc94534818b6d24d9537612408
+#: 407f3376c3d5465b9708e976a55f68bc 4e0dc24ddbc84620ade3268c514e64d1
+#: 5e8b4629099b405eae56d2d7e592e498 6d9333861c1d410ea614f48d0d0009bc
+#: 88de89a154064a618f9c7a9211621226 938817a7278247988a3871d1deb43332
+#: 9db08f76a4474664bede25411e7bf585 a882ce03529e4ff9b969c966f094fe3b
+#: c548149e892d4b86993068c89dc9722a d0314167b7a143d6b62be37db690b150
+msgid "**Type**: ``EpigenomicsTool``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:32 863f817eeb264f4d881b714c012e020c
+msgid ""
+"**Description**: Search ENCODE chromatin state annotations (ChromHMM "
+"segmentations) for specific biosamples or tissues. Chromatin states are "
+"genome-wide annotations that classify each genomic position into a "
+"functional state (e.g., active TSS, flanking active TSS, strong "
+"transcription, weak transcription, genic enhancers, active enhancers, "
+"bivalent enhancer, bivalent/poised TSS, flanking bivalent TSS, repressed "
+"polycomb, weak repressed polycomb, quiescent, heterochromatin) based on "
+"combinatorial patterns of histone marks. Use this to understand the "
+"chromatin landscape of specific cell types."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:34 ../../tools/epigenomics_tools.rst:70
+#: ../../tools/epigenomics_tools.rst:112 ../../tools/epigenomics_tools.rst:151
+#: ../../tools/epigenomics_tools.rst:190 ../../tools/epigenomics_tools.rst:244
+#: ../../tools/epigenomics_tools.rst:283 ../../tools/epigenomics_tools.rst:319
+#: ../../tools/epigenomics_tools.rst:367 ../../tools/epigenomics_tools.rst:409
+#: ../../tools/epigenomics_tools.rst:440 ../../tools/epigenomics_tools.rst:476
+#: ../../tools/epigenomics_tools.rst:513 ../../tools/epigenomics_tools.rst:550
+#: ../../tools/epigenomics_tools.rst:586 ../../tools/epigenomics_tools.rst:628
+#: ../../tools/epigenomics_tools.rst:670 291540b13325452d929cd14b566206af
+#: 3cdbb49f4f5b46f9be130c383be9123b 5951569f20e04eb9907c792d9254ead8
+#: 6e597d08866e425c82b35574b07c6add 88cbc5b4fcec49d5abd43bc03cba910d
+#: 8a5169391b834c87bed20a726c47e36d 8b55cefaaaee4660a67e0a2d5412ba56
+#: 96db394a6a134a789b224b9fb86e873b bdcffb73cc1d45109a8984cb2ba50abd
+#: d1654247ff6447eaa604bff41d3745a1 d2bcf60513bd49bc8e2053973fe9a22d
+#: dfa7be8c2fb24ed38564af63bbe0eb1f e6ce37afef154725bfaa89aa70a144ec
+#: ea1c5672c33249dd8d8c81be7cdca426 f3b8d6c953b945fdb6932335fa4e2cf0
+#: f4a1f6bb3eae47218bde2488c72644fd fc56e2da61884e7c804980e108f11fff
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:36 44913483956c4a48995827a6fe99e247
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name (e.g., "
+"'K562', 'HepG2', 'GM12878', 'liver'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:39 ../../tools/epigenomics_tools.rst:78
+#: ../../tools/epigenomics_tools.rst:120 ../../tools/epigenomics_tools.rst:252
+#: 079db21b9e4544029d536bb2bd7f10aa 40ac1eac56cd4deba7e26776592b29bb
+#: b34fbe57fce14b148a793ec776319d9d eea778f7de884cea90b3b556e9be3515
+msgid "``organism`` (string) (optional) Organism scientific name."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:42 ../../tools/epigenomics_tools.rst:84
+#: 3267952132724b5eaf63516016834fab a9b5b6a3bf3e40f5a33507a99a1159e6
+msgid "``limit`` (integer) (optional) Maximum number of results."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:45 ../../tools/epigenomics_tools.rst:87
+#: ../../tools/epigenomics_tools.rst:126 ../../tools/epigenomics_tools.rst:165
+#: ../../tools/epigenomics_tools.rst:219 ../../tools/epigenomics_tools.rst:258
+#: ../../tools/epigenomics_tools.rst:294 ../../tools/epigenomics_tools.rst:342
+#: ../../tools/epigenomics_tools.rst:381 ../../tools/epigenomics_tools.rst:414
+#: ../../tools/epigenomics_tools.rst:451 ../../tools/epigenomics_tools.rst:487
+#: ../../tools/epigenomics_tools.rst:524 ../../tools/epigenomics_tools.rst:561
+#: ../../tools/epigenomics_tools.rst:600 ../../tools/epigenomics_tools.rst:642
+#: ../../tools/epigenomics_tools.rst:684 0a5658f3c1f644ffb1171ac776db76df
+#: 0d92a3c27a3f4ed5b1c20c44a283c503 41548d3219c74b47b5354a0d74a0458c
+#: 5dcbcf8cdf3346d2bb350a4898e585af 63c0668e7558402c9016fd4d52916412
+#: 65a73be6d61b408eb732ba96fbfd8f8f 76f59088166943a5acb3a41bf4bb298e
+#: aceaef56699c4451b76d71615c4af307 b0025c68c45d4a2da9118034a33698a1
+#: b5b2a4545e4c43a1ba631d9fb552ec73 b99149a726c14bc49ef106a878b1b903
+#: c8898763c0cc4ff9b2080a1332f82f27 d245fc18808745978c9573762837b361
+#: d7303f052ae84e8da09b0aaf56953d78 d8355cc3adf142569c9d7000ed151571
+#: e06563bd654144848bf0f3b95dfe1b11 ec2be555982d4d33a6a7c2347b01039f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:58 60c105c8ced1417687d3fc664e46fb59
+msgid "**ENCODE_search_annotations** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:60 6939935d787f449db08636489ce2cc31
+msgid ""
+"Search ENCODE annotations including candidate cis-Regulatory Elements "
+"(cCREs), chromatin states, ..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 4eaa75fd70784e4089096d5c47462ba4
+msgid "ENCODE_search_annotations tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:66 20790542b0af4b1a87b8c26f4690d4e7
+msgid "**Name**: ``ENCODE_search_annotations``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:68 481a99b57fe848e6b5b7f3f076891437
+msgid ""
+"**Description**: Search ENCODE annotations including candidate cis-"
+"Regulatory Elements (cCREs), chromatin states, and imputed signals. cCREs"
+" are classified as promoter-like (PLS), proximal enhancer-like (pELS), "
+"distal enhancer-like (dELS), DNase-H3K4me3 (DNase-H3K4me3), and CTCF-"
+"only. Chromatin state annotations use ChromHMM models to segment the "
+"genome into functional states. Use this to find regulatory element "
+"annotations for specific biosamples or genome assemblies."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:72 39578c952b9a49c3b257b43e3c2d39bb
+msgid ""
+"``annotation_type`` (string) (optional) Annotation type filter. Options: "
+"'candidate Cis-Regulatory Elements' (cCREs), 'chromatin state' "
+"(ChromHMM), 'imputed signal' (predicted epigenetic marks). Default: "
+"cCREs."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:75 765f3ce62c89429eae684067d6bff093
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample filter (e.g.,"
+" 'K562', 'HepG2'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:81 6ee10dffab89412cae5d84e328bf7fce
+msgid ""
+"``assembly`` (string) (optional) Genome assembly (e.g., 'GRCh38', 'hg19',"
+" 'mm10')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:100 b9062a208cd044bcbd83127b53d85a51
+msgid "**ENCODE_search_chromatin_accessibility** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:102 51ae7c1fd9a143ec8365d3b75cb57853
+msgid ""
+"Search ENCODE chromatin accessibility experiments (ATAC-seq and DNase-"
+"seq). ATAC-seq and DNase-se..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 5abca6eec5e74604bcc4bebdcc1ea1f1
+msgid "ENCODE_search_chromatin_accessibility tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:108 410a465a6c9a418c97d5212f6e2a330e
+msgid "**Name**: ``ENCODE_search_chromatin_accessibility``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:110 752faf0f3b6f4dcc8746b761e661aaf6
+msgid ""
+"**Description**: Search ENCODE chromatin accessibility experiments (ATAC-"
+"seq and DNase-seq). ATAC-seq and DNase-seq identify open chromatin "
+"regions including promoters, enhancers, and other regulatory elements. "
+"Returns experiment accessions, biosample details, and accessibility assay"
+" metadata. Open chromatin regions are sites of active gene regulation "
+"where transcription factors can bind. Use this to find chromatin "
+"accessibility data for specific tissues or cell types."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:114 ddc3ba3412994dc4a1d56c840910f81b
+msgid ""
+"``assay_type`` (string) (optional) Chromatin accessibility assay: 'ATAC-"
+"seq' (Assay for Transposase-Accessible Chromatin, newer/preferred) or "
+"'DNase-seq' (DNase I hypersensitive sites, larger dataset)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:117 538efbe91d4c4f50b251f39b8fd999ba
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name filter "
+"(e.g., 'K562', 'GM12878', 'liver'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:123 ../../tools/epigenomics_tools.rst:162
+#: ../../tools/epigenomics_tools.rst:255 ../../tools/epigenomics_tools.rst:291
+#: 16a14b72a30f46e88635217d84ae59e1 3422a4346a0e48b692b1daa4d448c37c
+#: 736df698545b4bdfbd5f9a94a7d4ebc1 976303c1412b43818f702ad78ba8881a
+msgid "``limit`` (integer) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:139 8e2d2a74eac140e4879f567c0e189f26
+msgid "**ENCODE_search_hic_experiments** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:141 21c24fe144714414ad8bc1bfb0d3cf62
+msgid ""
+"Search ENCODE Hi-C and intact Hi-C experiments for 3D genome organization"
+" data. Hi-C captures chr..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 5568d0c98b654ecf8da4061ba02cc31d
+msgid "ENCODE_search_hic_experiments tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:147 f58c76c0e8ba455b926765d1bb1fcb9b
+msgid "**Name**: ``ENCODE_search_hic_experiments``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:149 5d5a4945416e4c7a99d3802387b2ddf4
+msgid ""
+"**Description**: Search ENCODE Hi-C and intact Hi-C experiments for 3D "
+"genome organization data. Hi-C captures chromatin interactions genome-"
+"wide, revealing topologically associating domains (TADs), chromatin "
+"loops, and A/B compartments. Returns experiment accessions, biosample "
+"details, and metadata. Use this to find 3D genome structure data for "
+"specific cell types or tissues. Intact Hi-C is the newer protocol with "
+"improved resolution."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:153 9f318c93085943fa9a7ee601147e4fb6
+msgid ""
+"``assay_type`` (string) (optional) Hi-C assay type: 'intact Hi-C' (newer "
+"protocol, better resolution) or 'Hi-C' (original protocol). Default is "
+"'intact Hi-C'."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:156 131d8a9282c9493a901858e5b831a8c2
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name filter "
+"(e.g., 'K562', 'GM12878', 'H1'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:159 ../../tools/epigenomics_tools.rst:204
+#: ../../tools/epigenomics_tools.rst:288 ../../tools/epigenomics_tools.rst:333
+#: ../../tools/epigenomics_tools.rst:445 ../../tools/epigenomics_tools.rst:555
+#: 50eb78a4ef554f81a8b6580937c14c93 561b1915483a43b7afc0ba9fec37b289
+#: e3932dadc42747af86743ceed98bfa52 ebb3a868bbd047b6b9f1a36b2764dee5
+#: f57b8fd0947146b68e7b87a3a88b9f6b f9ab7c92e12642bc8cc2a25c798fb635
+msgid ""
+"``organism`` (string) (optional) Organism scientific name (e.g., 'Homo "
+"sapiens', 'Mus musculus')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:178 b6af332d4afe41b5ad1d9c73efa31507
+msgid "**ENCODE_search_histone_experiments** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:180 34b1c20d19bf47f6bd7cc431a71b4379
+msgid ""
+"Search ENCODE histone ChIP-seq experiments by histone modification mark, "
+"biosample, or organism. ..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst c660169845a34410b641226eacb331f7
+msgid "ENCODE_search_histone_experiments tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:186 d763de5ad97746b5bd26d89652a760bb
+msgid "**Name**: ``ENCODE_search_histone_experiments``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:188 a5c1cb12a80e474a9bfacb1ec177a43e
+msgid ""
+"**Description**: Search ENCODE histone ChIP-seq experiments by histone "
+"modification mark, biosample, or organism. Returns experiment accessions,"
+" histone marks (H3K4me3, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K9me3), "
+"biosample summaries, and metadata. Use this to find histone modification "
+"profiling data for specific marks or tissues. Common marks: H3K4me3 "
+"(active promoters), H3K27ac (active enhancers), H3K27me3 (polycomb "
+"repression), H3K4me1 (poised enhancers), H3K36me3 (gene bodies), H3K9me3 "
+"(heterochromatin)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:192 6da4d6fc033d474688eaff521d9336a9
+msgid ""
+"``histone_mark`` (string, null) (optional) Histone modification mark to "
+"filter by (e.g., 'H3K4me3', 'H3K27ac', 'H3K27me3', 'H3K4me1', 'H3K36me3',"
+" 'H3K9me3'). Leave empty to search all histone marks."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:195 f21905d6500d4abaa704bf4a060712d1
+msgid ""
+"``target`` (string, null) (optional) Alias for histone\\_mark. Histone "
+"modification mark (e.g., 'H3K27ac', 'H3K4me3')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:198 896cfc4a0aae4e32965ba7360f262982
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name from "
+"ENCODE ontology (cell lines or tissues, NOT disease names). Examples: "
+"'K562', 'HepG2', 'GM12878', 'liver', 'brain'. For disease-specific data, "
+"search by relevant cell lines (e.g., K562/MOLM-13 for AML). Leave empty "
+"to search all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:201 05ff5fc436d342e797d16286efe8c990
+msgid ""
+"``biosample`` (string, null) (optional) Alias for "
+"biosample\\_term\\_name. Biosample (tissue or cell line, e.g., 'liver', "
+"'K562')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:207 ../../tools/epigenomics_tools.rst:339
+#: ../../tools/epigenomics_tools.rst:448 ../../tools/epigenomics_tools.rst:558
+#: 1ab79c283eee4ccdb56ab3f990981a20 3e8765fbb35e42368c16dfc56b24dc9d
+#: 83ebeb9b22e24fbb8e5c81f46a57c49e a08478dcfd614cecaa44b26041d96720
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(1-100)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:210 342ecccec79a41058ea393c14ecbb3a4
+msgid ""
+"``biosample_term`` (string, null) (optional) Alias for "
+"biosample\\_term\\_name. Biosample tissue or cell line (e.g., \"breast "
+"epithelium\", \"liver\", \"K562\")."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:213 a1c36ffb2964494aa6409cc449dcf3da
+msgid ""
+"``cell_type`` (string, null) (optional) Alias for "
+"biosample\\_term\\_name. Cell type or tissue (e.g., 'GM12878', 'K562', "
+"'liver', 'brain')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:216 23e549c724b5415782d55001445183c0
+msgid ""
+"``tissue`` (string, null) (optional) Alias for biosample\\_term\\_name. "
+"Tissue or cell line (e.g., 'liver', 'brain', 'breast epithelium', "
+"'MCF-7')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:232 ed1b8fe31ba543a481009f3448c62fcf
+msgid "**ENCODE_search_methylation_experiments** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:234 b82a7a6952de436fae31374898fbc55b
+msgid ""
+"Search ENCODE whole-genome bisulfite sequencing (WGBS) and reduced-"
+"representation bisulfite seque..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 92df69e15b604802b089a8310366b7d6
+msgid "ENCODE_search_methylation_experiments tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:240 3ef7804ed0ce4e83ae37499f9459c912
+msgid "**Name**: ``ENCODE_search_methylation_experiments``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:242 bdf1d3223d2448a68101a9a4b1a616b2
+msgid ""
+"**Description**: Search ENCODE whole-genome bisulfite sequencing (WGBS) "
+"and reduced-representation bisulfite sequencing (RRBS) experiments for "
+"DNA methylation profiling. Returns experiment accessions, biosample "
+"information, methylation assay type, and metadata. DNA methylation (5mC) "
+"at CpG sites is a key epigenetic mark regulating gene silencing, genomic "
+"imprinting, and X-inactivation. Use this to find methylation data for "
+"specific tissues, cell lines, or developmental stages."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:246 56598d106ce642f4ac7b5d4ca6f4604e
+msgid ""
+"``assay_type`` (string) (optional) Methylation assay type: 'WGBS' (whole-"
+"genome bisulfite sequencing, comprehensive CpG coverage) or 'RRBS' "
+"(reduced-representation, enriched for CpG islands)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:249 070cec24ceb64891aab84191f64d52a8
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name filter "
+"(e.g., 'K562', 'liver', 'brain', 'motor neuron'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:271 3329bb634de44b4a95bd077afd57c063
+msgid "**ENCODE_search_microrna_experiments** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:273 e41c5a7b991f4e35b7f3c980c0a1ed89
+msgid ""
+"Search ENCODE microRNA-seq experiments. MicroRNA-seq profiles small "
+"regulatory RNAs (miRNAs, ~22n..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 029b6491a55a499695ac9367e3576fbd
+msgid "ENCODE_search_microrna_experiments tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:279 ba6cdac7f10d415fbbf5877f7d5e41ff
+msgid "**Name**: ``ENCODE_search_microrna_experiments``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:281 9c0c75edac8b444c968b388921ad1310
+msgid ""
+"**Description**: Search ENCODE microRNA-seq experiments. MicroRNA-seq "
+"profiles small regulatory RNAs (miRNAs, ~22nt) that post-"
+"transcriptionally regulate gene expression by targeting mRNA 3' UTRs. "
+"Returns experiment accessions, biosample details, and metadata. Use this "
+"to find miRNA expression profiling data for specific cell types or "
+"tissues. ENCODE has 400+ released microRNA-seq experiments across diverse"
+" cell types."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:285 1c4c7aaccb2940a09715ed7118b01f66
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name filter "
+"(e.g., 'K562', 'GM12878', 'liver', 'heart'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:307 15b27a3107404abd8aab30e8d80133d3
+msgid "**ENCODE_search_rnaseq_experiments** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:309 3210c0e75e1c4a2d9ed3873001093e3c
+msgid ""
+"Search ENCODE RNA-seq experiments by biosample (cell type or tissue), "
+"organism, and assay type (t..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 4cfc7f3cccdd443abf6867709c392aa4
+msgid "ENCODE_search_rnaseq_experiments tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:315 3a0c4e12ad9f4defaff423437810598b
+msgid "**Name**: ``ENCODE_search_rnaseq_experiments``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:317 721c107dd96545bca677267d1d38231a
+msgid ""
+"**Description**: Search ENCODE RNA-seq experiments by biosample (cell "
+"type or tissue), organism, and assay type (total RNA-seq, polyA plus RNA-"
+"seq, small RNA-seq, microRNA-seq). Returns experiment accessions, "
+"biosample summaries, lab names, and metadata from the ENCODE project. Use"
+" this to find ENCODE-curated RNA-seq data for specific cell lines or "
+"tissues."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:321 0c441c2eb10c4dfa9c0c0982d56a3c50
+msgid ""
+"``biosample_term_name`` (string, null) (optional) Biosample name from "
+"ENCODE ontology (e.g., 'K562', 'HepG2', 'GM12878', 'liver', 'brain'). "
+"Leave empty to search all biosamples."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:324 818b74520d1e4fb2a7be97f481dae52b
+msgid ""
+"``biosample`` (string, null) (optional) Alias for "
+"biosample\\_term\\_name. Cell type or tissue (e.g., 'K562', 'liver')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:327 4df7bae41ec647e1a250c3aab06a4030
+msgid ""
+"``cell_type`` (string, null) (optional) Alias for "
+"biosample\\_term\\_name. Cell type (e.g., 'K562', 'HepG2', 'GM12878')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:330 fdb40a3ac17e44e1ae07f5a06b9e3faa
+msgid ""
+"``tissue`` (string, null) (optional) Alias for biosample\\_term\\_name. "
+"Tissue type (e.g., 'liver', 'brain', 'heart')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:336 44ea3640c8f545d3b315a40fb912eb05
+msgid ""
+"``assay_type`` (string) (optional) RNA-seq assay type: 'total RNA-seq' "
+"(default, all RNA), 'polyA plus RNA-seq' (mRNA), 'small RNA-seq', "
+"'microRNA-seq'. Aliases: 'total', 'polya', 'mirna', 'small'."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:355 a001fa81520b4d72ba7a382746c9c022
+msgid "**EnsemblReg_get_regulatory_elements** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:357 15bb2f3e1cbd4c9da1f27582a4ade511
+msgid ""
+"Get Ensembl regulatory features (enhancers, promoters, CTCF binding "
+"sites, open chromatin, TF bin..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst f852d084bdae40079557dc4375c1ac14
+msgid "EnsemblReg_get_regulatory_elements tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:363 cd53e96bcfa04e71b30fe6e1440bde4f
+msgid "**Name**: ``EnsemblReg_get_regulatory_elements``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:365 d4eaf89849c54a8aa738c3a40c74b004
+msgid ""
+"**Description**: Get Ensembl regulatory features (enhancers, promoters, "
+"CTCF binding sites, open chromatin, TF binding sites) for a genomic "
+"region from the Ensembl Regulatory Build. The Ensembl Regulatory Build "
+"integrates epigenomic data from ENCODE, Roadmap Epigenomics, and "
+"BLUEPRINT to annotate regulatory elements across the human genome. "
+"Returns feature IDs, types, coordinates, and extended bounds. Use this to"
+" identify known regulatory elements in a region of interest for "
+"epigenomic analysis or variant interpretation."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:369 60d095c2d59446d5935fc662eaf895ff
+msgid ""
+"``species`` (string) (optional) Species name (e.g., 'homo\\_sapiens', "
+"'mus\\_musculus')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:372 ec9729a094d8483aae6474dbd971ffec
+msgid ""
+"``chrom`` (string) (required) Chromosome number without 'chr' prefix "
+"(e.g., '17', '7', 'X')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:375 77ef04acf1474744a987eeb4684e136d
+msgid "``start`` (integer) (required) Start position (1-based)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:378 f8b9b44ad2a84a2fbf3d3acb2069cd8e
+msgid "``end`` (integer) (required) End position (1-based)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:397 8a73b3509cbb4579957d03f57894e0cf
+msgid "**GEO_get_dataset_details** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:399 413de74b6d854ab498a435b2ba90a23f
+msgid ""
+"Get detailed metadata for a specific GEO dataset by its accession (GSE "
+"ID). Returns comprehensive..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 2139f14a1ce24d969316c9f572eec30d
+msgid "GEO_get_dataset_details tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:405 fa2030917f53414a8be61cb1fe563aff
+msgid "**Name**: ``GEO_get_dataset_details``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:407 812e050402f743539aff583a4f847352
+msgid ""
+"**Description**: Get detailed metadata for a specific GEO dataset by its "
+"accession (GSE ID). Returns comprehensive information including title, "
+"summary, experiment type, platform, organism, sample count, publication "
+"date, and supplementary data links. Use this after searching with "
+"GEO\\_search\\_methylation\\_datasets or "
+"GEO\\_search\\_chipseq\\_datasets to get full details about a dataset of "
+"interest."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:411 959d67c989c94364a4164951f1fa4661
+msgid ""
+"``geo_id`` (string) (required) GEO dataset accession (numeric part only, "
+"e.g., '200291249' for GSE291249). Get IDs from GEO search results."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:428 5243c0bd6fbb43c3b023099bf9c1d2aa
+msgid "**GEO_search_atacseq_datasets** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:430 8d1674c6c6404c6580a4c97f14600080
+msgid ""
+"Search NCBI GEO for ATAC-seq chromatin accessibility datasets by query "
+"keyword, tissue, or cell t..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst bdd096a2566242c594c23c147755b205
+msgid "GEO_search_atacseq_datasets tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:436 6b2ba025aaa24613b3c380ee662ff000
+msgid "**Name**: ``GEO_search_atacseq_datasets``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:438 f23ae2798af94a9986d36d7c848c0a16
+msgid ""
+"**Description**: Search NCBI GEO for ATAC-seq chromatin accessibility "
+"datasets by query keyword, tissue, or cell type. Returns dataset "
+"accessions (GSE IDs), titles, summaries, organism, and sample counts. "
+"ATAC-seq measures open chromatin regions and is used to map regulatory "
+"elements, enhancers, and TF binding sites genome-wide."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:442 47472b8cfdb74159a7b5b6e4a7507dbd
+msgid ""
+"``query`` (string, null) (optional) Search query (e.g., 'T cell "
+"differentiation', 'liver hepatocyte', 'hematopoiesis'). Leave empty to "
+"search broadly."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:464 1bb11e06a8924a5e9f5af6c370f02e75
+msgid "**GEO_search_chipseq_datasets** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:466 73cd90cd4dfa43ab83a2ad1f74d10771
+msgid ""
+"Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by "
+"sequencing) datasets. ChI..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst fe7e9cb427ff4f02ad5cb0e448ca8239
+msgid "GEO_search_chipseq_datasets tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:472 45cac107dfb846809d5b5d10598f9c46
+msgid "**Name**: ``GEO_search_chipseq_datasets``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:474 0e2893ea3f42491c94c3b322dc3ebae3
+msgid ""
+"**Description**: Search NCBI GEO for ChIP-seq (Chromatin "
+"Immunoprecipitation followed by sequencing) datasets. ChIP-seq profiles "
+"genome-wide binding of proteins (transcription factors, histones) to DNA."
+" Returns dataset accessions, titles, summaries, and sample counts. Use "
+"this to find ChIP-seq studies for specific transcription factors, histone"
+" marks, or in specific cell types/diseases."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:478 12c7fb1f846743399611eb5fc10e6a80
+msgid ""
+"``query`` (string) (required) Search terms for ChIP-seq datasets (e.g., "
+"'H3K27ac liver', 'CTCF cancer', 'p53 ChIP-seq')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:481 11a6e8965b5442d5916653286aa0a5cf
+msgid "``organism`` (string) (optional) Organism filter."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:484 ../../tools/epigenomics_tools.rst:521
+#: 9e5fcd80e659403ca7f9a42dc6d47146 f541abe9bab341bfb0044b19619b1c91
+msgid "``limit`` (integer) (optional) Maximum number of dataset IDs to return."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:501 c6381c0eb7d04e39b905a54f0bfbfdcc
+msgid "**GEO_search_methylation_datasets** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:503 046fdbcb10314e51b37bbfc4122ec961
+msgid ""
+"Search NCBI GEO for DNA methylation array datasets, including Illumina "
+"450K, EPIC (850K), and oth..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 2cdfd76712574c0d91873457485d18ae
+msgid "GEO_search_methylation_datasets tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:509 b703f447074f4867aa612023c4eb069e
+msgid "**Name**: ``GEO_search_methylation_datasets``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:511 4712654aad5744d6b4b0a84f52f175e5
+msgid ""
+"**Description**: Search NCBI GEO for DNA methylation array datasets, "
+"including Illumina 450K, EPIC (850K), and other methylation profiling "
+"platforms. Returns dataset accessions (GSE IDs), titles, summaries, "
+"platform information, sample counts, and organisms. DNA methylation "
+"arrays measure methylation levels at hundreds of thousands of CpG sites "
+"genome-wide. Use this to find published methylation studies for specific "
+"conditions, tissues, or diseases. Follow up with "
+"GEO\\_get\\_dataset\\_details for full metadata."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:515 e4455ff4bc004c53965eadc302b4db5d
+msgid ""
+"``query`` (string) (required) Search terms for methylation datasets "
+"(e.g., 'breast cancer methylation', 'brain methylation aging', 'CpG "
+"island methylation'). Combined with methylation platform filter."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:518 029e5f065aa74eaea06b63d21ff9f7d0
+msgid ""
+"``organism`` (string) (optional) Organism filter (e.g., 'Homo sapiens', "
+"'Mus musculus')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:538 6555de404536487c88b092ee49838307
+msgid "**GEO_search_rnaseq_datasets** (Type: EpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:540 0a06590dfea742beb2f6dd1f7910fcae
+msgid ""
+"Search NCBI GEO for RNA-seq gene expression datasets by query keyword, "
+"disease, tissue, or gene o..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 51217b427928430eb96adc80c2688172
+msgid "GEO_search_rnaseq_datasets tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:546 a6e4a61217dc42c08a5145426ea068b4
+msgid "**Name**: ``GEO_search_rnaseq_datasets``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:548 f3138c203bec49c383511ddf8f4bbea3
+msgid ""
+"**Description**: Search NCBI GEO for RNA-seq gene expression datasets by "
+"query keyword, disease, tissue, or gene of interest. Returns dataset "
+"accessions (GSE IDs), titles, summaries, organism, and sample counts. Use"
+" this to find transcriptomics experiments relevant to a biological "
+"question. Covers bulk RNA-seq and total RNA-seq studies across all "
+"tissues and diseases."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:552 ad361b312c4a4698b22ec88c48824b7c
+msgid ""
+"``query`` (string, null) (optional) Search query (e.g., 'BRCA1 breast "
+"cancer', 'T cell activation', 'Alzheimer disease'). Leave empty to search"
+" broadly."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:574 017b220928c34135babc58d611a99809
+msgid "**UCSC_get_cpg_islands** (Type: UCSCEpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:576 03e326c2226b4d7d86a567ba1058bb24
+msgid ""
+"Get CpG island annotations for a genomic region from UCSC Genome Browser."
+" CpG islands are genomic..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst cfc2a46691074b5e93dbda7ba0d2974c
+msgid "UCSC_get_cpg_islands tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:582 bf131ed24f8847e7b9fd4d4047028503
+msgid "**Name**: ``UCSC_get_cpg_islands``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:583 ../../tools/epigenomics_tools.rst:625
+#: ../../tools/epigenomics_tools.rst:667 09099a6385b94f0690c752aaada0498e
+#: 8a9393323782467d957b0d4b4ebe97ae e15d853ffbb94adebe9e79cf6c101188
+msgid "**Type**: ``UCSCEpigenomicsTool``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:584 43cb7e6ecb17446f9b81c7bcc9572851
+msgid ""
+"**Description**: Get CpG island annotations for a genomic region from "
+"UCSC Genome Browser. CpG islands are genomic regions with high CpG "
+"dinucleotide density, often found at gene promoters. Methylation of CpG "
+"islands is associated with gene silencing. Returns CpG island locations, "
+"length, CpG count, GC content, and observed/expected CpG ratio. Use this "
+"to identify CpG islands near genes of interest for methylation analysis, "
+"or to characterize the regulatory landscape of a genomic region."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:588 63bc96b06e764b7c98dd81435c883c46
+msgid ""
+"``genome`` (string) (optional) Genome assembly (e.g., 'hg38', 'hg19', "
+"'mm10', 'mm39')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:591 1710fa0be1ac462487b28f42071af889
+msgid ""
+"``chrom`` (string) (required) Chromosome name (e.g., 'chr17', 'chr1', "
+"'chrX')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:594 ace83213720040ceb5c6ba9c937f61bb
+msgid "``start`` (integer) (required) Start position (0-based, inclusive)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:597 5b561b9ae7c54a3eb9bb56af9f9da054
+msgid "``end`` (integer) (required) End position (0-based, exclusive)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:616 901666f1cfee44b7ac2004de1653f63b
+msgid "**UCSC_get_encode_cCREs** (Type: UCSCEpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:618 e0963086c77244e8bfdcf8279a541f54
+msgid ""
+"Get ENCODE4 candidate cis-Regulatory Elements (cCREs) for a genomic "
+"region from UCSC Genome Brows..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 59a8075cdd5c46fd8dbb92acd87b725e
+msgid "UCSC_get_encode_cCREs tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:624 76d5675bf07f4745a573c44a4aee4022
+msgid "**Name**: ``UCSC_get_encode_cCREs``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:626 1fbe44151c4f4ce7b25c35adee06caaf
+msgid ""
+"**Description**: Get ENCODE4 candidate cis-Regulatory Elements (cCREs) "
+"for a genomic region from UCSC Genome Browser. cCREs are classified by "
+"epigenetic signatures into: Promoter-like (PLS, red), Proximal enhancer-"
+"like (pELS, orange), Distal enhancer-like (dELS, yellow), DNase-H3K4me3 "
+"(blue), CTCF-only/CTCF-bound (green). Each cCRE includes max Z-scores for"
+" DNase, H3K4me3, H3K27ac, and CTCF signals across biosamples. Use this to"
+" identify regulatory elements in a region of interest for functional "
+"genomics or GWAS variant interpretation."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:630 0f0ceda2aea54b578eaa1510a25a5df4
+msgid "``genome`` (string) (optional) Genome assembly (e.g., 'hg38', 'mm10')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:633 ../../tools/epigenomics_tools.rst:675
+#: 10a8046dbf834832af5ed52d5c0600b3 99bcad72754141788d6d0e52a54493bc
+msgid "``chrom`` (string) (required) Chromosome name (e.g., 'chr17')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:636 ../../tools/epigenomics_tools.rst:678
+#: 0d1aef3c57b84507973dcbcdb385bdfb f8dabb70df8f411c8f77901911a6f20e
+msgid "``start`` (integer) (required) Start position (0-based)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:639 ../../tools/epigenomics_tools.rst:681
+#: 644457bf6c9d42e1b61852ad37c9d31b 645d65159f344cbe9ace5e6d8ff9f9ee
+msgid "``end`` (integer) (required) End position (0-based)."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:658 cc69dde024f743838aacb947641d4452
+msgid "**UCSC_get_tf_binding_clusters** (Type: UCSCEpigenomicsTool)"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:660 9e69996fa8894570bc0dab5e19ed1af1
+msgid ""
+"Get Transcription Factor ChIP-seq Clusters from ENCODE3 for a genomic "
+"region via UCSC Genome Brow..."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst 2cf2af985ed74ff8b614ce39ada1f0ab
+msgid "UCSC_get_tf_binding_clusters tool specification"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:666 150785fee326484e99cfb5f07b1b6543
+msgid "**Name**: ``UCSC_get_tf_binding_clusters``"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:668 5074553cf7074c069334ebbb0b15cbb3
+msgid ""
+"**Description**: Get Transcription Factor ChIP-seq Clusters from ENCODE3 "
+"for a genomic region via UCSC Genome Browser. Returns clusters of TF "
+"binding sites from 340 factors across 129 cell types, aggregated from "
+"ENCODE3 ChIP-seq peak data. Each cluster shows the transcription factor "
+"name, peak score, and number of source experiments. Use this to identify "
+"which transcription factors bind to a specific genomic region, discover "
+"regulatory hotspots, or interpret GWAS variants by finding overlapping TF"
+" binding sites."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:672 d5ae2bc24fcb445c8d5c780bbe36c80e
+msgid "``genome`` (string) (optional) Genome assembly (e.g., 'hg38', 'hg19')."
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:700 931adc877a3b4b0bbd869a59ddb8933d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:702 f2aa3ef5c4664e7297922638e90089ac
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/epigenomics_tools.rst:703 09190f4325c64561944936abd61b2c90
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

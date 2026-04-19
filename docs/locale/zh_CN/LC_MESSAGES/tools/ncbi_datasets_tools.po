@@ -1,0 +1,272 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ncbi_datasets_tools.rst:10 3f3648801d994abeba424f93b2677602
+msgid "Ncbi Datasets Tools"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:12 12574a1dbce148e2904c989d6bf3633d
+msgid ""
+"**Configuration File**: ``ncbi_datasets_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:16 95509eccf4fb46cfb8177af4010d8c18
+msgid ""
+"This page contains all tools defined in the ``ncbi_datasets_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:19 b47eb061ac9a4bd6a3ed1b6331715b62
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:22 74b6cb9f4b514e7e9080e34058b45fef
+msgid "**NCBIDatasets_get_gene** (Type: NCBIDatasetsTool)"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:24 e251391989a7494dbc18e14e477fbd6f
+msgid ""
+"Get comprehensive gene information from NCBI by Gene ID. Returns gene "
+"symbol, description, chromo..."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst c5a4b5409488494bb07d8aab655844ec
+msgid "NCBIDatasets_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:28
+#: ../../tools/ncbi_datasets_tools.rst:59
+#: ../../tools/ncbi_datasets_tools.rst:93
+#: ../../tools/ncbi_datasets_tools.rst:127
+#: ../../tools/ncbi_datasets_tools.rst:158 511c7b34257440cdb7098c67a1942b41
+#: 7ece35a4dbe6459dbc2bb07c3859c66d 9ceaee2ed3ea4d799fa661d948ea15b3
+#: b660c917950849e78e5984df847d2205 e56cdc6a89c146a58f29cea083df9874
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:30 1377be4dc177430f8c1e523fd7a50838
+msgid "**Name**: ``NCBIDatasets_get_gene``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:31
+#: ../../tools/ncbi_datasets_tools.rst:62
+#: ../../tools/ncbi_datasets_tools.rst:96
+#: ../../tools/ncbi_datasets_tools.rst:130
+#: ../../tools/ncbi_datasets_tools.rst:161 19a7860dd3f3461fa9d6476565f44c24
+#: 29d3ccaa2f6e4eb8b75ae2924bcdc84c 6a835467a6a84a598f1e15d897d4aea4
+#: a0b640d1047b44e5bcebf0df1c2de26f ca5d2a8faa6c4dc69e0a016cebb0eadc
+msgid "**Type**: ``NCBIDatasetsTool``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:32 1669b46ebac542bb92169d06d8ababfb
+msgid ""
+"**Description**: Get comprehensive gene information from NCBI by Gene ID."
+" Returns gene symbol, description, chromosomal location, genomic "
+"coordinates, cross-references to UniProt/Ensembl/OMIM, synonyms, and "
+"annotation details. Covers all organisms in NCBI Gene database. Example: "
+"gene\\_id 7157 returns TP53 (tumor protein p53) on chromosome 17."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:34
+#: ../../tools/ncbi_datasets_tools.rst:65
+#: ../../tools/ncbi_datasets_tools.rst:99
+#: ../../tools/ncbi_datasets_tools.rst:133
+#: ../../tools/ncbi_datasets_tools.rst:164 1ea83cabfef64bf289c436b3e50ddb4e
+#: 42b062d5275e484a8cf8687a0cf875eb 55d9ea6dc0c14402a6d208c86bee731b
+#: 6686b5f14f8f4568ad8fa5eec5cb6a6a 995076098a614fa987020243b7cdc666
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:36 efd5923626974c798b7f54a1cb8c147b
+msgid ""
+"``gene_id`` (string) (required) NCBI Gene ID (numeric). Examples: '7157' "
+"(TP53), '672' (BRCA1), '3630' (INS), '22059' (mouse Trp53)."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:39
+#: ../../tools/ncbi_datasets_tools.rst:73
+#: ../../tools/ncbi_datasets_tools.rst:107
+#: ../../tools/ncbi_datasets_tools.rst:138
+#: ../../tools/ncbi_datasets_tools.rst:169 307dbb4132b042ae9aef535ebc4cf78c
+#: 49f40e12268a4f44a3c4da5f88147c37 5c3c86fa04a847afa36f2da23f9fe4a0
+#: 8142e1aa3c734bd7a5c3b2eafbe0c64f b7acc3d5548c42d398b1c33f72ac7f0a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:53 34a40dbe8b08452082189cde531768f1
+msgid "**NCBIDatasets_get_gene_by_symbol** (Type: NCBIDatasetsTool)"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:55 edfcbee2a01540269a1f1ed3c1002b5b
+msgid ""
+"Look up gene information by gene symbol and organism. Searches NCBI Gene "
+"database using official ..."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst 2d6397a6a65244a28ebc7c2c4b0e2218
+msgid "NCBIDatasets_get_gene_by_symbol tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:61 83860d68418142fd8028af00d4e4778b
+msgid "**Name**: ``NCBIDatasets_get_gene_by_symbol``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:63 14a8874de3574b26a692b854ff97b6a3
+msgid ""
+"**Description**: Look up gene information by gene symbol and organism. "
+"Searches NCBI Gene database using official gene symbols. Specify the "
+"taxon as common name (human, mouse, rat) or taxonomy ID. Returns gene ID,"
+" description, chromosomal location, and database cross-references."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:67 14f5b0904ebf4602bf1c7a30aace5622
+msgid ""
+"``symbol`` (string) (required) Gene symbol. Examples: 'TP53', 'BRCA1', "
+"'INS', 'EGFR'."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:70 ecdcc5d5a1244e94a5d31123254d489f
+msgid ""
+"``taxon`` (string) (optional) Organism as common name or taxonomy ID. "
+"Examples: 'human', 'mouse', 'rat', '9606', '10090'. Default: 'human'."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:87 1c7724e0800741509e4dedae8fa39632
+msgid "**NCBIDatasets_get_orthologs** (Type: NCBIDatasetsTool)"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:89 e63ddae6306244ac8ec0225c5eaf9078
+msgid ""
+"Get orthologous genes across species for a given NCBI Gene ID. Returns "
+"orthologs identified by NC..."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst 61d14151c4e0486c9bbc8a79858550b5
+msgid "NCBIDatasets_get_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:95 e90ca8f976614e57a1543bdd3f921913
+msgid "**Name**: ``NCBIDatasets_get_orthologs``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:97 1d67bec6132b42b4a85385b35840a17b
+msgid ""
+"**Description**: Get orthologous genes across species for a given NCBI "
+"Gene ID. Returns orthologs identified by NCBI's Ortholog pipeline, "
+"including gene symbols, species, and gene types for each ortholog. Useful"
+" for comparative genomics and cross-species gene function studies. "
+"Example: gene\\_id 7157 (TP53) returns mouse Trp53, rat Tp53, zebrafish "
+"tp53, etc."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:101 6566497d32704bf79e9dd9a222e6a95a
+msgid ""
+"``gene_id`` (string) (required) NCBI Gene ID (numeric). Examples: '7157' "
+"(TP53), '672' (BRCA1), '3630' (INS)."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:104 e279924356394826af234245e31bb005
+msgid ""
+"``page_size`` (integer) (optional) Maximum number of orthologs to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:121 040eda84c5f9475aa80975747d2e0354
+msgid "**NCBIDatasets_get_taxonomy** (Type: NCBIDatasetsTool)"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:123 988ded943ea54240b907a1bf5adefd2e
+msgid ""
+"Get detailed taxonomy information from NCBI by taxonomy ID. Returns "
+"organism name, rank, full lin..."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst 11c792fe4a68497f9b43d35137f7e285
+msgid "NCBIDatasets_get_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:129 a04f9aaec0f442d9b5ad49d0650855d2
+msgid "**Name**: ``NCBIDatasets_get_taxonomy``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:131 7f502b2aabf443ca8e233b5515a6ab56
+msgid ""
+"**Description**: Get detailed taxonomy information from NCBI by taxonomy "
+"ID. Returns organism name, rank, full lineage, counts of "
+"genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI "
+"Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: "
+"tax\\_id 9606 returns Homo sapiens with 20,625 protein-coding genes."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:135 128e1626027d4ae9871a50e89eec07df
+msgid ""
+"``tax_id`` (string) (required) NCBI Taxonomy ID (numeric). Examples: "
+"'9606' (Homo sapiens), '10090' (Mus musculus), '7227' (Drosophila "
+"melanogaster), '562' (E. coli)."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:152 6d2e3dccedcb464c98abc5f3746bd9fa
+msgid "**NCBIDatasets_suggest_taxonomy** (Type: NCBIDatasetsTool)"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:154 ee513b6bf2504df29ebd4fe1435c22d1
+msgid ""
+"Suggest taxonomic names matching a query string. Searches NCBI Taxonomy "
+"for organisms by partial ..."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst 93b3df98e4e4483180b7c29c69f9965d
+msgid "NCBIDatasets_suggest_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:160 a7f9377605544dcc95352e83188163e7
+msgid "**Name**: ``NCBIDatasets_suggest_taxonomy``"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:162 31ab842c974c4d8b91070fcaba54585d
+msgid ""
+"**Description**: Suggest taxonomic names matching a query string. "
+"Searches NCBI Taxonomy for organisms by partial name, returning matching "
+"scientific names, taxonomy IDs, common names, and ranks. Useful for "
+"finding taxonomy IDs from partial organism names. Example: 'drosophila' "
+"returns D. melanogaster (7227), D. simulans (7240), etc."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:166 af954f872be84031b610793fe77f8584
+msgid ""
+"``query`` (string) (required) Partial organism name to search. Examples: "
+"'drosophila', 'escherichia', 'arabidopsis', 'saccharomyces'."
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:183 12ee1953a70c4db595a1dab5c621114c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:185 ada937a97192419e96e97ac2da67fa1e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ncbi_datasets_tools.rst:186 f22e353aaa184dad9fc78cbf7acf0eb3
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

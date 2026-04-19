@@ -38,7 +38,7 @@ msgstr ":doc:`faq` - 常见问题解答"
 
 #: ../../help/index.rst:15 cd98b3bf6f67405889fce60d78bfbbf3
 msgid ":doc:`troubleshooting` - Common problems and solutions"
-msgstr ":doc:`故障排除` - 常见问题及解决方案"
+msgstr ":doc:`troubleshooting` - 常见问题及解决方案"
 
 #: ../../help/index.rst:17 65c98084a60b4c7fb391871aa3368a73
 msgid "**Need Help?**"

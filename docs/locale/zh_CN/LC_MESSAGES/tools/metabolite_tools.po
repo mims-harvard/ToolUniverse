@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/metabolite_tools.rst:10 682451acf4824ce3940fd8639fdbb206
+msgid "Metabolite Tools"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:12 ff5bb7c996994e468b37cedffbf24e6b
+msgid ""
+"**Configuration File**: ``metabolite_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:16 df4c2cefaa0c4ecbb60842b477bad353
+msgid ""
+"This page contains all tools defined in the ``metabolite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:19 0dbb0985ea2e41c5b74dab29a36201b3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:22 d2d2f814d2164bd199f30d1f248f9028
+msgid "**HMDB_get_diseases** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:24 b4edb66de74a4810a8ec6fc02a57c62d
+msgid ""
+"Alias for Metabolite\\_get\\_diseases. Get disease associations for a "
+"metabolite via CTD database."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst 5f44d7fb252147a9bcaed849eec54bf7
+msgid "HMDB_get_diseases tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:28 ../../tools/metabolite_tools.rst:64
+#: ../../tools/metabolite_tools.rst:100 ../../tools/metabolite_tools.rst:134
+#: ../../tools/metabolite_tools.rst:176 ../../tools/metabolite_tools.rst:215
+#: 0bbb5742f09442a0b798d3cd082aa573 204195eaf0fd4066a453bb7d70eb4b45
+#: 49d335bb1e1a41269012f09d5a049f48 53f8433a02d543fd86b75df91b75c88a
+#: 7a4656810cd74bc28b3a478cc809e75b 8495b7760e8346a4b32f509452518426
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:30 8abf1d0437514ea8b7c2fbe1a29b7394
+msgid "**Name**: ``HMDB_get_diseases``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:31 ../../tools/metabolite_tools.rst:67
+#: ../../tools/metabolite_tools.rst:103 ../../tools/metabolite_tools.rst:137
+#: ../../tools/metabolite_tools.rst:179 ../../tools/metabolite_tools.rst:218
+#: 1e8d3b1245054088a847d607f26ea215 4c474d8ad44b4a93984bd02076493520
+#: 6cb4834b882d4fcc9bd6792df4a6eb2a 7e5214e709674b6191c138299743b7b3
+#: 92923286949b44c69379871b7f894602 a6b6832110b3482db90c5cd310d57cce
+msgid "**Type**: ``MetaboliteTool``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:32 5efba78e443d4753b55c3f6318d09e3f
+msgid ""
+"**Description**: Alias for Metabolite\\_get\\_diseases. Get disease "
+"associations for a metabolite via CTD database."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:34 ../../tools/metabolite_tools.rst:70
+#: ../../tools/metabolite_tools.rst:106 ../../tools/metabolite_tools.rst:140
+#: ../../tools/metabolite_tools.rst:182 ../../tools/metabolite_tools.rst:221
+#: 1aac46b711a94c8e9ffee89b4008ba30 1f3b99715d354e57b5fce5dba9ebea84
+#: 43c2e816a48c46b6b1b228942a6f7379 6d9f9fb5589541b8adc07a2c78c86695
+#: 7d23f8346d6e4b2894c5a6a43d6bdae9 cb8fa2f0d4b5412390a8c380e87d2b19
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:36 ../../tools/metabolite_tools.rst:72
+#: ../../tools/metabolite_tools.rst:108 ../../tools/metabolite_tools.rst:142
+#: ../../tools/metabolite_tools.rst:184 ../../tools/metabolite_tools.rst:223
+#: 410f581aeec24d19844ee7a4d4e2ccd2 a87d6506587f4a7681c04193ee4b0fa1
+#: b8dc58f38c6843fb88c200cb56d31f36 bc10eea419144cf492398307851ce691
+#: e742ba9185f445029810ef0d82f892ad eab0bb37b09c42d0b8e0e1061a4b0982
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:39 ../../tools/metabolite_tools.rst:75
+#: ../../tools/metabolite_tools.rst:145 0fcea0f1cdbf484888960fbcc9bbb963
+#: 4e9401c6d4ac49619bb4d81cd33205b9 d1b5adff3c104da3af51542f8b3dd12a
+msgid "``hmdb_id`` (string) (optional) HMDB ID (e.g., HMDB0000122)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:42 ../../tools/metabolite_tools.rst:78
+#: 41c7c45c55c74acf9c5373c8dc56461d a7f7a861172e44d5a5ac5ec353a4893d
+msgid "``compound_name`` (string) (optional) Compound name (e.g., glucose)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:45 ../../tools/metabolite_tools.rst:81
+#: ../../tools/metabolite_tools.rst:114 ../../tools/metabolite_tools.rst:157
+#: ../../tools/metabolite_tools.rst:196 ../../tools/metabolite_tools.rst:232
+#: 2a20c23c03ed4d9d8587623eddf27b63 b23b26f47e4b4e53b481afffe4232c5d
+#: c26da768a0194c2084a83929561bc839 c612e80453c149d1b5a30541da03c448
+#: d0257ed460c0406e831cda25fc583354 d849eb0e9b3b4ed9a7a1e445d5841bba
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:58 800ab73f2b6d47aabdbf72523533b966
+msgid "**HMDB_get_metabolite** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:60 e228a49f6be743a882979fa0992da5dc
+msgid ""
+"Alias for Metabolite\\_get\\_info. Get compound information by HMDB ID, "
+"compound name, or PubChem CID."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst 8afe50694da84643b613eafb0a1806a9
+msgid "HMDB_get_metabolite tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:66 7f6d3c8ace074f829f50278f894a3140
+msgid "**Name**: ``HMDB_get_metabolite``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:68 e7a5838a593942d590e28da4491222de
+msgid ""
+"**Description**: Alias for Metabolite\\_get\\_info. Get compound "
+"information by HMDB ID, compound name, or PubChem CID."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:94 df986a931849450c8eafc9a3d30cb4b7
+msgid "**HMDB_search** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:96 145d0a3f42e54f9f8af7dd97cb124555
+msgid ""
+"Alias for Metabolite\\_search. Search for metabolites by compound name or"
+" molecular formula via Pu..."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst 2e2ce61afd054b0ebdfd7147999f0b1b
+msgid "HMDB_search tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:102 2096f09630f54d72a8b037cf9ee18a3b
+msgid "**Name**: ``HMDB_search``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:104 9ffcb25496d645fb8a366e30cfcb9615
+msgid ""
+"**Description**: Alias for Metabolite\\_search. Search for metabolites by"
+" compound name or molecular formula via PubChem. Accepts common names, "
+"synonyms (e.g., 'glucosylceramide', 'glucose', 'ATP')."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:111 806134285f36497caa334f00455936ef
+msgid "``query`` (string) (required) Compound name or molecular formula to search"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:128 bbcf2c58637d4652a0798d7da7f3bff5
+msgid "**Metabolite_get_diseases** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:130 a16478b275bd438ebb0e72d1ba2e9b86
+msgid ""
+"Get curated disease associations for a metabolite using CTD (Comparative "
+"Toxicogenomics Database)..."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst 233c8a23eb3b46ef949853e4d19516d8
+msgid "Metabolite_get_diseases tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:136 bc5686aab5dd47299ecb53d133ae2474
+msgid "**Name**: ``Metabolite_get_diseases``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:138 fc20678396274bd381c3ed762911bfba
+msgid ""
+"**Description**: Get curated disease associations for a metabolite using "
+"CTD (Comparative Toxicogenomics Database). Accepts HMDB ID, compound "
+"name, or PubChem CID. Resolves the identifier to PubChem to get the "
+"canonical compound name, then queries CTD for chemical-disease "
+"associations with direct evidence. Returns disease name, disease ID "
+"(MeSH), disease categories, direct evidence type (marker/mechanism), and "
+"supporting PubMed IDs."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:148 1235e647ad5c4b6ca2afa2a193b14406
+msgid ""
+"``compound_name`` (string) (optional) Compound name (e.g., glucose, "
+"cholesterol)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:151 ../../tools/metabolite_tools.rst:193
+#: 860007619317487c8d07bd5ae82b8b88 9159c451c73349b69f4f2a3b92c0e834
+msgid "``pubchem_cid`` (integer, string) (optional) PubChem CID (e.g., 5793)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:154 71b06589ec35492abb46c9baf5df9925
+msgid ""
+"``limit`` (integer) (optional) Maximum number of disease associations to "
+"return (default: 50)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:170 d998cb9ff0d745a99da84f4adfd22cc0
+msgid "**Metabolite_get_info** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:172 6d36c8ea8ec84255bb6bd061d833fd1c
+msgid ""
+"Get compound information for a metabolite by HMDB ID, compound name, or "
+"PubChem CID. Returns comm..."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst 999a0aeed56b4239a149c25a538c26d5
+msgid "Metabolite_get_info tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:178 27a4512090824f0bbb59c42b8b411be7
+msgid "**Name**: ``Metabolite_get_info``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:180 640fc1f7b6e64403bed4d5a709ea3298
+msgid ""
+"**Description**: Get compound information for a metabolite by HMDB ID, "
+"compound name, or PubChem CID. Returns common name, IUPAC name, molecular"
+" formula, molecular weight, canonical SMILES, and InChIKey via PubChem. "
+"Accepts HMDB IDs (e.g., HMDB0000122), compound names (e.g., glucose), or "
+"PubChem CIDs (numeric)."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:187 0f577962e28c44cfa395f9bf1f94dd4f
+msgid "``hmdb_id`` (string) (optional) HMDB ID (e.g., HMDB0000122 or HMDB0000001)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:190 4b6c611f26c04c008fee458b4d6b89ee
+msgid ""
+"``compound_name`` (string) (optional) Compound name (e.g., glucose, "
+"L-alanine, caffeine)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:209 175418f9502341d68b386f0711a0a651
+msgid "**Metabolite_search** (Type: MetaboliteTool)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:211 7926d41158bb49b98783d39713aeff6b
+msgid ""
+"Search for metabolites by compound name or molecular formula via PubChem."
+" Returns up to 10 matchi..."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst e25e922506634d08a771b7ba6d173008
+msgid "Metabolite_search tool specification"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:217 74e7f7671a574a6a8093a10e84811193
+msgid "**Name**: ``Metabolite_search``"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:219 81d84ce1f1694b49af827267fbf97a05
+msgid ""
+"**Description**: Search for metabolites by compound name or molecular "
+"formula via PubChem. Returns up to 10 matching compounds with PubChem "
+"CID, name, formula, molecular weight, and SMILES. Use "
+"search\\_type='name' for name/keyword search (default) or "
+"search\\_type='formula' for exact molecular formula search (e.g., "
+"C6H12O6)."
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:226 4d51df819b9645b9946143aa8bd982e9
+msgid ""
+"``query`` (string) (required) Search query: compound name (e.g., glucose)"
+" or molecular formula (e.g., C6H12O6)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:229 cd3745c61a964b88abcd5d0f3bf14252
+msgid ""
+"``search_type`` (string) (optional) Search type: 'name' for compound name"
+" search, 'formula' for molecular formula search (default: name)"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:246 5d932da598e54023a68bf2354688dcbe
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:248 e5277886d5f044278b62218d0fa6183d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/metabolite_tools.rst:249 96136960b67b4a128aa2733b2e6b9a54
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

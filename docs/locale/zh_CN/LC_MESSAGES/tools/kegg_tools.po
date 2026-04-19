@@ -1,0 +1,252 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/kegg_tools.rst:10 ab5a61365b994308b97194a91d1a98fd
+msgid "Kegg Tools"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:12 697392d7b59f4c818740f68e1478ca59
+msgid ""
+"**Configuration File**: ``kegg_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:16 7509b67d5c244630acbf18dc29ca80af
+msgid ""
+"This page contains all tools defined in the ``kegg_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:19 383fba28a668419d9bb5b2dff73f5640
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:22 3b56458026274611b21f0d799aa39b15
+msgid "**kegg_find_genes** (Type: KEGGFindGenes)"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:24 c760f9511c624390a8628f8352fc155c
+msgid ""
+"Find genes in KEGG database by keyword. Can search across all organisms "
+"or within a specific orga..."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst 20192cced7894b61ac63309fb76a7a94
+msgid "kegg_find_genes tool specification"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:28 ../../tools/kegg_tools.rst:62
+#: ../../tools/kegg_tools.rst:93 ../../tools/kegg_tools.rst:124
+#: ../../tools/kegg_tools.rst:153 59ac65deca72407589d2c42bd9bf42c4
+#: 63bd6aa95b10464790cc5eb0356a11d0 7f20686cd8194fb192fb32dd33f70cf2
+#: f2ea46bbd19b4c24915aab141e0827bc f78ff6f00da84b7da538d28ff9637826
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:30 df3d90d824ec45299d6a54a9138e3f08
+msgid "**Name**: ``kegg_find_genes``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:31 6075179e9e154cd596d1645632a2b8a0
+msgid "**Type**: ``KEGGFindGenes``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:32 7cda55beadc64c958a0c81a21326e67a
+msgid ""
+"**Description**: Find genes in KEGG database by keyword. Can search "
+"across all organisms or within a specific organism."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:34 ../../tools/kegg_tools.rst:68
+#: ../../tools/kegg_tools.rst:99 ../../tools/kegg_tools.rst:130
+#: ../../tools/kegg_tools.rst:159 03efbb44beb347729c01c053d319a5b1
+#: 0b47604ae2c94c3e8989bda865e2c422 b11658640507447b8b412a9856fb5a31
+#: c74f845c1ce843f5952529c1fb907d05 d304f96f09a5433c97e2e44368b3d2c9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:36 4776e6216e8445b1bf79db1fe4b62d14
+msgid ""
+"``keyword`` (string) (required) Search keyword for gene names or "
+"descriptions"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:39 0b6125247ba14741be43412109aace0f
+msgid ""
+"``organism`` (string) (optional) Organism code (e.g., 'hsa' for human, "
+"'mmu' for mouse). Optional - searches all organisms if not specified"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:42 ../../tools/kegg_tools.rst:73
+#: ../../tools/kegg_tools.rst:104 ../../tools/kegg_tools.rst:134
+#: ../../tools/kegg_tools.rst:164 402043f5f85f478aa0de8029fbeb0d53
+#: 53bc7ce68d8d4f8a91e3b6f12bda1896 84ef0d9c23164e09b7eeb06f723319db
+#: aca0739096bf43f2ba06723beeb3d9b5 b87ca0f2b25d420aad98d34d4ee1cf70
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:56 ae4419344c7142a69cffa223bb256541
+msgid "**kegg_get_gene_info** (Type: KEGGGetGeneInfo)"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:58 b043b9d0ca9f42fca30fc334b2931b7b
+msgid ""
+"Get detailed gene information from KEGG by gene ID. Returns gene data "
+"including sequence, functio..."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst 10b84320e3d749c6820cbb122762fe6f
+msgid "kegg_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:64 01b588125ac846fa98fd76cea7b40583
+msgid "**Name**: ``kegg_get_gene_info``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:65 7b51000f22b544cc9f5b5b14c56dbbce
+msgid "**Type**: ``KEGGGetGeneInfo``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:66 7cdff65719d4454e843f712cd2c65e75
+msgid ""
+"**Description**: Get detailed gene information from KEGG by gene ID. "
+"Returns gene data including sequence, function, and pathway associations."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:70 d5f7645513614172b4b9ce1a93c539b7
+msgid ""
+"``gene_id`` (string) (required) KEGG gene identifier (e.g., 'hsa:348', "
+"'hsa:3480')"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:87 6c635f862d9f4cb5a9fc50165fec2f61
+msgid "**kegg_get_pathway_info** (Type: KEGGGetPathwayInfo)"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:89 26e539f7ac9440f8a0ed5f0e80c5c25c
+msgid ""
+"Get detailed pathway information from KEGG by pathway ID. Returns pathway"
+" data including genes, c..."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst 94ace81b2a7941db9271fa38833985ba
+msgid "kegg_get_pathway_info tool specification"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:95 f5df903f1c8a40e1b3a430b3f14e2d13
+msgid "**Name**: ``kegg_get_pathway_info``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:96 f73233de7547403791dc10f99e0f1454
+msgid "**Type**: ``KEGGGetPathwayInfo``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:97 ec272c8293af4fb19830208140c6f947
+msgid ""
+"**Description**: Get detailed pathway information from KEGG by pathway "
+"ID. Returns pathway data including genes, compounds, and reactions."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:101 69a377f7476744f0acb7ca574b00ef31
+msgid ""
+"``pathway_id`` (string) (required) KEGG pathway identifier (e.g., "
+"'hsa00010', 'path:hsa00010')"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:118 0dcdfeb40e104aacbee7f42bb93b6915
+msgid "**kegg_list_organisms** (Type: KEGGListOrganisms)"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:120 842f64674f1f4f14bf7ffa55768f6eea
+msgid ""
+"List all available organisms in the KEGG database. Returns organism "
+"codes, names, and descriptions."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst 3a44229b8a3e4f47a0d298922ec1775c
+msgid "kegg_list_organisms tool specification"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:126 e807da191e58420097f743b3f472abbc
+msgid "**Name**: ``kegg_list_organisms``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:127 d93ec3d166dd4dfb94e3dc45ebe49510
+msgid "**Type**: ``KEGGListOrganisms``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:128 713af522264a4bba808e1269da4cda02
+msgid ""
+"**Description**: List all available organisms in the KEGG database. "
+"Returns organism codes, names, and descriptions."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:132 a31a8f9cd10541e0b69b35af3666a621
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:147 42c95d049c304183b710b394d2dfe2fa
+msgid "**kegg_search_pathway** (Type: KEGGSearchPathway)"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:149 d6dcdfe0df5e4d708d2869b856171b46
+msgid ""
+"Search KEGG pathways by keyword. Returns pathway IDs and descriptions "
+"matching the search term."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst 7c39e0a9a78c4c849f14586b6d3bf037
+msgid "kegg_search_pathway tool specification"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:155 809c292608d747ea938ea615199474b3
+msgid "**Name**: ``kegg_search_pathway``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:156 ffca9db9790f41aabc886e9652e088ee
+msgid "**Type**: ``KEGGSearchPathway``"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:157 d392987659954f5190fc466444d910e8
+msgid ""
+"**Description**: Search KEGG pathways by keyword. Returns pathway IDs and"
+" descriptions matching the search term."
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:161 b538dd0b8beb4200a5034cbd8191977a
+msgid ""
+"``keyword`` (string) (required) Search keyword for pathway names or "
+"descriptions (e.g., 'diabetes', 'metabolism')"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:178 d5f1dc37159d47ff9a7b0502cbb00c12
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:180 3de2fb22e13b400ead53645c06542fe7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/kegg_tools.rst:181 2fab3926fed9442893596d268d3f66f8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

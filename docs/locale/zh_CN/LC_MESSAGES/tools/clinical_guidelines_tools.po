@@ -1,0 +1,491 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clinical_guidelines_tools.rst:10
+#: f552183dc96b45eca053694799bdc18d
+msgid "Clinical Guidelines Tools"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:12
+#: 9adf2757ccad4a72b705e3554e7ac220
+msgid ""
+"**Configuration File**: ``clinical_guidelines_tools.json`` **Tool Type**:"
+" Local **Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:16
+#: c2aff71c117a41d2b792be2eb7cf7ad4
+msgid ""
+"This page contains all tools defined in the "
+"``clinical_guidelines_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:19
+#: e445aaa8eae74e14bbb1dcaa55a8edff
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:22
+#: d0d06cd98f27461a98d2c3920dbb003b
+msgid "**DailyMed_search_drug_classes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:24
+#: 02cf941ed0d54a9887bda3bdafca0d7e
+msgid ""
+"Search the DailyMed database for FDA Established Pharmacologic Classes "
+"(EPC). Returns drug class ..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst ef68ed92d2fb475d9948c2d159b915d0
+msgid "DailyMed_search_drug_classes tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:28
+#: ../../tools/clinical_guidelines_tools.rst:65
+#: ../../tools/clinical_guidelines_tools.rst:96
+#: ../../tools/clinical_guidelines_tools.rst:127
+#: ../../tools/clinical_guidelines_tools.rst:158
+#: ../../tools/clinical_guidelines_tools.rst:187
+#: ../../tools/clinical_guidelines_tools.rst:224
+#: ../../tools/clinical_guidelines_tools.rst:255
+#: 317cb1fd113b4c7088dc7464e130dcd6 6e38f147d6004831bbd34e1799e05518
+#: 7ea0eba9fedb419f8d7d978f0c114167 94936f98d8934a7fa463a5bace5604e9
+#: bab90afa931148f2b171195e7bae5e22 e777f893b7474a9d8d28c29ff8dffab7
+#: fbc9846e3da44359bb135d9ba3703450 fc4ce5c3994948ad8aafb64b9d763f6d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:30
+#: 103073937c454151a26e82a82fab634d
+msgid "**Name**: ``DailyMed_search_drug_classes``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:31
+#: ../../tools/clinical_guidelines_tools.rst:68
+#: ../../tools/clinical_guidelines_tools.rst:99
+#: ../../tools/clinical_guidelines_tools.rst:130
+#: ../../tools/clinical_guidelines_tools.rst:161
+#: ../../tools/clinical_guidelines_tools.rst:190
+#: ../../tools/clinical_guidelines_tools.rst:227
+#: ../../tools/clinical_guidelines_tools.rst:258
+#: 18c5c91839e5401f8d2549d1a1b9025b 34e806679f4c4c54a0ea5536b1d63819
+#: 3dfb3d2457c44d319d0a106392e41895 5ea8281d14ba4e88a609ebc697089f35
+#: 99c24782095f4c258c6e49d051d5ae37 9bc0151fdca6474eab4cb1fd1931b218
+#: ac50bade5aa34fa7b6edbeb5fcfe510d cf2b1e2df4604ee6a47d6e1233dd3717
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:32
+#: b2b74696c6d64c48b0ea58d0e28782e9
+msgid ""
+"**Description**: Search the DailyMed database for FDA Established "
+"Pharmacologic Classes (EPC). Returns drug class names and NDF-RT codes "
+"that categorize drugs by their mechanism of action or pharmacologic "
+"effect. Use this to find drug classes for a specific therapeutic area "
+"(e.g., 'antihypertensive', 'antibiotic', 'antineoplastic') or to look up "
+"specific pharmacologic class codes. The drug class codes can be used to "
+"search DailyMed\\_search\\_spls for all drugs in that class."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:34
+#: ../../tools/clinical_guidelines_tools.rst:71
+#: ../../tools/clinical_guidelines_tools.rst:102
+#: ../../tools/clinical_guidelines_tools.rst:133
+#: ../../tools/clinical_guidelines_tools.rst:164
+#: ../../tools/clinical_guidelines_tools.rst:193
+#: ../../tools/clinical_guidelines_tools.rst:230
+#: ../../tools/clinical_guidelines_tools.rst:261
+#: 3ffcc4f7ac4848e59413982e41577259 48c9cd5f993d4775a7367fe780f2dc5c
+#: 4d93c594296c4297a9ba59efd296802a 882a462e569747cd930ef71180cc4ff3
+#: 9766e32c4daf4b6bb4dfa4b3af971914 b81aaa5340a74b2199ac219de3b7e2d7
+#: bbea313863af4f00b39e6524af34ce9f c2cf386bac2143e89adba9cb4872b202
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:36
+#: 1634b025465b4e53a7ac378b4171ba6b
+msgid ""
+"``drug_class_name`` (string) (required) Search term for drug class name "
+"(e.g., 'anti', 'kinase inhibitor', 'antibacterial', 'antineoplastic', "
+"'angiotensin')"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:39
+#: 7b0d0d0f60614a94aa0b35afcae0f3c2
+msgid ""
+"``pagesize`` (integer) (optional) Number of results per page (default: "
+"100)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:42
+#: b6e53a6db9954c7fbf0ad1e7a547193c
+msgid "``page`` (integer) (optional) Page number for pagination (default: 1)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:45
+#: ../../tools/clinical_guidelines_tools.rst:76
+#: ../../tools/clinical_guidelines_tools.rst:107
+#: ../../tools/clinical_guidelines_tools.rst:138
+#: ../../tools/clinical_guidelines_tools.rst:168
+#: ../../tools/clinical_guidelines_tools.rst:204
+#: ../../tools/clinical_guidelines_tools.rst:235
+#: ../../tools/clinical_guidelines_tools.rst:278
+#: 223cdac62fb94407a8bd4ec6fb5988a6 4bbd4d05a6be46fbbed4b9bae1be0168
+#: 8c43eac16eb345ecb9d44728a98d1be8 cc3658103ab14ec5a62341ab91d5ad76
+#: d1d1016925294911aaaf32ed416bbc79 d76523982d27443cb4193a5ee5bfeaa2
+#: e1d6552d4f854a4cb6b4c6a434891586 eac51be80b8c4255a1e9cc0dd3f1be60
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:59
+#: ca0b5f69900f4d17954b51effb0c6222
+msgid "**MAGICapp_get_guideline** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:61
+#: bf7ac17acbcd4af3b5879d90a7004eff
+msgid ""
+"Get detailed information about a specific clinical guideline from "
+"MAGICapp by its numeric guideli..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst c8610e03041b4bc18f9204c0ec1fecb5
+msgid "MAGICapp_get_guideline tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:67
+#: 001fccf14c1f4073ad52c97e0718fea9
+msgid "**Name**: ``MAGICapp_get_guideline``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:69
+#: 452f63de023b4f7e97ed479eda21a3d3
+msgid ""
+"**Description**: Get detailed information about a specific clinical "
+"guideline from MAGICapp by its numeric guideline ID. Returns "
+"comprehensive guideline metadata including title, authoring organization,"
+" contact information, version details, GRADE methodology settings, and "
+"links to PDF/JSON exports. Use MAGICapp\\_list\\_guidelines first to find"
+" guideline IDs, then use this tool to get full details. For the "
+"guideline's clinical recommendations, use "
+"MAGICapp\\_get\\_recommendations instead."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:73
+#: f52b136e1b684bd2be025fba107eca04
+msgid ""
+"``guideline_id`` (integer) (required) Numeric guideline ID (use the "
+"publishedId from MAGICapp\\_list\\_guidelines, e.g., 10962, 10258, 7594)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:90
+#: eb9271a6b021492d837d97ffbeec4a63
+msgid "**MAGICapp_get_recommendations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:92
+#: ae7ad03dc0df454a99d7944f7d64334f
+msgid ""
+"Get all clinical recommendations from a specific MAGICapp guideline. "
+"Returns GRADE-rated recommen..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst db8c5e778d7c4b3aa03e3b53224537f1
+msgid "MAGICapp_get_recommendations tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:98
+#: 62b987e435f84f138da75109eb1e5928
+msgid "**Name**: ``MAGICapp_get_recommendations``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:100
+#: 63ea1316cc5545b0bd2062fb990996fe
+msgid ""
+"**Description**: Get all clinical recommendations from a specific "
+"MAGICapp guideline. Returns GRADE-rated recommendations with strength "
+"levels (STRONG, WEAK, PRACTICE, NO\\_STRENGTH), recommendation text "
+"(HTML), supporting remarks, rationale, and key information including "
+"evidence quality assessments. This is the core tool for accessing "
+"evidence-based clinical recommendations from living guidelines hosted on "
+"MAGICapp. Use MAGICapp\\_list\\_guidelines first to find guideline IDs."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:104
+#: ../../tools/clinical_guidelines_tools.rst:135
+#: 5af6560e5b4e4587a228a5abe5006b92 b8e0602c555749a4918cc8fa437d6f4c
+msgid ""
+"``guideline_id`` (integer) (required) Numeric guideline ID (use the "
+"publishedId from MAGICapp\\_list\\_guidelines, e.g., 10962 for oral "
+"cancer screening, 10258 for WHO mpox guidelines)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:121
+#: eff507e7d6534e82ae6e9b3736028cb2
+msgid "**MAGICapp_get_sections** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:123
+#: 7cfadb55057b4be198d388f26d852fd0
+msgid ""
+"Get all sections (chapters) of a specific MAGICapp clinical guideline. "
+"Returns the structural org..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst 6edc450293824811b5988a83d6d6a050
+msgid "MAGICapp_get_sections tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:129
+#: ea988b834739419fb2b5bbf44432d2dc
+msgid "**Name**: ``MAGICapp_get_sections``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:131
+#: c2b1fcfbaca94a0fb6adae760f64363d
+msgid ""
+"**Description**: Get all sections (chapters) of a specific MAGICapp "
+"clinical guideline. Returns the structural organization of the guideline "
+"including section headings, text content, section types, and hierarchical"
+" ordering. Use this to understand the guideline's structure and find "
+"specific clinical topics within a guideline. Sections contain the "
+"narrative text while recommendations are accessed separately via "
+"MAGICapp\\_get\\_recommendations."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:152
+#: 74009078697d4127ad04c6aa7bc32e25
+msgid "**MAGICapp_list_guidelines** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:154
+#: 38938962f2304c99bb9879de65953a85
+msgid ""
+"List all publicly available clinical guidelines from MAGICapp (Making "
+"GRADE the Irresistible Choi..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst 0c3fef7d42944904af5f0a9d94534de6
+msgid "MAGICapp_list_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:160
+#: 4cd155d26df043259720e5f9a2c61626
+msgid "**Name**: ``MAGICapp_list_guidelines``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:162
+#: 276fb567cea54b19bf7025c7cf14ea7c
+msgid ""
+"**Description**: List all publicly available clinical guidelines from "
+"MAGICapp (Making GRADE the Irresistible Choice). MAGICapp hosts GRADE-"
+"based living guidelines from organizations like WHO, Stroke Foundation, "
+"American Dental Association, and others. Returns guideline metadata "
+"including name, owner organization, publication date, recommendation "
+"count, and guideline IDs for detailed lookups. Use this tool to discover "
+"available evidence-based clinical guidelines, then use "
+"MAGICapp\\_get\\_guideline or MAGICapp\\_get\\_recommendations for "
+"details."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:166
+#: a253578fecd94efea8d4b51955bd46e1
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:181
+#: a543e3754b6f4e679ea4f26795ef24fe
+msgid "**NCI_expand_drugs_by_letter** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:183
+#: 8f52b7fc0b684f9fbce8faa6999afac8
+msgid ""
+"Browse the NCI Drug Dictionary by first letter. Returns all cancer drugs "
+"and drug aliases startin..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst 984ee40850304f2094d85f61ecf871dc
+msgid "NCI_expand_drugs_by_letter tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:189
+#: 072f8c242abc4790ba7c40a0b3bf259c
+msgid "**Name**: ``NCI_expand_drugs_by_letter``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:191
+#: 08b8dbe13d064ff18dc1ec890625aec2
+msgid ""
+"**Description**: Browse the NCI Drug Dictionary by first letter. Returns "
+"all cancer drugs and drug aliases starting with the specified letter. "
+"Each result includes the drug name, preferred name, type (DrugTerm or "
+"DrugAlias), and a pretty URL name for detailed lookups. Useful for "
+"discovering cancer drugs alphabetically or finding all drugs starting "
+"with a specific letter. Use NCI\\_get\\_drug\\_by\\_name with the "
+"prettyUrlName to get full details."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:195
+#: 5d715fce8d074664ada8e7c98fd511bc
+msgid ""
+"``letter`` (string) (required) First letter to browse by (a-z, or '#' for"
+" drugs starting with numbers/special characters)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:198
+#: 752d4433f514438a8dc4d276e8b5065a
+msgid ""
+"``size`` (integer) (optional) Number of results per page (default: 100, "
+"max: 10000)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:201
+#: ../../tools/clinical_guidelines_tools.rst:269
+#: 240e596baca94e7bbe4b1f26e5328c5d 739a24ed7d274a6eb817d90e6e8364db
+msgid "``from`` (integer) (optional) Offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:218
+#: 5b0e82035b4a41ddb184f605de00be41
+msgid "**NCI_get_drug_by_name** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:220
+#: 16721cb59b4b4a8f829f191c60e52b2a
+msgid ""
+"Get detailed information about a cancer drug from the NCI Drug Dictionary"
+" by its pretty-url-name ..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst 2cfb97f14f024315830b323bac4e2c57
+msgid "NCI_get_drug_by_name tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:226
+#: 2bd5661a317443e4a9729b42d1801512
+msgid "**Name**: ``NCI_get_drug_by_name``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:228
+#: 12f45ca07fe44fafbe320742e56a7044
+msgid ""
+"**Description**: Get detailed information about a cancer drug from the "
+"NCI Drug Dictionary by its pretty-url-name (slug). Returns comprehensive "
+"drug information including definition, aliases (brand names, chemical "
+"names, code names, CAS registry numbers), NCI concept ID, and links to "
+"drug information summaries. The pretty-url-name is a lowercase hyphenated"
+" slug (e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab'). You can "
+"find drug names from NCIDrugDict\\_search results (prettyUrlName field)."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:232
+#: d4cc2f622351462fb75ea5bb1d6714b2
+msgid ""
+"``drug_name`` (string) (required) Pretty URL name (slug) of the drug "
+"(e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab', 'trastuzumab')"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:249
+#: f84090224f784debaf3ac5b9c6a0c1e5
+msgid "**NCI_search_cancer_resources** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:251
+#: bc8e60fd2e39412f87d70cbd14002c8e
+msgid ""
+"Search NCI (National Cancer Institute) Resources for Researchers (R4R) "
+"for cancer research tools,..."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst cf8e0bb8eed248668d4967bf58c10116
+msgid "NCI_search_cancer_resources tool specification"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:257
+#: 777d4642ccb24999914bd869cca0c358
+msgid "**Name**: ``NCI_search_cancer_resources``"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:259
+#: 5b06859bb2a44bc083d7dd4461914d71
+msgid ""
+"**Description**: Search NCI (National Cancer Institute) Resources for "
+"Researchers (R4R) for cancer research tools, databases, datasets, and "
+"clinical research resources. The R4R collection includes bioinformatics "
+"tools, clinical research tools, lab instruments, datasets, specimen "
+"repositories, and community resources. Returns resource descriptions, "
+"links, tool types, research areas, and research types. Useful for finding"
+" cancer-specific research resources, analysis tools, and clinical "
+"resources."
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:263
+#: 9791097acb304918bd0d5485fda9e8ac
+msgid ""
+"``q`` (string) (required) Search query for cancer research resources "
+"(e.g., 'breast cancer treatment', 'genomics analysis', 'clinical trial "
+"design')"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:266
+#: c57ab70511954b47b8048c0137f3f228
+msgid ""
+"``size`` (integer) (optional) Number of results to return (default: 20, "
+"max: 50)"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:272
+#: 01d9941e3a3c4a9fa4a6401c41ccdd8f
+msgid ""
+"``toolTypes`` (string) (optional) Filter by tool type key: "
+"'analysis\\_tools', 'datasets\\_databases', 'lab\\_tools', "
+"'community\\_research\\_tools', 'clinical\\_research\\_tools', "
+"'terminology'"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:275
+#: 116ea90cee6943509f793a8decee243d
+msgid ""
+"``researchAreas`` (string) (optional) Filter by research area key: "
+"'cancer\\_treatment', 'cancer\\_biology', 'cancer\\_omics', "
+"'screening\\_detection', 'causes\\_of\\_cancer', "
+"'cancer\\_health\\_disparities', 'cancer\\_statistics', "
+"'cancer\\_prevention', 'cancer\\_diagnosis', 'cancer\\_survivorship'"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:292
+#: 8de8b19da1c9451ba2a578db7f445c5b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:294
+#: ef88e3506bff4b14a0b03140b930e486
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clinical_guidelines_tools.rst:295
+#: 197d50d860cf4f7e86a3bec9636e1f50
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

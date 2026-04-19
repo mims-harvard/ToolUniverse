@@ -1,0 +1,352 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pfam_tools.rst:10 634a716f233e4463beffb6b6024ac265
+msgid "Pfam Tools"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:12 934156fcba03449097c891f0ba24379a
+msgid ""
+"**Configuration File**: ``pfam_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 6"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:16 b5442397a3a14dad8c456b8bbe186c43
+msgid ""
+"This page contains all tools defined in the ``pfam_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:19 c5bbe382c5624d27b0773660a408bdd8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:22 6a188b424fde46c1a4361dd5df65e076
+msgid "**Pfam_get_family_detail** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:24 c8b09b720f494b5394b81cbf7263b531
+msgid ""
+"Get detailed information about a specific Pfam protein family by "
+"accession. Returns the full fami..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst 1188c1ba52e34d97b87aae659f8e62cf
+msgid "Pfam_get_family_detail tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:28 ../../tools/pfam_tools.rst:59
+#: ../../tools/pfam_tools.rst:99 ../../tools/pfam_tools.rst:133
+#: ../../tools/pfam_tools.rst:164 ../../tools/pfam_tools.rst:197
+#: 03e95aeaaaa44d5ba8ad3eb06c8e278e 1cb4070c85854d77b3f91f589566f1ff
+#: 3a70b79e64754948869ac7fedd1be6b8 4e838aa4ba1443dab068515e6dbfa743
+#: 78ff2d6c0fd74d708376ed59a0507fa1 dd8543ce0c78465ba98e2cf0911aa588
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:30 c881e45b99da4f3fbe2bedf8277b5f90
+msgid "**Name**: ``Pfam_get_family_detail``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:31 ../../tools/pfam_tools.rst:62
+#: ../../tools/pfam_tools.rst:102 ../../tools/pfam_tools.rst:136
+#: ../../tools/pfam_tools.rst:167 ../../tools/pfam_tools.rst:200
+#: 285aeb721923448693e31673c3fd4e37 356673d983084560957e88c5a400fafc
+#: 3bebfd1ece4948589e31d8b34f80101b 546ef9e900d44ab5885b88c6f25719d8
+#: 96b47d1314dc40f489adb625e19dfd42 989063b5f4ed4031aec4b281c5fdbb35
+msgid "**Type**: ``PfamTool``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:32 af3ca798277a4c11b5e1bb2fa39e24f4
+msgid ""
+"**Description**: Get detailed information about a specific Pfam protein "
+"family by accession. Returns the full family name, short name, "
+"description, type (domain/family/repeat), protein/structure/taxa counts, "
+"clan (superfamily) membership, representative 3D structure, Wikipedia "
+"link, and GO terms. Pfam families are the fundamental units of protein "
+"classification - for example PF00001 (7tm\\_1) covers the rhodopsin-like "
+"GPCR superfamily with 432,000+ proteins, while PF00076 (RRM\\_1) is the "
+"RNA recognition motif found in 627,000+ proteins. Use this to understand "
+"what a Pfam family represents and its biological significance."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:34 ../../tools/pfam_tools.rst:65
+#: ../../tools/pfam_tools.rst:105 ../../tools/pfam_tools.rst:139
+#: ../../tools/pfam_tools.rst:170 ../../tools/pfam_tools.rst:203
+#: 05187e271c3d450fa4255baf43057263 0cb61a7f1d2946db9a976ba066944667
+#: 65a129699bd74997838f25219373e10f 7e6841f40b564acda0a74478d62f278a
+#: 83ac4ed741a24cc998e793de8aacc55e bb7b4118ef6d446a8aa38888287a8499
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:36 13ed93b3335c4971872ad3fc67a2e8c5
+msgid ""
+"``pfam_accession`` (string) (required) Pfam family accession. Examples: "
+"'PF00001' (7tm\\_1, GPCR rhodopsin family), 'PF00076' (RRM\\_1, RNA "
+"recognition motif), 'PF00069' (Pkinase), 'PF00096' (zf-C2H2, zinc "
+"finger)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:39 ../../tools/pfam_tools.rst:79
+#: ../../tools/pfam_tools.rst:113 ../../tools/pfam_tools.rst:144
+#: ../../tools/pfam_tools.rst:178 ../../tools/pfam_tools.rst:211
+#: 2752152562664d9c9124849599d255ca 85f28bae8eac4c31a929ae3275fc2f54
+#: 8faf574d10094b50ade16f1ba27cb77e 9e7b895d9f894b17b6c6d25f297a1b50
+#: c3818f32fb854df7b121cbfc73e074c1 f800e943ba9e442696ef2cccda758753
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:53 1df3cfbe433e45cab096b6605a4cd9b6
+msgid "**Pfam_get_family_proteins** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:55 f8c14991a0fa45e38169eba9ec278033
+msgid ""
+"Get proteins containing a specific Pfam domain, optionally filtered by "
+"species. Returns protein a..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst d25b320e9aa84074b9d6a4f949009796
+msgid "Pfam_get_family_proteins tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:61 fad5bf9cea654f3cbe8a3e11e77192cb
+msgid "**Name**: ``Pfam_get_family_proteins``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:63 26bb7a48756940f7bb15c94a94353b19
+msgid ""
+"**Description**: Get proteins containing a specific Pfam domain, "
+"optionally filtered by species. Returns protein accessions, names, gene "
+"names, lengths, organisms, and exact domain positions (start/end "
+"residues). Can filter to SwissProt-reviewed proteins only and/or specific"
+" species by NCBI taxonomy ID. For example, PF00001 (7tm\\_1 GPCR domain) "
+"has 289 human reviewed proteins including GPCRs like chemokine receptors,"
+" olfactory receptors, and serotonin receptors. PF00076 (RRM\\_1) has 199 "
+"human reviewed proteins. Use this to find which proteins in a species "
+"contain a specific domain."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:67 950596654ceb4e18b53ee3d29633ef70
+msgid ""
+"``pfam_accession`` (string) (required) Pfam family accession. Examples: "
+"'PF00001' (7tm\\_1 GPCR), 'PF00076' (RRM\\_1), 'PF00069' (Pkinase), "
+"'PF00125' (Core histone)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:70 4145ef82af9a441d920d19e34f0971fb
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of proteins to return"
+" (default 20, max 100)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:73 6008cd54ea694a9e8279a7c1cf61ad8c
+msgid ""
+"``reviewed_only`` (boolean) (optional) If true (default), return only "
+"SwissProt-reviewed proteins. Set false for all UniProt proteins."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:76 43f64cdf08c942b6b9f0ef2442435694
+msgid ""
+"``tax_id`` (string, null) (optional) NCBI taxonomy ID to filter by "
+"species. Examples: '9606' (human), '10090' (mouse), '7227' (Drosophila), "
+"'559292' (S. cerevisiae)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:93 783430bd87a544bf866e078a99ebc411
+msgid "**Pfam_get_family_proteomes** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:95 2b67dfea196c4a6dbf93873f2f976141
+msgid ""
+"Get the proteome (organism) distribution for a Pfam protein family. "
+"Returns the list of reference..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst a6ad630dff584411a866501079cee392
+msgid "Pfam_get_family_proteomes tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:101 4a039b9b015d474d9f8225a5a7156b56
+msgid "**Name**: ``Pfam_get_family_proteomes``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:103 dd03bdd656c24e7987f4287dc2786137
+msgid ""
+"**Description**: Get the proteome (organism) distribution for a Pfam "
+"protein family. Returns the list of reference proteomes that contain "
+"proteins with this Pfam domain, including organism names, taxonomy IDs, "
+"and whether the proteome is a reference proteome. This reveals the "
+"taxonomic distribution of a domain across the tree of life. For example, "
+"PF00001 (7tm\\_1 GPCR) is found in 1,890 proteomes spanning from early-"
+"diverging animals to humans, while PF00076 (RRM\\_1 RNA recognition "
+"motif) is in 6,831 proteomes. Use this to understand the evolutionary "
+"spread of a protein domain."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:107 30bbc0b83cbb42919b8a875588fcc11c
+msgid ""
+"``pfam_accession`` (string) (required) Pfam family accession. Examples: "
+"'PF00001' (7tm\\_1, found in 1890 proteomes), 'PF00076' (RRM\\_1, 6831 "
+"proteomes), 'PF00069' (Pkinase)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:110 a27b9b3f33f948368b9acf9889cf703d
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of proteomes to "
+"return (default 20, max 100)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:127 f33ee358b9bb4fab8860a831d9d1b709
+msgid "**Pfam_get_protein_annotations** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:129 918ba4fe500346679032b09698da4bc7
+msgid ""
+"Get all Pfam domain annotations for a specific protein by its UniProt "
+"accession. Returns every Pf..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst 4f078f7129664703bc57f16a084c5a43
+msgid "Pfam_get_protein_annotations tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:135 679b5d5e334b411d94d4d1be21e0f991
+msgid "**Name**: ``Pfam_get_protein_annotations``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:137 bfe449d425ac40e98384bef3455fd838
+msgid ""
+"**Description**: Get all Pfam domain annotations for a specific protein "
+"by its UniProt accession. Returns every Pfam domain found in the protein "
+"with exact start/end residue positions, E-values (scores), short names, "
+"and integrated InterPro entries. This provides the complete Pfam domain "
+"architecture of a protein. For example, P04637 (TP53) has 4 Pfam domains:"
+" PF08563 (P53\\_TAD, 6-30), PF18521 (P53\\_TAD2, 35-59), PF00870 (P53, "
+"100-288), PF07710 (P53\\_tetramer, 319-357). Use this to understand the "
+"domain composition of any protein."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:141 0c4e18885033436c95d77aa99efdb128
+msgid ""
+"``accession`` (string) (required) UniProt protein accession. Examples: "
+"'P04637' (TP53, 4 domains), 'P00533' (EGFR), 'P68431' (Histone H3.1), "
+"'P38398' (BRCA1), 'P01308' (Insulin)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:158 81a07764065f4629af64be2f59595301
+msgid "**Pfam_search_clans** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:160 140cfd968e164863bb4cd475471322fe
+msgid ""
+"Search and list Pfam clans (superfamilies) by keyword. Pfam clans group "
+"together related Pfam fam..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst 524f1cb346a841f6be2cd785a50c0611
+msgid "Pfam_search_clans tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:166 49579ec9714d4c5f9ddcee627ef9162c
+msgid "**Name**: ``Pfam_search_clans``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:168 91ea7040c12c4d17a54ab59ea3bdcfe1
+msgid ""
+"**Description**: Search and list Pfam clans (superfamilies) by keyword. "
+"Pfam clans group together related Pfam families that share a common "
+"evolutionary origin but may have diverged beyond simple sequence "
+"similarity. There are 812 Pfam clans covering major protein "
+"superfamilies. For example, CL0016 (PKinase) groups 30+ kinase domain "
+"families, CL0001 (EGF) groups EGF-like domain families, CL0221 (RRM) "
+"groups RNA recognition motif families. Use this to explore protein "
+"superfamily relationships. If no query is given, returns a general "
+"listing of clans."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:172 615d127d770f405f9c06c33e20234755
+msgid ""
+"``query`` (string) (optional) Search keyword for clan name. Examples: "
+"'kinase', 'EGF', 'RRM', 'immunoglobulin'. Leave empty to list all clans."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:175 5aec56e741634fd498c86157378d4322
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of clans to return "
+"(default 20, max 100)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:191 7c772b8b8fe24f45907ec6bb983cf9ad
+msgid "**Pfam_search_families** (Type: PfamTool)"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:193 071be6de46eb4be5aea592d40e3a5def
+msgid ""
+"Search for Pfam protein family entries by keyword using the InterPro API."
+" Pfam is the authoritati..."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst bfe2b3a677674e409dc106bf616db87d
+msgid "Pfam_search_families tool specification"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:199 98f9f7dc8c404e92965902167c130c7b
+msgid "**Name**: ``Pfam_search_families``"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:201 28929b6eb4ea4984b7525ff1975388bc
+msgid ""
+"**Description**: Search for Pfam protein family entries by keyword using "
+"the InterPro API. Pfam is the authoritative database of protein families,"
+" domains, and functional sites. Returns matching Pfam family accessions, "
+"names, types (domain, family, repeat, etc.), and integrated InterPro "
+"entries. There are over 20,000 Pfam families covering protein domains "
+"like kinases (PF00069), zinc fingers (PF00096), immunoglobulin (PF07654),"
+" and many more. Use this to find Pfam families related to a biological "
+"function or structural motif."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:205 3eed59f977e848acaedcf4eca2851fed
+msgid ""
+"``query`` (string) (required) Search keyword. Examples: 'kinase', 'zinc "
+"finger', 'helicase', 'immunoglobulin', 'rhodopsin', 'RNA binding'."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:208 548996059610443bb179b647e900701b
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default 20, max 100)."
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:225 4cfadd946dc140bdb34f18ddbb0a9e81
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:227 df2ae6d693344c84858754135d04828f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pfam_tools.rst:228 adddfc3abed747acb1c5f1940f2dfe9f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hmdb_tools.rst:10 dadee1504222436e8059cab40ae324a7
+msgid "Hmdb Tools"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:12 92d80c6f9d404194bec3a2c445898e6f
+msgid ""
+"**Configuration File**: ``broken_apis/hmdb_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:16 c6c15a2914b74862afb6f9d89e100951
+msgid ""
+"This page contains all tools defined in the ``hmdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:19 214d830e3d264464b22f83d8caaf3b65
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:22 118e43801d4e4173be4b74e19096ec6d
+msgid "**HMDB_get_diseases** (Type: HMDBTool)"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:24 9f3dcd1331e14cf799e206f6c14445ad
+msgid ""
+"Attempts to get disease associations for a metabolite from HMDB. Note: "
+"HMDB does not provide an o..."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst 98f221b5d484402cab9f1b7793dfb696
+msgid "HMDB_get_diseases tool specification"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:28 ../../tools/hmdb_tools.rst:62
+#: ../../tools/hmdb_tools.rst:96 1a1720ce395645959f7af4e1e4ece7bc
+#: 704f95187d484682a901a86ee3b06d71 bc406abb0c9b4fb98c0af5da6b8f6823
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:30 5c442ab0079b4b7f882b372747088697
+msgid "**Name**: ``HMDB_get_diseases``"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:31 ../../tools/hmdb_tools.rst:65
+#: ../../tools/hmdb_tools.rst:99 2707cffbbc1d43888930fbf538526b88
+#: 55eca9704b8f4ec785cb58792925e542 cb39aefd55774dfabe706f3deff1b155
+msgid "**Type**: ``HMDBTool``"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:32 d7cc4a24ff1f4341b7235c1cb74a8318
+msgid ""
+"**Description**: Attempts to get disease associations for a metabolite "
+"from HMDB. Note: HMDB does not provide an open API for disease data. This"
+" tool always returns an error directing users to the HMDB website. For "
+"disease-metabolite relationships, consider using CTD or DisGeNET "
+"databases instead."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:34 ../../tools/hmdb_tools.rst:68
+#: ../../tools/hmdb_tools.rst:102 8b676ede58c6449889c401096e6be8ff
+#: cd86e774979f4228ba0cec3219b797b8 dd5e9dd7e97e4678b7a3e92b58077fc9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:36 ../../tools/hmdb_tools.rst:70
+#: ../../tools/hmdb_tools.rst:104 86d869d9918d4c04b10248173c2242ca
+#: a749f28f984c4cd2bf138a2024a1bcc5 e92e89768ce34c3aaa3d233204b61a41
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:39 d0f77f48abf64c53952c6cf0ea26273e
+msgid "``hmdb_id`` (string) (required) HMDB ID"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:42 ../../tools/hmdb_tools.rst:76
+#: ../../tools/hmdb_tools.rst:113 35b9e5330f0a4f41a9514b9e3c10cad8
+#: 61abb380e7f94ea69badb7e3bcb5bc26 73f32c7a1c504d729e60d9d9462a4e3d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:56 6a7490fce74a49ec9bda2a6809c6fc87
+msgid "**HMDB_get_metabolite** (Type: HMDBTool)"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:58 3702aeb0e53445a587027181b2c268cb
+msgid ""
+"Get human metabolite information from HMDB by ID. Returns basic chemical "
+"properties via PubChem c..."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst e49c2472a565424e972026d97d39a398
+msgid "HMDB_get_metabolite tool specification"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:64 7cfcfce228424eaf846ccc9d9a950b9e
+msgid "**Name**: ``HMDB_get_metabolite``"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:66 2106b3f6365c47ddb9b0d0f01c1f7c13
+msgid ""
+"**Description**: Get human metabolite information from HMDB by ID. "
+"Returns basic chemical properties via PubChem cross-reference: IUPAC "
+"name, molecular formula, SMILES, InChIKey, and molecular weight. Note: "
+"HMDB has no open API; data is retrieved from PubChem using the HMDB ID as"
+" a cross-reference. Classification, pathways, and disease associations "
+"are not available programmatically."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:73 09055db44b6b4cd18195073240137696
+msgid "``hmdb_id`` (string) (required) HMDB ID (e.g., HMDB0000001 or 0000001)"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:90 a817b9bd56c04348903bb4dbf222989e
+msgid "**HMDB_search** (Type: HMDBTool)"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:92 838b62b7f0774c8a926b4a6571acfe20
+msgid ""
+"Search for metabolites by name or formula using PubChem. Returns PubChem "
+"CIDs (not HMDB IDs) with..."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst 5dc6619f86cc46d6ad9623dbdf4fab3d
+msgid "HMDB_search tool specification"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:98 558a16262c7040edb5bf86a0b538d398
+msgid "**Name**: ``HMDB_search``"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:100 79c505fd23eb407ababb94a8b03d5e1a
+msgid ""
+"**Description**: Search for metabolites by name or formula using PubChem."
+" Returns PubChem CIDs (not HMDB IDs) with name, formula, SMILES, and "
+"molecular weight. search\\_type='name' uses PubChem compound/name "
+"endpoint; search\\_type='formula' uses PubChem fastformula endpoint; "
+"search\\_type='mass' falls back to name search (mass-based search not "
+"supported). HMDB IDs are not included in results."
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:107 a92fa4d9130d47a8bfdf9990a225c7a7
+msgid ""
+"``query`` (string) (required) Search query - metabolite name, formula, or"
+" keyword"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:110 027f5edeb19842e6977952b28cc1b244
+msgid ""
+"``search_type`` (string) (optional) Search type: name, formula, mass "
+"(default: name)"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:127 607e503be801412d9d58d775a0e7f566
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:129 921e81f4195e46aab043b2b47830022f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hmdb_tools.rst:130 e7821bd8122f4ad28d0e6459aea4ee21
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

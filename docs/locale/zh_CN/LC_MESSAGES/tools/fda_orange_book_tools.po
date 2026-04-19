@@ -1,0 +1,328 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fda_orange_book_tools.rst:10 8477f40e7dd34719b5de289b00a1ae05
+msgid "Fda Orange Book Tools"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:12 5853b8bfd27b4e9a8442fee90228dfd6
+msgid ""
+"**Configuration File**: ``fda_orange_book_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:16 9093af1a130b4ff1ba2b080080778e77
+msgid ""
+"This page contains all tools defined in the "
+"``fda_orange_book_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:19 5a7e64de59204e41aee19144eb5d7e42
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:22 71e457d189d44b638b24fa712a84e7d6
+msgid "**FDA_OrangeBook_check_generic_availability** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:24 b4da5a3257a4462ca04dcca258f30276
+msgid ""
+"Check if generic versions are FDA-approved for a brand-name drug. Returns"
+" reference drug info, ap..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst 556c12cd8d4e407d91e34ca1b969c37e
+msgid "FDA_OrangeBook_check_generic_availability tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:28
+#: ../../tools/fda_orange_book_tools.rst:64
+#: ../../tools/fda_orange_book_tools.rst:98
+#: ../../tools/fda_orange_book_tools.rst:134
+#: ../../tools/fda_orange_book_tools.rst:170
+#: ../../tools/fda_orange_book_tools.rst:206 0429e689fe694421a7fb1f1877a03fd9
+#: 05d1dfc811494b95ad2782f18d15ea5a 7e1370a1f47740718e1353def454116a
+#: 8c64c0e500384ac6b172f469549512f9 b39483794909475091766a5d1b126a4d
+#: e048a8e9320a421c85f5aabe25d1c6bf
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:30 8dad650b8ffc431e8c87c1d64d3d7d3f
+msgid "**Name**: ``FDA_OrangeBook_check_generic_availability``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:31
+#: ../../tools/fda_orange_book_tools.rst:67
+#: ../../tools/fda_orange_book_tools.rst:101
+#: ../../tools/fda_orange_book_tools.rst:137
+#: ../../tools/fda_orange_book_tools.rst:173
+#: ../../tools/fda_orange_book_tools.rst:209 21b408ca73d24e46b568b41caca4a154
+#: 507896723e6942aeaf883da8b62dae63 8c3fa7b99dad4e2299687e2793e3be74
+#: e69798ae806544fb919c32896869c74d eef0ba34edf74665b81cd6624647eb0a
+#: f7eb22f186ee4cc59f7ac81ee750e367
+msgid "**Type**: ``FDAOrangeBookTool``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:32 6717d4a6574a4fef9bfb42bedf760c02
+msgid ""
+"**Description**: Check if generic versions are FDA-approved for a brand-"
+"name drug. Returns reference drug info, approved generics count, and TE "
+"codes. Example: Query 'LIPITOR' to find atorvastatin generics. Use for "
+"competitive landscape analysis."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:34
+#: ../../tools/fda_orange_book_tools.rst:70
+#: ../../tools/fda_orange_book_tools.rst:104
+#: ../../tools/fda_orange_book_tools.rst:140
+#: ../../tools/fda_orange_book_tools.rst:176
+#: ../../tools/fda_orange_book_tools.rst:212 34b99db544934a59b65127649bef2628
+#: 41a1b3b34096469db1f6fb14e7e97656 503f7f243c07491d8f78995ac4b8f44a
+#: b1f0f14e933e4e3f81c23881a0f2756b bfaaaac426414cc7aeb31ab920cefbc8
+#: d67d89d7575546debd1b64149a02829b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:36
+#: ../../tools/fda_orange_book_tools.rst:72
+#: ../../tools/fda_orange_book_tools.rst:106
+#: ../../tools/fda_orange_book_tools.rst:142
+#: ../../tools/fda_orange_book_tools.rst:178
+#: ../../tools/fda_orange_book_tools.rst:214 6245d7858c9b4f04a2b92599c8e28ca8
+#: 64efc57a08674bc59c5029ecc799da57 85da46df9e2e4badb46e0709fb5d118c
+#: bb4249b2569446b0965ee94e7837f315 bd115b81c1c7446b8802e7c5358d42dd
+#: cd462c9717484dfd8c433930ebb4c347
+msgid "``operation`` (unknown) (optional) Operation type (fixed)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:39 2e32606750d342c39612c052fd521a2b
+msgid "``brand_name`` (string) (optional) Brand name to check for generics"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:42 3ceffe77fb2e4be28f3057201b39e037
+msgid "``generic_name`` (string) (optional) Generic name to check"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:45
+#: ../../tools/fda_orange_book_tools.rst:78
+#: ../../tools/fda_orange_book_tools.rst:115
+#: ../../tools/fda_orange_book_tools.rst:151
+#: ../../tools/fda_orange_book_tools.rst:187
+#: ../../tools/fda_orange_book_tools.rst:229 2fd2e5e4b91642f9a44a22dc69030808
+#: 3f79990e4888479ebe6b78ebbe4701e3 40d969b29b5c402392995651e4b8b80d
+#: 5366744e43d4492fbda3692f8487c13a ac6e879c29734454b785b3f76f748869
+#: f8d7ae8a950147c2ad9ba268a9c33b8e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:58 c94af581d9be4046bd8a4d6aad5d7088
+msgid "**FDA_OrangeBook_get_approval_history** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:60 24490c1f01734e62baaa48f48fe9eeb9
+msgid ""
+"Get complete approval history for a drug application including original "
+"approval date, supplement..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst 04188ad586414953b9e22a10eaec21cc
+msgid "FDA_OrangeBook_get_approval_history tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:66 ddff6b747fbc42b281a0e1e6034e21ed
+msgid "**Name**: ``FDA_OrangeBook_get_approval_history``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:68 64a34dbd30fa450e89742c92f236110c
+msgid ""
+"**Description**: Get complete approval history for a drug application "
+"including original approval date, supplements, and review documents. "
+"Returns submission timeline and links to approval letters/labels. "
+"Example: NDA020402 shows all Advil approval actions."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:75 93ecace160dd4ab78d55663a563e0c6d
+msgid ""
+"``application_number`` (string) (required) FDA application number (e.g., "
+"'NDA020402')"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:92 3cbf1c912f804e0d8ef419006ddd4ffd
+msgid "**FDA_OrangeBook_get_exclusivity** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:94 03794ddd122c408b90a3147084a43595
+msgid ""
+"Get drug exclusivity information (NCE, orphan, pediatric). Note: Specific"
+" expiration dates requir..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst 3654916e29784ca2b8bab5ecc7540f39
+msgid "FDA_OrangeBook_get_exclusivity tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:100 290d790f68c8412181fe677e4ccaf0c4
+msgid "**Name**: ``FDA_OrangeBook_get_exclusivity``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:102 6953738037b1447da7110dd68c34eb3c
+msgid ""
+"**Description**: Get drug exclusivity information (NCE, orphan, "
+"pediatric). Note: Specific expiration dates require Orange Book data "
+"files. Returns exclusivity types (5-year NCE, 3-year clinical study, "
+"7-year orphan, 180-day generic). Use for generic launch planning."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:109
+#: ../../tools/fda_orange_book_tools.rst:145 6bf29bd06b424c36a71161383a5fc864
+#: eee536552f8f4d71b6767012639d5f4c
+msgid "``application_number`` (string) (optional) FDA application number"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:112
+#: ../../tools/fda_orange_book_tools.rst:148 6585248e5574491591fef1488c464647
+#: 969474a4905b48f496c256783ee5ea7f
+msgid "``brand_name`` (string) (optional) Brand name of drug"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:128 197e45c2219649589f05cd2ea2b38d33
+msgid "**FDA_OrangeBook_get_patent_info** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:130 f3eda7ec5b3c45c4adb6af401c21571e
+msgid ""
+"Get patent information for approved drugs. Note: Full patent details "
+"(numbers, expiration dates) ..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst 35d252198ea843d3955fe44652fefdb7
+msgid "FDA_OrangeBook_get_patent_info tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:136 841ff02bb02b462384fde4131ee73d01
+msgid "**Name**: ``FDA_OrangeBook_get_patent_info``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:138 f10df3e44aaa4f88bc37084dbffa638b
+msgid ""
+"**Description**: Get patent information for approved drugs. Note: Full "
+"patent details (numbers, expiration dates) require Orange Book data files"
+" download. Returns guidance on accessing complete patent data. Use for "
+"regulatory exclusivity planning."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:164 f59ede3bfd2c4b829e1ea6ab40062010
+msgid "**FDA_OrangeBook_get_te_code** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:166 a6de2d179a9d45e4ba87185f3ab87a2a
+msgid ""
+"Get therapeutic equivalence (TE) codes for drug products. "
+"AB=bioequivalent/substitutable, AT=topi..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst a54003cce08049b2a4038426f1f531c2
+msgid "FDA_OrangeBook_get_te_code tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:172 fe2bce2638cf47aa9639b934e9783b86
+msgid "**Name**: ``FDA_OrangeBook_get_te_code``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:174 0de442f42c7b4cd6a72ee66988078ef4
+msgid ""
+"**Description**: Get therapeutic equivalence (TE) codes for drug "
+"products. AB=bioequivalent/substitutable, AT=topical equivalent, B\\*=NOT"
+" therapeutically equivalent. Returns TE codes with interpretation guide. "
+"Use for generic substitution decisions."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:181 0bfa9ab2a9834a3b83642b7b74f70411
+msgid "``brand_name`` (string) (optional) Brand name to check TE codes"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:184 a16051452cc0439ebc64f67246785837
+msgid "``generic_name`` (string) (optional) Generic name to check TE codes"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:200 101fd5eb24c34958937b1debcb608364
+msgid "**FDA_OrangeBook_search_drug** (Type: FDAOrangeBookTool)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:202 eaba7b2c7d8844f2b20ae3e07aba7279
+msgid ""
+"Search FDA Drugs@FDA database by brand name, generic name, or application"
+" number. Returns approva..."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst 8695189859bc45c4b72b54cf7c69226d
+msgid "FDA_OrangeBook_search_drug tool specification"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:208 f6ad744e20c94856ba9135c73c7dd15b
+msgid "**Name**: ``FDA_OrangeBook_search_drug``"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:210 8664d2014e9441268441f564f698cf96
+msgid ""
+"**Description**: Search FDA Drugs@FDA database by brand name, generic "
+"name, or application number. Returns approval status, products, and basic"
+" regulatory info. Example: brand\\_name='ADVIL' finds all Advil products "
+"with NDA numbers."
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:217 8f22a85dacd84cb387edb809d1e5562d
+msgid ""
+"``brand_name`` (string) (optional) Brand/trade name of drug (e.g., "
+"'ADVIL', 'LIPITOR')"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:220 ad208dc128de4cc1aa1332e6166713bc
+msgid ""
+"``generic_name`` (string) (optional) Generic/active ingredient name "
+"(e.g., 'IBUPROFEN', 'ATORVASTATIN')"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:223 952f0c40171641d2b74d4d17fd68fb2e
+msgid ""
+"``application_number`` (string) (optional) FDA application number (e.g., "
+"'NDA020402', 'ANDA078394')"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:226 5c071e6e13aa4bddbd1348874451926d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (1-100, default "
+"10)"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:242 4258671fec464866a6126d3dd8ed7c4c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:244 6c5b014ffc9b4973bc42f56fb32cd7c6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fda_orange_book_tools.rst:245 001316d567ab4cdcbea53610beae4088
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

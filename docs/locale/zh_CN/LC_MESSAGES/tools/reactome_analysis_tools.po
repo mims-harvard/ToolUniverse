@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/reactome_analysis_tools.rst:10 8549a7be0c134c118220340188c0dc7f
+msgid "Reactome Analysis Tools"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:12 b6636a515f9b40deae9cc9ee9d054113
+msgid ""
+"**Configuration File**: ``reactome_analysis_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:16 40041c6094624a1e83ae0f27cb88e15a
+msgid ""
+"This page contains all tools defined in the "
+"``reactome_analysis_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:19 77cd514a3f494bc3874e89b6a9bd26f4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:22 aa99fda8cdc54daf83e1de06efec0b78
+msgid "**ReactomeAnalysis_pathway_enrichment** (Type: ReactomeAnalysisTool)"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:24 c4bba9163645475e9fdc50bec1bd0773
+msgid ""
+"Perform pathway overrepresentation (enrichment) analysis using the "
+"Reactome Analysis Service. Sub..."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst 0c82e91dcbe241aea13084018918e96b
+msgid "ReactomeAnalysis_pathway_enrichment tool specification"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:28
+#: ../../tools/reactome_analysis_tools.rst:68
+#: ../../tools/reactome_analysis_tools.rst:105 1579e6af6a5c487ca6e9173ee97cf598
+#: a7a180c803e349b9b51b13f4d08f7ae0 ba924bcbbc234e0e909b3910c41743cf
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:30 e8967bb3a40a4b8c94a45060b815aa4b
+msgid "**Name**: ``ReactomeAnalysis_pathway_enrichment``"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:31
+#: ../../tools/reactome_analysis_tools.rst:71
+#: ../../tools/reactome_analysis_tools.rst:108 5a64768923c8455e9982c0a8592a905a
+#: 82c841f4b7c44f969096aeb82339a7d7 ccf3e09ec27d468d9b23820777cfd339
+msgid "**Type**: ``ReactomeAnalysisTool``"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:32 ad88f98e277f46ac9ba3e07c2d6f32c0
+msgid ""
+"**Description**: Perform pathway overrepresentation (enrichment) analysis"
+" using the Reactome Analysis Service. Submit a list of gene symbols, "
+"UniProt IDs, or Ensembl IDs and identify which Reactome pathways are "
+"statistically enriched. Returns pathways ranked by p-value with FDR "
+"correction, entity counts, and reaction coverage. Supports projection to "
+"human pathways for cross-species analysis. Example: submitting TP53, "
+"BRCA1, CDH1, EGFR, KRAS returns 394 enriched pathways including "
+"'Developmental Lineage of Mammary Gland Myoepithelial Cells' (p=3.94e-08)"
+" and 'Signaling by ERBB2 KD Mutants'."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:34
+#: ../../tools/reactome_analysis_tools.rst:74
+#: ../../tools/reactome_analysis_tools.rst:111 5d8c98abb1584e37aa24acd7361f548f
+#: 8716b63e59fb41f58c17404986b8dcec ec1de91c7bae49d595f4a68705acc3e6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:36 34ecd090a3724e8c979a2f1a98ef002c
+msgid ""
+"``identifiers`` (string) (required) Newline-separated list of "
+"gene/protein identifiers. Supports gene symbols (TP53, BRCA1), UniProt "
+"IDs (P04637, P38398), or Ensembl IDs. Example: "
+"'TP53\\\\nBRCA1\\\\nCDH1\\\\nEGFR\\\\nKRAS'."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:39
+#: ../../tools/reactome_analysis_tools.rst:82 e29193ded45e49cf9f837683fbe1cb2a
+#: f9fde11772aa41fa9fb605218231b76e
+msgid ""
+"``page_size`` (integer, null) (optional) Number of pathways to return "
+"(default 20, max 50)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:42 14c2f04810484344891a540e3801162e
+msgid ""
+"``include_disease`` (boolean, null) (optional) Include disease pathways "
+"in results (default true)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:45 bcd08a28dd814dbd9a9ab2df7d0de5c1
+msgid ""
+"``projection`` (boolean, null) (optional) Project identifiers to human "
+"Reactome pathways for cross-species analysis (default true)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:48
+#: ../../tools/reactome_analysis_tools.rst:85
+#: ../../tools/reactome_analysis_tools.rst:119 104783fca6324930b6796609e3743eb3
+#: 5ad299e3767442f2a4cba034a80af143 a8d052eae8aa4909b177641db0bf06d4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:62 928488ed0a7a4059bc5ff536b594b5d4
+msgid "**ReactomeAnalysis_species_comparison** (Type: ReactomeAnalysisTool)"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:64 29da90b25b6348eb96ffc781a86ce786
+msgid ""
+"Perform Reactome pathway analysis with cross-species projection. Submit "
+"protein/gene identifiers ..."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst 0dbe771becbd4c258085e9518d229f86
+msgid "ReactomeAnalysis_species_comparison tool specification"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:70 5422a9fbc58b4a6eb519765a6f05ba49
+msgid "**Name**: ``ReactomeAnalysis_species_comparison``"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:72 4fd4dcda90b043a8aaa380700e3ed5e7
+msgid ""
+"**Description**: Perform Reactome pathway analysis with cross-species "
+"projection. Submit protein/gene identifiers from any supported species "
+"and Reactome will project them to human pathways, enabling comparison of "
+"pathway enrichment across species. This uses the same overrepresentation "
+"analysis but ensures identifiers are mapped via orthology to human "
+"pathways. Example: submitting mouse protein IDs returns enriched human "
+"Reactome pathways with mapping statistics."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:76 4a1831e692ce4bc78fb22e9b2dc8bbec
+msgid ""
+"``identifiers`` (string) (required) Newline-separated list of "
+"gene/protein identifiers from any species. Supports UniProt, Ensembl, or "
+"gene symbols. Example: 'Trp53\\\\nBrca1\\\\nCdh1' (mouse gene symbols)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:79 685aabfc1c1a4f0cabe8411c83e8e059
+msgid ""
+"``species`` (integer, null) (optional) NCBI taxonomy ID of the source "
+"species (default 9606 for human). Examples: 10090 (mouse), 7955 "
+"(zebrafish), 7227 (fly)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:99 b8f6b434240e4dd7b939a96064782115
+msgid "**ReactomeAnalysis_token_result** (Type: ReactomeAnalysisTool)"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:101 5637b8cf0d434e34ac67794e7bff9488
+msgid ""
+"Retrieve previously computed Reactome pathway analysis results using an "
+"analysis token. Tokens ar..."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst b9c8fea6850d419b897748c39f46e2a4
+msgid "ReactomeAnalysis_token_result tool specification"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:107 99f82c680c4043f7aefa8f4f7ad468c3
+msgid "**Name**: ``ReactomeAnalysis_token_result``"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:109 eba9d1d9f2834411a12204457e5939fb
+msgid ""
+"**Description**: Retrieve previously computed Reactome pathway analysis "
+"results using an analysis token. Tokens are returned from "
+"pathway\\_enrichment or species\\_comparison analyses and can be used to "
+"access results without rerunning the analysis. Useful for paginating "
+"through large result sets or sharing analysis results. The token contains"
+" the full analysis result and is valid for a limited time."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:113 4cd6bf990be540a089255ed7868baa21
+msgid ""
+"``token`` (string) (required) Analysis token from a previous "
+"ReactomeAnalysis\\_pathway\\_enrichment or "
+"ReactomeAnalysis\\_species\\_comparison call."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:116 c2c7e65df7164bde8f7ed141aabbcece
+msgid ""
+"``page_size`` (integer, null) (optional) Number of pathways per page "
+"(default 20, max 50)."
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:133 2b030813ffdd406cb36a95021d2629b0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:135 ffe93de6790e4aeeb9f4946c21abcc2c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/reactome_analysis_tools.rst:136 2f02081fe869486ea5a0986a61101729
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

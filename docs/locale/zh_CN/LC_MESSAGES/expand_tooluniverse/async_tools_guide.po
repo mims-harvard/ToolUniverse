@@ -1,0 +1,745 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:-1
+#: 28e2908807614afd9e470dd54f3f23fa
+msgid ""
+"Complete guide to creating async tools in ToolUniverse using "
+"AsyncPollingTool base class"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:-1
+#: 2578354740a14d00a7afdd50379a1961
+msgid "async tools, long-running operations, polling, MCP tasks, ToolUniverse"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:3
+#: a28d333af10248eebfc6b381a60f5bd9
+msgid "Creating Async Tools with AsyncPollingTool"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:11
+#: bcc9b28825524bcc81ff1bc1602959e3
+msgid "Table of Contents"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:14
+#: e2f03bc9919147048670c46fe18a2d54
+msgid "Overview"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:16
+#: 7bf6d40758fc4d8db4ad68aa52d182f8
+msgid ""
+"Many scientific operations take minutes or hours to complete—protein "
+"docking, molecular dynamics simulations, large-scale data processing. "
+"ToolUniverse provides the **AsyncPollingTool** base class to handle these"
+" long-running operations elegantly:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:18
+#: 86012c02bf6e4f77a9d8c9509503834c
+msgid ""
+"**Automatic polling** - No manual loops needed **Progress reporting** - "
+"Built-in status updates **Non-blocking** - Server remains responsive "
+"**MCP Tasks compatible** - Works with Model Context Protocol **Consistent"
+" patterns** - All async tools behave the same way"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:25
+#: 7bc7bb1df46e4fefa7d9ff659005a172
+msgid "When to Use AsyncPollingTool"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:27
+#: 5fe195d48e5848e59485d9791e16f4ba
+msgid "Use AsyncPollingTool when your tool:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:29
+#: 19cf77d8709a447e993b56a7d4f65881
+msgid ""
+"**Takes >30 seconds** to complete **Polls external APIs** for job status "
+"**Returns job IDs** that require status checking **Has multiple "
+"processing stages** (submit → poll → retrieve)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:34
+#: e8cf27d94d254e81890faa2b9aec66ec
+msgid "**Examples**:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:35
+#: 6196ab86a4c840939015ce3142451cb2
+msgid "Protein structure prediction (5-60 minutes)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:36
+#: ce9bd239ba1c4ec3878f921c9415f01e
+msgid "Molecular docking (10-30 minutes)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:37
+#: d35ac0b774064b9f8cf0387b7b2c8056
+msgid "Large-scale sequence alignment (minutes to hours)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:38
+#: 12491bbdcd424c638814a7cddddbdfa5
+msgid "Complex simulations (hours to days)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:40
+#: 9758805d06864ad39f812f1b3c5a5634
+msgid "**Don't use** for:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:41
+#: 9fe1a52f639b44209ee680db8d5f9914
+msgid "Quick API calls (<30 seconds)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:42
+#: 233954f9d02b44c3ae2e3564be4765ea
+msgid "Synchronous operations"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:43
+#: 5aea272589b54e27b18998f6de181581
+msgid "Database queries"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:44
+#: 1cef65ed2ebd4ce3a60bad75804e138c
+msgid "Simple lookups"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:47
+#: a9f9cf87fb894174a31896a361f031df
+msgid "Quick Start"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:49
+#: 651d00e45aab4c45921c72c289a156a9
+msgid "Here's a minimal async tool:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:93
+#: fd4a4a848b4848d394b35a18f9957ef7
+msgid ""
+"That's it! The base class handles polling, timeouts, and progress "
+"reporting."
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:96
+#: ../../expand_tooluniverse/async_tools_guide.rst:469
+#: 33cbf27007934b2399af47182ffa73e2 b6092d721d7a4d449d3a1faf1dc8dbf4
+msgid "How It Works"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:99
+#: 7aed1eaf6a134250854e924fa0436152
+msgid "The Workflow"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:118
+#: de6656bb596b4c1d89261eec79351802
+msgid ""
+"**Your responsibilities**: Implement 2-3 methods **Base class handles**: "
+"Polling loop, timeouts, progress, error handling"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:122
+#: 09ecae4efe494187aea4360e9b0daa66
+msgid "What You Implement"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:125
+#: 6b7f60cfea2f4dc094c486eccac6f11c
+msgid "Required Methods"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:127
+#: 4690184d196744c0b31c27b20f5aa58b
+msgid "**submit_job(arguments) → job_id**"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:129
+#: f469d628d6fb4faeab30ddead46945ae
+msgid "Submit the job to the external service."
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:150
+#: 937db21b416c499eb94deee74a33eccc
+msgid "**check_status(job_id) → status dict**"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:152
+#: 5b7da16940a24a2bb2177fd7b5ebcb60
+msgid "Check if job is complete and return results."
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:185
+#: 70768b72221b407da4e0b6d2774ac97b
+msgid "Optional Methods"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:187
+#: b6928586b4a545fbb83048f62ac5aac3
+msgid "**format_result(result) → formatted dict**"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:189
+#: 895a76836fc248c5b8a7693b662dd0ac
+msgid "Format the final result (optional, has default)."
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:204
+#: 7c0b6af050dc4b449f3da3e43047cb26
+msgid "What the Base Class Provides"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:206
+#: c2775526140e4111ac1e65a4e3dc9c68
+msgid ""
+"**Automatic polling loop** - Calls ``check_status()`` repeatedly **Non-"
+"blocking async** - Uses ``await asyncio.sleep()`` **Timeout handling** - "
+"Stops after ``max_duration`` seconds **Progress reporting** - Updates via"
+" ``TaskProgress`` **Error handling** - Catches exceptions, returns error "
+"dicts **Return schema** - Auto-generates oneOf structure **run() method**"
+" - Orchestrates the entire workflow"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:215
+#: 71410c3de2044716a95374be2fc3e8fd
+msgid "Configuration"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:218
+#: 015a3f3d57a34eca8885356385b722c9
+msgid "Class Attributes"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:220
+#: 5d803148808843539048391686304780
+msgid "Set these in your tool class:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:238
+#: 7824f14b00d24b0f9efd95188a953e3e
+msgid "JSON Configuration"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:240
+#: fbf3877f7c72429aa48aa00de07c8cde
+msgid "In your ``*_tools.json`` file:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:266
+#: 786bf0246e1e4c828e699c9332fbb635
+msgid "Real-World Examples"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:269
+#: 440952695d0e4bbda1b6b28d3688bb3a
+msgid "Example 1: ProteinsPlus (Simple Polling)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:271
+#: 566eb3eb3acf41cd9d3c183102a3e425
+msgid "ProteinsPlus API returns a status URL that we poll:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:320
+#: 868de1c7e89149cbad91bea37f230461
+msgid "Example 2: SwissDock (Multi-Step Workflow)"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:322
+#: 8ab237e39bda41cdb568d3bcf737c615
+msgid "SwissDock requires multiple API calls before polling:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:379
+#: d2201c5ef8f442a8bd42c3fde11318e0
+msgid "Progress Reporting"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:382
+#: 2614e99d1f58445ca8f03109507708d7
+msgid "Automatic Progress"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:384
+#: 8e1255f2364e48d0b3a392e1dcb5e996
+msgid ""
+"The base class automatically reports progress through the "
+"``TaskProgress`` system:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:395
+#: 4fa084ccca634dd7af38550f97b5c92f
+msgid "Custom Messages"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:397
+#: 74a9ac5a5c5c448caf799e099dc557fa
+msgid "For more detailed progress updates:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:415
+#: a6e1961732f64a34b33942a47234b040
+msgid "Error Handling"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:418
+#: 9c9330f3fd774e2893ef94d05341f926
+msgid "In submit_job"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:420
+#: 39667f6c505448e390b9f29949670a1c
+msgid "Raise exceptions for validation errors:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:440
+#: b64024e57e9e4424a8c45ddc82387d5d
+msgid "In check_status"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:442
+#: 16ffb5ffc7eb4552b5f0aa8fdebbb325
+msgid "Return error dicts for job failures:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:464
+#: d805423998764abe894d70d7b6984624
+msgid "MCP Tasks Integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:466
+#: 748c2bee745646cb8d267b989adbcd5d
+msgid ""
+"Your AsyncPollingTool automatically works with MCP Tasks protocol for "
+"non-blocking execution."
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:479
+#: 22616bd92a0b4f7c9487541b9c9b523f
+msgid "The TaskManager handles:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:480
+#: c5fe967252b54ae2bd4e46fae0a49a74
+msgid "Creating background tasks"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:481
+#: eb9e19ace36643efaee2ce0a0c63e75f
+msgid "Polling your tool's status"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:482
+#: 7987510765524bfa97d7969ab9ab6b43
+msgid "Reporting progress to client"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:483
+#: 1d8b90bd6b434d1588761c72d91663ab
+msgid "Managing timeouts and cleanup"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:485
+#: 69f487f830384a938468c04486cafebc
+msgid "You don't need to do anything special—just inherit from AsyncPollingTool!"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:488
+#: c9170e9973784883bb700b89fc0ae4e8
+msgid "Testing Async Tools"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:491
+#: 9fb0bf3d429443279d877faca41f7dd9
+msgid "Unit Testing"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:493
+#: f58d7bae0b8943f39d12c7cf545e767a
+msgid "Test components individually:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:543
+#: 742df70528574d09955ced86f7755316
+msgid "Integration Testing"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:545
+#: 40606ccf4bb4492bb6531c1cbce59a71
+msgid "Test with real API (when available):"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:567
+#: d5db75ecbc2940279f4a4077cdfa7b67
+msgid "Best Practices"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:570
+#: c4a302ad6c3b463d82fdbed238aa5486
+msgid "Do's"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:572
+#: 21273ff2689e4b59a784f726a66b1d3b
+msgid ""
+"**Keep submit_job lightweight** - Just submit and return ID **Handle all "
+"status cases** - completed, failed, running, unknown **Validate inputs "
+"early** - Fail fast in submit_job **Use appropriate intervals** - 10-30s "
+"for most APIs **Set realistic timeouts** - Consider actual job duration "
+"**Return progress when available** - Better UX **Use helper methods** - "
+"Keep methods focused and clean **Test with mocks first** - Don't hit real"
+" APIs in unit tests"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:582
+#: 9bb2476b98d64f6a9ae11f72dee3a0ce
+msgid "Don'ts"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:584
+#: 845bcfd6b9d041bf95bc91fe622e4c9f
+#, python-brace-format
+msgid ""
+"**Don't do work in submit_job** - Just submit to external service **Don't"
+" block in check_status** - Should be a quick status check **Don't poll "
+"too frequently** - Respect API rate limits (<10s is usually too much) "
+"**Don't set infinite timeouts** - Always have max_duration **Don't "
+"swallow errors** - Return {\"error\": \"...\"} or raise exception **Don't"
+" use time.sleep()** - Use asyncio.sleep() or let base class handle it "
+"**Don't return raw API responses** - Format consistently"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:593
+#: e5ad2fa327eb4ce0ab38976243324210
+msgid "Common Patterns"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:596
+#: a7ab820c5952415787636a70b14eedcc
+msgid "Pattern 1: Status URL"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:598
+#: a9807359d12a465ba85d19f12478b284
+msgid "API returns a URL to poll:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:611
+#: 57a54ae860334f94ac1859dc88f57b93
+msgid "Pattern 2: Separate Endpoints"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:613
+#: 2a83d5d1542c45399c7932785aa6d5fb
+msgid "Different endpoints for submit and status:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:626
+#: 62ffd79ca10a4737905328355f7a9151
+msgid "Pattern 3: Polling with Authentication"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:628
+#: bebb92c69ebb44ebb4ca308430d6beae
+msgid "Need auth token for status checks:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:646
+#: 977deeae80724a6f8d47d650ccd9d606
+msgid "Pattern 4: Multi-Stage Pipeline"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:648
+#: 07293fe1df114a16a45cc182fd449893
+msgid "Job has multiple stages:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:675
+#: c9e27b7f81834bebaede2000b86bdd83
+msgid "Migration Guide"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:678
+#: 1b151d7488274db1917351ed65d77936
+msgid "Converting Existing Async Tools"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:680
+#: 3e23611b42944e4999e54410dcb32f8f
+msgid "If you have an existing async tool with manual polling:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:682
+#: a19536811f5a4c0eb74be9ffb11423ea
+msgid "**Before** (286 lines with manual polling):"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:704
+#: d733ee4149264a45a5bf87582bbe97f3
+msgid "**After** (356 lines, but cleaner with automatic polling):"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:718
+#: a9f3b79672584ee08665b607af7d71b5
+msgid "**Result**:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:719
+#: 7df08c44895c4f08a78518ad23e8af92
+msgid "Eliminated 70+ lines of polling boilerplate"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:720
+#: 59eb30d5a8664f4e8c9419ebde7e1940
+msgid "Non-blocking async execution"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:721
+#: 16ea4e361ba14e41b475c5f25b44a723
+msgid "Automatic progress reporting"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:722
+#: c0054f98ed0a485aaf4f0e46c23f7a34
+msgid "MCP Tasks compatible"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:725
+#: 321f6f65490a4645a1e9866177fa05ec
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:728
+#: b831cb5f11ff4f04bcf8cd29f654b4bb
+msgid "Tool Never Completes"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:730
+#: 40499ef387d145919ff3a9f73930101a
+msgid "**Symptoms**: Tool runs forever, never returns result"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:732
+#: ../../expand_tooluniverse/async_tools_guide.rst:754
+#: ../../expand_tooluniverse/async_tools_guide.rst:772
+#: ../../expand_tooluniverse/async_tools_guide.rst:796
+#: 136467157f69410fbb733c443629f105 44138bb7710042f584e90de21c36e79c
+#: 6b80b2ecf30245f3bed4412adf42f5fd 8185269b51924cc1a9338d636dcf78ee
+msgid "**Causes**:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:733
+#: 01a209e670474bc7bde0971736d72080
+msgid "``check_status()`` never returns ``done=True``"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:734
+#: 27c7f8904ca44571bbfc9c3a11ada5c3
+msgid "Wrong job_id format"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:735
+#: 468a078deb63403d906968050696b18c
+msgid "API endpoint changed"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:737
+#: ../../expand_tooluniverse/async_tools_guide.rst:801
+#: 22617d0202fc45c5aaff8a1dc0c2ba95 5fc1adebfab24a2581e0a62846f6cfc3
+msgid "**Debug**:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:750
+#: 43aa2d6912c14befbeba2503e94d552f
+msgid "Job Times Out"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:752
+#: aa7ce3c3d91e4a42b334665415b83d73
+msgid "**Symptoms**: Tool returns timeout error"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:755
+#: d38f63d183184171953eb031c0e624ca
+msgid "``max_duration`` too short"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:756
+#: cc2dc8235f07466e81eb4f8e752f458f
+msgid "Job actually takes longer than expected"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:757
+#: bdcab2837617485a8cf94760f4448e41
+msgid "API is slow"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:759
+#: ../../expand_tooluniverse/async_tools_guide.rst:776
+#: bacbe9747a5b46d79be6ea01f81fc700 f2e7a67a29fb4e88a4d314a9f539eeee
+msgid "**Fix**:"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:768
+#: 694404bea01842eca27f2dc23972b6b6
+msgid "Progress Not Showing"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:770
+#: bd14d2ef2e344b9990216059b318646c
+msgid "**Symptoms**: No progress updates visible"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:773
+#: 5730b79070db41e9a4dc38860a1ab3d7
+msgid "Not returning ``progress`` in ``check_status()``"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:774
+#: 5ca4a917424848a0813b01dbd83c0072
+msgid "Progress not changing between calls"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:792
+#: 20e02742ac4649979d2aa639d3449db0
+msgid "Tool Returns Error Dict"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:794
+#: f522d38518634f4b82a423e2494b78a5
+#, python-brace-format
+msgid "**Symptoms**: Tool returns ``{\"error\": \"...\"}`` unexpectedly"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:797
+#: 7430ab9836814487b935c751752e201b
+msgid "Exception in ``submit_job()``"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:798
+#: f5a2d18b453d48f39ec7b5e28e89e707
+msgid "API returns error status"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:799
+#: c4fc49a4c3bf4116897854e73ce7fce3
+msgid "Network error"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:818
+#: ea96b474e6704b84bb4064953bd54877
+msgid "API Reference"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:821
+#: cbf46ee7a20140568f5c8f646294397b
+msgid "AsyncPollingTool Class"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:897
+#: 122cf8395ada477d80134a3fb5b734db
+msgid "Further Reading"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:899
+#: 796f257878584af3b06da940ad0ef66d
+msgid ":doc:`comprehensive_tool_guide` - Complete tool development guide"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:900
+#: 28922639bf2e49c283e83cace37d3275
+msgid ":doc:`local_tools/index` - Creating local tools"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:901
+#: d349e9d293794f2e90a94fa7e140fb79
+msgid ":doc:`../guide/building_ai_scientists/mcp_support` - MCP integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:902
+#: 1c74a88db16a411cb0e07535735815d9
+msgid ":doc:`../api/modules` - API documentation"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:905
+#: c56b86565432423f987db4fbf7987601
+msgid "Examples"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:907
+#: f38a8ee5294040f79f7ed65275eec813
+msgid "``src/tooluniverse/proteinsplus_tool.py`` - Simple polling example"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:908
+#: f6dd8e235cbe47fa91ee6072346c52cb
+msgid "``src/tooluniverse/swissdock_tool.py`` - Complex multi-step workflow"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:909
+#: 29da1c04733547f0849e1dad8221332b
+msgid "``examples/proteinsplus_tools_example.py`` - Usage examples"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:910
+#: 1c5775c8e3eb4f51b8f8e3edb1229597
+msgid "``tests/test_async_base.py`` - Test examples"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:913
+#: 780e8ef3003d45b9811f9e19ad5ef90a
+msgid "Changelog"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:915
+#: 1a8810e2d0274601994b84ed85e6a925
+msgid "**v0.4.0** (2024-02): Added AsyncPollingTool base class"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:916
+#: 43591b87fa1a45a3be7287fb8d98638a
+msgid "**v0.4.1** (2024-02): Added MCP Tasks integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:917
+#: 4c533485e72f4776b733f556f2bd8e3f
+msgid "**v0.4.2** (2024-02): Converted ProteinsPlus and SwissDock tools"
+msgstr ""
+
+#: ../../expand_tooluniverse/async_tools_guide.rst:920
+#: 5ed3ca0961ee4ea591830ce186ab450d
+msgid ""
+"AsyncPollingTool is production-ready and recommended for all new async "
+"tools. It eliminates 70-100 lines of boilerplate per tool and ensures "
+"consistent behavior."
+msgstr ""
+

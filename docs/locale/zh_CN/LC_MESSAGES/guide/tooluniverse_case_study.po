@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/tooluniverse_case_study.rst:2 81ad1cd78fe74510bd23fcf86a71daff
+msgid "Case Study: Hypercholesterolemia Drug Discovery"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:4 44b51c67cada4f4fab51de927ed9bb95
+msgid "Open in Google Colab"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:8 71c91ca62c964237897653f61850a889
+msgid ""
+"**Explore a full AI-driven drug discovery workflow using ToolUniverse and"
+" Gemini 2.5 Pro!**"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:10 bcbc39e9ebd845828f0bf1cb833b2f38
+msgid ""
+"This tutorial walks you through the hypercholesterolemia case study "
+"presented in our paper, \"Democratizing AI scientist systems using "
+"ToolUniverse.\" You can run the entire workflow interactively in Google "
+"Colab: `ToolUniverse Case Study Notebook "
+"<https://colab.research.google.com/drive/1UwJ6RwyUoqI5risKQ365EeFdDQWOeOCv?usp=sharing>`_."
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:13 d3a1886c2c0f40c1b505c684daaab946
+msgid "What does the case study cover?"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:14 0cf6e698cedc4cd6a16ad4464d243b23
+msgid "**End-to-end drug discovery pipeline** for hypercholesterolemia"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:15 0805dd9a917e4f9aad4845773e7f0917
+msgid ""
+"**AI scientist reasoning**: See how Gemini 2.5 Pro uses ToolUniverse "
+"tools to select targets, analyze tissue expression, choose drugs, and "
+"optimize molecules"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:16 14b463c3ec3345e39ac748ac0661f78e
+msgid ""
+"**Human-in-the-loop**: Integrates expert feedback for final decision "
+"making"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:17 cc75dd40b0c64abdaa412d598f17a93e
+msgid "**Tool calls and outputs**: All code and tool calls are shown step-by-step"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:20 f4b8b4ca1e0b4630b5a49aeabb7c4e3e
+msgid "Sections in the tutorial:"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:21 ef76f52962124c588863bf07c365920b
+msgid ""
+"**Target Selection**: Identify top protein targets for "
+"hypercholesterolemia using OpenTargets and literature review"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:22 aae3c267d88d4d008e8bc6eccd3a21f8
+msgid ""
+"**Target Characterization**: Analyze tissue/organ expression of selected "
+"target to assess drug side effects"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:23 0bd0a859786b4b2fa52aba3e6cedf5a0
+msgid ""
+"**Drug Selection**: Review current drugs targeting the protein and select"
+" a molecule to optimize"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:24 2ad7570a606e47efa1d535244b0be233
+msgid ""
+"**Analog Search & ADMET Prediction**: Find structural analogs and predict"
+" pharmaceutical properties"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:25 7c168188a91148e1b076c5511b3c2fa2
+msgid ""
+"**IP Review**: Check intellectual property status for the optimized "
+"molecule"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:28 4d066288861a49f781712a176f51a808
+msgid "How to use this tutorial:"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:29 1232f2ed7a38419abd211f849bbd0f6d
+msgid "**Open the Colab notebook**: Click the badge or link above"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:30 e311e3741b8a44f5aabdc979db8d3106
+msgid ""
+"**Follow the step-by-step code**: Each section includes code, tool calls,"
+" and reasoning"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:31 b9c526dee532495bb26f193079074fda
+msgid ""
+"**Learn by example**: See how ToolUniverse enables agentic workflows for "
+"real-world biomedical research"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:34 b30deb6084074dae8b5633b1dc0f5bac
+msgid "Useful links:"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:35 911ed07646db4d1ab639c1a795a839e1
+msgid "`ToolUniverse Documentation <https://aiscientist.tools>`_"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:36 4969cfcaa88740e78cdac49eb1426d2a
+msgid "`ToolUniverse GitHub <https://github.com/mims-harvard/ToolUniverse>`_"
+msgstr ""
+
+#: ../../guide/tooluniverse_case_study.rst:37 ea5e0563e9dc451c82d7f5c039ad192c
+msgid "`Gemini 2.5 Pro <https://deepmind.google/technologies/gemini/>`_"
+msgstr ""
+

@@ -7,138 +7,140 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/molecule_3d_tools.rst:2 dfcd0f7331f84902a029094dd34a3744
+#: ../../tools/molecule_3d_tools.rst:10 dba64f5d259a4ece94eaa74f9dd6e251
 msgid "Molecule 3D Tools"
 msgstr "分子3D工具"
 
-#: ../../tools/molecule_3d_tools.rst:4 cbb09a1c8f9044ad8371d27cea40f302
+#: ../../tools/molecule_3d_tools.rst:12 73c457d75f724b08bf030c495b2345ea
 msgid ""
 "**Configuration File**: ``molecule_3d_tools.json`` **Tool Type**: Local "
 "**Tools Count**: 1"
 msgstr "**配置文件**: ``molecule_3d_tools.json`` **工具类型**: 本地 **工具数量**: 1"
 
-#: ../../tools/molecule_3d_tools.rst:8 2a75254b06db48dc943bc85b68fd6685
+#: ../../tools/molecule_3d_tools.rst:16 46e8aa6b511d49a7a63699a836ffab86
 msgid ""
 "This page contains all tools defined in the ``molecule_3d_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``molecule_3d_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/molecule_3d_tools.rst:11 d46b9492299247f38d074d9a443a5107
+#: ../../tools/molecule_3d_tools.rst:19 a2637c4e0b384f29bcc85dc36b4823a4
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/molecule_3d_tools.rst:14 4f292234a9924871a9af08515368f780
+#: ../../tools/molecule_3d_tools.rst:22 b7619d39a8814d74a51fd8d379cbcdab
 msgid "**visualize_molecule_3d** (Type: Molecule3DTool)"
 msgstr "**visualize_molecule_3d**（类型：Molecule3DTool）"
 
-#: ../../tools/molecule_3d_tools.rst:16 5ed4b26f06544ebab67efbf95331ef34
+#: ../../tools/molecule_3d_tools.rst:24 2adef928460a4a6e941ade2f04888481
 msgid ""
-"Visualize 3D molecular structures using RDKit and py3Dmol. Supports SMILES, "
-"MOL files, SDF conten..."
+"Visualize 3D molecular structures using RDKit and py3Dmol. Supports "
+"SMILES, MOL files, SDF conten..."
 msgstr "使用 RDKit 和 py3Dmol 可视化 3D 分子结构。支持 SMILES、MOL 文件、SDF 内容..."
 
-#: ../../tools/molecule_3d_tools.rst 0dc42c1666cc4485a57b24077b38a4b0
+#: ../../tools/molecule_3d_tools.rst 9e63b16bcdee46feb744392f17171863
 msgid "visualize_molecule_3d tool specification"
 msgstr "visualize_molecule_3d 工具规范"
 
-#: ../../tools/molecule_3d_tools.rst:20 4c39a55037ba4103b0e175784bd80db0
+#: ../../tools/molecule_3d_tools.rst:28 2e138a14c8b14928ad44ff7e0500b0d4
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/molecule_3d_tools.rst:22 8d3f8a3c28dc41efb428aaa16ec5cda3
+#: ../../tools/molecule_3d_tools.rst:30 28773c24a2324be096a1f3e8e08ad60c
 msgid "**Name**: ``visualize_molecule_3d``"
 msgstr "**名称**: ``visualize_molecule_3d``"
 
-#: ../../tools/molecule_3d_tools.rst:23 12055d24582a4319b0e8da102b5a51d8
+#: ../../tools/molecule_3d_tools.rst:31 c77196ffef1e46bb8189f2844d9f8a0e
 msgid "**Type**: ``Molecule3DTool``"
 msgstr "**类型**: ``Molecule3DTool``"
 
-#: ../../tools/molecule_3d_tools.rst:24 a91a7108d4fd496699500d5b61a68d31
+#: ../../tools/molecule_3d_tools.rst:32 213e96d0c7774ebb9e0c7600f22d7da9
 msgid ""
-"**Description**: Visualize 3D molecular structures using RDKit and py3Dmol. "
-"Supports SMILES, MOL files, SDF content, and various visualization styles "
-"with interactive 3D viewing capabilities."
-msgstr ""
-"**描述**：使用RDKit和py3Dmol可视化3D分子结构。支持SMILES、MOL文件、SDF内容以及多种可视化样式，并提供交互式3D查看功能。"
+"**Description**: Visualize 3D molecular structures using RDKit and "
+"py3Dmol. Supports SMILES, MOL files, SDF content, and various "
+"visualization styles with interactive 3D viewing capabilities."
+msgstr "**描述**：使用RDKit和py3Dmol可视化3D分子结构。支持SMILES、MOL文件、SDF内容以及多种可视化样式，并提供交互式3D查看功能。"
 
-#: ../../tools/molecule_3d_tools.rst:26 84f0121d3f124be69f5c5c477284e991
+#: ../../tools/molecule_3d_tools.rst:34 80585bb744f9442db92ad6df2edf9fde
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/molecule_3d_tools.rst:28 a97835b56ac548c4af96a9ac706f467b
+#: ../../tools/molecule_3d_tools.rst:36 57b3af7555434bfa89464322b513e4d4
+#, fuzzy
 msgid ""
-"``smiles`` (string) (required) SMILES string representation of the molecule"
+"``smiles`` (string) (optional) SMILES string representation of the "
+"molecule"
 msgstr "``smiles``（字符串）（必需）分子结构的SMILES字符串表示形式"
 
-#: ../../tools/molecule_3d_tools.rst:31 3006a60f5bf846ed8345c80a9dbea954
-msgid "``mol_content`` (string) (required) MOL file content as string"
+#: ../../tools/molecule_3d_tools.rst:39 bea5e2c5279e43158fc4f6347bb9769a
+#, fuzzy
+msgid "``mol_content`` (string) (optional) MOL file content as string"
 msgstr "``mol_content``（字符串）（必填）作为字符串的MOL文件内容"
 
-#: ../../tools/molecule_3d_tools.rst:34 151271f418184224a25ea54d34588f59
-msgid "``sdf_content`` (string) (required) SDF file content as string"
+#: ../../tools/molecule_3d_tools.rst:42 e584df9426774ec8a6a014cb7c05a52c
+#, fuzzy
+msgid "``sdf_content`` (string) (optional) SDF file content as string"
 msgstr "``sdf_content``（字符串）（必需）作为字符串的SDF文件内容"
 
-#: ../../tools/molecule_3d_tools.rst:37 4ab647b4e552435db301024cf6ac438d
+#: ../../tools/molecule_3d_tools.rst:45 ff788e2f01b1444c909aeeee49a0bc31
 msgid "``style`` (string) (optional) Visualization style"
 msgstr "``style``（字符串）（可选）可视化样式"
 
-#: ../../tools/molecule_3d_tools.rst:40 692ffc0377de426d9e01be722e1455c0
+#: ../../tools/molecule_3d_tools.rst:48 e36acdaf9d05418f8edb1b4e14700d6a
 msgid "``color_scheme`` (string) (optional) Color scheme for the molecule"
 msgstr "``color_scheme``（字符串）（可选）分子颜色方案"
 
-#: ../../tools/molecule_3d_tools.rst:43 61a79f743d524aa4b676bd700e69b83d
+#: ../../tools/molecule_3d_tools.rst:51 320f7fd934824de38aa89a53361898b2
 msgid "``width`` (integer) (optional) Width of the visualization in pixels"
 msgstr "``width``（整数）（可选）可视化的宽度（单位：像素）"
 
-#: ../../tools/molecule_3d_tools.rst:46 8d3fc30382b846258d9333afde2d1650
+#: ../../tools/molecule_3d_tools.rst:54 fa990a1f498c4b2cb9194784e7e922fc
 msgid "``height`` (integer) (optional) Height of the visualization in pixels"
 msgstr "``height``（整数）（可选）可视化的高度，单位为像素"
 
-#: ../../tools/molecule_3d_tools.rst:49 059fac1e6df440aa8b3f553e5713e381
+#: ../../tools/molecule_3d_tools.rst:57 3ad684d9e5354bbaaca92c6c7e296ba2
 msgid "``show_hydrogens`` (boolean) (optional) Whether to show hydrogen atoms"
 msgstr "``show_hydrogens``（布尔值）（可选）是否显示氢原子"
 
-#: ../../tools/molecule_3d_tools.rst:52 aed34032331844e09f4b9d81d4d2e4bb
-msgid ""
-"``show_surface`` (boolean) (optional) Whether to show molecular surface"
+#: ../../tools/molecule_3d_tools.rst:60 b2772a656f95486b9f36a1f09cf50366
+msgid "``show_surface`` (boolean) (optional) Whether to show molecular surface"
 msgstr "``show_surface``（布尔值）（可选）是否显示分子表面"
 
-#: ../../tools/molecule_3d_tools.rst:55 958cb177a39446738d5638e43b2033f4
+#: ../../tools/molecule_3d_tools.rst:63 bd470de82c1b44aa833e633fa304ca2f
 msgid ""
-"``generate_conformers`` (boolean) (optional) Whether to generate multiple "
-"conformers"
+"``generate_conformers`` (boolean) (optional) Whether to generate multiple"
+" conformers"
 msgstr "``generate_conformers``（布尔值）（可选）是否生成多个构象"
 
-#: ../../tools/molecule_3d_tools.rst:58 6f53a439b5f34873adb4e32c44efcb39
-msgid ""
-"``conformer_count`` (integer) (optional) Number of conformers to generate"
+#: ../../tools/molecule_3d_tools.rst:66 eba3329aa1744778b946de452cc40d2d
+msgid "``conformer_count`` (integer) (optional) Number of conformers to generate"
 msgstr "``conformer_count``（整数）（可选）生成构象体的数量"
 
-#: ../../tools/molecule_3d_tools.rst:61 940e9712efea4f9a9d0855293112208b
+#: ../../tools/molecule_3d_tools.rst:69 f11a4319034d4656b35fd09b13013678
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/molecule_3d_tools.rst:77 587438b8022b49de98b5332c5ffe27d1
+#: ../../tools/molecule_3d_tools.rst:82 67442df0377e4cb29801665eb28d3250
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/molecule_3d_tools.rst:79 5bc7af1b34c54416bf297a28ad2dc8d5
+#: ../../tools/molecule_3d_tools.rst:84 d834af55d87a4de39cbd1905e9e5e1a7
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/molecule_3d_tools.rst:80 32fb8b072a90434c80502a15589b7436
+#: ../../tools/molecule_3d_tools.rst:85 d06648f594fc44249953bbe9150e7252
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+

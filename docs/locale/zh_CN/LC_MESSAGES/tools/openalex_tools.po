@@ -7,127 +7,517 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/openalex_tools.rst:2 e7659d51fcd243868d32e266996d2fb8
+#: ../../tools/openalex_tools.rst:10 08e953bcef574adfa17a7cb98f111af4
 msgid "Openalex Tools"
 msgstr "Openalex 工具"
 
-#: ../../tools/openalex_tools.rst:4 645edf36a86e489280ceb61f41134640
+#: ../../tools/openalex_tools.rst:12 3872177049b64e9ba93a85943a95f46b
+#, fuzzy
 msgid ""
-"**Configuration File**: ``openalex_tools.json`` **Tool Type**: Local **Tools"
-" Count**: 1"
+"**Configuration File**: ``openalex_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
 msgstr ""
 "**配置文件**：``openalex_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/openalex_tools.rst:8 112f0300206a47cca8b9a3fa96803108
+#: ../../tools/openalex_tools.rst:16 0573acfc2b12402995f3fea68ba58c93
 msgid ""
 "This page contains all tools defined in the ``openalex_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``openalex_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/openalex_tools.rst:11 4f343b68820d4e7396057a7b9bd51100
+#: ../../tools/openalex_tools.rst:19 6893bc0c8252449d95083457f6147be9
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/openalex_tools.rst:14 386cd69f8ce44ccbaa274b3558a2aaf1
-msgid "**openalex_literature_search** (Type: OpenAlexTool)"
+#: ../../tools/openalex_tools.rst:22 d287590a1b014b2b95cc905e1856faca
+#, fuzzy
+msgid "**openalex_get_author** (Type: OpenAlexRESTTool)"
 msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
 
-#: ../../tools/openalex_tools.rst:16 932f822a292943c49f32fc8d9773275d
+#: ../../tools/openalex_tools.rst:24 ced7878504854aa3951e3ec8846ff683
 msgid ""
-"Search for academic literature using OpenAlex API. Retrieves papers with "
-"title, abstract, authors..."
-msgstr "使用 OpenAlex API 搜索学术文献。检索包含标题、摘要、作者的论文信息..."
+"Get a single OpenAlex author by Author ID (A...). You can pass either the"
+" short ID (e.g., \"A50012..."
+msgstr ""
 
-#: ../../tools/openalex_tools.rst 0eea1b6231a64059bb94ada4ed224f2e
-msgid "openalex_literature_search tool specification"
+#: ../../tools/openalex_tools.rst 9e27864b89564f329318165dc8f15211
+#, fuzzy
+msgid "openalex_get_author tool specification"
 msgstr "openalex_literature_search 工具规格说明"
 
-#: ../../tools/openalex_tools.rst:20 4e1189fd4f524677b127a6304fef84e7
+#: ../../tools/openalex_tools.rst:28 ../../tools/openalex_tools.rst:62
+#: ../../tools/openalex_tools.rst:96 ../../tools/openalex_tools.rst:130
+#: ../../tools/openalex_tools.rst:164 ../../tools/openalex_tools.rst:218
+#: ../../tools/openalex_tools.rst:258 ../../tools/openalex_tools.rst:298
+#: 3c6d7b6a2fdf46f19b35d76aac8bd5d3 446a842c84cf420796f1002bb752391e
+#: 4b0612c625214a7985b0fd31fa1bec58 7fb8ee6c66ad4558a2f712688d88b84d
+#: b5f8d85d7d3347198924205be505a259 c21a79035e974c0c9174ef57444828ff
+#: c3a5cf1f1cc945b9934244591e26845d fe2ac76a9b354061bdde84951aea8851
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/openalex_tools.rst:22 7807a413b70744e3850b9e26c47ba931
-msgid "**Name**: ``openalex_literature_search``"
-msgstr "**名称**：``openalex_literature_search``"
-
-#: ../../tools/openalex_tools.rst:23 71b1f221808f4ed4a1fc94ef97970c22
-msgid "**Type**: ``OpenAlexTool``"
+#: ../../tools/openalex_tools.rst:30 cf06c7c309384176aac85c91b0272682
+#, fuzzy
+msgid "**Name**: ``openalex_get_author``"
 msgstr "**类型**：``OpenAlexTool``"
 
-#: ../../tools/openalex_tools.rst:24 e9400ae388694dff90497bdd6d3f12a7
-msgid ""
-"**Description**: Search for academic literature using OpenAlex API. "
-"Retrieves papers with title, abstract, authors, publication year, and "
-"organizational affiliations based on search keywords."
-msgstr "**描述**：使用 OpenAlex API 搜索学术文献。根据搜索关键词检索包含标题、摘要、作者、出版年份以及机构关联信息的论文。"
+#: ../../tools/openalex_tools.rst:31 ../../tools/openalex_tools.rst:65
+#: ../../tools/openalex_tools.rst:99 ../../tools/openalex_tools.rst:133
+#: ../../tools/openalex_tools.rst:221 ../../tools/openalex_tools.rst:261
+#: ../../tools/openalex_tools.rst:301 11e7d276d4884ffe81ad6181136335a0
+#: 20583bb19e7d475d984d3cf3143671cf 254d9ce8200b4ee68f0deec5f3d21c6d
+#: 593b86ed53fa4d3d83aeb0949ae05810 b99dc86c803c40c88bb795a7a55347c6
+#: dc03504e02c246d4b6bff0509ae0865e e61e3e60a69c4b0b840dd32689538074
+#, fuzzy
+msgid "**Type**: ``OpenAlexRESTTool``"
+msgstr "**类型**：``OpenAlexTool``"
 
-#: ../../tools/openalex_tools.rst:26 3d4ada9cc39848c196283cc9b933fc70
+#: ../../tools/openalex_tools.rst:32 80bffb349b054b6f972299068bcc7717
+msgid ""
+"**Description**: Get a single OpenAlex author by Author ID (A...). You "
+"can pass either the short ID (e.g., \"A5001226970\") or the full URL "
+"(e.g., \"https://openalex.org/A5001226970\")."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:34 ../../tools/openalex_tools.rst:68
+#: ../../tools/openalex_tools.rst:102 ../../tools/openalex_tools.rst:136
+#: ../../tools/openalex_tools.rst:170 ../../tools/openalex_tools.rst:224
+#: ../../tools/openalex_tools.rst:264 ../../tools/openalex_tools.rst:304
+#: 02072744044f491081773ca9190cb726 49de5deb1cdc4c30b9b55520a73a7824
+#: 66360f76914e40cc89806db64fa82ccd 933da6308b5043428c97c6fe4db81032
+#: 9efd8bb4720d406c8881192c98f7f391 a1837155598e4263b7c34df347ad2d3e
+#: d1f5b3d0de27476fb9f680dfe101469f ffc336c3fda544ee9c3f38c59336f6b5
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/openalex_tools.rst:28 e52b12b7850f428cb05ff10c796f7420
+#: ../../tools/openalex_tools.rst:36 f205792d0d544df8857ab0299c685191
 msgid ""
-"``search_keywords`` (string) (required) Keywords to search for in paper "
-"titles, abstracts, and content. Use relevant scientific terms or phrases."
+"``author_id`` (string) (required) OpenAlex Author ID (A...) or full "
+"OpenAlex URL."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:39 ../../tools/openalex_tools.rst:73
+#: ../../tools/openalex_tools.rst:107 ../../tools/openalex_tools.rst:141
+#: ../../tools/openalex_tools.rst:235 ../../tools/openalex_tools.rst:275
+#: 284169f6796c4fedbfda7de3626ae27f 5ddf75e374cb43d680bc2ae9e0346962
+#: a442f5062f3b4f15bf7ec216a9c9c992 bb94a7545645494486dc1a8b95980a56
+#: c4d10f82d2c6482aa2535d651759e2f0 c948a7dece314763847b7b6dee39135e
+msgid ""
+"``mailto`` (string) (optional) Optional contact email for OpenAlex polite"
+" pool."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:42 ../../tools/openalex_tools.rst:76
+#: ../../tools/openalex_tools.rst:110 ../../tools/openalex_tools.rst:144
+#: ../../tools/openalex_tools.rst:199 ../../tools/openalex_tools.rst:238
+#: ../../tools/openalex_tools.rst:278 ../../tools/openalex_tools.rst:336
+#: 0c863864bb6f4c72818d36ed1740da49 12893225bfb0454b9d3625e833176701
+#: 2e23aa83e3e5421bb94a6bea346ecc44 84400475d4624a13acbfe80759c801c9
+#: 846fde12bd9946d69cdd66ad333b02eb b678591efd2b40349ba8cccb31953eab
+#: edc0ecd7d42a44dda7568ac650bda6e4 fa3bea8334564927b122a4bf2fe8309a
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/openalex_tools.rst:56 eb279ca3392e483dbe97ad8d0e8c39fd
+#, fuzzy
+msgid "**openalex_get_institution** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:58 376235c5048d4e5b84957f5396f20ee8
+msgid ""
+"Get a single OpenAlex institution by Institution ID (I...). You can pass "
+"either the short ID (e.g..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst 09f2ba238cc94b5b80f9a7db472638bd
+#, fuzzy
+msgid "openalex_get_institution tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:64 405be66ae06e44efa2b7ae4c064089f4
+#, fuzzy
+msgid "**Name**: ``openalex_get_institution``"
+msgstr "**名称**：``openalex_literature_search``"
+
+#: ../../tools/openalex_tools.rst:66 c5af9d33e5694268b49a18f36fb3eb5e
+msgid ""
+"**Description**: Get a single OpenAlex institution by Institution ID "
+"(I...). You can pass either the short ID (e.g., \"I136199984\") or the "
+"full URL (e.g., \"https://openalex.org/I136199984\")."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:70 4c5fdb5de4244a168e7d097d3b81150e
+msgid ""
+"``institution_id`` (string) (required) OpenAlex Institution ID (I...) or "
+"full OpenAlex URL."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:90 22c915d565864c32b3a894e4401cee14
+#, fuzzy
+msgid "**openalex_get_work** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:92 3de7d60976c54275acc9468677f70ce7
+msgid ""
+"Get a single OpenAlex work (paper) by OpenAlex Work ID (W...). You can "
+"pass either the short ID (..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst a9aa1cf248064992870319de01557154
+#, fuzzy
+msgid "openalex_get_work tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:98 6e0acc1e63dc4e2788573e9a66ecd11f
+#, fuzzy
+msgid "**Name**: ``openalex_get_work``"
+msgstr "**类型**：``OpenAlexTool``"
+
+#: ../../tools/openalex_tools.rst:100 430503281988497b9fc4cdcf5c0d1202
+msgid ""
+"**Description**: Get a single OpenAlex work (paper) by OpenAlex Work ID "
+"(W...). You can pass either the short ID (e.g., \"W2626778328\") or the "
+"full URL (e.g., \"https://openalex.org/W2626778328\")."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:104 30079495f3ad437d90eef90450aeabcd
+msgid ""
+"``openalex_id`` (string) (required) OpenAlex Work ID (W...) or full "
+"OpenAlex URL."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:124 4cbf4768a41948a88c573ae2e7b84c73
+#, fuzzy
+msgid "**openalex_get_work_by_doi** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:126 60b1bdb064694a1c8831120259c094f6
+msgid ""
+"Get a single OpenAlex work (paper) by DOI. Provide a DOI string like "
+"\"10.65215/2q58a426\" (you can..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst 54dc5142f32a4f76aeddf24d383e92f4
+#, fuzzy
+msgid "openalex_get_work_by_doi tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:132 7b93fe8b9d80445f93ee91baeb1c72c0
+#, fuzzy
+msgid "**Name**: ``openalex_get_work_by_doi``"
+msgstr "**类型**：``OpenAlexTool``"
+
+#: ../../tools/openalex_tools.rst:134 4d36a22a1333487c82a970e15d411ff7
+msgid ""
+"**Description**: Get a single OpenAlex work (paper) by DOI. Provide a DOI"
+" string like \"10.65215/2q58a426\" (you can also pass a DOI URL like "
+"\"https://doi.org/10.65215/2q58a426\")."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:138 3ebcca3410d64251b6307837560fe85a
+msgid "``doi`` (string) (required) DOI identifier (preferred) or DOI URL."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:158 f42e32edd93e46b6ad25aa0397d882f7
+msgid "**openalex_literature_search** (Type: OpenAlexTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:160 e612cc1d593245d2b65e32ee118d7acf
+msgid ""
+"Search for academic literature using OpenAlex. Supports optional full-"
+"text-index filtering (has\\_..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst 3e462c3536a941128de6910d32dbebbd
+msgid "openalex_literature_search tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:166 52ac9bc5698a49de858b444022c778be
+msgid "**Name**: ``openalex_literature_search``"
+msgstr "**名称**：``openalex_literature_search``"
+
+#: ../../tools/openalex_tools.rst:167 69aee95d28ad485db225a2702a1295e5
+msgid "**Type**: ``OpenAlexTool``"
+msgstr "**类型**：``OpenAlexTool``"
+
+#: ../../tools/openalex_tools.rst:168 31d98f14b596449fa2e0492cff4b92ed
+msgid ""
+"**Description**: Search for academic literature using OpenAlex. Supports "
+"optional full-text-index filtering (has\\_fulltext + fulltext.search) "
+"when you need body-only term discovery, but note: OpenAlex full-text "
+"indexing is incomplete, and a work can be open-access elsewhere (e.g., "
+"PMC) while still having has\\_fulltext=false in OpenAlex. Returns paper "
+"metadata and (when available) OA links/content URLs."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:172 53d7a9c3c0204e55a7e23c5564bfd1ea
+#, fuzzy
+msgid ""
+"``search_keywords`` (string) (optional) Keywords to search for in paper "
+"titles/abstracts/etc. For full-text-index-only matching, also use "
+"require\\_has\\_fulltext/fulltext\\_terms."
 msgstr "``search_keywords``（字符串）（必填）用于在论文标题、摘要和内容中搜索的关键词。请使用相关的科学术语或短语。"
 
-#: ../../tools/openalex_tools.rst:31 46544f7bc8084fb88d7ccc193f601d1b
+#: ../../tools/openalex_tools.rst:175 9716c8a3395f44c7a3eb500dcd30ea84
 msgid ""
-"``max_results`` (integer) (optional) Maximum number of papers to retrieve "
-"(default: 10, maximum: 200)."
+"``query`` (string) (optional) Alias for \\`search\\_keywords\\` "
+"(recommended when you standardize on \\`query\\` across multiple paper-"
+"search tools)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:178 fc86e4cd863e407c923eca2116fb91a8
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of papers to retrieve"
+" (default: 10, maximum: 200)."
 msgstr "``max_results``（整数）（可选）要检索的论文最大数量（默认值：10，最大值：200）。"
 
-#: ../../tools/openalex_tools.rst:34 50485be57cab44fab3226d3713c2acde
+#: ../../tools/openalex_tools.rst:181 232bfccd28d143b4bf70a0d15a225f02
 msgid ""
-"``year_from`` (integer) (optional) Start year for publication date filter "
-"(e.g., 2020). Optional parameter to limit search to papers published from "
-"this year onwards."
+"``limit`` (integer) (optional) Alias for \\`max\\_results\\` (OpenAlex "
+"max 200)."
 msgstr ""
-"``year_from``（整数）（可选）用于筛选出版日期的起始年份（例如：2020）。这是一个可选参数，用于将搜索范围限制为从该年份起发布的论文。"
 
-#: ../../tools/openalex_tools.rst:37 a601c5475cc6497fbdeb6287dc76be22
+#: ../../tools/openalex_tools.rst:184 838869172eaf46b4bb98a3d0abcc4f9d
 msgid ""
-"``year_to`` (integer) (optional) End year for publication date filter (e.g.,"
-" 2023). Optional parameter to limit search to papers published up to this "
-"year."
+"``year_from`` (integer) (optional) Start year for publication date filter"
+" (e.g., 2020). Optional parameter to limit search to papers published "
+"from this year onwards."
+msgstr "``year_from``（整数）（可选）用于筛选出版日期的起始年份（例如：2020）。这是一个可选参数，用于将搜索范围限制为从该年份起发布的论文。"
+
+#: ../../tools/openalex_tools.rst:187 266000132e2b44b5bdf5cc23bd9d3c2c
+msgid ""
+"``year_to`` (integer) (optional) End year for publication date filter "
+"(e.g., 2023). Optional parameter to limit search to papers published up "
+"to this year."
 msgstr "``year_to``（整数）（可选）用于筛选出版日期的结束年份（例如：2023）。可选参数，用于将搜索范围限制为截至该年份发表的论文。"
 
-#: ../../tools/openalex_tools.rst:40 0b731c7d788e43b58b596059b637c72c
+#: ../../tools/openalex_tools.rst:190 03a5ef381d1a442a8dc8234f5006e560
 msgid ""
-"``open_access`` (boolean) (optional) Filter for open access papers only. Set"
-" to true for open access papers, false for non-open access, or omit for all "
-"papers."
+"``open_access`` (boolean) (optional) Filter for open access papers only. "
+"Set to true for open access papers, false for non-open access, or omit "
+"for all papers."
 msgstr ""
 "``open_access``（布尔值）（可选）仅筛选开放获取的论文。设置为 true 表示仅开放获取的论文，设置为 false "
 "表示非开放获取的论文，或省略以包含所有论文。"
 
-#: ../../tools/openalex_tools.rst:43 afbd15100f1548839b883066b9889397
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
+#: ../../tools/openalex_tools.rst:193 81179291a6034dc4b14a1233f749c6fb
+msgid ""
+"``require_has_fulltext`` (boolean) (optional) If true, filters to works "
+"where OpenAlex indicates a full-text index is available "
+"(has\\_fulltext:true)."
+msgstr ""
 
-#: ../../tools/openalex_tools.rst:57 a58d61c640ca49629141d744a09f0722
+#: ../../tools/openalex_tools.rst:196 8cad874b81904cb680f67c5d76a1ab64
+msgid ""
+"``fulltext_terms`` (array) (optional) Optional list of terms that must "
+"occur in OpenAlex full-text index (adds fulltext.search:<term> filters "
+"and implicitly enables require\\_has\\_fulltext)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:212 c65ae7de446448c3bf7b6cb01a7d43d9
+#, fuzzy
+msgid "**openalex_search_authors** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:214 db1fa91ef867423ba23bdde5c41e1b3a
+msgid ""
+"Search OpenAlex authors via the /authors endpoint. Use this to discover "
+"Author IDs (A...) and the..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst 3ee7e3badbed423f9abab39cb3110120
+#, fuzzy
+msgid "openalex_search_authors tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:220 b45b34d3ac984de5b1ef9e1c114c2cfa
+#, fuzzy
+msgid "**Name**: ``openalex_search_authors``"
+msgstr "**名称**：``openalex_literature_search``"
+
+#: ../../tools/openalex_tools.rst:222 e8b6369ed8634e7db17516ae8f38b425
+msgid ""
+"**Description**: Search OpenAlex authors via the /authors endpoint. Use "
+"this to discover Author IDs (A...) and then fetch details with "
+"openalex\\_get\\_author."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:226 0330c426c7e84313915f82bee8e1092f
+msgid ""
+"``search`` (string) (required) Author name search query. Example: \"Yann "
+"LeCun\"."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:229 ../../tools/openalex_tools.rst:269
+#: ../../tools/openalex_tools.rst:321 4785baafe40a46c5815c1ac1456e32e4
+#: d7017b82d42e4c518eee67d4fc65f087 f81cbeb21b954cc7a4eb73d0793ec68c
+msgid "``per_page`` (integer) (optional) Results per page (OpenAlex max 200)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:232 ../../tools/openalex_tools.rst:272
+#: ../../tools/openalex_tools.rst:327 0dfdb15b87344774834463204f670682
+#: 43880da98ec545fc9812a8606b0e670a ccdfcaf9994244deac39bc916c0397c0
+msgid "``page`` (integer) (optional) Page number (1-indexed)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:252 7b3a0fe1d8e343639ff19186ee84f6d9
+#, fuzzy
+msgid "**openalex_search_institutions** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:254 b039a3584b2341cfb4c34c4c3c4d0962
+msgid ""
+"Search OpenAlex institutions via the /institutions endpoint. Use this to "
+"discover Institution IDs..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst ebee3531953848689d123697176ab5dc
+#, fuzzy
+msgid "openalex_search_institutions tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:260 aaba712fa8ad4678a067a76fd3919d70
+#, fuzzy
+msgid "**Name**: ``openalex_search_institutions``"
+msgstr "**名称**：``openalex_literature_search``"
+
+#: ../../tools/openalex_tools.rst:262 410a46f3e4154f84ab88be8e78f0be97
+msgid ""
+"**Description**: Search OpenAlex institutions via the /institutions "
+"endpoint. Use this to discover Institution IDs (I...) and then fetch "
+"details with openalex\\_get\\_institution."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:266 79904bf80b4f42fbb665ed0588f536a9
+msgid ""
+"``search`` (string) (required) Institution name search query. Example: "
+"\"Harvard University\"."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:292 a002bcf2524d4867aaf63370834b208c
+#, fuzzy
+msgid "**openalex_search_works** (Type: OpenAlexRESTTool)"
+msgstr "**openalex_literature_search**（类型：OpenAlex工具）"
+
+#: ../../tools/openalex_tools.rst:294 cc5cc7aa99724359bff40f61f743b457
+msgid ""
+"Search OpenAlex works (papers) via the /works endpoint. Supports both "
+"general search and optional..."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst fbac850c8454465ebe2d8456dadc6197
+#, fuzzy
+msgid "openalex_search_works tool specification"
+msgstr "openalex_literature_search 工具规格说明"
+
+#: ../../tools/openalex_tools.rst:300 2703473f73524e118dfea56fa08635d1
+#, fuzzy
+msgid "**Name**: ``openalex_search_works``"
+msgstr "**名称**：``openalex_literature_search``"
+
+#: ../../tools/openalex_tools.rst:302 f71b9c49fa764cfc9029eb9ec09bd7f3
+msgid ""
+"**Description**: Search OpenAlex works (papers) via the /works endpoint. "
+"Supports both general search and optional full-text-index filtering: set "
+"require\\_has\\_fulltext=true and/or pass fulltext\\_terms to add "
+"OpenAlex filters (has\\_fulltext:true and fulltext.search:<term>). "
+"Important: has\\_fulltext/fulltext.search only match works where OpenAlex"
+" has indexed full text; this can miss papers whose full text is available"
+" elsewhere (e.g., PMC) but not indexed by OpenAlex. Use this to discover "
+"Work IDs (W...) and DOIs, then follow up with "
+"openalex\\_get\\_work/openalex\\_get\\_work\\_by\\_doi to retrieve OA "
+"links and (sometimes) content\\_urls."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:306 f572ea9cf07e4ce3b0c8ee1319f49de7
+msgid ""
+"``search`` (string) (optional) Search query for works. Use filter + "
+"fulltext\\_terms/require\\_has\\_fulltext when you need full-text-index-"
+"only matching."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:309 7f6765ae19914b8895cde3667954754c
+msgid ""
+"``query`` (string) (optional) Alias for \\`search\\` (recommended when "
+"you standardize on \\`query\\` across multiple paper-search tools)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:312 0655a80270b942b2835f1f7affda6c14
+msgid ""
+"``filter`` (string) (optional) OpenAlex filter string (comma-separated). "
+"Example: \"from\\_publication\\_date:2020-01-01,is\\_oa:true\"."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:315 2fb5b2ba40044617aa360c94f572258f
+msgid ""
+"``require_has_fulltext`` (boolean) (optional) If true, appends OpenAlex "
+"filter has\\_fulltext:true (keeps only works with full-text index "
+"available)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:318 bb292c34b2bf468785c9d1e8fa9d076f
+msgid ""
+"``fulltext_terms`` (array) (optional) Optional list of terms to match in "
+"OpenAlex full-text index. Adds one or more fulltext.search:<term> filters"
+" and implicitly enables require\\_has\\_fulltext."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:324 ebb8dbb09c9a4b3593d4bfe6f82e4715
+msgid ""
+"``limit`` (integer) (optional) Alias for \\`per\\_page\\` (OpenAlex max "
+"200)."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:330 7b75078285424965be91fdff39e52097
+msgid ""
+"``sort`` (string) (optional) Sort order string, e.g. "
+"\"cited\\_by\\_count:desc\"."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:333 c58e9d7c284a4f9e82d2cc13cfca157f
+msgid ""
+"``mailto`` (string) (optional) Optional contact email for OpenAlex polite"
+" pool. If omitted, ToolUniverse uses a default."
+msgstr ""
+
+#: ../../tools/openalex_tools.rst:349 8b22479ccf9546daa97f8f1217bd712d
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/openalex_tools.rst:59 2abe0440d0344fafa0eccc87dcd2ab19
+#: ../../tools/openalex_tools.rst:351 f34015526b234269a6f36ecb9edac41e
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/openalex_tools.rst:60 648c7f73dbb349a0b3b5860cd96fbb31
+#: ../../tools/openalex_tools.rst:352 f22505dd26be4bcd8149152d1a0c7201
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "Search for academic literature using "
+#~ "OpenAlex API. Retrieves papers with "
+#~ "title, abstract, authors..."
+#~ msgstr "使用 OpenAlex API 搜索学术文献。检索包含标题、摘要、作者的论文信息..."
+
+#~ msgid ""
+#~ "**Description**: Search for academic "
+#~ "literature using OpenAlex API. Retrieves "
+#~ "papers with title, abstract, authors, "
+#~ "publication year, and organizational "
+#~ "affiliations based on search keywords."
+#~ msgstr "**描述**：使用 OpenAlex API 搜索学术文献。根据搜索关键词检索包含标题、摘要、作者、出版年份以及机构关联信息的论文。"
+

@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_phenotype_tools.rst:10 6674f472f90449609b1f54be7f000de9
+msgid "Ensembl Phenotype Tools"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:12 299e76f652054d41a4a1d23ed4d63751
+msgid ""
+"**Configuration File**: ``ensembl_phenotype_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:16 a7c91b9da4154500a466e309694cbef6
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_phenotype_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:19 5b43b182eea64988be3f35b54f531938
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:22 2d7010dc9095447a8fe192b8304319c1
+msgid "**EnsemblPheno_get_by_gene** (Type: EnsemblPhenotypeTool)"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:24 1f7d2dfdebb44389bf4e3fe5f6a36a7c
+msgid ""
+"Get phenotype associations for a gene from the Ensembl REST API. Returns "
+"diseases, traits, and cl..."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst da9730eaf7004c928c3c5c951f6c3747
+msgid "EnsemblPheno_get_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:28
+#: ../../tools/ensembl_phenotype_tools.rst:62
+#: ../../tools/ensembl_phenotype_tools.rst:99 4de5af4810bd434e85b123e5f7b081e7
+#: 9f0f8c28f18741ce8c099d88f752bd04 e8fccd7f92cf457faa7cf228e946aae6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:30 f3b0eecdf16d420086b3ab0c6875c31b
+msgid "**Name**: ``EnsemblPheno_get_by_gene``"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:31
+#: ../../tools/ensembl_phenotype_tools.rst:65
+#: ../../tools/ensembl_phenotype_tools.rst:102 5200e2a362274369b525b2d9c262dc83
+#: 787dee9745154e0bb73f2765601d6d45 cedf5d96afb84f04bc4eac3079e40705
+msgid "**Type**: ``EnsemblPhenotypeTool``"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:32 c1d2cf5a553f44a2a9dcbfae5f2dca87
+msgid ""
+"**Description**: Get phenotype associations for a gene from the Ensembl "
+"REST API. Returns diseases, traits, and clinical conditions linked to the"
+" gene, aggregated from multiple sources including Cancer Gene Census, "
+"OMIM, ClinVar, NHGRI-EBI GWAS catalog, and Orphanet. Each entry includes "
+"the phenotype description, data source, genomic location, and ontology "
+"accessions (EFO, HP, Orphanet). Example: BRCA1 returns 162 phenotype "
+"associations across multiple cancer types and other conditions."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:34
+#: ../../tools/ensembl_phenotype_tools.rst:68
+#: ../../tools/ensembl_phenotype_tools.rst:105 158f41842cb640a38af8834c3e861132
+#: 6840d0455c984a8a937c44e957a467cd 86a19b99c21443bbbe6dd5232c4ec652
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:36
+#: ../../tools/ensembl_phenotype_tools.rst:70
+#: ../../tools/ensembl_phenotype_tools.rst:107 3bf71228a56f4301bb34910dc3ebe979
+#: 93d04806d4a54863a014dfb58702796b fa14d7b0d8be4bb1a542776dc819b19c
+msgid ""
+"``species`` (string) (optional) Species name. Use 'homo\\_sapiens' for "
+"human. Default: 'homo\\_sapiens'."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:39 ec89f23407a3476e90439196c0c62487
+msgid ""
+"``gene`` (string) (required) Gene symbol. Examples: 'BRCA1', 'TP53', "
+"'EGFR', 'KRAS', 'BRAF'."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:42
+#: ../../tools/ensembl_phenotype_tools.rst:79
+#: ../../tools/ensembl_phenotype_tools.rst:113 282687b8037c412cacbda2cf638e2aaa
+#: 60517a9f08584adcadaa4d7c5a57ab4f 611c432021d342cf8f945c9d5e301e07
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:56 c040bdc7ab4448279fabedb0d3283ff5
+msgid "**EnsemblPheno_get_by_region** (Type: EnsemblPhenotypeTool)"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:58 aa437cf177f64317a21109351335c800
+msgid ""
+"Get phenotype associations for all variants and genes in a genomic region"
+" from the Ensembl REST A..."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst 1e378adc9c3a41dba5c39c2f708bf6d9
+msgid "EnsemblPheno_get_by_region tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:64 41d9c7c738cc496e9987ed215cc368ca
+msgid "**Name**: ``EnsemblPheno_get_by_region``"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:66 d7bf36e76f6f46bd840796af4039ff6e
+msgid ""
+"**Description**: Get phenotype associations for all variants and genes in"
+" a genomic region from the Ensembl REST API. Returns disease/trait "
+"associations from GWAS catalog, ClinVar, Cancer Gene Census, etc. for "
+"features overlapping the specified region. Useful for understanding the "
+"phenotypic landscape of a genomic interval, especially for interpreting "
+"GWAS loci or candidate regions. Example: TP53 region "
+"(chr17:7661779-7687538) returns phenotype associations from the NHGRI-EBI"
+" GWAS catalog."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:73 5da60f3d058c4b4db7c38b807405d696
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end'. Example: '17:7661779-7687538' for TP53, "
+"'17:43044295-43125482' for BRCA1. Keep regions under 5Mb for reasonable "
+"response times."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:76 7e7612c9d5bd4e6c800e1d4cb5abcd75
+msgid ""
+"``feature_type`` (string, null) (optional) Filter by feature type: "
+"'Variation' (variants only), 'Gene' (genes only), 'QTL' (quantitative "
+"trait loci). Default: all types."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:93 31bd0df0050042439324741ca752edb0
+msgid "**EnsemblPheno_get_by_variant** (Type: EnsemblPhenotypeTool)"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:95 1bf10af0d7ce4272bb4c98d25d2b5242
+msgid ""
+"Get phenotype associations for a specific variant (by rsID) from the "
+"Ensembl REST API. Returns tr..."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst a9111d958358488eabeca90611d613e2
+msgid "EnsemblPheno_get_by_variant tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:101 0105b124c4f5480ab530f14aa141c458
+msgid "**Name**: ``EnsemblPheno_get_by_variant``"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:103 53ddbc4c96f449a3969b858348c1118d
+msgid ""
+"**Description**: Get phenotype associations for a specific variant (by "
+"rsID) from the Ensembl REST API. Returns traits, diseases, and phenotypes"
+" associated with the variant from NHGRI-EBI GWAS catalog, ClinVar, and "
+"other sources. Includes risk alleles, beta coefficients/odds ratios, "
+"p-values, and study references. Example: rs429358 (APOE epsilon 4 "
+"variant) returns 1004 phenotype associations including Alzheimer disease,"
+" LDL cholesterol levels, and metabolite measurements."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:110 bb3f8f87e5c84b4ea1fd96232103c562
+msgid ""
+"``variant_id`` (string) (required) Variant rsID. Examples: 'rs429358' "
+"(APOE e4), 'rs7903146' (TCF7L2 diabetes), 'rs1801133' (MTHFR)."
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:127 8cac3bcf71a84cc0be715be682d49c58
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:129 f72d07dfc9b64a6aadcba754c6c82cbb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_phenotype_tools.rst:130 e7a4954b337e40f3bf087dd295482ca3
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

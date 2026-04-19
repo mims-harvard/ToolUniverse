@@ -7,215 +7,388 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 11:56-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../index.rst:95
-msgid "🚀 Getting Started"
+#: ../../index.rst:36 ../../index.rst:201 7bf9e2a5014e4596b85cbe15f5a6d787
+#, fuzzy
+msgid "Get Started"
 msgstr "🚀 快速开始"
 
-#: ../../index.rst:103
-msgid "🤖 Building AI Scientists"
-msgstr "🤖 构建 AI 科学家"
+#: ../../index.rst:212
+msgid "Tutorials"
+msgstr "教程"
 
-#: ../../index.rst:109
-msgid "🔧 Tools"
-msgstr "🔧 工具"
+#: ../../index.rst:226
+#, fuzzy
+msgid "Tools Catalog"
+msgstr "工具目录"
 
-#: ../../index.rst:116
-msgid "💡 Use ToolUniverse"
-msgstr "💡 使用 ToolUniverse"
+#: ../../index.rst:151 ../../index.rst:234 65b1ee42cf0b41e9bf4e9dba49ab4ac8
+#, fuzzy
+msgid "Expand ToolUniverse"
+msgstr "扩展 ToolUniverse"
 
-#: ../../index.rst:133
-msgid "🔨 Add Tools to ToolUniverse"
-msgstr "🔨 扩展 ToolUniverse"
+#: ../../index.rst:241
+#, fuzzy
+msgid "Help & Reference"
+msgstr "帮助与参考"
 
-#: ../../index.rst:145
-msgid "🔌 API"
-msgstr "🔌 API 参考"
+#: ../../index.rst:2 9732357ea3724c828ca0e2f33d62ddef
+#, fuzzy
+msgid "ToolUniverse Documentation"
+msgstr "ToolUniverse 文档"
 
-#: ../../index.rst:151
-msgid "❓ Reference"
-msgstr "❓ 参考资料"
-
-#: ../../index.rst:6 b3709dba009246c486fe09fba9d90bde
-msgid "|logo| ToolUniverse Documentation"
-msgstr "|logo| ToolUniverse 文档"
-
-#: ../../index.rst:1 6bcfdf23eb8b4532827665f8abaf59da
-msgid "ToolUniverse Logo"
-msgstr "ToolUniverse 标志"
-
-#: ../../index.rst:8 43c68d9ffee14c1690fa4e25481fed2d
+#: ../../index.rst:8 27f3fa344f204991b5f74670e4dfea50
 msgid "Website"
 msgstr "网站"
 
-#: ../../index.rst:12 f9fabe84e37c40ddba7868183c670774
+#: ../../index.rst:12 b6b1fb72c7ab4178b7d183870b559c1c
 msgid "PyPI"
 msgstr "PyPI"
 
-#: ../../index.rst:16 69790600a1ae4fd5aacb9ca446f62827
+#: ../../index.rst:16 2e5826efcd0245a6838ac6018fa587e5
 msgid "GitHub"
 msgstr "GitHub"
 
-#: ../../index.rst:20 5414e79c9ca24c1bb8d198402da03e14
+#: ../../index.rst:20 966f944ba2634e96894408e3cc70a829
 msgid "Slack"
 msgstr "Slack"
 
-#: ../../index.rst:27 25d8dac1452b4e7c88b5ca2851d0d35f
+#: ../../index.rst:29 ac8184b757584eeca6778aa5c7d73462
 msgid "Democratizing AI Scientists for Science"
 msgstr "普及化 AI 科学家"
 
-#: ../../index.rst:57 29e4c379f7574f14af92b892af67cd97
+#: ../../index.rst:31 551cfa2dc48a49939005d39a6bb9faf4
+#, fuzzy
 msgid ""
-"ToolUniverse is a unified ecosystem that transforms any large language model"
-" (LLM)—open or closed—into a powerful AI scientist. By standardizing how "
-"LLMs identify and call tools, it integrates over 600 scientific resources, "
-"including machine learning models, datasets, APIs, and analysis packages."
+"ToolUniverse is a unified ecosystem that transforms any large language "
+"model (LLM)—open or closed—into a powerful AI scientist. By standardizing"
+" how LLMs identify and call tools, it integrates over **1000 scientific "
+"resources**, including machine learning models, datasets, APIs, and "
+"analysis packages."
 msgstr ""
-"ToolUniverse 是一个统一的生态系统，可以将任何大型语言模型（LLM）——无论是开源还是闭源——转化为强大的 AI 科学家。通过标准化 LLM"
-" 识别和调用工具的方式，它集成了超过 600 个科学资源，包括机器学习模型、数据集、API 和分析包。"
+"ToolUniverse 是一个统一的生态系统，可以将任何大型语言模型（LLM）——无论是开源还是闭源——转化为强大的 AI 科学家。通过标准化 "
+"LLM 识别和调用工具的方式，它集成了超过 600 个科学资源，包括机器学习模型、数据集、API 和分析包。"
 
-#: ../../index.rst:59 24c9031fd20e477b8317be46528fa2e0
+#: ../../index.rst:33 0f7665e6b25a47db9a89194a8dd73ff9
 msgid ""
-"With its **AI-Tool Interaction Protocol**, ToolUniverse provides a common "
-"interface for seamless communication between LLMs and tools, ensuring "
-"compatibility across platforms such as GPT, Claude, Gemini, and open-source "
-"models."
+"With its **AI-Tool Interaction Protocol**, ToolUniverse provides a common"
+" interface for seamless communication between LLMs and tools, ensuring "
+"compatibility across platforms such as GPT, Claude, Gemini, and open-"
+"source models."
 msgstr ""
 "通过其 **AI-工具交互协议**，ToolUniverse 为 LLM 和工具之间的无缝通信提供了一个通用接口，确保在 "
 "GPT、Claude、Gemini 和开源模型等平台上的兼容性。"
 
-#: ../../index.rst:63 4546b2bc0ed54556b5f4d1d1d397ba75
-msgid "Building your AI Scientists"
-msgstr "构建您的 AI 科学家"
+#: ../../index.rst:38 d50d2796ca714b02b0365e347d7a94a1
+msgid "**Choose your path:**"
+msgstr "**选择你的路径：**"
 
-#: ../../index.rst:65 6d72ff85672343479a715e9c7922b325
-msgid ""
-"Transform any LLM/Reasoning Model/Agent into a powerful research scientist "
-"with ToolUniverse's comprehensive integration guides:"
-msgstr "使用 ToolUniverse 的全面集成指南，将任何 LLM/推理模型/智能体转化为强大的研究科学家："
+#: ../../index.rst:44 55b5f2fd88494838b021a70ce4d56a76
+msgid "Using AI chat?"
+msgstr "在使用 AI 聊天？"
 
-#: ../../index.rst:67 075b33fc7a4643cdb35b7eba6935f2e3
-msgid ""
-"📖 **Complete Tutorial**: `Building AI Scientists Overview "
-"<guide/building_ai_scientists/index.html>`_"
-msgstr "📖 **完整教程**：`构建 AI 科学家概述 <guide/building_ai_scientists/index.html>`_"
+#: ../../index.rst:50 360fbff98ed2440ca38c24de769e197f
+msgid "**Choose AI Agent User**"
+msgstr "**选择 AI Agent 用户**"
 
-#: ../../index.rst:70 93008d36b16f4865ba7e539e2165c9e1
+#: ../../index.rst:52 8701f4d7ab4f4e648cf0d51f2a385878
 msgid ""
-"**Claude Desktop**: `Claude Desktop Integration "
-"<guide/building_ai_scientists/claude_desktop.html>`_"
+"Integrate ToolUniverse with Claude, ChatGPT, Gemini, or other AI agents "
+"for interactive research."
+msgstr "将 ToolUniverse 集成到 Claude、ChatGPT、Gemini 或其他 AI Agent 中，用于交互式科研。"
+
+#: ../../index.rst:54 a65ea011b78148a4a09924c3171162a0
+msgid "Using the terminal?"
+msgstr "在使用终端？"
+
+#: ../../index.rst:60 eddb06d45ef24cef87eb306c7e6e1930
+#, fuzzy
+msgid "**Choose CLI**"
+msgstr "**选择 CLI**"
+
+#: ../../index.rst:62 1139e535dabf44c99e096d50a46893a2
+msgid ""
+"Discover, inspect, run, and test 1000+ tools directly from your shell "
+"with the ``tu`` command."
+msgstr "使用 ``tu`` 命令，直接在 Shell 中发现、查看、运行并测试 1000+ 工具。"
+
+#: ../../index.rst:64 31a1d8439be34419a3b5dfa58573c5b3
+msgid "Writing code?"
+msgstr "在写代码？"
+
+#: ../../index.rst:70 27839ff93168479c96b3db8b8799b500
+msgid "**Choose Python Developer**"
+msgstr "**选择 Python 开发者**"
+
+#: ../../index.rst:72 f73735148f6741f2afce5cb75e939e10
+msgid ""
+"Use ToolUniverse's Python API directly in your code, Jupyter notebooks, "
+"or custom applications."
+msgstr "在你的代码、Jupyter Notebook 或自定义应用中直接使用 ToolUniverse 的 Python API。"
+
+#: ../../index.rst:75 21f4488328f645a0b04c5c8ba7fbd840
+msgid "What Can You Do?"
+msgstr "你可以做什么？"
+
+#: ../../index.rst:77 0d3ac09fc7ea4c918e02cf87dbe4d8a6
+msgid ""
+"**AI Agent Skills** - Specialized workflows combining 1000+ scientific "
+"tools:"
+msgstr "**AI Agent Skills** - 组合 1000+ 科学工具的专用工作流："
+
+#: ../../index.rst:82 3e408520bf384878bb5ac4f353b41c7a
+msgid "Research Skills"
+msgstr "科研技能"
+
+#: ../../index.rst:88 1652a548e0254be48c79bbe58bc64013
+msgid ""
+"Drug discovery, target analysis, disease research, literature reviews, "
+"protein design, binder discovery, precision oncology, and more"
+msgstr "涵盖药物发现、靶点分析、疾病研究、文献综述、蛋白设计、binder 发现、精准肿瘤学等场景"
+
+#: ../../index.rst:92 3e45580396794591bda5edf3897997fa
+msgid ":bdg-info:`15 skills available`"
+msgstr ":bdg-info:`15 个可用技能`"
+
+#: ../../index.rst:94 cf2e721389a34aef9a77561f8ad7f183
+msgid "Development Skills"
+msgstr "开发技能"
+
+#: ../../index.rst:100 53970002f6d747b580fc8dedbef5d758
+msgid ""
+"Create new tools, fix failing tools, optimize descriptions, improve "
+"documentation quality, and enhance skill workflows"
+msgstr "创建新工具、修复失效工具、优化描述、提升文档质量，并改进技能工作流"
+
+#: ../../index.rst:104 195e9a444b854f039a57e26ca9778c7e
+msgid ":bdg-info:`6 skills available`"
+msgstr ":bdg-info:`6 个可用技能`"
+
+#: ../../index.rst:106 bbe39c05598247d192629db9e73d85dc
+msgid "Setup & Configuration"
+msgstr "安装与配置"
+
+#: ../../index.rst:112 dd54b937a871440cadc5c4c7e0558e57
+msgid ""
+"Install and configure ToolUniverse with MCP integration for any AI coding"
+" client (Cursor, Claude, Gemini, VS Code, etc.)"
+msgstr "为任意 AI 编码客户端安装并配置带有 MCP 集成的 ToolUniverse（如 Cursor、Claude、Gemini、VS Code 等）"
+
+#: ../../index.rst:116 ../../index.rst:128 8d8312e9ba644b10945cee1c5232c441
+#: b8ec2d8b8d4b44d182b3b28775e5172b
+msgid ":bdg-info:`1 skill available`"
+msgstr ":bdg-info:`1 个可用技能`"
+
+#: ../../index.rst:118 adc91dd37fc442ed8d07f82203f141cd
+msgid "General Purpose"
+msgstr "通用用途"
+
+#: ../../index.rst:124 bc9e0afab0bf4b21a928d6774d24847c
+msgid ""
+"General strategies for using ToolUniverse effectively: tool discovery, "
+"multi-hop queries, comprehensive research workflows"
+msgstr "高效使用 ToolUniverse 的通用策略，包括工具发现、多跳查询和综合研究工作流"
+
+#: ../../index.rst:130 eec9e10ebf824af2a61f735e89a70a14
+msgid ""
+"View All Skills: Browse complete catalog with detailed descriptions and "
+"usage guides"
+msgstr "查看全部技能：浏览完整目录以及详细说明和使用指南"
+
+#: ../../index.rst:138 47c8218b9beb42ddbb225f356caf133e
+msgid "Explore More"
+msgstr "继续探索"
+
+#: ../../index.rst:143 45ffc4dc815e4ad992d3bf0b917a6e93
+msgid "Browse 1000+ Tools"
+msgstr "浏览 1000+ 工具"
+
+#: ../../index.rst:149 c022cc8e708a42809b0fd50eb0f2d92d
+msgid "Complete tool catalog with examples"
+msgstr "包含示例的完整工具目录"
+
+#: ../../index.rst:157 ce1e9a0c968f4fd6bb01a16df6d33bf1
+msgid "Add custom tools and APIs"
+msgstr "添加自定义工具与 API"
+
+#: ../../index.rst:159 130c12b91ac642e3b61b196b5c46ee5c
+msgid "Troubleshooting"
+msgstr "故障排查"
+
+#: ../../index.rst:165 9411e8efd8fc4758b4646d7e7daabeb7
+msgid "Fix common issues"
+msgstr "解决常见问题"
+
+#: ../../index.rst:168 b41d87495c6e47b6b42f72aefdf30c3b
+msgid "Community & Support"
+msgstr "社区与支持"
+
+#: ../../index.rst:173 1eca58c7371f4e149fd29a9d21bbe5af
+#, fuzzy
+msgid "Join Slack"
+msgstr "Slack"
+
+#: ../../index.rst:178 e006a4451ae2437592365f9f65f6eebb
+msgid "Get help and connect with community"
+msgstr "获取帮助并与社区交流"
+
+#: ../../index.rst:180 39ab0448352d4fd9a1f3b4f0f3b9b3f6
+msgid "Report Issues"
+msgstr "报告问题"
+
+#: ../../index.rst:185 6509fcf331bd4390afdfac6cb0daf56c
+msgid "Bug reports and feature requests"
+msgstr "提交 Bug 报告与功能请求"
+
+#: ../../index.rst:187 e3a305215b4548318c06b7a6b09b1e53
+#, fuzzy
+msgid "Visit Website"
+msgstr "访问网站"
+
+#: ../../index.rst:192 fc3c4e095f894d3488be1ac46c09bc1e
+msgid "Try tools directly in browser"
+msgstr "直接在浏览器中试用工具"
+
+#: ../../index.rst:194 81e2f0047ffd412ca64051a55e16ab28
+msgid "Browse All Documentation - Complete sitemap"
+msgstr "浏览全部文档 - 完整站点地图"
+
+#: ../../index.rst:256 be32ba911bd749fd9cce06f70e8046ff
+msgid "---"
 msgstr ""
-"**Claude Desktop**：`Claude Desktop 集成 "
-"<guide/building_ai_scientists/claude_desktop.html>`_"
 
-#: ../../index.rst:71 4327c8c19e2f499cabbba2154f541784
-msgid ""
-"**Claude Code**: `Claude Code Integration "
-"<guide/building_ai_scientists/claude_code.html>`_"
-msgstr ""
-"**Claude Code**：`Claude Code 集成 "
-"<guide/building_ai_scientists/claude_code.html>`_"
-
-#: ../../index.rst:72 4d3d82ca82ed4b3283c31ee704045676
-msgid ""
-"**Gemini CLI**: `Gemini CLI Integration "
-"<guide/building_ai_scientists/gemini_cli.html>`_"
-msgstr ""
-"**Gemini CLI**：`Gemini CLI 集成 "
-"<guide/building_ai_scientists/gemini_cli.html>`_"
-
-#: ../../index.rst:73 905221632b404173918460bb78a1e229
-msgid ""
-"**Qwen Code**: `Qwen Code Integration "
-"<guide/building_ai_scientists/qwen_code.html>`_"
-msgstr ""
-"**Qwen Code**：`Qwen Code 集成 <guide/building_ai_scientists/qwen_code.html>`_"
-
-#: ../../index.rst:74 cfb5fb10751b4c2e9840fd478efa6261
-msgid ""
-"**Codex CLI**: `Codex CLI Integration "
-"<guide/building_ai_scientists/codex_cli.html>`_"
-msgstr ""
-"**Codex CLI**：`Codex CLI 集成 <guide/building_ai_scientists/codex_cli.html>`_"
-
-#: ../../index.rst:75 21b5a414f9334559869ec43b4961bedf
-msgid ""
-"**ChatGPT API**: `ChatGPT API Integration "
-"<guide/building_ai_scientists/chatgpt_api.html>`_"
-msgstr ""
-"**ChatGPT API**：`ChatGPT API 集成 "
-"<guide/building_ai_scientists/chatgpt_api.html>`_"
-
-#: ../../index.rst:78 b688cec29e674612a55b3b5b0dcd1f5b
-msgid "🌍 Ecosystem & Community"
-msgstr "🌍 生态系统与社区"
-
-#: ../../index.rst:79 404691d80b6c4cfab968664867696acc
-msgid "**Open Science**"
-msgstr "**开放科学**"
-
-#: ../../index.rst:81 33ea4581d61d482a95ae7b1a8a1170d1
-msgid "Open-source ecosystem encouraging community contributions"
-msgstr "鼓励社区贡献的开源生态系统"
-
-#: ../../index.rst:82 743a43747fd8470299bb064519f198d9
-msgid "Standardized tool specifications for agentic AI"
-msgstr "面向智能体 AI 的标准化工具规范"
-
-#: ../../index.rst:83 e771d3480e034777ae21ba56a95d7198
-msgid "Integration with heterogeneous scientific workflows"
-msgstr "与异构科学工作流的集成"
-
-#: ../../index.rst:85 2a0b97a3f72949d4a40df0ea0f86d353
-msgid "**Join the Community**"
-msgstr "**加入社区**"
-
-#: ../../index.rst:87 bdf46c65f9784aa7a7e6df29f2b6aa89
-msgid "**Web Service**: `aiscientist.tools <https://aiscientist.tools>`_"
-msgstr "**Web 服务**：`aiscientist.tools <https://aiscientist.tools>`_"
-
-#: ../../index.rst:88 dff94e4e463742fbb98aaa04b96a2f3d
-msgid ""
-"**GitHub Repository**: `mims-harvard/ToolUniverse <https://github.com/mims-"
-"harvard/ToolUniverse>`_"
-msgstr ""
-"**GitHub 仓库**：`mims-harvard/ToolUniverse <https://github.com/mims-"
-"harvard/ToolUniverse>`_"
-
-#: ../../index.rst:89 369527e43cbf473985aef4d92a6bd005
-msgid ""
-"**Report Issues**: `GitHub Issues <https://github.com/mims-"
-"harvard/ToolUniverse/issues>`_"
-msgstr ""
-"**报告问题**：`GitHub Issues <https://github.com/mims-"
-"harvard/ToolUniverse/issues>`_"
-
-#: ../../index.rst:90 5fc653c3278e4ce09bc2683b3a541367
-msgid ""
-"**Discussions**: `Join our Slack community "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
-msgstr ""
-"**讨论**：`加入我们的 Slack 社区 "
-"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
-
-#: ../../index.rst:93 8ecca50594c64ea4b77f5f3fa168f2d2
-msgid "📚 Documentation Structure"
-msgstr "📚 文档结构"
+#: ../../index.rst:258 c26a4c3b8f1049d3b5851e751e877098
+#, fuzzy
+msgid "*Democratizing AI agents for science with ToolUniverse.*"
+msgstr "*用 ToolUniverse 推动面向科学的 AI Agent 普及化。*"
 
 #~ msgid "Python Version"
 #~ msgstr "Python 版本"
 
 #~ msgid "Number of Tools"
 #~ msgstr "工具数量"
+
+#~ msgid "🤖 Building AI Scientists"
+#~ msgstr "🤖 构建 AI 科学家"
+
+#~ msgid "🔧 Tools"
+#~ msgstr "🔧 工具"
+
+#~ msgid "🔨 Add Tools to ToolUniverse"
+#~ msgstr "🔨 扩展 ToolUniverse"
+
+#~ msgid "🔌 API"
+#~ msgstr "🔌 API 参考"
+
+#~ msgid "Building your AI Scientists"
+#~ msgstr "构建您的 AI 科学家"
+
+#~ msgid ""
+#~ "Transform any LLM/Reasoning Model/Agent into"
+#~ " a powerful research scientist with "
+#~ "ToolUniverse's comprehensive integration guides:"
+#~ msgstr "使用 ToolUniverse 的全面集成指南，将任何 LLM/推理模型/智能体转化为强大的研究科学家："
+
+#~ msgid ""
+#~ "📖 **Complete Tutorial**: `Building AI "
+#~ "Scientists Overview "
+#~ "<guide/building_ai_scientists/index.html>`_"
+#~ msgstr "📖 **完整教程**：`构建 AI 科学家概述 <guide/building_ai_scientists/index.html>`_"
+
+#~ msgid ""
+#~ "**Claude Desktop**: `Claude Desktop "
+#~ "Integration <guide/building_ai_scientists/claude_desktop.html>`_"
+#~ msgstr ""
+#~ "**Claude Desktop**：`Claude Desktop 集成 "
+#~ "<guide/building_ai_scientists/claude_desktop.html>`_"
+
+#~ msgid ""
+#~ "**Claude Code**: `Claude Code Integration "
+#~ "<guide/building_ai_scientists/claude_code.html>`_"
+#~ msgstr ""
+#~ "**Claude Code**：`Claude Code 集成 "
+#~ "<guide/building_ai_scientists/claude_code.html>`_"
+
+#~ msgid ""
+#~ "**Gemini CLI**: `Gemini CLI Integration "
+#~ "<guide/building_ai_scientists/gemini_cli.html>`_"
+#~ msgstr ""
+#~ "**Gemini CLI**：`Gemini CLI 集成 "
+#~ "<guide/building_ai_scientists/gemini_cli.html>`_"
+
+#~ msgid ""
+#~ "**Qwen Code**: `Qwen Code Integration "
+#~ "<guide/building_ai_scientists/qwen_code.html>`_"
+#~ msgstr ""
+#~ "**Qwen Code**：`Qwen Code 集成 "
+#~ "<guide/building_ai_scientists/qwen_code.html>`_"
+
+#~ msgid ""
+#~ "**Codex CLI**: `Codex CLI Integration "
+#~ "<guide/building_ai_scientists/codex_cli.html>`_"
+#~ msgstr ""
+#~ "**Codex CLI**：`Codex CLI 集成 "
+#~ "<guide/building_ai_scientists/codex_cli.html>`_"
+
+#~ msgid ""
+#~ "**ChatGPT API**: `ChatGPT API Integration "
+#~ "<guide/building_ai_scientists/chatgpt_api.html>`_"
+#~ msgstr ""
+#~ "**ChatGPT API**：`ChatGPT API 集成 "
+#~ "<guide/building_ai_scientists/chatgpt_api.html>`_"
+
+#~ msgid "🌍 Ecosystem & Community"
+#~ msgstr "🌍 生态系统与社区"
+
+#~ msgid "Open-source ecosystem encouraging community contributions"
+#~ msgstr "鼓励社区贡献的开源生态系统"
+
+#~ msgid "Standardized tool specifications for agentic AI"
+#~ msgstr "面向智能体 AI 的标准化工具规范"
+
+#~ msgid "Integration with heterogeneous scientific workflows"
+#~ msgstr "与异构科学工作流的集成"
+
+#~ msgid "**Join the Community**"
+#~ msgstr "**加入社区**"
+
+#~ msgid "**Web Service**: `aiscientist.tools <https://aiscientist.tools>`_"
+#~ msgstr "**Web 服务**：`aiscientist.tools <https://aiscientist.tools>`_"
+
+#~ msgid ""
+#~ "**GitHub Repository**: `mims-harvard/ToolUniverse"
+#~ " <https://github.com/mims-harvard/ToolUniverse>`_"
+#~ msgstr ""
+#~ "**GitHub 仓库**：`mims-harvard/ToolUniverse "
+#~ "<https://github.com/mims-harvard/ToolUniverse>`_"
+
+#~ msgid ""
+#~ "**Report Issues**: `GitHub Issues "
+#~ "<https://github.com/mims-harvard/ToolUniverse/issues>`_"
+#~ msgstr ""
+#~ "**报告问题**：`GitHub Issues <https://github.com/mims-"
+#~ "harvard/ToolUniverse/issues>`_"
+
+#~ msgid ""
+#~ "**Discussions**: `Join our Slack community "
+#~ "<https://join.slack.com/t/tooluniversehq/shared_invite/zt-"
+#~ "3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
+#~ msgstr ""
+#~ "**讨论**：`加入我们的 Slack 社区 "
+#~ "<https://join.slack.com/t/tooluniversehq/shared_invite/zt-"
+#~ "3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
+
+#~ msgid "📚 Documentation Structure"
+#~ msgstr "📚 文档结构"

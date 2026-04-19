@@ -7,1047 +7,906 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:2
-#: 49d7b106f82747d9b54af4e1c9219fc4
-msgid "Contributing Tools to ToolUniverse"
-msgstr "为 ToolUniverse 贡献工具"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:4
-#: b54ac0530ce04eac9a5109784786868e
-msgid ""
-"This comprehensive Tutorial covers everything you need to know about "
-"contributing tools to ToolUniverse, from understanding existing tools to "
-"creating, testing, and submitting your own tools."
-msgstr "本综合教程涵盖了您需要了解的关于为 ToolUniverse 贡献工具的所有内容，从了解现有工具到创建、测试和提交您自己的工具。"
+#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:-1
+#: 8c19f4794dce421f8c116974900d3695
+msgid "0; url=contributing/index.html"
+msgstr ""
 
 #: ../../expand_tooluniverse/comprehensive_tool_guide.rst:7
-#: 75538e127ab045d58b3aa68ab9c54f0a
-msgid "Table of Contents"
-msgstr "目录"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:14
-#: 43fb24cd70034205bb3d130febcc4a8e
-msgid "Part I: Understanding ToolUniverse Tools"
-msgstr "第一部分：了解 ToolUniverse 工具"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:17
-#: 09b8a5f575d541ff842101abe602b503
-msgid "What Are ToolUniverse Tools?"
-msgstr "什么是 ToolUniverse 工具？"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:19
-#: 764d9a22cbf3472a8430c7c58cf421b2
-msgid ""
-"ToolUniverse tools are standardized interfaces to scientific databases, "
-"APIs, machine learning models, and data analysis packages. Each tool follows"
-" a consistent pattern:"
-msgstr "ToolUniverse 工具是科学数据库、API、机器学习模型和数据分析包的标准化接口。每个工具都遵循一致的模式："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:21
-#: f09c769f34204d5e882d520853b6cd4d
-msgid ""
-"**Standardized Input/Output**: All tools accept structured parameters and "
-"return consistent JSON responses"
-msgstr "**标准化输入/输出**：所有工具都接受结构化参数并返回一致的 JSON 响应"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:22
-#: 2c58df75b1f14966b16cc5f40bc05bb1
-msgid "**Error Handling**: Unified error reporting across all tools"
-msgstr "**错误处理**：所有工具的统一错误报告"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:23
-#: bf13bbc4d71b46c7a0780e17154e6504
-msgid "**Documentation**: Self-describing with clear parameter specifications"
-msgstr "**文档**：具有清晰参数规范的自描述"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:24
-#: c0865ef2f81e4e42b972a10fee7eff29
-msgid "**Testing**: Comprehensive test coverage for reliability"
-msgstr "**测试**：全面的测试覆盖以确保可靠性"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:28
-#: 32237d196d594a7b83a2b4d5997f49e8
-msgid "Part II: Step-by-Step Tool Development Tutorial"
-msgstr "第二部分：逐步工具开发教程"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:31
-#: 7f1782ed06fc41b6ae5e522e52e70f70
-msgid "Step 1: Development Environment Setup"
-msgstr "步骤 1：开发环境设置"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:34
-#: b551acb4feec44c8b8ca7c469891042b
-msgid "1.1 Fork and Clone Repository"
-msgstr "1.1 分叉和克隆仓库"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:43
-#: 014cbe7a199e410bb41c4e97793e2de8
-msgid "1.2 Create Virtual Environment"
-msgstr "1.2 创建虚拟环境"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:51
-#: c825d08980a342aba7548915431d2e3b
-msgid "1.3 Install Development Dependencies"
-msgstr "1.3 安装开发依赖"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:58
-#: c9d6c39511f44c06aadfcc15c4daf0d1
-msgid "1.4 Install Pre-commit Hooks"
-msgstr "1.4 安装预提交钩子"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:60
-#: 91ba245eeece4a56b01c322190e229d8
-msgid "**Automatic Setup (Recommended):**"
-msgstr "**自动设置（推荐）：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:67
-#: 701b24029c2449a2aa110c70e2b7a311
-msgid "**Manual Setup:**"
-msgstr "**手动设置：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:80
-#: 4f92a5c28d894825bb97055c5b34c45b
-msgid ""
-"**Required Development Tools:** - ``pytest`` - Testing framework - ``black``"
-" - Code formatting - ``flake8`` - Code linting - ``mypy`` - Type checking - "
-"``sphinx`` - Documentation - ``pre-commit`` - Git hooks"
+#: 3724f49c1225458f89818ef430dcd937
+msgid "Comprehensive Tool Guide"
 msgstr ""
-"**必需的开发工具：** - ``pytest`` - 测试框架 - ``black`` - 代码格式化 - ``flake8`` - 代码检查 - "
-"``mypy`` - 类型检查 - ``sphinx`` - 文档 - ``pre-commit`` - Git 钩子"
 
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:88
-#: ade856b7fcdc48068cf28a447622fb81
-msgid ""
-"**Pre-commit Benefits:** - ✅ **Automatic code formatting** with Black - ✅ "
-"**Code linting** with flake8 and ruff - ✅ **Import cleanup** with autoflake "
-"- ✅ **File validation** (YAML, TOML, AST checks) - ✅ **Runs on every "
-"commit** to ensure code quality"
+#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:9
+#: a5f2fa90a3064fa595541c70c423c0e4
+msgid "Redirecting to :doc:`contributing/index`..."
 msgstr ""
-"**预提交优势：** - ✅ **使用 Black 自动代码格式化** - ✅ **使用 flake8 和 ruff 进行代码检查** - ✅ **使用"
-" autoflake 进行导入清理** - ✅ **文件验证**（YAML、TOML、AST 检查） - ✅ **在每次提交时运行**以确保代码质量"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:96
-#: 1f19ad953d7343f88def22798d7dcb80
-msgid "Step 2: Choose Your Tool Type and Design"
-msgstr "步骤 2：选择您的工具类型和设计"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:99
-#: bf58602dbdca436abef438a3779d3fd1
-msgid "2.1 Tool Type Selection"
-msgstr "2.1 工具类型选择"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:101
-#: 01fa25ae6b2b48c6823c00e084a75ede
-msgid ""
-"Before implementing, decide whether your tool should be local or remote:"
-msgstr "在实现之前，决定您的工具应该是本地的还是远程的："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:103
-#: 9fce840564324fd6a20307514dca7804
-msgid ""
-"**Local Tools** (recommended for most cases): - Python classes running in "
-"the same process - Best for: API wrappers, data processing, simple "
-"computations - See :doc:`local_tool_registration` for detailed "
-"implementation Tutorial"
-msgstr ""
-"**本地工具**（推荐大多数场景使用）：  \n"
-"- 在同一进程中运行的 Python 类  \n"
-"- 适用于：API 封装、数据处理、简单计算  \n"
-"- 详见 :doc:`local_tool_registration` 获取详细实现教程"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:108
-#: 030cbf398fd14727bfd1ac96ab85c714
-msgid ""
-"**Remote Tools** (for specialized cases): - External services accessed via "
-"MCP or REST APIs - Best for: microservices, cloud AI services, existing "
-"systems - See :doc:`remote_tool_registration` for detailed implementation "
-"Tutorial"
-msgstr ""
-"**远程工具**（针对特殊情况）：  \n"
-"- 通过 MCP 或 REST API 访问的外部服务  \n"
-"- 适用于：微服务、云端 AI 服务、现有系统  \n"
-"- 详见 :doc:`remote_tool_registration` 获取详细实现教程"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:114
-#: c3db8c37234e45479cba45f2b4ab0e11
-msgid "2.2 Research Your Data Source"
-msgstr "2.2 研究您的数据源"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:116
-#: e7080d32a6454f498368ab8e87d131ab
-msgid ""
-"**API Documentation**: Understand endpoints, rate limits, authentication"
-msgstr "**API 文档**：了解端点、速率限制、身份验证"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:117
-#: 38063f5bf29242eba48cb161e9d61d2a
-msgid "**Data Format**: Study response structures and data types"
-msgstr "**数据格式**：研究响应结构和数据类型"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:118
-#: 18716074e6cf48e487248101e1d9fd2a
-msgid "**Error Conditions**: Identify common error scenarios"
-msgstr "**错误情况**：识别常见错误场景"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:119
-#: 33674bf24d974522b49d61ce74df19ab
-msgid "**Usage Patterns**: How researchers typically use this data"
-msgstr "**使用模式**：研究人员通常如何使用这些数据"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:121
-#: 65037e082a324265acafcc0217956984
-msgid ""
-"**Design Principles:** - Keep parameters intuitive for scientists - Use "
-"consistent naming conventions - Provide sensible defaults - Support common "
-"use cases first"
-msgstr ""
-"**设计原则：**  \n"
-"- 保持参数对科学家直观易懂  \n"
-"- 使用一致的命名规范  \n"
-"- 提供合理的默认值  \n"
-"- 优先支持常见使用场景"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:128
-#: 43e7a983097249baa05220bc3f73c376
-msgid "Step 3: Tool Implementation"
-msgstr "步骤3：工具实施"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:130
-#: ad14c9f910d145f5a228894afd05a757
-msgid ""
-"The implementation details depend on whether you're creating a local or "
-"remote tool:"
-msgstr "具体实现细节取决于您是创建本地工具还是远程工具："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:132
-#: 2f94b3d1f2cf4a57b4ab022faef775c7
-msgid ""
-"**For Local Tools:** Follow the comprehensive Tutorial at "
-":doc:`local_tool_registration` which covers: - Directory structure and file "
-"organization - Tool class implementation with BaseTool inheritance - "
-"Configuration and parameter handling - Testing and validation"
-msgstr ""
-"**对于本地工具：** 请参考完整的教程 :doc:`local_tool_registration`，内容包括：  \n"
-"- 目录结构和文件组织  \n"
-"- 使用 BaseTool 继承实现工具类  \n"
-"- 配置和参数处理  \n"
-"- 测试与验证"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:139
-#: e2ddd0f600274d49ab373aa8423e2ef1
-msgid ""
-"**For Remote Tools:** Follow the detailed Tutorial at "
-":doc:`remote_tool_registration` which covers: - MCP server setup and "
-"configuration - REST API wrapper patterns - Authentication and security - "
-"Performance optimization"
-msgstr ""
-"**对于远程工具：** 请参阅详细教程 :doc:`remote_tool_registration`，内容包括：  \n"
-"- MCP 服务器的设置与配置  \n"
-"- REST API 包装模式  \n"
-"- 身份验证与安全性  \n"
-"- 性能优化"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:146
-#: a59f6bd00e604a20808bc4ac25929ee4
-msgid "**Key Requirements for Community Contribution:**"
-msgstr "**社区贡献的关键要求：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:148
-#: 1c5e2cd855ca41a4aeca5348df5f6a11
-msgid ""
-"**Inherit from BaseTool**: All contributed tools must inherit from BaseTool"
-msgstr "**继承自 BaseTool**：所有贡献的工具都必须继承自 BaseTool"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:149
-#: e66456fabd2642b296136d55399fab96
-msgid ""
-"**Comprehensive Documentation**: Include detailed docstrings with examples"
-msgstr "**全面文档**：包含带有示例的详细文档字符串"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:150
-#: dc754e5e2fb245d1b817b359fd543c09
-msgid "**Error Handling**: Implement robust error handling and validation"
-msgstr "**错误处理**：实施健壮的错误处理和验证"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:151
-#: 5bda757a711343ccb499e63ba987cdb7
-msgid ""
-"**Consistent API**: Follow ToolUniverse conventions for parameters and "
-"responses"
-msgstr "**一致的 API**：遵循 ToolUniverse 对参数和响应的约定"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:152
-#: bbfd901a2b4b4c99b85aa0e4dcb14d1e
-msgid ""
-"**Scientific Focus**: Design interfaces that are intuitive for researchers"
-msgstr "**科学重点**：设计直观且适合研究人员使用的界面"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:154
-#: c28668efc81e41b083ce485ce561beba
-msgid ""
-"For detailed implementation examples and templates, see the appropriate "
-"Tutorial above."
-msgstr "如需详细的实现示例和模板，请参阅上方相应的教程。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:157
-#: 068283d978364a8d95ee93970b18c50c
-msgid "3.3 Contribution-Specific Requirements"
-msgstr "3.3 特定贡献要求"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:159
-#: 9617c16033a6497c9d1f7f7f3df8ab96
-msgid ""
-"When contributing tools to ToolUniverse, ensure your implementation "
-"includes:"
-msgstr "在向 ToolUniverse 提交工具时，请确保您的实现包含："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:161
-#: d1bd14c37be0442a8e70058619a9882e
-#, python-format
-msgid ""
-"**Code Organization:** - Place tools in appropriate domain directories - "
-"Include comprehensive test suites with >90% coverage - Provide configuration"
-" files following ToolUniverse standards - Add proper documentation and "
-"examples"
-msgstr ""
-"**代码组织：**  \n"
-"- 将工具放置在适当的领域目录中  \n"
-"- 包含覆盖率超过90%的全面测试套件  \n"
-"- 提供符合ToolUniverse标准的配置文件  \n"
-"- 添加适当的文档和示例"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:167
-#: ad83076d696c49ecba3d250af74daa23
-msgid ""
-"**Quality Standards:** - Pass all code quality checks (Black, flake8, mypy) "
-"- Include detailed docstrings with usage examples - Implement robust error "
-"handling and input validation - Follow scientific naming conventions"
-msgstr ""
-"**质量标准：**  \n"
-"- 通过所有代码质量检查（Black、flake8、mypy）  \n"
-"- 包含带有使用示例的详细文档字符串  \n"
-"- 实现健壮的错误处理和输入验证  \n"
-"- 遵循科学命名规范"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:173
-#: db0c0ee6c891459d83d9ba33c74c88d8
-msgid ""
-"For detailed file structures and templates, refer to the tool registration "
-"guides linked above."
-msgstr "有关详细的文件结构和模板，请参阅上方链接的工具注册指南。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:176
-#: d884094a6345458faa39e4f45529eb9d
-msgid "Step 4: Testing Requirements for Contribution"
-msgstr "步骤 4：贡献测试要求"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:178
-#: e8c0eb1c018b4c36ad8f2acf4f2c9c25
-msgid ""
-"Contributors must provide comprehensive test suites. The testing patterns "
-"and examples are detailed in :doc:`local_tool_registration` under the "
-"testing section."
-msgstr "贡献者必须提供全面的测试套件。测试模式和示例详见 :doc:`local_tool_registration` 的测试部分。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:180
-#: 3b30bea1b84e4a44a4c7f8a2bda2f51b
-msgid "**Key Testing Requirements:**"
-msgstr "**关键测试要求：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:182
-#: a259a87317d042be8ff4e81cde2aa4f2
-msgid ""
-"**>90% Test Coverage**: All contributed tools must have comprehensive test "
-"coverage"
-msgstr "**>90% 测试覆盖率**：所有提交的工具必须具备全面的测试覆盖率"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:183
-#: bda89ca703054b9cb7502ede993aa0cd
-msgid ""
-"**Unit Tests**: Test all public methods with various inputs and edge cases"
-msgstr "**单元测试**：使用各种输入和边界情况测试所有公共方法"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:184
-#: 4520ffb597794b47a09c4e5054c9d031
-msgid "**Integration Tests**: Verify tool works correctly within ToolUniverse"
-msgstr "**集成测试**：验证工具在 ToolUniverse 中的正确运行"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:185
-#: a36cc32ea45f446e8c37007d4c747fd6
-msgid "**Error Testing**: Test all error conditions and input validation"
-msgstr "**错误测试**：测试所有错误情况和输入验证"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:186
-#: dc67564e92fa4366a450fca8968e4299
-msgid "**Mock External APIs**: Use mocks for external service calls in tests"
-msgstr "**模拟外部 API**：在测试中使用模拟来替代外部服务调用"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:188
-#: f095a5efe720494aa49009350b575337
-msgid ""
-"**Required Test Components:** - Test class with pytest fixtures - Mock "
-"external API calls appropriately - Test both success and error scenarios - "
-"Include test data fixtures - Validate input/output formats"
-msgstr ""
-"**必需的测试组件：**  \n"
-"- 使用 pytest 夹具的测试类  \n"
-"- 适当模拟外部 API 调用  \n"
-"- 测试成功和错误两种场景  \n"
-"- 包含测试数据夹具  \n"
-"- 验证输入/输出格式"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:195
-#: c435e6cc00b342e99d0aad39873d6dbd
-msgid ""
-"For detailed testing examples and templates, see "
-":doc:`local_tool_registration` which includes: - Complete test file "
-"structures - Fixture creation patterns - Mocking strategies for external "
-"APIs - Coverage reporting setup"
-msgstr ""
-"有关详细的测试示例和模板，请参见 :doc:`local_tool_registration`，其中包括：  \n"
-"- 完整的测试文件结构  \n"
-"- 夹具创建模式  \n"
-"- 外部 API 的模拟策略  \n"
-"- 覆盖率报告设置"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:202
-#: 2bae8158ad9c47a887bb499666e5bf68
-msgid "Step 5: Code Quality and Standards for Contribution"
-msgstr "步骤5：代码质量与贡献标准"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:204
-#: 7b6330d3cedb4ea4b2a83d44ef0163ae
-msgid ""
-"All contributed tools must meet ToolUniverse's code quality standards. The "
-"detailed requirements and examples are covered in "
-":doc:`local_tool_registration`."
-msgstr ""
-"所有贡献的工具必须符合 ToolUniverse 的代码质量标准。详细的要求和示例请参见 :doc:`local_tool_registration`。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:206
-#: adf80b5a712249759e4dfa1e9cc5da67
-msgid "**Quality Checklist:**"
-msgstr "**质量检查清单：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:209
-#: bf5b326c012944499900f1b4d7bb1047
-msgid "5.1 Pre-submission Requirements"
-msgstr "5.1 提交前要求"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:225
-#: b41b2eeba76147b7ae197595c93b9120
-msgid ""
-"**Required Standards:** - **Code Formatting**: Black formatting (88 "
-"character line limit) - **Linting**: Pass flake8 checks with no warnings - "
-"**Type Hints**: All functions must have complete type annotations - "
-"**Documentation**: Google-style docstrings with examples - **Testing**: >90%"
-" test coverage"
-msgstr ""
-"**必需标准：**  \n"
-"- **代码格式**：使用 Black 格式化（行宽限制为 88 字符）  \n"
-"- **代码检查**：通过 flake8 检查且无警告  \n"
-"- **类型注解**：所有函数必须具备完整的类型注解  \n"
-"- **文档编写**：采用 Google 风格的文档字符串，包含示例  \n"
-"- **测试覆盖率**：测试覆盖率超过 90%"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:232
-#: e531e50435d44224929926ecf7e87be6
-msgid ""
-"For detailed code examples and documentation templates, see "
-":doc:`local_tool_registration`."
-msgstr "有关详细的代码示例和文档模板，请参见 :doc:`local_tool_registration`。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:235
-#: 86e0825bdd4f42d2901242b5b47ad55b
-msgid "Step 6: Tool Registration and Discovery"
-msgstr "第6步：工具注册与发现"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:237
-#: 0099e691d6354ff9a315303b1b058167
-msgid ""
-"Tool registration is handled automatically by ToolUniverse when tools are "
-"placed in the correct directory structure. The registration details are "
-"covered in the implementation guides:"
-msgstr "工具注册由 ToolUniverse 自动处理，当工具放置在正确的目录结构中时即完成注册。注册详情请参阅实施指南："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:239
-#: 59c4a3293ebc4a738e4e9be3b8819652
-msgid ""
-"**Local Tools**: See :doc:`local_tool_registration` for automatic discovery "
-"patterns"
-msgstr "**本地工具**：参见 :doc:`local_tool_registration` 了解自动发现模式"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:240
-#: c762959c67cd4588864d8f9e626fb736
-msgid ""
-"**Remote Tools**: See :doc:`remote_tool_registration` for MCP and REST API "
-"registration"
-msgstr "**远程工具**：有关 MCP 和 REST API 注册，请参见 :doc:`remote_tool_registration`。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:242
-#: e3851959ff994f2dbd6723b1d3e3478e
-msgid "**Verification Test:**"
-msgstr "**验证测试：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:264
-#: a05c855efa6e42608f6f396ee1757b4b
-msgid "Step 7: Documentation Requirements for Contribution"
-msgstr "第七步：贡献文档要求"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:266
-#: 1f302eafd11d42968c7f086b5dc8f100
-msgid ""
-"Contributors must provide comprehensive documentation for their tools. The "
-"detailed documentation patterns and requirements are covered in "
-":doc:`local_tool_registration`."
-msgstr "贡献者必须为其工具提供全面的文档。详细的文档模式和要求请参见 :doc:`local_tool_registration`。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:268
-#: cc051542f49b49c4a6b8e5df09cf0645
-msgid "**Required Documentation Components:**"
-msgstr "**必需的文档组成部分：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:270
-#: 9d59e1fd904d48d89ada67d56c0f07c5
-msgid ""
-"**Comprehensive Docstrings**: All public methods must have detailed Google-"
-"style docstrings"
-msgstr "**完整的文档字符串**：所有公共方法必须包含详细的 Google 风格文档字符串"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:271
-#: ddac833cc4204f8ab66aa5259e403034
-msgid ""
-"**Usage Examples**: Include practical examples in docstrings showing real-"
-"world usage"
-msgstr "**使用示例**：在文档字符串中包含展示实际应用的示例"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:272
-#: 6775c1f0bb95429d90c46b3e3cdec8f3
-msgid ""
-"**API Documentation**: Create RST documentation files for Sphinx if "
-"contributing to core"
-msgstr "**API 文档**：如果参与核心开发，请创建用于 Sphinx 的 RST 文档文件"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:273
-#: e1f49b327a0c4a7d9886cb8811822b47
-msgid ""
-"**README Updates**: Update relevant documentation to mention your tool's "
-"capabilities"
-msgstr "**README 更新**：更新相关文档以说明您的工具功能"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:275
-#: bd996f07d24541d6b83b475233c7aeaf
-msgid ""
-"**Documentation Standards:** - Clear, scientist-friendly parameter "
-"descriptions - Real-world usage examples in docstrings - Error handling "
-"documentation - Configuration options clearly explained"
-msgstr ""
-"**文档标准：**  \n"
-"- 清晰、符合科学家习惯的参数描述  \n"
-"- 文档字符串中的实际使用示例  \n"
-"- 错误处理说明  \n"
-"- 配置选项的明确解释"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:281
-#: 45385cdfcfa648bda003e9fccb6e26b3
-msgid ""
-"For detailed documentation templates and examples, see "
-":doc:`local_tool_registration` which includes complete documentation "
-"patterns and Sphinx integration examples."
-msgstr ""
-"有关详细的文档模板和示例，请参见 :doc:`local_tool_registration`，其中包含完整的文档模式和 Sphinx 集成示例。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:284
-#: f94d833649694058be797cdea80e144b
-msgid "Step 8: Integration Testing for Contribution"
-msgstr "第8步：贡献的集成测试"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:286
-#: e29387848f644005b45afb73b90c3a1c
-msgid ""
-"Before submitting your tool, verify it integrates correctly with "
-"ToolUniverse through integration testing."
-msgstr "在提交您的工具之前，请通过集成测试确认其与 ToolUniverse 的正确集成。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:288
-#: 0d152bf4f25f451f93ee9e74e65f0e7a
-msgid "**Required Integration Tests:**"
-msgstr "**必需的集成测试：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:314
-#: 626ed449e30742e79eff6f38617061dc
-msgid ""
-"**Integration Test Requirements:** - **Tool Discovery**: Verify tool is "
-"automatically discovered by ToolUniverse - **API Compliance**: Ensure tool "
-"methods work through ToolUniverse interface - **Response Format**: Validate "
-"standardized response structure - **Error Handling**: Test error conditions "
-"are properly handled"
-msgstr ""
-"**集成测试要求：**  \n"
-"- **工具发现**：验证工具能被 ToolUniverse 自动发现  \n"
-"- **API 合规性**：确保工具方法通过 ToolUniverse 接口正常工作  \n"
-"- **响应格式**：验证响应结构符合标准化要求  \n"
-"- **错误处理**：测试错误情况是否得到妥善处理"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:320
-#: 3f9c5d0250c74640826442eec3a3bb3c
-msgid ""
-"The detailed integration testing patterns are covered in "
-":doc:`local_tool_registration`."
-msgstr "详细的集成测试模式已在 :doc:`local_tool_registration` 中介绍。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:323
-#: 34692010f81b4cbeb6120bbbed2a0f04
-msgid "Step 9: Pull Request Submission"
-msgstr "第九步：提交拉取请求"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:326
-#: bece9385871d4781a32ecaf80683cb01
-msgid "9.1 Pre-submission Checklist"
-msgstr "9.1 提交前检查清单"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:328
-#: 1368ed3371014c6c85c674b2406e8728
-msgid "Before submitting your pull request, ensure:"
-msgstr "在提交您的拉取请求之前，请确保："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:330
-#: 40c160454c1a4b3a86970e378c3f24f1
-msgid ""
-"**Code Quality:** - [ ] All tests pass: ``pytest`` - [ ] Code is formatted: "
-"``black src/`` - [ ] No linting errors: ``flake8 src/`` - [ ] Type checking "
-"passes: ``mypy src/`` - [ ] Test coverage >90%: ``pytest "
-"--cov=tooluniverse``"
-msgstr ""
-"**代码质量：**  \n"
-"- [ ] 所有测试通过：``pytest``  \n"
-"- [ ] 代码格式化完成：``black src/``  \n"
-"- [ ] 无代码风格错误：``flake8 src/``  \n"
-"- [ ] 类型检查通过：``mypy src/``  \n"
-"- [ ] 测试覆盖率 >90%：``pytest --cov=tooluniverse``"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:337
-#: 5c0028d57ec64f3ebdb491638fbbdb5f
-msgid ""
-"**Documentation:** - [ ] Docstrings follow Google style - [ ] API "
-"documentation is complete - [ ] Usage examples are provided - [ ] README "
-"updated if needed"
-msgstr ""
-"**文档：**  \n"
-"- [ ] Docstrings 遵循 Google 风格  \n"
-"- [ ] API 文档完整  \n"
-"- [ ] 提供使用示例  \n"
-"- [ ] 如有必要，更新 README"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:343
-#: 628438ecd6244cab94e8023e9a2eee16
-msgid ""
-"**Testing:** - [ ] Unit tests cover all methods - [ ] Integration tests pass"
-" - [ ] Error conditions are tested - [ ] Edge cases are handled"
-msgstr ""
-"**测试：**  \n"
-"- [ ] 单元测试覆盖所有方法  \n"
-"- [ ] 集成测试通过  \n"
-"- [ ] 错误情况已测试  \n"
-"- [ ] 边界情况已处理"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:349
-#: 044bf389d91743ef841f5bd12d080d8d
-msgid ""
-"**Tool Integration:** - [ ] Tool loads correctly in ToolUniverse - [ ] Tool "
-"methods work through ToolUniverse interface - [ ] Configuration is properly "
-"handled"
-msgstr ""
-"**工具集成：**  \n"
-"- [ ] 工具在 ToolUniverse 中正确加载  \n"
-"- [ ] 工具方法通过 ToolUniverse 界面正常运行  \n"
-"- [ ] 配置得到正确处理"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:355
-#: b57d5b0e5d3445fdacdfd877d4d50c58
-msgid "9.2 Create Feature Branch"
-msgstr "9.2 创建功能分支"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:371
-#: 1d22e0a0e5274a848bfd60fb8931abe6
-msgid "9.3 Commit Changes"
-msgstr "9.3 提交更改"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:373
-#: 78fe859e9d6a43c08dfdd91e5f655967
-msgid "Use conventional commit messages:"
-msgstr "使用规范的提交信息："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:387
-#: 43874261c40741588c1caaab3a62b082
-msgid ""
-"**Commit Message Format:** - ``feat``: New tool or feature - ``fix``: Bug "
-"fixes - ``docs``: Documentation updates - ``test``: Test additions - "
-"``refactor``: Code refactoring"
-msgstr ""
-"**提交信息格式：**  \n"
-"- ``feat``：新工具或新功能  \n"
-"- ``fix``：错误修复  \n"
-"- ``docs``：文档更新  \n"
-"- ``test``：测试新增  \n"
-"- ``refactor``：代码重构"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:395
-#: f18c6c6dfa8049bcab575c53ac8efd0c
-msgid "9.4 Push and Create PR"
-msgstr "9.4 推送并创建合并请求（PR）"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:402
-#: 81093754821b4ae99121af4b12359aea
-msgid "**Pull Request Template:**"
-msgstr "**拉取请求模板：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:461
-#: 5e818e700e5246dfa3dbf1bbba67d3d3
-msgid "Step 10: Post-Submission"
-msgstr "第10步：提交后处理"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:464
-#: b7b73f65843942278cc9aae1aab38ffc
-msgid "10.1 Respond to Review Feedback"
-msgstr "10.1 回复审查反馈"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:466
-#: 3c1b1d7cee704f819fe83683a3f5b72c
-msgid "**Common Review Feedback:**"
-msgstr "**常见审查反馈：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:468
-#: a75aa7b72a234b5087d145c2efaf36f7
-msgid ""
-"**Code Style Issues** - Fix formatting, linting, or type hint issues - "
-"Follow naming conventions - Improve code organization"
-msgstr "**代码风格问题** - 修复格式、代码规范或类型提示问题 - 遵循命名规范 - 优化代码结构"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:473
-#: d7af16fcd2e24af5956ee767b4ffd723
-msgid ""
-"**Testing Improvements** - Add missing test cases - Improve test coverage - "
-"Mock external dependencies properly"
-msgstr ""
-"**测试改进**  \n"
-"- 补充缺失的测试用例  \n"
-"- 提高测试覆盖率  \n"
-"- 正确模拟外部依赖"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:478
-#: db2f12f5c10a4093b7788012b12ec5e3
-msgid ""
-"**Documentation Clarifications** - Clarify unclear docstrings - Add missing "
-"examples - Fix documentation formatting"
-msgstr "**文档说明澄清** - 澄清不明确的文档字符串 - 添加缺失的示例 - 修正文档格式"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:483
-#: 7b214e0ed5f24a5cad0211608fce5404
-msgid ""
-"**API Design Suggestions** - Simplify complex interfaces - Make parameters "
-"more intuitive - Improve error messages"
-msgstr ""
-"**API 设计建议**  \n"
-"- 简化复杂接口  \n"
-"- 使参数更直观  \n"
-"- 改进错误信息"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:488
-#: c90b1db14f7049c8a92768e67b0c8a03
-msgid "**How to Address Feedback:**"
-msgstr "**如何处理反馈：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:513
-#: b4fbe89546944e86addca056215e85ed
-msgid "10.2 Tool Maintenance"
-msgstr "10.2 工具维护"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:515
-#: 349ced7935f94da4bfde8b1cf597cb5d
-msgid "After your tool is merged:"
-msgstr "工具合并后："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:517
-#: 09404a5fa53d47c2bb9f26895a2879a1
-msgid ""
-"**Ongoing Responsibilities:** - Monitor for issues reported by users - "
-"Update tool when external API changes - Improve performance based on usage "
-"patterns - Add new features as requested by community"
-msgstr ""
-"**持续职责：**  \n"
-"- 监控用户反馈的问题  \n"
-"- 在外部API变更时更新工具  \n"
-"- 根据使用模式提升性能  \n"
-"- 根据社区需求添加新功能"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:523
-#: 69963d8fbdec4074982d45545ab55da2
-msgid ""
-"**Version Updates:** - Follow semantic versioning for tool updates - "
-"Document breaking changes clearly - Provide migration guides when needed"
-msgstr ""
-"**版本更新：**  \n"
-"- 遵循语义化版本控制进行工具更新  \n"
-"- 明确记录重大变更  \n"
-"- 需要时提供迁移指南"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:529
-#: bc77598e56844a09b876a96dcaadfea1
-msgid "Part III: Advanced Topics"
-msgstr "第三部分：高级主题"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:532
-#: 567b04d9637f4c5abddcde43de096a90
-msgid "Tool Composition and Workflows"
-msgstr "工具组成与工作流程"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:534
-#: 7b618d5485c7498286b527722b373326
-msgid "Design your tool to work well with others:"
-msgstr "设计您的工具以实现良好的兼容性："
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:554
-#: 080201cbbb36469bbb93a984f39501b6
-msgid "Performance Optimization"
-msgstr "性能优化"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:556
-#: a1cee91b8a7946e8903fd8300bd96281
-msgid "**Caching Strategies:**"
-msgstr "**缓存策略：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:578
-#: 5a1ca7cdc5e74f78a6ede14058a9e690
-msgid "**Batch Processing:**"
-msgstr "**批处理：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:596
-#: b871c9b93d2f47b5ab4d197abafad0a1
-msgid "Security Considerations"
-msgstr "安全性注意事项"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:598
-#: c1ba7030e6634c75beb7d4c742a4a06f
-msgid "**API Key Handling:**"
-msgstr "**API 密钥管理：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:634
-#: ea10170784b0450682952ce731a6446d
-msgid "**Input Sanitization:**"
-msgstr "**输入清理：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:653
-#: 707fac1fdfa34b47be9c2abee198b386
-msgid "Error Recovery and Resilience"
-msgstr "错误恢复与弹性"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:655
-#: 4d9e6328a14a4f5db901455e86ccdd1b
-msgid "**Retry Logic:**"
-msgstr "**重试逻辑：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:680
-#: 52be89f189c545a98fc2ec1a12f7f0cb
-msgid "**Graceful Degradation:**"
-msgstr "**优雅降级：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:706
-#: f88f1fda6866492a9a7bf097f5f13513
-msgid "Community and Support"
-msgstr "社区与支持"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:709
-#: 940f6e9a7a5d411888066eb3b7072231
-msgid "Getting Help"
-msgstr "获取帮助"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:711
-#: 276c34fb780743b280a26f2526159fbe
-msgid ""
-"**Community Resources:** - GitHub Discussions: General questions and feature"
-" discussions - GitHub Issues: Bug reports and specific problems - Email: "
-"Direct contact with maintainers - Documentation: Comprehensive guides and "
-"examples"
-msgstr ""
-"**社区资源：**  \n"
-"- GitHub 讨论区：常见问题及功能讨论  \n"
-"- GitHub 问题追踪：错误报告及具体问题  \n"
-"- 电子邮件：与维护者直接联系  \n"
-"- 文档：全面的指南和示例"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:717
-#: 4dc40884bb1b4d9ea4770270b45ed8a4
-msgid ""
-"**Best Practices for Getting Help:** 1. Search existing issues first 2. "
-"Provide minimal reproducible examples 3. Include system information (Python "
-"version, OS, ToolUniverse version) 4. Share relevant error messages and "
-"tracebacks"
-msgstr ""
-"**获取帮助的最佳实践：**  \n"
-"1. 首先搜索已有的问题  \n"
-"2. 提供最小可复现示例  \n"
-"3. 包含系统信息（Python 版本、操作系统、ToolUniverse 版本）  \n"
-"4. 分享相关的错误信息和追踪日志"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:724
-#: 48524ddd4714442299b458e3e6114e2c
-msgid "Contributing Beyond Tools"
-msgstr "超越工具的贡献"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:726
-#: a515091efc434d4e954b52a621fd1101
-msgid ""
-"**Other Ways to Contribute:** - Improve documentation - Add usage examples -"
-" Fix bugs in existing tools - Optimize performance - Add new features to the"
-" core framework - Help with testing and quality assurance"
-msgstr ""
-"**其他贡献方式：**  \n"
-"- 改进文档  \n"
-"- 添加使用示例  \n"
-"- 修复现有工具中的漏洞  \n"
-"- 优化性能  \n"
-"- 为核心框架添加新功能  \n"
-"- 协助测试与质量保证"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:734
-#: 2aefd5f5e3c84840aae4bec03aff378c
-msgid ""
-"**Mentoring New Contributors:** - Help newcomers understand the codebase - "
-"Review pull requests from community members - Create tutorials and learning "
-"materials - Participate in community discussions"
-msgstr ""
-"**指导新贡献者：**  \n"
-"- 帮助新成员理解代码库  \n"
-"- 审查社区成员的拉取请求  \n"
-"- 制作教程和学习资料  \n"
-"- 参与社区讨论"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:741
-#: 0c167ed988bc44d4a62f508ce13fef5b
-msgid "Recognition and Rewards"
-msgstr "认可与奖励"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:743
-#: e5e6ccffd7cc4beb8f5305ae467eabf0
-msgid ""
-"**Contributor Recognition:** - Contributors are listed in release notes - "
-"Major contributors get acknowledgment in documentation - Annual contributor "
-"highlights - Conference presentation opportunities for significant "
-"contributions"
-msgstr ""
-"**贡献者认可：**  \n"
-"- 贡献者将在发行说明中列出  \n"
-"- 主要贡献者将在文档中获得表彰  \n"
-"- 每年突出展示贡献者  \n"
-"- 对重大贡献者提供会议演讲机会"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:749
-#: e68e36dcd02a4bdd8c332b989c205f26
-msgid ""
-"**Long-term Benefits:** - Build your scientific software portfolio - Gain "
-"experience with production-quality APIs - Learn best practices for "
-"scientific data integration - Network with other scientific developers"
-msgstr ""
-"**长期收益：**  \n"
-"- 构建您的科学软件作品集  \n"
-"- 积累生产级API的使用经验  \n"
-"- 学习科学数据集成的最佳实践  \n"
-"- 与其他科学开发者建立网络联系"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:756
-#: 7bed67d45d2548a4bb5fc337d53abf36
-msgid "Conclusion"
-msgstr "结论"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:758
-#: d3fa13e5d1754ff39088ef24ec248852
-msgid ""
-"Contributing to ToolUniverse is an opportunity to democratize access to "
-"scientific data and help build the next generation of AI scientist systems. "
-"By following this comprehensive Tutorial, you'll create high-quality tools "
-"that benefit the entire scientific community."
-msgstr ""
-"参与 ToolUniverse 项目是实现科学数据普及化的机会，有助于构建下一代 AI "
-"科学家系统。通过遵循本全面教程，您将创建惠及整个科学界的高质量工具。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:760
-#: 70a09c127e7f4389813e2f2834d30674
-msgid ""
-"**Key Takeaways:** 1. **Quality First**: Focus on robust, well-tested, and "
-"well-documented tools 2. **User Experience**: Design intuitive APIs that "
-"scientists can easily use 3. **Community**: Engage with the community for "
-"feedback and support 4. **Continuous Improvement**: Maintain and improve "
-"your tools based on user feedback"
-msgstr ""
-"**关键要点：**  \n"
-"1. **质量优先**：专注于稳健、经过充分测试且文档完善的工具  \n"
-"2. **用户体验**：设计科学家易于使用的直观 API  \n"
-"3. **社区**：积极与社区互动，获取反馈与支持  \n"
-"4. **持续改进**：根据用户反馈维护并提升工具性能"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:766
-#: 4ce70427966a4ae8bd4941aed3c5036c
-msgid ""
-"**Next Steps:** 1. Choose a scientific data source you're passionate about "
-"2. Follow this Tutorial step-by-step 3. Start with a simple tool and "
-"gradually add features 4. Engage with the community for feedback and support"
-msgstr ""
-"**下一步：**  \n"
-"1. 选择一个您感兴趣的科学数据源  \n"
-"2. 按照本教程逐步操作  \n"
-"3. 从简单的工具开始，逐步添加功能  \n"
-"4. 积极参与社区，获取反馈与支持"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:772
-#: fd0e0deacae54d7fb870f4e314d3c472
-msgid "Happy coding, and thank you for contributing to ToolUniverse! 🧬🔬🤖"
-msgstr "祝您编程愉快，感谢您为 ToolUniverse 做出的贡献！🧬🔬🤖"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:774
-#: 878dfb090b9d4c40bc7f63b3060d2c93
-msgid "---"
-msgstr "请提供需要翻译的具体英文文本，我将为您提供符合要求的中文翻译。"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:776
-#: ad2607a52fec443eac98a4ee6f133632
-msgid "**Additional Resources:**"
-msgstr "**其他资源：**"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:778
-#: a367af14d1064300ac1472aa391f00d2
-msgid "ToolUniverse GitHub: https://github.com/mims-harvard/ToolUniverse"
-msgstr ""
-"ToolUniverse GitHub: https://github.com/mims-harvard/ToolUniverse\n"
-"\n"
-"工具宇宙 GitHub: https://github.com/mims-harvard/ToolUniverse"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:779
-#: 034ca3fc363843b0a0eac390cbff766c
-msgid "API Documentation: https://tooluniverse.readthedocs.io"
-msgstr "API 文档：https://tooluniverse.readthedocs.io"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:780
-#: 173bcedebee249b59eb43388f4d4595f
-msgid ""
-"Community Discussions: https://github.com/mims-"
-"harvard/ToolUniverse/discussions"
-msgstr "社区讨论：https://github.com/mims-harvard/ToolUniverse/discussions"
-
-#: ../../expand_tooluniverse/comprehensive_tool_guide.rst:781
-#: 8522dc0202b9463f848298e97041b399
-msgid "Issue Tracker: https://github.com/mims-harvard/ToolUniverse/issues"
-msgstr "问题追踪器: https://github.com/mims-harvard/ToolUniverse/issues"
+
+#~ msgid "Contributing Tools to ToolUniverse"
+#~ msgstr "为 ToolUniverse 贡献工具"
+
+#~ msgid ""
+#~ "This comprehensive Tutorial covers everything"
+#~ " you need to know about contributing"
+#~ " tools to ToolUniverse, from understanding"
+#~ " existing tools to creating, testing, "
+#~ "and submitting your own tools."
+#~ msgstr "本综合教程涵盖了您需要了解的关于为 ToolUniverse 贡献工具的所有内容，从了解现有工具到创建、测试和提交您自己的工具。"
+
+#~ msgid "Table of Contents"
+#~ msgstr "目录"
+
+#~ msgid "Part I: Understanding ToolUniverse Tools"
+#~ msgstr "第一部分：了解 ToolUniverse 工具"
+
+#~ msgid "What Are ToolUniverse Tools?"
+#~ msgstr "什么是 ToolUniverse 工具？"
+
+#~ msgid ""
+#~ "ToolUniverse tools are standardized interfaces"
+#~ " to scientific databases, APIs, machine "
+#~ "learning models, and data analysis "
+#~ "packages. Each tool follows a consistent"
+#~ " pattern:"
+#~ msgstr "ToolUniverse 工具是科学数据库、API、机器学习模型和数据分析包的标准化接口。每个工具都遵循一致的模式："
+
+#~ msgid ""
+#~ "**Standardized Input/Output**: All tools "
+#~ "accept structured parameters and return "
+#~ "consistent JSON responses"
+#~ msgstr "**标准化输入/输出**：所有工具都接受结构化参数并返回一致的 JSON 响应"
+
+#~ msgid "**Error Handling**: Unified error reporting across all tools"
+#~ msgstr "**错误处理**：所有工具的统一错误报告"
+
+#~ msgid "**Documentation**: Self-describing with clear parameter specifications"
+#~ msgstr "**文档**：具有清晰参数规范的自描述"
+
+#~ msgid "**Testing**: Comprehensive test coverage for reliability"
+#~ msgstr "**测试**：全面的测试覆盖以确保可靠性"
+
+#~ msgid "Part II: Step-by-Step Tool Development Tutorial"
+#~ msgstr "第二部分：逐步工具开发教程"
+
+#~ msgid "Step 1: Development Environment Setup"
+#~ msgstr "步骤 1：开发环境设置"
+
+#~ msgid "1.1 Fork and Clone Repository"
+#~ msgstr "1.1 分叉和克隆仓库"
+
+#~ msgid "1.2 Create Virtual Environment"
+#~ msgstr "1.2 创建虚拟环境"
+
+#~ msgid "1.3 Install Development Dependencies"
+#~ msgstr "1.3 安装开发依赖"
+
+#~ msgid "1.4 Install Pre-commit Hooks"
+#~ msgstr "1.4 安装预提交钩子"
+
+#~ msgid "**Automatic Setup (Recommended):**"
+#~ msgstr "**自动设置（推荐）：**"
+
+#~ msgid "**Manual Setup:**"
+#~ msgstr "**手动设置：**"
+
+#~ msgid ""
+#~ "**Required Development Tools:** - ``pytest``"
+#~ " - Testing framework - ``black`` -"
+#~ " Code formatting - ``flake8`` - Code"
+#~ " linting - ``mypy`` - Type checking"
+#~ " - ``sphinx`` - Documentation - "
+#~ "``pre-commit`` - Git hooks"
+#~ msgstr ""
+#~ "**必需的开发工具：** - ``pytest`` - 测试框架 - "
+#~ "``black`` - 代码格式化 - ``flake8`` - "
+#~ "代码检查 - ``mypy`` - 类型检查 - "
+#~ "``sphinx`` - 文档 - ``pre-commit`` -"
+#~ " Git 钩子"
+
+#~ msgid ""
+#~ "**Pre-commit Benefits:** - ✅ **Automatic"
+#~ " code formatting** with Black - ✅ "
+#~ "**Code linting** with flake8 and ruff"
+#~ " - ✅ **Import cleanup** with "
+#~ "autoflake - ✅ **File validation** (YAML,"
+#~ " TOML, AST checks) - ✅ **Runs "
+#~ "on every commit** to ensure code "
+#~ "quality"
+#~ msgstr ""
+#~ "**预提交优势：** - ✅ **使用 Black 自动代码格式化** "
+#~ "- ✅ **使用 flake8 和 ruff 进行代码检查**"
+#~ " - ✅ **使用 autoflake 进行导入清理** - "
+#~ "✅ **文件验证**（YAML、TOML、AST 检查） - ✅ "
+#~ "**在每次提交时运行**以确保代码质量"
+
+#~ msgid "Step 2: Choose Your Tool Type and Design"
+#~ msgstr "步骤 2：选择您的工具类型和设计"
+
+#~ msgid "2.1 Tool Type Selection"
+#~ msgstr "2.1 工具类型选择"
+
+#~ msgid ""
+#~ "Before implementing, decide whether your "
+#~ "tool should be local or remote:"
+#~ msgstr "在实现之前，决定您的工具应该是本地的还是远程的："
+
+#~ msgid ""
+#~ "**Local Tools** (recommended for most "
+#~ "cases): - Python classes running in "
+#~ "the same process - Best for: API"
+#~ " wrappers, data processing, simple "
+#~ "computations - See :doc:`local_tool_registration`"
+#~ " for detailed implementation Tutorial"
+#~ msgstr ""
+#~ "**本地工具**（推荐大多数场景使用）：  \n"
+#~ "- 在同一进程中运行的 Python 类  \n"
+#~ "- 适用于：API 封装、数据处理、简单计算  \n"
+#~ "- 详见 :doc:`local_tool_registration` 获取详细实现教程"
+
+#~ msgid ""
+#~ "**Remote Tools** (for specialized cases): "
+#~ "- External services accessed via MCP "
+#~ "or REST APIs - Best for: "
+#~ "microservices, cloud AI services, existing "
+#~ "systems - See :doc:`remote_tool_registration` "
+#~ "for detailed implementation Tutorial"
+#~ msgstr ""
+#~ "**远程工具**（针对特殊情况）：  \n"
+#~ "- 通过 MCP 或 REST API 访问的外部服务  \n"
+#~ "- 适用于：微服务、云端 AI 服务、现有系统  \n"
+#~ "- 详见 :doc:`remote_tool_registration` 获取详细实现教程"
+
+#~ msgid "2.2 Research Your Data Source"
+#~ msgstr "2.2 研究您的数据源"
+
+#~ msgid ""
+#~ "**API Documentation**: Understand endpoints, "
+#~ "rate limits, authentication"
+#~ msgstr "**API 文档**：了解端点、速率限制、身份验证"
+
+#~ msgid "**Data Format**: Study response structures and data types"
+#~ msgstr "**数据格式**：研究响应结构和数据类型"
+
+#~ msgid "**Error Conditions**: Identify common error scenarios"
+#~ msgstr "**错误情况**：识别常见错误场景"
+
+#~ msgid "**Usage Patterns**: How researchers typically use this data"
+#~ msgstr "**使用模式**：研究人员通常如何使用这些数据"
+
+#~ msgid ""
+#~ "**Design Principles:** - Keep parameters "
+#~ "intuitive for scientists - Use "
+#~ "consistent naming conventions - Provide "
+#~ "sensible defaults - Support common use"
+#~ " cases first"
+#~ msgstr ""
+#~ "**设计原则：**  \n"
+#~ "- 保持参数对科学家直观易懂  \n"
+#~ "- 使用一致的命名规范  \n"
+#~ "- 提供合理的默认值  \n"
+#~ "- 优先支持常见使用场景"
+
+#~ msgid "Step 3: Tool Implementation"
+#~ msgstr "步骤3：工具实施"
+
+#~ msgid ""
+#~ "The implementation details depend on "
+#~ "whether you're creating a local or "
+#~ "remote tool:"
+#~ msgstr "具体实现细节取决于您是创建本地工具还是远程工具："
+
+#~ msgid ""
+#~ "**For Local Tools:** Follow the "
+#~ "comprehensive Tutorial at "
+#~ ":doc:`local_tool_registration` which covers: - "
+#~ "Directory structure and file organization "
+#~ "- Tool class implementation with "
+#~ "BaseTool inheritance - Configuration and "
+#~ "parameter handling - Testing and "
+#~ "validation"
+#~ msgstr ""
+#~ "**对于本地工具：** 请参考完整的教程 :doc:`local_tool_registration`，内容包括：  \n"
+#~ "- 目录结构和文件组织  \n"
+#~ "- 使用 BaseTool 继承实现工具类  \n"
+#~ "- 配置和参数处理  \n"
+#~ "- 测试与验证"
+
+#~ msgid ""
+#~ "**For Remote Tools:** Follow the "
+#~ "detailed Tutorial at :doc:`remote_tool_registration`"
+#~ " which covers: - MCP server setup "
+#~ "and configuration - REST API wrapper "
+#~ "patterns - Authentication and security -"
+#~ " Performance optimization"
+#~ msgstr ""
+#~ "**对于远程工具：** 请参阅详细教程 :doc:`remote_tool_registration`，内容包括：  \n"
+#~ "- MCP 服务器的设置与配置  \n"
+#~ "- REST API 包装模式  \n"
+#~ "- 身份验证与安全性  \n"
+#~ "- 性能优化"
+
+#~ msgid "**Key Requirements for Community Contribution:**"
+#~ msgstr "**社区贡献的关键要求：**"
+
+#~ msgid ""
+#~ "**Inherit from BaseTool**: All contributed "
+#~ "tools must inherit from BaseTool"
+#~ msgstr "**继承自 BaseTool**：所有贡献的工具都必须继承自 BaseTool"
+
+#~ msgid ""
+#~ "**Comprehensive Documentation**: Include detailed"
+#~ " docstrings with examples"
+#~ msgstr "**全面文档**：包含带有示例的详细文档字符串"
+
+#~ msgid "**Error Handling**: Implement robust error handling and validation"
+#~ msgstr "**错误处理**：实施健壮的错误处理和验证"
+
+#~ msgid ""
+#~ "**Consistent API**: Follow ToolUniverse "
+#~ "conventions for parameters and responses"
+#~ msgstr "**一致的 API**：遵循 ToolUniverse 对参数和响应的约定"
+
+#~ msgid ""
+#~ "**Scientific Focus**: Design interfaces that"
+#~ " are intuitive for researchers"
+#~ msgstr "**科学重点**：设计直观且适合研究人员使用的界面"
+
+#~ msgid ""
+#~ "For detailed implementation examples and "
+#~ "templates, see the appropriate Tutorial "
+#~ "above."
+#~ msgstr "如需详细的实现示例和模板，请参阅上方相应的教程。"
+
+#~ msgid "3.3 Contribution-Specific Requirements"
+#~ msgstr "3.3 特定贡献要求"
+
+#~ msgid ""
+#~ "When contributing tools to ToolUniverse, "
+#~ "ensure your implementation includes:"
+#~ msgstr "在向 ToolUniverse 提交工具时，请确保您的实现包含："
+
+#~ msgid ""
+#~ "**Code Organization:** - Place tools in"
+#~ " appropriate domain directories - Include"
+#~ " comprehensive test suites with >90% "
+#~ "coverage - Provide configuration files "
+#~ "following ToolUniverse standards - Add "
+#~ "proper documentation and examples"
+#~ msgstr ""
+#~ "**代码组织：**  \n"
+#~ "- 将工具放置在适当的领域目录中  \n"
+#~ "- 包含覆盖率超过90%的全面测试套件  \n"
+#~ "- 提供符合ToolUniverse标准的配置文件  \n"
+#~ "- 添加适当的文档和示例"
+
+#~ msgid ""
+#~ "**Quality Standards:** - Pass all code"
+#~ " quality checks (Black, flake8, mypy) "
+#~ "- Include detailed docstrings with usage"
+#~ " examples - Implement robust error "
+#~ "handling and input validation - Follow"
+#~ " scientific naming conventions"
+#~ msgstr ""
+#~ "**质量标准：**  \n"
+#~ "- 通过所有代码质量检查（Black、flake8、mypy）  \n"
+#~ "- 包含带有使用示例的详细文档字符串  \n"
+#~ "- 实现健壮的错误处理和输入验证  \n"
+#~ "- 遵循科学命名规范"
+
+#~ msgid ""
+#~ "For detailed file structures and "
+#~ "templates, refer to the tool "
+#~ "registration guides linked above."
+#~ msgstr "有关详细的文件结构和模板，请参阅上方链接的工具注册指南。"
+
+#~ msgid "Step 4: Testing Requirements for Contribution"
+#~ msgstr "步骤 4：贡献测试要求"
+
+#~ msgid ""
+#~ "Contributors must provide comprehensive test"
+#~ " suites. The testing patterns and "
+#~ "examples are detailed in "
+#~ ":doc:`local_tool_registration` under the testing "
+#~ "section."
+#~ msgstr "贡献者必须提供全面的测试套件。测试模式和示例详见 :doc:`local_tool_registration` 的测试部分。"
+
+#~ msgid "**Key Testing Requirements:**"
+#~ msgstr "**关键测试要求：**"
+
+#~ msgid ""
+#~ "**>90% Test Coverage**: All contributed "
+#~ "tools must have comprehensive test "
+#~ "coverage"
+#~ msgstr "**>90% 测试覆盖率**：所有提交的工具必须具备全面的测试覆盖率"
+
+#~ msgid ""
+#~ "**Unit Tests**: Test all public methods"
+#~ " with various inputs and edge cases"
+#~ msgstr "**单元测试**：使用各种输入和边界情况测试所有公共方法"
+
+#~ msgid "**Integration Tests**: Verify tool works correctly within ToolUniverse"
+#~ msgstr "**集成测试**：验证工具在 ToolUniverse 中的正确运行"
+
+#~ msgid "**Error Testing**: Test all error conditions and input validation"
+#~ msgstr "**错误测试**：测试所有错误情况和输入验证"
+
+#~ msgid "**Mock External APIs**: Use mocks for external service calls in tests"
+#~ msgstr "**模拟外部 API**：在测试中使用模拟来替代外部服务调用"
+
+#~ msgid ""
+#~ "**Required Test Components:** - Test "
+#~ "class with pytest fixtures - Mock "
+#~ "external API calls appropriately - Test"
+#~ " both success and error scenarios -"
+#~ " Include test data fixtures - "
+#~ "Validate input/output formats"
+#~ msgstr ""
+#~ "**必需的测试组件：**  \n"
+#~ "- 使用 pytest 夹具的测试类  \n"
+#~ "- 适当模拟外部 API 调用  \n"
+#~ "- 测试成功和错误两种场景  \n"
+#~ "- 包含测试数据夹具  \n"
+#~ "- 验证输入/输出格式"
+
+#~ msgid ""
+#~ "For detailed testing examples and "
+#~ "templates, see :doc:`local_tool_registration` which"
+#~ " includes: - Complete test file "
+#~ "structures - Fixture creation patterns -"
+#~ " Mocking strategies for external APIs "
+#~ "- Coverage reporting setup"
+#~ msgstr ""
+#~ "有关详细的测试示例和模板，请参见 :doc:`local_tool_registration`，其中包括：  \n"
+#~ "- 完整的测试文件结构  \n"
+#~ "- 夹具创建模式  \n"
+#~ "- 外部 API 的模拟策略  \n"
+#~ "- 覆盖率报告设置"
+
+#~ msgid "Step 5: Code Quality and Standards for Contribution"
+#~ msgstr "步骤5：代码质量与贡献标准"
+
+#~ msgid ""
+#~ "All contributed tools must meet "
+#~ "ToolUniverse's code quality standards. The "
+#~ "detailed requirements and examples are "
+#~ "covered in :doc:`local_tool_registration`."
+#~ msgstr ""
+#~ "所有贡献的工具必须符合 ToolUniverse 的代码质量标准。详细的要求和示例请参见 "
+#~ ":doc:`local_tool_registration`。"
+
+#~ msgid "**Quality Checklist:**"
+#~ msgstr "**质量检查清单：**"
+
+#~ msgid "5.1 Pre-submission Requirements"
+#~ msgstr "5.1 提交前要求"
+
+#~ msgid ""
+#~ "**Required Standards:** - **Code Formatting**:"
+#~ " Black formatting (88 character line "
+#~ "limit) - **Linting**: Pass flake8 checks"
+#~ " with no warnings - **Type Hints**:"
+#~ " All functions must have complete "
+#~ "type annotations - **Documentation**: "
+#~ "Google-style docstrings with examples - "
+#~ "**Testing**: >90% test coverage"
+#~ msgstr ""
+#~ "**必需标准：**  \n"
+#~ "- **代码格式**：使用 Black 格式化（行宽限制为 88 字符）  \n"
+#~ "- **代码检查**：通过 flake8 检查且无警告  \n"
+#~ "- **类型注解**：所有函数必须具备完整的类型注解  \n"
+#~ "- **文档编写**：采用 Google 风格的文档字符串，包含示例  \n"
+#~ "- **测试覆盖率**：测试覆盖率超过 90%"
+
+#~ msgid ""
+#~ "For detailed code examples and "
+#~ "documentation templates, see "
+#~ ":doc:`local_tool_registration`."
+#~ msgstr "有关详细的代码示例和文档模板，请参见 :doc:`local_tool_registration`。"
+
+#~ msgid "Step 6: Tool Registration and Discovery"
+#~ msgstr "第6步：工具注册与发现"
+
+#~ msgid ""
+#~ "Tool registration is handled automatically "
+#~ "by ToolUniverse when tools are placed"
+#~ " in the correct directory structure. "
+#~ "The registration details are covered in"
+#~ " the implementation guides:"
+#~ msgstr "工具注册由 ToolUniverse 自动处理，当工具放置在正确的目录结构中时即完成注册。注册详情请参阅实施指南："
+
+#~ msgid ""
+#~ "**Local Tools**: See :doc:`local_tool_registration`"
+#~ " for automatic discovery patterns"
+#~ msgstr "**本地工具**：参见 :doc:`local_tool_registration` 了解自动发现模式"
+
+#~ msgid ""
+#~ "**Remote Tools**: See "
+#~ ":doc:`remote_tool_registration` for MCP and "
+#~ "REST API registration"
+#~ msgstr "**远程工具**：有关 MCP 和 REST API 注册，请参见 :doc:`remote_tool_registration`。"
+
+#~ msgid "**Verification Test:**"
+#~ msgstr "**验证测试：**"
+
+#~ msgid "Step 7: Documentation Requirements for Contribution"
+#~ msgstr "第七步：贡献文档要求"
+
+#~ msgid ""
+#~ "Contributors must provide comprehensive "
+#~ "documentation for their tools. The "
+#~ "detailed documentation patterns and "
+#~ "requirements are covered in "
+#~ ":doc:`local_tool_registration`."
+#~ msgstr "贡献者必须为其工具提供全面的文档。详细的文档模式和要求请参见 :doc:`local_tool_registration`。"
+
+#~ msgid "**Required Documentation Components:**"
+#~ msgstr "**必需的文档组成部分：**"
+
+#~ msgid ""
+#~ "**Comprehensive Docstrings**: All public "
+#~ "methods must have detailed Google-style"
+#~ " docstrings"
+#~ msgstr "**完整的文档字符串**：所有公共方法必须包含详细的 Google 风格文档字符串"
+
+#~ msgid ""
+#~ "**Usage Examples**: Include practical examples"
+#~ " in docstrings showing real-world "
+#~ "usage"
+#~ msgstr "**使用示例**：在文档字符串中包含展示实际应用的示例"
+
+#~ msgid ""
+#~ "**API Documentation**: Create RST "
+#~ "documentation files for Sphinx if "
+#~ "contributing to core"
+#~ msgstr "**API 文档**：如果参与核心开发，请创建用于 Sphinx 的 RST 文档文件"
+
+#~ msgid ""
+#~ "**README Updates**: Update relevant "
+#~ "documentation to mention your tool's "
+#~ "capabilities"
+#~ msgstr "**README 更新**：更新相关文档以说明您的工具功能"
+
+#~ msgid ""
+#~ "**Documentation Standards:** - Clear, "
+#~ "scientist-friendly parameter descriptions - "
+#~ "Real-world usage examples in docstrings"
+#~ " - Error handling documentation - "
+#~ "Configuration options clearly explained"
+#~ msgstr ""
+#~ "**文档标准：**  \n"
+#~ "- 清晰、符合科学家习惯的参数描述  \n"
+#~ "- 文档字符串中的实际使用示例  \n"
+#~ "- 错误处理说明  \n"
+#~ "- 配置选项的明确解释"
+
+#~ msgid ""
+#~ "For detailed documentation templates and "
+#~ "examples, see :doc:`local_tool_registration` which"
+#~ " includes complete documentation patterns "
+#~ "and Sphinx integration examples."
+#~ msgstr ""
+#~ "有关详细的文档模板和示例，请参见 :doc:`local_tool_registration`，其中包含完整的文档模式和 "
+#~ "Sphinx 集成示例。"
+
+#~ msgid "Step 8: Integration Testing for Contribution"
+#~ msgstr "第8步：贡献的集成测试"
+
+#~ msgid ""
+#~ "Before submitting your tool, verify it"
+#~ " integrates correctly with ToolUniverse "
+#~ "through integration testing."
+#~ msgstr "在提交您的工具之前，请通过集成测试确认其与 ToolUniverse 的正确集成。"
+
+#~ msgid "**Required Integration Tests:**"
+#~ msgstr "**必需的集成测试：**"
+
+#~ msgid ""
+#~ "**Integration Test Requirements:** - **Tool"
+#~ " Discovery**: Verify tool is automatically"
+#~ " discovered by ToolUniverse - **API "
+#~ "Compliance**: Ensure tool methods work "
+#~ "through ToolUniverse interface - **Response"
+#~ " Format**: Validate standardized response "
+#~ "structure - **Error Handling**: Test "
+#~ "error conditions are properly handled"
+#~ msgstr ""
+#~ "**集成测试要求：**  \n"
+#~ "- **工具发现**：验证工具能被 ToolUniverse 自动发现  \n"
+#~ "- **API 合规性**：确保工具方法通过 ToolUniverse 接口正常工作  \n"
+#~ "- **响应格式**：验证响应结构符合标准化要求  \n"
+#~ "- **错误处理**：测试错误情况是否得到妥善处理"
+
+#~ msgid ""
+#~ "The detailed integration testing patterns "
+#~ "are covered in :doc:`local_tool_registration`."
+#~ msgstr "详细的集成测试模式已在 :doc:`local_tool_registration` 中介绍。"
+
+#~ msgid "Step 9: Pull Request Submission"
+#~ msgstr "第九步：提交拉取请求"
+
+#~ msgid "9.1 Pre-submission Checklist"
+#~ msgstr "9.1 提交前检查清单"
+
+#~ msgid "Before submitting your pull request, ensure:"
+#~ msgstr "在提交您的拉取请求之前，请确保："
+
+#~ msgid ""
+#~ "**Code Quality:** - [ ] All tests"
+#~ " pass: ``pytest`` - [ ] Code is"
+#~ " formatted: ``black src/`` - [ ] "
+#~ "No linting errors: ``flake8 src/`` - "
+#~ "[ ] Type checking passes: ``mypy "
+#~ "src/`` - [ ] Test coverage >90%:"
+#~ " ``pytest --cov=tooluniverse``"
+#~ msgstr ""
+#~ "**代码质量：**  \n"
+#~ "- [ ] 所有测试通过：``pytest``  \n"
+#~ "- [ ] 代码格式化完成：``black src/``  \n"
+#~ "- [ ] 无代码风格错误：``flake8 src/``  \n"
+#~ "- [ ] 类型检查通过：``mypy src/``  \n"
+#~ "- [ ] 测试覆盖率 >90%：``pytest --cov=tooluniverse``"
+
+#~ msgid ""
+#~ "**Documentation:** - [ ] Docstrings "
+#~ "follow Google style - [ ] API "
+#~ "documentation is complete - [ ] "
+#~ "Usage examples are provided - [ ]"
+#~ " README updated if needed"
+#~ msgstr ""
+#~ "**文档：**  \n"
+#~ "- [ ] Docstrings 遵循 Google 风格  \n"
+#~ "- [ ] API 文档完整  \n"
+#~ "- [ ] 提供使用示例  \n"
+#~ "- [ ] 如有必要，更新 README"
+
+#~ msgid ""
+#~ "**Testing:** - [ ] Unit tests "
+#~ "cover all methods - [ ] "
+#~ "Integration tests pass - [ ] Error"
+#~ " conditions are tested - [ ] "
+#~ "Edge cases are handled"
+#~ msgstr ""
+#~ "**测试：**  \n"
+#~ "- [ ] 单元测试覆盖所有方法  \n"
+#~ "- [ ] 集成测试通过  \n"
+#~ "- [ ] 错误情况已测试  \n"
+#~ "- [ ] 边界情况已处理"
+
+#~ msgid ""
+#~ "**Tool Integration:** - [ ] Tool "
+#~ "loads correctly in ToolUniverse - [ "
+#~ "] Tool methods work through ToolUniverse"
+#~ " interface - [ ] Configuration is "
+#~ "properly handled"
+#~ msgstr ""
+#~ "**工具集成：**  \n"
+#~ "- [ ] 工具在 ToolUniverse 中正确加载  \n"
+#~ "- [ ] 工具方法通过 ToolUniverse 界面正常运行  \n"
+#~ "- [ ] 配置得到正确处理"
+
+#~ msgid "9.2 Create Feature Branch"
+#~ msgstr "9.2 创建功能分支"
+
+#~ msgid "9.3 Commit Changes"
+#~ msgstr "9.3 提交更改"
+
+#~ msgid "Use conventional commit messages:"
+#~ msgstr "使用规范的提交信息："
+
+#~ msgid ""
+#~ "**Commit Message Format:** - ``feat``: "
+#~ "New tool or feature - ``fix``: Bug"
+#~ " fixes - ``docs``: Documentation updates"
+#~ " - ``test``: Test additions - "
+#~ "``refactor``: Code refactoring"
+#~ msgstr ""
+#~ "**提交信息格式：**  \n"
+#~ "- ``feat``：新工具或新功能  \n"
+#~ "- ``fix``：错误修复  \n"
+#~ "- ``docs``：文档更新  \n"
+#~ "- ``test``：测试新增  \n"
+#~ "- ``refactor``：代码重构"
+
+#~ msgid "9.4 Push and Create PR"
+#~ msgstr "9.4 推送并创建合并请求（PR）"
+
+#~ msgid "**Pull Request Template:**"
+#~ msgstr "**拉取请求模板：**"
+
+#~ msgid "Step 10: Post-Submission"
+#~ msgstr "第10步：提交后处理"
+
+#~ msgid "10.1 Respond to Review Feedback"
+#~ msgstr "10.1 回复审查反馈"
+
+#~ msgid "**Common Review Feedback:**"
+#~ msgstr "**常见审查反馈：**"
+
+#~ msgid ""
+#~ "**Code Style Issues** - Fix formatting,"
+#~ " linting, or type hint issues - "
+#~ "Follow naming conventions - Improve code"
+#~ " organization"
+#~ msgstr "**代码风格问题** - 修复格式、代码规范或类型提示问题 - 遵循命名规范 - 优化代码结构"
+
+#~ msgid ""
+#~ "**Testing Improvements** - Add missing "
+#~ "test cases - Improve test coverage "
+#~ "- Mock external dependencies properly"
+#~ msgstr ""
+#~ "**测试改进**  \n"
+#~ "- 补充缺失的测试用例  \n"
+#~ "- 提高测试覆盖率  \n"
+#~ "- 正确模拟外部依赖"
+
+#~ msgid ""
+#~ "**Documentation Clarifications** - Clarify "
+#~ "unclear docstrings - Add missing "
+#~ "examples - Fix documentation formatting"
+#~ msgstr "**文档说明澄清** - 澄清不明确的文档字符串 - 添加缺失的示例 - 修正文档格式"
+
+#~ msgid ""
+#~ "**API Design Suggestions** - Simplify "
+#~ "complex interfaces - Make parameters "
+#~ "more intuitive - Improve error messages"
+#~ msgstr ""
+#~ "**API 设计建议**  \n"
+#~ "- 简化复杂接口  \n"
+#~ "- 使参数更直观  \n"
+#~ "- 改进错误信息"
+
+#~ msgid "**How to Address Feedback:**"
+#~ msgstr "**如何处理反馈：**"
+
+#~ msgid "10.2 Tool Maintenance"
+#~ msgstr "10.2 工具维护"
+
+#~ msgid "After your tool is merged:"
+#~ msgstr "工具合并后："
+
+#~ msgid ""
+#~ "**Ongoing Responsibilities:** - Monitor for"
+#~ " issues reported by users - Update"
+#~ " tool when external API changes - "
+#~ "Improve performance based on usage "
+#~ "patterns - Add new features as "
+#~ "requested by community"
+#~ msgstr ""
+#~ "**持续职责：**  \n"
+#~ "- 监控用户反馈的问题  \n"
+#~ "- 在外部API变更时更新工具  \n"
+#~ "- 根据使用模式提升性能  \n"
+#~ "- 根据社区需求添加新功能"
+
+#~ msgid ""
+#~ "**Version Updates:** - Follow semantic "
+#~ "versioning for tool updates - Document"
+#~ " breaking changes clearly - Provide "
+#~ "migration guides when needed"
+#~ msgstr ""
+#~ "**版本更新：**  \n"
+#~ "- 遵循语义化版本控制进行工具更新  \n"
+#~ "- 明确记录重大变更  \n"
+#~ "- 需要时提供迁移指南"
+
+#~ msgid "Part III: Advanced Topics"
+#~ msgstr "第三部分：高级主题"
+
+#~ msgid "Tool Composition and Workflows"
+#~ msgstr "工具组成与工作流程"
+
+#~ msgid "Design your tool to work well with others:"
+#~ msgstr "设计您的工具以实现良好的兼容性："
+
+#~ msgid "Performance Optimization"
+#~ msgstr "性能优化"
+
+#~ msgid "**Caching Strategies:**"
+#~ msgstr "**缓存策略：**"
+
+#~ msgid "**Batch Processing:**"
+#~ msgstr "**批处理：**"
+
+#~ msgid "Security Considerations"
+#~ msgstr "安全性注意事项"
+
+#~ msgid "**API Key Handling:**"
+#~ msgstr "**API 密钥管理：**"
+
+#~ msgid "**Input Sanitization:**"
+#~ msgstr "**输入清理：**"
+
+#~ msgid "Error Recovery and Resilience"
+#~ msgstr "错误恢复与弹性"
+
+#~ msgid "**Retry Logic:**"
+#~ msgstr "**重试逻辑：**"
+
+#~ msgid "**Graceful Degradation:**"
+#~ msgstr "**优雅降级：**"
+
+#~ msgid "Community and Support"
+#~ msgstr "社区与支持"
+
+#~ msgid "Getting Help"
+#~ msgstr "获取帮助"
+
+#~ msgid ""
+#~ "**Community Resources:** - GitHub Discussions:"
+#~ " General questions and feature discussions"
+#~ " - GitHub Issues: Bug reports and "
+#~ "specific problems - Email: Direct "
+#~ "contact with maintainers - Documentation: "
+#~ "Comprehensive guides and examples"
+#~ msgstr ""
+#~ "**社区资源：**  \n"
+#~ "- GitHub 讨论区：常见问题及功能讨论  \n"
+#~ "- GitHub 问题追踪：错误报告及具体问题  \n"
+#~ "- 电子邮件：与维护者直接联系  \n"
+#~ "- 文档：全面的指南和示例"
+
+#~ msgid ""
+#~ "**Best Practices for Getting Help:** 1."
+#~ " Search existing issues first 2. "
+#~ "Provide minimal reproducible examples 3. "
+#~ "Include system information (Python version,"
+#~ " OS, ToolUniverse version) 4. Share "
+#~ "relevant error messages and tracebacks"
+#~ msgstr ""
+#~ "**获取帮助的最佳实践：**  \n"
+#~ "1. 首先搜索已有的问题  \n"
+#~ "2. 提供最小可复现示例  \n"
+#~ "3. 包含系统信息（Python 版本、操作系统、ToolUniverse 版本）  \n"
+#~ "4. 分享相关的错误信息和追踪日志"
+
+#~ msgid "Contributing Beyond Tools"
+#~ msgstr "超越工具的贡献"
+
+#~ msgid ""
+#~ "**Other Ways to Contribute:** - Improve"
+#~ " documentation - Add usage examples -"
+#~ " Fix bugs in existing tools - "
+#~ "Optimize performance - Add new features"
+#~ " to the core framework - Help "
+#~ "with testing and quality assurance"
+#~ msgstr ""
+#~ "**其他贡献方式：**  \n"
+#~ "- 改进文档  \n"
+#~ "- 添加使用示例  \n"
+#~ "- 修复现有工具中的漏洞  \n"
+#~ "- 优化性能  \n"
+#~ "- 为核心框架添加新功能  \n"
+#~ "- 协助测试与质量保证"
+
+#~ msgid ""
+#~ "**Mentoring New Contributors:** - Help "
+#~ "newcomers understand the codebase - "
+#~ "Review pull requests from community "
+#~ "members - Create tutorials and learning"
+#~ " materials - Participate in community "
+#~ "discussions"
+#~ msgstr ""
+#~ "**指导新贡献者：**  \n"
+#~ "- 帮助新成员理解代码库  \n"
+#~ "- 审查社区成员的拉取请求  \n"
+#~ "- 制作教程和学习资料  \n"
+#~ "- 参与社区讨论"
+
+#~ msgid "Recognition and Rewards"
+#~ msgstr "认可与奖励"
+
+#~ msgid ""
+#~ "**Contributor Recognition:** - Contributors "
+#~ "are listed in release notes - "
+#~ "Major contributors get acknowledgment in "
+#~ "documentation - Annual contributor highlights"
+#~ " - Conference presentation opportunities "
+#~ "for significant contributions"
+#~ msgstr ""
+#~ "**贡献者认可：**  \n"
+#~ "- 贡献者将在发行说明中列出  \n"
+#~ "- 主要贡献者将在文档中获得表彰  \n"
+#~ "- 每年突出展示贡献者  \n"
+#~ "- 对重大贡献者提供会议演讲机会"
+
+#~ msgid ""
+#~ "**Long-term Benefits:** - Build your "
+#~ "scientific software portfolio - Gain "
+#~ "experience with production-quality APIs "
+#~ "- Learn best practices for scientific"
+#~ " data integration - Network with "
+#~ "other scientific developers"
+#~ msgstr ""
+#~ "**长期收益：**  \n"
+#~ "- 构建您的科学软件作品集  \n"
+#~ "- 积累生产级API的使用经验  \n"
+#~ "- 学习科学数据集成的最佳实践  \n"
+#~ "- 与其他科学开发者建立网络联系"
+
+#~ msgid "Conclusion"
+#~ msgstr "结论"
+
+#~ msgid ""
+#~ "Contributing to ToolUniverse is an "
+#~ "opportunity to democratize access to "
+#~ "scientific data and help build the "
+#~ "next generation of AI scientist systems."
+#~ " By following this comprehensive Tutorial,"
+#~ " you'll create high-quality tools "
+#~ "that benefit the entire scientific "
+#~ "community."
+#~ msgstr ""
+#~ "参与 ToolUniverse 项目是实现科学数据普及化的机会，有助于构建下一代 AI "
+#~ "科学家系统。通过遵循本全面教程，您将创建惠及整个科学界的高质量工具。"
+
+#~ msgid ""
+#~ "**Key Takeaways:** 1. **Quality First**: "
+#~ "Focus on robust, well-tested, and "
+#~ "well-documented tools 2. **User "
+#~ "Experience**: Design intuitive APIs that "
+#~ "scientists can easily use 3. "
+#~ "**Community**: Engage with the community "
+#~ "for feedback and support 4. **Continuous"
+#~ " Improvement**: Maintain and improve your"
+#~ " tools based on user feedback"
+#~ msgstr ""
+#~ "**关键要点：**  \n"
+#~ "1. **质量优先**：专注于稳健、经过充分测试且文档完善的工具  \n"
+#~ "2. **用户体验**：设计科学家易于使用的直观 API  \n"
+#~ "3. **社区**：积极与社区互动，获取反馈与支持  \n"
+#~ "4. **持续改进**：根据用户反馈维护并提升工具性能"
+
+#~ msgid ""
+#~ "**Next Steps:** 1. Choose a scientific"
+#~ " data source you're passionate about "
+#~ "2. Follow this Tutorial step-by-"
+#~ "step 3. Start with a simple tool"
+#~ " and gradually add features 4. Engage"
+#~ " with the community for feedback and"
+#~ " support"
+#~ msgstr ""
+#~ "**下一步：**  \n"
+#~ "1. 选择一个您感兴趣的科学数据源  \n"
+#~ "2. 按照本教程逐步操作  \n"
+#~ "3. 从简单的工具开始，逐步添加功能  \n"
+#~ "4. 积极参与社区，获取反馈与支持"
+
+#~ msgid "Happy coding, and thank you for contributing to ToolUniverse! 🧬🔬🤖"
+#~ msgstr "祝您编程愉快，感谢您为 ToolUniverse 做出的贡献！🧬🔬🤖"
+
+#~ msgid "---"
+#~ msgstr "请提供需要翻译的具体英文文本，我将为您提供符合要求的中文翻译。"
+
+#~ msgid "**Additional Resources:**"
+#~ msgstr "**其他资源：**"
+
+#~ msgid "ToolUniverse GitHub: https://github.com/mims-harvard/ToolUniverse"
+#~ msgstr ""
+#~ "ToolUniverse GitHub: https://github.com/mims-harvard/ToolUniverse\n"
+#~ "\n"
+#~ "工具宇宙 GitHub: https://github.com/mims-harvard/ToolUniverse"
+
+#~ msgid "API Documentation: https://tooluniverse.readthedocs.io"
+#~ msgstr "API 文档：https://tooluniverse.readthedocs.io"
+
+#~ msgid ""
+#~ "Community Discussions: https://github.com/mims-"
+#~ "harvard/ToolUniverse/discussions"
+#~ msgstr "社区讨论：https://github.com/mims-harvard/ToolUniverse/discussions"
+
+#~ msgid "Issue Tracker: https://github.com/mims-harvard/ToolUniverse/issues"
+#~ msgstr "问题追踪器: https://github.com/mims-harvard/ToolUniverse/issues"
+

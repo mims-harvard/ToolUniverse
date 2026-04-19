@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniprot_proteomes_tools.rst:10 e2d12c9a3267438b9f88721302e27c26
+msgid "Uniprot Proteomes Tools"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:12 fbb58dde0bba4e73998df27395047ec8
+msgid ""
+"**Configuration File**: ``uniprot_proteomes_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:16 eaf2a07214e34c539d578304ee015d2a
+msgid ""
+"This page contains all tools defined in the "
+"``uniprot_proteomes_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:19 1ca93f4dcda448b5b3f9327df13b318c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:22 2c9d5ee788ce48a2bdc69d6e7a86a7ad
+msgid "**UniProt_get_proteome** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:24 84ebe7a98a7c4f03b40978ff0edac475
+msgid ""
+"Get detailed metadata for a specific UniProt proteome by its proteome ID "
+"(e.g., UP000005640 for h..."
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst f3c4b527d9b745309c6a64d64360b7e0
+msgid "UniProt_get_proteome tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:28
+#: ../../tools/uniprot_proteomes_tools.rst:59 44fbbb1d3588415ba9142158f6670e22
+#: e468227dcc274bd0bd8d6008f9905d60
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:30 8df52cb5d2be49bbb8e32bdce0cb0cd0
+msgid "**Name**: ``UniProt_get_proteome``"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:31
+#: ../../tools/uniprot_proteomes_tools.rst:62 9d2d408c94be465681a318e635ee6c99
+#: b82a352272a947cba3bd3b64418715c6
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:32 3f372b82603a40dcbfd03ae9c92902cf
+msgid ""
+"**Description**: Get detailed metadata for a specific UniProt proteome by"
+" its proteome ID (e.g., UP000005640 for human). Returns comprehensive "
+"information including organism taxonomy, gene count, genome assembly "
+"details, BUSCO completeness assessment, proteome type, annotation score, "
+"component breakdown (chromosomes), and cross-references. Use "
+"UniProt\\_search\\_proteomes to find proteome IDs."
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:34
+#: ../../tools/uniprot_proteomes_tools.rst:65 cc95e4a224394a9795826d47d63b5ab4
+#: dcadefa5e8664214af92b373a0d322b3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:36 c0a08a78831646c794618729864c3aea
+msgid ""
+"``proteome_id`` (string) (required) UniProt proteome ID (e.g., "
+"'UP000005640' for human, 'UP000000589' for mouse, 'UP000000625' for E. "
+"coli)"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:39
+#: ../../tools/uniprot_proteomes_tools.rst:73 21277393232c429a9a60ad1115b3ad41
+#: d61d0b1d7104462bbe58dda1ee3f90df
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:53 8f5dacc2058e4a4ab7059718f97cb018
+msgid "**UniProt_search_proteomes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:55 83111ffa3d6d43159d730d6f98c70d07
+msgid ""
+"Search the UniProt Proteome database for complete sets of proteins "
+"expressed by organisms. Proteo..."
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst f6e50bd729c74740a8356fceac338bc6
+msgid "UniProt_search_proteomes tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:61 d832638921a540b8a7c1ea180c7dd2f5
+msgid "**Name**: ``UniProt_search_proteomes``"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:63 947d5decc18941e0810fc49dffd2f294
+msgid ""
+"**Description**: Search the UniProt Proteome database for complete sets "
+"of proteins expressed by organisms. Proteomes represent the complete set "
+"of proteins from a fully sequenced genome. Supports searching by organism"
+" name, taxonomy ID, BUSCO completeness, proteome type "
+"(reference/representative/redundant), and more. Returns proteome IDs "
+"(e.g., UP000005640 for human), gene counts, organism info, and quality "
+"metrics. Useful for comparative genomics, finding model organism "
+"proteomes, or identifying reference proteomes."
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:67 f3085e23da9a43d2942800adfab89f06
+msgid ""
+"``query`` (string) (required) Search query using UniProt query syntax. "
+"Examples: 'organism\\_name:human', 'organism\\_id:9606', "
+"'organism\\_name:escherichia coli', 'proteome\\_type:1' (reference), "
+"'busco:complete>95.0'"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:70 edf2539a2daf413b82dc3001d15954ef
+msgid ""
+"``size`` (integer) (optional) Number of results to return (default 10, "
+"max 500)"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:87 4b4b6d672ba84d83ae5e9a508a6fd851
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:89 8683a50fbd77429b9caec0750bf872ab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniprot_proteomes_tools.rst:90 b1fa0481c09843d4b0574912ae862193
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/orthodb_tools.rst:10 78dbdacba127438c8ec3d2151cbcc5fd
+msgid "Orthodb Tools"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:12 2b619d3a4fbb4dc99ea7da969f922c78
+msgid ""
+"**Configuration File**: ``orthodb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:16 199f5db78de64f41bf0f313aca582cb1
+msgid ""
+"This page contains all tools defined in the ``orthodb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:19 c4da3df272db483487e35a55ee317f55
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:22 28f5cb8805c84232a1d42ce058d49435
+msgid "**OrthoDB_get_group_details** (Type: OrthoDBTool)"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:24 36a26fa3d0e44f9e89692f0c9f1bf49e
+msgid ""
+"Get detailed information about an OrthoDB orthologous group including "
+"functional annotations. Ret..."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst 270dfe9c5dae4b59a5f035e28d071ac9
+msgid "OrthoDB_get_group_details tool specification"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:28 ../../tools/orthodb_tools.rst:59
+#: ../../tools/orthodb_tools.rst:93 0f4119bf12054aa1903ebf82dc2f5e9e
+#: 287c66b587814684909f433f4d6ef0d5 6ea1b31448814ce5827ea28f56ecdde4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:30 90465afe24614bdcaab3b96a4bf01f8f
+msgid "**Name**: ``OrthoDB_get_group_details``"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:31 ../../tools/orthodb_tools.rst:62
+#: ../../tools/orthodb_tools.rst:96 729f24d2d4c94db6b9372e00fdbb8894
+#: b3c2313c87754b89af894af6a0ce2eb7 f19b238112a3438abedb5d51070e69b2
+msgid "**Type**: ``OrthoDBTool``"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:32 1841589f9511437eb1eabc8436095488
+msgid ""
+"**Description**: Get detailed information about an OrthoDB orthologous "
+"group including functional annotations. Returns KEGG pathway "
+"associations, GO terms, and InterPro domain annotations for the group. "
+"Useful for understanding the evolutionary conservation and function of "
+"gene families. Example: group '727649at7742' shows olfactory receptor "
+"group at Vertebrata level with associated KEGG pathways for signal "
+"transduction."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:34 ../../tools/orthodb_tools.rst:65
+#: ../../tools/orthodb_tools.rst:99 159ef5d1bcaa4f7581d726b0b24b4d9b
+#: 4145e8a0b2344c59a4e8409b910c03f8 e5ed57c97f9940a2b7b37b1d32055669
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:36 35eca94bd9fa478ebce56e5b4784635e
+msgid ""
+"``group_id`` (string) (required) OrthoDB group ID. Format: "
+"'numberATtaxid'. Examples: '727649at7742' (Vertebrata level), "
+"'59506at9443' (Primates level). Get IDs from OrthoDB\\_search\\_groups."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:39 ../../tools/orthodb_tools.rst:73
+#: ../../tools/orthodb_tools.rst:113 2c2ded761a3149608968d9c611279fac
+#: 4296d5a8e4ac4ab995a719e4846fe194 463d0d7670ea444ca9d76df87411d00f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:53 73f1ed3a07a34184b00ff2a5ce9b7a54
+msgid "**OrthoDB_get_orthologs** (Type: OrthoDBTool)"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:55 e4b6423e91304513981bf530844d0cfb
+msgid ""
+"Get orthologous genes from an OrthoDB group, optionally filtered by "
+"species. Returns gene IDs, or..."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst c3b963939ea540f399fb2da16ef3f577
+msgid "OrthoDB_get_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:61 455857b325fd4558995e46825e442744
+msgid "**Name**: ``OrthoDB_get_orthologs``"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:63 f42251f05c0940ccbd97b4e1fe17ddcf
+msgid ""
+"**Description**: Get orthologous genes from an OrthoDB group, optionally "
+"filtered by species. Returns gene IDs, organism names, and descriptions "
+"for all members of an orthologous group. Useful for finding orthologs "
+"across species, evolutionary conservation analysis, and functional "
+"annotation transfer. Example: group '727649at7742' with species=9606 "
+"returns human genes in that orthologous group."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:67 09f6e858c4414219800a361ba30f761f
+msgid ""
+"``group_id`` (string) (required) OrthoDB group ID. Format: "
+"'numberATtaxid'. Get IDs from OrthoDB\\_search\\_groups."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:70 44f3e241808f4f209a739bbfa815f83c
+msgid ""
+"``species`` (string, null) (optional) Comma-separated NCBI taxonomy IDs "
+"to filter. Examples: '9606' (human only), '9606,10090' (human+mouse). "
+"Null for all species."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:87 a644092d9b8f4a3ba018459a63841032
+msgid "**OrthoDB_search_groups** (Type: OrthoDBTool)"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:89 0585a6fb03484471b53f35a7155a7daf
+msgid ""
+"Search for orthologous groups by gene/protein name in OrthoDB v12. "
+"OrthoDB catalogs orthologous g..."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst 938b6b4d3b774cfd9675283dc0692cff
+msgid "OrthoDB_search_groups tool specification"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:95 a5939ea826bd45faa1ac4dc8e8498e43
+msgid "**Name**: ``OrthoDB_search_groups``"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:97 50c762de6451491eb2282b7572d30e2f
+msgid ""
+"**Description**: Search for orthologous groups by gene/protein name in "
+"OrthoDB v12. OrthoDB catalogs orthologous groups at different taxonomic "
+"levels (vertebrates, metazoa, eukaryotes, etc.), enabling evolutionary "
+"analysis of gene conservation. Returns group IDs that can be queried for "
+"details. Complements OMA and Ensembl Compara with group-level orthology "
+"at deep evolutionary scales. Example: searching 'BRCA1' with species=9606"
+" returns orthologous groups containing BRCA1 at various taxonomic levels."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:101 d38d5492e2dc4e909d8396c931c9bf4a
+msgid ""
+"``query`` (string) (required) Gene or protein name to search. Examples: "
+"'BRCA1', 'TP53', 'insulin', 'EGFR'."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:104 5b02b5e8de024fc5a85bba18d07b56a9
+msgid ""
+"``species`` (integer, null) (optional) NCBI taxonomy ID to filter by "
+"species. Examples: 9606 (human), 10090 (mouse), 7227 (fly). Null for all "
+"species."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:107 b685ae2a90d74d3da217eaf088742cdb
+msgid ""
+"``level`` (integer, null) (optional) Taxonomic level for group "
+"definition. Examples: 7742 (Vertebrata), 33208 (Metazoa), 2759 "
+"(Eukaryota). Null for all levels."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:110 cdec57704fa74928b5e01cf667e9296b
+msgid ""
+"``limit`` (integer) (optional) Maximum number of groups to return (1-50)."
+" Default: 10."
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:127 f91ff7809ba14ae9b95ed4290fcb0945
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:129 4f7076cf72744b7bac3cb11cb7c4ae2d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/orthodb_tools.rst:130 9f558655c786406789ed673230590e03
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

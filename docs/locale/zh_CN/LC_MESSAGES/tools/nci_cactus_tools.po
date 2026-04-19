@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nci_cactus_tools.rst:10 c73f35e2816b43da910c1ee075d13942
+msgid "Nci Cactus Tools"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:12 ebf2a2c4df794c96997712759d306f75
+msgid ""
+"**Configuration File**: ``nci_cactus_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:16 4caa3b166b554aeb9258e37652f9e326
+msgid ""
+"This page contains all tools defined in the ``nci_cactus_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:19 92cd74270b2c447ebe3a5f445f6e3536
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:22 2eb12a643bac46e998adcdba8a62242f
+msgid "**NCICACTUS_resolve** (Type: NCICACTUSTool)"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:24 db71705f2b9f40d29b9c29179be8d9e7
+msgid ""
+"Convert chemical identifiers using the NCI CACTUS Chemical Identifier "
+"Resolver. Accepts chemical ..."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst fd97814f32b948428b5bed3b9884c328
+msgid "NCICACTUS_resolve tool specification"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:28 662eea8d57ed46398d1d6bd80302b428
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:30 7eb5b88dfd3b47459e417bc7d4827e03
+msgid "**Name**: ``NCICACTUS_resolve``"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:31 6346e08af7c54815a6d8f1d2a0be5ef5
+msgid "**Type**: ``NCICACTUSTool``"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:32 22423a6460b749969b1a8ae512e9c1b1
+msgid ""
+"**Description**: Convert chemical identifiers using the NCI CACTUS "
+"Chemical Identifier Resolver. Accepts chemical names (IUPAC or common), "
+"SMILES, InChI, InChIKey, or CAS registry numbers and resolves them to any"
+" supported representation: SMILES, IUPAC name, molecular formula, "
+"molecular weight, CAS number, standard InChI, InChIKey, or a list of "
+"synonyms. Set resolve\\_all=true to fetch SMILES, IUPAC name, formula, "
+"molecular weight, InChIKey, and CAS in a single call. Useful for chemical"
+" name standardization, identifier cross-mapping, and structure retrieval "
+"without requiring any API key."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:34 795b36ca9dd847d5936753d35aaf8950
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:36 1d318d8ba74945138e9fb38608ef465b
+msgid ""
+"``identifier`` (string) (required) Chemical identifier to resolve. "
+"Accepts: common name (e.g. 'aspirin', 'ibuprofen'), IUPAC name, SMILES "
+"(e.g. 'CC(=O)Oc1ccccc1C(=O)O'), InChI, InChIKey (e.g. 'BSYNRYMUTXBXSQ-"
+"UHFFFAOYSA-N'), or CAS number (e.g. '50-78-2')."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:39 490a8ab38e9a47ddae6b9f6121876bc6
+msgid ""
+"``representation`` (string) (optional) Target representation to return. "
+"Options: 'smiles' (canonical SMILES), 'iupac\\_name' (IUPAC systematic "
+"name), 'formula' (molecular formula), 'mw' (molecular weight), 'cas' (CAS"
+" registry number(s)), 'stdinchi' (standard InChI), 'stdinchikey' "
+"(standard InChIKey), 'inchi', 'inchikey', 'names' (all synonyms), 'sdf' "
+"(structure data file). Default: 'smiles'."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:42 6f255abdc1584202b045e96b535eb811
+msgid ""
+"``resolve_all`` (boolean) (optional) If true, resolves SMILES, IUPAC "
+"name, formula, molecular weight, InChIKey, and CAS in one call and "
+"returns all results. Overrides the 'representation' parameter."
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:45 84110a196b9b45a4a6c89b499f2e95c9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:59 924f330e1e964b3792e0de75198d098e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:61 7e05b2119769429c836833d0fe5a5593
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nci_cactus_tools.rst:62 73af71dd6a2948d9a664cdaef6935c69
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

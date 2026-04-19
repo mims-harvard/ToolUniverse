@@ -1,0 +1,1148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/euhealth_tools.rst:10 53d93e3bd7144d1d97ba63552018e5d9
+msgid "Euhealth Tools"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:12 aa2668ec710f4067b94460c0d6454d01
+msgid ""
+"**Configuration File**: ``euhealth_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 21"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:16 5980edd200c642c288ae5650b20f6992
+msgid ""
+"This page contains all tools defined in the ``euhealth_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:19 24f1f44c1c974ac4a5f835dc1f900e87
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:22 b2a4ad4b209f4adab6d024beb21bc47c
+msgid "**euhealthinfo_deepdive** (Type: EuHealthDeepDiveTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:24 31fc509f07b54545a47adc1f31b87095
+msgid ""
+"This tool identifies and retrieves relevant links related to publicly "
+"accessible datasets and inf..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 4dee414fc3574448bef21f9ea4c7a28a
+msgid "euhealthinfo_deepdive tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:28 ../../tools/euhealth_tools.rst:85
+#: ../../tools/euhealth_tools.rst:133 ../../tools/euhealth_tools.rst:181
+#: ../../tools/euhealth_tools.rst:229 ../../tools/euhealth_tools.rst:277
+#: ../../tools/euhealth_tools.rst:325 ../../tools/euhealth_tools.rst:373
+#: ../../tools/euhealth_tools.rst:421 ../../tools/euhealth_tools.rst:469
+#: ../../tools/euhealth_tools.rst:517 ../../tools/euhealth_tools.rst:565
+#: ../../tools/euhealth_tools.rst:613 ../../tools/euhealth_tools.rst:661
+#: ../../tools/euhealth_tools.rst:709 ../../tools/euhealth_tools.rst:757
+#: ../../tools/euhealth_tools.rst:805 ../../tools/euhealth_tools.rst:853
+#: ../../tools/euhealth_tools.rst:901 ../../tools/euhealth_tools.rst:949
+#: ../../tools/euhealth_tools.rst:997 0a3470e0a6fe42919800071d92a4794a
+#: 4b968a2ce121496184bdf62ba02d0733 4db25c9745654ccaa78f20787f19d28a
+#: 56397a8fcbcd42d3b3e0c5e63876f92c 5f5d4cdbd64e44efa187451b9904ef04
+#: 67d9bbf4fb00408d995ddbb181777406 6b95b7f2a99c4782957932b478c41fe2
+#: 6c84ec1f5f8c4a37bb315cb04fbd3a14 86085089517048b3ac4bcce04fc219cf
+#: 8e3859c2237d413f8ae2ad9eb6624968 917ee56332b4472e9805207313370f5d
+#: 9e79bbfc9855419ab0dde6401ef14d4a 9ea33f60ca704942984e9b143cbfa260
+#: a4a1a59ec91747f0bfe2b06403e8fb2b a93bf9a3e57b4b518cbc775432855731
+#: a9aadc3104a6418280a1e49df6731b3f b31274f29a2648ee8152ce3a416360d7
+#: cacc1b5793914aa289cb6e609bf21b9d d9a768836dc64e66aa86ce4ccf475d50
+#: ea3b60d2962042a68170a7ea3635a5e9 fb246e54fea9462aa5edf3028cbb8259
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:30 0806055d1a8644c4af40984bc819d7e6
+msgid "**Name**: ``euhealthinfo_deepdive``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:31 fbacb31198404c93b1cbbe8bea9f3c7a
+msgid "**Type**: ``EuHealthDeepDiveTool``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:32 ca1defd2a69f43d18243cde438409171
+msgid ""
+"**Description**: This tool identifies and retrieves relevant links "
+"related to publicly accessible datasets and information sources. Using "
+"metadata or topic-specific queries, it generates structured outputs of "
+"categorized links, including direct download pages, resource portals, and"
+" other associated materials. When metadata is unavailable or incomplete, "
+"the tool dynamically navigates query results to provide actionable "
+"outputs. It also classifies links by type and provides additional "
+"contextual details, ensuring users can access pertinent resources for "
+"their informational needs."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:34 ../../tools/euhealth_tools.rst:91
+#: ../../tools/euhealth_tools.rst:139 ../../tools/euhealth_tools.rst:187
+#: ../../tools/euhealth_tools.rst:235 ../../tools/euhealth_tools.rst:283
+#: ../../tools/euhealth_tools.rst:331 ../../tools/euhealth_tools.rst:379
+#: ../../tools/euhealth_tools.rst:427 ../../tools/euhealth_tools.rst:475
+#: ../../tools/euhealth_tools.rst:523 ../../tools/euhealth_tools.rst:571
+#: ../../tools/euhealth_tools.rst:619 ../../tools/euhealth_tools.rst:667
+#: ../../tools/euhealth_tools.rst:715 ../../tools/euhealth_tools.rst:763
+#: ../../tools/euhealth_tools.rst:811 ../../tools/euhealth_tools.rst:859
+#: ../../tools/euhealth_tools.rst:907 ../../tools/euhealth_tools.rst:955
+#: ../../tools/euhealth_tools.rst:1003 19f46517a9ff435298c77eeb1d9da9b4
+#: 3b3e3d0d84f643569a654e075f6e211d 405abecc68c746d5b22ceb04b1130484
+#: 4f38aa2caf8944249fc97e91c035eb10 52e8cd075ede44aab3c6e32c19d396d2
+#: 555785a4ae864752a56cc66ecc92aad8 5c60738fe6534e6eb513bdddf52cf3d6
+#: a88bdb45bc4442268ba85cb68a458be0 ad61b48febb0471da141046b44df3e06
+#: b0b9e086e13643e28eb92f398012be19 bbe559cb6c894791bc19bba283dd9caf
+#: d9845e493a554ab4abfaead83c3bc743 d9ea9f7baea84a9ba5a776b1e9aebf00
+#: da9bd76c9dec41609a8f4a6bf1379a15 dc3479ed3f8a4d1086572cd46ef7e075
+#: eb88e58fb5724ca48aaf549b5064b008 f1845505da6349479bc5f5e4abd598d4
+#: f93be186ca814545bb28ad33235a320f fbf9fbc828194164a8755d4536b2298b
+#: fc71fac8456f4e40b332a607d6a668c8 fd3a5ef1482d48e9b115a59869b6a9f0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:36 5243a07c8c7846da8d77dacf10b6280b
+msgid ""
+"``uuids`` (array) (optional) Dataset UUIDs to deep-dive (format "
+"'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'). If provided, the tool inspects "
+"exactly these datasets."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:39 51ff312ed9544e4bb124a1b46dcd699b
+msgid ""
+"``topic`` (string) (optional) Topic name to resolve seeds from (e.g., "
+"'euhealthinfo\\_search\\_cancer'). Used when 'uuids' are not provided."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:42 6855f755c28d436084d15821ab99bedb
+msgid ""
+"``limit`` (integer) (optional) Maximum number of datasets to resolve when"
+" using 'topic'. Default 10."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:45 d41b43b9bca54798ac211c35e3ac7f07
+msgid ""
+"``links_per`` (integer) (optional) Maximum number of outgoing links to "
+"classify per dataset. Default 3."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:48 99aafe95e39845d4926a135209774d14
+msgid ""
+"``country`` (string) (optional) Country filter applied when resolving "
+"seeds from 'topic'. Accepts full names (e.g., 'Germany') or ISO-3166 "
+"codes ('DE', 'DEU'). Case-insensitive; substring/IRI-tail matching "
+"allowed."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:51 89ec292a1aad4406bfd5e8a7d20d9576
+msgid ""
+"``language`` (string) (optional) Language filter applied when resolving "
+"seeds from 'topic'. Accepts ISO 639-1 codes (e.g., 'en') or full names "
+"(e.g., 'English'). Case-insensitive; substring/IRI-tail matching allowed."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:54 3375755a62214502866aa5b96e5ed667
+msgid ""
+"``term_override`` (string) (optional) Overrides the default topic seed "
+"terms with a custom query string when using 'topic'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:57 90db341e6f814f5cb42b30c508a0824f
+msgid ""
+"``method`` (string) (optional) Search strategy used when resolving from "
+"topic (ignored if 'uuids' are given)."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:60 c72db6b526884242b44dee07633618b7
+msgid "``alpha`` (number) (optional) Blend ratio used when method='hybrid'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:63 ../../tools/euhealth_tools.rst:111
+#: ../../tools/euhealth_tools.rst:159 ../../tools/euhealth_tools.rst:207
+#: ../../tools/euhealth_tools.rst:255 ../../tools/euhealth_tools.rst:303
+#: ../../tools/euhealth_tools.rst:351 ../../tools/euhealth_tools.rst:399
+#: ../../tools/euhealth_tools.rst:447 ../../tools/euhealth_tools.rst:495
+#: ../../tools/euhealth_tools.rst:543 ../../tools/euhealth_tools.rst:591
+#: ../../tools/euhealth_tools.rst:639 ../../tools/euhealth_tools.rst:687
+#: ../../tools/euhealth_tools.rst:735 ../../tools/euhealth_tools.rst:783
+#: ../../tools/euhealth_tools.rst:831 ../../tools/euhealth_tools.rst:879
+#: ../../tools/euhealth_tools.rst:927 ../../tools/euhealth_tools.rst:975
+#: ../../tools/euhealth_tools.rst:1023 0304042a6da6456880471bfcda1b982f
+#: 157a0556968c44478406400376a323d8 1aa5a6827c254d879fb528ac10bbc752
+#: 1b9db248cf874453a18926cfbc278a65 2415026b441b43dfa0a5be271566dc92
+#: 3186fd45c6a0456da35250eb82cdac31 3d7ed093e64d4e54938cc82df02a7637
+#: 4b7c3ec164024652aa4af54f79a15981 62a4a7ab823441b884d37e0b5406e0ac
+#: 71190330274f4f9484627d3cf2b07d34 76c5ce90a5d14de6ad642620dce27cd8
+#: 78d9bdace13d4d0690231643f0cdbf6f 96cdc6191a4e47af8e76951ff92b5c3d
+#: aa6e2d2800b94392ba6c81da235cfd78 aa9ac968a35740f6913bc18988158ea1
+#: b136085d575b448cb132e5cb22b9a701 b752316dee5a466aae486bae6b9424d5
+#: b7cedbde983e4d7b8f75348aceeffc79 dbd5f237de4f40daae102bacaae36512
+#: e52c6cd8e7874f84893baa46cd531884 ed6dc846cb8d44fd891d4e9817167fd3
+msgid ""
+"``top_k`` (integer) (optional) Number of candidate documents to retrieve "
+"before filtering."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:66 ../../tools/euhealth_tools.rst:114
+#: ../../tools/euhealth_tools.rst:162 ../../tools/euhealth_tools.rst:210
+#: ../../tools/euhealth_tools.rst:258 ../../tools/euhealth_tools.rst:306
+#: ../../tools/euhealth_tools.rst:354 ../../tools/euhealth_tools.rst:402
+#: ../../tools/euhealth_tools.rst:450 ../../tools/euhealth_tools.rst:498
+#: ../../tools/euhealth_tools.rst:546 ../../tools/euhealth_tools.rst:594
+#: ../../tools/euhealth_tools.rst:642 ../../tools/euhealth_tools.rst:690
+#: ../../tools/euhealth_tools.rst:738 ../../tools/euhealth_tools.rst:786
+#: ../../tools/euhealth_tools.rst:834 ../../tools/euhealth_tools.rst:882
+#: ../../tools/euhealth_tools.rst:930 ../../tools/euhealth_tools.rst:978
+#: ../../tools/euhealth_tools.rst:1026 0546be2807d741258b74d5695af2233e
+#: 16cb04c3bbff41b086031640ed81517a 28be88a0601a4582a438c8fafd7604de
+#: 2d9df629d7a74c98b4da52add453e118 33121ebe46db4c5aa0bf96eaf6996b81
+#: 3882d012cbbe4490a3b6840594db37e4 4020e6952e2f42508dd8ab5f50e75b7a
+#: 51087b33c67844a49b7351b3233ef5dc 5df1b669d50d4f9daba3dc68cd1bb535
+#: 7656ae95df6345ef9346e0a37fa1748a 80995384c256433d910e1f3d07b6a487
+#: 837ed5cac30a401ba9e85c714ee57bf3 86dd7fc99bef4752a77f3072b6445169
+#: b6b9db3d1b154c19ab75304169705b58 b879e819013144b0ba5217588cd4232d
+#: b98613190fcf441c8a2fd118486ef9b9 dc767bed84af4fc987193eee3d181d0d
+#: e02c51ec086f48acb108792a75e13ea4 e35bd9592f4c4b999142bd246b391b47
+#: eba3e3d4e0e44b9da4a9d2fc8018e919 ed9cfbd5bf0d47c7ae2a7f75ca65acfd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:79 79f919d0045348bdb489732039e7ed68
+msgid ""
+"**euhealthinfo_search_alcohol_tobacco_psychoactive_use** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:81 24ab0092d9d14e2ba2f09e895378428e
+msgid ""
+"This tool provides centralized access to datasets focused on substance "
+"usage, including alcohol, ..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst c30ddd5485624f5e8c45fdb168d21ecc
+msgid "euhealthinfo_search_alcohol_tobacco_psychoactive_use tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:87 7c944c0cc7cc4fe88da37d5d5799e463
+msgid "**Name**: ``euhealthinfo_search_alcohol_tobacco_psychoactive_use``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:88 ../../tools/euhealth_tools.rst:136
+#: ../../tools/euhealth_tools.rst:184 ../../tools/euhealth_tools.rst:232
+#: ../../tools/euhealth_tools.rst:280 ../../tools/euhealth_tools.rst:328
+#: ../../tools/euhealth_tools.rst:376 ../../tools/euhealth_tools.rst:424
+#: ../../tools/euhealth_tools.rst:472 ../../tools/euhealth_tools.rst:520
+#: ../../tools/euhealth_tools.rst:568 ../../tools/euhealth_tools.rst:616
+#: ../../tools/euhealth_tools.rst:664 ../../tools/euhealth_tools.rst:712
+#: ../../tools/euhealth_tools.rst:760 ../../tools/euhealth_tools.rst:808
+#: ../../tools/euhealth_tools.rst:856 ../../tools/euhealth_tools.rst:904
+#: ../../tools/euhealth_tools.rst:952 ../../tools/euhealth_tools.rst:1000
+#: 090a21352a2d4e74a7bc605ba97c0fad 0db8a3d5a1e04357a263bba05c14dcdf
+#: 224642f47a204adc8b1673755c5a6b4a 23d01e548eb74dd499925cce3dce0fda
+#: 26b5452ae57a4f4f9e05cea44686f6aa 33bb7e96304a4b98b41889eff23909ee
+#: 3540a293273e4d209633810f8214cad8 36bf5c179e25491bae9ef5ea119a5a05
+#: 4c37de912f6941089fba415a645075ef 52676a36af5e477fb34510c2b7aaad43
+#: a454d135aea644fb957354270668c5ef a4822fcc05034f0fa8654a6e953fa47a
+#: a564f3ff48604bc48a8794dc31fef034 aef097b416c6463b88cc124c1590b17d
+#: b27d0dc1b2a94918a8ef3290df4ae2ee c24d248f76eb41a48bfb2f82a7ef8de3
+#: cf748b9758854e528d36710641d09a17 d68b40d7b0b143eeae63f53a78aee6f3
+#: db548b0738a24d02b0075272dae4fc10 ff90859d4e28422ebb92c627dc04497a
+msgid "**Type**: ``EuHealthTopicSearchTool``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:89 447b19644747459cb34360a52342cc53
+msgid ""
+"**Description**: This tool provides centralized access to datasets "
+"focused on substance usage, including alcohol, tobacco, vaping, and "
+"psychoactive substances. It enables users to investigate behavioral "
+"trends, societal perceptions, and related impacts by retrieving both "
+"metadata and dataset links, offering a streamlined gateway to resources "
+"for population-level analysis and study of substance-use patterns. If the"
+" user wants to look into the actual data, the 'euhealthinfo\\_deepdive' "
+"tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:93 ../../tools/euhealth_tools.rst:141
+#: ../../tools/euhealth_tools.rst:189 ../../tools/euhealth_tools.rst:237
+#: ../../tools/euhealth_tools.rst:285 ../../tools/euhealth_tools.rst:333
+#: ../../tools/euhealth_tools.rst:381 ../../tools/euhealth_tools.rst:429
+#: ../../tools/euhealth_tools.rst:477 ../../tools/euhealth_tools.rst:525
+#: ../../tools/euhealth_tools.rst:573 ../../tools/euhealth_tools.rst:621
+#: ../../tools/euhealth_tools.rst:669 ../../tools/euhealth_tools.rst:717
+#: ../../tools/euhealth_tools.rst:765 ../../tools/euhealth_tools.rst:813
+#: ../../tools/euhealth_tools.rst:861 ../../tools/euhealth_tools.rst:909
+#: ../../tools/euhealth_tools.rst:957 ../../tools/euhealth_tools.rst:1005
+#: 0c0659a014fb4b97921d294c27f19e7f 0c0735ea988f4dc98e073e3659435d10
+#: 0f63db7eee904a5d97ff255b5f49070b 3f5b40b4a41e4dc2a6ee69f583822f54
+#: 4038a92251ab40bd8c72ba2605d9b5eb 4da74ed2c8574bae8e9605427da3bfb1
+#: 64282aef2cc84c9fb8831c0a3bacc478 6996c6a6516248b4acad106e939aa3b1
+#: 7512e53275ee4e4ba0c30471c9306ba7 7f5b23d0c7474f1dbb390977f40d2903
+#: 8add5103286044d9bc26cc67801c6e1d 9156cff94dfc438db3a6fad95eea0dd0
+#: 95e9c963fc1e4494879ff9b4d13abca8 970077c401274adcb1d841cc30974e43
+#: bca03b4bfa484c7e8c25a05e53f8ee12 c90b30402e684ab2be18d65a8fdbe461
+#: d3e3b63b8ccd44c0adb78a872b3dbfe8 dab34990f21543818b9a13e07945ce65
+#: dd04f3ddaa2b43cdb43f051be14c8453 fa3e28028bc04189a7b8e06367d0d12f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return. "
+"Default 25."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:96 ../../tools/euhealth_tools.rst:144
+#: ../../tools/euhealth_tools.rst:192 ../../tools/euhealth_tools.rst:240
+#: ../../tools/euhealth_tools.rst:288 ../../tools/euhealth_tools.rst:336
+#: ../../tools/euhealth_tools.rst:384 ../../tools/euhealth_tools.rst:432
+#: ../../tools/euhealth_tools.rst:480 ../../tools/euhealth_tools.rst:528
+#: ../../tools/euhealth_tools.rst:576 ../../tools/euhealth_tools.rst:624
+#: ../../tools/euhealth_tools.rst:672 ../../tools/euhealth_tools.rst:720
+#: ../../tools/euhealth_tools.rst:768 ../../tools/euhealth_tools.rst:816
+#: ../../tools/euhealth_tools.rst:864 ../../tools/euhealth_tools.rst:912
+#: ../../tools/euhealth_tools.rst:960 ../../tools/euhealth_tools.rst:1008
+#: 0523eae54dc64758a0eded357662fb79 070917a3502248ae9002756d9ec8989a
+#: 0cdab3ad292747388178e6019d3bad09 0fc0de1f32cd4b758df030c7fab3ebd9
+#: 18f3e5e487df41459274d638411bce90 263bcc7455704980844179eb5ba9cbe0
+#: 2705914f172c47fc9fa52e77513b5158 46f8c576287b495ba33d5ed2c0ec1b2f
+#: 655bc4a8486d40cf926ec6f62276524b 855ed15e1e0c4e03ba28f0402fd47da2
+#: 89c3437babcf4d3d99920e9a8a77fa99 918d5c548c2e4fb497238dceae9c58ed
+#: a14eb7868da04dd8822ff4c1c7b0f21d aa73aa696e2c4b5c8ed6ae560f59db1b
+#: b5455146840f4929a37ba2b7dbaacf83 dc39754c4b3a447d8eee59a4b176637c
+#: dc61768d878e44439ffe2a38d153d881 f0c8a11ba1c74cae966894eda3cfda96
+#: f20faaa7aa5b4fa68adff57061304f09 f8d0a95dfd57449dac72f748a3734000
+msgid ""
+"``country`` (string) (optional) Country filter. Accepts full names (e.g.,"
+" 'Germany') or ISO-3166 codes ('DE', 'DEU'). Case-insensitive; substring"
+"/IRI-tail matching allowed."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:99 ../../tools/euhealth_tools.rst:147
+#: ../../tools/euhealth_tools.rst:195 ../../tools/euhealth_tools.rst:243
+#: ../../tools/euhealth_tools.rst:291 ../../tools/euhealth_tools.rst:339
+#: ../../tools/euhealth_tools.rst:387 ../../tools/euhealth_tools.rst:435
+#: ../../tools/euhealth_tools.rst:483 ../../tools/euhealth_tools.rst:531
+#: ../../tools/euhealth_tools.rst:579 ../../tools/euhealth_tools.rst:627
+#: ../../tools/euhealth_tools.rst:675 ../../tools/euhealth_tools.rst:723
+#: ../../tools/euhealth_tools.rst:771 ../../tools/euhealth_tools.rst:819
+#: ../../tools/euhealth_tools.rst:867 ../../tools/euhealth_tools.rst:915
+#: ../../tools/euhealth_tools.rst:963 ../../tools/euhealth_tools.rst:1011
+#: 05909f16c1884f44bbbab7bebc736259 0a3175330f3d48558d0d2e59a950d5ca
+#: 0c19e51b388f4d66858946d0858cd847 11d9f7b740984f97a23891acd1fd3e85
+#: 3ec17f7369df4510b79c39850d30f440 48dbce8d4a554361bb222a42a0b40d55
+#: 515548635fc8471dab4019a48de86d69 559db638cd1b429aaaf19b8500ee0bf2
+#: 7d7f9b93281044aabd15d28d6b213e64 91cbe4171db549f1bc024ce09c6c4dbf
+#: b46b5495cfb04d12ba655b0a9f733d98 b4e67d5b40fa49bbb49aecb6e2e69889
+#: b8430cb6e1ad4d3a9e0b7494052e8d4d c39d342f52e9404d9995bbdd27f36db8
+#: ce7bf183ac714e65a8329ea988ae14e5 d1b786e5d835481b9e35e9430884381b
+#: e5a33e512d684a8db0e2aad4adc1cd52 ec76fc5459a34d6baa554474ed837f6c
+#: f5eb26c1871d44d3afd749d097f585b7 fafcd4566f944178b9c2dfd3b7e263d6
+msgid ""
+"``language`` (string) (optional) Language filter. Accepts ISO 639-1 codes"
+" (e.g., 'en') or full names (e.g., 'English'). Case-insensitive; "
+"substring/IRI-tail matching allowed."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:102 57625646c42642a38db90a05f4e36920
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"alcohol/tobacco psychoactive use'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:105 ../../tools/euhealth_tools.rst:153
+#: ../../tools/euhealth_tools.rst:201 ../../tools/euhealth_tools.rst:249
+#: ../../tools/euhealth_tools.rst:297 ../../tools/euhealth_tools.rst:345
+#: ../../tools/euhealth_tools.rst:393 ../../tools/euhealth_tools.rst:441
+#: ../../tools/euhealth_tools.rst:489 ../../tools/euhealth_tools.rst:537
+#: ../../tools/euhealth_tools.rst:585 ../../tools/euhealth_tools.rst:633
+#: ../../tools/euhealth_tools.rst:681 ../../tools/euhealth_tools.rst:729
+#: ../../tools/euhealth_tools.rst:777 ../../tools/euhealth_tools.rst:825
+#: ../../tools/euhealth_tools.rst:873 ../../tools/euhealth_tools.rst:921
+#: ../../tools/euhealth_tools.rst:969 ../../tools/euhealth_tools.rst:1017
+#: 023cc810eb594f1f9ebb0bb8738304e9 0cb22cc5d4a849bea3716970359f91cf
+#: 14d9467059034bc0a1f93fa52537f018 2891b19330f949debc9d9271df95fbaa
+#: 3ed87e1844224fa381d80ffe968118e7 42a0ccab92e746afbdc3f944c17468cb
+#: 5f254b7bac274761a668f05fd5691847 62f243e2b078463e81648452eccb41d0
+#: 63a453a29b5240d19e154a00aaa7d189 68bb667053bb4c159dbce91dc35aa764
+#: 77283f75035d41f5a35e98b27b2c826d 787f29fdc42d40e69659fe4343c76ae9
+#: 7e47c22d80a44b6291da4aa20479f5c3 7e80ce1edc5b482c80bfd8f68e8b34aa
+#: 88770ae83ba541528afd4505fff38f60 8b00633a961047d7bf4495731f6417cd
+#: b86687ae90344e2b9d8e73042f2fd438 cdfe94887a2e4ce9b10ce0d3bf8490c9
+#: f4435f6899bf417cb337e1098d52c9ae f97f090f2b76406f97b89153b701869d
+msgid ""
+"``method`` (string) (optional) Search strategy: 'keyword' (text only), "
+"'embedding' (vector), or 'hybrid' (blend)."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:108 ../../tools/euhealth_tools.rst:156
+#: ../../tools/euhealth_tools.rst:204 ../../tools/euhealth_tools.rst:252
+#: ../../tools/euhealth_tools.rst:300 ../../tools/euhealth_tools.rst:348
+#: ../../tools/euhealth_tools.rst:396 ../../tools/euhealth_tools.rst:444
+#: ../../tools/euhealth_tools.rst:492 ../../tools/euhealth_tools.rst:540
+#: ../../tools/euhealth_tools.rst:588 ../../tools/euhealth_tools.rst:636
+#: ../../tools/euhealth_tools.rst:684 ../../tools/euhealth_tools.rst:732
+#: ../../tools/euhealth_tools.rst:780 ../../tools/euhealth_tools.rst:828
+#: ../../tools/euhealth_tools.rst:876 ../../tools/euhealth_tools.rst:924
+#: ../../tools/euhealth_tools.rst:972 ../../tools/euhealth_tools.rst:1020
+#: 110fc0c28c7c4f0287afa89ca60d1f38 1273f611d4ab4257a3f10b5b2b32fb16
+#: 148e20b5b5a442a8be9a9f65d51656a9 258ca037bbbf4868852f755a44853da6
+#: 3477750275244bc2afac1884410978dd 4e1c905f11194ba8b585ad5e46a3fe2f
+#: 580f0bcd68b940cb93d06e7578a0bcd3 61dd419e841c4fe2b968b0c65ab38497
+#: 6c3f83ce235f40d0be5b9ad9d7246a3c 7018ee08a1f049b0b335320e92b6c2d5
+#: 773d11f997ac4cbab26527473153a025 800234acdabb409a8c1542f2e04c4723
+#: 861fa61132e345d9b812deb35da99f13 9e8a13c4307244b9a5469b2d8de129ab
+#: a4548ab1a9c64810bed5126860f2d42e a71e85b1ad484b838437c11495dd212b
+#: deece5e2ac804af2a2f98d278eebedaf e06582cf67574a3dbd0258721e0cff0b
+#: e2dc1738b4ff43d3b4958b8169474e14 f85b44e12da9476d97e628c71908e02f
+msgid ""
+"``alpha`` (number) (optional) Blend ratio used when method='hybrid' "
+"(0=text, 1=embedding)."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:127 859e15aff88449cb89c4761fbb493b9b
+msgid "**euhealthinfo_search_births** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:129 382ccfaa3c9f4dc7aea2b5428aa70e47
+msgid ""
+"This tool identifies and retrieves data related to fertility, birth "
+"trends, and perinatal indicat..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 49188632a8ef4ebe84fccb86662b6050
+msgid "euhealthinfo_search_births tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:135 35529dde617e4464998e5b8fdab44b1a
+msgid "**Name**: ``euhealthinfo_search_births``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:137 94dd811abca04e17abed7b66ac3a5794
+msgid ""
+"**Description**: This tool identifies and retrieves data related to "
+"fertility, birth trends, and perinatal indicators for use in structured "
+"analysis. It generates metadata or summary outputs designed for "
+"comparisons across geographical regions or countries, providing a "
+"foundation for statistical or demographic exploration. If the user wants "
+"to look into the actual data, the 'euhealthinfo\\_deepdive' tool is "
+"helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:150 aeda85fbd9944153976f3f6571e025a6
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'births'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:175 9368c3dca97d4d4cac6d52e94c60c134
+msgid "**euhealthinfo_search_cancer** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:177 aad33d61f56743f88c1425c09a4587c5
+msgid ""
+"This tool provides a curated list of datasets and resources relevant to "
+"cancer-related topics, in..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst cfd10ef0fea14dabb9392382d1748fc0
+msgid "euhealthinfo_search_cancer tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:183 c9554e3629e946689de34a1e7dcc4f33
+msgid "**Name**: ``euhealthinfo_search_cancer``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:185 5f9a612af2bf4ae5bf8eeb9d9cd06ec4
+msgid ""
+"**Description**: This tool provides a curated list of datasets and "
+"resources relevant to cancer-related topics, including detailed "
+"information on incidence, prevalence, survival rates, screening, and "
+"tumor registries. It analyzes data from a cached database and presents "
+"structured output featuring dataset summaries, metadata, identifiers, and"
+" other relevant attributes for users to explore cancer-related data "
+"across various contexts and regions. If the user wants to look into the "
+"actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:198 5d8f3212a0b2451890ea145c4e4526cf
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'cancer'"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:223 8dbfdc8e6f664b66bca861538f95d2b9
+msgid "**euhealthinfo_search_cancer_registry** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:225 5e56787cbd8c40529dc194d708191e72
+msgid ""
+"This tool identifies and retrieves datasets containing cancer-related "
+"statistical information. It..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 5e77e8cab06646719de7a81c8ce4da5c
+msgid "euhealthinfo_search_cancer_registry tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:231 6c766721b5d54a558f57b3d645fa49ae
+msgid "**Name**: ``euhealthinfo_search_cancer_registry``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:233 2be781a1ff65441b85125e299e428033
+msgid ""
+"**Description**: This tool identifies and retrieves datasets containing "
+"cancer-related statistical information. It is designed to assist users in"
+" exploring resources about cancer incidence, prevalence, mortality, and "
+"survival across various geographic, linguistic, and thematic contexts. "
+"The tool provides links to relevant datasets and accompanying metadata to"
+" support further examination and utilization. If the user wants to look "
+"into the actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:246 1562fae1278e4852920dfe1bf90ced00
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'cancer "
+"registry'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:271 fab27f5d71844f0fa49d4708616f5f06
+msgid "**euhealthinfo_search_causes_of_death** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:273 32773cbcab954ba5af08395f9ca110de
+msgid ""
+"This tool enables users to search and retrieve datasets that provide "
+"insights into cause-specific..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst ab808a843e864b46a66394604c079903
+msgid "euhealthinfo_search_causes_of_death tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:279 7016593f8e7342c1a57a750495954d4c
+msgid "**Name**: ``euhealthinfo_search_causes_of_death``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:281 d7579683b0f14e94b36439a08685b57c
+msgid ""
+"**Description**: This tool enables users to search and retrieve datasets "
+"that provide insights into cause-specific mortality data. It generates "
+"outputs that may include summaries of mortality trends, metadata, and "
+"links to external resources, helping users analyze patterns in public "
+"health data across different regions and countries. The tool is designed "
+"to support exploration of mortality-related information organized by "
+"standardized categorizations while maintaining regional or national "
+"specificity in its outputs. If the user wants to look into the actual "
+"data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:294 cac0138467ce4d47a924530aa12b5277
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'causes of "
+"death'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:319 576c02f93ae34c06adfbeddf0ea6c098
+msgid "**euhealthinfo_search_covid_19** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:321 fa1a42b5a2b04dd0be3cd615baa55a9f
+msgid ""
+"This tool facilitates the discovery of datasets and resources relevant to"
+" COVID-19 or SARS-CoV-2...."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst d6f6411752ad472fbd1aee11b3e97166
+msgid "euhealthinfo_search_covid_19 tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:327 cdd6c8bac89248f6b4062e8b53f8b4c5
+msgid "**Name**: ``euhealthinfo_search_covid_19``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:329 89b7c6075ee548d3a18264fe1a958add
+msgid ""
+"**Description**: This tool facilitates the discovery of datasets and "
+"resources relevant to COVID-19 or SARS-CoV-2. It enables users to "
+"efficiently locate information across diverse topics, such as "
+"vaccination, hospitalization, seroprevalence, and wastewater monitoring, "
+"and provides access to associated data sources or portals for further "
+"exploration. If the user wants to look into the actual data, the "
+"'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:342 c0460efc544b41ab95b70d6ed9b49f0e
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'covid-19'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:367 03360a3cf89344229f34c04ae80c1f8b
+msgid "**euhealthinfo_search_deaths** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:369 63d26ba8e7e34502bb9e65ee4506ebd6
+msgid ""
+"This tool facilitates the exploration and analysis of datasets related to"
+" mortality metrics, enab..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 081f7b641a944b7d9a7923007bad90c6
+msgid "euhealthinfo_search_deaths tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:375 4d21b69656214def93c3f7a612c234a0
+msgid "**Name**: ``euhealthinfo_search_deaths``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:377 1b987d67862a4d35b61ff451950b09e2
+msgid ""
+"**Description**: This tool facilitates the exploration and analysis of "
+"datasets related to mortality metrics, enabling users to examine trends "
+"and comparisons across various geographic regions. It is designed to "
+"retrieve relevant datasets based on user queries, assisting in "
+"identifying patterns and addressing key questions about mortality "
+"outcomes. The tool functions consistently to provide structured outputs "
+"relevant to the requested queries. If the user wants to look into the "
+"actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:390 b837eaf95acb40aa88a7890d48274bea
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'death'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:415 407602ac919b46ca80195a87e49c6939
+msgid ""
+"**euhealthinfo_search_diabetes_epidemiology_registry** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:417 d9d334877624476686e54c382400886e
+msgid ""
+"This tool is designed to search and retrieve datasets related to "
+"epidemiological and registry-bas..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst e412f6ec5e9c4fba8cc0ddb75806dad2
+msgid "euhealthinfo_search_diabetes_epidemiology_registry tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:423 1177e733c8524420a7dedaa95f270e5a
+msgid "**Name**: ``euhealthinfo_search_diabetes_epidemiology_registry``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:425 aa8fcd5e921c40f2b23ddb52f1162abd
+msgid ""
+"**Description**: This tool is designed to search and retrieve datasets "
+"related to epidemiological and registry-based health data, focusing on "
+"diabetes and associated conditions. Users can conduct searches to "
+"identify datasets covering prevalence, incidence, and other metrics "
+"across varying geographic regions and demographic groups. The tool "
+"returns structured datasets enriched with metadata and may provide links "
+"to external data sources or downloadable files. It is specialized for "
+"accessing curated, health-related information within its defined dataset "
+"scope and supports exploration across diverse topics within the diabetes "
+"domain. If the user wants to look into the actual data, the "
+"'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:438 a8eae61e0ab041d49e8444a637f172da
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search diabetes"
+" mellitus epidemiology registry'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:463 05e806c8430d43b2be73fba433501ffc
+msgid "**euhealthinfo_search_disability** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:465 d6038574c4294cae9763c043778b99fa
+msgid ""
+"This tool performs searches across multiple dataset repositories to "
+"identify datasets related to ..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 81902426bc0b4f4c8dc1c0fbed503b42
+msgid "euhealthinfo_search_disability tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:471 0c05dc982998472280ceb3d27dc7ee7f
+msgid "**Name**: ``euhealthinfo_search_disability``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:473 8be259e0b8fb4745af5fdff8b2274adc
+msgid ""
+"**Description**: This tool performs searches across multiple dataset "
+"repositories to identify datasets related to disabilities, accessibility,"
+" functional limitations, and quality of care. It provides links to "
+"accessible datasets when available and flags areas requiring further "
+"investigation when specific datasets cannot be directly retrieved. If the"
+" user wants to look into the actual data, the 'euhealthinfo\\_deepdive' "
+"tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:486 e44e198d55d141ad995a3b4b199ad158
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"disability'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:511 c44fa4229b87434095650a8a2b670e48
+msgid ""
+"**euhealthinfo_search_healthcare_expenditure** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:513 956145e908ea493da4a2608a63e73425
+msgid ""
+"This tool enables the discovery of healthcare-related datasets focusing "
+"on expenditure and spendi..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 91c135fad3564bdaae91c93a61064a97
+msgid "euhealthinfo_search_healthcare_expenditure tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:519 0279d934915d414daf54d6e1edaa1a2f
+msgid "**Name**: ``euhealthinfo_search_healthcare_expenditure``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:521 7dd5d7c04dc1401eb21bb2ecf2500816
+msgid ""
+"**Description**: This tool enables the discovery of healthcare-related "
+"datasets focusing on expenditure and spending trends. It is designed to "
+"support users in identifying relevant datasets for comparative analysis "
+"across countries or national contexts and provides outputs that indicate "
+"dataset availability or absence for specified criteria. If the user wants"
+" to look into the actual data, the 'euhealthinfo\\_deepdive' tool is "
+"helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:534 69b5f2879d814fb8897b8020c36c6581
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'healthcare "
+"expenditure'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:559 e5fba7ca732b4d529d6e982533fa352f
+msgid ""
+"**euhealthinfo_search_hospital_in_patient_data** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:561 cbfee4e36d85401ca332dc6d0412f5a2
+msgid ""
+"This tool is designed to retrieve and explore datasets related to "
+"hospital inpatient activity, in..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 8e6251fec6ed44b98e3a3c3f3b3cdd35
+msgid "euhealthinfo_search_hospital_in_patient_data tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:567 62181301a8cc48878b3ca9392d3ab529
+msgid "**Name**: ``euhealthinfo_search_hospital_in_patient_data``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:569 bad74c76cfc14c439bb246a73dde631e
+msgid ""
+"**Description**: This tool is designed to retrieve and explore datasets "
+"related to hospital inpatient activity, including admissions, discharges,"
+" diagnoses, and medical procedures. It aims to provide users with a "
+"curated subset of information to identify patterns and trends in "
+"inpatient healthcare and enable exploration of broader healthcare "
+"contexts. The tool generates results that align with specified search "
+"criteria, offering insights into healthcare dynamics across various "
+"regions or facility types. If the user wants to look into the actual "
+"data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:582 83173b6d3ec04276969d2033aba43460
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search hospital"
+" in patient data'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:607 9a3ee9bac04f41279b7713e260cc63eb
+msgid ""
+"**euhealthinfo_search_infectious_diseases** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:609 df2f0b9d310c4a02a9f8a530492f1f8a
+msgid ""
+"This tool enables users to discover publicly available health-related "
+"datasets by searching and a..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst c19421532e9c49778f8dbb005c2a297d
+msgid "euhealthinfo_search_infectious_diseases tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:615 35054488a65645519ff3c635d3ac2606
+msgid "**Name**: ``euhealthinfo_search_infectious_diseases``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:617 893c8ddc3dc147079034578d7a224f68
+msgid ""
+"**Description**: This tool enables users to discover publicly available "
+"health-related datasets by searching and aggregating data from multiple "
+"sources. It uniquely identifies relevant datasets within areas such as "
+"epidemiology, disease statistics, and health indicators, providing "
+"detailed metadata including access information and thematic "
+"classifications. The tool is designed to facilitate exploration of health"
+" trends by consolidating resources into a cohesive output tailored to the"
+" user's search context. If the user wants to look into the actual data, "
+"the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:630 b5a0de1090794aa7ac2650d9ae061c05
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"infectious diseases'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:655 4b95ee4c6b2c4a1dba22907e0d6d7aec
+msgid ""
+"**euhealthinfo_search_key_indicators_registries_surveys** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:657 cd83d80108544dba8addae475ea7a247
+msgid ""
+"This tool identifies and retrieves aggregated datasets that include high-"
+"level health indicators ..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 775b8c82b7c34567b76b7c6fc641b0c3
+msgid "euhealthinfo_search_key_indicators_registries_surveys tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:663 76c79314c41447e9b6f852c26507b2a6
+msgid "**Name**: ``euhealthinfo_search_key_indicators_registries_surveys``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:665 968ee7ba763845d9bcc5f39ba5f687ea
+msgid ""
+"**Description**: This tool identifies and retrieves aggregated datasets "
+"that include high-level health indicators derived from various sources "
+"such as registries and surveys. It provides organized metadata and links "
+"to these datasets, enabling users to explore public health information "
+"across diverse geographic regions and topics. The tool primarily focuses "
+"on simplifying access to comprehensive health data summaries suitable for"
+" broad analysis and decision-making. If the user wants to look into the "
+"actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:678 d2dccd14d9d14b95886952848f3ac150
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search key "
+"indicators registries surveys'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:703 57d87224449d44b5b74a69c1e98e453b
+msgid "**euhealthinfo_search_mental_health** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:705 0a683ed215ca413a801d70a57f18b33c
+msgid ""
+"This tool identifies publicly accessible datasets pertaining to mental "
+"health topics. It retrieve..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst ac2272a7f95c432b9529da009fc369e0
+msgid "euhealthinfo_search_mental_health tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:711 07739199c3a5437ab6c187d8a12f8757
+msgid "**Name**: ``euhealthinfo_search_mental_health``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:713 fb37a16119d74083a904b0e5379afe44
+msgid ""
+"**Description**: This tool identifies publicly accessible datasets "
+"pertaining to mental health topics. It retrieves datasets from structured"
+" studies and aggregated collections, providing insights into mental "
+"health, behavioral factors, and related conditions across diverse "
+"populations. The tool generates results that align with high-level "
+"thematic criteria, enabling informed decision-making for research, policy"
+" formation, and intervention strategies. If the user wants to look into "
+"the actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:726 ebdc5da066fa419198c911d7b4d37b24
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search mental "
+"health'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:751 79c9fbe0a8704fa4bb8a387dc77e94f4
+msgid "**euhealthinfo_search_obesity** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:753 088d7d991ccd47a8afe4cb07fb533f7c
+msgid ""
+"This tool facilitates the discovery of datasets related to health topics,"
+" specializing in areas s..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 5076482dd0334d10a246d5940480223f
+msgid "euhealthinfo_search_obesity tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:759 ee41695d783b4cf7af3c98e49bc83640
+msgid "**Name**: ``euhealthinfo_search_obesity``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:761 3e1e3dd27fa84fbb9aea1a4f0bc1b530
+msgid ""
+"**Description**: This tool facilitates the discovery of datasets related "
+"to health topics, specializing in areas such as obesity, overweight "
+"status, BMI, and associated risk factors. Its primary function is to "
+"enable users to locate diverse health information resources, focusing on "
+"prevalence, trends, and determinants of health conditions and behaviors. "
+"If the user wants to look into the actual data, the "
+"'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:774 60b70f35f2434df3ab52cf9f9009bdbc
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"obesity'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:799 c52d178b4001492e80fa5576babffc24
+msgid ""
+"**euhealthinfo_search_population_health_survey** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:801 bbc91000bf594d95a0a04fbac72e82e1
+msgid ""
+"This tool allows users to identify and retrieve datasets from population "
+"health surveys conducted..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 228194700b664fbbaeefc0633c32f91d
+msgid "euhealthinfo_search_population_health_survey tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:807 7ad83732a9c4431492d02de79b1ece73
+msgid "**Name**: ``euhealthinfo_search_population_health_survey``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:809 d0c4472df65842d59113b0909de3f401
+msgid ""
+"**Description**: This tool allows users to identify and retrieve datasets"
+" from population health surveys conducted by international and national "
+"organizations. It assists in discovering health-related information, such"
+" as survey results and derived indicators, tailored to general thematic "
+"interests and geographic contexts. The tool produces a selection of "
+"curated survey datasets and relevant access links, offering insights into"
+" health trends and research-ready data resources. It ensures its search "
+"results are aligned with health-focused global and regional queries, with"
+" an emphasis on meaningful and actionable outputs. If the user wants to "
+"look into the actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:822 f3aa710e56c046979bf69d651c911b11
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"population health survey'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:847 8e7a90cee7134973927d848c002d0d77
+msgid ""
+"**euhealthinfo_search_primary_care_workforce** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:849 4b7dd9ba9b99438e865b2ffda8b8515c
+msgid ""
+"This tool is designed to conduct metadata searches for datasets related "
+"to the primary-care workf..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 31ca0d980ed34b77a91e3997f666cd3e
+msgid "euhealthinfo_search_primary_care_workforce tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:855 5f832b8fc49d44cebec137119900e7b0
+msgid "**Name**: ``euhealthinfo_search_primary_care_workforce``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:857 6735dce227cf49deafc20cb73d90ef6c
+msgid ""
+"**Description**: This tool is designed to conduct metadata searches for "
+"datasets related to the primary-care workforce. Its primary purpose is to"
+" assist users in identifying data sources that may provide insights into "
+"workforce composition and geographic distribution patterns, as well as "
+"potentially relevant topics in healthcare professions. Note that the tool"
+" requires valid inputs for successful execution and provides either "
+"metadata results or error messages indicating invalid parameters when "
+"applicable. If the user wants to look into the actual data, the "
+"'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:870 ba8908b0e0f34ab2b4c7d1014d8473d6
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search primary "
+"care workforce'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:895 1bd6fb0941c0441b9eb290ed211a47b8
+msgid "**euhealthinfo_search_surveillance** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:897 51bedbd08b90466682eae72546df89e1
+msgid ""
+"The tool facilitates the identification and exploration of health-related"
+" datasets across diverse..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst bd24e749347a4559b315b27228257954
+msgid "euhealthinfo_search_surveillance tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:903 2bd0f01314064f4fac9e005d8d2b0205
+msgid "**Name**: ``euhealthinfo_search_surveillance``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:905 2a5e92e207064a599c8e999c174b6c59
+msgid ""
+"**Description**: The tool facilitates the identification and exploration "
+"of health-related datasets across diverse domains. It aggregates "
+"information from various sources and provides outputs that help users "
+"uncover patterns, trends, and relationships within datasets related to "
+"public health, epidemiology, and surveillance activities. It is "
+"particularly designed for broad searches and enables access to datasets "
+"focused on monitoring health issues globally or regionally. If the user "
+"wants to look into the actual data, the 'euhealthinfo\\_deepdive' tool is"
+" helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:918 7e1b5a05bb6a4e31b2b43ecfb212f204
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"surveillance'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:943 0e5a7ca1efed4570bcbf1344399882fd
+msgid ""
+"**euhealthinfo_search_surveillance_mortality_rates** (Type: "
+"EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:945 7fde841d604444e4b03fbe04c7c97841
+msgid ""
+"The tool identifies and retrieves publicly available sources and systems "
+"related to mortality tre..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 1242e1e3d4374ebe8845f45180c7a877
+msgid "euhealthinfo_search_surveillance_mortality_rates tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:951 ed73a22da4d64c0798ead38e6af6e252
+msgid "**Name**: ``euhealthinfo_search_surveillance_mortality_rates``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:953 38224cb52f6649abb8df153e9244dc73
+msgid ""
+"**Description**: The tool identifies and retrieves publicly available "
+"sources and systems related to mortality trends, with a focus on excess "
+"mortality and similar patterns. Outputs include details on relevant "
+"monitoring systems and resources that provide insights into mortality "
+"dynamics within specific geographic or thematic contexts, subject to data"
+" availability. If the user wants to look into the actual data, the "
+"'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:966 e1de0655be5247978442dbcbcf989564
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"surveillance mortality rates'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:991 2f55eaf6d66942f0ba61d62af0818c2e
+msgid "**euhealthinfo_search_vaccination** (Type: EuHealthTopicSearchTool)"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:993 bb3f1fa67f84471ea4e152bfd3b11b0a
+msgid ""
+"This tool enables users to discover and access datasets related to "
+"vaccination and immunization s..."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst 84227d92cb5a48618f681392cbbc5e23
+msgid "euhealthinfo_search_vaccination tool specification"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:999 1ab0d6b351e74392ac0d61956bef07a0
+msgid "**Name**: ``euhealthinfo_search_vaccination``"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:1001 4799c988c2274b9d9ec6623d2abac7c1
+msgid ""
+"**Description**: This tool enables users to discover and access datasets "
+"related to vaccination and immunization statistics, including global and "
+"regional trends and coverage rates. It provides summaries of relevant "
+"datasets and facilitates access to comprehensive resources for analyzing "
+"health-related data on immunization. If the user wants to look into the "
+"actual data, the 'euhealthinfo\\_deepdive' tool is helpful."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:1014 820840004c82483fa73216c27fea0048
+msgid ""
+"``term_override`` (string) (optional) Override the default topic seed "
+"terms with a custom query string. Defaults internally to 'search "
+"vaccination'."
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:1039 a243decca59b408d99c30cc3f3ebbbac
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:1041 d6ef5d1cbcca40399a943a20f98adab9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/euhealth_tools.rst:1042 ff060f41dfd04ed189416eab5bd81cd9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

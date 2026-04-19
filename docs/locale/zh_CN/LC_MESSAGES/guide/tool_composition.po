@@ -7,53 +7,54 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/tool_composition.rst:2 a9630f33a9c343acb5d1f22ce0628d79
+#: ../../guide/tool_composition.rst:2 24b8c88a388f48cea2f8a6791bc0a12c
 msgid "Tool Composition Tutorial"
 msgstr "工具组成教程"
 
-#: ../../guide/tool_composition.rst:4 038cc327bdc64350a0d7324797118101
+#: ../../guide/tool_composition.rst:4 ed337ad7050644e59ab4d497aa25dadd
 msgid "**Chain ToolUniverse's 1000+ tools into powerful scientific workflows**"
 msgstr "**将ToolUniverse的600多种工具整合为强大的科学工作流**"
 
-#: ../../guide/tool_composition.rst:7 1584e128fd394f49860550765972eab9
+#: ../../guide/tool_composition.rst:7 b010153f58b24fdd9db15bb3f1e52ff5
 msgid "Overview"
 msgstr "概述"
 
-#: ../../guide/tool_composition.rst:9 2283662712494f38a8a5d364d03dc954
+#: ../../guide/tool_composition.rst:9 adf6614b22c940bf8078fabbdc7ce7ed
 msgid ""
-"Tool composition is the art of combining individual scientific tools into "
-"sophisticated research workflows. ToolUniverse's Tool Composer enables the "
-"integration of tools with heterogeneous backends to build end-to-end "
-"workflows. By leveraging the Tool Caller for direct in-code execution, Tool "
-"Composer generates a container function that exposes both the Tool Caller "
-"and ToolUniverse as in-line, executable primitives."
+"Tool composition is the art of combining individual scientific tools into"
+" sophisticated research workflows. ToolUniverse's Tool Composer enables "
+"the integration of tools with heterogeneous backends to build end-to-end "
+"workflows. By leveraging the Tool Caller for direct in-code execution, "
+"Tool Composer generates a container function that exposes both the Tool "
+"Caller and ToolUniverse as in-line, executable primitives."
 msgstr ""
 "工具组合是一门将单个科学工具整合为复杂研究工作流的艺术。ToolUniverse 的工具组合器（Tool "
 "Composer）支持集成具有异构后端的工具，以构建端到端的工作流。通过利用工具调用器（Tool "
 "Caller）进行代码内的直接执行，工具组合器会生成一个容器函数，将工具调用器和 ToolUniverse 暴露为内联可执行的原语。"
 
-#: ../../guide/tool_composition.rst:24 0cde3e4769454b5e91749c7ad7d11bb4
+#: ../../guide/tool_composition.rst:24 b5420dc94ff04a9787ee5016d0b772e8
 msgid ""
-"**Benefits of Tool Composition**: - **Complex Research**: Solve multi-step "
-"problems that no single tool can address - **Workflow Reuse**: Create "
-"reusable research pipelines for common tasks - **Automation**: Reduce manual"
-" coordination between different tools - **Quality Control**: Build in "
-"validation and expert review at critical steps - **Heterogeneous "
-"Integration**: Combine tools with different backends seamlessly - **Agentic "
-"Loops**: Enable adaptive, multi-step experimental analysis"
+"**Benefits of Tool Composition**: - **Complex Research**: Solve multi-"
+"step problems that no single tool can address - **Workflow Reuse**: "
+"Create reusable research pipelines for common tasks - **Automation**: "
+"Reduce manual coordination between different tools - **Quality Control**:"
+" Build in validation and expert review at critical steps - "
+"**Heterogeneous Integration**: Combine tools with different backends "
+"seamlessly - **Agentic Loops**: Enable adaptive, multi-step experimental "
+"analysis"
 msgstr ""
 "**工具组合的优势**：  \n"
 "- **复杂研究**：解决单一工具无法处理的多步骤问题  \n"
@@ -63,68 +64,70 @@ msgstr ""
 "- **异构集成**：无缝组合具有不同后端的工具  \n"
 "- **智能循环**：支持自适应的多步骤实验分析"
 
-#: ../../guide/tool_composition.rst:33 84c98175d60b46c69b6a7449bf4dc078
+#: ../../guide/tool_composition.rst:33 04bd3bd7cfd143189c0a5cd8ee58a014
 msgid "Tool Composer Architecture"
 msgstr "工具编写器架构"
 
-#: ../../guide/tool_composition.rst:35 b6d7dbded7354540aca2d30faceaa4ff
+#: ../../guide/tool_composition.rst:35 86d2a488107b4ba99a53111228529337
 msgid ""
 "The Tool Composer generates a container function that serves as the "
 "execution backbone for complex workflows. This container function, "
-"implemented as `compose(arguments, tooluniverse, call_tool)`, contains the "
-"logic for coordinating different types of tools so they work together in a "
-"single workflow."
+"implemented as `compose(arguments, tooluniverse, call_tool)`, contains "
+"the logic for coordinating different types of tools so they work together"
+" in a single workflow."
 msgstr ""
 "Tool Composer 会生成一个容器函数，作为复杂工作流的执行主干。该容器函数以 `compose(arguments, "
 "tooluniverse, call_tool)` 的形式实现，包含用于协调不同类型工具的逻辑，从而使它们能够在单一工作流中协同工作。"
 
-#: ../../guide/tool_composition.rst:37 a63ca151a8994b679585ba3abe059788
+#: ../../guide/tool_composition.rst:37 4d2364549bb04395b8665223fb062e4c
 msgid "**Container Function Components**:"
 msgstr "**容器功能组件**:"
 
-#: ../../guide/tool_composition.rst:39 1105eeea1ce946f9b8c546597cd25014
+#: ../../guide/tool_composition.rst:39 abd860411a2e4a969cf27e88bc6b1bca
 msgid ""
-"**arguments**: Specifies the tool call arguments that follow the interaction"
-" protocol schema of ToolUniverse"
+"**arguments**: Specifies the tool call arguments that follow the "
+"interaction protocol schema of ToolUniverse"
 msgstr "**arguments**：指定遵循 ToolUniverse 交互协议架构的工具调用参数"
 
-#: ../../guide/tool_composition.rst:40 4f39c67bdbe042c0bda5c7dc725da706
+#: ../../guide/tool_composition.rst:40 05fa40666ce94f56884f804b11659423
 msgid ""
-"**tooluniverse**: An instance of ToolUniverse that provides all available "
-"functions that ToolUniverse can support"
+"**tooluniverse**: An instance of ToolUniverse that provides all available"
+" functions that ToolUniverse can support"
 msgstr "**tooluniverse**：ToolUniverse 的一个实例，提供 ToolUniverse 所支持的所有可用功能"
 
-#: ../../guide/tool_composition.rst:41 d0f82bdbb9a04c0ea7a00d32d455e2e5
+#: ../../guide/tool_composition.rst:41 9ec6b83b671b46f697e83659643d287f
 msgid ""
 "**call_tool**: A callable interface of Tool Caller that abstracts the "
 "invocation of individual tools in ToolUniverse"
 msgstr "**call_tool**：Tool Caller 的可调用接口，用于抽象调用 ToolUniverse 中的各个工具"
 
-#: ../../guide/tool_composition.rst:43 82c9beb1f32445bf9c2397a5471b5b1f
+#: ../../guide/tool_composition.rst:43 2050313c9f904e69bd36c35a724f866e
 msgid ""
-"**Execution Patterns**: - **Chaining**: Chain the output of one tool into "
-"the input of the next - **Broadcasting**: Call multiple tools with a single "
-"query - **Agentic Loops**: Build agentic loops that use agentic tools to "
-"generate function calls, execute tools, and incorporate tool feedback for "
-"multi-step experimental analysis"
+"**Execution Patterns**: - **Chaining**: Chain the output of one tool into"
+" the input of the next - **Broadcasting**: Call multiple tools with a "
+"single query - **Agentic Loops**: Build agentic loops that use agentic "
+"tools to generate function calls, execute tools, and incorporate tool "
+"feedback for multi-step experimental analysis"
 msgstr ""
 "**执行模式**：  \n"
 "- **链式调用**：将一个工具的输出作为下一个工具的输入进行链式调用  \n"
 "- **广播调用**：通过单个查询调用多个工具  \n"
 "- **智能体循环**：构建智能体循环，利用智能体工具生成函数调用、执行工具操作，并结合工具反馈进行多步骤实验分析"
 
-#: ../../guide/tool_composition.rst:49 e50159d60e334e15a95f13f7d92c7972
+#: ../../guide/tool_composition.rst:49 3bae900c9bee4a07b69b2fb463274673
 msgid "How Tool Composition Works"
 msgstr ""
 "工具组成原理\n"
 "\n"
-"工具组成是指将多个工具模块组合在一起以实现特定功能的过程。这些模块可以是独立的组件，也可以是相互依赖的子系统。工具组成的核心在于模块之间的接口设计和数据流的有效管理。\n"
+"工具组成是指将多个工具模块组合在一起以实现特定功能的过程。这些模块可以是独立的组件，也可以是相互依赖的子系统。工具组成的核心在于模块之间的接口设计和数据流的有效管理。"
+"\n"
 "\n"
 "<h2>模块化设计</h2>\n"
 "模块化设计允许开发者根据需求选择和组合不同的功能模块。这种设计方式不仅提高了系统的灵活性，还简化了维护和升级过程。\n"
 "\n"
 "<h2>接口和数据流</h2>\n"
-"模块之间通过定义明确的接口进行通信。接口设计需要确保数据的完整性和兼容性，同时避免信息丢失或误传。数据流管理则负责协调模块之间的数据交换，确保系统的高效运行。\n"
+"模块之间通过定义明确的接口进行通信。接口设计需要确保数据的完整性和兼容性，同时避免信息丢失或误传。数据流管理则负责协调模块之间的数据交换，确保系统的高效运行。"
+"\n"
 "\n"
 "<h2>工具组成的优势</h2>\n"
 "工具组成的主要优势包括：\n"
@@ -136,442 +139,535 @@ msgstr ""
 "\n"
 "通过合理的工具组成设计，开发者可以构建功能强大且易于维护的系统，从而满足复杂的业务需求。"
 
-#: ../../guide/tool_composition.rst:51 ba96fa01412c409fb1a00f28138a76ed
+#: ../../guide/tool_composition.rst:51 8c81395d6e01413f9392f0851630f46f
 msgid ""
 "ToolUniverse's ComposeTool system works through a configuration-driven "
 "approach:"
 msgstr "ToolUniverse 的 ComposeTool 系统采用基于配置驱动的方法："
 
-#: ../../guide/tool_composition.rst:53 4b354dcfdc3947e5bf8796fa8fdb3797
+#: ../../guide/tool_composition.rst:53 4e721518ad8a4f588618fc86111294a6
 msgid ""
 "**Configuration File**: Define compose tools in a JSON file like "
 "`compose_tools.json`"
 msgstr "**配置文件**：在类似于 `compose_tools.json` 的 JSON 文件中定义组合工具"
 
-#: ../../guide/tool_composition.rst:54 f001583ae8b542c79461baac9bba3568
+#: ../../guide/tool_composition.rst:54 9ed5f52e0ee046e785cd5c1950c72ecf
 msgid ""
-"**Implementation Script**: Write Python scripts in the compose environment: "
-"`def compose(arguments, tooluniverse, call_tool): ...`"
+"**Implementation Script**: Write Python scripts in the compose "
+"environment: `def compose(arguments, tooluniverse, call_tool): ...`"
 msgstr ""
 "**实现脚本**：在compose环境中编写Python脚本：`def compose(arguments, tooluniverse, "
 "call_tool): ...`"
 
-#: ../../guide/tool_composition.rst:55 f0cdfa7ca862428d9772463fdcff6eb4
+#: ../../guide/tool_composition.rst:55 d9170b2cd1064c7ba30ace40acd5c7ab
 msgid ""
 "**Automatic Loading**: ComposeTool automatically loads dependencies and "
 "executes workflows"
 msgstr "**自动加载**：ComposeTool 自动加载依赖项并执行工作流"
 
-#: ../../guide/tool_composition.rst:58 0b713d710af049fa9919a3a99f37b26b
+#: ../../guide/tool_composition.rst:58 206f5a630eda4bd3b08196e82e026ab9
 msgid "Creating Your First Compose Tool"
 msgstr "创建您的第一个 Compose 工具"
 
-#: ../../guide/tool_composition.rst:60 a85759fedf4b455c8febb8e7514bedd3
+#: ../../guide/tool_composition.rst:60 3f36f09a173949a2a195bfcf52be36ff
 msgid "Let's create a literature search and summary tool as an example:"
 msgstr "让我们创建一个文献检索和摘要工具作为示例："
 
-#: ../../guide/tool_composition.rst:63 793c56e8cf874420b236a0306bacbd9b
+#: ../../guide/tool_composition.rst:63 f1e2bc1a29ca415283fdb37410eb04c1
 msgid "Step 1: Create the Implementation Script"
 msgstr "步骤 1：创建实现脚本"
 
-#: ../../guide/tool_composition.rst:65 b863863af05d4a03ae085b9109ad52c6
+#: ../../guide/tool_composition.rst:65 683f28adfbc04c8ea9cfebc3fb3ec6e2
 msgid "Create a file `src/tooluniverse/compose_scripts/literature_tool.py`:"
 msgstr "创建文件 `src/tooluniverse/compose_scripts/literature_tool.py`："
 
-#: ../../guide/tool_composition.rst:92 5702913b39504395a133fd0fa882938a
+#: ../../guide/tool_composition.rst:92 63a66889770444f3b23674ab733d05a5
 msgid "Step 2: Add Configuration to compose_tools.json"
 msgstr "步骤 2：将配置添加到 compose_tools.json"
 
-#: ../../guide/tool_composition.rst:94 d10a69c1935545adabbca130d3363889
+#: ../../guide/tool_composition.rst:94 64d8d1d44caa41a49a6350cbd38e3056
 msgid "Add this configuration to `src/tooluniverse/data/compose_tools.json`:"
 msgstr "将以下配置添加到 `src/tooluniverse/data/compose_tools.json` 中："
 
-#: ../../guide/tool_composition.rst:125 e5352b5b8d7e416fb806e9f897ad9324
+#: ../../guide/tool_composition.rst:125 bb4a30fcc70a49a69dd2c762518fbbaf
 msgid "Step 3: Use Your Compose Tool"
 msgstr "步骤 3：使用撰写工具"
 
-#: ../../guide/tool_composition.rst:127 d09b740c1191476ca836ba9555eaf465
+#: ../../guide/tool_composition.rst:127 7594eede0a4143f1b7ee2befdb13f4e1
 msgid ""
-"Once configured, you can use your compose tool like any other ToolUniverse "
-"tool:"
+"Once configured, you can use your compose tool like any other "
+"ToolUniverse tool:"
 msgstr "一旦配置完成，您即可像使用其他 ToolUniverse 工具一样使用您的 compose 工具："
 
-#: ../../guide/tool_composition.rst:147 4bae3e4135554963ab8f8e684a621ebe
+#: ../../guide/tool_composition.rst:145 14599bff7b6b404f91398d7ba28265d3
 msgid "Compose Tool Configuration Reference"
 msgstr "Compose 工具配置参考"
 
-#: ../../guide/tool_composition.rst:150 104a744bbd9745bdae4b7f1569f301ea
+#: ../../guide/tool_composition.rst:148 47e3db2333044072bfa6a793ca059858
 msgid "Required Fields"
 msgstr "必填字段"
 
-#: ../../guide/tool_composition.rst:152 d3e733b511354b1481dfee2dd1b1b44a
+#: ../../guide/tool_composition.rst:150 79ec5d9672c64b2196b8ac441d0ef26e
 msgid "**type**: Must be \"ComposeTool\""
 msgstr "**类型**：必须为 \"ComposeTool\""
 
-#: ../../guide/tool_composition.rst:153 e8a76a986e104882824ecfeefe969ce3
+#: ../../guide/tool_composition.rst:151 1b3ee81130c646beb9c211038cf65d55
 msgid "**name**: Unique name for your compose tool"
 msgstr "**name**: 为您的编排工具设置唯一名称"
 
-#: ../../guide/tool_composition.rst:154 7966e82250304d43910298864f20d39a
+#: ../../guide/tool_composition.rst:152 54277b0ce8bd4cb8b3bba374b7dbbf50
 msgid "**description**: Human-readable description of what the tool does"
 msgstr "**description**: 工具功能的人类可读描述"
 
-#: ../../guide/tool_composition.rst:155 1592d5fbc9654f18a1818fcb0ca3bf08
+#: ../../guide/tool_composition.rst:153 3726064b6e594493b0fb8946257da5da
 msgid "**parameter**: JSON schema defining input parameters"
 msgstr "**parameter**：定义输入参数的 JSON 模式"
 
-#: ../../guide/tool_composition.rst:156 e3b8b891a002425580217c7c5433802d
+#: ../../guide/tool_composition.rst:154 d2d35049e896449399bf8c94f265932a
 msgid "**composition_file**: Python file in `compose_scripts/` directory"
 msgstr "**composition_file**：`compose_scripts/` 目录中的 Python 文件"
 
-#: ../../guide/tool_composition.rst:157 c84d501b5a0f40b5a83ea10e12c6d603
+#: ../../guide/tool_composition.rst:155 ca1ce5b356ac4c79a150ce14c8fe0e6a
 msgid "**composition_function**: Function name to call (usually \"compose\")"
 msgstr "**composition_function**：调用的函数名称（通常为“compose”）"
 
-#: ../../guide/tool_composition.rst:160 2863cc064aa84b45b735eefaaef26fd0
+#: ../../guide/tool_composition.rst:158 133deea077b94e379d94c11f3facbe67
 msgid "Optional Fields"
 msgstr "可选字段"
 
-#: ../../guide/tool_composition.rst:162 e165d979da3741328cfc6456f0885502
+#: ../../guide/tool_composition.rst:160 346466fb622f420b9dbffb6daf00cdf3
 msgid ""
 "**auto_load_dependencies**: Whether to automatically load required tools "
 "(default: true)"
 msgstr "**auto_load_dependencies**：是否自动加载所需工具（默认值：true）"
 
-#: ../../guide/tool_composition.rst:163 43df3a7a2ac94783a571977b3507c061
+#: ../../guide/tool_composition.rst:161 55eafef859cb42ea8eac107c882a2cf9
 msgid ""
 "**fail_on_missing_tools**: Whether to fail if required tools are missing "
 "(default: false)"
 msgstr "**fail_on_missing_tools**：是否在缺少必要工具时失败（默认值：false）"
 
-#: ../../guide/tool_composition.rst:164 ab632b0334be4b25af82415d5f0979d8
+#: ../../guide/tool_composition.rst:162 c0f4f7d1779740f79b87e880bdc5f5da
 msgid "**required_tools**: List of tool names that must be available"
 msgstr "**required_tools**：必须具备的工具名称列表"
 
-#: ../../guide/tool_composition.rst:167 8141069cecdd4a76a48d0be8f9c91680
+#: ../../guide/tool_composition.rst:165 8500f0b47dc84355a7b9e6d6d8e27105
 msgid "Compose Function Signature"
 msgstr "函数签名组合"
 
-#: ../../guide/tool_composition.rst:169 bf63e7b5d2b64b0186c546c2f2bb74eb
+#: ../../guide/tool_composition.rst:167 e316cda6a30c42dc842e578104bc5350
 msgid "Your compose function must follow this exact signature:"
 msgstr "您的 compose 函数必须遵循以下确切的签名："
 
-#: ../../guide/tool_composition.rst:189 a5b6dfd0cbda4efea337dc45a52835ca
+#: ../../guide/tool_composition.rst:187 aed76c88b099436a92a3febcfdc11ffd
 msgid "Heterogeneous Workflow Construction"
 msgstr "异构工作流构建"
 
-#: ../../guide/tool_composition.rst:191 a4b0803f5d1445f09b5682ee8f045116
+#: ../../guide/tool_composition.rst:189 44cdbe1a14ee46f4b4bdee82d7b00855
 msgid ""
-"As illustrated in the ToolUniverse paper, a composed tool can run several "
-"literature search tools concurrently and then invoke a summarization agent "
-"to synthesize the findings, demonstrating heterogeneous workflow "
-"construction in which each step is driven by tool execution. This approach "
-"enables:"
-msgstr ""
-"如《ToolUniverse》论文所示，组合工具可以同时运行多个文献检索工具，随后调用摘要智能体对结果进行综合，展示了异构工作流的构建方式，其中每个步骤均由工具执行驱动。该方法实现了："
+"As illustrated in the ToolUniverse paper, a composed tool can run several"
+" literature search tools concurrently and then invoke a summarization "
+"agent to synthesize the findings, demonstrating heterogeneous workflow "
+"construction in which each step is driven by tool execution. This "
+"approach enables:"
+msgstr "如《ToolUniverse》论文所示，组合工具可以同时运行多个文献检索工具，随后调用摘要智能体对结果进行综合，展示了异构工作流的构建方式，其中每个步骤均由工具执行驱动。该方法实现了："
 
-#: ../../guide/tool_composition.rst:193 3b7af2a476974828a81f3797936fd4b3
+#: ../../guide/tool_composition.rst:191 561bedbc6b624ee8a14559ae856c127f
 msgid ""
 "**Multi-backend Integration**: Combine tools from different scientific "
 "databases and APIs"
 msgstr "**多后端集成**：结合来自不同科学数据库和API的工具"
 
-#: ../../guide/tool_composition.rst:194 41f6bbcb597e408b9171b70fab5d85b6
-msgid ""
-"**Concurrent Execution**: Run multiple tools simultaneously for efficiency"
+#: ../../guide/tool_composition.rst:192 d6ae3bee9dac44abbab4f8b7e62a7a75
+msgid "**Concurrent Execution**: Run multiple tools simultaneously for efficiency"
 msgstr "**并发执行**：同时运行多个工具以提高效率"
 
-#: ../../guide/tool_composition.rst:195 f001fd62ffb64f25acd25da5ba8062f2
+#: ../../guide/tool_composition.rst:193 739710aa6e534c3db8a30de2872e7119
 msgid ""
 "**Intelligent Synthesis**: Use AI agents to synthesize results from "
 "heterogeneous sources"
 msgstr "**智能合成**：使用人工智能智能体从异构来源合成结果"
 
-#: ../../guide/tool_composition.rst:196 1931e5c9dcd04b25b3ba090708a85f0d
+#: ../../guide/tool_composition.rst:194 0d4d52c89468409a80deac6cabd9e27c
 msgid ""
-"**Adaptive Analysis**: Build workflows that can adapt based on intermediate "
-"results"
+"**Adaptive Analysis**: Build workflows that can adapt based on "
+"intermediate results"
 msgstr "**自适应分析**：构建能够根据中间结果进行调整的工作流程"
 
-#: ../../guide/tool_composition.rst:199 84838e3b2c064349ba472369ee9311d4
+#: ../../guide/tool_composition.rst:197 5e590e36a5064d60b5384663e94940cb
 msgid "Core Composition Patterns"
 msgstr "核心组成模式"
 
-#: ../../guide/tool_composition.rst:202 85b4dcf57b244b1f8867def6b5e45e92
+#: ../../guide/tool_composition.rst:200 52b9d3acfb1d438bac18a3f3638fbe1b
 msgid "1. Sequential Chaining"
 msgstr "1. 顺序链式调用"
 
-#: ../../guide/tool_composition.rst:204 62648ade088b45a5955659bd16c0c892
-msgid ""
-"**Use Case**: Linear workflows where each step depends on the previous one"
+#: ../../guide/tool_composition.rst:202 5993120529dc408f9e374934f0b52c6e
+msgid "**Use Case**: Linear workflows where each step depends on the previous one"
 msgstr "**用例**：每个步骤依赖于前一步的线性工作流程"
 
-#: ../../guide/tool_composition.rst:206 6c31e743882448e28c92acc666684f84
+#: ../../guide/tool_composition.rst:204 58e0423be7a34f54b5f6adf3d7f87c0f
 msgid "**Pattern**: Chain the output of one tool into the input of the next"
 msgstr "**模式**：将一个工具的输出链接为下一个工具的输入"
 
-#: ../../guide/tool_composition.rst:276 38ca5ec2334244b9b44d15c19739ae37
+#: ../../guide/tool_composition.rst:274 0d80d59f184845cba6829311443b272e
 msgid "2. Broadcasting (Parallel Execution)"
 msgstr "2. 广播（并行执行）"
 
-#: ../../guide/tool_composition.rst:278 7b9c9d6c0c6e4501ac58775dab11c7a1
+#: ../../guide/tool_composition.rst:276 1d2128611ea246e79e02a3943a120fe1
 msgid "**Use Case**: Independent operations that can run simultaneously"
 msgstr "**用例**：可同时运行的独立操作"
 
-#: ../../guide/tool_composition.rst:280 1d570703e1c74066b0460e3c1478d09c
+#: ../../guide/tool_composition.rst:278 88a7df1cb443481f8892b9ebbc1c148a
 msgid "**Pattern**: Call multiple tools with a single query (broadcasting)"
 msgstr "**模式**：使用单个查询调用多个工具（广播）"
 
-#: ../../guide/tool_composition.rst:321 cddbeb3355ee4591870d13358b385987
+#: ../../guide/tool_composition.rst:319 e775a05a157743d694d73bf89cdeb11e
 msgid "3. Agentic Loops"
 msgstr "3. 智能体循环"
 
-#: ../../guide/tool_composition.rst:323 aecb11c11e034060acf8d1374d03586d
-msgid ""
-"**Use Case**: Iterative optimization with AI guidance and tool feedback"
+#: ../../guide/tool_composition.rst:321 c02ff14f135940dfb9abe2f8bace092f
+msgid "**Use Case**: Iterative optimization with AI guidance and tool feedback"
 msgstr "**用例**：在人工智能指导和工具反馈下的迭代优化"
 
-#: ../../guide/tool_composition.rst:325 ef9bab09a74e47c997c05675204a70b6
+#: ../../guide/tool_composition.rst:323 a87adc4476d94186858fbb0da960b5d3
 msgid ""
-"**Pattern**: Build agentic loops that use agentic tools to generate function"
-" calls, execute tools, and incorporate tool feedback for multi-step "
-"experimental analysis"
+"**Pattern**: Build agentic loops that use agentic tools to generate "
+"function calls, execute tools, and incorporate tool feedback for multi-"
+"step experimental analysis"
 msgstr "**模式**：构建智能体循环，利用智能体工具生成函数调用、执行工具并结合工具反馈，以进行多步骤实验分析"
 
-#: ../../guide/tool_composition.rst:403 a5d6f7fb59494ee6a75281523802f82a
+#: ../../guide/tool_composition.rst:401 3d8009b09d024f46b2363c22e838c3cf
 msgid "4. Error Handling and Fallbacks"
 msgstr "4. 错误处理与回退机制"
 
-#: ../../guide/tool_composition.rst:405 f213680409fb4547bbe4115df1e0dedb
+#: ../../guide/tool_composition.rst:403 d3d76791324c469f91c045b68f564bd1
 msgid "**Use Case**: Robust workflows that handle failures gracefully"
 msgstr "**用例**：能够优雅处理故障的稳健工作流程"
 
-#: ../../guide/tool_composition.rst:407 c8abcb15fe90464782591dc83ce2f5c8
+#: ../../guide/tool_composition.rst:405 472eb345562f48a68d366459edc975aa
 msgid "**Pattern**: Implement fallback mechanisms and graceful degradation"
 msgstr "**模式**：实现回退机制和优雅降级"
 
-#: ../../guide/tool_composition.rst:456 25c3d725e8334adfb4da4fc360824b9e
+#: ../../guide/tool_composition.rst:454 eafe93f009bb4a76a3bbfe2ceba09938
 msgid "Real-World Composition Examples"
 msgstr "真实世界的组成示例"
 
-#: ../../guide/tool_composition.rst:458 b0e2149c0d0141e0b7b627a7a44bdd77
+#: ../../guide/tool_composition.rst:456 bac0c84f23f549609e34c77a03d597af
 msgid ""
 "For comprehensive examples of compose tools in action, see the "
 ":doc:`scientific_workflows` Tutorial, which includes:"
 msgstr "有关组合工具实际应用的完整示例，请参见 :doc:`scientific_workflows` 教程，其中包括："
 
-#: ../../guide/tool_composition.rst:460 2df2828df0134fcfb273a4a64fb32b18
+#: ../../guide/tool_composition.rst:458 f1d5757256f74b429b6129e7c3cf530c
 msgid ""
-"**Comprehensive Drug Discovery Pipeline**: End-to-end workflow from target "
-"identification to safety assessment"
+"**Comprehensive Drug Discovery Pipeline**: End-to-end workflow from "
+"target identification to safety assessment"
 msgstr "**全面的药物发现流程**：从靶点识别到安全性评估的端到端工作流程"
 
-#: ../../guide/tool_composition.rst:461 1dc442287f8d4f9caca9cec689b0c0c3
+#: ../../guide/tool_composition.rst:459 57b6e03415514360a3a23c611f8c8d50
 msgid ""
 "**Biomarker Discovery Workflow**: Multi-step biomarker validation using "
 "literature, expression data, and pathway analysis"
 msgstr "**生物标志物发现工作流程**：利用文献、表达数据和通路分析进行多步骤生物标志物验证"
 
-#: ../../guide/tool_composition.rst:462 9c2fd47966344ba7b25d3401258abdfa
+#: ../../guide/tool_composition.rst:460 b5954557b51c423d9175c9523b69d344
 msgid ""
-"**Advanced Literature Review**: AI-powered systematic reviews with citation "
-"analysis"
+"**Advanced Literature Review**: AI-powered systematic reviews with "
+"citation analysis"
 msgstr "**高级文献综述**：基于人工智能的系统综述及引文分析"
 
-#: ../../guide/tool_composition.rst:463 8edc287587a04eac8fac2ce93fc15b0d
+#: ../../guide/tool_composition.rst:461 2665f0497b534fc199fac31dcfddbaed
 msgid ""
-"**Agentic Research Workflows**: Adaptive workflows that use AI feedback for "
-"multi-step analysis"
+"**Agentic Research Workflows**: Adaptive workflows that use AI feedback "
+"for multi-step analysis"
 msgstr "**自主研究工作流程**：利用人工智能反馈进行多步骤分析的自适应工作流程"
 
-#: ../../guide/tool_composition.rst:465 80a2b17f522349b8babfc0e53bc389f3
+#: ../../guide/tool_composition.rst:463 7fb2e8854b844828813b33f4702d48b7
 msgid ""
 "These examples demonstrate how compose tools can orchestrate complex "
-"scientific workflows, combining tools from different backends to solve real-"
-"world research problems."
+"scientific workflows, combining tools from different backends to solve "
+"real-world research problems."
 msgstr "这些示例展示了组合工具如何协调复杂的科学工作流程，结合来自不同后端的工具以解决实际研究问题。"
 
-#: ../../guide/tool_composition.rst:468 cac39acde3914cd994c04d1c452e76b8
+#: ../../guide/tool_composition.rst:466 b5ff8f90a2cc434cbf9080b20ce9020d
 msgid "Tool Caller Interface"
 msgstr "工具调用接口"
 
-#: ../../guide/tool_composition.rst:470 8fb52ed1e2c247909348c748c8d7ce58
+#: ../../guide/tool_composition.rst:468 5c3d0a4d72bb43a4b694e24842260140
 msgid ""
-"The Tool Caller provides a callable interface that abstracts the invocation "
-"of individual tools in ToolUniverse. This abstraction enables:"
+"The Tool Caller provides a callable interface that abstracts the "
+"invocation of individual tools in ToolUniverse. This abstraction enables:"
 msgstr "Tool Caller 提供了一个可调用接口，用于抽象调用 ToolUniverse 中的各个工具。该抽象实现了："
 
-#: ../../guide/tool_composition.rst:472 fc8e368126bc45d8a3e73888df7d2532
+#: ../../guide/tool_composition.rst:470 90745734a20843ecae51a5773b54c065
 msgid ""
-"**Unified Tool Access**: All tools are accessed through the same `call_tool`"
-" interface"
+"**Unified Tool Access**: All tools are accessed through the same "
+"`call_tool` interface"
 msgstr "**统一工具访问**：所有工具均通过相同的 `call_tool` 接口访问"
 
-#: ../../guide/tool_composition.rst:473 fe221e887f5a49d08e3c67835b2678ad
+#: ../../guide/tool_composition.rst:471 80d11823d9a74bdab5d1b67865ab1d3f
 msgid ""
-"**Protocol Compliance**: Tool calls follow the interaction protocol schema "
-"of ToolUniverse"
+"**Protocol Compliance**: Tool calls follow the interaction protocol "
+"schema of ToolUniverse"
 msgstr "**协议合规性**：工具调用遵循 ToolUniverse 的交互协议规范。"
 
-#: ../../guide/tool_composition.rst:474 8180fe227a0946fba11d5de45e010733
-msgid ""
-"**Error Handling**: Consistent error handling across different tool types"
+#: ../../guide/tool_composition.rst:472 cb590696092b46e5b55693772750f05f
+msgid "**Error Handling**: Consistent error handling across different tool types"
 msgstr "**错误处理**：在不同工具类型之间实现一致的错误处理"
 
-#: ../../guide/tool_composition.rst:475 22149715001f463c99cf023187c2e0e4
+#: ../../guide/tool_composition.rst:473 1f6bac8b2ca247c7854c6e3383bc06a5
 msgid ""
 "**Dependency Management**: Automatic loading and management of tool "
 "dependencies"
 msgstr "**依赖管理**：工具依赖的自动加载与管理"
 
-#: ../../guide/tool_composition.rst:477 50d022a6d448480ca580012f26cecff7
+#: ../../guide/tool_composition.rst:475 310dc9b07c6442efa4fc2035752d7591
 msgid "**Tool Caller Usage Pattern**:"
 msgstr "**工具调用者使用模式**："
 
-#: ../../guide/tool_composition.rst:494 326b6a522f314fb88037a27f9330deeb
+#: ../../guide/tool_composition.rst:492 83cea9f98a914fb2948e4b493a7f1bfc
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../guide/tool_composition.rst:497 5a0670f8b5214bfcae5ddbcd1ede95c5
+#: ../../guide/tool_composition.rst:495 a9b91b20410049f0b4b0555fecc1f38f
 msgid "Common Issues and Solutions"
 msgstr "常见问题及解决方案"
 
-#: ../../guide/tool_composition.rst:499 b946ef9d6724490dbd232f219ff9ca42
-msgid ""
-"**Tool Not Found Error** - Check that the tool name is correct in your "
-"compose script - Ensure the tool is loaded in ToolUniverse - Verify the tool"
-" is in the `required_tools` list - Use `auto_load_dependencies: true` to "
-"automatically load missing tools"
+#: ../../guide/tool_composition.rst:497 84048dd9e72d4b2097dfd41d42779f92
+msgid "**Tool Not Found Error**"
 msgstr ""
-"**工具未找到错误**  \n"
-"- 检查您的编写脚本中工具名称是否正确  \n"
-"- 确保该工具已加载到 ToolUniverse 中  \n"
-"- 验证该工具是否在 `required_tools` 列表中  \n"
-"- 使用 `auto_load_dependencies: true` 自动加载缺失的工具"
 
-#: ../../guide/tool_composition.rst:505 14e475566af7448dbcae335f83752abe
-msgid ""
-"**Import Errors** - Make sure your compose script is in the "
-"`compose_scripts/` directory - Check that the function name matches "
-"`composition_function` - Verify the function signature is correct: `def "
-"compose(arguments, tooluniverse, call_tool):`"
+#: ../../guide/tool_composition.rst:499 36fcf23945ab4bd1843758be681749fe
+msgid "Check that the tool name is correct in your compose script"
 msgstr ""
-"**导入错误**  \n"
-"- 确保您的 compose 脚本位于 `compose_scripts/` 目录下  \n"
-"- 检查函数名称是否为 `composition_function`  \n"
-"- 验证函数签名是否正确：`def compose(arguments, tooluniverse, call_tool):`"
 
-#: ../../guide/tool_composition.rst:510 75c06aaef12740ba8f1764ce8b383770
-msgid ""
-"**Parameter Errors** - Validate your parameter schema in the JSON "
-"configuration - Check that required parameters are provided - Ensure "
-"parameter types match the schema - Follow the interaction protocol schema of"
-" ToolUniverse"
+#: ../../guide/tool_composition.rst:500 1086027f08344cb1bcb4b69e9c8c6d85
+msgid "Ensure the tool is loaded in ToolUniverse"
 msgstr ""
-"**参数错误**  \n"
-"- 验证 JSON 配置中的参数架构  \n"
-"- 检查是否提供了必需的参数  \n"
-"- 确保参数类型与架构匹配  \n"
-"- 遵循 ToolUniverse 的交互协议架构"
 
-#: ../../guide/tool_composition.rst:516 05d413d23da04b7aaaa0401efee45770
-msgid ""
-"**Performance Issues** - Limit the number of tools called in sequence - Use "
-"`auto_load_dependencies: true` for automatic loading - Consider caching "
-"results for repeated calls - Implement proper error handling to avoid "
-"cascading failures"
+#: ../../guide/tool_composition.rst:501 5bdbd31e7e524e448c5bb41688f4ccca
+msgid "Verify the tool is in the ``required_tools`` list"
 msgstr ""
-"**性能问题**  \n"
-"- 限制顺序调用的工具数量  \n"
-"- 使用 `auto_load_dependencies: true` 实现自动加载  \n"
-"- 考虑对重复调用的结果进行缓存  \n"
-"- 实施适当的错误处理以避免级联故障"
 
-#: ../../guide/tool_composition.rst:522 66110aae29eb454b9f903adffc6edf79
-msgid ""
-"**Heterogeneous Backend Issues** - Ensure all required tools are available "
-"across different backends - Use `fail_on_missing_tools: false` for graceful "
-"degradation - Implement fallback mechanisms for critical workflow steps"
+#: ../../guide/tool_composition.rst:502 a05ec5e4bc9540448cecdc77b6254a20
+#, fuzzy
+msgid "Use ``auto_load_dependencies: true`` to automatically load missing tools"
+msgstr "**auto_load_dependencies**：是否自动加载所需工具（默认值：true）"
+
+#: ../../guide/tool_composition.rst:504 12a6b4d732684a0f995cdd2375ee54bd
+msgid "**Import Errors**"
 msgstr ""
-"**异构后端问题**  \n"
-"- 确保所有必需工具在不同后端均可用  \n"
-"- 对于缺失工具，使用 `fail_on_missing_tools: false` 实现优雅降级  \n"
-"- 为关键工作流程步骤实现回退机制"
 
-#: ../../guide/tool_composition.rst:528 8a0f5881121748c495076c1a0667ad36
+#: ../../guide/tool_composition.rst:506 c91f166cf8b2418b94dbd8ac2a901b7e
+#, fuzzy
+msgid "Make sure your compose script is in the ``compose_scripts/`` directory"
+msgstr "**composition_file**：`compose_scripts/` 目录中的 Python 文件"
+
+#: ../../guide/tool_composition.rst:507 01fd91215d334307ad8467219c80b83e
+msgid "Check that the function name matches ``composition_function``"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:508 7045abe924944ad5879acb0ffe320eb3
+#, fuzzy
+msgid ""
+"Verify the function signature is correct: ``def compose(arguments, "
+"tooluniverse, call_tool):``"
+msgstr ""
+"**实现脚本**：在compose环境中编写Python脚本：`def compose(arguments, tooluniverse, "
+"call_tool): ...`"
+
+#: ../../guide/tool_composition.rst:511 a54513dc2220421ab1285b414551c281
+msgid "**Parameter Errors**"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:513 65359957c01349fc8833e9ce0ad27f21
+msgid "Validate your parameter schema in the JSON configuration"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:514 bf24483837c646b89e02a2e1d620a1d0
+msgid "Check that required parameters are provided"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:515 acd2369e0c1444f6bb923cd1e6175d83
+msgid "Ensure parameter types match the schema"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:516 b6ea52e5bea24ed8ae71ffca2a8c01c8
+#, fuzzy
+msgid "Follow the interaction protocol schema of ToolUniverse"
+msgstr "**协议合规性**：工具调用遵循 ToolUniverse 的交互协议规范。"
+
+#: ../../guide/tool_composition.rst:518 990a59a0427c4ed38f882095e64eeb42
+msgid "**Performance Issues**"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:520 25543f59f7b7419b9c7c1a74aeb4a69a
+msgid "Limit the number of tools called in sequence"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:521 15ed85fca4d24b68831996b4eab58909
+msgid "Use ``auto_load_dependencies: true`` for automatic loading"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:522 388e50725dac4dcb90a5bb132e3832e1
+msgid "Consider caching results for repeated calls"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:523 62fd995636d34c8cad6acc9340145799
+msgid "Implement proper error handling to avoid cascading failures"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:525 1b925c4ea07946a4ba5fa2fa21ff001d
+msgid "**Heterogeneous Backend Issues**"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:527 e1f3af87d1154538a5e581117521af23
+msgid "Ensure all required tools are available across different backends"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:528 9153881e47094da5bbe0f5a0b6dd94c6
+msgid "Use ``fail_on_missing_tools: false`` for graceful degradation"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:529 cd6ed6f5d27547be9e1b929989c1eda2
+msgid "Implement fallback mechanisms for critical workflow steps"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:532 9ed429af386a4048aeb4374dd55f3c80
 msgid "Available Compose Tools"
 msgstr "可用的编写工具"
 
-#: ../../guide/tool_composition.rst:530 17837e6d2c7042aab76681b4ed9090bb
+#: ../../guide/tool_composition.rst:534 f9ee26b1aa3b487d864b2fb1dc139df2
 msgid ""
 "ToolUniverse currently provides several pre-built compose tools that "
 "demonstrate different workflow patterns:"
 msgstr "ToolUniverse 当前提供了多种预设的组合工具，以展示不同的工作流程模式："
 
-#: ../../guide/tool_composition.rst:532 6d792efddf894438bab09821c76ed970
-msgid "**✅ Working Compose Tools**:"
+#: ../../guide/tool_composition.rst:536 b8b37a050f114793941869ba3257b8a9
+#, fuzzy
+msgid "**Working Compose Tools**:"
 msgstr "**✅ 可用的 Compose 工具**："
 
-#: ../../guide/tool_composition.rst:534 62169bbd70484982a2b1577041d5789b
-msgid ""
-"**LiteratureSearchTool** - Literature research and synthesis - Searches "
-"EuropePMC, OpenAlex, and PubTator databases - Uses AI agent for literature "
-"summarization - Demonstrates broadcasting pattern"
+#: ../../guide/tool_composition.rst:538 b5677c96641e4197a5faf221c36e85f6
+msgid "**LiteratureSearchTool** - Literature research and synthesis"
 msgstr ""
-"**LiteratureSearchTool** - 文献检索与综述 - 检索 EuropePMC、OpenAlex 及 PubTator 数据库 - "
-"使用 AI 智能体进行文献摘要 - 展示广播模式"
 
-#: ../../guide/tool_composition.rst:539 5e0b4390009e4394ae4c652f6e53dc1e
-msgid ""
-"**ComprehensiveDrugDiscoveryPipeline** - End-to-end drug discovery - Target "
-"identification using OpenTargets - Lead discovery from known drugs - Safety "
-"assessment using ADMETAI tools - Literature validation - Demonstrates "
-"sequential chaining with tool integration"
+#: ../../guide/tool_composition.rst:540 aed34894b2114bc0aa04109de3ce0fca
+msgid "Searches EuropePMC, OpenAlex, and PubTator databases"
 msgstr ""
-"**ComprehensiveDrugDiscoveryPipeline** - 端到端药物发现流程 - 使用 OpenTargets 进行靶点识别 -"
-" 从已知药物中发现先导化合物 - 利用 ADMETAI 工具进行安全性评估 - 文献验证 - 展示工具集成的顺序链式操作"
 
-#: ../../guide/tool_composition.rst:546 98f029230bbb4980932c404b5735468a
-msgid ""
-"**BiomarkerDiscoveryWorkflow** - Biomarker discovery and validation - "
-"Literature-based biomarker discovery - Multi-strategy gene search using HPA "
-"- Comprehensive pathway analysis using HPA tools - Clinical validation using"
-" FDA data - Demonstrates multi-strategy fallbacks and error handling"
+#: ../../guide/tool_composition.rst:541 3bd7c83bb1664265ad0235220d4d1774
+msgid "Uses AI agent for literature summarization"
 msgstr ""
-"**BiomarkerDiscoveryWorkflow** - 生物标志物发现与验证 - 基于文献的生物标志物发现 - 使用HPA进行多策略基因搜索 "
-"- 利用HPA工具进行全面的通路分析 - 使用FDA数据进行临床验证 - 展示多策略回退机制及错误处理"
 
-#: ../../guide/tool_composition.rst:553 cddc6066b786446990980c7e6e70bf23
-msgid ""
-"**DrugSafetyAnalyzer** - Drug safety assessment - PubChem compound "
-"information retrieval - EuropePMC literature search - Demonstrates safety-"
-"focused workflows"
+#: ../../guide/tool_composition.rst:542 5808eb04baae4eb18eaa75be0f7b25a9
+msgid "Demonstrates broadcasting pattern"
 msgstr ""
-"**DrugSafetyAnalyzer** - 药物安全性评估 - PubChem 化合物信息检索 - EuropePMC 文献搜索 - "
-"展示以安全性为核心的工作流程"
 
-#: ../../guide/tool_composition.rst:558 62c5bc0100804c1eb26524c786ae4e5a
-msgid ""
-"**ToolDescriptionOptimizer** - Tool optimization - AI-powered tool "
-"description improvement - Test case generation and quality evaluation - "
-"Demonstrates agentic optimization loops"
+#: ../../guide/tool_composition.rst:544 588d1736b48840058053d0daec34e546
+msgid "**ComprehensiveDrugDiscoveryPipeline** - End-to-end drug discovery"
 msgstr ""
-"**ToolDescriptionOptimizer** - 工具优化 - 基于人工智能的工具描述改进 - 测试用例生成与质量评估 - 展示自主优化循环"
 
-#: ../../guide/tool_composition.rst:563 b54a44082b1c4a27946b9bc5d454ae99
-msgid ""
-"**ToolDiscover** - Tool discovery and generation - AI-powered tool creation "
-"from descriptions - Iterative code improvement - Demonstrates advanced "
-"agentic workflows"
-msgstr "**ToolDiscover** - 工具发现与生成 - 基于描述的AI驱动工具创建 - 迭代代码优化 - 展示先进的自主智能体工作流程"
+#: ../../guide/tool_composition.rst:546 95f61a3809924667b3921b05e73181b5
+msgid "Target identification using OpenTargets"
+msgstr ""
 
-#: ../../guide/tool_composition.rst:568 93aad734ff314fababf2152bbb8b6590
+#: ../../guide/tool_composition.rst:547 fd954ee1a5a04f58bc4b095361c11755
+msgid "Lead discovery from known drugs"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:548 c9093c634ba94c1bacd5886a8cc1971c
+msgid "Safety assessment using ADMETAI tools"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:549 3126afac2cc94614aad9fba8bac59d5e
+msgid "Literature validation"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:550 5677aa0a781e4b33a64dad805c98b8fb
+msgid "Demonstrates sequential chaining with tool integration"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:552 ca5ab2768552460eac4038450d482177
+msgid "**BiomarkerDiscoveryWorkflow** - Biomarker discovery and validation"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:554 0514a9eec178447fae5c5552144388d6
+msgid "Literature-based biomarker discovery"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:555 93a7c65bce6b400abe22e275c93ca8cf
+msgid "Multi-strategy gene search using HPA"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:556 43f6eaf957dd4a958722d1e4c660d90a
+msgid "Comprehensive pathway analysis using HPA tools"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:557 44937961dee143148c26ca11114987cf
+msgid "Clinical validation using FDA data"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:558 6a3305a524bb4c14b4e40c8a07d59dc0
+msgid "Demonstrates multi-strategy fallbacks and error handling"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:560 6b44202dc8594b95890c1e885241e7d6
+msgid "**DrugSafetyAnalyzer** - Drug safety assessment"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:562 a896c9c2ee1e4ac4b6ce597adf90d614
+msgid "PubChem compound information retrieval"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:563 7ad45faa05524b71ae98112b2abbb1b7
+msgid "EuropePMC literature search"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:564 d1819ab1c4464026be79a4912ea9e0f8
+msgid "Demonstrates safety-focused workflows"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:566 dab79393387344918135cef7c7a4fc01
+msgid "**ToolDescriptionOptimizer** - Tool optimization"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:568 d4d8a0cbb44b4e2581ec9833a5b24b4d
+msgid "AI-powered tool description improvement"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:569 6e4b15e0cd5e4fa991e55859e4cd6bd8
+msgid "Test case generation and quality evaluation"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:570 70bb13cb4c604d9a9638cf493671266c
+msgid "Demonstrates agentic optimization loops"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:572 115ddc1ad53842b894a11c7d166f7203
+msgid "**ToolDiscover** - Tool discovery and generation"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:574 612a025e45b04b9dbe14a1088982f235
+msgid "AI-powered tool creation from descriptions"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:575 a191eb87b360415ca31c1e49d9192481
+msgid "Iterative code improvement"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:576 3e0bd006932f49c09b99dc588b9e87ea
+msgid "Demonstrates advanced agentic workflows"
+msgstr ""
+
+#: ../../guide/tool_composition.rst:578 0ee220d07e1544179313d589f193908c
 msgid ""
 "**Key Features**: - **All tools tested and working** with real data "
 "processing - **Comprehensive error handling** with graceful fallbacks - "
 "**Tool chaining** for complex multi-step workflows - **Dynamic data "
-"extraction** (e.g., SMILES from drug names) - **Multi-strategy approaches** "
-"for robust data retrieval"
+"extraction** (e.g., SMILES from drug names) - **Multi-strategy "
+"approaches** for robust data retrieval"
 msgstr ""
 "**主要功能**：  \n"
 "- **所有工具均经过测试并可正常运行**，支持真实数据处理  \n"
@@ -580,88 +676,28 @@ msgstr ""
 "- **动态数据提取**（例如，从药物名称中提取SMILES）  \n"
 "- **多策略方法**，确保数据检索的稳健性"
 
-#: ../../guide/tool_composition.rst:576 2ff7799489424153a5181efa349bbcdf
-msgid "Summary"
-msgstr "摘要"
-
-#: ../../guide/tool_composition.rst:578 8c9e2517ac484e27962d6d32ba09a7ff
-msgid ""
-"ToolUniverse's Tool Composer enables the creation of sophisticated "
-"scientific workflows by combining individual tools with heterogeneous "
-"backends. The container function `compose(arguments, tooluniverse, "
-"call_tool)` serves as the execution backbone, providing:"
-msgstr ""
-"ToolUniverse 的 Tool Composer 通过结合具有异构后端的单个工具，实现复杂科学工作流的创建。容器函数 "
-"`compose(arguments, tooluniverse, call_tool)` 作为执行核心，提供："
-
-#: ../../guide/tool_composition.rst:580 cb6e9c6972c4470081e7889666372de0
-msgid ""
-"**Flexible Multi-tool Execution**: Support for chaining, broadcasting, and "
-"agentic loops"
-msgstr "**灵活的多工具执行**：支持链式调用、广播及智能体循环"
-
-#: ../../guide/tool_composition.rst:581 1e660ebbde214af3b7dfe97861b0d598
-msgid ""
-"**Heterogeneous Integration**: Seamless combination of tools from different "
-"scientific databases and APIs"
-msgstr "**异构集成**：无缝整合来自不同科学数据库和API的工具"
-
-#: ../../guide/tool_composition.rst:582 8020360aad25468a84fedc260bab5b9b
-msgid ""
-"**Adaptive Analysis**: Multi-step experimental analysis with tool feedback "
-"incorporation"
-msgstr "**自适应分析**：多步骤实验分析，结合工具反馈"
-
-#: ../../guide/tool_composition.rst:583 90469d9c15b0444f976e154ac2c6b69a
-msgid ""
-"**Protocol Compliance**: Consistent interaction with tools through the "
-"ToolUniverse schema"
-msgstr "**协议合规性**：通过 ToolUniverse 架构与工具保持一致的交互"
-
-#: ../../guide/tool_composition.rst:585 475c787d68574277871e5da30a87d672
-msgid ""
-"The Tool Caller interface abstracts tool invocation, enabling developers to "
-"focus on workflow logic rather than tool management details. This "
-"architecture supports complex research patterns while maintaining simplicity"
-" and reliability."
-msgstr ""
-"Tool Caller 接口抽象了工具调用，使开发人员能够专注于工作流逻辑，而无需关注工具管理的细节。该架构支持复杂的研究模式，同时保持简洁性和可靠性。"
-
-#: ../../guide/tool_composition.rst:588 cd1ec4d0984844288d6362d5f2bc5cd2
-msgid "Next Steps"
-msgstr "下一步"
-
-#: ../../guide/tool_composition.rst:590 5d5b2dc0b52747869cfe749d9d3846ea
-msgid ""
-"**Learn Components**: :doc:`architecture` - Understand ToolUniverse "
-"architecture"
+#: ../../guide/tool_composition.rst:587 2212db08b1e040c5b87ed090d053c022
+#, fuzzy
+msgid ":doc:`../expand_tooluniverse/architecture` - ToolUniverse architecture"
 msgstr "**了解组件**：:doc:`architecture` - 了解 ToolUniverse 架构"
 
-#: ../../guide/tool_composition.rst:591 ffe2ed07ed61454491a483ab8038d283
-msgid ""
-"**Build AI Scientists**: :doc:`building_ai_scientists/index` - Create "
-"autonomous research workflows"
-msgstr "**构建 AI 科学家**：:doc:`building_ai_scientists/index` - 创建自主研究工作流程"
+#: ../../guide/tool_composition.rst:588 1c3a5e9e5785486f840da9582b0dfa60
+msgid ":doc:`building_ai_scientists/index` - Connect to AI agents"
+msgstr ""
 
-#: ../../guide/tool_composition.rst:592 10c67e2e4803437c8e324653df5d8e31
-msgid ""
-"**Case Studies**: :doc:`scientific_workflows` - Real composition examples"
+#: ../../guide/tool_composition.rst:589 32c3ccd1b33145c29d38e474cf5f9ddb
+#, fuzzy
+msgid ":doc:`scientific_workflows` - Real composition examples"
 msgstr "**案例研究**：:doc:`scientific_workflows` - 真实组成示例"
 
-#: ../../guide/tool_composition.rst:593 1f400788395d4447829ea45a9c792e1f
-msgid ""
-"**Best Practices**: :doc:`best_practices` - Production workflow optimization"
-msgstr "**最佳实践**：:doc:`best_practices` - 生产流程优化"
-
-#: ../../guide/tool_composition.rst:596 365357159d784583a48822684e25428c
+#: ../../guide/tool_composition.rst:592 a88f7986d9df4cdf9909a658c26fc5c3
 msgid ""
 "**Start simple**: Begin with sequential workflows like the "
-"LiteratureSearchTool example, then progress to more complex patterns as you "
-"become comfortable with tool composition."
-msgstr ""
-"**从简单开始**：先从像 LiteratureSearchTool 示例这样的顺序工作流入手，随着对工具组合的熟悉，再逐步过渡到更复杂的模式。"
+"LiteratureSearchTool example, then progress to more complex patterns as "
+"you become comfortable with tool composition."
+msgstr "**从简单开始**：先从像 LiteratureSearchTool 示例这样的顺序工作流入手，随着对工具组合的熟悉，再逐步过渡到更复杂的模式。"
 
-#: ../../guide/tool_composition.rst:599 0d4ea1535b6348e1829140f8135de901
+#: ../../guide/tool_composition.rst:595 f116de6d25b94c94a5537110eacd7858
 msgid ""
 "**Compose Tool Location**: All compose scripts must be placed in "
 "`src/tooluniverse/compose_scripts/` directory and registered in "
@@ -670,12 +706,218 @@ msgstr ""
 "**Compose 工具位置**：所有 compose 脚本必须放置在 `src/tooluniverse/compose_scripts/` "
 "目录下，并在 `src/tooluniverse/data/compose_tools.json` 中注册。"
 
-#: ../../guide/tool_composition.rst:602 8a1956742a2047e8bae06b8cabd5cc53
+#: ../../guide/tool_composition.rst:598 634e2da8a50e407e9340fb8d1960d7bb
 msgid ""
 "**Tool Composer Architecture**: The Tool Composer generates container "
-"functions that expose ToolUniverse and Tool Caller as in-line, executable "
-"primitives, enabling flexible multi-tool execution patterns for complex "
+"functions that expose ToolUniverse and Tool Caller as in-line, executable"
+" primitives, enabling flexible multi-tool execution patterns for complex "
 "scientific workflows."
 msgstr ""
 "**工具组合器架构**：工具组合器生成容器函数，将 ToolUniverse 和 Tool Caller "
 "作为内联的可执行原语暴露出来，从而实现复杂科学工作流中灵活的多工具执行模式。"
+
+#~ msgid ""
+#~ "**Tool Not Found Error** - Check "
+#~ "that the tool name is correct in"
+#~ " your compose script - Ensure the "
+#~ "tool is loaded in ToolUniverse - "
+#~ "Verify the tool is in the "
+#~ "`required_tools` list - Use "
+#~ "`auto_load_dependencies: true` to automatically "
+#~ "load missing tools"
+#~ msgstr ""
+#~ "**工具未找到错误**  \n"
+#~ "- 检查您的编写脚本中工具名称是否正确  \n"
+#~ "- 确保该工具已加载到 ToolUniverse 中  \n"
+#~ "- 验证该工具是否在 `required_tools` 列表中  \n"
+#~ "- 使用 `auto_load_dependencies: true` 自动加载缺失的工具"
+
+#~ msgid ""
+#~ "**Import Errors** - Make sure your "
+#~ "compose script is in the "
+#~ "`compose_scripts/` directory - Check that "
+#~ "the function name matches "
+#~ "`composition_function` - Verify the function"
+#~ " signature is correct: `def "
+#~ "compose(arguments, tooluniverse, call_tool):`"
+#~ msgstr ""
+#~ "**导入错误**  \n"
+#~ "- 确保您的 compose 脚本位于 `compose_scripts/` 目录下  \n"
+#~ "- 检查函数名称是否为 `composition_function`  \n"
+#~ "- 验证函数签名是否正确：`def compose(arguments, tooluniverse, call_tool):`"
+
+#~ msgid ""
+#~ "**Parameter Errors** - Validate your "
+#~ "parameter schema in the JSON "
+#~ "configuration - Check that required "
+#~ "parameters are provided - Ensure "
+#~ "parameter types match the schema - "
+#~ "Follow the interaction protocol schema "
+#~ "of ToolUniverse"
+#~ msgstr ""
+#~ "**参数错误**  \n"
+#~ "- 验证 JSON 配置中的参数架构  \n"
+#~ "- 检查是否提供了必需的参数  \n"
+#~ "- 确保参数类型与架构匹配  \n"
+#~ "- 遵循 ToolUniverse 的交互协议架构"
+
+#~ msgid ""
+#~ "**Performance Issues** - Limit the "
+#~ "number of tools called in sequence "
+#~ "- Use `auto_load_dependencies: true` for "
+#~ "automatic loading - Consider caching "
+#~ "results for repeated calls - Implement"
+#~ " proper error handling to avoid "
+#~ "cascading failures"
+#~ msgstr ""
+#~ "**性能问题**  \n"
+#~ "- 限制顺序调用的工具数量  \n"
+#~ "- 使用 `auto_load_dependencies: true` 实现自动加载  \n"
+#~ "- 考虑对重复调用的结果进行缓存  \n"
+#~ "- 实施适当的错误处理以避免级联故障"
+
+#~ msgid ""
+#~ "**Heterogeneous Backend Issues** - Ensure "
+#~ "all required tools are available across"
+#~ " different backends - Use "
+#~ "`fail_on_missing_tools: false` for graceful "
+#~ "degradation - Implement fallback mechanisms"
+#~ " for critical workflow steps"
+#~ msgstr ""
+#~ "**异构后端问题**  \n"
+#~ "- 确保所有必需工具在不同后端均可用  \n"
+#~ "- 对于缺失工具，使用 `fail_on_missing_tools: false` 实现优雅降级  \n"
+#~ "- 为关键工作流程步骤实现回退机制"
+
+#~ msgid ""
+#~ "**LiteratureSearchTool** - Literature research "
+#~ "and synthesis - Searches EuropePMC, "
+#~ "OpenAlex, and PubTator databases - Uses"
+#~ " AI agent for literature summarization "
+#~ "- Demonstrates broadcasting pattern"
+#~ msgstr ""
+#~ "**LiteratureSearchTool** - 文献检索与综述 - 检索 "
+#~ "EuropePMC、OpenAlex 及 PubTator 数据库 - 使用"
+#~ " AI 智能体进行文献摘要 - 展示广播模式"
+
+#~ msgid ""
+#~ "**ComprehensiveDrugDiscoveryPipeline** - End-to-"
+#~ "end drug discovery - Target "
+#~ "identification using OpenTargets - Lead "
+#~ "discovery from known drugs - Safety "
+#~ "assessment using ADMETAI tools - "
+#~ "Literature validation - Demonstrates "
+#~ "sequential chaining with tool integration"
+#~ msgstr ""
+#~ "**ComprehensiveDrugDiscoveryPipeline** - 端到端药物发现流程 -"
+#~ " 使用 OpenTargets 进行靶点识别 - 从已知药物中发现先导化合物 "
+#~ "- 利用 ADMETAI 工具进行安全性评估 - 文献验证 -"
+#~ " 展示工具集成的顺序链式操作"
+
+#~ msgid ""
+#~ "**BiomarkerDiscoveryWorkflow** - Biomarker discovery"
+#~ " and validation - Literature-based "
+#~ "biomarker discovery - Multi-strategy "
+#~ "gene search using HPA - Comprehensive"
+#~ " pathway analysis using HPA tools -"
+#~ " Clinical validation using FDA data -"
+#~ " Demonstrates multi-strategy fallbacks and"
+#~ " error handling"
+#~ msgstr ""
+#~ "**BiomarkerDiscoveryWorkflow** - 生物标志物发现与验证 - "
+#~ "基于文献的生物标志物发现 - 使用HPA进行多策略基因搜索 - "
+#~ "利用HPA工具进行全面的通路分析 - 使用FDA数据进行临床验证 - "
+#~ "展示多策略回退机制及错误处理"
+
+#~ msgid ""
+#~ "**DrugSafetyAnalyzer** - Drug safety "
+#~ "assessment - PubChem compound information "
+#~ "retrieval - EuropePMC literature search "
+#~ "- Demonstrates safety-focused workflows"
+#~ msgstr ""
+#~ "**DrugSafetyAnalyzer** - 药物安全性评估 - PubChem "
+#~ "化合物信息检索 - EuropePMC 文献搜索 - "
+#~ "展示以安全性为核心的工作流程"
+
+#~ msgid ""
+#~ "**ToolDescriptionOptimizer** - Tool optimization "
+#~ "- AI-powered tool description "
+#~ "improvement - Test case generation and"
+#~ " quality evaluation - Demonstrates agentic"
+#~ " optimization loops"
+#~ msgstr ""
+#~ "**ToolDescriptionOptimizer** - 工具优化 - "
+#~ "基于人工智能的工具描述改进 - 测试用例生成与质量评估 - 展示自主优化循环"
+
+#~ msgid ""
+#~ "**ToolDiscover** - Tool discovery and "
+#~ "generation - AI-powered tool creation"
+#~ " from descriptions - Iterative code "
+#~ "improvement - Demonstrates advanced agentic"
+#~ " workflows"
+#~ msgstr "**ToolDiscover** - 工具发现与生成 - 基于描述的AI驱动工具创建 - 迭代代码优化 - 展示先进的自主智能体工作流程"
+
+#~ msgid "Summary"
+#~ msgstr "摘要"
+
+#~ msgid ""
+#~ "ToolUniverse's Tool Composer enables the "
+#~ "creation of sophisticated scientific workflows"
+#~ " by combining individual tools with "
+#~ "heterogeneous backends. The container function"
+#~ " `compose(arguments, tooluniverse, call_tool)` "
+#~ "serves as the execution backbone, "
+#~ "providing:"
+#~ msgstr ""
+#~ "ToolUniverse 的 Tool Composer "
+#~ "通过结合具有异构后端的单个工具，实现复杂科学工作流的创建。容器函数 `compose(arguments, "
+#~ "tooluniverse, call_tool)` 作为执行核心，提供："
+
+#~ msgid ""
+#~ "**Flexible Multi-tool Execution**: Support "
+#~ "for chaining, broadcasting, and agentic "
+#~ "loops"
+#~ msgstr "**灵活的多工具执行**：支持链式调用、广播及智能体循环"
+
+#~ msgid ""
+#~ "**Heterogeneous Integration**: Seamless combination"
+#~ " of tools from different scientific "
+#~ "databases and APIs"
+#~ msgstr "**异构集成**：无缝整合来自不同科学数据库和API的工具"
+
+#~ msgid ""
+#~ "**Adaptive Analysis**: Multi-step experimental"
+#~ " analysis with tool feedback incorporation"
+#~ msgstr "**自适应分析**：多步骤实验分析，结合工具反馈"
+
+#~ msgid ""
+#~ "**Protocol Compliance**: Consistent interaction "
+#~ "with tools through the ToolUniverse "
+#~ "schema"
+#~ msgstr "**协议合规性**：通过 ToolUniverse 架构与工具保持一致的交互"
+
+#~ msgid ""
+#~ "The Tool Caller interface abstracts tool"
+#~ " invocation, enabling developers to focus"
+#~ " on workflow logic rather than tool"
+#~ " management details. This architecture "
+#~ "supports complex research patterns while "
+#~ "maintaining simplicity and reliability."
+#~ msgstr ""
+#~ "Tool Caller "
+#~ "接口抽象了工具调用，使开发人员能够专注于工作流逻辑，而无需关注工具管理的细节。该架构支持复杂的研究模式，同时保持简洁性和可靠性。"
+
+#~ msgid "Next Steps"
+#~ msgstr "下一步"
+
+#~ msgid ""
+#~ "**Build AI Scientists**: "
+#~ ":doc:`building_ai_scientists/index` - Create "
+#~ "autonomous research workflows"
+#~ msgstr "**构建 AI 科学家**：:doc:`building_ai_scientists/index` - 创建自主研究工作流程"
+
+#~ msgid ""
+#~ "**Best Practices**: :doc:`best_practices` - "
+#~ "Production workflow optimization"
+#~ msgstr "**最佳实践**：:doc:`best_practices` - 生产流程优化"
+

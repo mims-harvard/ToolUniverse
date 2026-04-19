@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wormbase_tools.rst:10 70d2cfd74fd84114a9316fe3a09401bc
+msgid "Wormbase Tools"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:12 5305ead163744a8694b236f56e91913b
+msgid ""
+"**Configuration File**: ``wormbase_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:16 dbfaeb911bf04222ba056c30390510c7
+msgid ""
+"This page contains all tools defined in the ``wormbase_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:19 bd9a1271a44f47629822b154e3889fc3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:22 91d984723f24402292601e8fdf1a7150
+msgid "**WormBase_get_expression** (Type: WormBaseTool)"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:24 c43a01b20b55417c821c62f9153db2cd
+msgid ""
+"Get expression data for a C. elegans gene from WormBase. Returns tissues "
+"where the gene is expres..."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst 7f74be0ac85b43c7b0055f9f0c5072f8
+msgid "WormBase_get_expression tool specification"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:28 ../../tools/wormbase_tools.rst:59
+#: ../../tools/wormbase_tools.rst:90 28658ddb61974cfb8b99ddc2dd5b812c
+#: 454d4aeb4f95479f81263e08a42f0f97 cf0a0a75db9a4405a3ad1414a7ddb8f0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:30 9155c5b890d646f2aad3de1e2b43a779
+msgid "**Name**: ``WormBase_get_expression``"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:31 ../../tools/wormbase_tools.rst:62
+#: ../../tools/wormbase_tools.rst:93 0c6380d28ac542d7826a61dbf801d6d9
+#: 45f59b23a1fc4a2ebe82d15eaaea18c2 4bc80396400943bda4ae3d060bf77a36
+msgid "**Type**: ``WormBaseTool``"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:32 d1146cacbd274776af47e96309655b89
+msgid ""
+"**Description**: Get expression data for a C. elegans gene from WormBase."
+" Returns tissues where the gene is expressed, developmental stages, "
+"subcellular localization, and expression clusters. Expression data is "
+"curated from GFP reporters, antibody staining, RNA in situ, and "
+"microarray experiments. Example: WBGene00006763 (unc-26) is expressed in "
+"38 tissues including neurons, pharynx, and body wall muscle."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:34 ../../tools/wormbase_tools.rst:65
+#: ../../tools/wormbase_tools.rst:96 18f53fa7e98d4881af90c95996856d8e
+#: 5db3c37604e9447c9f2bb0f29789e349 ff3ac327f5c14f778b33fe8524bc5ca1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:36 ../../tools/wormbase_tools.rst:98
+#: dddd4ac4a9674b5899485564ac0abcb3 de2c8e055a294be0a01f9890341c6557
+msgid ""
+"``gene_id`` (string) (required) WormBase gene identifier. Examples: "
+"'WBGene00006763' (unc-26), 'WBGene00000898' (daf-2)."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:39 ../../tools/wormbase_tools.rst:70
+#: ../../tools/wormbase_tools.rst:101 0a2c2eb2c4584c89a0a0854de1b41cee
+#: 50b6e487d7204cb8aa8535093e455672 9dc5646306f34a0fbe99e9f401ac5a23
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:53 d4e9132c382f40beb626afb1b2a898ac
+msgid "**WormBase_get_gene** (Type: WormBaseTool)"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:55 9d7019aad4d9499aa433889ab2963e09
+msgid ""
+"Get detailed gene overview from WormBase for C. elegans (nematode worm) "
+"by WormBase gene ID. Retu..."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst 0eb48c81e8df45c380d31fb4855cbaf7
+msgid "WormBase_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:61 41933cf16af24a63bd87d3f596b829b0
+msgid "**Name**: ``WormBase_get_gene``"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:63 53f35b453a654647987cc37c474d8419
+msgid ""
+"**Description**: Get detailed gene overview from WormBase for C. elegans "
+"(nematode worm) by WormBase gene ID. Returns gene name, sequence name, "
+"species, description, gene type, and status. C. elegans is one of the "
+"most important model organisms for genetics, neuroscience, and "
+"developmental biology. Example: WBGene00006763 returns unc-26 "
+"(synaptojanin, a polyphosphoinositide phosphatase required for synaptic "
+"vesicle recycling)."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:67 d5720d66d17d4e7e943eca88f8da07a7
+msgid ""
+"``gene_id`` (string) (required) WormBase gene identifier (WBGene format)."
+" Examples: 'WBGene00006763' (unc-26), 'WBGene00006789' (unc-52), "
+"'WBGene00000898' (daf-2)."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:84 d341446213be447298b0b6c2dfd0ef7d
+msgid "**WormBase_get_phenotypes** (Type: WormBaseTool)"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:86 f854cde4fd0e46398d78d9c1ba0559b7
+msgid ""
+"Get phenotype annotations for a C. elegans gene from WormBase. Returns "
+"observed phenotypes (from ..."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst 3abd31bdaa4d48ca93e9095927983974
+msgid "WormBase_get_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:92 ec498114e50c4698bf04320fdc0a7c56
+msgid "**Name**: ``WormBase_get_phenotypes``"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:94 49c2173b1487410a94a762c12f5cadc3
+msgid ""
+"**Description**: Get phenotype annotations for a C. elegans gene from "
+"WormBase. Returns observed phenotypes (from RNAi, mutation, transgene "
+"experiments), phenotypes not observed, and total counts. Phenotype data "
+"uses the WormBase Phenotype Ontology (WPO). Example: WBGene00006763 "
+"(unc-26) has 125+ observed phenotypes including locomotion defects, "
+"synaptic vesicle recycling abnormalities, and pharyngeal pumping defects."
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:115 49694f03690a401da3bc2f92c36a054a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:117 c53d6851034d40df8fd0fb14afc05465
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wormbase_tools.rst:118 e7fd1aa859d64d23985a5215b439ea19
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

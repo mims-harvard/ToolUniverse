@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/immune_compass_tools.rst:2 d630a9614fd446d8a05b4b0b4e4d0c93
+#: ../../tools/immune_compass_tools.rst:10 1fc06a2429674895885f917e1f538e60
 msgid "Immune Compass Tools"
 msgstr "免疫指南工具"
 
-#: ../../tools/immune_compass_tools.rst:4 7b121f46cac0486caa71c9bb9124ff6f
+#: ../../tools/immune_compass_tools.rst:12 19e976e3686f47b9a8c18379d2417291
 msgid ""
 "**Configuration File**: ``remote_tools/immune_compass_tools.json`` **Tool"
 " Type**: Remote **Tools Count**: 1"
@@ -33,43 +33,43 @@ msgstr ""
 "**工具类型**：远程  \n"
 "**工具数量**：1"
 
-#: ../../tools/immune_compass_tools.rst:8 11d46b4c47af417091c5a1714e51458e
+#: ../../tools/immune_compass_tools.rst:16 80b3be2a9ee4462f8a2457393114adb8
 msgid ""
 "This page contains all tools defined in the ``immune_compass_tools.json``"
 " configuration file."
 msgstr "此页面包含在 ``immune_compass_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/immune_compass_tools.rst:11 a274b60b29df42c4b38d894df019f4ec
+#: ../../tools/immune_compass_tools.rst:19 7e94076288354e34a106137844dcefee
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/immune_compass_tools.rst:14 de71fcd61a804ccaa0fd9c210c361744
+#: ../../tools/immune_compass_tools.rst:22 d07e88bc833843aba90b49d88c8a31ff
 msgid "**run_compass_prediction** (Type: RemoteTool)"
 msgstr "**run_compass_prediction**（类型：RemoteTool）"
 
-#: ../../tools/immune_compass_tools.rst:16 d1fc079cc46b4b1995319161d4043340
+#: ../../tools/immune_compass_tools.rst:24 37b82547afdc418cbe53173969663718
 msgid ""
 "Predicts immune checkpoint inhibitor (ICI) response using COMPASS model. "
 "This tool analyzes singl..."
 msgstr "使用COMPASS模型预测免疫检查点抑制剂（ICI）反应。该工具分析单细胞数据以评估治疗效果。"
 
-#: ../../tools/immune_compass_tools.rst b2bd7366faa74fd284d42b937d0abf21
+#: ../../tools/immune_compass_tools.rst 30342100549f42adbcbf448343cd3b24
 msgid "run_compass_prediction tool specification"
 msgstr "run_compass_prediction 工具规范"
 
-#: ../../tools/immune_compass_tools.rst:20 2eb539ee57e94a3586edc8a46a12b863
+#: ../../tools/immune_compass_tools.rst:28 bbb5250c012141caaf1c218218d22b60
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/immune_compass_tools.rst:22 54367b5232034739b6b06bcad41ea63b
+#: ../../tools/immune_compass_tools.rst:30 0cb8ed9478854621bea99ae3a8ba2d0b
 msgid "**Name**: ``run_compass_prediction``"
 msgstr "**名称**：``run_compass_prediction``"
 
-#: ../../tools/immune_compass_tools.rst:23 bce39992675b4f8d90160fb7134a2cc2
+#: ../../tools/immune_compass_tools.rst:31 a2f29fea7a9345e59cd999582b270c00
 msgid "**Type**: ``RemoteTool``"
 msgstr "**类型**：``RemoteTool``"
 
-#: ../../tools/immune_compass_tools.rst:24 0febfdd08096491e80157c0f5fe8830e
+#: ../../tools/immune_compass_tools.rst:32 6212bf937599457f8b08d3a6fc9a4f4a
 msgid ""
 "**Description**: Predicts immune checkpoint inhibitor (ICI) response "
 "using COMPASS model. This tool analyzes single-sample tumor gene "
@@ -79,11 +79,11 @@ msgid ""
 "into the immune microenvironment factors driving the prediction."
 msgstr "**描述**：使用COMPASS模型预测免疫检查点抑制剂（ICI）的响应情况。本工具通过分析单样本肿瘤基因表达数据，预测患者对免疫检查点抑制剂疗法的反应。COMPASS模型利用免疫细胞概念分析，提供二元预测结果，并提供对驱动预测的免疫微环境因素的可解释性见解。"
 
-#: ../../tools/immune_compass_tools.rst:26 88b05b4fc4ce4a9696860840325fb74b
+#: ../../tools/immune_compass_tools.rst:34 352f496e98ad4ec3bde9486d9acff1a2
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/immune_compass_tools.rst:28 13b97063999045f89e971be2d81bb267
+#: ../../tools/immune_compass_tools.rst:36 3e17e346e88342a6814dd64efa266676
 msgid ""
 "``gene_expression_data_path`` (string) (required) Path to the TPM "
 "expression data file. Keys should be standard gene symbols (e.g., "
@@ -92,7 +92,7 @@ msgid ""
 "predictions."
 msgstr "``gene_expression_data_path``（字符串）（必填）TPM表达数据文件的路径。键应为标准基因符号（例如：'CD274'、'PDCD1'、'CTLA4'）。值应为以TPM（每百万转录本数）为单位的归一化表达值。建议至少包含约100个基因以确保预测结果的可靠性。"
 
-#: ../../tools/immune_compass_tools.rst:31 543f2562b1a8476895e566075a63f977
+#: ../../tools/immune_compass_tools.rst:39 e3c26ab57b6640a583a42754c8803381
 #, fuzzy
 msgid ""
 "``threshold`` (number) (required) Probability threshold for responder "
@@ -103,28 +103,29 @@ msgstr ""
 "``threshold``（数字）（可选）用于响应者分类的概率阈值（0.0-1.0）。值 ≥ 阈值时，将样本分类为可能的响应者。默认值为 "
 "0.5，可在灵敏度和特异性之间提供平衡。若需更高的灵敏度，可考虑使用较低的阈值（约 0.3）。"
 
-#: ../../tools/immune_compass_tools.rst:34 5f8a342af4c7436391136ce43ed44675
+#: ../../tools/immune_compass_tools.rst:42 bd08feaeb4e6407b9a64ca07357b557a
 #, fuzzy
 msgid ""
 "``root_path`` (string) (required) Path to the directory containing model "
-"checkpoints. If None, uses COMPASS_MODEL_PATH/immune-compass/checkpoint."
+"checkpoints. If None, uses COMPASS\\_MODEL\\_PATH/immune-"
+"compass/checkpoint."
 msgstr ""
 "``root_path``（字符串）（可选）模型检查点所在目录的路径。如果为 None，则使用 COMPASS_MODEL_PATH"
 "/immune-compass/checkpoint。"
 
-#: ../../tools/immune_compass_tools.rst:37 6e8b40d6ee4e4209a4a5eb22fc2d6b3c
+#: ../../tools/immune_compass_tools.rst:45 4ac2978cb7384a768471ba12b823ce0c
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/immune_compass_tools.rst:53 72ae2555fde444fb837299d9f6de7307
+#: ../../tools/immune_compass_tools.rst:61 e2fd1c072a5943118099537af4a96a18
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/immune_compass_tools.rst:55 3e6a0143254740ed9a1aa0558200ed68
+#: ../../tools/immune_compass_tools.rst:63 f3b2f3eedde1450084a04952e0470e9c
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/immune_compass_tools.rst:56 c92933123aa649a4a45c5b59deb18532
+#: ../../tools/immune_compass_tools.rst:64 306960247f21406ca5109ab5730bae2a
 msgid ":doc:`remote_tools` - Remote Tools Setup"
 msgstr ":doc:`remote_tools` - 远程工具设置"
 

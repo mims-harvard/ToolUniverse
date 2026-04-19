@@ -13,8 +13,9 @@ from typing import Dict, Any, Optional, List, Tuple
 def sanitize_param_name(name: str) -> str:
     """Convert an API parameter name to a valid Python identifier.
 
-    Handles dots (query.cond -> query_cond), hyphens (from-date -> from_date),
-    and Python reserved keywords (for -> for_, in -> in_).
+    Handles dots (``query.cond`` -> ``query_cond``), hyphens
+    (``from-date`` -> ``from_date``), and Python reserved keywords
+    (``for`` -> ``for_``, ``in`` -> ``in_``).
     """
     sanitized = re.sub(r"[.\-]", "_", name)
     if keyword.iskeyword(sanitized) or keyword.issoftkeyword(sanitized):

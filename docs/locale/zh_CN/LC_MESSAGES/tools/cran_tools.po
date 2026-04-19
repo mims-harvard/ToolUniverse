@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cran_tools.rst:10 1beb673f99cc40e8b4b31e2c7f5630ae
+msgid "Cran Tools"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:12 fd11d5f559af439493f00fc1033d9914
+msgid ""
+"**Configuration File**: ``cran_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:16 2f990fd279364790a4d1106cdd9f7c7a
+msgid ""
+"This page contains all tools defined in the ``cran_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cran_tools.rst:19 055d24255488407fb267c7b3ce8b60c3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:22 7410cbf51da74f419515ca01fff66192
+msgid "**CRAN_get_package** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:24 c24c2c1463c64f2d90a34cb27082ee75
+msgid ""
+"Get metadata for a CRAN R package from the CRAN database (crandb). "
+"Returns package title, version..."
+msgstr ""
+
+#: ../../tools/cran_tools.rst 465ee9deda804c69ae4c1b9263aa8716
+msgid "CRAN_get_package tool specification"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:28 ../../tools/cran_tools.rst:59
+#: 0a8923e470b4459baa6d8fbb2e6737ee 8d4219518e804dc7b3ab5b5993585816
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:30 c3d538ca0c754ed995f8fbb1a6f0d1e7
+msgid "**Name**: ``CRAN_get_package``"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:31 ../../tools/cran_tools.rst:62
+#: 901c56597ed14134a64e550ff21fe3d6 d65cdc53bbff4bbdb874a2360c0b5bb2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:32 cde3b2b101994173bd045d730e591484
+msgid ""
+"**Description**: Get metadata for a CRAN R package from the CRAN database"
+" (crandb). Returns package title, version, description, authors, license,"
+" dependencies (Imports, Suggests, Depends), URL, publication date, and "
+"release history. CRAN hosts 20,000+ R packages for statistical computing,"
+" bioinformatics, data visualization, and machine learning. Use for "
+"discovering R package information, checking versions, and finding "
+"dependencies."
+msgstr ""
+
+#: ../../tools/cran_tools.rst:34 ../../tools/cran_tools.rst:65
+#: 242694bd7c2842daad12f9e99cab929e b0d9da8383d04f71b32bdc7d1edb0ac1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:36 d4d2a45b376e443c887c9e14a07698a6
+msgid ""
+"``package`` (string) (required) R package name (case-sensitive). "
+"Examples: 'ggplot2', 'dplyr', 'Seurat', 'DESeq2', 'tidyr', 'data.table', "
+"'BiocManager', 'limma'"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:39 ../../tools/cran_tools.rst:70
+#: 0abaed49ef284322908b836c2a4b98b4 8521a9d440bf44d0bc1c3a4879fbc2e3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:53 d1daca82f741442da126c49e590d65e0
+msgid "**CRAN_get_package_versions** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:55 25db84d9b7094dd99d5d65ffbe35ad48
+msgid ""
+"Get all historical versions of an R package from CRAN with release dates "
+"and dependencies for eac..."
+msgstr ""
+
+#: ../../tools/cran_tools.rst 0bd037941ce94420a391ff31c7427d1f
+msgid "CRAN_get_package_versions tool specification"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:61 0b8e7a9e153544a3b948a6f496a36932
+msgid "**Name**: ``CRAN_get_package_versions``"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:63 334cedd7b7cb421ea5c188042501f06b
+msgid ""
+"**Description**: Get all historical versions of an R package from CRAN "
+"with release dates and dependencies for each version. Useful for "
+"understanding package evolution, checking compatibility, and finding when"
+" specific features were added. Returns the full version timeline with "
+"release dates."
+msgstr ""
+
+#: ../../tools/cran_tools.rst:67 9983bf536dde43c4919c4ebea44498fd
+msgid ""
+"``package`` (string) (required) R package name (case-sensitive). "
+"Examples: 'ggplot2', 'dplyr', 'Seurat', 'tidyverse', 'BiocManager'"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:84 a20f33a2260049d3a91e7ca4e3a474fe
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:86 f19bd1a2a4164801aa94725560cdbea4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cran_tools.rst:87 412fd7766a664f2d88cd55fbe8f6c201
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,34 +1,8 @@
-"""
-Tool Discovery Tools - Standard ToolUniverse tools for discovering and
-exploring available tools.
+"""Tool discovery helpers for listing, searching, and executing tools.
 
-These tools provide efficient ways to discover, list, and explore tools
-while minimizing context window usage through progressive disclosure.
-
-Key Features:
-- Progressive disclosure: Start with minimal info (names), get details
-  when needed
-- Agent-friendly: Simple text search (no regex required), natural
-  language task discovery
-- Workflow-oriented: Tools guide agent through discovery process
-- Reduced tool calls: Combined search+detail tools minimize overhead
-
-Tool Categories:
-1. Listing Tools: list_tools (unified tool with multiple modes)
-   - Use for initial exploration and overview
-   - Modes: names, basic, categories, by_category, summary, custom
-2. Search Tools: grep_tools, find_tools
-   - Use for finding relevant tools
-3. Definition Tools: get_tool_info
-   - Use for getting detailed information about specific tools
-   - Supports description or full definition, single or batch
-
-Recommended Workflow:
-1. Start with list_tools(mode="names") or list_tools(mode="categories")
-2. Use find_tools (for natural language) or grep_tools
-   (for keywords) to find relevant tools
-3. Use get_tool_info to get full details
-4. Execute tools using execute_tool
+The module is designed for progressive disclosure: start with lightweight
+listing output, refine with search, then fetch detailed definitions only for
+the tools you plan to use.
 """
 
 import json
@@ -85,13 +59,8 @@ class GrepToolsTool(BaseTool):
         Search tools using simple text matching or regex pattern matching.
 
         Args:
-            arguments (dict): Dictionary containing:
-                - pattern (str): Search pattern (text or regex)
-                - field (str, optional): Field to search in: "name",
-                  "description", "type", "category" (default: "name")
-                - search_mode (str, optional): "text" for simple text
-                  matching or "regex" for regex (default: "text")
-                - categories (list, optional): Optional category filter
+            arguments (dict): Search options. Common keys are ``pattern``,
+                ``field``, ``search_mode``, and optional ``categories``.
 
         Returns:
             dict: Dictionary with matching tools (name + description)
@@ -221,23 +190,21 @@ class ListToolsTool(BaseTool):
         List tools with configurable output format via mode parameter.
 
         Args:
-            arguments (dict): Dictionary containing:
-                - mode (str, optional, default="names"): Output mode
-                  - "names": Return only tool names (default, recommended for large tool sets)
-                  - "basic": Return name + description (warning: can return very large payloads)
-                  - "categories": Return category statistics
-                  - "by_category": Return tools grouped by category
-                  - "summary": Return name + description + type + has_parameters
-                    (warning: can return very large payloads)
-                  - "custom": Return user-specified fields
-                Note: For getting tool descriptions, use 'get_tool_info' tool instead of
-                'basic'/'summary' modes to avoid large payloads.
-                - categories (list, optional): Filter by categories
-                - fields (list, required for mode="custom"): Fields to include
-                - group_by_category (bool, optional): Group by category
-                  (mode="names"|"basic"|"summary")
-                - brief (bool, optional): Truncate description
-                  (mode="basic"|"summary")
+            arguments (dict): Options controlling the response shape.
+                Supported keys:
+
+                - ``mode``: Output mode. One of ``"names"``, ``"basic"``,
+                  ``"categories"``, ``"by_category"``, ``"summary"``, or
+                  ``"custom"``.
+                - ``categories``: Optional category filter.
+                - ``fields``: Required when ``mode="custom"``.
+                - ``group_by_category``: Group results by category for
+                  ``"names"``, ``"basic"``, or ``"summary"`` output.
+                - ``brief``: Truncate descriptions in ``"basic"`` or
+                  ``"summary"`` output.
+
+                For detailed descriptions, prefer ``get_tool_info`` instead of
+                the heavier ``"basic"`` or ``"summary"`` modes.
 
         Returns:
             dict: Dictionary with tools in requested format
@@ -708,16 +675,13 @@ class GetToolInfoTool(BaseTool):
         Get tool information with configurable detail level.
 
         Args:
-            arguments (dict): Dictionary containing:
-                - tool_names (str | list): Single tool name (string) or list of tool names
-                - detail_level (str, optional): "description" or "full". Default: "full"
-                  - "description": Returns only the description field (complete, not truncated)
-                  - "full": Returns complete tool definition including parameter schema
+            arguments (dict): Expected keys are ``tool_names`` and optional
+                ``detail_level``. ``detail_level`` can be ``"description"``
+                or ``"full"``.
 
         Returns:
-            dict: Dictionary with tool information
-            - Single tool: Direct tool info object
-            - Batch tools: {"tools": [...], "total_requested": N, "total_found": M}
+            dict: Tool information for one tool, or a batch payload with
+            ``tools``, ``total_requested``, and ``total_found``.
         """
         import time
 
@@ -855,18 +819,14 @@ class ExecuteToolTool(BaseTool):
         Execute a ToolUniverse tool directly with custom arguments.
 
         Args:
-            arguments (dict): Dictionary containing:
-                - tool_name (str): Name of the tool to execute
-                - arguments (dict|str): Arguments to pass to the tool.
-                  Accepts:
-                  1) JSON object/dict: {"param1": "value1", "param2": 5}
-                  2) JSON string that parses to object:
-                     "{\"param1\": \"value1\", \"param2\": 5}"
+            arguments (dict): Expected keys are ``tool_name`` and
+                ``arguments``. ``arguments`` may be a dictionary or a JSON
+                string that decodes to a dictionary.
 
         Returns:
-            dict or str: Tool execution result. If result is already a dict,
-                        return as-is. If it's a string (JSON), parse and
-                        return as dict.
+            dict or str: Tool execution result. Dictionary results are
+            returned unchanged. JSON strings are parsed into dictionaries when
+            possible.
         """
         if not self.tooluniverse:
             return {"status": "error", "error": "ToolUniverse not available"}

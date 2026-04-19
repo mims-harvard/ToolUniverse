@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/emolecules_tools.rst:10 fd8d5074835948f29776895423454708
+msgid "Emolecules Tools"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:12 5617e3afd12946adb279657fe9f3e4b0
+msgid ""
+"**Configuration File**: ``emolecules_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:16 ab0ad2958eeb4081b22e7c06b8395fe2
+msgid ""
+"This page contains all tools defined in the ``emolecules_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:19 f98182d588c54fe2b325d43dd9bdfef5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:22 a9237d61c80347b7be446c11b49bb036
+msgid "**eMolecules_get_compound** (Type: EMoleculesTool)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:24 0879814f0f7649c887af60233bbf6ce7
+msgid ""
+"Get compound details by eMolecules ID. Returns a URL linking to the "
+"compound page with vendor, pr..."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst c8d22e5ab3d24433aee7d025ec19c43e
+msgid "eMolecules_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:28 ../../tools/emolecules_tools.rst:62
+#: ../../tools/emolecules_tools.rst:96 ../../tools/emolecules_tools.rst:133
+#: 141479440c784371a43b9532017e1d01 5490717204c942ba91f85b64a64f2649
+#: 6252cf8a75da4bac8565d56cd9ff869c c93c20315d774c7db20f1b3ec7b886f4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:30 fec87e13c74148e6b2d0c5f47424ca5e
+msgid "**Name**: ``eMolecules_get_compound``"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:31 ../../tools/emolecules_tools.rst:65
+#: ../../tools/emolecules_tools.rst:99 ../../tools/emolecules_tools.rst:136
+#: 27ca78aaed1545ecab63dccd001c14d5 3c73801f81914c6b86d19b2ae644f0b1
+#: 4bf3129abcaf455fbac456b495bf3a54 add3db30e3904f1a85a13683dfec7c51
+msgid "**Type**: ``EMoleculesTool``"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:32 3d21c5976e1d427e80150109a9475667
+msgid ""
+"**Description**: Get compound details by eMolecules ID. Returns a URL "
+"linking to the compound page with vendor, pricing, and availability "
+"information."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:34 ../../tools/emolecules_tools.rst:68
+#: ../../tools/emolecules_tools.rst:102 ../../tools/emolecules_tools.rst:139
+#: 0a8d3c8bbe3440ae8a37187d38749675 6253fb7406e64cbdb6c640258617bffd
+#: 6f33498fa67f4fb1be6419b1574fbdf0 7650e00526d942ae85c54506a71ef391
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:36 ../../tools/emolecules_tools.rst:70
+#: ../../tools/emolecules_tools.rst:104 ../../tools/emolecules_tools.rst:141
+#: 0483b8f4cdc144b6b4332be3f4b78e57 5d3e73d3692044a397814a6651a38c6a
+#: 681fe348935f455db7859007e0affde0 aa913bd652914ae1a1732c4414734ae8
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:39 65ad45cf53b84f2dbf950763563192ad
+msgid "``emol_id`` (string) (required) eMolecules compound/vendor ID"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:42 ../../tools/emolecules_tools.rst:76
+#: ../../tools/emolecules_tools.rst:113 ../../tools/emolecules_tools.rst:153
+#: 5ac9a467c8284104bc83efd8aab119ff 5fdc87beb4f94fa5b1de584c177f1083
+#: e8f77ce3041c4a6a934c849bb8d6ba91 fb43d660923f4c4590b85f18ea61fdfd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:56 bf089729e80544499791ada2ecc4adc0
+msgid "**eMolecules_get_vendors** (Type: EMoleculesTool)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:58 3e251d5b646d40d0a3a646a0c323dbb7
+msgid ""
+"Generate an eMolecules vendor search URL for a compound by SMILES. "
+"Returns a search\\_url to brows..."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst f085bb7322f74274b7e12a3275605fa6
+msgid "eMolecules_get_vendors tool specification"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:64 cb1338ec49a34ac599c9b10e7ababc6e
+msgid "**Name**: ``eMolecules_get_vendors``"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:66 f358278532ae4bd3bc760163bae29f1d
+msgid ""
+"**Description**: Generate an eMolecules vendor search URL for a compound "
+"by SMILES. Returns a search\\_url to browse 200+ supplier listings — no "
+"API access to vendor pricing data."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:73 fa3e5d9537034b379a6f1e220dce4331
+msgid "``smiles`` (string) (required) SMILES string for the compound"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:90 a1a817c722be4fb9af25fea1963d84a2
+msgid "**eMolecules_search** (Type: EMoleculesTool)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:92 38202223fa794b5bad061efcd0203f88
+msgid ""
+"Generate an eMolecules search URL for a compound name or keyword. "
+"eMolecules aggregates 200+ supp..."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst fe74821af73544a18d60729b998bacca
+msgid "eMolecules_search tool specification"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:98 ada349fd8b724932a47aa0efd6000521
+msgid "**Name**: ``eMolecules_search``"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:100 4cf3c007c70340c4968f96c37b3ebb43
+msgid ""
+"**Description**: Generate an eMolecules search URL for a compound name or"
+" keyword. eMolecules aggregates 200+ suppliers. Returns a search\\_url to"
+" browse results — no API access to vendor data."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:107 4481381c06fa4533aa5b4b33e62573d5
+msgid "``query`` (string) (required) Search query - compound name or keyword"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:110 ../../tools/emolecules_tools.rst:150
+#: 33c46c7ec0f64875b964a7a2c20436b4 b246dd8e9c29498fb94634725231e33f
+msgid "``max_results`` (integer) (optional) Maximum results (default: 20)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:127 afc2d742d4da410b8cad658efd42f77e
+msgid "**eMolecules_search_smiles** (Type: EMoleculesTool)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:129 8e993f63e1524395afe1f0d15352398f
+msgid ""
+"Generate an eMolecules structure search URL for a SMILES string. Supports"
+" exact, substructure, an..."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst 2112adafff7347998d1e6082757c8cf9
+msgid "eMolecules_search_smiles tool specification"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:135 d09df06463fe490a9c7967bc2716c1f8
+msgid "**Name**: ``eMolecules_search_smiles``"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:137 c7a874a4700840c99787f07e1432fbcc
+msgid ""
+"**Description**: Generate an eMolecules structure search URL for a SMILES"
+" string. Supports exact, substructure, and similarity search types. "
+"Returns a search\\_url to browse matching compounds — no API access to "
+"vendor data."
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:144 f38406d43cec4dcda058d767458f7a23
+msgid "``smiles`` (string) (required) SMILES string for the query compound"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:147 128e16556ab84f3c9f52f38f3777d0dd
+msgid ""
+"``search_type`` (string) (optional) Search type: exact, substructure, "
+"similarity (default: similarity)"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:167 20ae2b9ee79d4adf82586869049e35de
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:169 6703f5cbd5fb435397e911637abf35f0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/emolecules_tools.rst:170 5278dfb126e44fbd9077bb9e7340842b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

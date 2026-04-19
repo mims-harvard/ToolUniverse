@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/idmap_tools.rst:2 1d14f5db16d846d6be4b075f79779592
+#: ../../tools/idmap_tools.rst:10 a50a36533e3f4ca0bc5c3f0d887be1af
 msgid "Idmap Tools"
 msgstr "Idmap 工具"
 
-#: ../../tools/idmap_tools.rst:4 b59438ca12c9404f8e8f222ac7c726ce
+#: ../../tools/idmap_tools.rst:12 efbb061e8e2e483da66a0bfe9e8b3a4e
 msgid ""
 "**Configuration File**: ``idmap_tools.json`` **Tool Type**: Local **Tools"
 " Count**: 3"
@@ -33,47 +33,47 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：3"
 
-#: ../../tools/idmap_tools.rst:8 dc0bb3e970c7459f8638b57438b93177
+#: ../../tools/idmap_tools.rst:16 c76644ab66b74f608486c0d06f2b2eea
 msgid ""
 "This page contains all tools defined in the ``idmap_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``idmap_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/idmap_tools.rst:11 df69f9f369da42cd828dfb0541db1610
+#: ../../tools/idmap_tools.rst:19 9bd25facdd64467092541ca770686cce
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/idmap_tools.rst:14 1a87538bc5bc4954b2f0fbb0969e3473
+#: ../../tools/idmap_tools.rst:22 0c18477f463a402684aaf324831276df
 msgid "**OpenTargets_get_disease_ids_by_efoId** (Type: OpenTarget)"
 msgstr "**OpenTargets_get_disease_ids_by_efoId**（类型：OpenTarget）"
 
-#: ../../tools/idmap_tools.rst:16 7ed72a8d98ec4f928748a838189d6bbc
+#: ../../tools/idmap_tools.rst:24 a84ce9df3bd84e1a9fed5c841c7e4e00
 msgid ""
 "Given an EFO ID, retrieve all cross-referenced external disease IDs "
 "including MONDO, OMIM, MeSH, ..."
 msgstr "给定一个 EFO ID，检索所有交叉引用的外部疾病 ID，包括 MONDO、OMIM、MeSH 等。"
 
-#: ../../tools/idmap_tools.rst 8c0f98f61cc745c0913c6599f07b0d12
+#: ../../tools/idmap_tools.rst 947528ac89cd4a7f80e5759d9d46ab2e
 msgid "OpenTargets_get_disease_ids_by_efoId tool specification"
 msgstr "OpenTargets_get_disease_ids_by_efoId 工具规格说明"
 
-#: ../../tools/idmap_tools.rst:20 ../../tools/idmap_tools.rst:51
-#: ../../tools/idmap_tools.rst:82 831c7621c665449c9934ceaf502e1a70
-#: 88865554ddd948df992608c051b34521 bd5e17ed353d4a358f9d3a3a8f529605
+#: ../../tools/idmap_tools.rst:28 ../../tools/idmap_tools.rst:59
+#: ../../tools/idmap_tools.rst:90 52a067d0031d4b89813a90a4d9b6ea2e
+#: c6176e7731334cdf9846b67c77dff76f fbecf1f83f394901a23f7d916e24329b
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/idmap_tools.rst:22 8014412efb714772804eef470967041c
+#: ../../tools/idmap_tools.rst:30 3fcd3407c5834693bf6cbc430c5dd34c
 msgid "**Name**: ``OpenTargets_get_disease_ids_by_efoId``"
 msgstr "**名称**：``OpenTargets_get_disease_ids_by_efoId``"
 
-#: ../../tools/idmap_tools.rst:23 ../../tools/idmap_tools.rst:54
-#: ../../tools/idmap_tools.rst:85 428d36cd502d4d8bbba0ef61f932beeb
-#: 82ad50dc351e4ec99178022049aa3619 c1219649e3334003a7e54cad921056ab
+#: ../../tools/idmap_tools.rst:31 ../../tools/idmap_tools.rst:62
+#: ../../tools/idmap_tools.rst:93 b3d462f0f35840a59e7789cb8aac63c8
+#: b6962846fbec4fc29853efcb67894333 fd9961bddd2b4e8fb270b522dffd984f
 msgid "**Type**: ``OpenTarget``"
 msgstr "**类型**：``OpenTarget``"
 
-#: ../../tools/idmap_tools.rst:24 a78f986df51f43809b6557a20ba5379b
+#: ../../tools/idmap_tools.rst:32 169c88bfb7a04708bdf7e6cf50cdc931
 msgid ""
 "**Description**: Given an EFO ID, retrieve all cross-referenced external "
 "disease IDs including MONDO, OMIM, MeSH, MedDRA, NCIt, ICD10, Orphanet, "
@@ -82,42 +82,42 @@ msgstr ""
 "**描述**：根据提供的EFO "
 "ID，检索所有交叉引用的外部疾病ID，包括MONDO、OMIM、MeSH、MedDRA、NCIt、ICD10、Orphanet、UMLS。"
 
-#: ../../tools/idmap_tools.rst:26 ../../tools/idmap_tools.rst:57
-#: ../../tools/idmap_tools.rst:88 4029d5f59919443a8890bb197a86165e
-#: ac4c96f9dc5d421e93cae05c7e19d11b d78a39e536604caab5af7a47adfd6f02
+#: ../../tools/idmap_tools.rst:34 ../../tools/idmap_tools.rst:65
+#: ../../tools/idmap_tools.rst:96 1cc89f3bc4a64c10846afdb0c5a7a6d2
+#: 39dbaf6364ee4d4999b1c6198a77f19d b8cbf70d7301450bad095656ca05f996
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/idmap_tools.rst:28 5829bc8caade4d8a92f2a3704ed8364f
+#: ../../tools/idmap_tools.rst:36 cb57776b08b14056b644156be74d47ce
 #, fuzzy
 msgid "``efoId`` (string) (required) The EFO ID of the disease or phenotype."
 msgstr "``efoId``（字符串）（可选）疾病或表型的EFO ID。"
 
-#: ../../tools/idmap_tools.rst:31 ../../tools/idmap_tools.rst:62
-#: ../../tools/idmap_tools.rst:93 3bfc9d6a31494542a34a9c9282e8c2f1
-#: 3dc0cd6c1ed449c1ac9d810c01048379 82ce1e7023634354be553ed904ba9bf8
+#: ../../tools/idmap_tools.rst:39 ../../tools/idmap_tools.rst:70
+#: ../../tools/idmap_tools.rst:101 6c17241732454a80a7dc764c940747d9
+#: bb5fb94b835d4daeb0c0b8e23107806c ed8c33b951bd4949abbf084e1923a45e
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/idmap_tools.rst:45 c4618a4919164a0ba37f4472768277b5
+#: ../../tools/idmap_tools.rst:53 bfcb816105d84246baf49eafe9103fcd
 msgid "**OpenTargets_get_disease_ids_by_name** (Type: OpenTarget)"
 msgstr "**OpenTargets_get_disease_ids_by_name**（类型：OpenTarget）"
 
-#: ../../tools/idmap_tools.rst:47 ba15f9f378014c9eb9680b6a2032d77b
+#: ../../tools/idmap_tools.rst:55 22ef3d9723c646fc8a7e54d5a73e7001
 msgid ""
 "Given a disease or phenotype name, find all cross-referenced external IDs"
 " (e.g., OMIM, MONDO, MeS..."
 msgstr "根据疾病或表型名称，查找所有交叉引用的外部标识符（例如，OMIM、MONDO、MeSH...）。"
 
-#: ../../tools/idmap_tools.rst 9d316c6d7ee240338ced7870117e285b
+#: ../../tools/idmap_tools.rst 3fc43a2da67a4b36b53c75014ea92820
 msgid "OpenTargets_get_disease_ids_by_name tool specification"
 msgstr "OpenTargets_get_disease_ids_by_name 工具规范"
 
-#: ../../tools/idmap_tools.rst:53 5792c76880a749b39f7363609d7da968
+#: ../../tools/idmap_tools.rst:61 b256c5f7604041edaf77812dd07a1dd6
 msgid "**Name**: ``OpenTargets_get_disease_ids_by_name``"
 msgstr "**名称**: ``OpenTargets_get_disease_ids_by_name``"
 
-#: ../../tools/idmap_tools.rst:55 fb6f79ec2d6c4f55b63190fab990adb7
+#: ../../tools/idmap_tools.rst:63 149733a24ed14fcaad0e7aab9668d329
 msgid ""
 "**Description**: Given a disease or phenotype name, find all cross-"
 "referenced external IDs (e.g., OMIM, MONDO, MeSH, ICD10, UMLS, MedDRA, "
@@ -126,32 +126,32 @@ msgstr ""
 "**描述**：根据疾病或表型名称，使用 Open Targets GraphQL API "
 "查找所有交叉引用的外部标识符（例如：OMIM、MONDO、MeSH、ICD10、UMLS、MedDRA、NCIt、Orphanet）。"
 
-#: ../../tools/idmap_tools.rst:59 0745d1700e1a4fadaa587952e8e6adf1
+#: ../../tools/idmap_tools.rst:67 ec73cf17a4174f52b02db3b6bd1503b1
 #, fuzzy
 msgid ""
 "``name`` (string) (required) The name of the disease or phenotype (e.g. "
 "'rheumatoid arthritis')."
 msgstr "``name``（字符串）（可选）疾病或表型的名称（例如“类风湿性关节炎”）。"
 
-#: ../../tools/idmap_tools.rst:76 ccac12d43ec748e69ec7b8f9916e7b9c
+#: ../../tools/idmap_tools.rst:84 d831834d1e534c15bc30cbeba146ac89
 msgid "**OpenTargets_map_any_disease_id_to_all_other_ids** (Type: OpenTarget)"
 msgstr "**OpenTargets_map_any_disease_id_to_all_other_ids**（类型：OpenTarget）"
 
-#: ../../tools/idmap_tools.rst:78 e4d9c2b6da9f4d0bb3175f8bc6874de2
+#: ../../tools/idmap_tools.rst:86 a603dd5d85bd44f1853743e672045309
 msgid ""
 "Given any known disease or phenotype ID (EFO, OMIM, MONDO, UMLS, ICD10, "
 "MedDRA, etc.), return all..."
 msgstr "根据任何已知的疾病或表型ID（如EFO、OMIM、MONDO、UMLS、ICD10、MedDRA等），返回所有..."
 
-#: ../../tools/idmap_tools.rst 500e1bfa1d6344e0b38c20a3256664eb
+#: ../../tools/idmap_tools.rst cf2871aaa3a24c34a1033d793d80d756
 msgid "OpenTargets_map_any_disease_id_to_all_other_ids tool specification"
 msgstr "OpenTargets_map_any_disease_id_to_all_other_ids 工具规范"
 
-#: ../../tools/idmap_tools.rst:84 93abec8de7424759a088d0769c242fb7
+#: ../../tools/idmap_tools.rst:92 3602d5802bdc43c0a8ebb3dbdeb5019e
 msgid "**Name**: ``OpenTargets_map_any_disease_id_to_all_other_ids``"
 msgstr "**名称**: ``OpenTargets_map_any_disease_id_to_all_other_ids``"
 
-#: ../../tools/idmap_tools.rst:86 78fb28beb6c34771aab4e8d949ac5c18
+#: ../../tools/idmap_tools.rst:94 0a6ebb9dfa9047579e82d15df54e3bf0
 msgid ""
 "**Description**: Given any known disease or phenotype ID (EFO, OMIM, "
 "MONDO, UMLS, ICD10, MedDRA, etc.), return all known cross-referenced IDs "
@@ -160,24 +160,24 @@ msgstr ""
 "**描述**：提供任何已知的疾病或表型ID（如EFO、OMIM、MONDO、UMLS、ICD10、MedDRA等），返回所有已知的交叉引用ID，包括EFO"
 " ID。"
 
-#: ../../tools/idmap_tools.rst:90 d2ecb66b4db4458a8310c05c0184d76e
+#: ../../tools/idmap_tools.rst:98 c5f17aa32b8b42f188ecca1f23d2bc35
 #, fuzzy
 msgid ""
 "``inputId`` (string) (required) Any known disease ID (e.g. OMIM:604302, "
-"UMLS:C0003873, ICD10:M05, EFO_0000685, etc.)"
+"UMLS:C0003873, ICD10:M05, EFO\\_0000685, etc.)"
 msgstr ""
 "``inputId``（字符串）（可选）任何已知疾病ID（例如 "
 "OMIM:604302、UMLS:C0003873、ICD10:M05、EFO_0000685 等）。"
 
-#: ../../tools/idmap_tools.rst:107 e322270ee1c14ac982b14cf82aa82dd6
+#: ../../tools/idmap_tools.rst:115 49a6796ef7114c43b967513f6459196e
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/idmap_tools.rst:109 969f94f535d4446aa2356b3baf67f863
+#: ../../tools/idmap_tools.rst:117 87938fa2c8a240b4a05b8a7b84a9708d
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/idmap_tools.rst:110 87ec7f81a8864ff6acd4526f81a9e286
+#: ../../tools/idmap_tools.rst:118 29e885d56805418896b28da6c2b41d9b
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

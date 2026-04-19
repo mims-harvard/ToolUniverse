@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,165 +18,364 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/dailymed_tools.rst:2 01516f24ae3247fdbb13500fcdced46a
+#: ../../tools/dailymed_tools.rst:10 8be756182adb4f8ba9a01db69d853be5
 msgid "Dailymed Tools"
 msgstr "Dailymed 工具"
 
-#: ../../tools/dailymed_tools.rst:4 5c16fd4a8690434390b77c00a0eb2b26
+#: ../../tools/dailymed_tools.rst:12 375d05234dc0435d9be27052b4aefa18
+#, fuzzy
 msgid ""
 "**Configuration File**: ``dailymed_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 2"
+"**Tools Count**: 7"
 msgstr "**配置文件**：``dailymed_tools.json`` **工具类型**：本地 **工具数量**：2"
 
-#: ../../tools/dailymed_tools.rst:8 432f09e21fff4343b02285145418a8aa
+#: ../../tools/dailymed_tools.rst:16 5ebc8eaeeb864ca38952faacaed6d5b7
 msgid ""
 "This page contains all tools defined in the ``dailymed_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``dailymed_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/dailymed_tools.rst:11 7055489f6a994daaaa6036ab3d3effee
+#: ../../tools/dailymed_tools.rst:19 fda28f7a971148b8ba80cd39e1f93ef7
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/dailymed_tools.rst:14 7f64028ab1134e2cb4a8e922d5fe26d4
+#: ../../tools/dailymed_tools.rst:22 e9c346bfd6c844dca573934579f5a1a1
 msgid "**DailyMed_get_spl_by_setid** (Type: GetSPLBySetIDTool)"
 msgstr "**DailyMed_get_spl_by_setid**（类型：GetSPLBySetIDTool）"
 
-#: ../../tools/dailymed_tools.rst:16 7abe5c050a9a42d4a4b02d3e8a46cae3
+#: ../../tools/dailymed_tools.rst:24 1b64df1e882e49f6877bb072ca8eb27d
 msgid ""
 "Get complete label corresponding to SPL Set ID, returns content in XML or"
 " JSON format."
 msgstr "获取与SPL Set ID对应的完整标签，以XML或JSON格式返回内容。"
 
-#: ../../tools/dailymed_tools.rst 8fbebf8a8e074001b6967fece3682b95
+#: ../../tools/dailymed_tools.rst 5978067127fc4cf3913813b91885c4ba
 msgid "DailyMed_get_spl_by_setid tool specification"
 msgstr "DailyMed_get_spl_by_setid 工具规格"
 
-#: ../../tools/dailymed_tools.rst:20 ../../tools/dailymed_tools.rst:55
-#: 49dc0cb0e8da43d29ec2fc2af929470d e71cb5a22a4e4959bdd86d8ffee4fab4
+#: ../../tools/dailymed_tools.rst:28 ../../tools/dailymed_tools.rst:62
+#: ../../tools/dailymed_tools.rst:98 ../../tools/dailymed_tools.rst:134
+#: ../../tools/dailymed_tools.rst:170 ../../tools/dailymed_tools.rst:206
+#: ../../tools/dailymed_tools.rst:242 25d886f61d964880a2ea0f052ff41f4a
+#: 2701d3117b0b4ef2abb3bdd1ff36aaee 496a30ef4ff040e78e2732323ef3dad0
+#: 60c1f4148d9d46b8b90e1134812fa0bc 6bde5cc841fd42458043146f9581bf46
+#: 7e9055b8fbfe42809f705af47f1eeb54 dacea89ea0af4ec28d2d1ae43437df26
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/dailymed_tools.rst:22 44ae6f73fcaa4cb899eb8fd68c152d2c
+#: ../../tools/dailymed_tools.rst:30 9bbdad86890d4021b373f64204c8a605
 msgid "**Name**: ``DailyMed_get_spl_by_setid``"
 msgstr "**名称**: ``DailyMed_get_spl_by_setid``"
 
-#: ../../tools/dailymed_tools.rst:23 bca280dfd33d4c31ad14e15145302409
+#: ../../tools/dailymed_tools.rst:31 1d971344e8f74acbb8347ad705433c0e
 msgid "**Type**: ``GetSPLBySetIDTool``"
 msgstr "**类型**: ``GetSPLBySetIDTool``"
 
-#: ../../tools/dailymed_tools.rst:24 800cfbe56fc243de95aec8253eecc2a4
+#: ../../tools/dailymed_tools.rst:32 14250cae030042388ba8fee8e94638fa
 msgid ""
 "**Description**: Get complete label corresponding to SPL Set ID, returns "
 "content in XML or JSON format."
 msgstr "**描述**：获取与SPL Set ID对应的完整标签，返回内容为XML或JSON格式。"
 
-#: ../../tools/dailymed_tools.rst:26 ../../tools/dailymed_tools.rst:61
-#: 93c57817c729420e9c3b2f23265540af ce7132fd4c13458ba94b2cb488d431a7
+#: ../../tools/dailymed_tools.rst:34 ../../tools/dailymed_tools.rst:68
+#: ../../tools/dailymed_tools.rst:104 ../../tools/dailymed_tools.rst:140
+#: ../../tools/dailymed_tools.rst:176 ../../tools/dailymed_tools.rst:212
+#: ../../tools/dailymed_tools.rst:248 049696954bef47e192f328ecce845579
+#: 306e518552164864b3858f61351ccd8f a4482c27cc8c4041acb7c6182498a770
+#: af2d6706147e4169ad2ced11711bf229 e4be57905eba4512a720d7bece311728
+#: e86112cb21594444aba248ab08603a07 eb8e7f7b17c54d8bb14fbdbd1887317f
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/dailymed_tools.rst:28 51aecfbf1a32402bbbfcfaae7a6b025d
+#: ../../tools/dailymed_tools.rst:36 2a8993b356c64ae5a39acad0af0ed356
 msgid "``setid`` (string) (required) SPL Set ID to query."
 msgstr "``setid``（字符串）（必填）用于查询的 SPL 集合 ID。"
 
-#: ../../tools/dailymed_tools.rst:31 f8af2fc60a204c3abeb89c47554fbbc5
+#: ../../tools/dailymed_tools.rst:39 84566f7972a94900be265aa8bb7b0adf
 #, fuzzy
-msgid "``format`` (string) (required) Return format, only supports 'xml'."
+msgid "``format`` (string) (optional) Return format, only supports 'xml'."
 msgstr "``format``（字符串）（可选）返回格式，仅支持“xml”。"
 
-#: ../../tools/dailymed_tools.rst:34 ../../tools/dailymed_tools.rst:87
-#: 6c3e419a19364d628dd1a74cbb6f803b c2280546b659487aad1b1bd95ca415f5
+#: ../../tools/dailymed_tools.rst:42 ../../tools/dailymed_tools.rst:79
+#: ../../tools/dailymed_tools.rst:115 ../../tools/dailymed_tools.rst:151
+#: ../../tools/dailymed_tools.rst:187 ../../tools/dailymed_tools.rst:223
+#: ../../tools/dailymed_tools.rst:274 06cd79b098b84608a0c7b4f519158700
+#: 3541e29c26414b1a8026a8cc5095b5ef 39cde9bf9d3e409f91bc8371b1d67a71
+#: 4d27cd2bfe9244b9a14b35d2b8bd9b20 5cbf3155e1404ad7891541c05167cd38
+#: d8593546a1834371ac792731086ddb38 d863b41239e84fb8a3bfbb491ad6728a
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/dailymed_tools.rst:49 7dec56624ad443c79cdd6b2afec2222f
+#: ../../tools/dailymed_tools.rst:56 70e828b7158842d68ab8b71a6a8dc2e4
+#, fuzzy
+msgid "**DailyMed_parse_adverse_reactions** (Type: DailyMedSPLParserTool)"
+msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
+
+#: ../../tools/dailymed_tools.rst:58 b5c7fa11b4f04daab1e923b143ae115d
+msgid ""
+"Parse adverse reactions section from SPL XML into structured table "
+"format. Returns AE frequencies..."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst 00e2f97d9159426ab149aa45df64e472
+#, fuzzy
+msgid "DailyMed_parse_adverse_reactions tool specification"
+msgstr "DailyMed_search_spls 工具规范"
+
+#: ../../tools/dailymed_tools.rst:64 17e61154e6f541dab591224e729faea9
+#, fuzzy
+msgid "**Name**: ``DailyMed_parse_adverse_reactions``"
+msgstr "**名称**: ``DailyMed_search_spls``"
+
+#: ../../tools/dailymed_tools.rst:65 ../../tools/dailymed_tools.rst:101
+#: ../../tools/dailymed_tools.rst:137 ../../tools/dailymed_tools.rst:173
+#: ../../tools/dailymed_tools.rst:209 4e3b7ae81885407fbb7f464c88b3467c
+#: a4e8f21092584eab963a65aa4bcc401b ea748eb3e56c48b0bbd7fcdd3396b649
+#: f53493969df04cf5b243581a5e2c70c9 fcd4ea7849344b6f88c64a3497d0d31f
+#, fuzzy
+msgid "**Type**: ``DailyMedSPLParserTool``"
+msgstr "**类型**: ``GetSPLBySetIDTool``"
+
+#: ../../tools/dailymed_tools.rst:66 7ad4256fc6f246e68a7570dfdc16e8a0
+msgid ""
+"**Description**: Parse adverse reactions section from SPL XML into "
+"structured table format. Returns AE frequencies, severity, and "
+"descriptions. Example: setid='030d9bca-a934-6ef9-e063-6394a90a8277' "
+"extracts headache 10%, GI upset 5%."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:70 ../../tools/dailymed_tools.rst:106
+#: ../../tools/dailymed_tools.rst:142 ../../tools/dailymed_tools.rst:178
+#: ../../tools/dailymed_tools.rst:214 1d8388edf73f47ca83d07b7e7f746504
+#: 1eaf4bfe52654bbca920ecabf4f21aac 785dc570d01449aca84fe37025947cdd
+#: 8710e82ee8924ed78e9a84039698f44f 8f770e07f03c4460b8a1808bcc3a12e4
+msgid "``operation`` (unknown) (optional) Operation type (fixed)"
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:73 ../../tools/dailymed_tools.rst:109
+#: ../../tools/dailymed_tools.rst:145 ../../tools/dailymed_tools.rst:181
+#: ../../tools/dailymed_tools.rst:217 4b05d56efd4f4d69a4adef0230b6e0fd
+#: 8222f02ac4524f0eba53a0afde45122d a729ae90fd72401fa1b2db13f3ea4371
+#: c1c7988da010492f8a92850edc7c9e15 f28fcb669d3e4f1d94c7cefc02b9bcd9
+#, fuzzy
+msgid "``setid`` (string) (optional) SPL Set ID to parse"
+msgstr "``setid``（字符串）（必填）用于查询的 SPL 集合 ID。"
+
+#: ../../tools/dailymed_tools.rst:76 ../../tools/dailymed_tools.rst:112
+#: ../../tools/dailymed_tools.rst:148 ../../tools/dailymed_tools.rst:184
+#: ../../tools/dailymed_tools.rst:220 940e348a42904013bbc387e700dec595
+#: 96babd93f54e40859f4492bfa000ee53 b08bcafed4f949f199b634e925ea3669
+#: f03580445f0046ec904d60e35576736c f5a4b61d682f4d97839dadf2e6b07ddc
+msgid ""
+"``drug_name`` (string) (optional) Drug name for automatic Set ID lookup "
+"(alternative to setid)"
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:92 70997db8cd7e40b1a8e51d6a8add7ee8
+#, fuzzy
+msgid "**DailyMed_parse_clinical_pharmacology** (Type: DailyMedSPLParserTool)"
+msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
+
+#: ../../tools/dailymed_tools.rst:94 5ee8b501ed634946b9d874e6b9c3396b
+msgid ""
+"Parse clinical pharmacology section from SPL XML. Returns PK parameters "
+"(Cmax, Tmax, t1/2, AUC), ..."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst 0d4ae10f065346a5b9cd666e84d023ce
+#, fuzzy
+msgid "DailyMed_parse_clinical_pharmacology tool specification"
+msgstr "DailyMed_search_spls 工具规范"
+
+#: ../../tools/dailymed_tools.rst:100 09f250008f1a4fdcb5f8eafb83a0eea6
+#, fuzzy
+msgid "**Name**: ``DailyMed_parse_clinical_pharmacology``"
+msgstr "**名称**: ``DailyMed_search_spls``"
+
+#: ../../tools/dailymed_tools.rst:102 f52aac105f884ca8a43a4428c4585c96
+msgid ""
+"**Description**: Parse clinical pharmacology section from SPL XML. "
+"Returns PK parameters (Cmax, Tmax, t1/2, AUC), PD effects, metabolism "
+"pathways, and elimination. Example: absorption, distribution, metabolism "
+"tables."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:128 57c1f4538b8647d19af1192c1cccd63a
+#, fuzzy
+msgid "**DailyMed_parse_contraindications** (Type: DailyMedSPLParserTool)"
+msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
+
+#: ../../tools/dailymed_tools.rst:130 0c97394e92294c04882e419d7746cd4e
+msgid ""
+"Parse contraindications section from SPL XML into structured list. "
+"Returns conditions, population..."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst 95706e416e324650824c7fd67acdcde7
+#, fuzzy
+msgid "DailyMed_parse_contraindications tool specification"
+msgstr "DailyMed_search_spls 工具规范"
+
+#: ../../tools/dailymed_tools.rst:136 9d454998e13945d28edd33b9dfefee8b
+#, fuzzy
+msgid "**Name**: ``DailyMed_parse_contraindications``"
+msgstr "**名称**: ``DailyMed_search_spls``"
+
+#: ../../tools/dailymed_tools.rst:138 8b0e51df52a44fc1b805ed43458f6e4e
+msgid ""
+"**Description**: Parse contraindications section from SPL XML into "
+"structured list. Returns conditions, populations, or situations where "
+"drug should not be used. Example: pregnancy, hypersensitivity, severe "
+"renal impairment."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:164 b88639c9ec9242ffb8fdee080cd1a15d
+#, fuzzy
+msgid "**DailyMed_parse_dosing** (Type: DailyMedSPLParserTool)"
+msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
+
+#: ../../tools/dailymed_tools.rst:166 990c30eae6d24179984fc05960e5dbb9
+msgid ""
+"Parse dosage and administration section from SPL XML. Returns structured "
+"dosing instructions, dos..."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst df92c67a2bce4d39a2c44f0b13043a58
+#, fuzzy
+msgid "DailyMed_parse_dosing tool specification"
+msgstr "DailyMed_search_spls 工具规范"
+
+#: ../../tools/dailymed_tools.rst:172 5ef9ef252408425f8240c13f83ec88eb
+#, fuzzy
+msgid "**Name**: ``DailyMed_parse_dosing``"
+msgstr "**名称**: ``DailyMed_search_spls``"
+
+#: ../../tools/dailymed_tools.rst:174 6a1b1ab674624eeb81348fb65ed8f6d9
+msgid ""
+"**Description**: Parse dosage and administration section from SPL XML. "
+"Returns structured dosing instructions, dose modifications, and "
+"administration guidelines. Example: standard dose, dose adjustments for "
+"renal/hepatic impairment."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:200 3b621d6463cb49d5a58eb53e7575d4fc
+#, fuzzy
+msgid "**DailyMed_parse_drug_interactions** (Type: DailyMedSPLParserTool)"
+msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
+
+#: ../../tools/dailymed_tools.rst:202 ac41eefcdb6d4d3f954c61f4d83b3757
+msgid ""
+"Parse drug interactions section from SPL XML into structured format. "
+"Returns CYP substrates/inhib..."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst a76769c032044de493b63c0699c83905
+#, fuzzy
+msgid "DailyMed_parse_drug_interactions tool specification"
+msgstr "DailyMed_search_spls 工具规范"
+
+#: ../../tools/dailymed_tools.rst:208 95eebdc0263b454482134affdb8d2ada
+#, fuzzy
+msgid "**Name**: ``DailyMed_parse_drug_interactions``"
+msgstr "**名称**: ``DailyMed_search_spls``"
+
+#: ../../tools/dailymed_tools.rst:210 47136205244242778d73ec3ff5668d48
+msgid ""
+"**Description**: Parse drug interactions section from SPL XML into "
+"structured format. Returns CYP substrates/inhibitors/inducers, P-gp "
+"interactions, and specific drug-drug interactions. Example: avoid with "
+"strong CYP3A4 inhibitors."
+msgstr ""
+
+#: ../../tools/dailymed_tools.rst:236 ab4c6a7b2b49420e9137ebdfac5a31d0
 msgid "**DailyMed_search_spls** (Type: SearchSPLTool)"
 msgstr "**DailyMed_search_spls**（类型：SearchSPLTool）"
 
-#: ../../tools/dailymed_tools.rst:51 0c2063d84f6942e49fc084a6645232aa
+#: ../../tools/dailymed_tools.rst:238 da52c1487e814468b97d8b3b9a799b45
+#, fuzzy
 msgid ""
 "Search SPL list using multiple filter conditions "
-"(drug_name/ndc/rxcui/setid) and return metadata ..."
+"(drug\\_name/ndc/rxcui/setid) and return metadata..."
 msgstr "使用多个筛选条件（drug_name/ndc/rxcui/setid）搜索SPL列表，并返回元数据..."
 
-#: ../../tools/dailymed_tools.rst b99a7bc18abb4f199a8e20616087fc96
+#: ../../tools/dailymed_tools.rst 2852fb9bf8d64ed8aaa2827c66bd387e
 msgid "DailyMed_search_spls tool specification"
 msgstr "DailyMed_search_spls 工具规范"
 
-#: ../../tools/dailymed_tools.rst:57 3dbdf306effb4800afe067b85b7be21f
+#: ../../tools/dailymed_tools.rst:244 90b7737aff8d4b0d94a1344b2691c866
 msgid "**Name**: ``DailyMed_search_spls``"
 msgstr "**名称**: ``DailyMed_search_spls``"
 
-#: ../../tools/dailymed_tools.rst:58 3c359dfc1409475991700fd390cb61e0
+#: ../../tools/dailymed_tools.rst:245 66ce1b5ee4414392bfaa4adb3fde9636
 msgid "**Type**: ``SearchSPLTool``"
 msgstr "**类型**：``SearchSPLTool``"
 
-#: ../../tools/dailymed_tools.rst:59 6b1832bef5cb45348d78f1278b4d1f93
+#: ../../tools/dailymed_tools.rst:246 1308a94ebdf84191b50c0e53c9f34b47
+#, fuzzy
 msgid ""
 "**Description**: Search SPL list using multiple filter conditions "
-"(drug_name/ndc/rxcui/setid) and return metadata + data array."
+"(drug\\_name/ndc/rxcui/setid) and return metadata + data array."
 msgstr "**描述**：使用多个过滤条件（drug_name/ndc/rxcui/setid）搜索SPL列表，并返回元数据及数据数组。"
 
-#: ../../tools/dailymed_tools.rst:63 b4dedfea5cf34910b3d65394a1ef7b4b
+#: ../../tools/dailymed_tools.rst:250 a22b74635ec643d686ea7aa0cc06ccd8
 #, fuzzy
 msgid ""
 "``drug_name`` (string) (required) Generic or brand name of the drug, "
 "e.g., 'TAMSULOSIN HYDROCHLORIDE'."
 msgstr "``drug_name``（字符串）（可选）药物的通用名或商品名，例如，“盐酸坦索罗辛”。"
 
-#: ../../tools/dailymed_tools.rst:66 e0de1b9407764367a48cb20207f2dd15
+#: ../../tools/dailymed_tools.rst:253 d644ae6c82d641a4913106d675bf2e0e
 #, fuzzy
-msgid "``ndc`` (string) (required) National Drug Code (NDC)."
+msgid "``ndc`` (string) (optional) National Drug Code (NDC)."
 msgstr "``ndc``（字符串）（可选）国家药品代码（NDC）。"
 
-#: ../../tools/dailymed_tools.rst:69 8cdb5316484d4e09ad997cca700d2bdb
+#: ../../tools/dailymed_tools.rst:256 081c7921ab084fcfaf6262aff4c97929
 #, fuzzy
-msgid "``rxcui`` (string) (required) RxNorm Code (RXCUI)."
+msgid "``rxcui`` (string) (optional) RxNorm Code (RXCUI)."
 msgstr "``rxcui``（字符串）（可选）RxNorm代码（RXCUI）。"
 
-#: ../../tools/dailymed_tools.rst:72 9973c88853d1497fbb8f2e5d38358e83
+#: ../../tools/dailymed_tools.rst:259 fb4153d8e57949559620c1c0a233e108
 #, fuzzy
-msgid "``setid`` (string) (required) Set ID corresponding to the SPL."
+msgid "``setid`` (string) (optional) Set ID corresponding to the SPL."
 msgstr "``setid``（字符串）（可选）对应于SPL的设置ID。"
 
-#: ../../tools/dailymed_tools.rst:75 a21f291f3a4148e79291fe372eb69e15
+#: ../../tools/dailymed_tools.rst:262 747afb421f6e4628869db456d6eaa81b
 #, fuzzy
 msgid ""
-"``published_date_gte`` (string) (required) Published date >= specified "
+"``published_date_gte`` (string) (optional) Published date >= specified "
 "date, format 'YYYY-MM-DD'."
 msgstr "``published_date_gte``（字符串）（可选）发布日期 >= 指定日期，格式为“YYYY-MM-DD”。"
 
-#: ../../tools/dailymed_tools.rst:78 ec79973b7ea04574b9db070ce2867d94
+#: ../../tools/dailymed_tools.rst:265 9595e87ba9b04cbab7556b01608b3dac
 #, fuzzy
 msgid ""
-"``published_date_eq`` (string) (required) Published date == specified "
+"``published_date_eq`` (string) (optional) Published date == specified "
 "date, format 'YYYY-MM-DD'."
 msgstr "``published_date_eq``（字符串）（可选）发布日期 == 指定日期，格式为“YYYY-MM-DD”。"
 
-#: ../../tools/dailymed_tools.rst:81 e9595be7a47f4e19b219778e20c49369
+#: ../../tools/dailymed_tools.rst:268 8c0e8b04f93540db9ca32bce2e18823f
 #, fuzzy
 msgid ""
-"``pagesize`` (integer) (required) Number of items per page, maximum 100, "
+"``pagesize`` (integer) (optional) Number of items per page, maximum 100, "
 "default 100."
 msgstr "``pagesize``（整数）（可选）每页显示的条目数，最大值为100，默认值为100。"
 
-#: ../../tools/dailymed_tools.rst:84 e6505e6a26d44c3f8b87d75edc9f7b55
+#: ../../tools/dailymed_tools.rst:271 d236402d917a47aa9a0324102631d170
 #, fuzzy
-msgid "``page`` (integer) (required) Page number, starts from 1, default 1."
+msgid "``page`` (integer) (optional) Page number, starts from 1, default 1."
 msgstr "``page``（整数）（可选）页码，起始值为1，默认值为1。"
 
-#: ../../tools/dailymed_tools.rst:108 a3937d0b466549baaa338e30067e7917
+#: ../../tools/dailymed_tools.rst:288 43acd2b7770b43d589e3d3bd015c9997
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/dailymed_tools.rst:110 62472132a1074fc782055d85563001d6
+#: ../../tools/dailymed_tools.rst:290 be99f0d743104ac0b1ee7bb29c1c71c3
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/dailymed_tools.rst:111 15711eea6af942c8a1182c4d5a3c7d19
+#: ../../tools/dailymed_tools.rst:291 eb635a00c17146c7a589e56e8e08f018
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

@@ -1,0 +1,122 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/intervar_tools.rst:10 d3cecce0b6d149d0805acefe23876c8c
+msgid "Intervar Tools"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:12 a59d8d193a4a49ee8cec7c28a132b3ca
+msgid ""
+"**Configuration File**: ``intervar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:16 ac47473b91064d10a301ad50fcddea41
+msgid ""
+"This page contains all tools defined in the ``intervar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:19 2709aa0051e64c329e516e05dfd406d8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:22 af329a0fc252498d9869029f1ac51990
+msgid "**InterVar_classify_variant** (Type: InterVarTool)"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:24 bac38a2efb6642348b2626e09f2474f2
+msgid ""
+"Classify a germline variant using ACMG/AMP 2015 standards (InterVar). "
+"Returns the clinical signif..."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst a5711d001daf40b69b96834fdeb6ba46
+msgid "InterVar_classify_variant tool specification"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:28 9db970adfd274c68b9dd17fe511a9651
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:30 7f3405d950c143a68627b2b938820ce4
+msgid "**Name**: ``InterVar_classify_variant``"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:31 a972161cc4024e8dab68ac826f0bd64a
+msgid "**Type**: ``InterVarTool``"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:32 3d6f18ed14374fb8ae00ea267dfd11d1
+msgid ""
+"**Description**: Classify a germline variant using ACMG/AMP 2015 "
+"standards (InterVar). Returns the clinical significance category — "
+"Pathogenic, Likely Pathogenic, Uncertain Significance, Likely Benign, or "
+"Benign — plus the activation status of all 28 evidence criteria (PVS1, "
+"PS1-PS4, PM1-PM6, PP1-PP5, BA1, BP1-BP7, BS1-BS4). Input requires genomic"
+" coordinates in hg19 or hg38. No API key needed. Example: BRCA1 "
+"c.5266dupC (chr17:41245466 G>A in hg19) is Likely Pathogenic with "
+"PM2+PP3+PP5."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:34 ef8b2a1615814748b73c8f103e697c63
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:36 dc31cc2a1c9f4b8aa9b9cd5c3f447636
+msgid ""
+"``chrom`` (string) (required) Chromosome number or name. Can include "
+"'chr' prefix (e.g., '17', 'chr17', 'X')."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:39 beab00a91d7a46afadd94ae54cc5cacd
+msgid "``pos`` (integer) (required) Genomic position (1-based)."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:42 cbf6bb38218c4175b13a767639e8b26b
+msgid "``ref`` (string) (required) Reference allele (e.g., 'G', 'A', 'ATCG')."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:45 e050283707b041f0ba5ce9c7e0043a90
+msgid "``alt`` (string) (required) Alternate allele (e.g., 'A', 'T', 'C')."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:48 7d4324b50ede44f89a4afaba3a3b2c11
+msgid "``build`` (string) (optional) Genome build. Default: hg19."
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:51 21fff5ec66fb4e07b32e805eab1e75f5
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:68 74047da6ff1c4c0a9aec184e6d79eafb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:70 ac9cfbf0c40d439ebe0673f78fadd8c3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/intervar_tools.rst:71 bb5b9582094e455d8ef7e19928001d55
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/empiar_tools.rst:10 22c12b7893f840a690cbd0495868527f
+msgid "Empiar Tools"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:12 6da1a74a473848e2a7d75eea64fcbe97
+msgid ""
+"**Configuration File**: ``empiar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:16 603a40944c904abb874529a383984d8e
+msgid ""
+"This page contains all tools defined in the ``empiar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:19 b7bae7fb0b04452d9ff043f10814a5a2
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:22 68917d36afdc423ca3ed2595a3827382
+msgid "**EMPIAR_get_entry** (Type: EMPIARTool)"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:24 e91b1cba0a7f423799e050a6230c9c44
+msgid ""
+"Get detailed information about a specific EMPIAR entry including image "
+"sets, citations, cross-ref..."
+msgstr ""
+
+#: ../../tools/empiar_tools.rst 1f186008ec3343c0bdb19bc787dbe53a
+msgid "EMPIAR_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:28 ../../tools/empiar_tools.rst:59
+#: 633ececcfaf34336927d22385c809fe2 c302735bdeaa40d0a8e8c71c82c7c378
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:30 59ec59ffec8c4f52af5a9c59c68b0342
+msgid "**Name**: ``EMPIAR_get_entry``"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:31 ../../tools/empiar_tools.rst:62
+#: b2a6aac8569e49d096ef960a326f7348 ca0f394a1ff84911adbe434f8d6c0ab8
+msgid "**Type**: ``EMPIARTool``"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:32 1b3f90b5a2c94855a03614fc2e1342c0
+msgid ""
+"**Description**: Get detailed information about a specific EMPIAR entry "
+"including image sets, citations, cross-references to EMDB/PDB, dataset "
+"size, and principal investigator. Accepts EMPIAR accession (e.g., "
+"'EMPIAR-10028' or '10028')."
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:34 ../../tools/empiar_tools.rst:65
+#: 2555a1cce7c34170ade680ccfdce210c 76ad2b1aad644ef4bff9492df443038a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:36 1626fc0a4f634c4d8dad3adfa213b16a
+msgid ""
+"``empiar_id`` (string) (required) EMPIAR accession ID (e.g., "
+"'EMPIAR-10028' or '10028')"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:39 ../../tools/empiar_tools.rst:76
+#: 1b109b1c3d974f3abaec6c2f0f3c9251 931cf8b496ff4731b1200add7e9a5044
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:53 a880c7abe88e4263ba396f1910795a5c
+msgid "**EMPIAR_search_entries** (Type: EMPIARTool)"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:55 5eaabcbef1824b26a8dc41591747afe8
+msgid ""
+"Search the EMPIAR (Electron Microscopy Public Image Archive) for raw EM "
+"image datasets by keyword..."
+msgstr ""
+
+#: ../../tools/empiar_tools.rst 6b9737e9f4514d4bbbeddddd2e6cf07e
+msgid "EMPIAR_search_entries tool specification"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:61 580117cc4ea34008a0e9cbddaee556e4
+msgid "**Name**: ``EMPIAR_search_entries``"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:63 a843ef9d9631475eb631958622acd470
+msgid ""
+"**Description**: Search the EMPIAR (Electron Microscopy Public Image "
+"Archive) for raw EM image datasets by keyword. Returns matching entries "
+"with EMPIAR IDs, titles, and release dates. Use EMPIAR\\_get\\_entry to "
+"retrieve full details for a specific entry."
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:67 0d913832d6134f259bf5fb577338080a
+msgid ""
+"``query`` (string) (required) Search query keyword (e.g., 'ribosome', "
+"'membrane protein', 'SARS-CoV-2')"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:70 3ce2a4222e9a474980342aa0094c4d54
+msgid ""
+"``page_size`` (integer) (optional) Number of results to return (default: "
+"10, max: 100)"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:73 177df511597a4c03b7266553787785be
+msgid "``start`` (integer) (optional) Starting offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:90 f8a0d04d66cf4825b557abc11c3691a4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:92 b8cec7da94db4d15907e2a953f9f3dd6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/empiar_tools.rst:93 4499d5dbcf3241348d9b18e5840d5132
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

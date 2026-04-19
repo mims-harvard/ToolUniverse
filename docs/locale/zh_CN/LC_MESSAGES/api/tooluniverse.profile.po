@@ -1,0 +1,354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../api/tooluniverse.profile.rst:2 5f4c43cc659844ad80d3ec84e7cbbc08
+msgid "tooluniverse.profile package"
+msgstr ""
+
+#: 03cb630df0394841a3ee8e2df97d85e2 of tooluniverse.profile:1
+msgid "ToolUniverse Profile Configuration Management"
+msgstr ""
+
+#: dac0b641970246f7b21028549673f8bf of tooluniverse.profile:3
+msgid ""
+"This module provides tools for loading, validating, and managing "
+"ToolUniverse Profile configurations. Profile allows users to define "
+"collections of tools with specific configurations, LLM settings, and "
+"hooks for advanced scientific workflows."
+msgstr ""
+
+#: abc5f1585ae542baa21323ad892259c6 of tooluniverse.profile:7
+msgid ""
+"Main Components: - ProfileLoader: Loads Profile configurations from "
+"various sources (HuggingFace, local files, URLs) - ProfileValidator: "
+"Validates Profile configurations using JSON Schema - ValidationError: "
+"Exception raised when configuration validation fails"
+msgstr ""
+
+#: 536b249365ea425bae2667771e6858fd of tooluniverse.profile:12
+msgid "Usage:"
+msgstr ""
+
+#: 6741a7eec1bf428b9d9fc0240756e2f0 of tooluniverse.profile:13
+msgid "from tooluniverse.profile import ProfileLoader, validate_profile_config"
+msgstr ""
+
+#: 54ffe50264f54dcd8d95e14a0d5851c5 of tooluniverse.profile:15
+msgid ""
+"# Load a Profile configuration loader = ProfileLoader() config = "
+"loader.load(\"hf:user/repo\")"
+msgstr ""
+
+#: 59ef2d4c74f742a89d3da193736b0484 of tooluniverse.profile:19
+msgid ""
+"# Validate a configuration is_valid, errors = "
+"validate_profile_config(config)"
+msgstr ""
+
+#: d0042533fe8b4c168307e550499793fa eee0292a0bda41719e8cdf85e7230fa9 of
+#: tooluniverse.profile.loader.ProfileLoader:1
+msgid "Bases: :py:class:`object`"
+msgstr ""
+
+#: 51e0bc73882945208d3b124e61fe119d ef9e4fddea3a4ee2982c6e4069b55a96 of
+#: tooluniverse.profile.loader.ProfileLoader:1
+msgid "Simplified loader for ToolUniverse Profile configurations."
+msgstr ""
+
+#: 362032059e5d4b53945d9e9456224aca 96c52517320b47629dfb3cf2ae66c199 of
+#: tooluniverse.profile.loader.ProfileLoader.__init__:1
+msgid "Initialize the Profile loader."
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst 033d6e2a0fda4445845ac25c39617c6d
+#: 0d7ec78f0b844bcb9b0d38bad07c45e1 0f9ddf50452843dca5e1b9dcd9a96a35
+#: 130464ef28134e66b7a6ab51807186bb 1b49306a604a47758ce2699f11b6c396
+#: 45a84f6b0f6d41f09b17602b78b8a8e7 474a82c7583442a8a2f1775ab8ec7199
+#: 47d7bfadc95243be893612a766cbaabc 5f3a0e2db36543cba2410f3bd54bc9ee
+#: 6c52b5236f9a46fc880cd17ded8b394f 893af98d1ad74e0bb400f3f5e1d5c420
+#: 97be7afd39e54d12b742d331ee0026bc a7510e4d086940f88ba3f7b51bfe727d
+#: af923db5b83044bcb004803613332148 c9b8a8d8449c4adf9c10fdf1e94a9936
+#: d642812267ba46fa84881a76caf1c4ec
+msgid "Parameters"
+msgstr ""
+
+#: 4cd22335572549aeb85dc33326020b96 73f9973c50a84f2894fec66580c2cca6 of
+#: tooluniverse.profile.loader.ProfileLoader.__init__:3
+msgid "Directory for caching downloaded configurations"
+msgstr ""
+
+#: cfff7ddddc12458eaddacff496279ba5 e54ea0abda584e9db04287546c6622d5 of
+#: tooluniverse.profile.loader.ProfileLoader.load:1
+msgid "Load Profile configuration from URI."
+msgstr ""
+
+#: 783b05f512924f449da10d3c3a57551b 9355fc6b32bf4275b1e267e59d94e16c of
+#: tooluniverse.profile.loader.ProfileLoader.load:3
+msgid ""
+"Profile URI (e.g., \"hf:user/repo\", \"./config.yaml\", "
+"\"https://example.com/config.yaml\")"
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst 018e90aa3e5946c9a6765917a40d23d8
+#: 15c13b1ab410451a9dbee0f930fc45ac 24bbf193f0a349488e29d2cbe20669b6
+#: 314aa9dc44d04f69a219cf9f5045b46c 451cb54e28164933977c3852257bd367
+#: 452c4605993b45f6a13d0d8773fdbdc4 4ffd7d48b45143fab714f458f3136544
+#: 7a56a7d1099e4e6fbf8fd226fb87f326 83c293b03c11415494a9018fbd773516
+#: 942fa2cf48b6499193f98d6dda92a2ac a2557eeaa18e48e2920610787f53bd1e
+#: a89abbc48354435da381d511aa82704c ac59f5ec4ec84d78b79372758f94f529
+#: c22de71fe83544168f604bf4b9fcdbaf d75e4af8894e41a2a350520a65da4b35
+#: ee7c381df20949a4b1fe1a0cd380330c of
+#: tooluniverse.profile.loader.ProfileLoader.load:5
+msgid "Returns"
+msgstr ""
+
+#: 4ede44e321ec4e768513c69b076d55ef 5a9ce2e1cd5a40f5aebab8762ef31e0e of
+#: tooluniverse.profile.loader.ProfileLoader.load:6
+msgid "Loaded configuration dictionary"
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst da6ca49706df4343b7a254812c11ca78
+#: dde89e5f60e040148245b8e4e75ca48d
+msgid "Raises"
+msgstr ""
+
+#: 0c20e5cdf59c4dde9b76323d0b94628a ee5c7460a49645af8ceef8ebb64aa77f of
+#: tooluniverse.profile.loader.ProfileLoader.load:8
+msgid "If URI is unsupported or configuration is invalid"
+msgstr ""
+
+#: 8e974b87f75e49f9a0d7b31a9f378734 a238dd6ee86e40e9beeab3f3a6b34060 of
+#: tooluniverse.profile.loader.ProfileLoader.resolve_to_local_dir:1
+msgid "Resolve any URI to a local directory that contains Profile tool files."
+msgstr ""
+
+#: 708a71e33e5b4f2ab8a80bd333aa220c e1a1b715d36a41a28a8cf0ef33d448b8 of
+#: tooluniverse.profile.loader.ProfileLoader.resolve_to_local_dir:3
+msgid ""
+"Supported URI forms: - Local path (file or directory): returned as a "
+"``Path`` (file → parent) - ``hf:user/repo``: full repo downloaded via "
+"``snapshot_download`` - ``https://github.com/user/repo[/tree/branch]``: "
+"zip downloaded & extracted - Other ``http(s)://`` URL: single file "
+"downloaded; its parent dir returned"
+msgstr ""
+
+#: 66dc29b654b641e5be9aaae14f23c11e c18f3a633ef84c46acd92ca3a35fe09d of
+#: tooluniverse.profile.loader.ProfileLoader.resolve_to_local_dir:9
+msgid "The result is always a ``Path`` to an existing directory."
+msgstr ""
+
+#: 39281a705f6e4f729a7150f9fa49aac6 d0e27d819fbe43b394cb911248a4bfa0 of
+#: tooluniverse.profile.loader.ProfileLoader.get_tool_files_from_dir:1
+msgid "Scan ``dir_path`` for Python tool files and JSON config files."
+msgstr ""
+
+#: 1b22e55631d94e3fa91e4314196fe907 82ccd05215cf43a5a8a6c2352eb55640 of
+#: tooluniverse.profile.loader.ProfileLoader.get_tool_files_from_dir:3
+msgid ""
+"Follows the same layout convention as ``_get_user_tool_files()``: - Flat:"
+" ``*.py`` / ``*.json`` directly in the directory - Organised: "
+"``tools/*.py`` and ``data/*.json`` / ``configs/*.json``"
+msgstr ""
+
+#: 2cc47a2446a24940ab185f11a56ba431 47432239d66b4150882065266ff59be0 of
+#: tooluniverse.profile.loader.ProfileLoader.get_tool_files_from_dir:7
+msgid ""
+"``profile.yaml`` / ``profile.json`` are excluded (handled separately). "
+"``__init__.py`` is excluded (not a tool file)."
+msgstr ""
+
+#: 146b3d261e774eb5964562f8b45178bd 15a46ce811f84bc0adea0358beb819e9 of
+#: tooluniverse.profile.loader.ProfileLoader.get_tool_files_from_dir:10
+msgid "(python_files, json_files) — both are lists of ``Path`` objects."
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst 0214c1baad7d4170875f6a7ad029181a
+#: 22a1da879c4a4145b296491cbe38a1fb 42e8b209633d4b5b9575b6efa9c947f3
+#: 444654bdc4e04387a322ad6742838159 4fed7c7af90f4b8bbb8abf5b35eeded3
+#: 52cbe853290b46878369615725c2fb45 6a0743a1fd684d9486e5c092bad9bb78
+#: 738ba5b3ea1f4f348116dfc5af8d3c2c 8a9b7de4709142038b9da2445c72862f
+#: 94dec02405444e6e977e7f448181cb12 a79061309d0144f59dbb42e744790e0a
+#: cb4ebaff4269488490b55bd7fcbffa72 d8c5758b6e764e9f998fb4deea4cf52f
+#: e7fee87d14e84023b93bd7444dd9f8b3
+msgid "Return type"
+msgstr ""
+
+#: 6c06f868d405401a974840ffc1c45c80 b19b54e0251c4e889c0171e6317e1429 of
+#: tooluniverse.profile.validator.validate_profile_config:1
+msgid "Validate a Profile configuration using JSON Schema."
+msgstr ""
+
+#: d8aa3f9a2a3c4482a786ab373bf37c1a f27722ca41324f9bbd6580f5c0be5c6a of
+#: tooluniverse.profile.validator.validate_profile_config:3
+msgid ""
+"This is a legacy function that now uses the JSON Schema validation "
+"system. For new code, use validate_with_schema() instead."
+msgstr ""
+
+#: 63ed9a1d22fa479c919181ab47e3ffeb 763cc546a3cd439cbe19ecc03546b819 of
+#: tooluniverse.profile.validator.validate_profile_config:6
+msgid "Configuration dictionary"
+msgstr ""
+
+#: 11c52729c57040a1b51ec0c631789420 138973746c5344edb4161a0edbe3dd16
+#: 317e49526fc54fc0bace9666f6a9560a 50c08a11a37c498d833fd8e535dcdaa3
+#: 8941528231f64ca290efd0a184b38f37 e2d0c7a2618e4956a4b8cb4ee23d27c3 of
+#: tooluniverse.profile.validator.validate_profile_config:8
+#: tooluniverse.profile.validator.validate_yaml_file:5
+#: tooluniverse.profile.validator.validate_yaml_format_by_template:8
+msgid "Tuple of (is_valid, list_of_errors)"
+msgstr ""
+
+#: 0d4432e0a58441598b341e763af77414 0f072fb53af04968b18f8c3b515e77d6 of
+#: tooluniverse.profile.validator.validate_with_schema:1
+msgid ""
+"Validate YAML content using JSON Schema and optionally fill default "
+"values."
+msgstr ""
+
+#: 3a48445313d24e0ab58e71d3e3f8c93e 66778dd2a5e34575a4081e2516f5c027
+#: a5d4c42fb4d04c438d55820659ea884a e876d060888a4b03b73f3cb2d88cb02b of
+#: tooluniverse.profile.validator.validate_with_schema:3
+#: tooluniverse.profile.validator.validate_yaml_format_by_template:6
+msgid "YAML content string"
+msgstr ""
+
+#: a354c15b363441b38588080737ae50fd d872ba24aaaa49028b994bf519870223
+#: ed3334c259d6417bb4a456715908ce8c fc0faee913c94be4bc0473c94391d2db of
+#: tooluniverse.profile.validator.validate_with_schema:4
+#: tooluniverse.profile.validator.validate_yaml_file_with_schema:4
+msgid "Whether to fill default values"
+msgstr ""
+
+#: 30991722d7ce4f629e0a572817cf8283 36da56591d464fecb6e17510caae4834
+#: d506fe212e7f4bd89a9c3d7fe2e7a91b e82dd421881a4cf1917816566ace9a2a of
+#: tooluniverse.profile.validator.validate_with_schema:6
+#: tooluniverse.profile.validator.validate_yaml_file_with_schema:6
+msgid "Tuple of (is_valid, list_of_errors, processed_config)"
+msgstr ""
+
+#: 44bf05a8e79c447688a62a6292f5ac4f da74145c13154fe1ad5ac9625e9fc7f0 of
+#: tooluniverse.profile.validator.validate_yaml_file_with_schema:1
+msgid "Validate a YAML file using JSON Schema and optionally fill default values."
+msgstr ""
+
+#: 1a474caf0d5f43c39f98832557fa8614 8ddf46e705984265b1ed94e65e8205da
+#: 9fabf322c51d4446850ab82c656037b7 aafd30bb89b949a39716366608fb2400 of
+#: tooluniverse.profile.validator.validate_yaml_file:3
+#: tooluniverse.profile.validator.validate_yaml_file_with_schema:3
+msgid "Path to YAML file"
+msgstr ""
+
+#: 1335293560614e3ea529da6d2170dbbe 66aeb9201fbf46aba6576812eb50ce6f of
+#: tooluniverse.profile.validator.validate_yaml_format_by_template:1
+msgid "Validate YAML format by comparing against default template format."
+msgstr ""
+
+#: c2a01222066f4cdfb840e112cba2bdaf e9a2129620484276a4aed3874ab44b8f of
+#: tooluniverse.profile.validator.validate_yaml_format_by_template:3
+msgid ""
+"This method uses the JSON Schema as a reference to validate the structure"
+" and content of Profile YAML configurations."
+msgstr ""
+
+#: 6c3505fd137041269529a5ff40ee7349 e0fda275e8bf4c3886ffa21d3823090c of
+#: tooluniverse.profile.validator.validate_yaml_file:1
+msgid "Validate a YAML file by comparing against default template format."
+msgstr ""
+
+#: a1d34154d6ce42a1ac59961418a82761 b38558eb2cf249f9a3364cb9279caaae of
+#: tooluniverse.profile.validator.fill_defaults:1
+msgid "Recursively fill default values from JSON schema."
+msgstr ""
+
+#: ae9ff98f200749348dd8738357867f35 cdd44e93d14b447dbb84892b4c142085 of
+#: tooluniverse.profile.validator.fill_defaults:3
+msgid "Configuration data"
+msgstr ""
+
+#: 3b16e4dcc3624483860e35a78196dd6e 5c86a30bbbf744c69698a89200e503e8 of
+#: tooluniverse.profile.validator.fill_defaults:4
+msgid "JSON schema with default values"
+msgstr ""
+
+#: 765398a89c8a46e1a4aabd90d85c93d6 df64207fe2b54d20b30e96aee3ffcfe3 of
+#: tooluniverse.profile.validator.fill_defaults:6
+msgid "Configuration with default values filled"
+msgstr ""
+
+#: 330b64c5071c4581b0d8b346e3836e90 e21fb3dda19740608a53bf9c44a0cfcc of
+#: tooluniverse.profile.validator.ValidationError:1
+msgid "Bases: :py:class:`Exception`"
+msgstr ""
+
+#: 3d6021ea92a94863bee4835ba088ac02 4fe414961b854fba91fd96ce8b6b05a5 of
+#: tooluniverse.profile.validator.ValidationError:1
+msgid "Raised when configuration validation fails."
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst:10 cfdd0ac9213848e1b25ee2af5721633f
+msgid "Submodules"
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst:13 05c9f956b1c044fd94e801ed4deec1de
+msgid "tooluniverse.profile.loader module"
+msgstr ""
+
+#: 5859b33f535e4d12915df81a4b8ae815 of tooluniverse.profile.loader:1
+msgid "ToolUniverse Profile Configuration Loader"
+msgstr ""
+
+#: 1dff2e2ee1e541c1b5f689d9c2432ca5 of tooluniverse.profile.loader:3
+msgid "Simplified loader supporting HuggingFace, local files, and HTTP/HTTPS."
+msgstr ""
+
+#: ../../api/tooluniverse.profile.rst:21 b384377fbb784920b286d455ac309fae
+msgid "tooluniverse.profile.validator module"
+msgstr ""
+
+#: 71878713077246e480966ea20d40d8a0 of tooluniverse.profile.validator:1
+msgid "Profile Configuration Validator"
+msgstr ""
+
+#: 4be412d36cd74fba9d95bf9e5a35c7f3 of tooluniverse.profile.validator:3
+msgid ""
+"Comprehensive validation for Profile configurations using JSON Schema. "
+"Supports validation, default value filling, and structure checking for "
+"Profile YAML files."
+msgstr ""
+
+#: 7543bb56ba204503ae63f1353bde837e of tooluniverse.profile.validator:7
+msgid ""
+"The validation system is based on a comprehensive JSON Schema that "
+"defines: - All possible fields and their types - Default values for "
+"optional fields - Required fields and validation rules - Enum values for "
+"specific fields - Nested object structures and arrays"
+msgstr ""
+
+#: 932b3b8c8f954d739d5178e0a723cc24 of tooluniverse.profile.validator:14
+msgid ""
+"This provides a robust, flexible, and maintainable validation system that"
+" can: 1. Validate YAML structure and content 2. Fill in missing default "
+"values automatically 3. Provide detailed error messages for validation "
+"failures 4. Support both simple tool collections and complex workspaces"
+msgstr ""
+

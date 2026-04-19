@@ -1,0 +1,42 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/opencode.rst:2
+#: 7f862a87174f4489bf97a6984350a210
+msgid "OpenCode"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/opencode.rst:4
+#: 006553df8af24697ac895eadd00e1a0e
+msgid "`Download OpenCode <https://opencode.ai/>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/opencode.rst:5
+#: 129b22e13cd14d8c92672583fdb3d4f8
+msgid "`Official MCP setup guide <https://opencode.ai/docs/mcp-servers/>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/opencode.rst:7
+#: 2c7ce30f562d4d44a812c35bc7b9cd67
+msgid "To set up ToolUniverse, open OpenCode and run:"
+msgstr ""
+

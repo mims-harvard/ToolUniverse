@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gbif_tools.rst:10 089d1801817a45fb93750760407ba166
+msgid "Gbif Tools"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:12 9b1bfe2555a24a449f51fa556a08f129
+msgid ""
+"**Configuration File**: ``gbif_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:16 52b68de4a0af420c99e9342bf800da30
+msgid ""
+"This page contains all tools defined in the ``gbif_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:19 7e48ab1fda86485dbfa34d4dd429b06f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:22 bbfc234ce066493182f17d0c3a051755
+msgid "**GBIF_search_occurrences** (Type: GBIFOccurrenceTool)"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:24 3ae12a47430847938378771611652544
+msgid ""
+"Retrieve species occurrence records from GBIF with optional filters "
+"(taxonKey, country, coordinat..."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst 7b7a20e18a994045b3365b77ea758b60
+msgid "GBIF_search_occurrences tool specification"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:28 ../../tools/gbif_tools.rst:70
+#: 627a01af315d41c7bec531e4d98281f4 f32f8a1e555044559e356ca8d69418d8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:30 d57d1682efca45c2a40375e24ded3914
+msgid "**Name**: ``GBIF_search_occurrences``"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:31 8ac765114e6549ab93aac951e68c684a
+msgid "**Type**: ``GBIFOccurrenceTool``"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:32 cfea907cd76c46b08909c12e0c882af8
+msgid ""
+"**Description**: Retrieve species occurrence records from GBIF with "
+"optional filters (taxonKey, country, coordinates). Use for distribution "
+"mapping, presence-only modeling, and sampling context."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:34 ../../tools/gbif_tools.rst:76
+#: 4677798845cc429dbf3ef494862ee23a 5922805ae887439391d9835bc00a1b1c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:36 4e1ff37c5b4245f5b2a86d70cdfc3cf9
+msgid ""
+"``taxonKey`` (integer) (optional) GBIF taxon key to filter occurrences by"
+" a specific taxon (from species search)."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:39 458b59df294d4cd291ff25034d1bec7a
+msgid ""
+"``country`` (string) (optional) ISO 3166-1 alpha-2 country code filter "
+"(e.g., 'US', 'CN')."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:42 f0a46fe0343b49a0a6e3b0049f755544
+msgid ""
+"``hasCoordinate`` (boolean) (optional) Only return records with valid "
+"latitude/longitude coordinates when true."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:45 ../../tools/gbif_tools.rst:81
+#: af4d6d86108843af878d38f9f140b966 d3be7cb2cf5946a0b75566bb0eef0c54
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(1–300)."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:48 ../../tools/gbif_tools.rst:84
+#: 21a38f6dc58f443cbeeba6af6b7cfd09 251b60d945604f40bccaf38eb37e9031
+msgid "``offset`` (integer) (optional) Result offset for pagination (0-based)."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:51 ../../tools/gbif_tools.rst:87
+#: 917c74dffceb43198c6dc8dae4c5f3df 920648942e924c029f493acaf052c106
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:64 25b3bf3b82624550aaed350416c6b389
+msgid "**GBIF_search_species** (Type: GBIFTool)"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:66 d48424ff6d7b440e829524d88c0c2c8e
+msgid ""
+"Find taxa by keyword (scientific/common names) in GBIF. Use to resolve "
+"organism names to stable t..."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst 827db5d302664755a724ad3a8109e5c2
+msgid "GBIF_search_species tool specification"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:72 24da827a877a45fdaaff95fd5de996a5
+msgid "**Name**: ``GBIF_search_species``"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:73 3d2a9c6efdd34587b3a67c3c6c48a4f1
+msgid "**Type**: ``GBIFTool``"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:74 b249d9a8db814a7f9210db5b5eb8371f
+msgid ""
+"**Description**: Find taxa by keyword (scientific/common names) in GBIF. "
+"Use to resolve organism names to stable taxon keys (rank, lineage) for "
+"downstream biodiversity/occurrence queries."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:78 55945bbded7347d69afc2cafda99975d
+msgid ""
+"``query`` (string) (required) Search string for species/taxa (supports "
+"scientific/common names), e.g., 'Homo', 'Atlantic cod'."
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:101 a1f594e21c874e009ae8f4eb45120a39
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:103 71c67ad8bb4c4ff190466fdfd6822e56
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gbif_tools.rst:104 e0aded9dc8f2465ab9b96d8a4775ba46
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

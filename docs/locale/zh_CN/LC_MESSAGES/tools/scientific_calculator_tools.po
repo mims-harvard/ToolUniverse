@@ -1,0 +1,509 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/scientific_calculator_tools.rst:10
+#: c9cd5dff654c49128bf50144e6fdb6d9
+msgid "Scientific Calculator Tools"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:12
+#: f390405f370748d0be6d5156118913b9
+msgid ""
+"**Configuration File**: ``scientific_calculator_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:16
+#: 915be3b185814f86b3b2d6ff94cc601f
+msgid ""
+"This page contains all tools defined in the "
+"``scientific_calculator_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:19
+#: 556cb1e083104612b4fc3441770a42df
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:22
+#: 455c039ccd7b49209d58badb537ac019
+msgid "**DNA_translate_reading_frames** (Type: ScientificCalculatorTool)"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:24
+#: e369be9d02c94840b39ca3d8158b692c
+msgid ""
+"Translate a DNA sequence to protein in all 3 forward reading frames and "
+"identify the longest ORF...."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst 6fe684ef7c734d2daf5f2b714a157d68
+msgid "DNA_translate_reading_frames tool specification"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:28
+#: ../../tools/scientific_calculator_tools.rst:69
+#: ../../tools/scientific_calculator_tools.rst:119
+#: ../../tools/scientific_calculator_tools.rst:166
+#: ../../tools/scientific_calculator_tools.rst:215
+#: 2ce1dba28af840c6afe7765d1ac72565 7d727c58409848a08b69a8b1163b7b25
+#: a33be3d2bd5e439584715310ce610373 a7c5461e149a49a0a641a409b785fe10
+#: d367abe99e354eb4a7f1910705cb3110
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:30
+#: 9d4975ef68d4466b87c79f84d44d7924
+msgid "**Name**: ``DNA_translate_reading_frames``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:31
+#: ../../tools/scientific_calculator_tools.rst:72
+#: ../../tools/scientific_calculator_tools.rst:122
+#: ../../tools/scientific_calculator_tools.rst:169
+#: ../../tools/scientific_calculator_tools.rst:218
+#: 722227ac41f449aca4836d58a6214baa 7a14f0ed9ff246cba686c7af6e14a4c8
+#: 91fa021bac5644efb93b6c154e025260 9a9d47498e3546289a535e93373be806
+#: 9c14a9b3eb664323b775504357f09db0
+msgid "**Type**: ``ScientificCalculatorTool``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:32
+#: 78cf37abed8f418b816a3b3f40894c52
+msgid ""
+"**Description**: Translate a DNA sequence to protein in all 3 forward "
+"reading frames and identify the longest ORF. Uses the standard genetic "
+"code (NCBI Code 1). Returns protein sequences for each frame, longest ORF"
+" per frame, and the best frame with longest uninterrupted protein. Use "
+"for: reading frame analysis, finding the correct ORF in an unknown "
+"sequence, comparing all three frames."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:34
+#: ../../tools/scientific_calculator_tools.rst:75
+#: ../../tools/scientific_calculator_tools.rst:125
+#: ../../tools/scientific_calculator_tools.rst:172
+#: ../../tools/scientific_calculator_tools.rst:221
+#: 1e8164b2d87946479730f0ee024273f1 404a4986830b45b8921efc3c67d1b57c
+#: 6912e47801684bffb0143b4993a9c3b9 a4677e919e814bf992ad656151aad417
+#: e33b5248a1e2406392480683b094fdab
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:36
+#: 3158d07eeea14943ba1f13b373102e7b
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:39
+#: 0d23b8ce70a24f7fba4257d0e75d6c25
+msgid ""
+"``sequence`` (string) (required) DNA sequence (A, T, G, C only). Case "
+"insensitive. Spaces and newlines are stripped."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:42
+#: 025a7cb0cb1147b597517778dd312c88
+msgid ""
+"``frame`` (string, null) (optional) Reading frame to translate: '1', '2',"
+" '3', or 'all' (default). Frame 1 starts at position 0, frame 2 at "
+"position 1, frame 3 at position 2."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:45
+#: 2a4de83320754abd885b28acc7ed8645
+msgid ""
+"``genetic_code`` (integer, null) (optional) NCBI genetic code number. "
+"Currently only 1 (standard) is supported."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:48
+#: ../../tools/scientific_calculator_tools.rst:98
+#: ../../tools/scientific_calculator_tools.rst:145
+#: ../../tools/scientific_calculator_tools.rst:195
+#: ../../tools/scientific_calculator_tools.rst:253
+#: 5c39dfc0560c4defaba993c42cc29d23 945c1b3e944c45d8b2245f45af1ef724
+#: b251e94815e044d581850d695214fbe0 f4855476423b4a228587994a315ea072
+#: f66206cb11c34325a7fc39b4d2a46b28
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:63
+#: ad613adc5d0f47878acf842ff25da08a
+msgid "**EnzymeKinetics_calculate** (Type: ScientificCalculatorTool)"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:65
+#: 1f1391ca224f469a997062b9bf020767
+msgid ""
+"Calculate enzyme kinetic parameters from experimental data. Supports: (1)"
+" Michaelis-Menten Km/Vma..."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst e04f46908ec546cab96e83bcd963fde4
+msgid "EnzymeKinetics_calculate tool specification"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:71
+#: ebfa861a8c6d4311b0002a699d94a992
+msgid "**Name**: ``EnzymeKinetics_calculate``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:73
+#: 7cd9e0df6af34f3780213cdfdde0b44e
+msgid ""
+"**Description**: Calculate enzyme kinetic parameters from experimental "
+"data. Supports: (1) Michaelis-Menten Km/Vmax determination via "
+"Lineweaver-Burk linearization and nonlinear grid-search fitting, (2) Hill"
+" coefficient analysis for cooperative binding, (3) Ki determination from "
+"inhibition data (competitive, uncompetitive, noncompetitive). No external"
+" dependencies. Use for: enzyme characterization, inhibitor Ki "
+"determination, cooperativity analysis."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:77
+#: 179939b5acb14594a9761d7114e1836a
+msgid ""
+"``operation`` (string) (required) Calculation type: 'michaelis\\_menten' "
+"for Km/Vmax, 'hill' for Hill coefficient, 'inhibition' for Ki."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:80
+#: 993ebb5a38b24b769b7f4cfef041b683
+msgid ""
+"``substrate_concs`` (array) (required) Substrate concentrations (at least"
+" 3 values). Must be positive."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:83
+#: eb9c9af3d6f54b11b7a0905769ebadce
+msgid ""
+"``velocities`` (array, null) (optional) Measured velocities corresponding"
+" to substrate\\_concs. Required for michaelis\\_menten and hill modes."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:86
+#: 8a443dcffc6d4716b56a890a725ae35e
+msgid ""
+"``velocities_no_inhibitor`` (array, null) (optional) Velocities without "
+"inhibitor (required for inhibition mode)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:89
+#: 35d50178b4a1402ca44d3a2e10c22bc0
+msgid ""
+"``velocities_with_inhibitor`` (array, null) (optional) Velocities with "
+"inhibitor (required for inhibition mode)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:92
+#: 24fc6aceeddc48e48592435631942c3e
+msgid ""
+"``inhibitor_conc`` (number, null) (optional) Inhibitor concentration "
+"(required for inhibition mode)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:95
+#: 96573c41a51f4dbb9108e99a99c80aca
+msgid ""
+"``inhibition_type`` (string, null) (optional) Type of inhibition "
+"(default: competitive)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:113
+#: 89295d6dad644b1695420e36d24fa204
+msgid "**EquilibriumSolver_calculate** (Type: ScientificCalculatorTool)"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:115
+#: d41c4bb0a21740eba57f74e687dcb86c
+msgid ""
+"Solve chemical equilibrium problems: simple Ksp dissolution, Ksp with "
+"complex formation (amphoter..."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst e3aaa05700044c28a14be4d543b180cb
+msgid "EquilibriumSolver_calculate tool specification"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:121
+#: dbca7ac115a04eaea720bd0236967a40
+msgid "**Name**: ``EquilibriumSolver_calculate``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:123
+#: f0ec810f520d41dc8593b2d48e9914a7
+msgid ""
+"**Description**: Solve chemical equilibrium problems: simple Ksp "
+"dissolution, Ksp with complex formation (amphoterism), and common-ion "
+"effect. Uses numerical methods (Newton's method for complex systems, "
+"bisection for common-ion). Handles the full charge-balance equation for "
+"Ksp+Kf systems. Use for: solubility calculations, Ksp problems, common-"
+"ion effect, complex formation equilibria, amphoteric dissolution."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:127
+#: 2fbae491f88e49fc971500187f0873e0
+msgid ""
+"``operation`` (string) (required) Problem type: 'ksp\\_simple' for basic "
+"dissolution, 'ksp\\_complex' for dissolution + complex formation, "
+"'common\\_ion' for Ksp with added common ion."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:130
+#: a4daf204557e48e0b093553c1633faba
+msgid "``Ksp`` (number) (required) Solubility product constant (Ksp)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:133
+#: a1ca38ad8b364b449ae53869ea2787e5
+msgid ""
+"``Kf`` (number, null) (optional) Formation constant for complex ion "
+"(required for ksp\\_complex mode)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:136
+#: 940441572aa34fa0af4a8ba2db475b68
+msgid ""
+"``stoich_cation`` (integer, null) (optional) Stoichiometric coefficient "
+"'a' for the cation in MaXb (default: 1)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:139
+#: 8a0afcc783f84a4aa1d38a6f02680711
+msgid ""
+"``stoich_anion`` (integer, null) (optional) Stoichiometric coefficient "
+"'b' for the anion in MaXb (default: 1)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:142
+#: a56ed19febcf4498b8e3ca7491af1aa7
+msgid ""
+"``common_ion_conc`` (number, null) (optional) Common ion concentration in"
+" mol/L (required for common\\_ion mode)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:160
+#: 589c1e7124224b87bf2b34795aea300d
+msgid "**MolecularFormula_analyze** (Type: ScientificCalculatorTool)"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:162
+#: 2a685dbaff484755afc030ef07e58f91
+msgid ""
+"Analyze a molecular formula to calculate molar mass, degrees of "
+"unsaturation (DoU), and elemental..."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst 58a6fa4ea2134e31a537e0437cad75b7
+msgid "MolecularFormula_analyze tool specification"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:168
+#: a79248a6dfe8484696d8db2ebce88166
+msgid "**Name**: ``MolecularFormula_analyze``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:170
+#: 761ab14caae142f684f8496196652b96
+msgid ""
+"**Description**: Analyze a molecular formula to calculate molar mass, "
+"degrees of unsaturation (DoU), and elemental composition (mass "
+"percentages). OR determine empirical/molecular formula from combustion "
+"analysis data (masses of CO2, H2O produced from burning a sample). "
+"Supports elements: C, H, N, O, S, P, F, Cl, Br, I. Use for: formula "
+"analysis, combustion analysis problems, elemental composition, molecular "
+"weight calculation."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:174
+#: 88f719c47ab34bd1822cf8d72e42b7f5
+msgid ""
+"``operation`` (string) (required) Operation: 'analyze\\_formula' to "
+"analyze a known formula, or 'combustion\\_analysis' to determine formula "
+"from combustion data."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:177
+#: c5d1f4c29bd8496abe4b3cd41c0ccdf9
+msgid ""
+"``formula`` (string, null) (optional) Molecular formula string (e.g., "
+"'C6H12O6', 'C8H9NO2'). Required for analyze\\_formula mode."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:180
+#: 2cbd19f3238f4c34a3e9c98a275a02f7
+msgid ""
+"``sample_g`` (number, null) (optional) Mass of sample burned in grams. "
+"Required for combustion\\_analysis mode."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:183
+#: 8e914bf67bdd4563bd09d16a4be4938d
+msgid ""
+"``CO2_g`` (number, null) (optional) Mass of CO2 collected in grams. "
+"Required for combustion\\_analysis mode."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:186
+#: 7ebaa549cd2d445b94a060733cd69a62
+msgid ""
+"``H2O_g`` (number, null) (optional) Mass of H2O collected in grams. "
+"Required for combustion\\_analysis mode."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:189
+#: 260b37d91fd144249b0d59fe593b0a1d
+msgid ""
+"``N2_g`` (number, null) (optional) Mass of N2 collected in grams "
+"(optional, default 0)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:192
+#: c5778334f66540e683367ccd017ca643
+msgid ""
+"``molar_mass`` (number, null) (optional) Known molar mass in g/mol to "
+"determine molecular formula from empirical formula (optional, combustion "
+"mode only)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:209
+#: 452d6835d16f496ca3438972a7ababc7
+msgid "**Statistics_test** (Type: ScientificCalculatorTool)"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:211
+#: cd1f9b95bce841b29ab66531b364db1b
+msgid ""
+"Perform basic statistical tests using pure Python (no scipy/numpy "
+"required). Supports: (1) Chi-sq..."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst 0e3832b0173b41ce997ef9729bab6bfe
+msgid "Statistics_test tool specification"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:217
+#: f2260127d5eb4ce8843492d0b615f3e0
+msgid "**Name**: ``Statistics_test``"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:219
+#: 92a43324473d4ca8851e0b9646fa9605
+msgid ""
+"**Description**: Perform basic statistical tests using pure Python (no "
+"scipy/numpy required). Supports: (1) Chi-square goodness-of-fit test with"
+" p-value via gamma function, (2) Fisher's exact test for 2x2 contingency "
+"tables via hypergeometric distribution, (3) Simple linear regression "
+"(OLS) with R-squared, t-statistics, and p-values via incomplete beta "
+"function, (4) Two-sample t-test (Welch's) for comparing group means. Use "
+"for: hypothesis testing, contingency table analysis, regression analysis,"
+" group comparison."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:223
+#: b36d6943a8ba46b28dc212d600d4e939
+msgid ""
+"``operation`` (string) (required) Test type: 'chi\\_square' for goodness-"
+"of-fit, 'fisher\\_exact' for 2x2 tables, 'linear\\_regression' for OLS, "
+"'t\\_test' for two-sample Welch's t-test."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:226
+#: b36f72bc73144d23a3392b9c411cb905
+msgid ""
+"``observed`` (array, null) (optional) Observed counts/frequencies "
+"(required for chi\\_square)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:229
+#: 32fc4a50995f41e89d5a25e8b6fd5b47
+msgid ""
+"``expected`` (array, null) (optional) Expected counts/frequencies "
+"(required for chi\\_square). Will be rescaled to match observed total if "
+"totals differ."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:232
+#: c970744621624b0da6f644dd4f4b1302
+msgid ""
+"``a`` (integer, null) (optional) Top-left cell of 2x2 table (required for"
+" fisher\\_exact)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:235
+#: 1333169ea79d4737829c9b04d1bda16c
+msgid ""
+"``b`` (integer, null) (optional) Top-right cell of 2x2 table (required "
+"for fisher\\_exact)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:238
+#: 0c079022eacb45fd961abff1fa4e8a4f
+msgid ""
+"``c`` (integer, null) (optional) Bottom-left cell of 2x2 table (required "
+"for fisher\\_exact)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:241
+#: 7e51e5e473dd473b8f4b513a1df6b7f5
+msgid ""
+"``d`` (integer, null) (optional) Bottom-right cell of 2x2 table (required"
+" for fisher\\_exact)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:244
+#: 7d2f896a07f44ba9b726f2fc052036cb
+msgid ""
+"``alternative`` (string, null) (optional) Alternative hypothesis for "
+"Fisher's exact test (default: two-sided)."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:247
+#: 51fb0b2e9d394ef18975b909ac8dc06a
+msgid ""
+"``data_x`` (array, null) (optional) X values for linear\\_regression, or "
+"group 1 data for t\\_test."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:250
+#: d11f198a03524e508162e788e882678d
+msgid ""
+"``data_y`` (array, null) (optional) Y values for linear\\_regression, or "
+"group 2 data for t\\_test."
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:267
+#: a24bc6bb78fc46a3be1995906cd00a3a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:269
+#: e89f50232f1c49e58e7e1aad154616fb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/scientific_calculator_tools.rst:270
+#: 024c6b21440b4b919eba6bc5d11bd7fc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

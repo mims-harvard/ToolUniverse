@@ -1,0 +1,42 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/trae.rst:2
+#: d1225ca76e5f4379a2371b9f340b673d
+msgid "Trae"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/trae.rst:4
+#: ee4e210cf7104a63b6e5de30332d8692
+msgid "`Download Trae <https://trae.ai/>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/trae.rst:5
+#: bdde3a689c464e39a3fc159a9c0f7b48
+msgid "`Official MCP setup guide <https://docs.trae.ai/ide/add-mcp-servers>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/trae.rst:7
+#: 8ede6fa3e12f43349754670cdec7cf57
+msgid "To set up ToolUniverse, open Trae and run:"
+msgstr ""
+

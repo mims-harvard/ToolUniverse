@@ -1,0 +1,489 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/proteins_api_tools.rst:10 72067d5fb246468cbf2aeec566dbb8f9
+msgid "Proteins Api Tools"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:12 3bac89608edf43ad995fba9b5478e366
+msgid ""
+"**Configuration File**: ``proteins_api_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:16 3a33f71e84d14c64a3ea183d65fd99d9
+msgid ""
+"This page contains all tools defined in the ``proteins_api_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:19 443ae85c51c74c8e83ceec91c72d7554
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:22 fbf03578019a4c0d86619fbeb5d3b826
+msgid "**proteins_api_get_comments** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:24 b37d5a7629ef471095463f60c6fd8ae0
+msgid ""
+"Get functional annotations and comments for a protein from the Proteins "
+"API. Supports batch opera..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst c278025238364ee480d1dc8903a45355
+msgid "proteins_api_get_comments tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:28 ../../tools/proteins_api_tools.rst:62
+#: ../../tools/proteins_api_tools.rst:96 ../../tools/proteins_api_tools.rst:130
+#: ../../tools/proteins_api_tools.rst:164
+#: ../../tools/proteins_api_tools.rst:198
+#: ../../tools/proteins_api_tools.rst:232
+#: ../../tools/proteins_api_tools.rst:266
+#: ../../tools/proteins_api_tools.rst:306
+#: ../../tools/proteins_api_tools.rst:340 2035c1c5a550400194be071337bfbe03
+#: 4f37bddee887484998714e9d95ed4c91 6078bbf7ce2a41a8a7259178cacc3aa4
+#: 9113a2a8c1f142908cd5873798066aae 91478a5bbb46430580c6a7eaf13cba73
+#: a34c72aaaba3424991ecbf9027886e57 aaced6eba66c4203a00cbd92075e5a78
+#: beb60b8bc93d49b8ae133872bd4f7276 c90a97dce90943cf9dd9c62dd8f67b1c
+#: fec5b9e68ba74c41b86624f5402f8310
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:30 384154a00e5c485f9497dde40372abc5
+msgid "**Name**: ``proteins_api_get_comments``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:31 ../../tools/proteins_api_tools.rst:65
+#: ../../tools/proteins_api_tools.rst:99 ../../tools/proteins_api_tools.rst:133
+#: ../../tools/proteins_api_tools.rst:167
+#: ../../tools/proteins_api_tools.rst:201
+#: ../../tools/proteins_api_tools.rst:235
+#: ../../tools/proteins_api_tools.rst:269
+#: ../../tools/proteins_api_tools.rst:309
+#: ../../tools/proteins_api_tools.rst:343 1bf294036f35430785ba0d1fa44979ba
+#: 220753b10baa431389a84f2c3081e6b8 2b89b71559df4bf684c917f04b21b7d4
+#: 4db2ef7658d846d49af1336fdf4accf8 8c2fc3e9e5d344aab600b437cfcda51d
+#: 8ca0e4d7e96e4c9483139450e68ae04a a49f692ed39546ea97b7735d6cde393f
+#: aeeb2cf1d33447e8bd3ca981bb9ee32c b3807dfc65174f69bf81f45b8c7eb86c
+#: f8741dbfd07e44318362fe901a509c52
+msgid "**Type**: ``ProteinsAPIRESTTool``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:32 cb6e127f7cbc4d35899a824d46418a32
+msgid ""
+"**Description**: Get functional annotations and comments for a protein "
+"from the Proteins API. Supports batch operations: pass a list of "
+"accessions or comma-separated string to retrieve multiple proteins in "
+"parallel. This includes curated comments on function, subcellular "
+"location, disease involvement, and other annotations. Note: This tool "
+"extracts comments from the main protein endpoint (the separate comments "
+"endpoint is not available). Returns all functional annotation comments."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:34 ../../tools/proteins_api_tools.rst:68
+#: ../../tools/proteins_api_tools.rst:102
+#: ../../tools/proteins_api_tools.rst:136
+#: ../../tools/proteins_api_tools.rst:170
+#: ../../tools/proteins_api_tools.rst:204
+#: ../../tools/proteins_api_tools.rst:238
+#: ../../tools/proteins_api_tools.rst:272
+#: ../../tools/proteins_api_tools.rst:312
+#: ../../tools/proteins_api_tools.rst:346 1f746cd291864db7b6c679cae6471ca4
+#: 21505fa834c149ad882ec774fd838a60 2914eab16fe94c6bbe45c462510ff61f
+#: 47963491bf6d4dd0bdc81bb79e1ab11b 5d55e870df444e19a132b97194acc786
+#: 6124e207328e4540accdb73468fb0cdc 671a6690400c4f43a1fb6a652cf19b22
+#: 76e10dba8b4b4108ba20e586e6cee66f 8ca84e54bb214f28b68deb1c6454ba88
+#: fde7de2fd1514709a0696fddb630b837
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:36 ../../tools/proteins_api_tools.rst:70
+#: ../../tools/proteins_api_tools.rst:104
+#: ../../tools/proteins_api_tools.rst:138
+#: ../../tools/proteins_api_tools.rst:172
+#: ../../tools/proteins_api_tools.rst:206
+#: ../../tools/proteins_api_tools.rst:240
+#: ../../tools/proteins_api_tools.rst:274
+#: ../../tools/proteins_api_tools.rst:314 3d4161244bc643989b269a4e601bafb1
+#: 44f2a8cd2cc64d4db32007c6c2d3a932 5ad98930750d4a8eb602370793723ddb
+#: 7cdcea63722945c5a27929efa6d23885 9324bd345eb645988f4d8b8260b2b860
+#: 99dbcfaeb2d84ed1ba332eb8cbd15d0b 9fe169d0783144ee9ba145ccd0b2c23b
+#: ca4ab45eff8d4cc08575f8d898a893bf d1bb48bcd9004fc7ae2f2fd74506a1f6
+msgid ""
+"``accession`` (string, array) (required) UniProt protein accession(s). "
+"Can be a single accession (e.g., 'P05067'), comma-separated string (e.g.,"
+" 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt "
+"search or ebi\\_search\\_domain with domain='uniprot' to find valid "
+"accessions."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:39 ../../tools/proteins_api_tools.rst:73
+#: ../../tools/proteins_api_tools.rst:107
+#: ../../tools/proteins_api_tools.rst:141
+#: ../../tools/proteins_api_tools.rst:175
+#: ../../tools/proteins_api_tools.rst:209
+#: ../../tools/proteins_api_tools.rst:243
+#: ../../tools/proteins_api_tools.rst:283
+#: ../../tools/proteins_api_tools.rst:317
+#: ../../tools/proteins_api_tools.rst:357 0517aefa014e4024b8d5ea6bc808a3d7
+#: 237a1c1f394c46babbf8fbfd4b81423b 2d680c99070c46bd8ac311dde285e4c8
+#: 34e1b00282ac4341a619be77a3c2b8b4 789d9d9975fc415b98dce6691ae2eda0
+#: 7e0f0ca5f66e42ba83431805bba16f74 8917f9aedd56446c9117c46c0ba61661
+#: 9c6ef25c2063474c8bdf6fa484bd2f28 da7ea42f516d42a5a8fb8725b736a435
+#: f9bc6d9bc6a447a6a7a2bc1a17f7ea95
+msgid ""
+"``format`` (string) (optional) Response format. JSON is recommended for "
+"most use cases."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:42 ../../tools/proteins_api_tools.rst:76
+#: ../../tools/proteins_api_tools.rst:110
+#: ../../tools/proteins_api_tools.rst:144
+#: ../../tools/proteins_api_tools.rst:178
+#: ../../tools/proteins_api_tools.rst:212
+#: ../../tools/proteins_api_tools.rst:246
+#: ../../tools/proteins_api_tools.rst:286
+#: ../../tools/proteins_api_tools.rst:320
+#: ../../tools/proteins_api_tools.rst:369 0f65621e5fb24eea9c68556fc22e48a8
+#: 11d0368b55c0404aa949d15162950f72 27524766bcec4b9b8e80a05cdcb10333
+#: 355be9ef957941ed96b576d1da9ada39 3859b19fc4ce4649a9039a95eaf6982f
+#: 75c458d0990240cbb8c3e06a62b425fd 9fa4380063544acb972be78eb61e2df3
+#: af50aed3020a4a14829c1c85c6668198 b71adcf1dbf24b34b188b96fd9f49077
+#: c7ecb21db60c4a1fb491eb0f10797a51
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:56 f4771a45bc804bdb9006e1f71286abf6
+msgid "**proteins_api_get_epitopes** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:58 cee82af33268449e96d0133c66d958fd
+msgid ""
+"Get epitope sequences for a protein. Returns B-cell and T-cell epitope "
+"information with antigenic..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 4e90a0b7ed77499d834ea433f8eb46ef
+msgid "proteins_api_get_epitopes tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:64 ba3cd8e95585443f98565f57caa9f4ab
+msgid "**Name**: ``proteins_api_get_epitopes``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:66 b83f2c6e685a4701ac3eb117785eb957
+msgid ""
+"**Description**: Get epitope sequences for a protein. Returns B-cell and "
+"T-cell epitope information with antigenicity predictions. Supports batch "
+"operations: pass a list of accessions or comma-separated string to "
+"retrieve multiple proteins in parallel. Note: This tool extracts epitope-"
+"related data from the main protein endpoint (the separate epitopes "
+"endpoint is not available). Returns immunology comments and epitope "
+"features if present."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:90 4f919d97068e485f87594522f02ac044
+msgid "**proteins_api_get_features** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:92 0a5e5eae73614edbbb388a02c1b4ed3b
+msgid ""
+"Get detailed sequence features for a protein, including domains, regions,"
+" motifs, modified residu..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 27b33964d456408cbd929bd15585ce4e
+msgid "proteins_api_get_features tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:98 8ec7e51e99cc40a2a26eb7121c39690d
+msgid "**Name**: ``proteins_api_get_features``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:100 028e34e3a2cc4b21b0b6011c16b7b991
+msgid ""
+"**Description**: Get detailed sequence features for a protein, including "
+"domains, regions, motifs, modified residues, and other annotated "
+"features. Supports batch operations: pass a list of accessions or comma-"
+"separated string to retrieve multiple proteins in parallel. Note: This "
+"tool extracts features from the main protein endpoint (the separate "
+"features endpoint is not available). Returns all sequence feature "
+"annotations for the protein."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:124 4da8d4cc988b4c98a2b3043c1a2e1302
+msgid "**proteins_api_get_genome_mappings** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:126 fc95baf91dbe4a639dd8bf264d51831d
+msgid ""
+"Get reference genome mappings for a protein using the Proteins API. "
+"Supports batch operations: pa..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst c3ffb1d5470846cb8d9fb9c450283831
+msgid "proteins_api_get_genome_mappings tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:132 0854a44a24814a54afd3b22ca3de3389
+msgid "**Name**: ``proteins_api_get_genome_mappings``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:134 45d4592861644562a534922df038f58b
+msgid ""
+"**Description**: Get reference genome mappings for a protein using the "
+"Proteins API. Supports batch operations: pass a list of accessions or "
+"comma-separated string to retrieve multiple proteins in parallel. This "
+"extracts genome-related cross-references (Ensembl, RefSeq, EMBL, GenBank)"
+" from the main protein endpoint, which may contain genomic location "
+"information. Note: The separate genome endpoint is not available, so this"
+" tool extracts genome-related cross-references from the main protein "
+"data. Use UniProt or EBI Search (domain='uniprot') to find accessions "
+"such as 'P05067' or 'P04637'."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:158 022098e5e00349a3b1f4cb2457121092
+msgid "**proteins_api_get_protein** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:160 ef0bf77c4ba14f0881a9d6faac0ceda2
+msgid ""
+"Get comprehensive protein information from Proteins API by UniProt "
+"accession. Returns protein ann..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 99b8bb156e104d68ba612da1b2d4b0bd
+msgid "proteins_api_get_protein tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:166 3fa674c23fd44e48b97ea785230ae0f9
+msgid "**Name**: ``proteins_api_get_protein``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:168 e8e9b350ebde4873a6da9a941320e740
+msgid ""
+"**Description**: Get comprehensive protein information from Proteins API "
+"by UniProt accession. Returns protein annotations, sequences, features, "
+"and cross-references. Supports batch operations: pass a list of "
+"accessions or comma-separated string to retrieve multiple proteins in "
+"parallel."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:192 2fa1fc2177d74af4bb430ee4a23f5324
+msgid "**proteins_api_get_proteomics** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:194 4e69dc3f78dc4be4a151650bcf85aebb
+msgid ""
+"Get proteomics data for a protein including mass spectrometry evidence, "
+"PTM sites, and expression..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 718792ea5372442d88fdbb852ba936e3
+msgid "proteins_api_get_proteomics tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:200 b0ba37bd383e4cf0bbd3e043149d4cf2
+msgid "**Name**: ``proteins_api_get_proteomics``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:202 ca5431b69edd4f31b76849f52f220319
+msgid ""
+"**Description**: Get proteomics data for a protein including mass "
+"spectrometry evidence, PTM sites, and expression data. Supports batch "
+"operations: pass a list of accessions or comma-separated string to "
+"retrieve multiple proteins in parallel. Note: This tool extracts "
+"proteomics-related data from the main protein endpoint (the separate "
+"proteomics endpoint is not available). Returns PTM comments, modified "
+"residues, and related features."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:226 5d45ffef996e432ab1789a4749483f67
+msgid "**proteins_api_get_publications** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:228 c10624a0bbb34d239fd1c794ae26f5e9
+msgid ""
+"Get publications associated with a protein from the Proteins API. "
+"Supports batch operations: pass..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst cc7ccbda451f4d16911217a8e842f7fb
+msgid "proteins_api_get_publications tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:234 0cbe15ec1bd54e848e0e518fe23f4482
+msgid "**Name**: ``proteins_api_get_publications``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:236 f0fbb3d5b48c4b03b53c38c42a119717
+msgid ""
+"**Description**: Get publications associated with a protein from the "
+"Proteins API. Supports batch operations: pass a list of accessions or "
+"comma-separated string to retrieve multiple proteins in parallel. Returns"
+" literature references linked to the UniProt accession, including PubMed "
+"IDs and citation details. Note: This tool extracts publications from the "
+"main protein endpoint (the separate publications endpoint is not "
+"available). Returns all publication references."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:260 a6c3baa4b60244e3be4fa8683069daaa
+msgid "**proteins_api_get_variants** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:262 583dc6f69e444ac6a408068a65cb5506
+msgid ""
+"Get variation data for a protein including disease-associated variants, "
+"natural variants, and pop..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst f49a4d06cd544bf28804ffc1df9dcd76
+msgid "proteins_api_get_variants tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:268 ac98333f801e47a182b9133913ea148c
+msgid "**Name**: ``proteins_api_get_variants``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:270 b80e93d981ae405a87db1b57118e59fd
+msgid ""
+"**Description**: Get variation data for a protein including disease-"
+"associated variants, natural variants, and population data. Supports "
+"batch operations: pass a list of accessions or comma-separated string to "
+"retrieve multiple proteins in parallel. Returns variant information with "
+"positions, amino acid changes, disease associations, and evidence. Note: "
+"Not all proteins have annotated variants."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:277 20d3a110af874392bb5238441e125f93
+msgid ""
+"``size`` (integer) (optional) Maximum number of variants to return per "
+"protein (default: 100)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:280
+#: ../../tools/proteins_api_tools.rst:354 7d9ca8d670cb4b518dc4e01d07365c03
+#: d32ee4461d854f19a080d8feace44511
+msgid "``offset`` (integer) (optional) Offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:300 dd49591c21e24236adcecc3bb02e38b4
+msgid "**proteins_api_get_xrefs** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:302 5b275c1aff1d4a018b4925e3cbd8f53c
+msgid ""
+"Get cross-references for a protein from the Proteins API, including links"
+" to other databases (Ens..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 934268a25ff74b21970102018e3b3119
+msgid "proteins_api_get_xrefs tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:308 34f5f1ea867b4b449fcb29de01de0e62
+msgid "**Name**: ``proteins_api_get_xrefs``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:310 92a656b140294c01b82165a86b1d7cce
+msgid ""
+"**Description**: Get cross-references for a protein from the Proteins "
+"API, including links to other databases (Ensembl, PDB, Reactome, EMBL, "
+"RefSeq, etc.). Supports batch operations: pass a list of accessions or "
+"comma-separated string to retrieve multiple proteins in parallel. Note: "
+"This tool extracts cross-references from the main protein endpoint (the "
+"separate xrefs endpoint is not available). Returns database cross-"
+"reference records."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:334 e2eb24577b314a019d93f61421a7e026
+msgid "**proteins_api_search** (Type: ProteinsAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:336 020a5a01b21b4a5d9ac3e59ed1165bc8
+msgid ""
+"Search proteins in Proteins API by gene name, protein name, or accession."
+" Defaults to human prote..."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst 6b51f1510373429fa65f1a2bda8f971c
+msgid "proteins_api_search tool specification"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:342 949274c8d6814f4aacae83388aa6c808
+msgid "**Name**: ``proteins_api_search``"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:344 f6e32b1db01b41d9b2afe0e323b3ad46
+msgid ""
+"**Description**: Search proteins in Proteins API by gene name, protein "
+"name, or accession. Defaults to human proteins (taxid=9606) for gene/name"
+" searches; use organism param to override. Gene names (e.g., 'BRCA1') "
+"search by gene parameter, accessions (e.g., 'P05067') search by accession"
+" parameter, and longer queries (e.g., 'insulin') search by protein "
+"parameter. Returns list of matching proteins with full annotations."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:348 b0dd89e857324af8af85183e7e729157
+msgid ""
+"``query`` (string) (optional) Search query. Can be: gene name (e.g., "
+"'BRCA1', 'TP53'), protein name (e.g., 'insulin', 'hemoglobin'), or "
+"UniProt accession (e.g., 'P05067'). The tool automatically determines the"
+" appropriate search parameter."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:351 02fb376cef7e4feaa98779c6f819eeef
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default: 25, max: 100)"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:360 c4f557f4a49b492990ca667ede8802f2
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for query. Gene symbol to "
+"search (e.g., TP53, BRCA1)."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:363 ed44c624764e41278f973ca6fbfd818f
+msgid "``gene`` (string) (optional) Alias for query. Gene name to search."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:366 b4f0f85398a24a1f840223b0366d1a84
+msgid ""
+"``reviewed`` (boolean) (optional) If true, return only reviewed Swiss-"
+"Prot entries. If false or omitted, includes unreviewed TrEMBL entries."
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:382 2c8b42c523664631871a867cda657f59
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:384 9bb1deb2321446aaaf740f118b1364a7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/proteins_api_tools.rst:385 0802802687504b508102713d3bab2743
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

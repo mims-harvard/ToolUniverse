@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/swiss_target_tools.rst:10 efe85c671a864dd2816c15f2f1fc50bd
+msgid "Swiss Target Tools"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:12 4462c518258242ff958496a51b742999
+msgid ""
+"**Configuration File**: ``swiss_target_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:16 e82b34b8c0a841668b7998f3f8ccaab2
+msgid ""
+"This page contains all tools defined in the ``swiss_target_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:19 ca3f9be016774c0d81fc9ea86b5c02c8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:22 d9c7ff1b31ca4dbaae0155ba05dc68b9
+msgid "**SwissTargetPrediction_organisms** (Type: SwissTargetTool)"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:24 bd03cb1768544cb39c1ba8d6ee609edc
+msgid ""
+"List the organisms (proteomes) supported by SwissTargetPrediction. "
+"Returns organism names with th..."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst 74830d0e2d1547f0991822c11cda7ade
+msgid "SwissTargetPrediction_organisms tool specification"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:28 ../../tools/swiss_target_tools.rst:59
+#: 3d87ef7b81fc40e0972d63c5fdb3736d b935e576b5924221af668513f3131b07
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:30 a3be8b117bec4df182330ad79570a7b2
+msgid "**Name**: ``SwissTargetPrediction_organisms``"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:31 ../../tools/swiss_target_tools.rst:62
+#: 813b8a9c8ce64f9796ed50093f155953 fadef4f263474c61bf56b7877fb6820f
+msgid "**Type**: ``SwissTargetTool``"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:32 3d71d79999da47a6b3ce3fefd44a7f65
+msgid ""
+"**Description**: List the organisms (proteomes) supported by "
+"SwissTargetPrediction. Returns organism names with their parameter "
+"values, common names, and NCBI taxonomy IDs. Currently supports 5 "
+"species: human, mouse, rat, cow, and pig."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:34 ../../tools/swiss_target_tools.rst:65
+#: 29c39f0acf2649ada42c3d29a29ba973 d3ab82892c8842be8eb7cb3c5478bd93
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:36 ../../tools/swiss_target_tools.rst:67
+#: 2e78d65034214b20a559c1f73c01fc0c c6f5819218db437f8588913e42c42fa1
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:39 ../../tools/swiss_target_tools.rst:79
+#: 10b9a8fbbceb4f93a8e69f5f035798eb 5be58de1c9a14620ad8b20382b59a82f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:53 ac100ca437cc48c7a175c62b7a3cbfb3
+msgid "**SwissTargetPrediction_predict** (Type: SwissTargetTool)"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:55 eb5021497e084873804daf429d369bc8
+msgid ""
+"Predict the most probable protein targets of a small molecule using "
+"SwissTargetPrediction. Given ..."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst 448516dca6864c54a154103a422f2950
+msgid "SwissTargetPrediction_predict tool specification"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:61 23aa51efe9c44e40a245b32fbc183a14
+msgid "**Name**: ``SwissTargetPrediction_predict``"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:63 2efd6f18dcaa4f4c999c8097e3bc2d11
+msgid ""
+"**Description**: Predict the most probable protein targets of a small "
+"molecule using SwissTargetPrediction. Given a SMILES string, returns "
+"ranked target predictions with probability scores, UniProt IDs, ChEMBL "
+"IDs, target classes, and known active compound counts. Uses 2D and 3D "
+"molecular similarity to known ligands. Supports human, mouse, rat, cow, "
+"and pig proteomes. Note: computation takes 30-60 seconds as it runs a "
+"real-time similarity search against ~370,000 known active compounds."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:70 0f6d3b00470a4c9ea0ca6c206ec9d286
+msgid ""
+"``smiles`` (string) (required) SMILES representation of the query "
+"molecule. Must be a valid, druglike small molecule (not peptides or "
+"macromolecules). Examples: CC(=O)Oc1ccccc1C(=O)O (aspirin), "
+"CC(C)Cc1ccc(cc1)C(C)C(=O)O (ibuprofen), c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34 "
+"(benzo[a]pyrene)"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:73 2158758337ab47b38abc890a14cd8810
+msgid ""
+"``organism`` (string, null) (optional) Target organism proteome. Use "
+"underscores. Valid options: Homo\\_sapiens (default), Mus\\_musculus, "
+"Rattus\\_norvegicus, Bos\\_taurus, Sus\\_scrofa"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:76 1286bf4a05ba422c94472d137e4a66e6
+msgid ""
+"``top_n`` (integer, null) (optional) Return only the top N predictions "
+"ranked by probability. If null, returns all predictions (typically ~100 "
+"targets)."
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:94 c78555db71854b2899c8b72b2e06150b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:96 5cc985928c524f4c970377f744d092c5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/swiss_target_tools.rst:97 c996e1d4aa23465fa9e886d15adee238
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

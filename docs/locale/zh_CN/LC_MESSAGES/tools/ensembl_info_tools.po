@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_info_tools.rst:10 7dd96d7b2c0f4a5a9a64f8d7d685e753
+msgid "Ensembl Info Tools"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:12 7a058954c0454bcbbb4889e2359d17d4
+msgid ""
+"**Configuration File**: ``ensembl_info_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:16 4f2b2bcf5e85459391e29c291bb58f81
+msgid ""
+"This page contains all tools defined in the ``ensembl_info_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:19 e18c4e2304a24ed58f8dce5a840f7f9f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:22 c145fd5a0f0f42fdb17c728dd0858405
+msgid "**Ensembl_get_assembly_info** (Type: EnsemblInfoTool)"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:24 2b38c9321dca4e878f33abab0565d730
+msgid ""
+"Get genome assembly metadata for a species from the Ensembl REST API. "
+"Returns assembly name, acce..."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst c4160ff38ee44615a46ebaa96622ab4c
+msgid "Ensembl_get_assembly_info tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:28 ../../tools/ensembl_info_tools.rst:59
+#: 3f1ebe329c5448678c7c361a3b571143 90aa9f07a5ae4949a59c9132d37cd31e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:30 dee6447289944424be35d41d03521bb0
+msgid "**Name**: ``Ensembl_get_assembly_info``"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:31 ../../tools/ensembl_info_tools.rst:62
+#: 3bfc9a6ae82c4a10bd902a02d500dbc6 4442e4ad9e7f432694949900eb0b74de
+msgid "**Type**: ``EnsemblInfoTool``"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:32 6f686fe26b3c41c6b73620a63d4f4b29
+msgid ""
+"**Description**: Get genome assembly metadata for a species from the "
+"Ensembl REST API. Returns assembly name, accession, version history, "
+"chromosome karyotype with sizes, genebuild date, golden path length, and "
+"available coordinate system versions. Essential for interpreting genomic "
+"coordinates and understanding assembly composition. Example: "
+"'homo\\_sapiens' returns GRCh38.p14, assembly date 2013-12, genebuild May"
+" 2025, 194 top-level regions, karyotype chromosomes 1-22 plus X and Y."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:34 ../../tools/ensembl_info_tools.rst:65
+#: 3f6570577d4e45a8aa820b8653d7c1e1 f545c867fcf54ee9ae61ab776679667c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:36 3570c00e93c04b9eb066a2b0425dee89
+msgid ""
+"``species`` (string) (required) Ensembl species name (lowercase with "
+"underscores). Examples: 'homo\\_sapiens' (human), 'mus\\_musculus' "
+"(mouse), 'danio\\_rerio' (zebrafish), 'drosophila\\_melanogaster' (fruit "
+"fly), 'saccharomyces\\_cerevisiae' (yeast)."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:39 ../../tools/ensembl_info_tools.rst:70
+#: 1c26acb045af4432aa7ac8e7621fcba0 af53bf750dff4921a7ac7af6af5e5a70
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:53 49b8fe9329e54cb2a7b19d0ae825dead
+msgid "**Ensembl_get_species_info** (Type: EnsemblInfoTool)"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:55 22021dc8084545a1ad9a7a8a1f1e1eb8
+msgid ""
+"Search and list species available in the Ensembl database with their "
+"genome assembly information...."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst c96c2483183b458c95c16f3a8230ed17
+msgid "Ensembl_get_species_info tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:61 76fd74f676974fe7a9b18c0d03cd74eb
+msgid "**Name**: ``Ensembl_get_species_info``"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:63 519d5776c9bf49899ca6ea6cee43a6d8
+msgid ""
+"**Description**: Search and list species available in the Ensembl "
+"database with their genome assembly information. Returns species name, "
+"common name, taxonomy ID, current assembly version, and Ensembl division."
+" Supports filtering by species name, common name, or taxonomy ID. Useful "
+"for discovering which genomes are available and their assembly versions "
+"before querying other Ensembl endpoints. Example: searching 'mouse' "
+"returns Mus musculus (taxon 10090, assembly GRCm39) plus related species."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:67 a806889e4aed49afbe1a243f25aa23d4
+msgid ""
+"``search`` (string) (optional) Search term to filter species. Can be a "
+"species name ('mus\\_musculus'), common name ('mouse'), display name "
+"('Mouse'), or taxonomy ID ('10090'). Leave empty to list all 348+ "
+"species."
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:83 410dab2917d447189ce093a0ac7e9ad5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:85 1914b8ff48024c21b219537c95b1a1c5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_info_tools.rst:86 de5b571326de4bb8a86873337b8ce9f0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

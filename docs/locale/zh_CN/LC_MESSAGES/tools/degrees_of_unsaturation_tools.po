@@ -1,0 +1,179 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:10
+#: 6b0ecc73230141199dfb4abf7e81e347
+msgid "Degrees Of Unsaturation Tools"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:12
+#: 9cbad329597b4d12b64e20d86cd318e5
+msgid ""
+"**Configuration File**: ``degrees_of_unsaturation_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:16
+#: 12aa4c345ea241efb6c438ff4e697af4
+msgid ""
+"This page contains all tools defined in the "
+"``degrees_of_unsaturation_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:19
+#: 89ab579bfbd94b84adf768e93f5b3841
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:22
+#: e50a121c74be472382705e5602923e80
+msgid "**DegreesOfUnsaturation_calculate** (Type: DegreesOfUnsaturationTool)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:24
+#: 7cf644547ab445adbd2187117fef7b7d
+msgid ""
+"Calculate degrees of unsaturation (DoU, also called index of hydrogen "
+"deficiency or degree of uns..."
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst
+#: c0012e01517e4e0f804d8d8b4f5d5637
+msgid "DegreesOfUnsaturation_calculate tool specification"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:28
+#: ec948cdf55e5486e8391d3134bb04cca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:30
+#: cb6f3f0fcbb849a3b7af5e424d0f079c
+msgid "**Name**: ``DegreesOfUnsaturation_calculate``"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:31
+#: d12648f38c69425d9f99c42c49ebc546
+msgid "**Type**: ``DegreesOfUnsaturationTool``"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:32
+#: 0c70fae12e084970bf8e4e691eb672b5
+msgid ""
+"**Description**: Calculate degrees of unsaturation (DoU, also called "
+"index of hydrogen deficiency or degree of unsaturation) from a molecular "
+"formula. Uses the formula DoU = (2C + 2 + N - H - X) / 2 where X = total "
+"halogens (F, Cl, Br, I). Oxygen and sulfur do not affect DoU. Accepts "
+"either a formula string (e.g., 'C6H6') or explicit atom counts. Returns "
+"DoU value with structural interpretation: 0 = saturated, 1 = one ring or "
+"double bond, 4 = benzene ring, etc. Half-integer DoU indicates a formula "
+"error for neutral molecules."
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:34
+#: 0605195a11d3490e893258392e6edcfe
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:36
+#: b89f2b7da9244e729a0cf883f8e81b45
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:39
+#: 10bd33cb75a8407297e9c510b7657a35
+msgid ""
+"``formula`` (string) (optional) Molecular formula string (e.g., 'C6H6', "
+"'C8H15ClN2O2'). Alternative to explicit atom counts."
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:42
+#: ed1a873bf81f4c638619995ee3143558
+msgid ""
+"``C`` (integer) (optional) Number of carbon atoms (use if formula not "
+"provided)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:45
+#: bd41eb10ff6045e6a4ddb5db11a9def5
+msgid ""
+"``H`` (integer) (optional) Number of hydrogen atoms (use if formula not "
+"provided)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:48
+#: 8f424f07002f4c4f8b22b32c5f81e9ca
+msgid "``N`` (integer) (optional) Number of nitrogen atoms (default 0)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:51
+#: b33657fc10624b02a6381dcf3d67226f
+msgid "``S`` (integer) (optional) Number of sulfur atoms (does not affect DoU)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:54
+#: 3fafb0e6f6c043d0bebcee7bd410505d
+msgid "``F`` (integer) (optional) Number of fluorine atoms"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:57
+#: 6298a018034d45d39258927ebd7c7892
+msgid "``Cl`` (integer) (optional) Number of chlorine atoms"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:60
+#: 09aeabbc172e4b158733ecf2a57eab5a
+msgid "``Br`` (integer) (optional) Number of bromine atoms"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:63
+#: 9a9e478154784411a40f5e8185159501
+msgid ""
+"``oxygen`` (integer) (optional) Number of oxygen atoms (does not affect "
+"DoU, tracked for formula display)"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:66
+#: d9b3ccbd8bc042ada453a3cc22e15d49
+msgid "``iodine`` (integer) (optional) Number of iodine atoms"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:69
+#: 2874f01a07fe46d5890af716de9f4372
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:83
+#: 37f4f3c7b1d148c4a2b7f60808ec18d2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:85
+#: 9810056367f947b68e3bd5279fa178d6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/degrees_of_unsaturation_tools.rst:86
+#: 2a9b1d834e0047b8977f2309feb74feb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

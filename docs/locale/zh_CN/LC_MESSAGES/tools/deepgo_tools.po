@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/deepgo_tools.rst:10 5acb04c9d8c5464bac99b21ef8145be5
+msgid "Deepgo Tools"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:12 3c701f343c9f4695a905d971ed723079
+msgid ""
+"**Configuration File**: ``deepgo_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:16 2801486070344458a4004ffe756c2118
+msgid ""
+"This page contains all tools defined in the ``deepgo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:19 50f2e4070b834b24aac3112e6cbf471e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:22 3eae4e8f1d554a94937888a3f63d52b4
+msgid "**DeepGO_predict_function** (Type: DeepGOTool)"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:24 c470834c8c724dd7ad8a1dd82a0daa57
+msgid ""
+"Predict protein function from amino acid sequence using deep learning. "
+"Returns Gene Ontology (GO)..."
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst 3e82e94b017c44f98e495ee5ec7c54f5
+msgid "DeepGO_predict_function tool specification"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:28 c06f5ac89c284921b396c96592c8e10e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:30 2fcf04f9b3d74b2ebd3379f57cb74016
+msgid "**Name**: ``DeepGO_predict_function``"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:31 b49338cec7d946428dd7ea21b815f0af
+msgid "**Type**: ``DeepGOTool``"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:32 e6c6733f5adf4a4eb60be28ae54d3ad1
+msgid ""
+"**Description**: Predict protein function from amino acid sequence using "
+"deep learning. Returns Gene Ontology (GO) term predictions for Biological"
+" Process, Molecular Function, and Cellular Component with confidence "
+"scores. Uses DeepGOPlus method - 600x faster than sequence alignment "
+"approaches."
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:34 7f27d8e43a6147a0ae9fafc0f292b7cf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:36 80a9130f4a0841b8bd8284709715006d
+msgid ""
+"``sequence`` (string) (required) Protein sequence (10-5000 amino acids, "
+"standard 20 AAs)"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:39 3bb8ff238f034b5da94463d129421f4f
+msgid "``name`` (string) (optional) Optional name for the protein"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:42 f2bc7cf1da4049f0b8d96b16d0b6712b
+msgid ""
+"``threshold`` (number) (optional) Confidence threshold 0.1-1.0 (default: "
+"0.3)"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:45 b1d5c05eb7da438a8dd619007294c51a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:59 c5cba0cb848948b0baf45f4516cab6c2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:61 037cafb2bf7949aaacf51d1c9c06b047
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/deepgo_tools.rst:62 5fb3b86e67e24ea593943cd8e0e53e5c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

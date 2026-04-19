@@ -1,0 +1,156 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/unichem_tools.rst:10 558ef518ed7b47d89cc868524d2be505
+msgid "Unichem Tools"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:12 4231c2e0c3d34c56afb17c4c0d72c71a
+msgid ""
+"**Configuration File**: ``unichem_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:16 c6300e3b25754ae09b1f287f55f936d8
+msgid ""
+"This page contains all tools defined in the ``unichem_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:19 0b663c989214434c88003b65454934c1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:22 0f5cb4dcf6994276bcb359fdaf799d68
+msgid "**UniChem_list_sources** (Type: UniChemTool)"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:24 495ed65b78ac46519d1943c73dcc1894
+msgid ""
+"List all chemical database sources registered in UniChem. Returns the "
+"complete catalog of 40+ dat..."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst 69d5bebae8c144c2934b000edaa413d4
+msgid "UniChem_list_sources tool specification"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:28 ../../tools/unichem_tools.rst:57
+#: 05ab07b90f0249e0b08b9b0bd1c09216 dbde4d9ee6cd45b381bd46a80e37a40f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:30 cd372cb16a914c94851cd467bdd86792
+msgid "**Name**: ``UniChem_list_sources``"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:31 ../../tools/unichem_tools.rst:60
+#: 278b36dae8ee48ce8d9d64944f937349 895a5cccc0434927917fea2203ee30c2
+msgid "**Type**: ``UniChemTool``"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:32 294187706742462eace0bd6b2ff82d27
+msgid ""
+"**Description**: List all chemical database sources registered in "
+"UniChem. Returns the complete catalog of 40+ databases with their source "
+"IDs, names, descriptions, compound counts, and URLs. Use this to discover"
+" which databases are available for cross-referencing and to find source "
+"IDs for the UniChem\\_search\\_compound tool. Major sources include "
+"ChEMBL (id=1), DrugBank (id=2), PDBe (id=3), PubChem (id=22), KEGG "
+"(id=6), ChEBI (id=7), HMDB (id=18)."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:34 ../../tools/unichem_tools.rst:63
+#: acd4a3f054594723959ad06c8ff3833a c06611f4aa9d48af8d66e45e6465cebf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:36 1b345722ab494c9689805945b991b3c3
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:38 ../../tools/unichem_tools.rst:74
+#: b3d4190be53b4fb38e21c6c4d8ba3198 d56cd87df95b46f9b35b0758b516d18f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:51 990011dcd44b45628bde87463503e50f
+msgid "**UniChem_search_compound** (Type: UniChemTool)"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:53 a9c2169184ee4e44ac3c4ab58a2bc1d9
+msgid ""
+"Search UniChem for a chemical compound by InChIKey, source compound ID, "
+"or UCI (UniChem Compound ..."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst abfd895d52484f7da303038b04bd5117
+msgid "UniChem_search_compound tool specification"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:59 0b4a87963a8145c596f850a7306f76b4
+msgid "**Name**: ``UniChem_search_compound``"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:61 0c0111b44c1a4f0790bb98ff1835a188
+msgid ""
+"**Description**: Search UniChem for a chemical compound by InChIKey, "
+"source compound ID, or UCI (UniChem Compound Identifier). Returns cross-"
+"references to the compound across 40+ chemical databases including "
+"ChEMBL, DrugBank, PDBe, PubChem, KEGG, ChEBI, HMDB, and more. UniChem is "
+"EBI's unified chemical cross-referencing service. Example: searching "
+"InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (aspirin) returns mappings to "
+"CHEMBL25, DB00945, C01405, etc."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:65 47b3696ccffd44abae1cbfc369c79cd1
+msgid ""
+"``compound`` (string) (required) The compound identifier to search. Can "
+"be an InChIKey (e.g., 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N'), source compound ID "
+"(e.g., 'CHEMBL25'), or UCI number."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:68 bbb9955388d84175888f4c08cc9a6ded
+msgid ""
+"``type`` (string) (required) Type of the compound identifier. One of: "
+"'inchikey', 'sourceID', 'uci'. Default: 'inchikey'."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:71 9b0d2c47ca6f462286d1111b95e4659b
+msgid ""
+"``sourceID`` (integer, null) (optional) Required when type='sourceID'. "
+"The source database ID (e.g., 1=ChEMBL, 2=DrugBank, 7=ChEBI, 22=PubChem)."
+" Use UniChem\\_list\\_sources to see all IDs."
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:89 7b52029a51a546cf9c96f631fb26f783
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:91 e2900a31d44a41afb7199b38e9c114dc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/unichem_tools.rst:92 8a7b8c58d10a4d2a89c9891761606ffb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

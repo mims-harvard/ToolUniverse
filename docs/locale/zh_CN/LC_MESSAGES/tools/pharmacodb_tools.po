@@ -1,0 +1,368 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pharmacodb_tools.rst:10 cd6ab1b3a644453aac6caa7e85ddd72c
+msgid "Pharmacodb Tools"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:12 882ae4e8fb924957baa9e4387f172ca6
+msgid ""
+"**Configuration File**: ``pharmacodb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:16 632ef84a314e44aa9788a35b66a0f4e7
+msgid ""
+"This page contains all tools defined in the ``pharmacodb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:19 4f0f19fa11884afb8fe2d1a5c73d2ffd
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:22 191568e40f5d4deebc7ff3a0fdf778e3
+msgid "**PharmacoDB_get_biomarker_assoc** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:24 ce4f886ba8284de19fb29ff0aa1ee46b
+msgid ""
+"Get gene-compound biomarker associations from PharmacoDB showing how gene"
+" expression or other mol..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst 2789172d75804a529dc7189e8bebe3de
+msgid "PharmacoDB_get_biomarker_assoc tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:28 ../../tools/pharmacodb_tools.rst:77
+#: ../../tools/pharmacodb_tools.rst:114 ../../tools/pharmacodb_tools.rst:151
+#: ../../tools/pharmacodb_tools.rst:194 ../../tools/pharmacodb_tools.rst:225
+#: 093688ff21c64c29aae4abec0d4e6891 31e101d33a264ae08229288496727c3c
+#: 787c14cddfff45748205f0cf4259456e a0476b7108fc4e119ca14a7d37fff4bd
+#: bcf751aceab74e32b8e9463ad939d238 d7723682a17240d983ab5d2e7a7f6790
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:30 ba57f6530cf7498e8018957855eac1b0
+msgid "**Name**: ``PharmacoDB_get_biomarker_assoc``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:31 ../../tools/pharmacodb_tools.rst:80
+#: ../../tools/pharmacodb_tools.rst:117 ../../tools/pharmacodb_tools.rst:154
+#: ../../tools/pharmacodb_tools.rst:197 ../../tools/pharmacodb_tools.rst:228
+#: 40b533878a3a4b7b8c3bfa7d081ba892 4c95dcd30f674995b5c505eea253158d
+#: 6be18087348f4beeb7919fe067b2507c 873fffa1c519460ab98c4f2bfa7551f1
+#: bd0ab8a5164746c4b9086c474d184361 dd25145d7b0d4f55a1ad596e230a7164
+msgid "**Type**: ``PharmacoDBTool``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:32 f322208b28a349e2ae2934b6d1832d67
+msgid ""
+"**Description**: Get gene-compound biomarker associations from PharmacoDB"
+" showing how gene expression or other molecular features correlate with "
+"drug sensitivity. Returns statistical associations including effect "
+"estimate, p-values, FDR, sensitivity statistic (AAC/IC50), molecular data"
+" type (rna/cnv/mutation), sample size, and tissue/dataset context. Filter"
+" by compound, gene (Ensembl ID), tissue, and molecular data type. Useful "
+"for pharmacogenomics biomarker discovery and validating drug sensitivity "
+"predictors. Example: find genes associated with Paclitaxel sensitivity in"
+" breast cancer."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:34 ../../tools/pharmacodb_tools.rst:83
+#: ../../tools/pharmacodb_tools.rst:120 ../../tools/pharmacodb_tools.rst:157
+#: ../../tools/pharmacodb_tools.rst:200 ../../tools/pharmacodb_tools.rst:231
+#: 6fb93f20487d4e45bed232b3f36c2fc1 736b2342363d4113a05a355e87b01da1
+#: 765acd466a034b098f01669530e5ae99 8195ebe10a3547e1b96d77b00ed8719c
+#: 8433661ae7a74de4b7ca80e2b391ab48 bd0e8fb480aa410c8d0bf0077bf4d568
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:36 ../../tools/pharmacodb_tools.rst:85
+#: ../../tools/pharmacodb_tools.rst:122 ../../tools/pharmacodb_tools.rst:159
+#: ../../tools/pharmacodb_tools.rst:202 ../../tools/pharmacodb_tools.rst:233
+#: 0f15c6f2d74d42d899462ec1eaa3a282 292b62047be640e28f6570b0ec7609a5
+#: 7b59aff8ec354b3283ba729d054af304 a3507e055a4147b69dbc12aedfe32f87
+#: c061e34d01c14aa58cafdf0c033eb61c fb9fa875f0ad4937a278b11b6f997ed9
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:39 1030d06e86644bf1a5ef710ddf3b2876
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (e.g., "
+"'Paclitaxel', 'Erlotinib'). Either compound\\_name or compound\\_id "
+"required."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:42 2b076a235cdf469abe373ce236685669
+msgid ""
+"``compound_id`` (integer, null) (optional) PharmacoDB compound ID. Either"
+" compound\\_name or compound\\_id required."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:45 f62d1bada70c47aa9cf25b474f2e7b08
+msgid ""
+"``gene_name`` (string, null) (optional) Gene Ensembl ID to filter (e.g., "
+"'ENSG00000141510' for TP53)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:48 c6bc03f6a27c46478257e30f10e0b471
+msgid ""
+"``tissue_name`` (string, null) (optional) Tissue type to filter (e.g., "
+"'Breast', 'Lung', 'Skin')"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:51 7800437fd7e54eeb8b89a1d827fbc163
+msgid ""
+"``mdata_type`` (string, null) (optional) Molecular data type: 'rna' (gene"
+" expression), 'cnv' (copy number), 'mutation'"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:54 56282caf15ee409eba71cbd8faa05944
+msgid ""
+"``per_page`` (integer) (optional) Number of results per page (default 20,"
+" max 100)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:57 ../../tools/pharmacodb_tools.rst:94
+#: ../../tools/pharmacodb_tools.rst:131 ../../tools/pharmacodb_tools.rst:174
+#: ../../tools/pharmacodb_tools.rst:205 ../../tools/pharmacodb_tools.rst:239
+#: 09743280be6149af919f9fc1f95bfcac 318c15ffe17844d6ab00019cb24b34e0
+#: 37367ed50e61484db1d83ce426f3dd88 45b73fea674442488128ab7efed438f8
+#: a367d90515344ca095671c123a7f09f1 bb934d16c5a74991bc41b4805793d681
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:71 272140d278204a61bc63b76160d15098
+msgid "**PharmacoDB_get_cell_line** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:73 fb5bc66e0af148b280c37985df619c51
+msgid ""
+"Get detailed information about a cancer cell line from PharmacoDB, "
+"including tissue of origin, di..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst 6c66f61d0c4146cba19e94ef8e2a59ae
+msgid "PharmacoDB_get_cell_line tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:79 2cba7261c6764846be971854e65d97dc
+msgid "**Name**: ``PharmacoDB_get_cell_line``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:81 1a00cf9cafc3489ba41cdc0844bb365f
+msgid ""
+"**Description**: Get detailed information about a cancer cell line from "
+"PharmacoDB, including tissue of origin, disease annotations, dataset-"
+"specific synonyms, and accession IDs. Look up by cell line name or "
+"PharmacoDB cell ID. PharmacoDB harmonizes cell line identifiers across 10"
+" pharmacogenomics datasets. Example: get details for MCF-7 breast cancer "
+"or A549 lung cancer cell line."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:88 6d776795d6e04780972b4767c5622e6d
+msgid ""
+"``cell_name`` (string, null) (optional) Cell line name (e.g., 'MCF-7', "
+"'A549', 'HeLa'). Mutually exclusive with cell\\_id."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:91 19762828d02b4cedbbceadd9d8268f61
+msgid ""
+"``cell_id`` (integer, null) (optional) PharmacoDB cell line database ID "
+"(e.g., 273 for MCF-7). Mutually exclusive with cell\\_name."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:108 a411f36b3df546219daba81b94a65a81
+msgid "**PharmacoDB_get_compound** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:110 9a893bb9f58a4437b9e9dec2721bfeee
+msgid ""
+"Get detailed information about a compound/drug from PharmacoDB, including"
+" chemical annotations (S..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst 958a9b7f7dcb4f3bb37b5db4fa6eda9f
+msgid "PharmacoDB_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:116 aaabe47b864e462a8bfb4d9722f9ef48
+msgid "**Name**: ``PharmacoDB_get_compound``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:118 9078c4a1502840d5aae6df1f238150d7
+msgid ""
+"**Description**: Get detailed information about a compound/drug from "
+"PharmacoDB, including chemical annotations (SMILES, InChIKey, PubChem "
+"CID, ChEMBL ID, FDA approval status), the datasets it has been profiled "
+"in, and its known molecular targets with associated genes. Look up by "
+"compound name or PharmacoDB compound ID. Useful for characterizing drug "
+"properties and identifying which pharmacogenomics datasets include a "
+"specific compound. Example: get details for Paclitaxel, Erlotinib, or "
+"Lapatinib."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:125 751519ea50944a97a80e900d13414314
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (e.g., "
+"'Paclitaxel', 'Erlotinib'). Mutually exclusive with compound\\_id."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:128 175a79dddf44461e838831d92c44fa51
+msgid ""
+"``compound_id`` (integer, null) (optional) PharmacoDB compound database "
+"ID (e.g., 49658 for Paclitaxel). Mutually exclusive with compound\\_name."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:145 24d3facfba6d4a15b233e0dd74b0c932
+msgid "**PharmacoDB_get_experiments** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:147 ec65f1ba218d497fbbf499aa8b7535c9
+msgid ""
+"Get drug sensitivity experiments from PharmacoDB with dose-response "
+"curves and pharmacological pr..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst 37981092e3a84adca369a8647307493c
+msgid "PharmacoDB_get_experiments tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:153 75251d1c7b0d405b8468a5eddd742d78
+msgid "**Name**: ``PharmacoDB_get_experiments``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:155 abd5e30d32f14b1c8813f795d10f25a8
+msgid ""
+"**Description**: Get drug sensitivity experiments from PharmacoDB with "
+"dose-response curves and pharmacological profiles. Returns experiment "
+"data including raw dose-response measurements and fitted parameters "
+"(IC50, EC50, AAC, Hill slope, Einf, DSS1/2/3). Filter by compound name, "
+"cell line name, and/or dataset. Integrates data from CCLE, CTRPv2, FIMM, "
+"GDSC1, GDSC2, GRAY, NCI60, PRISM, UHNBreast, and gCSI. Essential for "
+"comparing drug sensitivity across cell lines and datasets. Example: get "
+"Paclitaxel dose-response data across all cell lines."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:162 d0988bad3f4a49e7874078b85204dbdf
+msgid ""
+"``compound_name`` (string, null) (optional) Compound/drug name to filter "
+"experiments (e.g., 'Paclitaxel', 'Erlotinib')"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:165 326b5ad750154107a8a6bc02be1fa246
+msgid ""
+"``cell_line_name`` (string, null) (optional) Cell line name to filter "
+"experiments (e.g., 'MCF-7', 'A549')"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:168 2252116bd5d042b8a9370add22b1ecd4
+msgid ""
+"``dataset_name`` (string, null) (optional) Dataset name to filter (e.g., "
+"'GDSC1', 'CCLE', 'CTRPv2', 'PRISM')"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:171 d7e9562766f047f0bb38b3190f92801f
+msgid ""
+"``per_page`` (integer) (optional) Number of experiments to return per "
+"page (default 10, max 100)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:188 cd28df1384d343b28de85ec0f78f6efb
+msgid "**PharmacoDB_list_datasets** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:190 e783b9dcbc3844e3bd3d03efb3f8be5a
+msgid ""
+"List all cancer pharmacogenomics datasets available in PharmacoDB. "
+"Returns dataset names and IDs ..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst 91453f83f3e44db0b2bf92ffb2658cb2
+msgid "PharmacoDB_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:196 4907bdd19f9c43c3a3b5f8f70a43a0a9
+msgid "**Name**: ``PharmacoDB_list_datasets``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:198 2effa516720a484789e3d0304f7857f6
+msgid ""
+"**Description**: List all cancer pharmacogenomics datasets available in "
+"PharmacoDB. Returns dataset names and IDs for the integrated collection "
+"including CCLE (Cancer Cell Line Encyclopedia), CTRPv2 (Cancer "
+"Therapeutics Response Portal), FIMM (Institute for Molecular Medicine "
+"Finland), GDSC1/GDSC2 (Genomics of Drug Sensitivity in Cancer), GRAY, "
+"NCI60, PRISM, UHNBreast, and gCSI (Genentech Cell Screening Initiative). "
+"Use dataset names to filter experiments and biomarker queries."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:219 fc95100bf8a74167bd0af2aa5beb0a90
+msgid "**PharmacoDB_search** (Type: PharmacoDBTool)"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:221 94d94338c8ad414bb459c11479711290
+msgid ""
+"Search PharmacoDB for compounds, cell lines, tissues, or genes by name. "
+"PharmacoDB integrates can..."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst f8d9afef70b844b2a2c74b0d59439c5a
+msgid "PharmacoDB_search tool specification"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:227 d3b5a35da2c54e1c9ec02edc7073d269
+msgid "**Name**: ``PharmacoDB_search``"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:229 fd86b3de5e52470da0856091565e15aa
+msgid ""
+"**Description**: Search PharmacoDB for compounds, cell lines, tissues, or"
+" genes by name. PharmacoDB integrates cancer pharmacogenomics data from "
+"10 major datasets (CCLE, CTRPv2, FIMM, GDSC1, GDSC2, GRAY, NCI60, PRISM, "
+"UHNBreast, gCSI). Returns matching entities with their PharmacoDB UIDs "
+"and type (compound, cell\\_line, tissue, gene). Use this to find "
+"PharmacoDB identifiers for use with other PharmacoDB tools. Example: "
+"search for 'paclitaxel' to find its PharmacoDB compound ID."
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:236 801eb187d1a748039641acc136acf460
+msgid ""
+"``query`` (string) (required) Text query to search across compounds, cell"
+" lines, tissues, and genes. Examples: 'paclitaxel', 'MCF-7', 'Breast', "
+"'TP53'"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:254 cd46effccebb4cddb04bcbae72404d7b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:256 9d7ce5f119474afdb65cd386ae090708
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pharmacodb_tools.rst:257 30228cac45fd4c418ce0afd90d209888
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

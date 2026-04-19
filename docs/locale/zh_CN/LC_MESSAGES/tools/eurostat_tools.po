@@ -1,0 +1,138 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/eurostat_tools.rst:10 278a0567c5c943f1be6561968ae54449
+msgid "Eurostat Tools"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:12 df1bb9ddbb484ba4bfbd025e8b414bc8
+msgid ""
+"**Configuration File**: ``eurostat_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:16 8915b35a5af24f2ca3e48289a8cbf9d0
+msgid ""
+"This page contains all tools defined in the ``eurostat_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:19 1f23f5240fe3493399cc93c3028854cc
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:22 48105ce37aa74ff3b5f0b395ef913706
+msgid "**Eurostat_get_dataset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:24 a45abab5c176436996395931a6ac78f6
+msgid ""
+"Retrieve statistical data from Eurostat (EU statistical office) for a "
+"specific dataset and filter..."
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst 1e0c54b6042949bb9fb2cf25cc9e3e64
+msgid "Eurostat_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:28 2469bf4530624cf5b1fef2a1efd17787
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:30 c56dd41e4c72405884fb7a864326143b
+msgid "**Name**: ``Eurostat_get_dataset``"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:31 14a955decc3b46179d5f6d464bb2f915
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:32 32f5d6b6667e4b7b93cf006108f06574
+msgid ""
+"**Description**: Retrieve statistical data from Eurostat (EU statistical "
+"office) for a specific dataset and filter combination. Eurostat provides "
+"10,000+ datasets covering EU member states for economics (GDP, inflation,"
+" trade), social statistics (population, employment, poverty), health, "
+"environment, agriculture, and more. Returns time-series values with "
+"dimension metadata. Common datasets: 'demo\\_pjan' (population by "
+"age/sex), 'nama\\_10\\_gdp' (GDP), 'ilc\\_li01' (poverty rate), "
+"'env\\_air\\_gge' (GHG emissions), 'hlth\\_ehis\\_fv3e' (health). Use "
+"Eurostat database explorer to find dataset codes."
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:34 760aa04a03ec4bb4bc31aa22f477f156
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:36 e6ffad93897345488ab0b30c72e085b8
+msgid ""
+"``datasetCode`` (string) (required) Eurostat dataset code. Examples: "
+"'demo\\_pjan' (population by age/sex), 'nama\\_10\\_gdp' (GDP), "
+"'ilc\\_li01' (at-risk-of-poverty rate), 'env\\_air\\_gge' (GHG "
+"emissions), 'une\\_rt\\_a' (unemployment rate), 'tec00001' (GDP per "
+"capita)"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:39 49abcf8eac0c44929f2d428098eab5f6
+msgid ""
+"``geo`` (string, null) (optional) Country/region code filter. EU country "
+"codes: DE (Germany), FR (France), IT (Italy), ES (Spain), PL (Poland), NL"
+" (Netherlands), BE (Belgium), SE (Sweden). Use 'EU27\\_2020' for EU "
+"average."
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:42 b9b057f67d2b43009f3f197ab6a53b8b
+#, python-format
+msgid ""
+"``unit`` (string, null) (optional) Unit of measurement filter (dataset-"
+"specific). Examples: 'PC' (percentage), 'NR' (number), 'CP\\_MEUR' "
+"(million EUR current prices), 'PC\\_GDP' (% of GDP), 'T' (tonnes)"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:45 308d1f6af6a24723b12f5e12b0f3fdfa
+msgid ""
+"``na_item`` (string, null) (optional) National accounts item filter for "
+"economic datasets (e.g., 'B1GQ' for GDP, 'P3' for final consumption)"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:48 900a0972f0ed4465810ed079216ecf55
+msgid ""
+"``time`` (string, null) (optional) Time filter (year or time range). "
+"Examples: '2022', '2015:2022' (range)"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:51 ccb10b871a0c41de83fdd64b8311830a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:65 49764881ea4943d1972d635fe59d0ba0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:67 0ae4f5ceb9944778ad4a1669b2adfbd4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/eurostat_tools.rst:68 02ea7a48638c41dd86f55740859907db
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

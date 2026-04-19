@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_compound_tools.rst:10 e7448e6db2764b009aca7be59ba50a24
+msgid "Pdbe Compound Tools"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:12 e56bd30e878045b298ee0e57b8052924
+msgid ""
+"**Configuration File**: ``pdbe_compound_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:16 18b5856bfc394d06b212e232dcfea338
+msgid ""
+"This page contains all tools defined in the ``pdbe_compound_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:19 c508dc4b1b334212ad0d92be4bf7230c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:22 d8ae2332138e416cb2e5e5f012ea86c2
+msgid "**PDBe_get_compound_structures** (Type: PDBECompoundTool)"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:24 658061a71bcc4a2c9468afc55dfc901f
+msgid ""
+"Get PDB structures containing a specific chemical compound "
+"(ligand/cofactor/ion). Returns compoun..."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst 43a922362b15420584ebba738e91fbef
+msgid "PDBe_get_compound_structures tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:28
+#: ../../tools/pdbe_compound_tools.rst:59 14577ec97f044824b2acaa2a38abf666
+#: bf36ec8683264bed890f3d68ffa4ece0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:30 e314fb15cb8740a2b335eb99789f3366
+msgid "**Name**: ``PDBe_get_compound_structures``"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:31
+#: ../../tools/pdbe_compound_tools.rst:62 0997b66d94b24a60bd27873cbaf00300
+#: ebc2984d55b54fce86dc29c8063c49d7
+msgid "**Type**: ``PDBECompoundTool``"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:32 6fa35ecd6c2a40f1930cc21b655be42d
+msgid ""
+"**Description**: Get PDB structures containing a specific chemical "
+"compound (ligand/cofactor/ion). Returns compound details and a list of "
+"PDB entry IDs where the compound appears. Useful for finding all crystal "
+"structures with a drug or cofactor bound, studying binding site "
+"diversity, or identifying protein targets of a compound. Example: 'ATP' "
+"appears in thousands of PDB structures (kinases, ATPases, motor "
+"proteins); 'HEM' appears in hemoglobins, cytochromes, peroxidases; 'NAG' "
+"(N-acetylglucosamine) appears in glycoproteins."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:34
+#: ../../tools/pdbe_compound_tools.rst:65 274eaa34e22f4348af743f3750a74912
+#: 3b4259ba3a75464b88a3d44c6981f093
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:36 110479385cc94b4989ba4f827c935118
+msgid ""
+"``comp_id`` (string) (required) PDB chemical component ID (3-letter "
+"code). Examples: 'ATP', 'HEM', 'NAG', 'FAD', 'NAD', 'ZN', 'GOL'. Case-"
+"insensitive."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:39
+#: ../../tools/pdbe_compound_tools.rst:70 9afd2395a017467d81c15dbc474827a4
+#: b856a22f570c416c8bb049d14a4c9650
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:53 f890e594e11448a2a5cdc1858359fe6f
+msgid "**PDBe_get_compound_summary** (Type: PDBECompoundTool)"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:55 1da50102b3374eaaa37756885be4c028
+msgid ""
+"Get detailed chemical compound information from PDBe by PDB chemical "
+"component ID (3-letter code)..."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst 91bee178b0b54c5e9bdcbf89202abd0c
+msgid "PDBe_get_compound_summary tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:61 aae1cf520953459b96650a174a487145
+msgid "**Name**: ``PDBe_get_compound_summary``"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:63 bd401559c76c4cb4a89551cb4ccbe4a4
+msgid ""
+"**Description**: Get detailed chemical compound information from PDBe by "
+"PDB chemical component ID (3-letter code). Returns molecular formula, "
+"weight, formal charge, compound type, InChI identifier, InChI key, SMILES"
+" representations, systematic IUPAC names, and cross-references to "
+"PubChem, DrugBank, EPA CompTox, ClinicalTrials, and other chemical "
+"databases. Essential for studying protein-ligand interactions, drug "
+"binding, or identifying compounds in crystal structures. Example: 'ATP' "
+"returns adenosine-5'-triphosphate (C10H16N5O13P3, 507.18 Da, linked to "
+"DrugBank DB00171 and PubChem 5957); 'HEM' returns protoporphyrin IX "
+"containing Fe (616.49 Da); 'CFF' returns caffeine (194.19 Da)."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:67 dcf7347d237b4188bf49e751dda591a0
+msgid ""
+"``comp_id`` (string) (required) PDB chemical component ID (3-letter "
+"code). Examples: 'ATP', 'HEM' (heme), 'NAG' (N-acetylglucosamine), 'CFF' "
+"(caffeine), 'GOL' (glycerol), 'ZN' (zinc ion), 'FAD', 'NAD'. Case-"
+"insensitive."
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:84 a70ea116648a4b998fbfa5dbd0db552c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:86 9fdbf4ae18344e0da17fee02b8e47d6d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_compound_tools.rst:87 9b0de813fd6c4353bc0d3455a8743473
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

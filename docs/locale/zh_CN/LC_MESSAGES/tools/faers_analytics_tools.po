@@ -1,0 +1,384 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/faers_analytics_tools.rst:10 332cf24079ed44888b699cb80416aaaf
+msgid "Faers Analytics Tools"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:12 73a91f560d994b0baa39d647ba8f8ede
+msgid ""
+"**Configuration File**: ``faers_analytics_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:16 14948b27ea024f38a75e787246ab7497
+msgid ""
+"This page contains all tools defined in the "
+"``faers_analytics_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:19 9e40d43e9eea43c4963b94786ab3664a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:22 7f9ba9a094b34481ac130e6b71bd28ed
+msgid "**FAERS_analyze_temporal_trends** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:24 fefbc9936c674995ba2f10a50851abde
+msgid ""
+"Analyze temporal trends in adverse event reporting by year. Returns "
+"yearly counts and trend direc..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst a9a1e3d4cd584d97ad3fb069405ae8a0
+msgid "FAERS_analyze_temporal_trends tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:28
+#: ../../tools/faers_analytics_tools.rst:70
+#: ../../tools/faers_analytics_tools.rst:112
+#: ../../tools/faers_analytics_tools.rst:157
+#: ../../tools/faers_analytics_tools.rst:202
+#: ../../tools/faers_analytics_tools.rst:238 133e08f94fa74ff1a776ed4402cc9d8a
+#: 6847ea95010142c98d0dea776acd9f45 7dc724939517422f9077ea5603d03046
+#: 93d63a91e1f64ca88f4dc11abace7fd6 ad4a9866116246a78af3df03d7220169
+#: d2f84c15a8ef4611840d19a5ddc27f43
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:30 b87e68f51c054926a3aa81cf699994c2
+msgid "**Name**: ``FAERS_analyze_temporal_trends``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:31
+#: ../../tools/faers_analytics_tools.rst:73
+#: ../../tools/faers_analytics_tools.rst:115
+#: ../../tools/faers_analytics_tools.rst:160
+#: ../../tools/faers_analytics_tools.rst:205
+#: ../../tools/faers_analytics_tools.rst:241 02228df97413412cb392adacb69871ab
+#: 20e3e693f8b642ffb3a3b3ed329ddd17 657f89fcd1c244e7bb6c335756e64a99
+#: 7516ed352ce3400892fb445dc6a656ec 919049e1e8ac46219ef888aa3b5a542d
+#: c441d3296513480ca9c7180004a0f659
+msgid "**Type**: ``FAERSAnalyticsTool``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:32 b758aae2e5fa4c309e07df33656b323c
+#, python-format
+msgid ""
+"**Description**: Analyze temporal trends in adverse event reporting by "
+"year. Returns yearly counts and trend direction "
+"(increasing/decreasing/stable). Example: ibuprofen GI bleeding reports "
+"2015-2025 → +25% increase. Use for signal evolution monitoring."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:34
+#: ../../tools/faers_analytics_tools.rst:76
+#: ../../tools/faers_analytics_tools.rst:118
+#: ../../tools/faers_analytics_tools.rst:163
+#: ../../tools/faers_analytics_tools.rst:208
+#: ../../tools/faers_analytics_tools.rst:244 14a63f08316e445387d64803e70ec8a1
+#: 545095339b744843b7746d3e733e1ad0 54ea742bbcc54f509fbc9670bfed50e4
+#: 948e1123d9b84579aa7f2d68edd55c52 96f7f4f001c34f14a30fd91151e2b419
+#: f173fd6e61414ef6abf0c9343064722a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:36
+#: ../../tools/faers_analytics_tools.rst:78
+#: ../../tools/faers_analytics_tools.rst:120
+#: ../../tools/faers_analytics_tools.rst:165
+#: ../../tools/faers_analytics_tools.rst:210
+#: ../../tools/faers_analytics_tools.rst:246 2aa1e6261e004e678d5947eba40de1c5
+#: 7cd6616d917c412f94723d6d0e2666cc 92cf820d908e4acc87226eb51be76627
+#: e19e790e562440d0870ec7bc30f44683 f40f316598ad4c2fb0a66ce277d4aeae
+#: fe909f214af24b8694072c62c9ec24e2
+msgid "``operation`` (unknown) (optional) Operation type (fixed)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:39
+#: ../../tools/faers_analytics_tools.rst:168
+#: ../../tools/faers_analytics_tools.rst:213
+#: ../../tools/faers_analytics_tools.rst:249 0478108198a24a6a825e3816a6a02459
+#: 052cb52321d3448fa193106a08c7e1e9 628f6bc18698416b95a84b577355f024
+#: bee73a388fe74aada8f97bdd6660ea3b
+msgid "``drug_name`` (string) (optional) Generic drug name"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:42 090e8b2371c64a16a68790ab4312a2f2
+msgid ""
+"``adverse_event`` (string) (optional) MedDRA Preferred Term (optional, "
+"omit for all events). Use exact MedDRA Preferred Term capitalization "
+"(e.g., \"Haemorrhage\" not \"hemorrhage\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:45
+#: ../../tools/faers_analytics_tools.rst:87
+#: ../../tools/faers_analytics_tools.rst:132 1cf097b694d7443cb9e8169f11b368f7
+#: 4dfd1e28acc14da3912436d9f8984e72 fa6b398b57e2488a86d98e0d84565c2d
+msgid ""
+"``reaction`` (string) (optional) Alias for adverse\\_event. MedDRA "
+"Preferred Term for the adverse drug reaction."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:48
+#: ../../tools/faers_analytics_tools.rst:90
+#: ../../tools/faers_analytics_tools.rst:174
+#: ../../tools/faers_analytics_tools.rst:216
+#: ../../tools/faers_analytics_tools.rst:264 1a138d8b7ddb4c6a8de51c7a02eb4349
+#: 60bac623c53d4bb5b6c35616d5f30850 b1e96cdb016a42d1951a099597c0b9f1
+#: b5c31c98f6004193a0f7e1548fd36654 b9da9c825bf94a0ea17f8b1d017cede4
+msgid "``drug`` (string) (optional) Alias for drug\\_name. Generic drug name."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:51
+#: ../../tools/faers_analytics_tools.rst:93
+#: ../../tools/faers_analytics_tools.rst:138
+#: ../../tools/faers_analytics_tools.rst:183
+#: ../../tools/faers_analytics_tools.rst:219
+#: ../../tools/faers_analytics_tools.rst:267 1fd1e31d30eb46f28136557d5fb9e4c9
+#: 4bce45ba55d04c9b9c52eb3631947419 4daed09873c744dcbe2f67761d322f05
+#: 5982f742312a48e89f58d4198def000d 6513d50ec83e4bd99e4d450d92953486
+#: efab81694c9a44b0a6f6e13c3c731799
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:64 a9c24f9ffebb42beb97d3269f0239dc1
+msgid "**FAERS_calculate_disproportionality** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:66 5b682867836a441b9a4c9f99f34b9a7b
+msgid ""
+"Calculate statistical disproportionality measures (ROR, PRR, IC) with 95%"
+" CI for drug-event pairs..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst def6e99d2ea940af925b431c33a29382
+msgid "FAERS_calculate_disproportionality tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:72 6134693dfcce4d4baac45cdf34f13a24
+msgid "**Name**: ``FAERS_calculate_disproportionality``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:74 37b023a38d2241c78972682e5a2b05bc
+msgid ""
+"**Description**: Calculate statistical disproportionality measures (ROR, "
+"PRR, IC) with 95% CI for drug-event pairs. Returns signal strength "
+"classification. Example: drug='ibuprofen', event='hepatotoxicity' → "
+"ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:81 586ddcf7e04242c4be108c6838eba0a5
+msgid ""
+"``drug_name`` (string) (optional) Generic drug name (e.g., 'IBUPROFEN', "
+"'ATORVASTATIN')"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:84 52211b0ac8ad463b886ab023cfdb6aa9
+msgid ""
+"``adverse_event`` (string) (optional) MedDRA Preferred Term (e.g., "
+"'Hepatotoxicity', 'Myopathy'). Use exact MedDRA Preferred Term "
+"capitalization (e.g., \"Haemorrhage\" not \"hemorrhage\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:106 22c4012dea1e453a9f4fb75323a6fe18
+msgid "**FAERS_compare_drugs** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:108 6e9b3f87960e48aaba486d64945500b0
+msgid ""
+"Compare safety signals for two drugs with the same adverse event. Returns"
+" ROR/PRR/IC for both dru..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst 726f5c002775435484716f79a7d8d0d2
+msgid "FAERS_compare_drugs tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:114 3a30b8316f694e889bde6d938ef09f5e
+msgid "**Name**: ``FAERS_compare_drugs``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:116 43c42bd7d9b3449295eda6008e329213
+msgid ""
+"**Description**: Compare safety signals for two drugs with the same "
+"adverse event. Returns ROR/PRR/IC for both drugs with comparative "
+"analysis. Example: compare fulvestrant vs tamoxifen for hepatotoxicity. "
+"Use for safety benchmarking."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:123 1a27e586e94d490eae3abd0c31226f51
+msgid "``drug1`` (string) (optional) First drug name (generic)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:126 58558042befe440fb2cc0e874fc81824
+msgid "``drug2`` (string) (optional) Second drug name (generic)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:129 9dba5b62205749cfa80e7d88e4dab0e8
+msgid ""
+"``adverse_event`` (string) (optional) MedDRA Preferred Term to compare. "
+"Use exact MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not"
+" \"hemorrhage\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:135 ddfc2b62d0e54ab2865c757d5d196b73
+msgid ""
+"``drugs`` (array) (optional) Alias for drug1/drug2. List of two drug "
+"names to compare, e.g., [\"tofacitinib\", \"baricitinib\"]."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:151 d344ecd47a794b289f81da83815c498b
+msgid "**FAERS_filter_serious_events** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:153 1a529c208d934853bb9635ef3c738132
+msgid ""
+"Filter for serious adverse events (death, hospitalization, disability, "
+"life-threatening). Returns..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst 80ab6f93770e4700af1ad1e59675b245
+msgid "FAERS_filter_serious_events tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:159 721ed7b243e64499bb51f7c1777827ae
+msgid "**Name**: ``FAERS_filter_serious_events``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:161 6015a556b353478cbd93bc4b2e6e600c
+msgid ""
+"**Description**: Filter for serious adverse events (death, "
+"hospitalization, disability, life-threatening). Returns top reactions "
+"meeting seriousness criteria. Example: fulvestrant serious events → "
+"Death: 150 cases, Hospitalization: 500 cases. Use for risk-benefit "
+"assessment."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:171 2e2d85fe75a7402f89cf313d71beeb17
+msgid "``seriousness_type`` (string) (optional) Type of serious event to filter"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:177 7a0e7932f2414565aa3bdf3be3b874be
+msgid ""
+"``event_type`` (string) (optional) Alias for seriousness\\_type. Type of "
+"serious event (e.g., hospitalization, death, life\\_threatening)."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:180 45b54a3025dc421588165c471bf31096
+msgid ""
+"``adverse_event`` (string) (optional) Specific adverse event MedDRA term "
+"to filter within serious events (e.g., MYOCARDIAL INFARCTION, DEATH). Use"
+" uppercase MedDRA PT terms."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:196 9bc29bde47dd4f1c861288955877dccc
+msgid "**FAERS_rollup_meddra_hierarchy** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:198 a8c3f40552aa48999a5b7a254ea5d11c
+msgid ""
+"Aggregate adverse events by MedDRA hierarchy (Preferred Term level). "
+"Returns top 50 PTs with coun..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst 57f1a56b585c47bf92ba9d3968f73245
+msgid "FAERS_rollup_meddra_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:204 3e9ef76602004e5ea3d75af1ecb22856
+msgid "**Name**: ``FAERS_rollup_meddra_hierarchy``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:206 81553f4cf3454b05a646b33e6be93284
+msgid ""
+"**Description**: Aggregate adverse events by MedDRA hierarchy (Preferred "
+"Term level). Returns top 50 PTs with counts. Note: Full HLT/SOC hierarchy"
+" requires MedDRA license. Use for adverse event profile overview."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:232 2ce2966f493140fe98d9bcddafa2f6a5
+msgid "**FAERS_stratify_by_demographics** (Type: FAERSAnalyticsTool)"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:234 55b2e8b2b9ba4cfc901832d3f5a96e07
+msgid ""
+"Stratify adverse event reports by demographics (sex, age group, country)."
+" Returns counts and perc..."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst 9917d7952f39472c913688a44de915db
+msgid "FAERS_stratify_by_demographics tool specification"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:240 3332180a0842485c8b06ac19ed1510ec
+msgid "**Name**: ``FAERS_stratify_by_demographics``"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:242 676a75fe24674245b07f6ebd48b89543
+msgid ""
+"**Description**: Stratify adverse event reports by demographics (sex, age"
+" group, country). Returns counts and percentages by demographic group. "
+"Example: ibuprofen + GI bleeding stratified by sex → Female: 60%, Male: "
+"40%. Use for subpopulation risk assessment."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:252 625af381dcf44d9fbee37cbe167de538
+msgid ""
+"``adverse_event`` (string) (optional) MedDRA Preferred Term. Use exact "
+"MedDRA Preferred Term capitalization (e.g., \"Haemorrhage\" not "
+"\"hemorrhage\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:255 062f000113db4312bdfa7880e3d357fa
+msgid ""
+"``stratify_by`` (string) (optional) Demographic dimension to stratify by."
+" Use \"sex\", \"age\", or \"country\" (\"age\\_group\" is also accepted "
+"as alias for \"age\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:258 d14d3e52224f436392f740b5a4462afe
+msgid ""
+"``reaction`` (string) (optional) Alias for adverse\\_event. MedDRA "
+"Preferred Term for the adverse drug reaction (e.g., \"hemorrhage\", "
+"\"nausea\")."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:261 a15df52ceafc45499efd8797ca101a9b
+msgid ""
+"``demographic`` (string) (optional) Alias for stratify\\_by. Demographic "
+"dimension to stratify by (sex, age, or country)."
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:280 4192a3db89654d11801d38f256867264
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:282 5c7b152c6b774055b6121c555cd13b76
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/faers_analytics_tools.rst:283 cb11a80866a04a57ba858ccf6c359cfa
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

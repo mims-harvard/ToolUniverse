@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/monarch_new_tools.rst:10 c0e4d1ff5abc4c61a16726ce8b8c52cf
+msgid "Monarch New Tools"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:12 b74130cf317a4e7e9336f6d5d00cebf6
+msgid ""
+"**Configuration File**: ``monarch_new_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:16 cd1411afbba74c1b9266ab57c714e4eb
+msgid ""
+"This page contains all tools defined in the ``monarch_new_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:19 dd6954076eb2475eaa7949791783345a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:22 e11c9a6e2fb04fa288507ba281fabedb
+msgid "**Monarch_get_associations** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:24 69456823b4104b38acf02a6ef6579dac
+msgid ""
+"Query disease-gene-phenotype associations in the Monarch Initiative "
+"knowledge graph. Find gene-ph..."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst 2438e497064641cf967d0937ebc18972
+msgid "Monarch_get_associations tool specification"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:28 ../../tools/monarch_new_tools.rst:67
+#: ../../tools/monarch_new_tools.rst:98 47a8954b2c2a4028b5a39c35a226c517
+#: 66e08f8d349d42a8ba5a2032df94bd0f cb6a0be073d24bcab7a9b87093c70a2b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:30 6f7eaf83189142298a55a32a8990f773
+msgid "**Name**: ``Monarch_get_associations``"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:31 ../../tools/monarch_new_tools.rst:70
+#: ../../tools/monarch_new_tools.rst:101 4c307f4e33964089bb9aa772e6a87f59
+#: 6a76b1ace72d44f5838f089557fa8dea d2bda5a6b69b46f198e11be48619de09
+msgid "**Type**: ``MonarchV3Tool``"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:32 0885369eb0f045908a4e6e5bc581b2d8
+msgid ""
+"**Description**: Query disease-gene-phenotype associations in the Monarch"
+" Initiative knowledge graph. Find gene-phenotype, disease-phenotype, "
+"gene-disease, or gene-pathway associations. Provide a subject CURIE "
+"(entity of interest) or object CURIE, with optional category filter. Uses"
+" the /association/all endpoint. Example: subject=HGNC:11998 returns all "
+"TP53 associations including phenotypes and diseases."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:34 ../../tools/monarch_new_tools.rst:73
+#: ../../tools/monarch_new_tools.rst:104 5222a02894bd411bb35bc2fb7e0b3c62
+#: ccfa96a446e44a5c978270b2ebf8c04a db46cd0b508348a6bef6361de6234a75
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:36 979a9546ca364e0caf09d6c6a1612752
+msgid ""
+"``subject`` (string) (optional) Subject entity CURIE. Examples: "
+"'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 diabetes)."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:39 b7bb822029ce4e02b96a0d50111ed769
+msgid ""
+"``object`` (string) (optional) Object entity CURIE. Use instead of "
+"subject to find entities associated TO this object."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:42 698b3ad6c7154011afbaa231a0f1ec8b
+msgid ""
+"``category`` (string) (optional) Optional Biolink association category "
+"filter. Options: 'biolink:GeneToPhenotypicFeatureAssociation', "
+"'biolink:DiseaseToPhenotypicFeatureAssociation', "
+"'biolink:CorrelatedGeneToDiseaseAssociation', "
+"'biolink:CausalGeneToDiseaseAssociation', "
+"'biolink:GeneToPathwayAssociation'."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:45 2ebb5f75fee441cd8c09bc6f5b076c81
+msgid ""
+"``limit`` (integer) (optional) Maximum associations to return (default: "
+"20, max: 200)."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:48 ../../tools/monarch_new_tools.rst:78
+#: ../../tools/monarch_new_tools.rst:115 010de8d06bbe4de5b3dd1dc361eea8cb
+#: 626a6c5ef4f645fc8038f093759c47ad 8cfdd284a9194f648b04eb09c9593a4f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:61 2b354e501402430792e851c1429384fa
+msgid "**Monarch_get_entity** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:63 19617946a55c45799c787b97e7e778b2
+msgid ""
+"Get detailed information about any biomedical entity in the Monarch "
+"Initiative knowledge graph by..."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst 575ced63852344feacf1b88dfadfb79f
+msgid "Monarch_get_entity tool specification"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:69 78f1dd1e6ba446db8c89ca4300a258bd
+msgid "**Name**: ``Monarch_get_entity``"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:71 48fa40eb08a84c5ca5f109b0d69834e9
+msgid ""
+"**Description**: Get detailed information about any biomedical entity in "
+"the Monarch Initiative knowledge graph by its CURIE identifier. Supports "
+"genes (HGNC), diseases (MONDO, OMIM), phenotypes (HP), variants, and "
+"more. Returns the entity name, category, description, synonyms, cross-"
+"references, and species. Example: HGNC:11998 returns TP53 gene; "
+"MONDO:0007739 returns Huntington disease with cross-refs to OMIM, DOID, "
+"ICD10."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:75 15c2248835174c188ad8e34e6797f61d
+msgid ""
+"``id`` (string) (required) Entity CURIE identifier. Examples: "
+"'HGNC:11998' (TP53), 'MONDO:0007739' (Huntington disease), "
+"'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure)."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:92 903015e99da147038edbe416bd61ae98
+msgid "**Monarch_search** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:94 7f874ca57a7f4448994031a67ff015c3
+msgid ""
+"Search the Monarch Initiative knowledge graph for biomedical entities by "
+"name or keyword. Returns..."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst 32849b5be8694621af4aa319e7295c3a
+msgid "Monarch_search tool specification"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:100 5055fd400fd14d37bebe6eb66fcebaad
+msgid "**Name**: ``Monarch_search``"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:102 8a85033144f14b77aa1f1306fef1bdb1
+msgid ""
+"**Description**: Search the Monarch Initiative knowledge graph for "
+"biomedical entities by name or keyword. Returns genes, diseases, "
+"phenotypes, and other entities matching the query, with CURIE identifiers"
+" and categories. Filter by category (biolink:Gene, biolink:Disease, "
+"biolink:PhenotypicFeature) to narrow results. Use returned CURIEs with "
+"Monarch\\_get\\_entity and Monarch\\_get\\_associations for detailed "
+"lookups."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:106 f49e7af043c24115b42238432fb85fac
+msgid ""
+"``query`` (string) (required) Search query: gene names, disease names, "
+"phenotype terms. Examples: 'BRCA1', 'Alzheimer', 'seizure', 'insulin "
+"resistance'."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:109 9197b5c6e5704d59ba421a774794713b
+msgid ""
+"``category`` (string) (optional) Filter by entity category. Options: "
+"'biolink:Gene', 'biolink:Disease', 'biolink:PhenotypicFeature'. Default: "
+"all categories."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:112 94db9c634fad4e58b2cb772f23cda744
+msgid "``limit`` (integer) (optional) Maximum results (default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:129 259e7b6754c04f36a99d12bb64733535
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:131 9c64f182bab64ea5938ed2f1dbddebac
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/monarch_new_tools.rst:132 7679355b1e134982aa3eb6892c5167e8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

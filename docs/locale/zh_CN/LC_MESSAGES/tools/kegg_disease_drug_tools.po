@@ -1,0 +1,328 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/kegg_disease_drug_tools.rst:10 dd36f17999c6459f93585c17fb79e292
+msgid "Kegg Disease Drug Tools"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:12 3b5b6d3be0b84017b2ebabac75c34ffa
+msgid ""
+"**Configuration File**: ``kegg_disease_drug_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:16 a8032c934df14bd981adb80fbd33900c
+msgid ""
+"This page contains all tools defined in the "
+"``kegg_disease_drug_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:19 25d3ae3ca3be4ea0bff282c5d32a97b8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:22 c90e2ec0cbdc492f939efcf5b71113fe
+msgid "**KEGG_get_disease** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:24 7ebb6a7071634197b07a7ee413e40553
+msgid ""
+"Get detailed KEGG disease information including disease name, category, "
+"description, associated g..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst 0207ebb637e34bd5b87d7ad08c571603
+msgid "KEGG_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:28
+#: ../../tools/kegg_disease_drug_tools.rst:59
+#: ../../tools/kegg_disease_drug_tools.rst:93
+#: ../../tools/kegg_disease_drug_tools.rst:124
+#: ../../tools/kegg_disease_drug_tools.rst:155
+#: ../../tools/kegg_disease_drug_tools.rst:191 28f4af8158e34540876b660778d8850a
+#: 58e1f47c3f884afc8bd7f86e5d08d4e9 7811bede469b46c18a639b8796cee711
+#: b536ddc185084a0992ceda3fa89d0559 caf1da56d1f147a1bfc01979c3299ef2
+#: e15e0a8bd86d4e67be294bc6d4551d97
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:30 296fa33932b6447d986300297648a53e
+msgid "**Name**: ``KEGG_get_disease``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:31
+#: ../../tools/kegg_disease_drug_tools.rst:62
+#: ../../tools/kegg_disease_drug_tools.rst:96
+#: ../../tools/kegg_disease_drug_tools.rst:127
+#: ../../tools/kegg_disease_drug_tools.rst:158
+#: ../../tools/kegg_disease_drug_tools.rst:194 2064db42e3e94925a8270e6b27115eba
+#: 4a3414f6b7d944f5ac77301b713e4411 84d676e8b0eb4fbab4758ae0e9e17a95
+#: 86078fa291fa4408a5f4a1875c51ab53 95270f22f9384a6f9edc7cea2dd8684e
+#: d9d2636a817d4ce281ea9cd638db1c7b
+msgid "**Type**: ``KEGGExtTool``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:32 e9dd89d78ad94d9aa2bfd97b02ad6a0f
+msgid ""
+"**Description**: Get detailed KEGG disease information including disease "
+"name, category, description, associated genes (with "
+"mutations/translocations), pathways, therapeutic drugs, database cross-"
+"references (ICD-10, MeSH, OMIM), and references. Example: H00001 returns "
+"B-cell acute lymphoblastic leukemia with BCR-ABL, MLL-AF4, E2A-PBX1 gene "
+"fusions and 10+ associated pathways. Use KEGG\\_search\\_disease to find "
+"disease IDs."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:34
+#: ../../tools/kegg_disease_drug_tools.rst:65
+#: ../../tools/kegg_disease_drug_tools.rst:99
+#: ../../tools/kegg_disease_drug_tools.rst:130
+#: ../../tools/kegg_disease_drug_tools.rst:161
+#: ../../tools/kegg_disease_drug_tools.rst:197 307e537368b14b1b832cc89da65ee750
+#: 47c282481b964fb7977c157c74cc84c4 738c45ea0d0c4eb5ae65092e442be0f7
+#: 8af2095f24d348d497219687e90c12b9 ed76762b359549379aae5bce98fdbeb8
+#: f4fdf4a1872844758c0835d99f5d3e17
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:36 5661dc25b71d4a048c8a81d848120b9a
+msgid ""
+"``disease_id`` (string) (required) KEGG disease ID in H##### format "
+"(e.g., 'H00001' for B-cell ALL, 'H00408' for type 1 diabetes, 'H00409' "
+"for type 2 diabetes, 'H00031' for breast cancer)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:39
+#: ../../tools/kegg_disease_drug_tools.rst:73
+#: ../../tools/kegg_disease_drug_tools.rst:104
+#: ../../tools/kegg_disease_drug_tools.rst:135
+#: ../../tools/kegg_disease_drug_tools.rst:172
+#: ../../tools/kegg_disease_drug_tools.rst:205 4482ece68388436f8286b56731021c9a
+#: 5129afc602df451da91dfc47a7a5cae9 57f81395174c4579836f1add417cde51
+#: 6bb44d0dfcd34ab28562d63afde4434c 8a6083daef814164bad559459ea056d4
+#: f97b434e261d4402933acc17cbdf40cb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:53 06662f5b21574ed3a00aa397a34ecb02
+msgid "**KEGG_get_disease_genes** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:55 9c2dbbd819654be1aca55225766758de
+msgid ""
+"Get all human genes linked to a KEGG disease. Returns KEGG gene IDs "
+"(hsa:XXXXX format) for genes ..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst 0072077b55db44cb8ff95abdb6d62aed
+msgid "KEGG_get_disease_genes tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:61 3f7a88ce86f847bda8d613aee6fb792a
+msgid "**Name**: ``KEGG_get_disease_genes``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:63 43b3563007644c91aea34fc189e64b8f
+msgid ""
+"**Description**: Get all human genes linked to a KEGG disease. Returns "
+"KEGG gene IDs (hsa:XXXXX format) for genes associated with the disease "
+"through mutations, gene fusions, or other mechanisms. Example: H00001 "
+"(B-cell ALL) returns hsa:25 (ABL1), hsa:4297 (KMT2A), hsa:4299 (AFF1), "
+"etc. Useful for building disease-gene association networks. Optionally "
+"specify a different organism."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:67 4584a22faf894bc8832e437840005676
+msgid ""
+"``disease_id`` (string) (required) KEGG disease ID (e.g., 'H00001' for "
+"B-cell ALL, 'H00031' for breast cancer)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:70 94bddfebf8a8414ea8e00ec3d5b48a72
+msgid ""
+"``organism`` (string) (optional) KEGG organism code (default: 'hsa' for "
+"human). Other examples: 'mmu' (mouse)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:87 77f026e073e4448d89831a6253fb4aa1
+msgid "**KEGG_get_drug** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:89 2118af2a7f484972bc64fc66f42a5adc
+msgid ""
+"Get detailed KEGG drug information including names, formula, molecular "
+"weight, drug targets, asso..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst c9213034487946fdb350a11aa948cc55
+msgid "KEGG_get_drug tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:95 e5531c00c61845e5bf0a1415d0ccd987
+msgid "**Name**: ``KEGG_get_drug``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:97 d792620499144a2bb0e712a2816343dc
+msgid ""
+"**Description**: Get detailed KEGG drug information including names, "
+"formula, molecular weight, drug targets, associated pathways, indicated "
+"diseases, efficacy description, cross-references (DrugBank, PubChem, "
+"CAS), and marketed products. Example: D00109 (aspirin) returns formula "
+"C9H8O4, targets PTGS1/PTGS2 (cyclooxygenase 1/2), and indications for "
+"pain/inflammation. Use KEGG\\_search\\_drug to find drug IDs."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:101 62d4548d6131406fb80229ca6e26275c
+msgid ""
+"``drug_id`` (string) (required) KEGG drug ID in D##### format (e.g., "
+"'D00109' for aspirin, 'D01441' for imatinib, 'D04966' for metformin)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:118 2a32b8f8d37445abbed5c411071e8289
+msgid "**KEGG_get_drug_targets** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:120 1812c4b56d1a43d5bdfa6396c0147a27
+msgid ""
+"Get human gene targets linked to a KEGG drug. Returns KEGG gene IDs "
+"(hsa:XXXXX format) for known ..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst 61032616e01043d58f8fbea80556d7da
+msgid "KEGG_get_drug_targets tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:126 cd0a07cca69c40caadfa0d726d370710
+msgid "**Name**: ``KEGG_get_drug_targets``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:128 83088d2b663d44a9ba37a9d8aabdd75d
+msgid ""
+"**Description**: Get human gene targets linked to a KEGG drug. Returns "
+"KEGG gene IDs (hsa:XXXXX format) for known drug targets. Example: D01441 "
+"(imatinib) returns hsa:25 (ABL1), hsa:3815 (KIT), hsa:5159 (PDGFRB). "
+"Useful for drug-target interaction analysis and pharmacogenomics. Limited"
+" to human targets by default."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:132 387406173e1344a6a0f60fead6c0e162
+msgid ""
+"``drug_id`` (string) (required) KEGG drug ID (e.g., 'D00109' for aspirin,"
+" 'D01441' for imatinib)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:149 dd5aa0aaf54646d082548049679a4006
+msgid "**KEGG_search_disease** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:151 daad0731df914c43a8f6202389431dfe
+msgid ""
+"Search the KEGG DISEASE database by keyword. KEGG DISEASE contains 2,600+"
+" human disease entries w..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst ac391fd08c114550b5925345b02961ed
+msgid "KEGG_search_disease tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:157 2caa5d0642da4d679d2af36534625c3e
+msgid "**Name**: ``KEGG_search_disease``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:159 e0346df8a7754f9e852fed36923a60dc
+msgid ""
+"**Description**: Search the KEGG DISEASE database by keyword. KEGG "
+"DISEASE contains 2,600+ human disease entries with associated genes, "
+"pathways, drugs, and cross-references. Returns disease IDs (H#####) and "
+"names. Example: searching 'leukemia' returns H00001 B-cell acute "
+"lymphoblastic leukemia, H00002 T-cell acute lymphoblastic leukemia, etc. "
+"Use KEGG\\_get\\_disease for full details including genes and pathways."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:163 02dc88d5cd334651ae413a6330170133
+msgid ""
+"``keyword`` (string) (optional) Search keyword for disease name (e.g., "
+"'leukemia', 'diabetes', 'breast cancer', 'alzheimer'). Case-insensitive "
+"partial match."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:166
+#: ../../tools/kegg_disease_drug_tools.rst:202 3d1182bc64314a7fb7f7c159aefa6f8f
+#: d5afea92f4824426beb7980603d3d6e5
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default: 25)."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:169 2a9196fd8c1748528bb401d218620f03
+msgid ""
+"``query`` (string, null) (optional) Alias for keyword: search keyword for"
+" disease name (e.g., 'diabetes', 'leukemia')."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:185 43b570627d9e43058d10065cfffc48a3
+msgid "**KEGG_search_drug** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:187 a168f1127f7b4300baf839a0f10349eb
+msgid ""
+"Search the KEGG DRUG database by keyword. KEGG DRUG contains 12,000+ "
+"approved and investigational..."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst cce289511f684f35a88f4aaab3d13ceb
+msgid "KEGG_search_drug tool specification"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:193 76e065264f6b49c4aae38388d80b13a8
+msgid "**Name**: ``KEGG_search_drug``"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:195 d59f32f8db994095bad5d219223544ac
+msgid ""
+"**Description**: Search the KEGG DRUG database by keyword. KEGG DRUG "
+"contains 12,000+ approved and investigational drug entries with chemical "
+"structures, targets, indications, and cross-references to "
+"DrugBank/PubChem. Returns drug IDs (D#####) and names. Example: searching"
+" 'aspirin' returns D00109 Aspirin, D02079 Codein phosphate and aspirin, "
+"etc. Use KEGG\\_get\\_drug for full details."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:199 ac8fe0e33e774b63a6f1b74cde542468
+msgid ""
+"``keyword`` (string) (required) Search keyword for drug name (e.g., "
+"'aspirin', 'imatinib', 'metformin'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:219 e0b03819795c4c3e8361c915be56884e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:221 989e91594d7f4463bbc372dfe72ecae8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/kegg_disease_drug_tools.rst:222 663b93b5f5af41d29cdb7ba2516e049d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

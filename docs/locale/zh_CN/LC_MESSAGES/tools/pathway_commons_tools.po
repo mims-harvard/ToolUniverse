@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pathway_commons_tools.rst:10 4d7d6eb0f0864a15afea02ccaea1d8a3
+msgid "Pathway Commons Tools"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:12 69b003d7648c44c4950992a0f5f6e5ee
+msgid ""
+"**Configuration File**: ``broken_apis/pathway_commons_tools.json`` **Tool"
+" Type**: Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:16 c1619f90997d47c89f147dea8c795428
+msgid ""
+"This page contains all tools defined in the "
+"``pathway_commons_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:19 07d030fde3bf4e0588be9cda4a04ec45
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:22 13cf4aad079c402d8e12e9d4733d547d
+msgid "**pc_get_interactions** (Type: PathwayCommonsTool)"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:24 c6294d94829c43b086df969f8eef6000
+msgid ""
+"Retrieves the interaction network (neighborhood) for a specified list of "
+"genes. Returns interacti..."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst ba7d56f789834d07b5cc084f0aff18fe
+msgid "pc_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:28
+#: ../../tools/pathway_commons_tools.rst:63 03c198a303b54ed380e5cf67d0bb3cc7
+#: d17e023cf0bb4800a2e8bc5a9b1fbf54
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:30 59e3932882fb4b3086c52361fd3d1c44
+msgid "**Name**: ``pc_get_interactions``"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:31
+#: ../../tools/pathway_commons_tools.rst:66 00f512ea43b74bb4bed61d990ef3490b
+#: a5cf39b293db4f60b5299084b7877bda
+msgid "**Type**: ``PathwayCommonsTool``"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:32 5f70fb4a99984613b614c34760e911cb
+msgid ""
+"**Description**: Retrieves the interaction network (neighborhood) for a "
+"specified list of genes. Returns interactions in Simple Interaction "
+"Format (SIF)."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:34
+#: ../../tools/pathway_commons_tools.rst:69 0560bde5dd34487980030588b4287752
+#: df714c8d332349d68d2bf1a5438a511c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:36 122655bbe1094c7db6d0b583665cca55
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'get\\_interaction\\_graph'."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:39 07a94d5a913048a58899281e207bd813
+msgid ""
+"``gene_list`` (array) (required) A list of gene symbols (e.g., ['TP53', "
+"'MDM2']) to query interactions for."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:42
+#: ../../tools/pathway_commons_tools.rst:83 60e30132a41c4ccca2d0d786986c170a
+#: 65c9d3cc58eb4b1ea656891eaac792a9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:57 7aa54cf0cc4d41feae4148a5bfea2fc7
+msgid "**pc_search_pathways** (Type: PathwayCommonsTool)"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:59 483607484aa64d26a23934e5d86621c2
+msgid ""
+"Searches for biological pathways in Pathway Commons (PC2). Use this tool "
+"to find pathways related..."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst 66a1af3c5fde4668b9054c0f8bf85035
+msgid "pc_search_pathways tool specification"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:65 086d51e51ba2474a8973cb482bf12788
+msgid "**Name**: ``pc_search_pathways``"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:67 08034657b9474b52973e508b4cc1be79
+msgid ""
+"**Description**: Searches for biological pathways in Pathway Commons "
+"(PC2). Use this tool to find pathways related to specific keywords, such "
+"as 'p53' or 'apoptosis'."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:71 9d795b9b23054ca9897c5bb9ed5fa732
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'search\\_pathways'."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:74 262c7ef6c11543b0b104734fd81527fd
+msgid ""
+"``keyword`` (string) (required) The search keyword to identify pathways. "
+"Examples include specific genes ('p53'), processes ('apoptosis'), or "
+"diseases."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:77 e85cfe6082554d29ab4fc75bea50afb3
+msgid ""
+"``datasource`` (string) (optional) Filter results by the original data "
+"source (e.g., 'reactome', 'kegg', 'panther'). This helps narrow down "
+"results to specific databases."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:80 4376c6aa8ec8493580e4c70cc328113c
+msgid ""
+"``limit`` (integer) (optional) The maximum number of pathway results to "
+"return. The default is 10."
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:98 b089470f0b8c4cb591b139fc3473f6fc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:100 71475ea4817b4c918002c630c2d906be
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pathway_commons_tools.rst:101 cd22e5beeaeb4fcca3d47eff8519fe62
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

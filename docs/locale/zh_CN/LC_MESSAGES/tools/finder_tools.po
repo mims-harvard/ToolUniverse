@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/finder_tools.rst:2 bffaf3aa45d04fcfb00143e36b596f67
+#: ../../tools/finder_tools.rst:10 aba703b6908c42b385204632e48b4f32
 msgid "Finder Tools"
 msgstr "查找器工具"
 
-#: ../../tools/finder_tools.rst:4 e4913148d17a45a2b508a78ec56156be
+#: ../../tools/finder_tools.rst:12 8cb7848b62324aca811a5a838bd96aea
 msgid ""
 "**Configuration File**: ``finder_tools.json`` **Tool Type**: Local "
 "**Tools Count**: 4"
@@ -33,157 +33,160 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：4"
 
-#: ../../tools/finder_tools.rst:8 ae03cfe883b94daab7451947a7553255
+#: ../../tools/finder_tools.rst:16 a427aef554ae4f5aaafbe47ed274edf3
 msgid ""
 "This page contains all tools defined in the ``finder_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``finder_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/finder_tools.rst:11 5e5a08aa4c83460fb4cd90198d7a5a8a
+#: ../../tools/finder_tools.rst:19 e57a303de84b48898818cca62013ba04
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/finder_tools.rst:14 5baf6adf87034687aa4fdd410f25201d
+#: ../../tools/finder_tools.rst:22 1b32cb3b3a47458d9c203ff79ac7c0cf
 msgid "**Tool_Finder** (Type: ToolFinderEmbedding)"
 msgstr "**Tool_Finder**（类型：ToolFinderEmbedding）"
 
-#: ../../tools/finder_tools.rst:16 258f0e7b58d54ac993febeef9328ba98
+#: ../../tools/finder_tools.rst:24 29d747ab66cb4172a9c6573a380bb51b
 msgid ""
 "Retrieve related tools from the toolbox based on the provided "
 "description, advanced version with ..."
 msgstr "根据提供的描述，从工具箱中检索相关工具，高级版本包含..."
 
-#: ../../tools/finder_tools.rst b0e2e6df36e5451797473ef71c49f995
+#: ../../tools/finder_tools.rst 4496623a83364b4583492de632e31c97
 msgid "Tool_Finder tool specification"
 msgstr "Tool_Finder 工具规格说明"
 
-#: ../../tools/finder_tools.rst:20 ../../tools/finder_tools.rst:64
-#: ../../tools/finder_tools.rst:108 ../../tools/finder_tools.rst:152
-#: 3ef9a9a4aab6494cba80615fcae9972f 972eae7c716843268404dc6126febc1e
-#: b57a3d0a08354565ab0f9393d8131eb6 f722328ed5e240e39e261a54ecd72f81
+#: ../../tools/finder_tools.rst:28 ../../tools/finder_tools.rst:71
+#: ../../tools/finder_tools.rst:114 ../../tools/finder_tools.rst:157
+#: 5d8fc30efb374c23a09e5b351ecf040d 87d82c02627c4f06a0cc3599637e903b
+#: cd822c830b434bab807f031667e488c8 de9b9ef882d544029eacf9f0455844b2
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/finder_tools.rst:22 2333c6ff97b445be9fce21d82476c00c
+#: ../../tools/finder_tools.rst:30 54b82eef899545c1a683c92d9f50b285
 msgid "**Name**: ``Tool_Finder``"
 msgstr "**名称**：``Tool_Finder``"
 
-#: ../../tools/finder_tools.rst:23 ../../tools/finder_tools.rst:155
-#: 6a74134509924504a3849c776a98b53a fe60d967616f4866b256967dd482b394
+#: ../../tools/finder_tools.rst:31 ../../tools/finder_tools.rst:160
+#: 07faaa5eaa3f4752bc381b44005b3173 3f5a96d003a74e2a8871459edc341f9d
 msgid "**Type**: ``ToolFinderEmbedding``"
 msgstr "**类型**：``ToolFinderEmbedding``"
 
-#: ../../tools/finder_tools.rst:24 22429af699ba447086d2aa4542b2d337
+#: ../../tools/finder_tools.rst:32 da9786c52d094421b3a8224428c8b48f
 msgid ""
 "**Description**: Retrieve related tools from the toolbox based on the "
 "provided description, advanced version with more functionality."
 msgstr "**描述**：根据提供的描述，从工具箱中检索相关工具，高级版本提供更多功能。"
 
-#: ../../tools/finder_tools.rst:26 ../../tools/finder_tools.rst:70
-#: ../../tools/finder_tools.rst:114 ../../tools/finder_tools.rst:158
-#: 0e1072c3ef334d96bd895816b6b909c0 34830d58b1734d568d0be58082b5f81f
-#: a7f8fbba7bd2453fb363dfaf59782db8 edf203a0567b4c6f932bc5b718c36ea7
+#: ../../tools/finder_tools.rst:34 ../../tools/finder_tools.rst:77
+#: ../../tools/finder_tools.rst:120 ../../tools/finder_tools.rst:163
+#: 0cde422bc9eb43ff912fb3058e4b8bf1 319b179f2c074e5090de1f21d19791e6
+#: 369942095b634c11bcf7677c8fb5c7cd 57db6bda4ff145168978df72ce59d2f5
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/finder_tools.rst:28 ../../tools/finder_tools.rst:72
-#: ../../tools/finder_tools.rst:116 ../../tools/finder_tools.rst:160
-#: 45400204e83d46909180739476f7484e 64a8e56b4dcf49bbb870a47b8af49e25
-#: 761360f00cec46f29d4d34fc10451764 8664551270d943e3997dd25b2e82bc29
+#: ../../tools/finder_tools.rst:36 ../../tools/finder_tools.rst:79
+#: ../../tools/finder_tools.rst:122 ../../tools/finder_tools.rst:165
+#: 3ac3475fad4b4abeabe08dea88993883 a1e30f00212e428592875044c2b311ab
+#: d3917c969dee4f0ba2ad43e8228349d8 fd593d93d6084e3b966e79382a27ea93
 msgid ""
 "``description`` (string) (required) The description of the tool "
 "capability required."
 msgstr "``description``（字符串）（必填）所需工具能力的描述。"
 
-#: ../../tools/finder_tools.rst:31 ../../tools/finder_tools.rst:75
-#: ../../tools/finder_tools.rst:119 ../../tools/finder_tools.rst:163
-#: 9101d29bf74045f5937bf90f3f0a90ef a6d460ae370c4691b38f6c3a18888fc8
-#: b1c29af0087e45b885ad68080dbfc304 e94fe6f444ce4bb796e467f2d0ce217f
-msgid "``limit`` (integer) (required) The number of tools to retrieve"
+#: ../../tools/finder_tools.rst:39 ../../tools/finder_tools.rst:82
+#: ../../tools/finder_tools.rst:125 ../../tools/finder_tools.rst:168
+#: 099f04ad9d464984a9a506b474b989d3 3fb3f2d47f20414db23689204cd9f32e
+#: 412fa5c137974959b2cd2e3f1f2db831 ab29d918674644d197bbed7da2f4d81c
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) The number of tools to retrieve (default: "
+"10)"
 msgstr "``limit``（整数）（必填）要检索的工具数量"
 
-#: ../../tools/finder_tools.rst:34 ../../tools/finder_tools.rst:78
-#: ../../tools/finder_tools.rst:122 0560acfd6de34d3b9643a0d65017a59f
-#: 8a331613ec34434381f48325450c7d13 edea005d33b14058aca0a43e8551051d
+#: ../../tools/finder_tools.rst:42 ../../tools/finder_tools.rst:85
+#: ../../tools/finder_tools.rst:128 3890ee2261f542f887fa1d64b3f57366
+#: 8a65ad622b3c4487b86281b7b994e22a 919b8fc73c14468192df6b11ef1cae4b
 msgid ""
 "``picked_tool_names`` (array) (optional) Pre-selected tool names to "
 "process. If provided, tool selection will skip these tools."
 msgstr "``picked_tool_names``（数组）（可选）预先选择的工具名称用于处理。如果提供了此参数，工具选择过程将跳过这些工具。"
 
-#: ../../tools/finder_tools.rst:37 ../../tools/finder_tools.rst:81
-#: ../../tools/finder_tools.rst:125 9d9715560dcf450f98ca4a2e1d4c5b1f
-#: aa779375d20a44528b461f469d4b063a bf48535b42744835adfc9fe085603c98
+#: ../../tools/finder_tools.rst:45 ../../tools/finder_tools.rst:88
+#: ../../tools/finder_tools.rst:131 94ead5d0138f4dbca44d151e7599eb79
+#: c7162b3f9a674ffd85eb022c4333107e c7bcfaf845b1419bb53b6188616d0a29
 msgid ""
 "``return_call_result`` (boolean) (optional) Whether to return both "
 "prompts and tool names. If false, returns only tool prompts."
 msgstr "``return_call_result``（布尔值）（可选）是否返回提示和工具名称。如果为 false，则仅返回工具提示。"
 
-#: ../../tools/finder_tools.rst:40 ../../tools/finder_tools.rst:84
-#: ../../tools/finder_tools.rst:128 3139cf9aa3d34af3aed4f0de05ad8298
-#: aa4fb17316e0459e84f9cc10772ff159 aaf43021e1134893af50d187a04f25b1
+#: ../../tools/finder_tools.rst:48 ../../tools/finder_tools.rst:91
+#: ../../tools/finder_tools.rst:134 23a38836681a4e9fab91c611db4ef820
+#: 6895cfc18bbf427691af6776f06c2c79 e1af0b29cc2c420b8e1b6a8d6e2e5903
 msgid ""
 "``categories`` (array) (optional) Optional list of tool categories to "
 "filter by"
 msgstr "``categories``（数组）（可选）可选的工具类别列表，用于筛选"
 
-#: ../../tools/finder_tools.rst:43 ../../tools/finder_tools.rst:87
-#: ../../tools/finder_tools.rst:131 ../../tools/finder_tools.rst:166
-#: 1edfffd83f164454a55be8b05cfdb359 c41bbad5a1e64dd69b1babc8b39a5a89
-#: d284794f01df40e483275e404acb5a91 e9497d888ae940fba440894a5dca23d8
+#: ../../tools/finder_tools.rst:51 ../../tools/finder_tools.rst:94
+#: ../../tools/finder_tools.rst:137 ../../tools/finder_tools.rst:171
+#: 1d175b774eac4fceaba7acf200db55a8 70891a44399d456698e79f8e0d9bb1bd
+#: 94df98e93a4b4898966c5918b72cacc1 e8bc0f8e08a84ab8880386665bb6db31
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/finder_tools.rst:58 c2223777ad034132a57d48a79e8b792b
+#: ../../tools/finder_tools.rst:65 89ca8ee9ff3b46c785d311c76f182030
 msgid "**Tool_Finder_Keyword** (Type: ToolFinderKeyword)"
 msgstr "**工具_查找器_关键字**（类型：ToolFinderKeyword）"
 
-#: ../../tools/finder_tools.rst:60 f7ff0c61649d4239a1ee5c1f7ec3e44a
+#: ../../tools/finder_tools.rst:67 7bd45322614f47d89ca52ef46e8af522
 msgid ""
 "Simple keyword-based tool finder for discovering relevant tools using "
 "text matching"
 msgstr "基于简单关键词的工具查找器，通过文本匹配发现相关工具"
 
-#: ../../tools/finder_tools.rst 2143a0f4d89c414fa6af00ba858926e8
+#: ../../tools/finder_tools.rst d7f8d62dbc4d44d99a8a8df566aae0cb
 msgid "Tool_Finder_Keyword tool specification"
 msgstr "Tool_Finder_Keyword 工具规范"
 
-#: ../../tools/finder_tools.rst:66 08d4df75c3e2483aa1a0f795f3f7e5fb
+#: ../../tools/finder_tools.rst:73 1048ee45561a4dc593ea2c8504faa249
 msgid "**Name**: ``Tool_Finder_Keyword``"
 msgstr "**名称**: ``Tool_Finder_Keyword``"
 
-#: ../../tools/finder_tools.rst:67 d7814b1a84c7453fa6bb1676310ad7e2
+#: ../../tools/finder_tools.rst:74 a485638f8c76468a96d44f3a6856babf
 msgid "**Type**: ``ToolFinderKeyword``"
 msgstr "**类型**: ``ToolFinderKeyword``"
 
-#: ../../tools/finder_tools.rst:68 2990e4b5de244dadb629aef3a40c4795
+#: ../../tools/finder_tools.rst:75 963da7615436482e8511d3de3026c8c6
 msgid ""
 "**Description**: Simple keyword-based tool finder for discovering "
 "relevant tools using text matching"
 msgstr "**描述**：基于关键词的简单工具查找器，通过文本匹配发现相关工具"
 
-#: ../../tools/finder_tools.rst:102 bb31007333334126b72f9f854f0a89ee
+#: ../../tools/finder_tools.rst:108 b2ffda9f48be478abd4da59cb30cba3a
 msgid "**Tool_Finder_LLM** (Type: ToolFinderLLM)"
 msgstr "**Tool_Finder_LLM**（类型：ToolFinderLLM）"
 
-#: ../../tools/finder_tools.rst:104 78c7071f34964b3d9cd259e370bc9748
+#: ../../tools/finder_tools.rst:110 fc2e5a7671d64ff1aed1030d1434b481
 msgid ""
 "LLM-based tool finder that uses natural language processing to "
 "intelligently select relevant tool..."
 msgstr "基于LLM的工具查找器，利用自然语言处理智能选择相关工具..."
 
-#: ../../tools/finder_tools.rst 9a4abc7c61e14cf59d69841f11ca9090
+#: ../../tools/finder_tools.rst 591823dd81624d3d9e5a9fea875f0dc6
 msgid "Tool_Finder_LLM tool specification"
 msgstr "Tool_Finder_LLM 工具规范"
 
-#: ../../tools/finder_tools.rst:110 c34a3a7793d94571aed88b299976c4f7
+#: ../../tools/finder_tools.rst:116 44062cd3e0494615878909e6c00e9645
 msgid "**Name**: ``Tool_Finder_LLM``"
 msgstr "**名称**: ``Tool_Finder_LLM``"
 
-#: ../../tools/finder_tools.rst:111 3fc452d87e3f4b158e6749764ed179bd
+#: ../../tools/finder_tools.rst:117 4da5300a13ad47e6932d727a19f93a8e
 msgid "**Type**: ``ToolFinderLLM``"
 msgstr "**类型**: ``ToolFinderLLM``"
 
-#: ../../tools/finder_tools.rst:112 eef7d6e1337e4618ab1cdd4c4e3b3663
+#: ../../tools/finder_tools.rst:118 d1db82c657d749c381a745cc626fe129
 msgid ""
 "**Description**: LLM-based tool finder that uses natural language "
 "processing to intelligently select relevant tools based on user queries. "
@@ -191,37 +194,37 @@ msgid ""
 "determine which tools would be most helpful for a given task or question."
 msgstr "**描述**：基于LLM的工具查找器，利用自然语言处理技术根据用户查询智能选择相关工具。该工具会分析所有可用的工具描述，并使用LLM确定哪些工具最适合特定任务或问题。"
 
-#: ../../tools/finder_tools.rst:146 808ff7b34bfa44719f9db325dfda41c9
+#: ../../tools/finder_tools.rst:151 e7dd931b431045b2a1a9f622fa4adbf5
 msgid "**Tool_RAG** (Type: ToolFinderEmbedding)"
 msgstr "**Tool_RAG**（类型：ToolFinderEmbedding）"
 
-#: ../../tools/finder_tools.rst:148 2ec214641f564be4a848d54c0e3fb1d9
+#: ../../tools/finder_tools.rst:153 3cacdaa0575346059cf0cca3f4ec5bd6
 msgid "Retrieve related tools from the toolbox based on the provided description"
 msgstr "根据提供的描述从工具箱中检索相关工具"
 
-#: ../../tools/finder_tools.rst df9cbe1467b24c0b998e32a737b2e6b3
+#: ../../tools/finder_tools.rst babbd579a81e4b06a2f21b19f6883224
 msgid "Tool_RAG tool specification"
 msgstr "Tool_RAG 工具规格说明"
 
-#: ../../tools/finder_tools.rst:154 7366125fa3384cde8637f38918244ff6
+#: ../../tools/finder_tools.rst:159 16dff26556254368b9c416d3f7ced621
 msgid "**Name**: ``Tool_RAG``"
 msgstr "**名称**：``Tool_RAG``"
 
-#: ../../tools/finder_tools.rst:156 91867e5ac03b444d8613c9d7e94912d9
+#: ../../tools/finder_tools.rst:161 1b571b8483d24e2e8e3833d1822cb39d
 msgid ""
 "**Description**: Retrieve related tools from the toolbox based on the "
 "provided description"
 msgstr "**描述**：根据提供的描述从工具箱中检索相关工具"
 
-#: ../../tools/finder_tools.rst:181 d651ad7105e147dfa2f15c8fdeb02cf7
+#: ../../tools/finder_tools.rst:185 2d8f63ff3a564f1cab0451fda430df2c
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/finder_tools.rst:183 2da770cfd66049b5a81cebb44a5491fe
+#: ../../tools/finder_tools.rst:187 cf41f83959bf4ac49e300f037e31499e
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/finder_tools.rst:184 2bd7ead49ce5435286a0903ec48a12bd
+#: ../../tools/finder_tools.rst:188 3ed86d1dc1ed492f89f80773a2cde53e
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

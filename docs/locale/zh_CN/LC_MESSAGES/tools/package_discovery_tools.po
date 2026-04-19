@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/package_discovery_tools.rst:10 dd6f063c9ccc44e4a97bfb4882fd5cde
+msgid "Package Discovery Tools"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:12 dbec2080d396470e9a5dc742714a2762
+msgid ""
+"**Configuration File**: ``package_discovery_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:16 c429205ebef04d65801799c63456bb5c
+msgid ""
+"This page contains all tools defined in the "
+"``package_discovery_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:19 000f3f7bbfca4666b22f7c6907072598
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:22 7defa7adffb14ebaa8de1a52ac4009ef
+msgid "**dynamic_package_discovery** (Type: DynamicPackageDiscovery)"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:24 ad05d8a567624dc8b35fc44751a58775
+msgid "Dynamically searches PyPI and evaluates packages based on requirements"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst 048df14ecb2d43a4b312a039c8b22887
+msgid "dynamic_package_discovery tool specification"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:28 930b9bcbb82144f69e7df978a056df87
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:30 686fd8663dde4a1080fec8e263e81cec
+msgid "**Name**: ``dynamic_package_discovery``"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:31 03575fd4f4bf4f389981836de3768257
+msgid "**Type**: ``DynamicPackageDiscovery``"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:32 7f8d16cc8d774fd783c9f6a317dd7780
+msgid ""
+"**Description**: Dynamically searches PyPI and evaluates packages based "
+"on requirements"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:34 c1fc3a06157742438eb78afbe06e75c9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:36 ba4d3c61fddd432e8b52b38cd783bf08
+msgid ""
+"``requirements`` (string) (required) Description of what the package "
+"should do"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:39 9df34d0ab1024d97a1f8b3e4750ceb8d
+msgid "``functionality`` (string) (optional) Specific functionality needed"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:42 86978a24180a48659bb9b54bd1632929
+msgid ""
+"``constraints`` (object) (optional) Constraints (python version, license,"
+" etc.)"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:45 663877bdb2cb44f0848f1a249e246629
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:59 ed0c985042ee433298b73d0416225c36
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:61 375380a05f5743c2b188ad77e353748f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/package_discovery_tools.rst:62 9aeeffef2c22431a827b9ba85097bba0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

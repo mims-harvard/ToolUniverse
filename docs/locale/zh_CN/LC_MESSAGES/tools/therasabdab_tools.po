@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/therasabdab_tools.rst:10 06f0e6657b54499db4ff40fb35877937
+msgid "Therasabdab Tools"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:12 70dd9a8e63584a8e9add440bbc379c24
+msgid ""
+"**Configuration File**: ``therasabdab_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:16 bc1ed59cd8c344cead27c5f718e208a1
+msgid ""
+"This page contains all tools defined in the ``therasabdab_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:19 c40fcc1c3dfd41fbbde78b98dc424506
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:22 b03fea5f09174595a76183e7e812a08c
+msgid "**TheraSAbDab_get_all_therapeutics** (Type: TheraSAbDabTool)"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:24 3e975f57e21a49d8bdeccf9d9cf92e81
+msgid ""
+"Get summary of all therapeutic antibodies in Thera-SAbDab database. "
+"Returns counts by format (IgG..."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst cba8e85956dc46a2aab88595f14eb527
+msgid "TheraSAbDab_get_all_therapeutics tool specification"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:28 ../../tools/therasabdab_tools.rst:57
+#: ../../tools/therasabdab_tools.rst:88 6b8fcf1aae6f42f69ae36c080c22f872
+#: 8ec44bc0347f405dad082b6af8bb800f b606ccc03f2f4168847b092b1a615f73
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:30 975a9b4c6ff346a9b3abd53e896f330f
+msgid "**Name**: ``TheraSAbDab_get_all_therapeutics``"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:31 ../../tools/therasabdab_tools.rst:60
+#: ../../tools/therasabdab_tools.rst:91 2cd3c54d3ef54f6595dc9d50bcafa74a
+#: 5561ff9e07034e8095e99b533ee6023a 6bd7f893bf384c02b9bea446e1f1295d
+msgid "**Type**: ``TheraSAbDabTool``"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:32 379bde5d6cf448529f6fd5f6bc83a395
+msgid ""
+"**Description**: Get summary of all therapeutic antibodies in Thera-"
+"SAbDab database. Returns counts by format (IgG, bispecific, ADC) and "
+"clinical phase. Use for landscape analysis of antibody therapeutics."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:34 ../../tools/therasabdab_tools.rst:63
+#: ../../tools/therasabdab_tools.rst:94 3207220693be4f4f9feae730ee6349d2
+#: ed3fb41a9ecf426181587fdc3d5b13f5 f5363911075647898ac8bac613ff385c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:36 7d4da514cd0c40f68bfce41cbe699d38
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:38 ../../tools/therasabdab_tools.rst:68
+#: ../../tools/therasabdab_tools.rst:99 6dacf036246a4316a385811bdb20d2c3
+#: 79ec41bbaed4463bb66d463ff2098cb7 9c9e52da477346c68b5602e3c333e69c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:51 2f7390e9e37b4302be8c31bd7f05581d
+msgid "**TheraSAbDab_search_by_target** (Type: TheraSAbDabTool)"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:53 5e6ebd6446ab464bbd9cbc3582398c43
+msgid ""
+"Find therapeutic antibodies targeting a specific antigen. Returns all "
+"clinical/approved antibodie..."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst 691e62fd40c64fa28b844b347d754879
+msgid "TheraSAbDab_search_by_target tool specification"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:59 a3491aa1dc254db38e18d28e372ed961
+msgid "**Name**: ``TheraSAbDab_search_by_target``"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:61 9dab11731a5d441f833d8e0e41d310ef
+msgid ""
+"**Description**: Find therapeutic antibodies targeting a specific "
+"antigen. Returns all clinical/approved antibodies against the target "
+"(e.g., all anti-PD1 antibodies). Essential for competitive landscape "
+"analysis."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:65 2b2c75cfd10e4c8294d553d92a2e128f
+msgid ""
+"``target`` (string) (required) Target antigen name (e.g., 'PD-1', 'HER2',"
+" 'CD20', 'TNF-alpha', 'VEGF')"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:82 1fdc562c511e49cab8c945ecfb1d9f98
+msgid "**TheraSAbDab_search_therapeutics** (Type: TheraSAbDabTool)"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:84 a6cb4f37e5694305b3e860e05633d973
+msgid ""
+"Search therapeutic antibodies by name in Thera-SAbDab. Returns WHO INN "
+"name, target antigen, form..."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst 40e235dd8ef84cb7b121d7d0303a9598
+msgid "TheraSAbDab_search_therapeutics tool specification"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:90 ba2c7bb1fe3d424e801be562cf0b7636
+msgid "**Name**: ``TheraSAbDab_search_therapeutics``"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:92 510e31e0f2eb43bc83831be29b9338cf
+msgid ""
+"**Description**: Search therapeutic antibodies by name in Thera-SAbDab. "
+"Returns WHO INN name, target antigen, format (IgG, bispecific, ADC), "
+"clinical phase, and PDB structures. Use for finding approved/clinical "
+"antibody drugs."
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:96 96aca5d79e894ac89d99bc5510d4c540
+msgid ""
+"``query`` (string) (required) Search query - antibody name (e.g., "
+"'trastuzumab', 'pembrolizumab', 'rituximab')"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:113 3f15432cc0b34d16b29ed0210ccd693f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:115 db7ce2b13ae04d4c947672f6eff8cf2d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/therasabdab_tools.rst:116 a116cb6dce6e47f587ffbe91dc0afc55
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

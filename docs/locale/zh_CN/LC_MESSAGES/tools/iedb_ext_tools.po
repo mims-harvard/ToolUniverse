@@ -1,0 +1,287 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/iedb_ext_tools.rst:10 065a5d6bf8ea44f9a5607e25cb6a4ef9
+msgid "Iedb Ext Tools"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:12 2270438a9dca4367b112712dd8568594
+msgid ""
+"**Configuration File**: ``iedb_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:16 95c9b2ec1d2946429fd0ef915706896a
+msgid ""
+"This page contains all tools defined in the ``iedb_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:19 53754fa987f246158de630ff48f771e9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:22 fc45bc501427470aab0c33677be77d36
+msgid "**iedb_get_epitope_tcell_assays** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:24 d05ff6fb3ad042329a66e513a7be9753
+msgid ""
+"Get T-cell assay data linked to a specific epitope structure ID. Given an"
+" epitope\\_id (from iedb\\..."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst 699f1bbafaa547ffb3fc35da0f39f890
+msgid "iedb_get_epitope_tcell_assays tool specification"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:28 ../../tools/iedb_ext_tools.rst:73
+#: ../../tools/iedb_ext_tools.rst:114 ../../tools/iedb_ext_tools.rst:169
+#: 448a2f6d84c54b919093d09cd9e32740 676bd2a7b7a4441c9874f23efad90e99
+#: 75f98da51f0e4b0ba86afedfdbdb56eb e39f1406a3204f429c6d549dc659070e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:30 f041473404914b28b7c59b716a03ba59
+msgid "**Name**: ``iedb_get_epitope_tcell_assays``"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:31 ../../tools/iedb_ext_tools.rst:76
+#: ../../tools/iedb_ext_tools.rst:117 ../../tools/iedb_ext_tools.rst:172
+#: 24450e30b15e493b9ba93d375637d565 4e908fe3021e46e88d9f5a5c63d75fcc
+#: d6f067492f3b428e858391d4315cb7fe fe7587ed2c714149be0e71978037dab8
+msgid "**Type**: ``IEDBTool``"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:32 ab337298c0f244a9ac3bc2e9256a1dbe
+msgid ""
+"**Description**: Get T-cell assay data linked to a specific epitope "
+"structure ID. Given an epitope\\_id (from iedb\\_search\\_epitopes), "
+"returns all T-cell assays that tested this epitope."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:34 cbc7020ee0534dd6a156463b37ffd91a
+msgid "Useful for understanding the T-cell immunogenicity of a known epitope."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:36 ../../tools/iedb_ext_tools.rst:81
+#: ../../tools/iedb_ext_tools.rst:124 ../../tools/iedb_ext_tools.rst:177
+#: 7bd40b9c2d2341838f9de759648d321c a705b7d1e4ab4493a0157adea15efbab
+#: b39519226a65475f872ded32cd9b0c0c f0eb6b3015414e2fb5ebbd65d077b51d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:38 2734b472e25b4cbdb54b3c8a0372296f
+msgid ""
+"``epitope_id`` (integer) (required) IEDB epitope structure ID (from "
+"iedb\\_search\\_epitopes results). Example: 20354 for GILGFVFTL."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:41 ../../tools/iedb_ext_tools.rst:83
+#: ../../tools/iedb_ext_tools.rst:138 ../../tools/iedb_ext_tools.rst:179
+#: 00b33f1bd35843519b690881618f1a2a 1f3cffd663ea42deb340b2ec0fedee54
+#: 2901ef44711d4484888b8fa02980f026 ec8ae491b7604543a0c00af14113cb8f
+msgid "``limit`` (integer) (optional) Maximum rows to return."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:44 ../../tools/iedb_ext_tools.rst:86
+#: ../../tools/iedb_ext_tools.rst:141 ../../tools/iedb_ext_tools.rst:182
+#: 479f76a9084142be9eae145a52be3243 c7b30b94af344844aa2aace5b317e6fc
+#: ce7b9b1370cc41e09ba4715fd6f1f133 dae8ba1fcc424cb2bb7ffc56038f6300
+msgid "``offset`` (integer) (optional) Pagination offset."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:47 ../../tools/iedb_ext_tools.rst:89
+#: ../../tools/iedb_ext_tools.rst:185 030b90cd10b34f75a62ef015bc0f3cf7
+#: 3823be54928d477ab5e94d13498013e9 74bb284d713e4d4fbec417c0e8de8191
+msgid "``select`` (unknown) (optional) Columns to return."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:50 aab3000ce7fe4febb77545faab673229
+msgid "``filters`` (object) (optional) Additional PostgREST filters."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:53 ../../tools/iedb_ext_tools.rst:95
+#: ../../tools/iedb_ext_tools.rst:150 ../../tools/iedb_ext_tools.rst:191
+#: 2fd3f112bc354db0972af32c6afa2dfb 74d6b828343e457bbe6f6b0fe03127b8
+#: df2daff42b6c4f958def61eeb003b71a e4c2d1d08ca4417fa8f593b4f5bd97ab
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:67 478eb3b5127b42de94ca56341327bf04
+msgid "**iedb_search_bcr_sequences** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:69 26a2318272b645ad9afb7d65ab997169
+msgid ""
+"Search B-cell receptor (BCR) / antibody sequence data from the IEDB. "
+"Returns antibody sequences w..."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst a931985f459c4ceba124be78277ea999
+msgid "iedb_search_bcr_sequences tool specification"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:75 d09d3fd53cc64e56b373132f092fa76c
+msgid "**Name**: ``iedb_search_bcr_sequences``"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:77 f8a0e6f5a71d400b9283dbc669f200c2
+msgid ""
+"**Description**: Search B-cell receptor (BCR) / antibody sequence data "
+"from the IEDB. Returns antibody sequences with heavy/light chain CDR3 "
+"sequences and cognate epitope information."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:79 2052119d68a84abeb0fa0581021d6814
+msgid ""
+"Useful for antibody discovery, therapeutic antibody engineering, and "
+"studying humoral immune responses."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:92 710cdf5e610f403fa16bbe8fc789c43f
+msgid ""
+"``filters`` (object) (optional) PostgREST filters. Key columns: "
+"receptor\\_group\\_id, receptor\\_type, receptor\\_name, chain\\_type, "
+"v\\_gene, j\\_gene."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:108 591c51aee8674d22803cfccbf7da384b
+msgid "**iedb_search_tcell_assays** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:110 9601f720b7ee44698e6fe02f088406f6
+msgid ""
+"Search T-cell assay data from the IEDB. Returns T-cell response assays "
+"with epitope sequences, MH..."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst ebffdb156392423b9ce7b6e4c9be8ae4
+msgid "iedb_search_tcell_assays tool specification"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:116 059e4cc4a13a475f8495d80dccfbd976
+msgid "**Name**: ``iedb_search_tcell_assays``"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:118 63adadf5be8143a4b198017529923a28
+msgid ""
+"**Description**: Search T-cell assay data from the IEDB. Returns T-cell "
+"response assays with epitope sequences, MHC restriction, source organism,"
+" and assay results."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:120 37ddb199a8b7484cafe32b6ab1a167b9
+msgid ""
+"Useful for finding T-cell epitopes for vaccine design, immunotherapy, and"
+" understanding cellular immunity. Filter by peptide sequence, MHC class, "
+"organism, or qualitative result."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:122 07ae33f8cfef4abc9df92c939cd4650b
+msgid "Tip: use \\`select\\` to request only key fields for faster responses."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:126 b27ccadbf58742ae873e83f7b95c6440
+msgid ""
+"``sequence`` (string) (optional) Exact peptide sequence to search (e.g., "
+"GILGFVFTL for influenza M1 epitope)."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:129 95229d86b5e74ebfb648a82e38c5df1b
+msgid ""
+"``sequence_contains`` (string) (optional) Partial peptide sequence "
+"(substring match). Example: 'SIINFEKL'."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:132 2895cd02fee542ae87f0d536b0c36719
+msgid "``mhc_class`` (string) (optional) MHC class restriction (I or II)."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:135 a2da1238e1a64112b7594be8a63adb49
+msgid "``qualitative_measure`` (string) (optional) Filter by assay result."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:144 893ea882c38649d587e241cf82c8b15f
+msgid ""
+"``select`` (unknown) (optional) Columns to return (array of strings). "
+"Example: "
+"['tcell\\_id','linear\\_sequence','mhc\\_restriction','qualitative\\_measure']."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:147 c4050190346a439aab067491411d80f1
+#, python-brace-format
+msgid ""
+"``filters`` (object) (optional) Advanced PostgREST filters (e.g., "
+"{\"source\\_organism\\_iri\":\"eq.NCBITaxon:11320\"})."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:163 72ebf801e0434422aeca3b299fff0214
+msgid "**iedb_search_tcr_sequences** (Type: IEDBTool)"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:165 1b8ac2cd8595407d9a0e378f4cc8e201
+msgid ""
+"Search T-cell receptor (TCR) sequence data from the IEDB. Returns TCR "
+"sequences paired with their..."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst b3e18720051f47e1aab820371513ee8d
+msgid "iedb_search_tcr_sequences tool specification"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:171 989dfea399ad4c08936350678127db11
+msgid "**Name**: ``iedb_search_tcr_sequences``"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:173 aaaba8d566a44a60a24f6ed46fb1c890
+msgid ""
+"**Description**: Search T-cell receptor (TCR) sequence data from the "
+"IEDB. Returns TCR sequences paired with their cognate epitopes and MHC "
+"restriction."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:175 13595b4a765e42fc9b36ab4b4f156813
+msgid ""
+"Useful for TCR engineering, adoptive cell therapy design, and "
+"understanding antigen-specific T-cell responses."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:188 23e3014514cc4306b46db9840f878b19
+msgid ""
+"``filters`` (object) (optional) PostgREST filters. Key columns: "
+"receptor\\_group\\_id, receptor\\_type, receptor\\_name, cdr3\\_alpha, "
+"cdr3\\_beta, chain\\_type, v\\_gene, j\\_gene."
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:204 175180f926094481b9e412915fd26113
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:206 3751e0a6a5e24386a5476eaa46c5a916
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/iedb_ext_tools.rst:207 408760d65ba04305b8f52b85086dc267
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

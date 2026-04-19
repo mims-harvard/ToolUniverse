@@ -1,0 +1,190 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/opencravat_tools.rst:10 f49763898c444f9688dfb326c32bebf3
+msgid "Opencravat Tools"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:12 4579a326abcb4ab794c83bd2fc93e491
+msgid ""
+"**Configuration File**: ``opencravat_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:16 b95b67de5e1841bc8d653795c67f5095
+msgid ""
+"This page contains all tools defined in the ``opencravat_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:19 6c94bf8c5702450c8de777f518bd7d3b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:22 5996ee8a2b2947138d2015c1059916e1
+msgid "**OpenCRAVAT_annotate_variant** (Type: OpenCRAVATTool)"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:24 611db758338f4ea4ae3aca5abba507a5
+msgid ""
+"Annotate a single genomic variant using OpenCRAVAT with 182+ annotation "
+"sources including ClinVar..."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst 04bf9c647c164b2c9542b65c58c703f8
+msgid "OpenCRAVAT_annotate_variant tool specification"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:28 ../../tools/opencravat_tools.rst:82
+#: 9aad15431c1f4c6c8e49b2cb71f2285b b95763f9089147b8a48d91648dda21c1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:30 2549da9e8b204dd3a09bdd9d7154d779
+msgid "**Name**: ``OpenCRAVAT_annotate_variant``"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:31 ../../tools/opencravat_tools.rst:85
+#: 41a9bc8445454b28996b7680b6cbb9a1 eb62fc2a9991468c92f7e7dd917aa0c1
+msgid "**Type**: ``OpenCRAVATTool``"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:32 29a33619559948469b648408378f28ff
+msgid ""
+"**Description**: Annotate a single genomic variant using OpenCRAVAT with "
+"182+ annotation sources including ClinVar, gnomAD, SIFT, PolyPhen-2, "
+"REVEL, AlphaMissense, SpliceAI, GERP, PhastCons, DANN, FATHMM, and more. "
+"Returns gene name, amino acid change, consequence type, and all requested"
+" annotator results. Input: chromosome, position (1-based, GRCh38), "
+"reference and alternate alleles. Optionally specify which annotators to "
+"use (comma-separated)."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:34 ../../tools/opencravat_tools.rst:88
+#: 1c0a9a30eb704f2c83b76e13055df219 5f0906a92be6464db12d01f97b684d1d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:36 cdcfa02aaf8d4491a873cb99cbf58fce
+msgid ""
+"``chrom`` (string, null) (optional) Chromosome (e.g., 'chr17', 'chr7', "
+"'17'). 'chr' prefix added automatically if missing."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:39 4b0ed4b34b8a476180e4a89bb2aa3d37
+msgid ""
+"``chromosome`` (string, null) (optional) Alias for chrom. Chromosome "
+"(e.g., 'chr17', 'chr7', '17')."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:42 9b41f0b4cde74f4fa4763fc69674cb91
+msgid ""
+"``pos`` (integer, null) (optional) Genomic position (1-based, GRCh38 "
+"coordinates)"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:45 2555c0fadae84831a07305c92e959864
+msgid ""
+"``position`` (integer, null) (optional) Alias for pos. Genomic position "
+"(1-based, GRCh38 coordinates)."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:48 dfd1feb90deb43e6a7ff12d31cba4216
+msgid ""
+"``ref_base`` (string, null) (optional) Reference allele (e.g., 'C', 'A', "
+"'G', 'T')"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:51 ef424c2e9a9649c5a00c34f4aff25bd0
+msgid "``ref`` (string, null) (optional) Alias for ref\\_base. Reference allele."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:54 5ee8d160b9d147569dde8ac3658fb82e
+msgid ""
+"``alt_base`` (string, null) (optional) Alternate allele (e.g., 'T', 'A', "
+"'G', 'C')"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:57 e674c6a48ebc40f0a1dccbf9dca599ae
+msgid "``alt`` (string, null) (optional) Alias for alt\\_base. Alternate allele."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:60 13fc444fb8ef47f495293fd2d7331160
+msgid ""
+"``annotators`` (string, null) (optional) Comma-separated annotator names "
+"(e.g., 'clinvar,gnomad3,sift,polyphen2,revel,alphamissense'). If omitted,"
+" returns only basic variant annotation (gene, consequence). Common "
+"annotators: clinvar, gnomad3, sift, polyphen2, cadd\\_exome, revel, "
+"alphamissense, spliceai, dann, fathmm, gerp, phastcons, dbsnp, "
+"mutation\\_assessor, provean, vest, primateai, lrt."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:63 ../../tools/opencravat_tools.rst:93
+#: 1d8cfeaa084c47a8b8bab022f06b8309 e2f44ff29a1c49ce97acb50d1a1927d0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:76 2f796f8615a64a5c95c7007d6ca72ed4
+msgid "**OpenCRAVAT_list_annotators** (Type: OpenCRAVATTool)"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:78 2b2ae15ec53e4223a97752e935874342
+msgid ""
+"List all available annotation modules on the OpenCRAVAT server. Returns "
+"182+ annotators including..."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst 53956ed9ba0a4739b01f916e428bf444
+msgid "OpenCRAVAT_list_annotators tool specification"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:84 1e723d5495ac4f948ce909112555b200
+msgid "**Name**: ``OpenCRAVAT_list_annotators``"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:86 3807b7cc754144b9bb62169ceec2ec10
+msgid ""
+"**Description**: List all available annotation modules on the OpenCRAVAT "
+"server. Returns 182+ annotators including variant effect predictors "
+"(SIFT, PolyPhen-2, REVEL, AlphaMissense), population databases (gnomAD, "
+"ExAC), clinical databases (ClinVar, COSMIC), conservation scores (GERP, "
+"PhastCons), and more. Optionally filter by category type."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:90 795d9c9790d748d283cc45b7bba2dc1c
+msgid ""
+"``category`` (string, null) (optional) Filter annotators by type/category"
+" substring (e.g., 'annotator', 'converter'). Case-insensitive."
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:106 2cccf9b518f34b88a5234d5eaeb720a3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:108 7f2602b48eb844f1a81e570180d5e683
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/opencravat_tools.rst:109 810bc8bdfc70485eb46688d5e2cc20b2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

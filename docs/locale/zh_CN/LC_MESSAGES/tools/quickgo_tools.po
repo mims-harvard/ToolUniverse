@@ -1,0 +1,253 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/quickgo_tools.rst:10 ebf1c4df341841b09ffdc897546b1868
+msgid "Quickgo Tools"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:12 c4be1c780f834e6ebb62b90c57257f7c
+msgid ""
+"**Configuration File**: ``quickgo_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:16 d88406a914fa4d938b1b56a5f5687127
+msgid ""
+"This page contains all tools defined in the ``quickgo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:19 0c7768750a05420494a5c4dfdab992b1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:22 ca38081d3d6144aea3a9b799aac3b03e
+msgid "**QuickGO_annotations_by_gene** (Type: QuickGOTool)"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:24 8e0d3ce92ec042ac8fc76da8f4d87de5
+msgid ""
+"Search Gene Ontology (GO) annotations for a specific gene product using "
+"the EBI QuickGO browser. ..."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst 28263b67210149d791ea2545605f5069
+msgid "QuickGO_annotations_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:28 ../../tools/quickgo_tools.rst:68
+#: ../../tools/quickgo_tools.rst:105 ../../tools/quickgo_tools.rst:136
+#: 5fd495267f8447ea807e17bf3d55b039 80a77a2ec2474d8fb66646530843c129
+#: 959231ae62914eca859f2ae149fc3db7 c08d0844f16946f890bac3a994bfdc86
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:30 1976e5e1c9ba438fa40d4c40ac4db69c
+msgid "**Name**: ``QuickGO_annotations_by_gene``"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:31 ../../tools/quickgo_tools.rst:71
+#: ../../tools/quickgo_tools.rst:108 ../../tools/quickgo_tools.rst:139
+#: 5dcb5aacce0a45d2be1554ae6ac88441 923505a4550940e8b0329df2e76c5397
+#: ac114940d98a4390bda81e8d05140df6 cc75ecca8685449fa59ca977ad0858ed
+msgid "**Type**: ``QuickGOTool``"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:32 5fd0db0a0cd54dfd8abb3b8c21acfbe9
+msgid ""
+"**Description**: Search Gene Ontology (GO) annotations for a specific "
+"gene product using the EBI QuickGO browser. Returns GO terms annotated to"
+" the protein/gene with evidence codes, qualifiers, and annotation "
+"sources. Accepts UniProtKB accessions (e.g., 'UniProtKB:P04637' for "
+"TP53). Provides more detailed annotation data than the standard GO API, "
+"including evidence provenance and assigned-by information. Useful for "
+"understanding gene function, localization, and biological processes."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:34 ../../tools/quickgo_tools.rst:74
+#: ../../tools/quickgo_tools.rst:111 ../../tools/quickgo_tools.rst:142
+#: 84f4d1295fa5466f83ef6da65e79fdd3 b254354ceecf4618bfa81eee96e6f0f5
+#: bd3dbcacbc4c45f5bb4b972a2f709bf1 f991b1b086f04715a6957378ed00a12c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:36 bfb7a5753ae1453c94377bdcf0ad7762
+msgid ""
+"``gene_product_id`` (string) (required) Gene product identifier, "
+"typically a UniProtKB accession. Format: 'UniProtKB:P04637' (TP53), "
+"'UniProtKB:P38398' (BRCA1), 'UniProtKB:P00533' (EGFR)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:39 a63102b71a0d42fc914b1e4e0ad2385d
+msgid ""
+"``aspect`` (string, null) (optional) Filter by GO aspect: "
+"'biological\\_process', 'molecular\\_function', or "
+"'cellular\\_component'. Default: all aspects."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:42 3f445196422446f4a2dca5f635e1b376
+msgid ""
+"``taxon_id`` (integer, null) (optional) Filter by NCBI taxonomy ID. "
+"Example: 9606 (human), 10090 (mouse)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:45 ../../tools/quickgo_tools.rst:82
+#: ded17041b0824823a7e68773db690e9d f86b3dff04dd4c9b8df3048feec2965d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of annotations to return. "
+"Default: 25, max: 100."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:48 ../../tools/quickgo_tools.rst:85
+#: ../../tools/quickgo_tools.rst:116 ../../tools/quickgo_tools.rst:147
+#: 23994f1716ae4c38819c5f9c66fa861b 2d319b7e8d0d45b4a0cc6d91c5315e78
+#: 6b0f942eca724680a45540677e0e488e 94ebdf77a1b3430a9387b322f99781a4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:62 2618f0e470df4c81af7bd7b500e90ec1
+msgid "**QuickGO_annotations_by_goterm** (Type: QuickGOTool)"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:64 48b8e0525d83445f8a188c0e45bd9bdd
+msgid ""
+"Search for all gene products annotated with a specific Gene Ontology (GO)"
+" term using the EBI Quic..."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst a47d7c1baf7e4a5787f697695d868653
+msgid "QuickGO_annotations_by_goterm tool specification"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:70 426cdc1be5ce469aacf233c1cb1714b7
+msgid "**Name**: ``QuickGO_annotations_by_goterm``"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:72 0e7182fe225d4ac7a10de5f562e6665b
+msgid ""
+"**Description**: Search for all gene products annotated with a specific "
+"Gene Ontology (GO) term using the EBI QuickGO browser. Returns the "
+"proteins/genes associated with the GO term, their evidence codes, and "
+"annotation sources. Can be filtered by species (taxon\\_id). Useful for "
+"finding all genes involved in a biological process, molecular function, "
+"or cellular component. Example: GO:0006915 (apoptotic process) returns "
+"6800+ human annotations."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:76 0ab2ea79ffb044beb410415944205d90
+msgid ""
+"``go_id`` (string) (required) Gene Ontology term accession. Examples: "
+"'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), "
+"'GO:0005634' (nucleus), 'GO:0003677' (DNA binding)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:79 7ae7f227a54c4a77aeef525eb53ab741
+msgid ""
+"``taxon_id`` (integer, null) (optional) Filter by NCBI taxonomy ID. "
+"Example: 9606 (human), 10090 (mouse), 7227 (fly)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:99 d09774aeabca4730af70763ef7641319
+msgid "**QuickGO_get_term_children** (Type: QuickGOTool)"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:101 66d76697c9224721bad7f2d8af567d1a
+msgid ""
+"Get child terms (direct descendants) of a Gene Ontology (GO) term from "
+"the EBI QuickGO browser. R..."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst f14db42b99854e7aa83f15f7f62ce42e
+msgid "QuickGO_get_term_children tool specification"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:107 00f434ed3dbb4e72ba4ee2d560bf1b01
+msgid "**Name**: ``QuickGO_get_term_children``"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:109 7a24b544f0124bd78b2c468d534bf825
+msgid ""
+"**Description**: Get child terms (direct descendants) of a Gene Ontology "
+"(GO) term from the EBI QuickGO browser. Returns child term IDs, names, "
+"relationship type (is\\_a, part\\_of, regulates), and whether they have "
+"further children. Useful for navigating the GO hierarchy and finding more"
+" specific terms. Example: GO:0006915 (apoptotic process) has 29 children "
+"including 'intrinsic apoptotic signaling pathway' and 'extrinsic "
+"apoptotic signaling pathway'."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:113 fbd85b0babe046e3b5b9008c60383f3c
+msgid ""
+"``go_id`` (string) (required) Gene Ontology term accession. Examples: "
+"'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), "
+"'GO:0005575' (cellular component)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:130 d39d2ea57b94474c8b167479b3259048
+msgid "**QuickGO_get_term_detail** (Type: QuickGOTool)"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:132 3788f1b57bd64f339a98354f9bcefe99
+msgid ""
+"Get detailed information about a specific Gene Ontology (GO) term from "
+"the EBI QuickGO browser. R..."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst aff1fe88d0924462a28297704578390f
+msgid "QuickGO_get_term_detail tool specification"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:138 fb3bad43cc19433d96036fec7e1325ed
+msgid "**Name**: ``QuickGO_get_term_detail``"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:140 e804e60c92a64ae8ab79a30efffe5d4a
+msgid ""
+"**Description**: Get detailed information about a specific Gene Ontology "
+"(GO) term from the EBI QuickGO browser. Returns the term name, "
+"definition, aspect "
+"(biological\\_process/molecular\\_function/cellular\\_component), "
+"synonyms, cross-references, and number of child terms. More detailed than"
+" the standard GO term lookup, including synonym types and cross-"
+"references to other ontologies. Example: GO:0006915 returns 'apoptotic "
+"process' with its full definition and 29 child terms."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:144 d049f520b2c048c5a8eda5188b9a39e7
+msgid ""
+"``go_id`` (string) (required) Gene Ontology term accession. Examples: "
+"'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), "
+"'GO:0005634' (nucleus), 'GO:0016020' (membrane)."
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:161 9399348be34f437dafa4de8c4b6f82bd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:163 47e1e9c60e24496e9aa290c4812c7bd4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/quickgo_tools.rst:164 a7515f8173b1467299505557b7909030
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,345 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bigg_models_tools.rst:10 f236e460e65443b2b4b7fb57165ad37e
+msgid "Bigg Models Tools"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:12 49df9f35e59541b99e84031b6fffe61b
+msgid ""
+"**Configuration File**: ``bigg_models_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:16 d36c30ee6c10424ab994d3769da437e9
+msgid ""
+"This page contains all tools defined in the ``bigg_models_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:19 b53c2be0e4bf43b996f8481447b13745
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:22 57cc61670c74400995ba45b5b7a1fb6e
+msgid "**BiGG_get_database_version** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:24 2d679e47463946a486765e390b55b55d
+msgid ""
+"Get BiGG Models database version and last update date. Returns BiGG "
+"version number, API version, ..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 208af010326c4a1f86774093e405fca3
+msgid "BiGG_get_database_version tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:28 ../../tools/bigg_models_tools.rst:59
+#: ../../tools/bigg_models_tools.rst:97 ../../tools/bigg_models_tools.rst:132
+#: ../../tools/bigg_models_tools.rst:167 ../../tools/bigg_models_tools.rst:205
+#: ../../tools/bigg_models_tools.rst:236 364daa2a04ad4005a18596495f1916f6
+#: 3658ff36aff94ea49d464529819066a1 5b715e3f7f30484da2d3a5d07868a5e0
+#: 6d5c4fda1c6441bab4860ea53b360ed9 bb63981e90ca4270867c5cf87514d7f3
+#: c7532eed76564c6b894c66eb763941e1 d7da3fdfa5a346edbd1c32167f9aee70
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:30 89309319d64d4444ad1ac1349422e22c
+msgid "**Name**: ``BiGG_get_database_version``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:31 ../../tools/bigg_models_tools.rst:62
+#: ../../tools/bigg_models_tools.rst:100 ../../tools/bigg_models_tools.rst:135
+#: ../../tools/bigg_models_tools.rst:170 ../../tools/bigg_models_tools.rst:208
+#: ../../tools/bigg_models_tools.rst:239 1e40ec572434425eab9d7c90029244d2
+#: 254595926d914ba0a006f387aad1b8c8 30507411067a4b2eac155c8434b1e193
+#: 5852c2853df8470a869ebd4b15314383 62b938e877f94547a2d587789012d73d
+#: aecc85356bed4e9da714d4a67381c4ba da2fed6902974964bbded9c4edab158e
+msgid "**Type**: ``BiGGModelsTool``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:32 2890da870b1645e4b3aef242b63f859e
+msgid ""
+"**Description**: Get BiGG Models database version and last update date. "
+"Returns BiGG version number, API version, and timestamp of last database "
+"update. Use for: checking data currency, version control, documentation, "
+"reproducibility. Check this to ensure using latest metabolic models data."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:34 ../../tools/bigg_models_tools.rst:65
+#: ../../tools/bigg_models_tools.rst:103 ../../tools/bigg_models_tools.rst:138
+#: ../../tools/bigg_models_tools.rst:173 ../../tools/bigg_models_tools.rst:211
+#: ../../tools/bigg_models_tools.rst:242 19049717c04f496e8c52deed9dba2355
+#: 27e57c26049143ee82c0a3643c852b17 5b6ea6421fa24e5d9b35b61ff602883b
+#: 61d6229bca1a4079ba0eaa5808beb1b5 6b10e216118f471b8687186d93f15ee6
+#: c4d11cd59fd5483ca7b0345220aaf19b e947f079bd534bbabdeaa4c4712c91b1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:36 ../../tools/bigg_models_tools.rst:67
+#: ../../tools/bigg_models_tools.rst:105 ../../tools/bigg_models_tools.rst:140
+#: ../../tools/bigg_models_tools.rst:175 ../../tools/bigg_models_tools.rst:213
+#: ../../tools/bigg_models_tools.rst:244 3411ed6ffc684551bd3ffc57a133c88c
+#: 4d457ed8a8af40fba6fc51a6791c7c7f 6d21e4bc29e74416b359cfb5a0858a06
+#: 72738a569fd84a92ab65e5cf64327426 8457615636ae414ea65a6211305e4688
+#: b457c1b49ee1432f8464181fe3b0fcf3 f1975f6c51654c0f93a555d6f08963e4
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:39 ../../tools/bigg_models_tools.rst:76
+#: ../../tools/bigg_models_tools.rst:111 ../../tools/bigg_models_tools.rst:146
+#: ../../tools/bigg_models_tools.rst:184 ../../tools/bigg_models_tools.rst:216
+#: ../../tools/bigg_models_tools.rst:253 49715cd5f9964d218ab0b431270fe603
+#: 847b2653560b4315accf0bb7598318d1 8facc9672e284db2aca64c0c3da87bf3
+#: b639aa17a5f54caca1877c75015f09fa c2cfa38b283f4d76a6432f78bdbad6dd
+#: c8b0f61521da46eebdedd90ae06db01e e9570774c5ee4acfbd82b42f82f24248
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:53 65b31c1520d7479c8e456037272df204
+msgid "**BiGG_get_metabolite** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:55 c8f9bfe1a40445bc995e5e5a1438bf25
+msgid ""
+"Get detailed metabolite information including formula, compartments, and "
+"database cross-reference..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 26609a37039143bc8b2512dd55ad591f
+msgid "BiGG_get_metabolite tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:61 f66fd8267f534d21a27c5479c38f64d1
+msgid "**Name**: ``BiGG_get_metabolite``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:63 b869abcf2c694412b9d53677ccedbe32
+msgid ""
+"**Description**: Get detailed metabolite information including formula, "
+"compartments, and database cross-references. Query from specific model or"
+" universal database. Returns metabolite names, formulas, compartment "
+"locations, and links to KEGG, MetaCyc, HMDB, ChEBI. Shows which models "
+"contain this metabolite. Use for: compound identification, formula "
+"lookup, database integration, metabolite annotation. Essential for "
+"understanding metabolic networks."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:70 794c8268050641c082caee195431e523
+msgid ""
+"``metabolite_id`` (string) (required) Required: BiGG metabolite ID (e.g.,"
+" 'g3p\\_c' with compartment, or 'g3p' without)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:73 253589d375d6495b94e5a128f7268677
+msgid ""
+"``model_id`` (string) (optional) Model ID or 'universal' for universal "
+"metabolite database"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:91 4a0030b308c84e298448f0839689ac2b
+msgid "**BiGG_get_model** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:93 4ece51b342694342b283a8a470ece999
+msgid ""
+"Get detailed information for a specific metabolic model. Returns "
+"organism, genome accession, reac..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 61a4cbfcaea34510b3cd11cc15e91522
+msgid "BiGG_get_model tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:99 f03fede85a9e4ea3972d0d5ec368798c
+msgid "**Name**: ``BiGG_get_model``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:101 8b3a97b2a2fc4201b51544f97ac91a66
+msgid ""
+"**Description**: Get detailed information for a specific metabolic model."
+" Returns organism, genome accession, reaction/metabolite/gene counts, and"
+" publication reference (PMID). Use for: understanding model scope, "
+"checking model currency, finding publications, model selection. Essential"
+" metadata before downloading or analyzing a model. Example model IDs: "
+"iJO1366 (E. coli), iMM904 (S. cerevisiae), Recon3D (human)."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:108 b9ff148182a04ff782ef91e1c339c42e
+msgid ""
+"``model_id`` (string) (required) Required: BiGG model ID (e.g., "
+"'iJO1366', 'iMM904', 'Recon3D')"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:126 c8e4cb84c6544c818b5a6186656c6737
+msgid "**BiGG_get_model_reactions** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:128 ae1dfcd1f70049918cae4252dac0b157
+msgid ""
+"Get all reactions in a metabolic model. Returns reaction IDs, names, and "
+"organisms for all bioche..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 62c110fb8f0b497cb93148a332a78adf
+msgid "BiGG_get_model_reactions tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:134 77280d39a5ce435caee4eef34dcbc204
+msgid "**Name**: ``BiGG_get_model_reactions``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:136 c28d441e9a1344e6882c3a6f09d7c309
+msgid ""
+"**Description**: Get all reactions in a metabolic model. Returns reaction"
+" IDs, names, and organisms for all biochemical reactions in the model. "
+"Use for: analyzing metabolic capabilities, finding specific pathways, "
+"reaction enumeration, model comparison. Follow with BiGG\\_get\\_reaction"
+" for detailed reaction information including stoichiometry and gene-"
+"reaction rules."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:143 263f8d12a26c496ea38f615f3450ae13
+msgid "``model_id`` (string) (required) Required: BiGG model ID"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:161 3964ec4daa024cb9bc4287121b7b19b7
+msgid "**BiGG_get_reaction** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:163 0b0e2f716f614e2ba4e398ee26a93657
+msgid ""
+"Get detailed reaction information including stoichiometry, metabolites, "
+"gene-reaction rules, and ..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 60fad08cc6d84baa85e58321fce5b5ea
+msgid "BiGG_get_reaction tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:169 13038c730a0542c8813e4269f98e8195
+msgid "**Name**: ``BiGG_get_reaction``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:171 e16c2326cdaa4e7888f1852eb2433a75
+msgid ""
+"**Description**: Get detailed reaction information including "
+"stoichiometry, metabolites, gene-reaction rules, and database links. "
+"Query from specific model or universal database. Returns reaction "
+"equation, participating metabolites with coefficients, GPR (gene-protein-"
+"reaction) associations, bounds, and cross-references (KEGG, MetaCyc, "
+"BRENDA). Use for: understanding reaction mechanisms, gene associations, "
+"flux constraints, pathway analysis. Essential for metabolic modeling."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:178 db93968998e24fbb82d75a9b7d75f742
+msgid ""
+"``reaction_id`` (string) (required) Required: BiGG reaction ID (e.g., "
+"'GAPD', 'PGI')"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:181 5b60bff86e974eb6a8c26d59f0d4a7be
+msgid ""
+"``model_id`` (string) (optional) Model ID or 'universal' for universal "
+"reaction database"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:199 0c51c5f1a5c44539af385596f4e78154
+msgid "**BiGG_list_models** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:201 28e6db9d2ff74ca2acce738aa3a7a5ba
+msgid ""
+"Get list of all genome-scale metabolic models in BiGG database (85+ "
+"models). Returns model IDs, o..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst 8ce151e8b68b4c3d9aa814dc19b2a5bd
+msgid "BiGG_list_models tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:207 b1b1fe335370402782fd8593c7cb625e
+msgid "**Name**: ``BiGG_list_models``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:209 61c220c50ade4c85a37cae1c691f7398
+msgid ""
+"**Description**: Get list of all genome-scale metabolic models in BiGG "
+"database (85+ models). Returns model IDs, organisms, reaction counts, "
+"metabolite counts, and gene counts for bacteria, archaea, and eukaryotes."
+" Models cover E. coli, yeast, human, and other organisms. Use for: "
+"discovering available models, finding organism-specific models, comparing"
+" model sizes, metabolic modeling projects. Essential first step for flux "
+"balance analysis."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:230 d14198e3bfde40c1a5b4963ebce58e00
+msgid "**BiGG_search** (Type: BiGGModelsTool)"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:232 a068796dae9d4e76a6d8035f0b5a0d05
+msgid ""
+"Search BiGG database for models, reactions, metabolites, or genes. "
+"Returns matching entries with ..."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst e1c37268e4c446ac90f644aaaa20fc93
+msgid "BiGG_search tool specification"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:238 2aa96d6c49744a29a1a9bc616f3377cb
+msgid "**Name**: ``BiGG_search``"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:240 49c273e887a34530a34fe186e33edfa2
+msgid ""
+"**Description**: Search BiGG database for models, reactions, metabolites,"
+" or genes. Returns matching entries with IDs, names, and organism info. "
+"Search types: models (find organisms), reactions (find biochemical "
+"reactions), metabolites (find compounds), genes (find gene names/IDs). "
+"Use for: discovery, finding specific entities, cross-model searches, "
+"identifying pathways. Flexible search across entire database."
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:247 7417e22f7c8c4fa99d552ff04d6423ca
+msgid ""
+"``query`` (string) (required) Required: Search term (e.g., 'glucose', "
+"'gapA', 'E. coli')"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:250 8a295f6567584577902b15366f735301
+msgid "``search_type`` (string) (optional) What to search for"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:268 84550eb8da2e4268a92f723220a1aa8a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:270 db04d3faa9894381a39e4aa3732d2e1c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bigg_models_tools.rst:271 53c5fd2f3c1140dd9bb2f8dae86c4da0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

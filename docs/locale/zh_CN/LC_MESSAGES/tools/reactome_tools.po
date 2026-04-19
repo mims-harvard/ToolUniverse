@@ -7,97 +7,838 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/reactome_tools.rst:2 d4320f42b2a7423c948993d5b08f5c8e
+#: ../../tools/reactome_tools.rst:10 70726e031a144aacb915c3d27bb1904f
 msgid "Reactome Tools"
 msgstr "Reactome 工具"
 
-#: ../../tools/reactome_tools.rst:4 541e58310e2140c68c6059be28fb4101
+#: ../../tools/reactome_tools.rst:12 7f460ffb5e64457d9ec63e89e7fae585
+#, fuzzy
 msgid ""
-"**Configuration File**: ``reactome_tools.json`` **Tool Type**: Local **Tools"
-" Count**: 1"
+"**Configuration File**: ``reactome_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 20"
 msgstr ""
 "**配置文件**：``reactome_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/reactome_tools.rst:8 ccc0761f1aa249d786f703edaec7fd87
+#: ../../tools/reactome_tools.rst:16 c4dc4f8baa104bc1accc98a9a583d54a
 msgid ""
 "This page contains all tools defined in the ``reactome_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``reactome_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/reactome_tools.rst:11 9b46556ab9084b7a9c5ab08dacd8085b
+#: ../../tools/reactome_tools.rst:19 4408cc22a06c4dada02c03094b28a713
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/reactome_tools.rst:14 b95bedbd26414fa4877575ec4f2543ec
-msgid "**Reactome_get_pathway_reactions** (Type: ReactomeRESTTool)"
+#: ../../tools/reactome_tools.rst:22 056b917082b04f0ab66b2095383cf8e5
+#, fuzzy
+msgid "**Reactome_get_complex** (Type: ReactomeRESTTool)"
 msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
 
-#: ../../tools/reactome_tools.rst:16 20429dd30cc1492ab574f6f6d634a6e0
+#: ../../tools/reactome_tools.rst:24 ff324c90b6374c2fb3dda60b12b3091c
 msgid ""
-"Query all Reactions contained under a Pathway using Pathway Stable ID. This "
-"is currently the only..."
-msgstr "使用通路稳定ID查询通路下包含的所有反应。目前这是唯一的..."
+"Get detailed information about a protein complex by its Stable ID. "
+"Returns comprehensive complex ..."
+msgstr ""
 
-#: ../../tools/reactome_tools.rst 10d45def62f94fe3a5bd819f1f01627f
-msgid "Reactome_get_pathway_reactions tool specification"
+#: ../../tools/reactome_tools.rst cc937f614fa0410abbd533c0d3d0f9f5
+#, fuzzy
+msgid "Reactome_get_complex tool specification"
 msgstr "Reactome_get_pathway_reactions 工具规范"
 
-#: ../../tools/reactome_tools.rst:20 78ce850fb24c4330bd118b3c0a2eb324
+#: ../../tools/reactome_tools.rst:28 ../../tools/reactome_tools.rst:59
+#: ../../tools/reactome_tools.rst:88 ../../tools/reactome_tools.rst:117
+#: ../../tools/reactome_tools.rst:148 ../../tools/reactome_tools.rst:179
+#: ../../tools/reactome_tools.rst:210 ../../tools/reactome_tools.rst:241
+#: ../../tools/reactome_tools.rst:272 ../../tools/reactome_tools.rst:303
+#: ../../tools/reactome_tools.rst:334 ../../tools/reactome_tools.rst:365
+#: ../../tools/reactome_tools.rst:396 ../../tools/reactome_tools.rst:427
+#: ../../tools/reactome_tools.rst:458 ../../tools/reactome_tools.rst:489
+#: ../../tools/reactome_tools.rst:518 ../../tools/reactome_tools.rst:549
+#: ../../tools/reactome_tools.rst:580 ../../tools/reactome_tools.rst:611
+#: 0fab75640bb94036be52bb6738487a56 221848cbd6844488b692341bf60ad8d1
+#: 26703d38935e432ca9b2e422413a38b3 2da58de38cf04579acf40310ffc88cc5
+#: 3e34d184987d41db8a7a201bd456f0dc 3f8cc19a2a4c41f299b5ae1299df55b0
+#: 4d0849a983a543198fe9b8c0f5f3bc48 7384c77a2840470481cde7102ff77cad
+#: 762185a6857b421097e99df12386c742 781272bb88f24e04b9b6fbc8d4f516b4
+#: 7dfba71ecf8b4bdc9a34d932b0f8fd2a 7e260774bfb5493aa4619b06d78fcd9c
+#: 7ee453366301415496891087b7748664 8b1bc87b89ce489296a12ddab16282ac
+#: 95455cfe4a83460ead834c80733526bc adf261afccb047c4bb41d9406e786bda
+#: c7ab454f11474ce5aab055d385d6a9d8 cffc7b94f013428ea7c63c9da858ae6e
+#: e2f24a10b025414fa248ef0481dd18b9 e66e1c9a775442c0a59fdc2a60ee90e6
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/reactome_tools.rst:22 bf1f5c66f6b747239e1aae6708da003d
-msgid "**Name**: ``Reactome_get_pathway_reactions``"
+#: ../../tools/reactome_tools.rst:30 e8dad7ddefee4dd1a4f985fb2f5dad9d
+#, fuzzy
+msgid "**Name**: ``Reactome_get_complex``"
 msgstr "**名称**：``Reactome_get_pathway_reactions``"
 
-#: ../../tools/reactome_tools.rst:23 3422f1a46e4f41b78146fc07f19aa942
+#: ../../tools/reactome_tools.rst:31 ../../tools/reactome_tools.rst:62
+#: ../../tools/reactome_tools.rst:91 ../../tools/reactome_tools.rst:120
+#: ../../tools/reactome_tools.rst:151 ../../tools/reactome_tools.rst:182
+#: ../../tools/reactome_tools.rst:213 ../../tools/reactome_tools.rst:244
+#: ../../tools/reactome_tools.rst:275 ../../tools/reactome_tools.rst:306
+#: ../../tools/reactome_tools.rst:337 ../../tools/reactome_tools.rst:368
+#: ../../tools/reactome_tools.rst:399 ../../tools/reactome_tools.rst:430
+#: ../../tools/reactome_tools.rst:461 ../../tools/reactome_tools.rst:492
+#: ../../tools/reactome_tools.rst:521 ../../tools/reactome_tools.rst:552
+#: ../../tools/reactome_tools.rst:583 ../../tools/reactome_tools.rst:614
+#: 075f055871d3443e96ac3213c4be026f 2f7210698b2f4c17be6d11f9cd7a533a
+#: 33a5143c390c4c5b95d98ae53a4ad3f9 376144b7fc7b4e4dab5630e77c194048
+#: 49eccecd3d9941a49df3243fbbb16c01 58e6d2806b2148e2a4809f2d4ff83f19
+#: 607f185be8024254878ad9d881e04757 6eaf349d3eed4149ae37047a7073a4f4
+#: 7e4ca343635e45a28f51bf9a67b39554 aff860fbc7724572931e21685c953dab
+#: b09460ed4418469595ad0502ae64aca0 b4bff7027bb14085b8064ff8a9d5964c
+#: bd055f5f3f15465a81fec183713f16e1 be8a4d18e60e410880ddaf40825026de
+#: c000d1cdfb184f9cb403e241a7385dbb d8da594cadf744f68cb046a20952bd8d
+#: dffaac36715b488197229535b150bb12 e2e528229b014415a30745fdf99b415d
+#: ee2100bad6bf4a469bf109b654eceda2 f26c5e94f0a64fa7b686d96f8099e662
 msgid "**Type**: ``ReactomeRESTTool``"
 msgstr "**类型**：``ReactomeRESTTool``"
 
-#: ../../tools/reactome_tools.rst:24 e2fcb5c985974f9db7a40fe9e0d8f49d
+#: ../../tools/reactome_tools.rst:32 ad9f3b5292e546818276c5bef41ac3ae
 msgid ""
-"**Description**: Query all Reactions contained under a Pathway using Pathway"
-" Stable ID. This is currently the only working Reactome tool."
+"**Description**: Get detailed information about a protein complex by its "
+"Stable ID. Returns comprehensive complex data including subunits, "
+"compartments, and related information. Uses the unified query endpoint "
+"that works for all entity types."
 msgstr ""
-"**描述**：使用 Pathway Stable ID 查询 Pathway 下包含的所有反应。这是目前唯一可用的 Reactome 工具。"
 
-#: ../../tools/reactome_tools.rst:26 95ca3d47fcce43d8bf77e6c483722b99
+#: ../../tools/reactome_tools.rst:34 ../../tools/reactome_tools.rst:65
+#: ../../tools/reactome_tools.rst:94 ../../tools/reactome_tools.rst:123
+#: ../../tools/reactome_tools.rst:154 ../../tools/reactome_tools.rst:185
+#: ../../tools/reactome_tools.rst:216 ../../tools/reactome_tools.rst:247
+#: ../../tools/reactome_tools.rst:278 ../../tools/reactome_tools.rst:309
+#: ../../tools/reactome_tools.rst:340 ../../tools/reactome_tools.rst:371
+#: ../../tools/reactome_tools.rst:402 ../../tools/reactome_tools.rst:433
+#: ../../tools/reactome_tools.rst:464 ../../tools/reactome_tools.rst:495
+#: ../../tools/reactome_tools.rst:524 ../../tools/reactome_tools.rst:555
+#: ../../tools/reactome_tools.rst:586 ../../tools/reactome_tools.rst:617
+#: 15a603326bb546fab909c323082c870a 160e6311232c473fb89e2db87cb595d7
+#: 2f4ebe78192045d9a149640fe95e94d5 3152e61c84f744c68f5c78b2cfc6a1fc
+#: 324f0b83e66d4f399c67d9468b45ec5f 38b35c2b682b44a58bd765b4b3e073aa
+#: 59bf3aa7b623465e8c33e2ea9addb3d2 6803877ff5a4467f88fe86a2b0fa1cb2
+#: 8ad9d7072be141148ae845fae130e0d9 8fe5eb016cc6492887bb38aac50bd08f
+#: 9324c0d39a83455ca8ec07453bedded0 a283d16bd38b4a36bf9e4f33975a937e
+#: a41d788248694ebfa72dc4045295ef59 af408da1b1ca4250bc67f54f7675457e
+#: b25252851a2a422485a6c70df80fbb8c c1490ab5113e4bf58e4412722d6890b1
+#: d34cff0fca594f5da19c95f17c72f0d3 d9b55979e42f44fb8244b3033727e02c
+#: ebdb8d4dab0147328e7058ec363f83c5 eee7befdd2d64b16869664f9fea69187
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/reactome_tools.rst:28 e8a25c6f771e458b8c3ed36ef3536502
+#: ../../tools/reactome_tools.rst:36 36e99ba9f1db4b36bd17f83ead0acb66
 msgid ""
-"``stId`` (string) (required) Pathway Stable ID, e.g., 'R-HSA-73817' "
-"(verified valid)."
-msgstr "``stId``（字符串）（必填）路径稳定标识符，例如：'R-HSA-73817'（已验证有效）。"
+"``stId`` (string) (required) Complex Stable ID (e.g., 'R-HSA-XXXXX'). To "
+"find complex IDs, use Reactome\\_get\\_participants with a reaction ID to"
+" see complexes participating in that reaction."
+msgstr ""
 
-#: ../../tools/reactome_tools.rst:31 784e147764f5477797b6f490d3da437f
+#: ../../tools/reactome_tools.rst:39 ../../tools/reactome_tools.rst:69
+#: ../../tools/reactome_tools.rst:98 ../../tools/reactome_tools.rst:128
+#: ../../tools/reactome_tools.rst:159 ../../tools/reactome_tools.rst:190
+#: ../../tools/reactome_tools.rst:221 ../../tools/reactome_tools.rst:252
+#: ../../tools/reactome_tools.rst:283 ../../tools/reactome_tools.rst:314
+#: ../../tools/reactome_tools.rst:345 ../../tools/reactome_tools.rst:376
+#: ../../tools/reactome_tools.rst:407 ../../tools/reactome_tools.rst:438
+#: ../../tools/reactome_tools.rst:469 ../../tools/reactome_tools.rst:499
+#: ../../tools/reactome_tools.rst:529 ../../tools/reactome_tools.rst:560
+#: ../../tools/reactome_tools.rst:591 ../../tools/reactome_tools.rst:628
+#: 0957d66558ad4b72a673fdd7a67d1222 1621ef06f6264e8aaaa21777ce4740ad
+#: 22b2a7f40dda474494398b983eb1f580 26d4c20660924ef6b1a24628a44f20fb
+#: 4eee3be758fe433bae2e22cb3227511b 6b57a40d47f146f78b38de7cb21898fd
+#: 771ccea5a5be4e0ea1dc3ba9c3dce130 90b4a5daa6394bc7bf7e836a40101daa
+#: 9e285587d12349ec9902effcf2abbb57 abcde65df31048a7a7fdd7a7d45a4d96
+#: b327f00d4eb94fd388492aed0da123aa bbfffbb85ec84a8a8dc946b1e66087d3
+#: c7cc37733fab46b5933318e961a11dca cae415df3ac046ec85e585583cfbb53e
+#: cbf7ef39fb064a08bdf80792d8fbadef d7476fff9eb8499cb92d838f8a28db77
+#: f1109faf655947388dfc54e7c1a4ab90 f6675d0945844d08bda9b87980d30d5b
+#: f6eb464a3b964fb9808d10e4dd3ab351 fd4e75f034794f6eb4cc8f2aa5718de4
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/reactome_tools.rst:45 0709e655c93043879176d5546d2a088b
+#: ../../tools/reactome_tools.rst:53 5a47b723b33d4a8bbedf10c18f107533
+#, fuzzy
+msgid "**Reactome_get_database_version** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:55 cb588f11bad549ecb4e485a53ad59b09
+msgid ""
+"Get Reactome database version information. Returns version number as "
+"integer."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 0ce61de2b0b444b9a0352a9569e551ba
+#, fuzzy
+msgid "Reactome_get_database_version tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:61 909c554f9bb749dea7471e202c94da23
+#, fuzzy
+msgid "**Name**: ``Reactome_get_database_version``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:63 80413baa556945d6af0276a3160dc54c
+msgid ""
+"**Description**: Get Reactome database version information. Returns "
+"version number as integer."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:67 ../../tools/reactome_tools.rst:96
+#: ../../tools/reactome_tools.rst:497 da2edf3020cd4ce68c8ec6cc03e86129
+#: f5aaf4c2db744590a2f3b9a5a5711b52 fdf073c069b94aebb7fa7604f7952754
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:82 30b4e8ba09b14d639b702f5100e18f7e
+#, fuzzy
+msgid "**Reactome_get_diseases** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:84 5f662c81edd94f0eab21082a6093d673
+msgid ""
+"Get list of disease pathways or DOIDs (Disease Ontology IDs) annotated in"
+" Reactome. Returns disea..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 45bf1c30fcf84492a87d3d093b4c5f41
+#, fuzzy
+msgid "Reactome_get_diseases tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:90 db6dd9c9e46a4c368ef277c2b6699361
+#, fuzzy
+msgid "**Name**: ``Reactome_get_diseases``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:92 845ef68855bd4a8281db5c233104f204
+msgid ""
+"**Description**: Get list of disease pathways or DOIDs (Disease Ontology "
+"IDs) annotated in Reactome. Returns disease-related pathway information "
+"including database identifiers, definitions, and names."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:111 1f66918408914aeb9355c0f5260c68a5
+#, fuzzy
+msgid "**Reactome_get_entity_compartment** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:113 3e48b6e3e40549f3b371186b38b10e01
+msgid ""
+"Get compartment information for an entity. Returns TSV-formatted "
+"compartment data parsed into str..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 02ac3070615d49c388021c51397bc185
+#, fuzzy
+msgid "Reactome_get_entity_compartment tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:119 ad1ead180c5d42e2b2d2f9bc845b4f28
+#, fuzzy
+msgid "**Name**: ``Reactome_get_entity_compartment``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:121 4d1e3a7cee3c45089de817ee39db8f60
+msgid ""
+"**Description**: Get compartment information for an entity. Returns TSV-"
+"formatted compartment data parsed into structured JSON. The API returns "
+"tab-separated values (ID, name, type) which are automatically converted "
+"to JSON format."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:125 f47eb8edb2914924ae7d60fa59732a43
+msgid ""
+"``stId`` (string) (required) Entity Stable ID (e.g., 'R-HSA-73817'). To "
+"find pathway IDs, use Reactome\\_list\\_top\\_pathways. To find reaction "
+"IDs, use Reactome\\_get\\_pathway\\_reactions. To find entity IDs, use "
+"Reactome\\_get\\_participants."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:142 bea88b9465584548bbf098ef82762830
+#, fuzzy
+msgid "**Reactome_get_entity_events** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:144 4bdfbf024c3b4780840aa7dbf0d2e678
+msgid ""
+"Get events (reactions/subpathways) associated with an entity. Returns "
+"TSV-formatted event data pa..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 31c2e4592497470fab7df0241b4430c2
+#, fuzzy
+msgid "Reactome_get_entity_events tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:150 6b7cea2bfcee4cc299ea024b410ad298
+#, fuzzy
+msgid "**Name**: ``Reactome_get_entity_events``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:152 f3dfc931af7e482ebb34d6206f2d9fe4
+msgid ""
+"**Description**: Get events (reactions/subpathways) associated with an "
+"entity. Returns TSV-formatted event data parsed into structured JSON. The"
+" API returns tab-separated values (ID, name, type) which are "
+"automatically converted to JSON format."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:156 8d171c50e931420bb2dce3c504e93a8b
+msgid ""
+"``stId`` (string) (required) Entity Stable ID (pathway, e.g., "
+"'R-HSA-73817'). To find pathway IDs, use Reactome\\_list\\_top\\_pathways"
+" to get top-level pathways, or Reactome\\_map\\_uniprot\\_to\\_pathways "
+"if you have a UniProt protein ID."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:173 e78cba2e36534b3580ccb98f312550d8
+#, fuzzy
+msgid "**Reactome_get_event_ancestors** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:175 439d62e49a494ce198bd9fd800ea8359
+msgid "Get ancestor events (parent pathways) for a reaction or pathway."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst b5b17ffb21ea4908bcd5ac2c742d8193
+#, fuzzy
+msgid "Reactome_get_event_ancestors tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:181 f7e8eb5611e645178a94cf8aff3b9c01
+#, fuzzy
+msgid "**Name**: ``Reactome_get_event_ancestors``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:183 85df30b88da94ffd99bfa264a0468991
+msgid ""
+"**Description**: Get ancestor events (parent pathways) for a reaction or "
+"pathway."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:187 67da8ef3737047278133ead9a287e735
+msgid ""
+"``stId`` (string) (required) Event Stable ID (pathway or reaction, e.g., "
+"'R-HSA-73817'). To find pathway IDs, use "
+"Reactome\\_list\\_top\\_pathways. To find reaction IDs, use "
+"Reactome\\_get\\_pathway\\_reactions with a pathway ID."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:204 a2dfd046ff2b46109874d3b71e8df96b
+#, fuzzy
+msgid "**Reactome_get_events_hierarchy** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:206 37902d077b1a412ea22d72349b9b15f4
+msgid ""
+"Get the full event hierarchy (pathways and reactions) for a specific "
+"species. Returns complete ne..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 7dabdcef5ad743ba9d96be029b86c145
+#, fuzzy
+msgid "Reactome_get_events_hierarchy tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:212 9a19f3c6f42e4deb95b7b564dcf4f18d
+#, fuzzy
+msgid "**Name**: ``Reactome_get_events_hierarchy``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:214 35e5405a7eaa44deaeed03fbb8906b34
+msgid ""
+"**Description**: Get the full event hierarchy (pathways and reactions) "
+"for a specific species. Returns complete nested hierarchy structure with "
+"top-level pathways and their children (subpathways and reactions). Note: "
+"Use taxonomy ID (e.g., '9606') for best results."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:218 e7eb58c65a8d408792b87fd389cacec6
+msgid ""
+"``species`` (string) (required) Species taxonomy ID (e.g., '9606' for "
+"Homo sapiens) or species name. Taxonomy ID is recommended. To find "
+"available species and their taxonomy IDs, use Reactome\\_list\\_species."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:235 7e1aebc4db9845fd855ee0f9dcc5caba
+#, fuzzy
+msgid "**Reactome_get_interactor** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:237 cf2ca0211a064daeb12fb38a2177f677
+msgid ""
+"Get detailed information about an interactor (protein, complex, or small "
+"molecule) by its Stable ..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst f0011f2fee254ecfa4f6d0ff52c27837
+#, fuzzy
+msgid "Reactome_get_interactor tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:243 cf476af1b0474b1ca4ae058d3e632bc6
+#, fuzzy
+msgid "**Name**: ``Reactome_get_interactor``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:245 498b004565b846f0b20696831664f3b5
+msgid ""
+"**Description**: Get detailed information about an interactor (protein, "
+"complex, or small molecule) by its Stable ID. Returns comprehensive "
+"interactor data including reference entities, compartments, and related "
+"pathways. Uses the unified query endpoint that works for all entity "
+"types."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:249 3be1a772410d4a14b9d29cc0b466ddd3
+msgid ""
+"``stId`` (string) (required) Interactor Stable ID. To find interactor "
+"IDs, use Reactome\\_get\\_participants with a reaction ID, or "
+"Reactome\\_map\\_uniprot\\_to\\_pathways/Reactome\\_map\\_uniprot\\_to\\_reactions"
+" if you have a UniProt protein ID."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:266 6b1678eca08342d884ed6e8d8d7eabde
+#, fuzzy
+msgid "**Reactome_get_participant_reference_entities** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:268 9fcf09eb7568423081fbd9542e38492d
+msgid ""
+"Get reference entities for participants of a reaction or event. Returns "
+"list of reference entitie..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 8ad4c3cbf7a540faa9b429fcd4039d4d
+#, fuzzy
+msgid "Reactome_get_participant_reference_entities tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:274 a31a560b2ab14276808b1b169c97d400
+#, fuzzy
+msgid "**Name**: ``Reactome_get_participant_reference_entities``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:276 7de37d68858b4b90892e46b7f2ff872d
+msgid ""
+"**Description**: Get reference entities for participants of a reaction or"
+" event. Returns list of reference entities (UniProt proteins, ChEBI "
+"chemicals, etc.) associated with the participants, including database "
+"identifiers and names."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:280 ../../tools/reactome_tools.rst:311
+#: 5327dc6e9e9d4faf94b9248deccb9cc0 57586a2a70ff4331b8dc94aab8d5cb48
+msgid ""
+"``stId`` (string) (required) Event Stable ID (reaction or pathway, e.g., "
+"'R-HSA-111289'). To find reaction IDs, use "
+"Reactome\\_get\\_pathway\\_reactions with a pathway ID. To find pathway "
+"IDs, use Reactome\\_list\\_top\\_pathways."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:297 279c29f329ff4146aec0b63941d3c108
+#, fuzzy
+msgid "**Reactome_get_participants** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:299 c96da2682ffb43aabe9774490c4f10e4
+msgid ""
+"Get all participants (physical entities) of a reaction or event. Returns "
+"list of physical entitie..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 229b5873314344fa87e65845ce3591e5
+#, fuzzy
+msgid "Reactome_get_participants tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:305 fcd69f0da1624240bed6e72aa8fe135f
+#, fuzzy
+msgid "**Name**: ``Reactome_get_participants``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:307 7d9753fa5e7342ae968aeb02ec61c2fc
+msgid ""
+"**Description**: Get all participants (physical entities) of a reaction "
+"or event. Returns list of physical entities (proteins, complexes, small "
+"molecules) participating in the event, including their reference "
+"entities."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:328 d035f8845e00484483909cc6db81a0ee
+#, fuzzy
+msgid "**Reactome_get_pathway** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:330 5fc92955c5ac451c9b883b46637e0b80
+msgid ""
+"Get detailed information about a specific pathway by its Stable ID. "
+"Returns comprehensive pathway..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst e60fc9dd5f1846b7a7b7a5657e6747bf
+#, fuzzy
+msgid "Reactome_get_pathway tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:336 a36a47993f9b408d8a22681859e26fee
+#, fuzzy
+msgid "**Name**: ``Reactome_get_pathway``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:338 3e4699c49d41496396afa419e5e439f2
+msgid ""
+"**Description**: Get detailed information about a specific pathway by its"
+" Stable ID. Returns comprehensive pathway data including metadata, "
+"compartments, literature references, orthologous events, and related "
+"pathways. Uses the unified query endpoint that works for all entity "
+"types."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:342 ../../tools/reactome_tools.rst:373
+#: ../../tools/reactome_tools.rst:404 1d2e9e2aa87740e1a0aebda24f823f2b
+#: 5e0c23d8fdda475dab1bb51756549857 e79f5de581fb41b3af37ba076421d188
+msgid ""
+"``stId`` (string) (required) Pathway Stable ID (e.g., 'R-HSA-73817'). To "
+"find pathway IDs, use Reactome\\_list\\_top\\_pathways to get top-level "
+"pathways, or Reactome\\_map\\_uniprot\\_to\\_pathways if you have a "
+"UniProt protein ID."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:359 2c354298e4b14c1296025559f194d0eb
+#, fuzzy
+msgid "**Reactome_get_pathway_hierarchy** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:361 4dcb88c18bce4a44b05afc3e234b49fa
+msgid ""
+"Get the hierarchy (parent pathways) for a pathway. Returns list of parent"
+" pathways."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst e7f8a1aa61aa4c5db588ddb139f23722
+#, fuzzy
+msgid "Reactome_get_pathway_hierarchy tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:367 c1aa0533388e4101a8048e56bd96e5b0
+#, fuzzy
+msgid "**Name**: ``Reactome_get_pathway_hierarchy``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:369 f66f4e2395b64ac09d157374235811f5
+msgid ""
+"**Description**: Get the hierarchy (parent pathways) for a pathway. "
+"Returns list of parent pathways."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:390 5cb6c2e92fc94b49990b6981db288c1d
+msgid "**Reactome_get_pathway_reactions** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:392 da87e901f3bc4d67aff350a04e0a550f
+#, fuzzy
+msgid ""
+"Query all reactions and subpathways contained under a Pathway using "
+"Pathway Stable ID. Returns li..."
+msgstr "使用通路稳定ID查询通路下包含的所有反应。目前这是唯一的..."
+
+#: ../../tools/reactome_tools.rst e392d56976194942a9d488184a356741
+msgid "Reactome_get_pathway_reactions tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:398 600715037531450f9e1ee4084eddc194
+msgid "**Name**: ``Reactome_get_pathway_reactions``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:400 dcb4861a717347cd8c6437aee59730c4
+#, fuzzy
+msgid ""
+"**Description**: Query all reactions and subpathways contained under a "
+"Pathway using Pathway Stable ID. Returns list of events (reactions and "
+"subpathways) contained in the pathway, including their metadata and "
+"relationships."
+msgstr "**描述**：使用 Pathway Stable ID 查询 Pathway 下包含的所有反应。这是目前唯一可用的 Reactome 工具。"
+
+#: ../../tools/reactome_tools.rst:421 4d3cc4a4bd3740ec9e601f6859a2ddf6
+#, fuzzy
+msgid "**Reactome_get_pathways_low_entity** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:423 8b20a500013c443b8a320cfc9130010c
+msgid ""
+"Get low-level pathways (most specific pathways) containing a specific "
+"entity. Returns pathways at..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 67ab3503b19f411192411e3dbf2448b5
+#, fuzzy
+msgid "Reactome_get_pathways_low_entity tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:429 547ad92787e1451095225acbbbcb39c7
+#, fuzzy
+msgid "**Name**: ``Reactome_get_pathways_low_entity``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:431 c141fdb8f6d04058922d4e6cb66eaa21
+msgid ""
+"**Description**: Get low-level pathways (most specific pathways) "
+"containing a specific entity. Returns pathways at the lowest level of the"
+" hierarchy."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:435 1f610d6a48c645dcb928b38fff9d53c8
+msgid ""
+"``id`` (string) (required) Entity Stable ID (pathway, reaction, or "
+"physical entity, e.g., 'R-HSA-73817'). To find pathway IDs, use "
+"Reactome\\_list\\_top\\_pathways. To find reaction IDs, use "
+"Reactome\\_get\\_pathway\\_reactions. To find entity IDs, use "
+"Reactome\\_get\\_participants."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:452 c9a56a501dc14952b6f619a81888588a
+#, fuzzy
+msgid "**Reactome_get_reaction** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:454 1f9e49048fed4eafb7c0ca26e48701e8
+msgid ""
+"Get detailed information about a specific reaction/event by its Stable "
+"ID. Returns comprehensive ..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 8ae479136ecc4de0813f2d6065a35cb7
+#, fuzzy
+msgid "Reactome_get_reaction tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:460 75d09df953e64ab68b808b13938ec842
+#, fuzzy
+msgid "**Name**: ``Reactome_get_reaction``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:462 1222dd37916b450fbf486254b1511258
+msgid ""
+"**Description**: Get detailed information about a specific reaction/event"
+" by its Stable ID. Returns comprehensive reaction data including inputs, "
+"outputs, regulation, literature references, and participants. Uses the "
+"unified query endpoint. Use Reactome\\_get\\_pathway\\_reactions to get "
+"valid reaction IDs first."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:466 0dc2a2dcdfeb4c5bb0a2c6850a161785
+msgid ""
+"``stId`` (string) (required) Reaction Stable ID (e.g., 'R-HSA-111289'). "
+"To find reaction IDs, use Reactome\\_get\\_pathway\\_reactions with a "
+"pathway ID to get all reactions in that pathway."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:483 91d7f10f2d00451f84f395d5bc4c63ff
+#, fuzzy
+msgid "**Reactome_list_species** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:485 395e2294e9dd43ba9e5ece5e4baf4c22
+msgid "List all species available in Reactome database."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst d34518bc0cca450388ee7f9112f09816
+#, fuzzy
+msgid "Reactome_list_species tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:491 984f8bf16b57429b9e428e0e49d8cf92
+#, fuzzy
+msgid "**Name**: ``Reactome_list_species``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:493 2a8ecb1e9b384add9accdbc904d53e4f
+msgid "**Description**: List all species available in Reactome database."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:512 9fec3fed2cba4f968eccb5f1f98911c3
+#, fuzzy
+msgid "**Reactome_list_top_pathways** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:514 7c081c6705874b8a901bfffb4ee789e7
+msgid ""
+"List top-level pathways for a specific species. Returns pathways that "
+"have no parent pathways, in..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 863410e2e14e47538217e98c76e08e03
+#, fuzzy
+msgid "Reactome_list_top_pathways tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:520 111c1e30cb5b4f7b818fcda23209f0e7
+#, fuzzy
+msgid "**Name**: ``Reactome_list_top_pathways``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:522 9afc43893f674ce7a04a76c466b6bf78
+msgid ""
+"**Description**: List top-level pathways for a specific species. Returns "
+"pathways that have no parent pathways, including their metadata and basic"
+" information."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:526 7ed0b797a24a4fe2bac16d6349859097
+msgid ""
+"``species`` (string) (required) Species name or taxonomy ID (e.g., 'Homo "
+"sapiens' or '9606'). IMPORTANT: Common names like 'human' or 'mouse' will"
+" return HTTP 404. Use exact scientific name (e.g., 'Homo sapiens', 'Mus "
+"musculus') or NCBI taxonomy ID. To find available species, use "
+"Reactome\\_list\\_species."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:543 97b0e65cda3f442085b9b1b2371e9c1d
+#, fuzzy
+msgid "**Reactome_map_uniprot_to_pathways** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:545 724693e03b7e4635b39aabdc43518ee5
+msgid ""
+"Map a UniProt protein identifier to Reactome pathways. Returns all "
+"pathways that contain this pro..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst acc57ccab4d34f68af4960d39123524c
+#, fuzzy
+msgid "Reactome_map_uniprot_to_pathways tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:551 1eafaa695870476dac63e5a4842fd5ef
+#, fuzzy
+msgid "**Name**: ``Reactome_map_uniprot_to_pathways``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:553 6ffa88be60d94d119f072c491a18bee6
+msgid ""
+"**Description**: Map a UniProt protein identifier to Reactome pathways. "
+"Returns all pathways that contain this protein."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:557 ../../tools/reactome_tools.rst:588
+#: 7188e3ad791e486596c5a02f4f1486a6 ba3cb53d1bf740e59351c95cf528926c
+msgid ""
+"``uniprot_id`` (string) (required) UniProt protein accession (e.g., "
+"'P04637' for TP53, 'P00533' for EGFR)"
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:574 ae8fd37728824ec3aabd0b09a2ecbc47
+#, fuzzy
+msgid "**Reactome_map_uniprot_to_reactions** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:576 00b4f67744af48c99f5ab30104e356c6
+msgid ""
+"Map a UniProt protein identifier to Reactome reactions. Returns all "
+"reactions that involve this p..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst 8ebb64a8f099480480418329dd1570b2
+#, fuzzy
+msgid "Reactome_map_uniprot_to_reactions tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:582 675beedd0fb642629e17fd2a8043663e
+#, fuzzy
+msgid "**Name**: ``Reactome_map_uniprot_to_reactions``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:584 f698915cd7c340b68c152d07addaa5a9
+msgid ""
+"**Description**: Map a UniProt protein identifier to Reactome reactions. "
+"Returns all reactions that involve this protein."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:605 83efd4dd10f745afbb46055d5bdb79a6
+#, fuzzy
+msgid "**Reactome_query_by_ids** (Type: ReactomeRESTTool)"
+msgstr "**Reactome_get_pathway_reactions**（类型：ReactomeRESTTool）"
+
+#: ../../tools/reactome_tools.rst:607 70d46cb939504b999649794498dbce86
+msgid ""
+"Query Reactome by providing a list of Reactome stable identifiers "
+"(R-HSA-\\*). Returns detailed in..."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst bee8b9a87e3c4cca9d6da358472e5297
+#, fuzzy
+msgid "Reactome_query_by_ids tool specification"
+msgstr "Reactome_get_pathway_reactions 工具规范"
+
+#: ../../tools/reactome_tools.rst:613 9b628048745b480e80c855c0cfa14705
+#, fuzzy
+msgid "**Name**: ``Reactome_query_by_ids``"
+msgstr "**名称**：``Reactome_get_pathway_reactions``"
+
+#: ../../tools/reactome_tools.rst:615 192f79ebf2434a63b3ac9bb004516825
+msgid ""
+"**Description**: Query Reactome by providing a list of Reactome stable "
+"identifiers (R-HSA-\\*). Returns detailed information about pathways, "
+"reactions, or other entities. Note: This endpoint requires Reactome "
+"stable IDs, not external IDs (UniProt, ChEBI). Use mapping endpoints "
+"first to convert external IDs to Reactome IDs."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:619 f94920a305ac4c6e9761da1834ec2b46
+msgid ""
+"``ids`` (array) (required) List of Reactome stable identifiers (e.g., "
+"'R-HSA-73817', 'R-HSA-111289'). Must be Reactome stable IDs, not external"
+" IDs. To find pathway IDs, use Reactome\\_list\\_top\\_pathways. To find "
+"reaction IDs, use Reactome\\_get\\_pathway\\_reactions. To convert "
+"external IDs (UniProt) to Reactome IDs, first use "
+"Reactome\\_map\\_uniprot\\_to\\_pathways or "
+"Reactome\\_map\\_uniprot\\_to\\_reactions."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:622 e0fa205353fe4620be4b878a348ca745
+msgid ""
+"``species`` (string) (optional) Optional: Filter by species using exact "
+"scientific name (e.g., 'Homo sapiens') or taxonomy ID. Common names like "
+"'human' are not supported."
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:625 997b771c0c524069aedbebf44961c23a
+msgid ""
+"``types`` (array) (optional) Optional: Filter by types (e.g., ['Pathway',"
+" 'Reaction'])"
+msgstr ""
+
+#: ../../tools/reactome_tools.rst:642 97dc2bcb4616403a9a99a9647a929100
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/reactome_tools.rst:47 f2e0e40f117346dea4ccc2ea9fc3ac40
+#: ../../tools/reactome_tools.rst:644 1c9aa1a25b8e404dae77eadc042a218f
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/reactome_tools.rst:48 fe7bd7e30d3943e1a78eac61484e4e0b
+#: ../../tools/reactome_tools.rst:645 ddb3353878c944b1b9c0a859351d7800
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "``stId`` (string) (required) Pathway Stable"
+#~ " ID, e.g., 'R-HSA-73817' (verified valid)."
+#~ msgstr "``stId``（字符串）（必填）路径稳定标识符，例如：'R-HSA-73817'（已验证有效）。"
+

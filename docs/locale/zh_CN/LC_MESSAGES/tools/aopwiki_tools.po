@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/aopwiki_tools.rst:10 6fddbb02369f43c0b77615cd055cd622
+msgid "Aopwiki Tools"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:12 222fe09024334bbba5ef15a9ae68afb0
+msgid ""
+"**Configuration File**: ``aopwiki_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:16 27b9bea02fdc4869a7ac57478f9e08d7
+msgid ""
+"This page contains all tools defined in the ``aopwiki_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:19 51bc88e6b77e48f191f975246165c7bb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:22 2c89834385994af5a16d1abe9a8ae20f
+msgid "**AOPWiki_get_aop** (Type: AOPWikiDetailTool)"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:24 bba834dd854d4bc4a6a159ae26b45263
+msgid ""
+"Get detailed information about a specific Adverse Outcome Pathway (AOP) "
+"from AOPWiki by AOP ID. R..."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst 40b906af36c64634bf4fd36f4fe1817c
+msgid "AOPWiki_get_aop tool specification"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:28 ../../tools/aopwiki_tools.rst:59
+#: 5f0efe14714a4a3eb3a1fe6368a2fbda ecd3d1a5c9cd4013aa8ec6d0a155e844
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:30 dfa4742769484c0d84cdc6aea625f8ae
+msgid "**Name**: ``AOPWiki_get_aop``"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:31 6216d5dbc2a04bad9f33f29b31d54415
+msgid "**Type**: ``AOPWikiDetailTool``"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:32 104cff6f9fdb4005b14946fede2a28cc
+msgid ""
+"**Description**: Get detailed information about a specific Adverse "
+"Outcome Pathway (AOP) from AOPWiki by AOP ID. Returns the molecular "
+"initiating events (MIEs), key events (KEs), adverse outcomes (AOs), "
+"stressors (chemicals), and key event relationships (causal chain)."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:34 ../../tools/aopwiki_tools.rst:65
+#: b9f955d151d34286a228b161bcc1896f bc6845e6834a4abca795c1efad016bf4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:36 a13b27a7f3ed47a5949dfba9912e3689
+msgid ""
+"``aop_id`` (integer) (required) AOP numeric identifier. Find IDs using "
+"AOPWiki\\_list\\_aops. Example: 3 (mitochondrial complex I inhibition "
+"leading to parkinsonian motor deficits)."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:39 ../../tools/aopwiki_tools.rst:69
+#: 896d3e6d64064d06b21e595ce848bd60 b3022956c3784ee89193c2429a6def20
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:53 ef6a555a53864e9abb46d3110c09a2eb
+msgid "**AOPWiki_list_aops** (Type: AOPWikiListTool)"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:55 37b1be8065384e34ad3095d419fca643
+msgid ""
+"List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, "
+"titles, and short names. AOPs..."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst 357771c010a14f2dbf96ab44e58f0046
+msgid "AOPWiki_list_aops tool specification"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:61 9c94b0b1485e4c868ab4236901f2310b
+msgid "**Name**: ``AOPWiki_list_aops``"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:62 736a9be266764ea59e076b6827595d47
+msgid "**Type**: ``AOPWikiListTool``"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:63 0c03a083ae094211a60a399081faa37c
+msgid ""
+"**Description**: List Adverse Outcome Pathways (AOPs) from AOPWiki. "
+"Returns AOP IDs, titles, and short names. AOPs describe causal chains "
+"from molecular initiating events through key events to adverse outcomes, "
+"used in toxicology and risk assessment."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:67 01a5134793fa47e5bd77ae2a07215398
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:82 cd77098299534747b8c9b844afe5afd6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:84 586f25f430a04508bf610257eaa65850
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/aopwiki_tools.rst:85 d4499761e42a45aca11ca7c4f0836279
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

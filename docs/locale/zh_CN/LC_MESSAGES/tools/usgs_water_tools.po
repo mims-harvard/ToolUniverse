@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/usgs_water_tools.rst:10 d0a865752e574d779c1f77724d2336df
+msgid "Usgs Water Tools"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:12 1946a31a157941c6bdea67ebbbb637ec
+msgid ""
+"**Configuration File**: ``usgs_water_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:16 6d50bc9a9cd042eb81b0bd81b29dfe4f
+msgid ""
+"This page contains all tools defined in the ``usgs_water_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:19 6a6db5461585428eac44cb5b36ca3aee
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:22 0bad2eff190c4c228f79ad48f2a07643
+msgid "**USGSWater_get_streamflow** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:24 9af76205ea6147c5bee5801d26373ca7
+msgid ""
+"Get real-time streamflow (discharge) data from USGS water monitoring "
+"stations. Returns instantane..."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst 6ab01d65aadf41caa606909056db4007
+msgid "USGSWater_get_streamflow tool specification"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:28 ../../tools/usgs_water_tools.rst:62
+#: ../../tools/usgs_water_tools.rst:96 91e854e7dcd94e448ed53ccb8409e943
+#: ae856b352120414c88010eb1e7d8ce49 f41a5a6d32e14ceba66e25af673751d5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:30 18a7b55dbaee4ec0950a36aadff29bfb
+msgid "**Name**: ``USGSWater_get_streamflow``"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:31 ../../tools/usgs_water_tools.rst:65
+#: ../../tools/usgs_water_tools.rst:99 2dea2108c3934b9d9b85577239b37147
+#: 3e9ee106da0845acbca16561d14f25ce bcd630c88e13402192f44fe3adf540f9
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:32 74694045b9454f049afae2e0e5957f9c
+msgid ""
+"**Description**: Get real-time streamflow (discharge) data from USGS "
+"water monitoring stations. Returns instantaneous values for water flow "
+"rate in cubic feet per second (ft3/s) including site name, location "
+"coordinates, and recent measurements. The USGS monitors over 10,000 "
+"stream gauges across the United States."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:34 ../../tools/usgs_water_tools.rst:68
+#: ../../tools/usgs_water_tools.rst:102 29ca0c59776a4fdc95cc18f0046c2424
+#: 325760cb5ef04722a4b5578dbd32454e 4d259853b4da4ee1a13ed6a707fe2ed7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:36 b1c4108d55bf4ff9a8447d7643b1b467
+msgid ""
+"``sites`` (string) (required) USGS site number(s), comma-separated (e.g.,"
+" '01646500' for Potomac River near Washington DC, '09380000' for Colorado"
+" River at Lees Ferry)"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:39 f1bb045c49b74e158dc794d47ec8908b
+msgid ""
+"``period`` (string, null) (optional) Time period for data in ISO 8601 "
+"duration format (e.g., 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 "
+"days). Default: 'P1D'"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:42 ../../tools/usgs_water_tools.rst:76
+#: ../../tools/usgs_water_tools.rst:110 1ba30e316cfc494199060ce68f06a7b4
+#: 9197b7b43f114f00b91dd8445d292db9 eaeca4f337b74010b1ba3403978dbac7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:56 f36e5baec60b47c0bc92f32b8da93b52
+msgid "**USGSWater_get_water_level** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:58 b8d5b1e68f9a4101a92b9b391969def4
+msgid ""
+"Get real-time water level (gage height) data from USGS monitoring "
+"stations. Returns water surface..."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst 5fed867dec154ae986fd927e5893cb25
+msgid "USGSWater_get_water_level tool specification"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:64 7aa85aee261d415f9ebd93226889f2ab
+msgid "**Name**: ``USGSWater_get_water_level``"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:66 6bc5557b131647c2a21ce41e452da25f
+msgid ""
+"**Description**: Get real-time water level (gage height) data from USGS "
+"monitoring stations. Returns water surface elevation in feet above a "
+"reference datum. Useful for monitoring river/lake levels, flood "
+"conditions, and drought assessment."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:70 773edd34e2fd45f886269a07f89b302d
+msgid ""
+"``sites`` (string) (required) USGS site number(s), comma-separated (e.g.,"
+" '01646500' for Potomac River)"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:73 ../../tools/usgs_water_tools.rst:107
+#: 4f44c64d73b54d85b104a5b92756e05b 6eeae8a50a1343978402359e8acebdd1
+msgid ""
+"``period`` (string, null) (optional) Time period in ISO 8601 format "
+"(e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:90 022971a23b9b4042b3383db97e557ba3
+msgid "**USGSWater_get_water_temperature** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:92 442c816d2d4b4ec18499816ff4bf265c
+msgid ""
+"Get real-time water temperature data from USGS monitoring stations. "
+"Returns water temperature in ..."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst de89a399434a4a09956f4aae80664a40
+msgid "USGSWater_get_water_temperature tool specification"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:98 119c5d0e209744a2aba62c01e90fbeee
+msgid "**Name**: ``USGSWater_get_water_temperature``"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:100 100bcc377bde48b297ba83ed7e11ee16
+msgid ""
+"**Description**: Get real-time water temperature data from USGS "
+"monitoring stations. Returns water temperature in degrees Celsius. Useful"
+" for ecological monitoring, aquatic habitat assessment, and water quality"
+" analysis."
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:104 577e3190496a45feb95d8e60bee3ac06
+msgid "``sites`` (string) (required) USGS site number(s), comma-separated"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:124 cca6fa73fc0345ebb8bad7fbaa16974e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:126 c56d9a4b1a9045e38af50f78e9ba7fc7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/usgs_water_tools.rst:127 47dc1d6338c44ef788a77c9ca5ae608b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

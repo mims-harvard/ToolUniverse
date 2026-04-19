@@ -1,0 +1,119 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/datagov_tools.rst:10 aedd5ec5c5ef4aed80e48704a3928d0d
+msgid "Datagov Tools"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:12 e05d466614ed40439df4addf070a8f06
+msgid ""
+"**Configuration File**: ``datagov_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:16 1c3e9d1e968b4a96af4796f0107d013c
+msgid ""
+"This page contains all tools defined in the ``datagov_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:19 54cc68e4c77343bf8cb81514eab2ba61
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:22 a6072166a6d540b3b7bb013a4d9075bd
+msgid "**DataGov_search_datasets** (Type: DataGovTool)"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:24 8dc668ad13ec4fe3878d742499fcc494
+msgid ""
+"Search the US federal open data catalog (Data.gov) for datasets from "
+"agencies like EPA, CDC, Cens..."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst 84d08d3ad45b4aa99fd8f11767584d8e
+msgid "DataGov_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:28 4e528275fdd5483d93379beb9710914a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:30 f029c2c152eb499c83e66c05e788f718
+msgid "**Name**: ``DataGov_search_datasets``"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:31 c5e6aacad3eb469392e4e0579818342a
+msgid "**Type**: ``DataGovTool``"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:32 57962c24a5f4407f9b8679a9e604a875
+msgid ""
+"**Description**: Search the US federal open data catalog (Data.gov) for "
+"datasets from agencies like EPA, CDC, Census Bureau, NIH, USDA, NOAA, and"
+" more. Data.gov uses the CKAN API and indexes over 300,000 federal "
+"datasets. Returns dataset titles, descriptions, organizations, download "
+"resource URLs, tags, and last-modified dates. Use organization filter "
+"(e.g. 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-"
+"gov') to narrow results to a specific agency."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:34 de31aaead1aa48e788e4429537090a4c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:36 a11d83c82c294ecdbdefdcc9ba10ceb0
+msgid ""
+"``query`` (string) (required) Search keywords for dataset discovery. "
+"Searches across dataset titles, descriptions, and tags."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:39 45b2c5b466784a40a066d92d5d0d8364
+msgid ""
+"``organization`` (string, null) (optional) Optional CKAN organization "
+"slug to filter by federal agency. Examples: 'epa-gov', 'cdc-gov', 'usda-"
+"gov', 'nih-gov', 'census-gov', 'noaa-gov', 'nasa-gov', 'nsf-gov', 'doe-"
+"gov', 'hhs-gov'. Leave null to search all agencies."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:42 91cc409531a143a08a6aa82b3515088b
+msgid ""
+"``rows`` (integer) (optional) Number of results to return. Default 10, "
+"maximum 100."
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:45 cb8a8050251b4817864bc81bdaf16652
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:59 30c38b4c622a43e9844ad8ba4cd2d8b5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:61 974010ad4eb249f6b993dfcb4103b9d9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/datagov_tools.rst:62 8fa2dcd3e9e84cb1958717da64f6f1b5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

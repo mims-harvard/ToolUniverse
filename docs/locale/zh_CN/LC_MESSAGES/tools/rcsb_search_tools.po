@@ -1,0 +1,129 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rcsb_search_tools.rst:10 4f4110f45bdd42138958c4f7c506011b
+msgid "Rcsb Search Tools"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:12 acc60a30fd96484abced0aefd82583a3
+msgid ""
+"**Configuration File**: ``rcsb_search_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:16 087cbf9b2c4f447288bdda1a9b01bc62
+msgid ""
+"This page contains all tools defined in the ``rcsb_search_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:19 63941ac5728f4be6af230ed62515a868
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:22 12ba4fad8bfe4f00a714c8232e78ea88
+msgid "**PDB_search_similar_structures** (Type: RCSBSearchTool)"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:24 c88cf558e5dd4587be9ce1eef45c44c7
+msgid ""
+"Search for protein structures similar to a given PDB ID or sequence using"
+" RCSB PDB structure simi..."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst 108154eaced24dc28230721643bbc494
+msgid "PDB_search_similar_structures tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:28 44c9eef6efdd494d8bd3f53386b2cc51
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:30 88ee8545ae1a42d6966f84c4eecedde3
+msgid "**Name**: ``PDB_search_similar_structures``"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:31 f4986fab38494b66804e72ac5eabff01
+msgid "**Type**: ``RCSBSearchTool``"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:32 912a7693e2eb469da220d3627d906448
+msgid ""
+"**Description**: Search for protein structures similar to a given PDB ID "
+"or sequence using RCSB PDB structure similarity search. Supports "
+"sequence-based, structure-based, and text-based search. Suitable for "
+"antibodies, proteins, and other biologics. Use text search to find PDB "
+"IDs by drug name, protein name, or keywords."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:34 bbd1ce856fa14db6a53d882362f344cd
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:36 941e708c9ca8493ab039e35eadc586c9
+msgid ""
+"``query`` (string) (required) PDB ID (e.g., '1ABC'), protein sequence "
+"(amino acids), or search text (e.g., drug name, protein name, keyword). "
+"For structure search, provide PDB ID. For sequence search, provide amino "
+"acid sequence. For text search, provide drug name, protein name, or "
+"keyword."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:39 beaea9507840469abddf7efb49996c02
+msgid ""
+"``search_type`` (string) (optional) Type of search: 'sequence' for "
+"sequence-based similarity search, 'structure' for structure-based "
+"similarity search using PDB ID, 'text' for text-based search by name or "
+"keyword"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:42 0425b844fa3d47aeace0b2eb46e0b585
+msgid ""
+"``similarity_threshold`` (number) (optional) Similarity threshold (0-1). "
+"Higher values return more similar structures. Values outside 0-1 will be "
+"clamped. For sequence search, this is the identity cutoff. For structure "
+"search, this is the structure similarity threshold. Not used for text "
+"search."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:45 0a7eeeac5bc24eb78cc278ffc5c0ff8c
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(1-100). Values outside this range will be clamped."
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:48 f04c68ac174e41568ff9bebf2b7b12fe
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:62 7feaab2729784a29b71802e6a21f8f27
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:64 e1c0317f557144838dd6138c28f2e0fd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rcsb_search_tools.rst:65 8e5aa7d90332409085758f5822bfbe16
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

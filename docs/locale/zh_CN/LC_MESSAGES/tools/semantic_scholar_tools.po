@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,103 +18,209 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/semantic_scholar_tools.rst:2 6094cb422aa34e4bad844e2d5b87a6e5
+#: ../../tools/semantic_scholar_tools.rst:10 ef09424e7cfa446a8ab5af49419f5932
 msgid "Semantic Scholar Tools"
 msgstr "语义学者工具"
 
-#: ../../tools/semantic_scholar_tools.rst:4 6d1bc608bbf743909d0028263f057b70
+#: ../../tools/semantic_scholar_tools.rst:12 2777adc0574e45d59aa63f3dd4d162ea
+#, fuzzy
 msgid ""
 "**Configuration File**: ``semantic_scholar_tools.json`` **Tool Type**: "
-"Local **Tools Count**: 1"
+"Local **Tools Count**: 2"
 msgstr ""
 "**配置文件**：``semantic_scholar_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/semantic_scholar_tools.rst:8 62d345ecb1ea4f1b8057255b6d8e8e36
+#: ../../tools/semantic_scholar_tools.rst:16 e3fc1efdf38a40bc85976c4b297dfee7
 msgid ""
 "This page contains all tools defined in the "
 "``semantic_scholar_tools.json`` configuration file."
 msgstr "此页面包含在 ``semantic_scholar_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/semantic_scholar_tools.rst:11 ecdd273fb1054dd9914df097cc2e681a
+#: ../../tools/semantic_scholar_tools.rst:19 6eb899fb3c0e4e9980b3d181f9986998
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/semantic_scholar_tools.rst:14 26cb48431b1b4d3da116eca140451c3b
-msgid "**SemanticScholar_search_papers** (Type: SemanticScholarTool)"
+#: ../../tools/semantic_scholar_tools.rst:22 248cd6b2b6294504ac64583ad44a13a2
+#, fuzzy
+msgid ""
+"**SemanticScholar_get_pdf_snippets** (Type: "
+"SemanticScholarPDFSnippetsTool)"
 msgstr "**SemanticScholar_search_papers**（类型：SemanticScholar工具）"
 
-#: ../../tools/semantic_scholar_tools.rst:16 c9692b81cff5452a86d516af6344fca2
+#: ../../tools/semantic_scholar_tools.rst:24 414876c89b79444681c6bf5261a64689
 msgid ""
-"Search for papers on Semantic Scholar including abstracts. This tool "
-"queries the Semantic Scholar..."
-msgstr "搜索包含摘要的 Semantic Scholar 论文。该工具查询 Semantic Scholar..."
+"Fetch a paper's open-access PDF from Semantic Scholar and return bounded "
+"text snippets around pro..."
+msgstr ""
 
-#: ../../tools/semantic_scholar_tools.rst d536ccd3935542ea8fa576c2091f4e46
-msgid "SemanticScholar_search_papers tool specification"
+#: ../../tools/semantic_scholar_tools.rst f7f1e3e6b8b54430b69a1393e0f80cd8
+#, fuzzy
+msgid "SemanticScholar_get_pdf_snippets tool specification"
 msgstr "SemanticScholar_search_papers 工具规范"
 
-#: ../../tools/semantic_scholar_tools.rst:20 f107ac1feacd4a6dad78f15339622454
+#: ../../tools/semantic_scholar_tools.rst:28
+#: ../../tools/semantic_scholar_tools.rst:74 169056820a3d4de1b866494ed93de97b
+#: 38007b98e5a84c1183dffe9b272c10eb
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/semantic_scholar_tools.rst:22 027740b080044cdfb7acef46418ba6e4
+#: ../../tools/semantic_scholar_tools.rst:30 125586ee04e747c285733566e62a132b
+#, fuzzy
+msgid "**Name**: ``SemanticScholar_get_pdf_snippets``"
+msgstr "**名称**：``SemanticScholar_search_papers``"
+
+#: ../../tools/semantic_scholar_tools.rst:31 a9e9fad0341d4a699fa8af6ee36d417e
+#, fuzzy
+msgid "**Type**: ``SemanticScholarPDFSnippetsTool``"
+msgstr "**类型**：``SemanticScholarTool``"
+
+#: ../../tools/semantic_scholar_tools.rst:32 dccfca35edee4a65af37eac42942ae6f
+msgid ""
+"**Description**: Fetch a paper's open-access PDF from Semantic Scholar "
+"and return bounded text snippets around provided terms. Uses markitdown "
+"to convert PDF to markdown. Useful when key details (methods, "
+"experimental parameters) are in the full text rather than abstract."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:34
+#: ../../tools/semantic_scholar_tools.rst:80 0defaa04bd9648a0bdf4d2975460132e
+#: 2760901478b64db29e18709c2c717084
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/semantic_scholar_tools.rst:36 9d4eb53031e745669adc46e133a32efb
+msgid ""
+"``paper_id`` (string) (optional) Semantic Scholar paper ID (e.g., from "
+"SemanticScholar\\_search\\_papers). The tool will fetch the PDF URL if "
+"available."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:39 4680afc3624743c3b9b482c2deb97b50
+msgid ""
+"``open_access_pdf_url`` (string) (optional) Direct open access PDF URL "
+"(recommended when you already have it from "
+"SemanticScholar\\_search\\_papers)."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:42 05c9d88637de416082af1bd31544cfe0
+msgid ""
+"``terms`` (array) (required) Terms to search for in the extracted full "
+"text (case-insensitive)."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:45 dfcc1fd488494e8b8f4e9e60435186fd
+msgid ""
+"``window_chars`` (integer) (optional) Context window size (characters) "
+"before and after each match."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:48 933ee31d6c244a5389f2472c91138ade
+#, fuzzy
+msgid ""
+"``max_snippets_per_term`` (integer) (optional) Maximum number of snippets"
+" returned per term."
+msgstr "``limit``（整数）（可选）从Semantic Scholar返回的论文最大数量。"
+
+#: ../../tools/semantic_scholar_tools.rst:51 7583d59528af4fcf985bcf3894998aee
+msgid ""
+"``max_total_chars`` (integer) (optional) Hard cap on total characters "
+"returned across all snippets."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:54
+#: ../../tools/semantic_scholar_tools.rst:97 5585fef5858f46c48ac64c011e9e2d44
+#: a6f3a8d9e7f24f3a97ec39af84cb5543
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/semantic_scholar_tools.rst:68 81ffc064b53d449aae3fbbcc32e8d4d8
+msgid "**SemanticScholar_search_papers** (Type: SemanticScholarTool)"
+msgstr "**SemanticScholar_search_papers**（类型：SemanticScholar工具）"
+
+#: ../../tools/semantic_scholar_tools.rst:70 082d43bb46fd4c9287e32be0ef8f720b
+#, fuzzy
+msgid ""
+"Search for papers on Semantic Scholar including abstracts and AI-"
+"generated TLDR summaries. This t..."
+msgstr "搜索包含摘要的 Semantic Scholar 论文。该工具查询 Semantic Scholar..."
+
+#: ../../tools/semantic_scholar_tools.rst 7ecfc4c77e0c43d7b3102533b3582871
+msgid "SemanticScholar_search_papers tool specification"
+msgstr "SemanticScholar_search_papers 工具规范"
+
+#: ../../tools/semantic_scholar_tools.rst:76 ac4bb1d5ee6245b884311a4e51e72399
 msgid "**Name**: ``SemanticScholar_search_papers``"
 msgstr "**名称**：``SemanticScholar_search_papers``"
 
-#: ../../tools/semantic_scholar_tools.rst:23 aba2c380f6cf45dfb6a7ec0d9b7016ee
+#: ../../tools/semantic_scholar_tools.rst:77 93a65613732c44fd87d6e37ed06c836e
 msgid "**Type**: ``SemanticScholarTool``"
 msgstr "**类型**：``SemanticScholarTool``"
 
-#: ../../tools/semantic_scholar_tools.rst:24 2c4cf300c4d441119501002fe6a9ab84
+#: ../../tools/semantic_scholar_tools.rst:78 5ee537494f124880973e63de2babbbc0
+#, fuzzy
 msgid ""
 "**Description**: Search for papers on Semantic Scholar including "
-"abstracts. This tool queries the Semantic Scholar API using natural "
-"language keywords and returns papers with details such as title, "
-"abstract, publication year, journal (venue), and URL."
+"abstracts and AI-generated TLDR summaries. This tool queries the Semantic"
+" Scholar API using natural language keywords and returns papers with "
+"details such as title, abstract, TLDR summary, fields of study, "
+"publication year, journal (venue), and URL. Rate limits: 1 req/sec "
+"without API key, 100 req/sec with SEMANTIC\\_SCHOLAR\\_API\\_KEY "
+"environment variable set."
 msgstr ""
 "**描述**：搜索Semantic Scholar上的论文，包括摘要。该工具使用自然语言关键词查询Semantic Scholar "
 "API，并返回包含标题、摘要、发表年份、期刊（出版物）和URL等详细信息的论文。"
 
-#: ../../tools/semantic_scholar_tools.rst:26 ae3c08d58a844ecea91985491880001e
-msgid "**Parameters:**"
-msgstr "**参数：**"
-
-#: ../../tools/semantic_scholar_tools.rst:28 f66a28712b4343e1aeb7f907bf2e4523
+#: ../../tools/semantic_scholar_tools.rst:82 257f5d08847d4c969848e9a9dffa4c19
 msgid ""
 "``query`` (string) (required) Search query for Semantic Scholar. Use "
 "keywords separated by spaces to refine the search."
 msgstr "``query``（字符串）（必填）用于Semantic Scholar的搜索查询。使用以空格分隔的关键词来优化搜索结果。"
 
-#: ../../tools/semantic_scholar_tools.rst:31 8d683d06697d4111a0b2b572367d7c34
+#: ../../tools/semantic_scholar_tools.rst:85 7dc3ea3b837943e0bb1fa8019cc46814
 #, fuzzy
 msgid ""
-"``limit`` (integer) (required) Maximum number of papers to return from "
+"``limit`` (integer) (optional) Maximum number of papers to return from "
 "Semantic Scholar."
 msgstr "``limit``（整数）（可选）从Semantic Scholar返回的论文最大数量。"
 
-#: ../../tools/semantic_scholar_tools.rst:34 d46f45297b5f4cf18efa49e76adc9a3a
+#: ../../tools/semantic_scholar_tools.rst:88 9d3dca8aaea245558955f57828cde5ae
 msgid ""
-"``api_key`` (string) (optional) Optional API key for Semantic Scholar to "
-"obtain a higher quota."
-msgstr "``api_key``（字符串）（可选）用于 Semantic Scholar 的可选 API 密钥，以获取更高的配额。"
+"``year`` (string) (optional) Filter results by publication year. Use a "
+"single year (e.g., '2024') or a range (e.g., '2020-2024')."
+msgstr ""
 
-#: ../../tools/semantic_scholar_tools.rst:37 37e00a73ab564727a269af2af625c245
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
+#: ../../tools/semantic_scholar_tools.rst:91 8ee068e9b539402d86ec84bd742a0926
+msgid ""
+"``sort`` (string) (optional) Sort results. Options: 'citationCount:desc',"
+" 'citationCount:asc', 'publicationDate:desc', 'publicationDate:asc'."
+msgstr ""
 
-#: ../../tools/semantic_scholar_tools.rst:52 6e6314610ab9467a98d1a305afc42da4
+#: ../../tools/semantic_scholar_tools.rst:94 afb3646bc41944bd83ccf90121339367
+msgid ""
+"``include_abstract`` (boolean) (optional) If true, best-effort fetches "
+"missing abstracts via the paper detail endpoint (only when abstract is "
+"missing in search results)."
+msgstr ""
+
+#: ../../tools/semantic_scholar_tools.rst:111 dc1426fa8b884be596d4ee1dd4288cab
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/semantic_scholar_tools.rst:54 28fc210620224b2e8ed5930161e72453
+#: ../../tools/semantic_scholar_tools.rst:113 9a3ff782a8db48c59c6bb7f69b5bea9f
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/semantic_scholar_tools.rst:55 64c89f8e06604cbbb4a2693172cb3d1c
+#: ../../tools/semantic_scholar_tools.rst:114 f96abef11ad443729d41329b9d4a3380
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "``api_key`` (string) (optional) Optional API"
+#~ " key for Semantic Scholar to obtain"
+#~ " a higher quota."
+#~ msgstr "``api_key``（字符串）（可选）用于 Semantic Scholar 的可选 API 密钥，以获取更高的配额。"
 

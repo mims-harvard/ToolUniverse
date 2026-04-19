@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mcule_tools.rst:10 e3591bc1985545a2968b90aa524518fb
+msgid "Mcule Tools"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:12 ffd928161acd4ceca7a3f77f7289ac0a
+msgid ""
+"**Configuration File**: ``mcule_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 4"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:16 13b5b4e460634c7aa48d9ee43a9c5ccc
+msgid ""
+"This page contains all tools defined in the ``mcule_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:19 d7c38898d1134f32953b533d5fc9c034
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:22 650199dd9d3d422abc4fd99d9d37dcde
+msgid "**Mcule_get_compound** (Type: MculeTool)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:24 ee077d19b94f494aa60c62b438cdac96
+msgid ""
+"Get detailed compound information from Mcule by its Mcule ID. Returns "
+"SMILES, InChIKey, standard ..."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst 30679f4d941846958f249ad36cb0d3ea
+msgid "Mcule_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:28 ../../tools/mcule_tools.rst:63
+#: ../../tools/mcule_tools.rst:98 ../../tools/mcule_tools.rst:132
+#: 305ab6af88704e0a827f241b69728fb5 6d3d28a160674c43885a15ae9caf697f
+#: 7c77b94f4ddd43acbfaf005fd3e57c3f 9bc05b9066dc444892376f0314ecf035
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:30 8f15f513f2aa46eea7ef32410eb77db6
+msgid "**Name**: ``Mcule_get_compound``"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:31 ../../tools/mcule_tools.rst:66
+#: ../../tools/mcule_tools.rst:101 ../../tools/mcule_tools.rst:135
+#: 7a5e71243fdc458eb4decbf70b0ec5a1 9257f185c670403e9c13c8a97406ec57
+#: ad644b9ad290409b93cce0b5b3745447 bb22973d6deb4f6cb0887de4d8222355
+msgid "**Type**: ``MculeTool``"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:32 a607dd3939e3456ba53fb84a50bc9242
+msgid ""
+"**Description**: Get detailed compound information from Mcule by its "
+"Mcule ID. Returns SMILES, InChIKey, standard InChI, molecular formula, "
+"CAS numbers, stereo type, and molecular properties (molecular mass, LogP,"
+" H-bond donors/acceptors, rotatable bonds, polar surface area, Lipinski "
+"Rule-of-5 violations, ring count, heavy atoms, stereocenters). Use after "
+"Mcule\\_lookup\\_compound to get full chemical data. Public endpoint, no "
+"auth required (rate limit: 10/min)."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:34 ../../tools/mcule_tools.rst:69
+#: ../../tools/mcule_tools.rst:104 ../../tools/mcule_tools.rst:138
+#: 0951ad76d6db4669b8eb310b70d15ed1 5a1dce095a534be1a7eafbc4b776c6d7
+#: ad2eaf947a004cc3b3e9a06f5746790e c786cb5ee66c49a0931007450b23eb93
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:36 ../../tools/mcule_tools.rst:71
+#: ../../tools/mcule_tools.rst:106 ../../tools/mcule_tools.rst:140
+#: 7e619678538b4ecc9f075e134dc6fc9f c09c625d250d4909809e60d5e8fc9ff6
+#: d3b5cfc353104dd4b921457cc768faac f2d56807547d4a1cba2e8a37d382d8b1
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:39 77ed5b4d28e3473286aa37d3dc209e32
+msgid ""
+"``mcule_id`` (string) (required) Mcule compound identifier, e.g., "
+"MCULE-3199019536 (aspirin), MCULE-9475454445 (ibuprofen racemic)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:42 ../../tools/mcule_tools.rst:77
+#: ../../tools/mcule_tools.rst:112 ../../tools/mcule_tools.rst:146
+#: 20e89b871d09455ab3d86b2f0ef76438 48b36ec763144dde82e40d0a92333ed7
+#: cf412ca62cce489ea89050018e453a43 fdfa1eb0104c4594a5b244e91ffa6d27
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:57 e1c1efeaeae244909d6f4b458d5c8822
+msgid "**Mcule_get_database** (Type: MculeTool)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:59 fdabc6576ea3468b93ffbba35c11adcb
+msgid ""
+"Get detailed information for a specific Mcule compound database file by "
+"its ID. Returns database ..."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst f6447bf41d9a45988671232921bf2c1f
+msgid "Mcule_get_database tool specification"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:65 8b6239a00ca547f68257515a0a6aba69
+msgid "**Name**: ``Mcule_get_database``"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:67 5ffbd4e907704441bd1503af29a8d5fd
+msgid ""
+"**Description**: Get detailed information for a specific Mcule compound "
+"database file by its ID. Returns database name, description, entry count,"
+" last updated date, and download file links with checksums. Known "
+"database IDs: 1 (Mcule Full, 139M+ compounds), 2 (Mcule In Stock, 7M+), "
+"15 (Building Blocks, 6.4M+), 3 (Known Stock Amounts, 4.4M+), 16 (Virtual,"
+" 132M+). Public endpoint, no auth required."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:74 36cb88c34dbc4331801dc74a75e204e9
+msgid ""
+"``database_id`` (integer) (required) Database file ID. Known IDs: 1 "
+"(Full), 2 (In Stock), 15 (Building Blocks), 3 (Known Stock Amounts), 16 "
+"(Virtual)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:92 53b92fe7677544aaba4ce34736839ff1
+msgid "**Mcule_list_databases** (Type: MculeTool)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:94 7230c19dbb1c4ed7a1f2406ba30a0d56
+msgid ""
+"List available compound database files from Mcule for bulk download. "
+"Mcule provides pre-built dat..."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst 40339b430a494f649fc7ddcd6beb6de9
+msgid "Mcule_list_databases tool specification"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:100 d1f1e5477aab4c829dbe8e8ca3ca16e6
+msgid "**Name**: ``Mcule_list_databases``"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:102 02297d4a5c4b4272a9236cd0fa4d3ff5
+msgid ""
+"**Description**: List available compound database files from Mcule for "
+"bulk download. Mcule provides pre-built databases of purchasable "
+"compounds including: Full (139M+ entries), In Stock (7M+), Building "
+"Blocks (6.4M+), Virtual (132M+), Known Stock Amounts, Bioactive, and "
+"more. Returns database names, descriptions, entry counts, last updated "
+"dates, and download links (SDF.gz and SMILES.gz formats). Useful for "
+"setting up local compound databases for virtual screening. Public "
+"endpoint, no auth required."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:109 e802f9b6c781413e9f3a86eafc3d92a9
+msgid ""
+"``public_only`` (boolean, null) (optional) If true (default), only return"
+" publicly accessible databases"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:126 15c96471eebc4c1f93e8919b1c055e00
+msgid "**Mcule_lookup_compound** (Type: MculeTool)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:128 cc483c1310e5466fbef0b1e7d2c901a5
+msgid ""
+"Look up purchasable compounds on Mcule by SMILES, InChIKey, or Mcule ID. "
+"Mcule aggregates 30M+ co..."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst 3d21a53f8789421e87e4f8c8923f4d7e
+msgid "Mcule_lookup_compound tool specification"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:134 6b2d459e281649d89df8b7cf0ff1b005
+msgid "**Name**: ``Mcule_lookup_compound``"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:136 d316492f4acc4e5087136098ed73bb55
+msgid ""
+"**Description**: Look up purchasable compounds on Mcule by SMILES, "
+"InChIKey, or Mcule ID. Mcule aggregates 30M+ compounds from multiple "
+"chemical suppliers. Returns matching Mcule IDs and SMILES structures. "
+"Accepts any chemical identifier: SMILES string (e.g., "
+"CC(=O)Oc1ccccc1C(=O)O for aspirin), InChIKey (e.g., BSYNRYMUTXBXSQ-"
+"UHFFFAOYSA-N), or Mcule ID (e.g., MCULE-3199019536). Use this as the "
+"first step to find a compound's Mcule ID, then use Mcule\\_get\\_compound"
+" for full details. Public endpoint, no auth required (rate limit: "
+"10/min)."
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:143 3b070ea9dd5a490ebfb5188310f9a63c
+msgid ""
+"``query`` (string) (required) Chemical identifier to look up: SMILES "
+"string, InChIKey, or Mcule ID (e.g., CC(=O)Oc1ccccc1C(=O)O, "
+"BSYNRYMUTXBXSQ-UHFFFAOYSA-N, or MCULE-3199019536)"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:161 10147243462b4d52a87076541c9f9d76
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:163 bc88cd07100d45afb6e12fb0e3d9bcdd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mcule_tools.rst:164 de86bb4373154a968e08dfebd143536a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

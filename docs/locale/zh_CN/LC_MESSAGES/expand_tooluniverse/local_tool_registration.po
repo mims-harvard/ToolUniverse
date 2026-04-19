@@ -7,349 +7,40 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../expand_tooluniverse/local_tool_registration.rst:2
-#: 44bbf645775542a798fd9429f2cb5cb8
+#: ../../expand_tooluniverse/local_tool_registration.rst:-1
+#: 05a6ef9b17ae46d58fd63e77b149ac6e
+msgid "0; url=local_tools/local_tools_tutorial.html"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tool_registration.rst:7
+#: ac5eee7b4496435baa87d54780f5ae9f
 msgid "Local Tool Registration"
 msgstr "本地工具注册"
 
-#: ../../expand_tooluniverse/local_tool_registration.rst:5
-#: 6db5d84e6ca54d7199248f28ed5edca3
-#, fuzzy
-msgid "What are Local Tools?"
-msgstr "现在您可以创建本地工具:"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:7
-#: 2f481ed369144181a3b7316788711b66
-#, fuzzy
-msgid ""
-"Local tools are Python classes that extend ToolUniverse with custom "
-"functionality. They run in the same process as ToolUniverse and provide the "
-"most efficient way to add specialized capabilities."
+#: ../../expand_tooluniverse/local_tool_registration.rst:9
+#: e1a8f345c6d94feeba67cddf0ec1d1c0
+msgid "Redirecting to :doc:`local_tools/local_tools_tutorial`..."
 msgstr ""
-"本地工具是在与 ToolUniverse 相同进程中运行的 Python 类。它们提供扩展 ToolUniverse "
-"功能的最有效方式，以满足您的特定研究需求。"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:10
-#: bb39ac5c41e945b79344f725ff41015b
-msgid "Complete Working Example"
-msgstr "完整工作示例"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:12
-#: 1e892762a5d64e02aa0764c8745be5b0
-msgid ""
-"Here's a complete protein molecular weight calculator you can copy and run:"
-msgstr "以下是一个完整的蛋白质分子量计算器，您可以复制并运行："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:110
-#: b2ac43fb3c7c44a19f10aa2f4c8e2615
-msgid ""
-"**How to use:** Save as `protein_calculator.py` and import it - the tool "
-"registers automatically."
-msgstr "**使用方法：** 保存为 `protein_calculator.py` 并导入使用——工具会自动注册。"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:114
-#: 44b212eff2cb4cb78f13b66ecd10cfd8
-msgid ""
-"**Complete Working Example**: See "
-":file:`examples/protein_calculator_example.py` for a full, runnable example "
-"with comprehensive testing and validation demonstrations."
-msgstr ""
-"**完整工作示例**：请参阅 "
-":file:`examples/protein_calculator_example.py`，其中包含一个完整的可运行示例，以及全面的测试和验证演示。"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:117
-#: d28366eac394494bb938c3e720502888
-#, fuzzy
-msgid "Adapt to Your Own Tool"
-msgstr "测试您的工具"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:119
-#: 52bf23b57a9d47bebf224e3f3aa7a6e1
-msgid "You only need to modify 3 places:"
-msgstr "您只需修改三个地方："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:121
-#: e831bc73cee0436d9eb6526121656eb7
-msgid "**1. Tool Name and Description (lines 8-9)**"
-msgstr "**1. 工具名称和描述（第8-9行）**"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:122
-#: 276a427776914eda9535c389d97110e8
-msgid "``name``: ``\"protein_calculator\"`` → change to your tool name"
-msgstr "``name``: ``\"protein_calculator\"`` → 更改为您的工具名称"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:123
-#: 73207e2c59354bfe881e492712c4bf57
-msgid ""
-"``description``: ``\"Calculate molecular weight...\"`` → change to your "
-"description"
-msgstr "``description``: ``\"计算分子量...\"``"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:125
-#: e18e6516f6a242d8bdfbdee76f213505
-msgid "**2. Input Parameters (lines 10-15)**"
-msgstr "**2. 输入参数（第10-15行）**"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:126
-#: cea6f34116294a98b27174c807b1ee4d
-msgid "Define the parameters you need:"
-msgstr "定义您需要的参数："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:132
-#: 0cbb3ccc484d4de68210197cb7342462
-msgid "Your Need"
-msgstr "您的需求"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:133
-#: 8b85a11322cf404eb76990ce2c8801cf
-#, fuzzy
-msgid "Parameter Type"
-msgstr "参数验证"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:134
-#: f8b6ed5bc5204a328fc939a4b4a3b92d
-msgid "Example"
-msgstr "示例"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:135
-#: 6ceb4cfde940430f9f5eb8c6d492c60a
-msgid "Text input"
-msgstr "请提供需要翻译的具体文本内容，我将为您进行翻译。"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:136
-#: f1e81455d32e4092b49ae8bcecbf9be8
-msgid "``\"type\": \"string\"``"
-msgstr "``\"type\": \"字符串\"``"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:137
-#: 920ae034b1c4416986f1b7d7e7f18972
-msgid "username, query, file_path"
-msgstr "用户名, 查询, 文件路径"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:138
-#: 6f15654ca228408aab9ed79f6e268855
-msgid "Number input"
-msgstr "数字输入"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:139
-#: f0002c8287e24f3bbf81a3584dd0a450
-msgid "``\"type\": \"number\"``"
-msgstr "``\"type\": \"数字\"``"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:140
-#: 90d860b2e77a4f81b012a9346e1c2950
-msgid "age, amount, limit"
-msgstr "年龄, 数量, 限制"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:141
-#: f66d122e8426458dbdb992a39f4edf97
-msgid "Dropdown options"
-msgstr "下拉选项"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:142
-#: 60a7b3eb66b944d7ae378f28c696d6d2
-msgid "``\"type\": \"string\", \"enum\": [...]``"
-msgstr "\"type\": \"string\", \"enum\": [...]"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:143
-#: 4bbf53f4553b43588fcc030c1256702c
-msgid "status, category, format"
-msgstr "状态，类别，格式"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:144
-#: dcbb18ab85554ff1a13bb31688c027ac
-msgid "Optional param"
-msgstr "可选参数"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:145
-#: 2d9d16ad516f40a7aab50070455d035f
-msgid "Don't put in ``\"required\"``"
-msgstr "不要添加``\"required\"``"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:146
-#: 3c32996282524de8a10e3c8ac50c3ee9
-msgid "optional filters, defaults"
-msgstr "可选过滤器，默认值"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:148
-#: f201a0f65116443a87fe31c2d1a574b6
-msgid "**3. Core Logic (run method at line 30)**"
-msgstr "**3. 核心逻辑（第30行的run方法）**"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:149
-#: 90a6fd6faa654628a4820da780e9001d
-msgid "Implement your business logic and return results:"
-msgstr "实现您的业务逻辑并返回结果："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:171
-#: 3899ee3f79084815bacd46e0b871e204
-#, fuzzy
-msgid "Common Scenarios"
-msgstr "常见问题"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:174
-#: cf2228a46f1341a28e00ff7d8229830e
-msgid "I want to call an external API"
-msgstr "我想调用外部 API"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:203
-#: a39a6cbc3df046218162477a6e07d08d
-msgid "I want to process files"
-msgstr "我想处理文件"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:232
-#: 1d70636a6b654abb8e23f1fc6eba6e8f
-#, fuzzy
-msgid "I want to use API keys (environment variables)"
-msgstr "环境变量"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:234
-#: d854639365bc48619e03ee8f284e8454
-msgid "Add to your config:"
-msgstr "将以下内容添加到您的配置中："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:254
-#: 5357b7977f944d20b4570b9c641c8633
-#, fuzzy
-msgid "Then in your run method:"
-msgstr "在您的环境中设置这些："
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:264
-#: 545b7c83c5fc4d6e96e751e8d823e614
-#, fuzzy
-msgid "I want custom error handling"
-msgstr "错误处理"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:295
-#: f74862798250483f9f324d44b64225d5
-msgid "Troubleshooting"
-msgstr "故障排除"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:298
-#: 990354a78cb5473c8ee48edc41ee5ed6
-msgid "Tool not found"
-msgstr "未找到工具"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:300
-#: cc756a11fbb04265a9d3d5d8e2aca857
-msgid ""
-"□ Is the tool file imported? (need to ``import`` or run directly) □ Is the "
-"``@register_tool`` decorator used correctly? □ Is ToolUniverse instantiated "
-"after tool import?"
-msgstr ""
-"□ 工具文件是否已导入？（需要``import``或直接运行）  \n"
-"□ 是否正确使用了``@register_tool``装饰器？  \n"
-"□ 工具导入后是否实例化了ToolUniverse？"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:305
-#: 28db23c98d5e447c818269a7029625b9
-#, fuzzy
-msgid "Parameter errors"
-msgstr "参数错误"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:307
-#: 57e073a1dfb64169ac91c289b6c4b102
-msgid ""
-"□ Do ``\"parameter\"`` definitions in config match ``run()`` method "
-"parameters? □ Are required parameters listed in ``\"required\"`` array? □ "
-"Are parameter types (``string``/``number``/``object``) correct?"
-msgstr ""
-"□ 配置中的``\"parameter\"``定义是否与``run()``方法的参数一致？  \n"
-"□ 必需参数是否列在``\"required\"``数组中？  \n"
-"□ 参数类型（``string``/``number``/``object``）是否正确？"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:312
-#: 85b974de2f98485eae68c36fe48138cf
-msgid "Execution failures"
-msgstr "执行失败"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:314
-#: 6a2a38d58ee24bab9560949eb3bf8dca
-msgid ""
-"□ Does the class inherit from ``BaseTool``? □ Does ``__init__`` call "
-"``super().__init__(tool_config)``? □ Does ``run()`` return a dict with "
-"``\"success\"`` field? □ Is ``validate_input()`` implemented for parameter "
-"validation?"
-msgstr ""
-"□ 该类是否继承自 ``BaseTool``？  \n"
-"□ ``__init__`` 是否调用了 ``super().__init__(tool_config)``？  \n"
-"□ ``run()`` 是否返回包含 ``\"success\"`` 字段的字典？  \n"
-"□ 是否实现了 ``validate_input()`` 用于参数验证？"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:320
-#: 69a563a52f7c4a4bb691b2c51c7ad092
-msgid "Next Steps"
-msgstr "下一步"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:322
-#: 8d25fe1a22b54fc9b3dc57a277e36afd
-msgid "Now that you can create local tools:"
-msgstr "现在您可以创建本地工具:"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:324
-#: 5ba6fb16375345559d150759c6a5d9f2
-msgid ""
-"🔗 **Remote Tools**: :doc:`remote_tool_registration` - Learn about remote "
-"tool integration"
-msgstr ""
-"🔗 **远程工具**： :doc:`remote_tool_registration` - 了解远程工具集成🔗 **远程工具**： "
-":doc:`remote_tool_registration` - 了解远程工具集成"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:325
-#: 1b7e0c45336f4fa7b5e708e4b2201201
-#, fuzzy
-msgid ""
-"📤 **Contributing**: :doc:`../contributing/local_tools` - Submit your tools "
-"to ToolUniverse"
-msgstr ""
-"📤 **贡献**： :doc:`contributing_tools` - 将您的工具提交到 ToolUniverse📤 **贡献**： "
-":doc:`contributing_tools` - 将您的工具提交到 ToolUniverse"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:326
-#: 7e4e9834092a43a78569c76ede92a108
-msgid ""
-"🤖 **AI Integration**: :doc:`../guide/building_ai_scientists/mcp_integration`"
-" - Connect your tools with AI assistants"
-msgstr ""
-"🤖 **AI 集成**： :doc:`../guide/building_ai_scientists/mcp_integration` - 将您的工具与"
-" AI 助手连接🤖 **AI 集成**： :doc:`../guide/building_ai_scientists/mcp_integration` "
-"- 将您的工具与 AI 助手连接"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:327
-#: 7259e2b1f0ab44ca8db57c467c3fd2c5
-msgid ""
-"🔬 **Scientific Workflows**: :doc:`../guide/scientific_workflows` - Build "
-"research pipelines"
-msgstr ""
-"🔬 **科学工作流程**： :doc:`../guide/scientific_workflows` - 构建研究管道🔬 **科学工作流程**： "
-":doc:`../guide/scientific_workflows` - 构建研究管道"
-
-#: ../../expand_tooluniverse/local_tool_registration.rst:330
-#: 490f2ac48c634f0f9806e8e3b4b50a7f
-msgid ""
-"**Development tip**: Start simple, test thoroughly, and gradually add "
-"complexity. The ToolUniverse community is here to help if you get stuck!"
-msgstr ""
-"**开发提示**：从简单开始，彻底测试，并逐渐增加复杂性。如果您遇到困难，ToolUniverse "
-"社区会在这里帮助您！**开发提示**：从简单开始，彻底测试，并逐渐增加复杂性。如果您遇到困难，ToolUniverse 社区会在这里帮助您！"
 
 #~ msgid ""
-#~ "Learn how to create, register, and use custom tools locally within "
-#~ "ToolUniverse. This Tutorial covers everything from basic tool creation to "
-#~ "advanced patterns and best practices."
+#~ "Learn how to create, register, and "
+#~ "use custom tools locally within "
+#~ "ToolUniverse. This Tutorial covers everything"
+#~ " from basic tool creation to advanced"
+#~ " patterns and best practices."
 #~ msgstr "学习如何在 ToolUniverse 中本地创建、注册和使用自定义工具。本教程涵盖从基本工具创建到高级模式和最佳实践的所有内容。"
 
 #~ msgid "Overview"
@@ -368,7 +59,8 @@ msgstr ""
 #~ msgstr "**重要：继承 BaseTool**"
 
 #~ msgid ""
-#~ "All ToolUniverse tools should inherit from the ``BaseTool`` class. This "
+#~ "All ToolUniverse tools should inherit "
+#~ "from the ``BaseTool`` class. This "
 #~ "provides:"
 #~ msgstr "所有 ToolUniverse 工具都应该继承 ``BaseTool`` 类。这提供："
 
@@ -376,32 +68,43 @@ msgstr ""
 #~ msgstr "BaseTool 类"
 
 #~ msgid ""
-#~ "ToolUniverse provides the ``BaseTool`` class as the foundation for all "
-#~ "custom tools. Inheriting from ``BaseTool`` ensures your tools follow "
-#~ "ToolUniverse standards and provides several benefits:"
+#~ "ToolUniverse provides the ``BaseTool`` class"
+#~ " as the foundation for all custom "
+#~ "tools. Inheriting from ``BaseTool`` ensures"
+#~ " your tools follow ToolUniverse standards"
+#~ " and provides several benefits:"
 #~ msgstr ""
-#~ "ToolUniverse 提供 ``BaseTool`` 类作为所有自定义工具的基础。继承 ``BaseTool`` 确保您的工具遵循 "
-#~ "ToolUniverse 标准，并提供几个好处："
+#~ "ToolUniverse 提供 ``BaseTool`` 类作为所有自定义工具的基础。继承 "
+#~ "``BaseTool`` 确保您的工具遵循 ToolUniverse 标准，并提供几个好处："
 
 #~ msgid ""
-#~ "**Core Features:** - **Standardized Interface**: All tools use the same "
-#~ "``execute()`` method signature - **Built-in Validation**: Automatic input "
-#~ "validation framework via ``validate_input()`` - **Configuration "
-#~ "Management**: Built-in handling of tool configuration - **Error Handling**: "
-#~ "Consistent error handling patterns - **Logging Support**: Integrated logging"
-#~ " capabilities - **Type Safety**: Better IDE support with type hints"
+#~ "**Core Features:** - **Standardized "
+#~ "Interface**: All tools use the same "
+#~ "``execute()`` method signature - **Built-"
+#~ "in Validation**: Automatic input validation"
+#~ " framework via ``validate_input()`` - "
+#~ "**Configuration Management**: Built-in "
+#~ "handling of tool configuration - **Error"
+#~ " Handling**: Consistent error handling "
+#~ "patterns - **Logging Support**: Integrated "
+#~ "logging capabilities - **Type Safety**: "
+#~ "Better IDE support with type hints"
 #~ msgstr ""
-#~ "**核心功能：** - **标准化接口**：所有工具使用相同的 ``execute()`` 方法签名 - **内置验证**：通过 "
-#~ "``validate_input()`` 自动输入验证框架 - **配置管理**：内置工具配置处理 - **错误处理**：一致的错误处理模式 - "
-#~ "**日志支持**： 集成的日志功能 - **类型安全**：使用类型提示提供更好的 IDE 支持"
+#~ "**核心功能：** - **标准化接口**：所有工具使用相同的 ``execute()`` "
+#~ "方法签名 - **内置验证**：通过 ``validate_input()`` "
+#~ "自动输入验证框架 - **配置管理**：内置工具配置处理 - "
+#~ "**错误处理**：一致的错误处理模式 - **日志支持**： 集成的日志功能 - "
+#~ "**类型安全**：使用类型提示提供更好的 IDE 支持"
 
 #~ msgid "**BaseTool Structure:** .. code-block:: python"
 #~ msgstr "**BaseTool 结构：** .. code-block:: python"
 
 #~ msgid ""
-#~ "from tooluniverse.base_tool import BaseTool from typing import Dict, Any"
+#~ "from tooluniverse.base_tool import BaseTool "
+#~ "from typing import Dict, Any"
 #~ msgstr ""
-#~ "from tooluniverse.base_tool import BaseTool from typing import Dict, Any"
+#~ "from tooluniverse.base_tool import BaseTool "
+#~ "from typing import Dict, Any"
 
 #~ msgid "class MyTool(BaseTool):"
 #~ msgstr "class MyTool(BaseTool):"
@@ -413,18 +116,22 @@ msgstr ""
 #~ msgstr "super().__init__(tool_config) # 在这里初始化您的工具"
 
 #~ msgid ""
-#~ "def execute(self, param1: str, param2: int = 10, **kwargs) -> Dict[str, "
+#~ "def execute(self, param1: str, param2: "
+#~ "int = 10, **kwargs) -> Dict[str, "
 #~ "Any]:"
 #~ msgstr ""
-#~ "def execute(self, param1: str, param2: int = 10, **kwargs) -> Dict[str, "
+#~ "def execute(self, param1: str, param2: "
+#~ "int = 10, **kwargs) -> Dict[str, "
 #~ "Any]:"
 
 #~ msgid ""
-#~ "\"\"\"Main execution method - implement your tool logic here.\"\"\" # "
-#~ "Validate inputs self.validate_input(param1=param1, param2=param2)"
-#~ msgstr ""
-#~ "\"\"\"主要执行方法 - 在这里实现您的工具逻辑。\"\"\" # 验证输入 self.validate_input(param1=param1, "
+#~ "\"\"\"Main execution method - implement "
+#~ "your tool logic here.\"\"\" # Validate"
+#~ " inputs self.validate_input(param1=param1, "
 #~ "param2=param2)"
+#~ msgstr ""
+#~ "\"\"\"主要执行方法 - 在这里实现您的工具逻辑。\"\"\" # 验证输入 "
+#~ "self.validate_input(param1=param1, param2=param2)"
 
 #~ msgid "# Your tool logic here result = self._process_data(param1, param2)"
 #~ msgstr "# 在这里实现您的工具逻辑 result = self._process_data(param1, param2)"
@@ -436,11 +143,12 @@ msgstr ""
 #~ msgstr "def validate_input(self, **kwargs) -> None:"
 
 #~ msgid ""
-#~ "\"\"\"Validate input parameters.\"\"\" param1 = kwargs.get('param1') param2 "
-#~ "= kwargs.get('param2', 10)"
-#~ msgstr ""
-#~ "\"\"\"验证输入参数。\"\"\" param1 = kwargs.get('param1') param2 = "
+#~ "\"\"\"Validate input parameters.\"\"\" param1 "
+#~ "= kwargs.get('param1') param2 = "
 #~ "kwargs.get('param2', 10)"
+#~ msgstr ""
+#~ "\"\"\"验证输入参数。\"\"\" param1 = kwargs.get('param1')"
+#~ " param2 = kwargs.get('param2', 10)"
 
 #~ msgid "if not param1 or not isinstance(param1, str):"
 #~ msgstr "if not param1 or not isinstance(param1, str):"
@@ -455,14 +163,18 @@ msgstr ""
 #~ msgstr "raise ValueError(\"param2 必须是非负整数\")"
 
 #~ msgid ""
-#~ "**Key Methods:** - ``__init__(tool_config)``: Initialize tool with "
-#~ "configuration - ``execute(**kwargs)``: Main execution method (required) - "
-#~ "``validate_input(**kwargs)``: Input validation (recommended) - ``config``: "
-#~ "Access to tool configuration - ``logger``: Built-in logging instance"
+#~ "**Key Methods:** - ``__init__(tool_config)``: "
+#~ "Initialize tool with configuration - "
+#~ "``execute(**kwargs)``: Main execution method "
+#~ "(required) - ``validate_input(**kwargs)``: Input "
+#~ "validation (recommended) - ``config``: Access"
+#~ " to tool configuration - ``logger``: "
+#~ "Built-in logging instance"
 #~ msgstr ""
-#~ "**关键方法：** - ``__init__(tool_config)``：使用配置初始化工具 - "
-#~ "``execute(**kwargs)``：主要执行方法（必需） - ``validate_input(**kwargs)``：输入验证（推荐） - "
-#~ "``config``：访问工具配置 - ``logger``：内置日志实例"
+#~ "**关键方法：** - ``__init__(tool_config)``：使用配置初始化工具 -"
+#~ " ``execute(**kwargs)``：主要执行方法（必需） - "
+#~ "``validate_input(**kwargs)``：输入验证（推荐） - ``config``：访问工具配置"
+#~ " - ``logger``：内置日志实例"
 
 #~ msgid "**Standardized Interface**: Consistent ``execute()`` method signature"
 #~ msgstr "**标准化接口**：一致的 ``execute()`` 方法签名"
@@ -564,11 +276,16 @@ msgstr ""
 #~ msgstr "**始终继承 BaseTool：**"
 
 #~ msgid ""
-#~ "**Benefits of BaseTool inheritance:** - Consistent interface across all "
-#~ "tools - Built-in validation framework - Standardized error handling - "
-#~ "Configuration management - Logging support - Type safety"
+#~ "**Benefits of BaseTool inheritance:** - "
+#~ "Consistent interface across all tools -"
+#~ " Built-in validation framework - "
+#~ "Standardized error handling - Configuration"
+#~ " management - Logging support - Type"
+#~ " safety"
 #~ msgstr ""
-#~ "**BaseTool 继承的好处：** - 所有工具的一致接口 - 内置验证框架 - 标准化的错误处理 - 配置管理 - 日志支持 - 类型安全"
+#~ "**BaseTool 继承的好处：** - 所有工具的一致接口 - 内置验证框架"
+#~ " - 标准化的错误处理 - 配置管理 - 日志支持 - "
+#~ "类型安全"
 
 #~ msgid "Always implement proper error handling:"
 #~ msgstr "始终实现适当的错误处理："
@@ -637,8 +354,8 @@ msgstr ""
 #~ msgstr "BaseTool 继承问题"
 
 #~ msgid ""
-#~ "Ensure your class inherits from ``BaseTool`` and calls "
-#~ "``super().__init__()``"
+#~ "Ensure your class inherits from "
+#~ "``BaseTool`` and calls ``super().__init__()``"
 #~ msgstr "确保您的类继承自 ``BaseTool`` 并调用 ``super().__init__()``"
 
 #~ msgid "Validation errors"
@@ -681,7 +398,8 @@ msgstr ""
 #~ msgstr "[ ] 类有 ``validate_input(self, **kwargs) -> None`` 方法"
 
 #~ msgid ""
-#~ "[ ] Config has all required fields (``name``, ``type``, ``description``, "
+#~ "[ ] Config has all required fields"
+#~ " (``name``, ``type``, ``description``, "
 #~ "``parameter``)"
 #~ msgstr "[ ] 配置包含所有必需字段 (``name``, ``type``, ``description``, ``parameter``)"
 
@@ -696,3 +414,238 @@ msgstr ""
 
 #~ msgid "[ ] Integration test works"
 #~ msgstr "[ ] 集成测试正常工作"
+
+#~ msgid "What are Local Tools?"
+#~ msgstr "现在您可以创建本地工具:"
+
+#~ msgid ""
+#~ "Local tools are Python classes that "
+#~ "extend ToolUniverse with custom functionality."
+#~ " They run in the same process "
+#~ "as ToolUniverse and provide the most "
+#~ "efficient way to add specialized "
+#~ "capabilities."
+#~ msgstr ""
+#~ "本地工具是在与 ToolUniverse 相同进程中运行的 Python 类。它们提供扩展"
+#~ " ToolUniverse 功能的最有效方式，以满足您的特定研究需求。"
+
+#~ msgid "Complete Working Example"
+#~ msgstr "完整工作示例"
+
+#~ msgid ""
+#~ "Here's a complete protein molecular "
+#~ "weight calculator you can copy and "
+#~ "run:"
+#~ msgstr "以下是一个完整的蛋白质分子量计算器，您可以复制并运行："
+
+#~ msgid ""
+#~ "**How to use:** Save as "
+#~ "`protein_calculator.py` and import it - "
+#~ "the tool registers automatically."
+#~ msgstr "**使用方法：** 保存为 `protein_calculator.py` 并导入使用——工具会自动注册。"
+
+#~ msgid ""
+#~ "**Complete Working Example**: See "
+#~ ":file:`examples/protein_calculator_example.py` for a "
+#~ "full, runnable example with comprehensive "
+#~ "testing and validation demonstrations."
+#~ msgstr ""
+#~ "**完整工作示例**：请参阅 "
+#~ ":file:`examples/protein_calculator_example.py`，其中包含一个完整的可运行示例，以及全面的测试和验证演示。"
+
+#~ msgid "Adapt to Your Own Tool"
+#~ msgstr "测试您的工具"
+
+#~ msgid "You only need to modify 3 places:"
+#~ msgstr "您只需修改三个地方："
+
+#~ msgid "**1. Tool Name and Description (lines 8-9)**"
+#~ msgstr "**1. 工具名称和描述（第8-9行）**"
+
+#~ msgid "``name``: ``\"protein_calculator\"`` → change to your tool name"
+#~ msgstr "``name``: ``\"protein_calculator\"`` → 更改为您的工具名称"
+
+#~ msgid ""
+#~ "``description``: ``\"Calculate molecular "
+#~ "weight...\"`` → change to your "
+#~ "description"
+#~ msgstr "``description``: ``\"计算分子量...\"``"
+
+#~ msgid "**2. Input Parameters (lines 10-15)**"
+#~ msgstr "**2. 输入参数（第10-15行）**"
+
+#~ msgid "Define the parameters you need:"
+#~ msgstr "定义您需要的参数："
+
+#~ msgid "Your Need"
+#~ msgstr "您的需求"
+
+#~ msgid "Parameter Type"
+#~ msgstr "参数验证"
+
+#~ msgid "Example"
+#~ msgstr "示例"
+
+#~ msgid "Text input"
+#~ msgstr "请提供需要翻译的具体文本内容，我将为您进行翻译。"
+
+#~ msgid "``\"type\": \"string\"``"
+#~ msgstr "``\"type\": \"字符串\"``"
+
+#~ msgid "username, query, file_path"
+#~ msgstr "用户名, 查询, 文件路径"
+
+#~ msgid "Number input"
+#~ msgstr "数字输入"
+
+#~ msgid "``\"type\": \"number\"``"
+#~ msgstr "``\"type\": \"数字\"``"
+
+#~ msgid "age, amount, limit"
+#~ msgstr "年龄, 数量, 限制"
+
+#~ msgid "Dropdown options"
+#~ msgstr "下拉选项"
+
+#~ msgid "``\"type\": \"string\", \"enum\": [...]``"
+#~ msgstr "\"type\": \"string\", \"enum\": [...]"
+
+#~ msgid "status, category, format"
+#~ msgstr "状态，类别，格式"
+
+#~ msgid "Optional param"
+#~ msgstr "可选参数"
+
+#~ msgid "Don't put in ``\"required\"``"
+#~ msgstr "不要添加``\"required\"``"
+
+#~ msgid "optional filters, defaults"
+#~ msgstr "可选过滤器，默认值"
+
+#~ msgid "**3. Core Logic (run method at line 30)**"
+#~ msgstr "**3. 核心逻辑（第30行的run方法）**"
+
+#~ msgid "Implement your business logic and return results:"
+#~ msgstr "实现您的业务逻辑并返回结果："
+
+#~ msgid "Common Scenarios"
+#~ msgstr "常见问题"
+
+#~ msgid "I want to call an external API"
+#~ msgstr "我想调用外部 API"
+
+#~ msgid "I want to process files"
+#~ msgstr "我想处理文件"
+
+#~ msgid "I want to use API keys (environment variables)"
+#~ msgstr "环境变量"
+
+#~ msgid "Add to your config:"
+#~ msgstr "将以下内容添加到您的配置中："
+
+#~ msgid "Then in your run method:"
+#~ msgstr "在您的环境中设置这些："
+
+#~ msgid "I want custom error handling"
+#~ msgstr "错误处理"
+
+#~ msgid "Troubleshooting"
+#~ msgstr "故障排除"
+
+#~ msgid "Tool not found"
+#~ msgstr "未找到工具"
+
+#~ msgid ""
+#~ "□ Is the tool file imported? (need"
+#~ " to ``import`` or run directly) □ "
+#~ "Is the ``@register_tool`` decorator used "
+#~ "correctly? □ Is ToolUniverse instantiated "
+#~ "after tool import?"
+#~ msgstr ""
+#~ "□ 工具文件是否已导入？（需要``import``或直接运行）  \n"
+#~ "□ 是否正确使用了``@register_tool``装饰器？  \n"
+#~ "□ 工具导入后是否实例化了ToolUniverse？"
+
+#~ msgid "Parameter errors"
+#~ msgstr "参数错误"
+
+#~ msgid ""
+#~ "□ Do ``\"parameter\"`` definitions in "
+#~ "config match ``run()`` method parameters? "
+#~ "□ Are required parameters listed in "
+#~ "``\"required\"`` array? □ Are parameter "
+#~ "types (``string``/``number``/``object``) correct?"
+#~ msgstr ""
+#~ "□ 配置中的``\"parameter\"``定义是否与``run()``方法的参数一致？  \n"
+#~ "□ 必需参数是否列在``\"required\"``数组中？  \n"
+#~ "□ 参数类型（``string``/``number``/``object``）是否正确？"
+
+#~ msgid "Execution failures"
+#~ msgstr "执行失败"
+
+#~ msgid ""
+#~ "□ Does the class inherit from "
+#~ "``BaseTool``? □ Does ``__init__`` call "
+#~ "``super().__init__(tool_config)``? □ Does ``run()``"
+#~ " return a dict with ``\"success\"`` "
+#~ "field? □ Is ``validate_input()`` implemented"
+#~ " for parameter validation?"
+#~ msgstr ""
+#~ "□ 该类是否继承自 ``BaseTool``？  \n"
+#~ "□ ``__init__`` 是否调用了 ``super().__init__(tool_config)``？  \n"
+#~ "□ ``run()`` 是否返回包含 ``\"success\"`` 字段的字典？  \n"
+#~ "□ 是否实现了 ``validate_input()`` 用于参数验证？"
+
+#~ msgid "Next Steps"
+#~ msgstr "下一步"
+
+#~ msgid "Now that you can create local tools:"
+#~ msgstr "现在您可以创建本地工具:"
+
+#~ msgid ""
+#~ "🔗 **Remote Tools**: :doc:`remote_tool_registration`"
+#~ " - Learn about remote tool "
+#~ "integration"
+#~ msgstr ""
+#~ "🔗 **远程工具**： :doc:`remote_tool_registration` - "
+#~ "了解远程工具集成🔗 **远程工具**： :doc:`remote_tool_registration` "
+#~ "- 了解远程工具集成"
+
+#~ msgid ""
+#~ "📤 **Contributing**: :doc:`../contributing/local_tools` "
+#~ "- Submit your tools to ToolUniverse"
+#~ msgstr ""
+#~ "📤 **贡献**： :doc:`contributing_tools` - 将您的工具提交到"
+#~ " ToolUniverse📤 **贡献**： :doc:`contributing_tools` "
+#~ "- 将您的工具提交到 ToolUniverse"
+
+#~ msgid ""
+#~ "🤖 **AI Integration**: "
+#~ ":doc:`../guide/building_ai_scientists/mcp_integration` - "
+#~ "Connect your tools with AI assistants"
+#~ msgstr ""
+#~ "🤖 **AI 集成**： "
+#~ ":doc:`../guide/building_ai_scientists/mcp_integration` - "
+#~ "将您的工具与 AI 助手连接🤖 **AI 集成**： "
+#~ ":doc:`../guide/building_ai_scientists/mcp_integration` - "
+#~ "将您的工具与 AI 助手连接"
+
+#~ msgid ""
+#~ "🔬 **Scientific Workflows**: "
+#~ ":doc:`../guide/scientific_workflows` - Build "
+#~ "research pipelines"
+#~ msgstr ""
+#~ "🔬 **科学工作流程**： :doc:`../guide/scientific_workflows` -"
+#~ " 构建研究管道🔬 **科学工作流程**： "
+#~ ":doc:`../guide/scientific_workflows` - 构建研究管道"
+
+#~ msgid ""
+#~ "**Development tip**: Start simple, test "
+#~ "thoroughly, and gradually add complexity. "
+#~ "The ToolUniverse community is here to"
+#~ " help if you get stuck!"
+#~ msgstr ""
+#~ "**开发提示**：从简单开始，彻底测试，并逐渐增加复杂性。如果您遇到困难，ToolUniverse "
+#~ "社区会在这里帮助您！**开发提示**：从简单开始，彻底测试，并逐渐增加复杂性。如果您遇到困难，ToolUniverse "
+#~ "社区会在这里帮助您！"
+

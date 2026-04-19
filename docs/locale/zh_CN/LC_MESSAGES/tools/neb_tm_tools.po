@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/neb_tm_tools.rst:10 87ab1a6029ee4fb4a75cc61749dd8843
+msgid "Neb Tm Tools"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:12 8a09a110d24346a3bf6a6261897c1e48
+msgid ""
+"**Configuration File**: ``neb_tm_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:16 47afca015bdd4f3fa034267920a5315d
+msgid ""
+"This page contains all tools defined in the ``neb_tm_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:19 d722e1470d42473b89d44269149671d9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:22 67a7c55385c244da8258216b419c20d0
+msgid "**NEB_Tm_calculate** (Type: NEBTmTool)"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:24 6ad1b1aac3dc4744a618f59913c24079
+msgid ""
+"Calculate primer melting temperature (Tm) and annealing temperature (Ta) "
+"using the NEB Tm Calcula..."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst 01cd43f96b0d4072aa7fad73a96c2a9f
+msgid "NEB_Tm_calculate tool specification"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:28 ../../tools/neb_tm_tools.rst:71
+#: 6eb46367440d4f1881447ad88541f04e ad1e3467508a4e24a9394136695bca9d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:30 1277a95fa7e14dd9be82a9dbe11716a3
+msgid "**Name**: ``NEB_Tm_calculate``"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:31 ../../tools/neb_tm_tools.rst:74
+#: 59657b71078c476f9f85fe46f020a4dd c068459d78664b23b75f43a405aab062
+msgid "**Type**: ``NEBTmTool``"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:32 8090d7aaa63e4b2fbb1467ac3140024f
+msgid ""
+"**Description**: Calculate primer melting temperature (Tm) and annealing "
+"temperature (Ta) using the NEB Tm Calculator API. Uses thermodynamic "
+"nearest-neighbor calculations (SantaLucia 1998) with polymerase-specific "
+"salt corrections for accurate PCR temperature predictions. Supports all "
+"NEB DNA polymerases including Q5, Phusion, Taq, OneTaq, and custom buffer"
+" conditions. When two primers are provided, also calculates the "
+"recommended annealing temperature (Ta). Complements the local "
+"DNA\\_primer\\_design tool by providing manufacturer-validated Tm values."
+" Common polymerase codes: 'q5-0' (Q5 High-Fidelity), 'phusion-0' (Phusion"
+" HF Buffer), 'taq-0' (Taq Standard Buffer), 'onetaq-0' (OneTaq Standard "
+"Buffer). Use NEB\\_Tm\\_list\\_polymerases to see all available product "
+"codes."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:34 ../../tools/neb_tm_tools.rst:77
+#: 8651cf0990ec439bb21dac82da66ec86 b2fdce40ad0d476f8acb59eead84ce97
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:36 632707dfc6c347caa89ddec82cadbd8a
+msgid ""
+"``primer_sequence`` (string) (required) Forward primer DNA sequence (5' "
+"to 3'). Must contain only A, T, C, G bases and be at least 10 nt long. "
+"Example: 'AGCGGATAACAATTTCACACAGGA'"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:39 0aad1c8e744e4888b586fc97e7894c73
+msgid ""
+"``primer_sequence_2`` (string, null) (optional) Optional reverse primer "
+"DNA sequence (5' to 3'). When provided, the API also calculates annealing"
+" temperature (Ta). Example: 'CCTCACTAAAGGGAACAAAAGCTG'"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:42 f906c47570bd4805a9eaeba9f1c04b0c
+msgid ""
+"``polymerase`` (string, null) (optional) NEB polymerase product code. "
+"Determines buffer composition for Tm calculation. Common codes: 'q5-0' "
+"(Q5 HF, default), 'phusion-0' (Phusion HF Buffer), 'taq-0' (Taq Standard "
+"Buffer), 'onetaq-0' (OneTaq Standard Buffer), 'custom' (specify "
+"monovalent\\_salt\\_mm). Use NEB\\_Tm\\_list\\_polymerases for full list."
+" Default: 'q5-0'."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:45 29173a26e8bd43d0981781cb0c3b2478
+msgid ""
+"``primer_concentration`` (integer, null) (optional) Primer concentration "
+"in nanomolar (nM). Affects Tm calculation. Common values: 200-500 nM. "
+"Default: 250."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:48 3bd1cd82953e4820a96865a17cee16a9
+msgid ""
+"``monovalent_salt_mm`` (integer, null) (optional) Monovalent salt "
+"concentration in mM. Only used when polymerase is 'custom'. Typical "
+"range: 20-100 mM. Default: 50."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:51 ../../tools/neb_tm_tools.rst:82
+#: 7229ecbfdf6b4f258a9891c01ee281c9 964c6b52da7242dca0eb669b5f3953ae
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:65 d698dfc6d3f047e383b3c1a7193b3edc
+msgid "**NEB_Tm_list_polymerases** (Type: NEBTmTool)"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:67 f594f67accdd4ea0929ffc54a151e820
+msgid ""
+"List all NEB DNA polymerase products available for Tm calculation. "
+"Returns product codes (prodcod..."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst 567217a5ab94438ca7c1ff69f98e75e4
+msgid "NEB_Tm_list_polymerases tool specification"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:73 d7167c711a224208ba9aa808acf672a6
+msgid "**Name**: ``NEB_Tm_list_polymerases``"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:75 3cac7e77590b429cbfcd2fcf827e40e0
+msgid ""
+"**Description**: List all NEB DNA polymerase products available for Tm "
+"calculation. Returns product codes (prodcode), product names, and NEB "
+"catalog numbers for all 54 supported polymerases/kits. Includes Q5, "
+"Phusion, Taq, OneTaq, LongAmp, Vent, Deep Vent, and specialty "
+"polymerases. Use the returned prodcode values with NEB\\_Tm\\_calculate "
+"to get polymerase-specific melting temperatures. Can optionally filter by"
+" keyword (e.g., 'Q5', 'Phusion', 'hot start')."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:79 88e7adc3136c486d82dc6db86862ec4e
+msgid ""
+"``filter`` (string, null) (optional) Optional keyword to filter products "
+"by name, product code, or catalog number. Case-insensitive. Examples: "
+"'Q5', 'Phusion', 'hot start', 'master mix', 'M0530'."
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:95 43fb004da2b44165bab593efb081273c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:97 c3f88d2db69a4a139cb8e44fe851ea9e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/neb_tm_tools.rst:98 354760944c884034baba99c558423bcb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_map_tools.rst:10 b44d728616c844bab91d6686b94ab9fe
+msgid "Ensembl Map Tools"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:12 2f8dded1d1344fe7a59ebbfa4075c66a
+msgid ""
+"**Configuration File**: ``ensembl_map_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:16 c973d5a334164b44921a98f947ab8c04
+msgid ""
+"This page contains all tools defined in the ``ensembl_map_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:19 57585d7dbafd408ab5fe05ed835bd1b4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:22 3a112325feac4978876e10f15b3054d8
+msgid "**EnsemblMap_convert_coordinates** (Type: EnsemblMapTool)"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:24 ab6f5833a39f4438a08959057af6b4c9
+msgid ""
+"Convert genomic coordinates between human genome assemblies (e.g., "
+"GRCh37/hg19 to GRCh38/hg38 or ..."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst f06471de4a504c3d91efda1e68e91c16
+msgid "EnsemblMap_convert_coordinates tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:28 ../../tools/ensembl_map_tools.rst:78
+#: 034b681741e24468a7995cff409edd7c 0e947cc06513482fa09ffa698fe297e7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:30 afa74adb9ade48f5a3c7783ef1d1cd54
+msgid "**Name**: ``EnsemblMap_convert_coordinates``"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:31 ../../tools/ensembl_map_tools.rst:81
+#: 06fa4e45a0de46ca83bfc2275f9edaab 7f65ccf91ab046d69573516507f8decb
+msgid "**Type**: ``EnsemblMapTool``"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:32 95ae8fb0e042474b9889d90f302c24db
+msgid ""
+"**Description**: Convert genomic coordinates between human genome "
+"assemblies (e.g., GRCh37/hg19 to GRCh38/hg38 or vice versa). Essential "
+"for migrating variant positions, GWAS loci, or BED intervals between "
+"assembly versions. Uses the Ensembl REST API assembly mapping endpoint. "
+"Example: converting BRAF V600E position chr7:140453136 from GRCh37 maps "
+"to chr7:140753336 in GRCh38. Supports any species with multiple "
+"assemblies."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:34 ../../tools/ensembl_map_tools.rst:84
+#: 5471c4ab1a5e445d9add7a4987c4b031 fe2fcd9512a64ccb98fc261dc0521d2e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:36 7b6ebf90a8ff4d70b0dc20dfd9939a5d
+msgid ""
+"``species`` (string) (optional) Species name. Default 'human'. Examples: "
+"'human', 'mouse', 'homo\\_sapiens', 'mus\\_musculus'."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:39 972c62bcca184903bbb269b3cbe5b0b1
+msgid ""
+"``source_assembly`` (string) (required) Source genome assembly name. "
+"Examples: 'GRCh37', 'GRCh38', 'GRCm38', 'GRCm39'."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:42 f99e0a2358c44f1da553cb03afdedca5
+msgid ""
+"``chromosome`` (string) (required) Chromosome name (e.g., '1', '17', 'X',"
+" 'MT')."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:45 b5dafb1ebdc94d6892861df7083a1c4e
+msgid ""
+"``start`` (integer) (required) Start position on the chromosome (1-based,"
+" inclusive)."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:48 eb7edfc441f848798dbfcdb49c4873ac
+msgid ""
+"``end`` (integer) (required) End position on the chromosome (1-based, "
+"inclusive)."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:51 1212fc8ea11a41b99e0c506cda8c09a3
+msgid ""
+"``target_assembly`` (string) (required) Target genome assembly name. "
+"Examples: 'GRCh38', 'GRCh37'."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:54 ../../tools/ensembl_map_tools.rst:95
+#: 3b38f76162d5496fbf0a6e6f0c03dd19 48877fd360654c819756d3781de5d01d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:72 fc2cbf7cd559495ebc3daa1a3632b1db
+msgid "**EnsemblMap_translate_coordinates** (Type: EnsemblMapTool)"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:74 7250ce62fbe7497eb2bff6e010003a13
+msgid ""
+"Map protein or cDNA positions to genomic coordinates using Ensembl. "
+"Converts positions from trans..."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst de899b93d0424f7182625d9e9486eddc
+msgid "EnsemblMap_translate_coordinates tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:80 6230827c778e4ee08c2843896e5126b0
+msgid "**Name**: ``EnsemblMap_translate_coordinates``"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:82 4b742f770e9e4651ac469a3fa30e63af
+msgid ""
+"**Description**: Map protein or cDNA positions to genomic coordinates "
+"using Ensembl. Converts positions from transcript coordinate space (cDNA "
+"nucleotide positions) or protein coordinate space (amino acid positions) "
+"to chromosomal positions. Essential for mapping protein mutations (e.g., "
+"p53 amino acids 100-200) or transcript features to their genomic "
+"locations. Example: mapping protein positions 100-200 of ENSP00000269305 "
+"(p53) returns genomic coordinates chr17:7674931-7676071 across 3 exons."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:86 2cbb95d257f14edfafbaedef4e9253c0
+msgid ""
+"``ensembl_id`` (string) (required) Ensembl transcript ID (ENST\\*) for "
+"cDNA mapping, or Ensembl protein ID (ENSP\\*) for protein mapping. "
+"Examples: 'ENST00000269305' (TP53 transcript), 'ENSP00000269305' (TP53 "
+"protein)."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:89 10d9add87b6f4b139b9f5feb46467006
+msgid ""
+"``start`` (integer) (required) Start position in transcript/protein "
+"coordinates (1-based). For cDNA: nucleotide position. For protein: amino "
+"acid position."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:92 6a47ad1fa590403082a98cee59df847f
+msgid ""
+"``end`` (integer) (required) End position in transcript/protein "
+"coordinates (1-based)."
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:111 114e2b8c6d544345ab097288c58fda5f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:113 d3a746dac9804a9092099ed413fcfaf8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_map_tools.rst:114 4c47c07c817d468f9993990f24f588c0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

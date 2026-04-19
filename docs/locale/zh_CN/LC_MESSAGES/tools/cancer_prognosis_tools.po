@@ -1,0 +1,320 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cancer_prognosis_tools.rst:10 2fa90429e4de4b9da0bb04317a790ff9
+msgid "Cancer Prognosis Tools"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:12 15de36ee08484438b440fa6cf22e819c
+msgid ""
+"**Configuration File**: ``cancer_prognosis_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:16 0a862cc115e842d7ac04fc8802094a18
+msgid ""
+"This page contains all tools defined in the "
+"``cancer_prognosis_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:19 d4d325cafbae44f48791989641c86270
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:22 b7c301e14ea6478d882f8b36bf7fff7a
+msgid "**CancerPrognosis_get_gene_expression** (Type: CancerPrognosisTool)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:24 889afe0f5d3943a4adbe2039ab0d3bd2
+msgid ""
+"Fetch gene expression values (RNA-seq) for a specific gene across cancer "
+"samples in a TCGA or cBi..."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst 4f1713fa92d14a9d93450ca6b04415f1
+msgid "CancerPrognosis_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:28
+#: ../../tools/cancer_prognosis_tools.rst:79
+#: ../../tools/cancer_prognosis_tools.rst:118
+#: ../../tools/cancer_prognosis_tools.rst:160 64a53fcf967b4d80808d86b77209ab28
+#: 85ea2bdb0cbf4df2ace587f58e2c5f0a c66ef174924e4eba9ab7737b1e7a59d3
+#: e1ff76c814f2465a8025d26d7c08ac00
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:30 ccaa1034e91e46ef9d9be8036199d377
+msgid "**Name**: ``CancerPrognosis_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:31
+#: ../../tools/cancer_prognosis_tools.rst:82
+#: ../../tools/cancer_prognosis_tools.rst:121
+#: ../../tools/cancer_prognosis_tools.rst:163 34194c0a9b7d4cac92846870e1309752
+#: 57c81077aa3a4837ba2f6ad720cfdd49 ad7bc00b5d4d4d968b0be6d001531939
+#: f934edbe022745b7bd37c9d90d8fcf62
+msgid "**Type**: ``CancerPrognosisTool``"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:32 797c907b2c7d489aa6fce8d0bce93789
+msgid ""
+"**Description**: Fetch gene expression values (RNA-seq) for a specific "
+"gene across cancer samples in a TCGA or cBioPortal study. Returns per-"
+"sample expression values with summary statistics (mean, median, min, "
+"max). Output can be combined with survival data for expression-based "
+"prognostic analysis. Supports 33 TCGA cancer types and any cBioPortal "
+"study with mRNA expression data."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:34
+#: ../../tools/cancer_prognosis_tools.rst:85
+#: ../../tools/cancer_prognosis_tools.rst:124
+#: ../../tools/cancer_prognosis_tools.rst:166 777081f8b49643439438b9e297fdc76f
+#: 82694798a8f84afda831c1f3e0e68b71 cda12a6f20834298aa978f262131eb1f
+#: e7650ea7177b4f09a2faae507b9e9c31
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:36
+#: ../../tools/cancer_prognosis_tools.rst:87
+#: ../../tools/cancer_prognosis_tools.rst:126
+#: ../../tools/cancer_prognosis_tools.rst:168 04aa020ba7704c31b69b9a72fd153af9
+#: 527e34abf82a4f2196dcfa9251d6faff 7b6fe75a30204d199d92203344a35fb2
+#: 89934158622d4159ac9de4a454b151b3
+msgid "``operation`` (string) (optional) Operation type"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:39
+#: ../../tools/cancer_prognosis_tools.rst:90 47c498f6e93947f58b17bd69262f9ae4
+#: aefbab3d894243178ef1e9fd927e6e60
+msgid ""
+"``cancer`` (string) (optional) TCGA cancer type abbreviation (e.g., "
+"'BRCA', 'LUAD', 'COADREAD') or cBioPortal study ID. Use cancer\\_type as "
+"alias."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:42 4e505483d0f248fca9e7e95ad0370280
+msgid ""
+"``cancer_type`` (string) (optional) Alias for cancer. TCGA cancer type "
+"(e.g., 'BRCA', 'LUAD', 'COADREAD') or cBioPortal study ID."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:45
+#: ../../tools/cancer_prognosis_tools.rst:96 5a6c04b1113c4edc88ac7565f2abe4d0
+#: 6a4b993046474ff3b7ee7f586650544f
+msgid ""
+"``study_id`` (string) (optional) Alias for cancer. cBioPortal study ID "
+"(e.g., 'brca\\_tcga', 'luad\\_tcga')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:48 fffa8d9bef8d430e88503899ecd9f31e
+msgid ""
+"``gene`` (string) (optional) Gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR', "
+"'CD8A')"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:51 3efac60db08e46f9a752f356914dd9ef
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene. Gene symbol (e.g., "
+"'TP53', 'BRCA1', 'EGFR')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:54 9f35f4f117d74eaebe42be4dd1218dfd
+msgid ""
+"``gene_name`` (string) (optional) Alias for gene. Gene symbol or name "
+"(e.g., 'TP53', 'BRCA1')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:57 3ef12650f1f84277b02488590d07e7ed
+msgid ""
+"``max_samples`` (integer, null) (optional) Upper bound on sample records "
+"to return (default 500, max 2000). Actual count may be lower if some "
+"samples lack expression data for the requested gene."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:60
+#: ../../tools/cancer_prognosis_tools.rst:99
+#: ../../tools/cancer_prognosis_tools.rst:141
+#: ../../tools/cancer_prognosis_tools.rst:186 07c50905129f4dd2bf9647781b734777
+#: 5001ee1ea28f4abc98295c631f4be049 71df398d7b0d4a389d8daecc9162a6a2
+#: 9241e2aa802744178cb5b2fa0277c804
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:73 6706cecb4d814526b8c75ba9203fd2d9
+msgid "**CancerPrognosis_get_study_summary** (Type: CancerPrognosisTool)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:75 230f6282db1246c18757488f63fdf5dc
+msgid ""
+"Get summary information for a cancer study including available molecular "
+"profiles (mutations, exp..."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst f852831bd2bc4467871bcd9f0b27ecd9
+msgid "CancerPrognosis_get_study_summary tool specification"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:81 78fe57fddce743bd969dddd77172b4af
+msgid "**Name**: ``CancerPrognosis_get_study_summary``"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:83 4bebb8c51f2543fc911d178b3be339dd
+msgid ""
+"**Description**: Get summary information for a cancer study including "
+"available molecular profiles (mutations, expression, CNV), survival-"
+"related clinical attributes, and sample counts. Useful for determining "
+"what data is available before querying expression or survival data. Lists"
+" all 33 supported TCGA cancer type abbreviations."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:93 0a73f2742705443085e7b74beb7a36cb
+msgid ""
+"``cancer_type`` (string) (optional) Alias for cancer. TCGA cancer type "
+"abbreviation (e.g., 'BRCA', 'LUAD', 'COADREAD')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:112 0a5d77d68b184d328e420206ce122eb9
+msgid "**CancerPrognosis_get_survival_data** (Type: CancerPrognosisTool)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:114 5ccd8cb0065f45388d2574f204c0f703
+msgid ""
+"Retrieve patient-level overall survival (OS) and disease-free survival "
+"(DFS) data from a TCGA or ..."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst 5310c3f6390d45598e146cf65c3bfd28
+msgid "CancerPrognosis_get_survival_data tool specification"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:120 1dea3b89795c4b30824d81d13ea24b08
+msgid "**Name**: ``CancerPrognosis_get_survival_data``"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:122 96e52b2e469144718ac5e27262e3a60c
+msgid ""
+"**Description**: Retrieve patient-level overall survival (OS) and "
+"disease-free survival (DFS) data from a TCGA or cBioPortal cancer study. "
+"Returns per-patient survival times, event status, and age. Data can be "
+"directly used with Survival\\_kaplan\\_meier or "
+"Survival\\_log\\_rank\\_test tools for custom survival analyses. Supports"
+" 33 TCGA cancer types (BRCA, LUAD, COAD, GBM, etc.) and 400+ cBioPortal "
+"studies."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:129 f12f4ade17c54bd290b9fee4db6e53d9
+msgid ""
+"``cancer`` (string) (optional) TCGA cancer type abbreviation (e.g., "
+"'BRCA', 'LUAD', 'COAD', 'GBM', 'COADREAD') or cBioPortal study ID (e.g., "
+"'brca\\_tcga'). Use cancer\\_type as alias."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:132 7bb4ffca93ff4fc4ae2433c2eec24748
+msgid ""
+"``cancer_type`` (string) (optional) Alias for cancer. TCGA cancer type "
+"abbreviation (e.g., 'BRCA', 'LUAD', 'COAD', 'GBM', 'COADREAD') or "
+"cBioPortal study ID."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:135 a08023a93e87411597b11a7f3e833395
+msgid ""
+"``study_id`` (string) (optional) Alias for cancer. cBioPortal study ID "
+"(e.g., 'brca\\_tcga', 'coadread\\_tcga', 'luad\\_tcga')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:138 c4e26e7f6e7946aa88cecce561014ae0
+msgid ""
+"``max_patients`` (integer, null) (optional) Maximum number of patient "
+"records to return (default 500, max 2000)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:154 5a3c7053603e4f5d9b7316d122dcc8a5
+msgid "**CancerPrognosis_search_studies** (Type: CancerPrognosisTool)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:156 2fc20048d914411e83f911461ad5044b
+msgid ""
+"Search cBioPortal for cancer genomics studies by keyword. Find studies by"
+" cancer type, institutio..."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst 701f04879a5647a68a57bc8e91a2fdda
+msgid "CancerPrognosis_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:162 61952ac8d712477fb3dc0b443faa9275
+msgid "**Name**: ``CancerPrognosis_search_studies``"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:164 9c39928a630f4c1caa7bec9bf86914d3
+msgid ""
+"**Description**: Search cBioPortal for cancer genomics studies by "
+"keyword. Find studies by cancer type, institution, or data type. Returns "
+"study IDs that can be used with other CancerPrognosis tools. Covers 400+ "
+"studies including all TCGA projects, AACR GENIE, MSK-IMPACT, and "
+"institutional cohorts."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:171 69490670f35444a3ad06336dbb317c4a
+msgid ""
+"``keyword`` (string) (optional) Search keyword (e.g., 'breast', 'lung', "
+"'TCGA', 'melanoma', 'glioblastoma')"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:174 62d93f1ba8204441b443fcd7378811fb
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 20, max 100)"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:177 99b5e40a8f5a42a580aec17bf596de5e
+msgid ""
+"``cancer_type`` (string) (optional) Cancer type to search for. Alias for "
+"keyword."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:180 5b65f20048e54f759a1c9eb3a91e7bea
+msgid ""
+"``cancer`` (string) (optional) Cancer type to search for. Alias for "
+"keyword."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:183 e02de61baa2649caa92feacf37e5ed60
+msgid ""
+"``query`` (string) (optional) Search query. Alias for keyword (e.g., "
+"'lung', 'breast', 'TCGA')."
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:199 77f9f000ec7e400db52e3d20c10395ab
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:201 f206f4fb65924b9c853f48812aed18cd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cancer_prognosis_tools.rst:202 ac5846182de74aae84078d79489b752e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

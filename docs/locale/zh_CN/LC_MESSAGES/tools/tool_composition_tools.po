@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/tool_composition_tools.rst:2 510778baa86f424fba885da1b6594aa0
+#: ../../tools/tool_composition_tools.rst:10 c38f96ecfb984d4da898060e9d31babd
 msgid "Tool Composition Tools"
 msgstr "工具组成工具"
 
-#: ../../tools/tool_composition_tools.rst:4 7973d68746da4e5cb3412ac4fb41f4fc
+#: ../../tools/tool_composition_tools.rst:12 fcb0d2e391b4406fb25b7b025c2fc9dd
 msgid ""
 "**Configuration File**: ``tool_composition_tools.json`` **Tool Type**: "
 "Local **Tools Count**: 2"
@@ -33,70 +33,70 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：2"
 
-#: ../../tools/tool_composition_tools.rst:8 cfa86fb4557d4d469ae4e1af0ccc48f2
+#: ../../tools/tool_composition_tools.rst:16 3ca997804d254ca7b1150b4218c825eb
 msgid ""
 "This page contains all tools defined in the "
 "``tool_composition_tools.json`` configuration file."
 msgstr "此页面包含 ``tool_composition_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/tool_composition_tools.rst:11 e222d9f65f204974be72e9b0ab89bf3c
+#: ../../tools/tool_composition_tools.rst:19 7770dea627324a9992c69b02ad2f3b45
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/tool_composition_tools.rst:14 1a5b22bfb7124ba0acf365a984521550
+#: ../../tools/tool_composition_tools.rst:22 a6ca4f72ac4d40fbb12855a89d2bac95
 msgid "**ToolCompatibilityAnalyzer** (Type: AgenticTool)"
 msgstr "**工具兼容性分析器**（类型：AgenticTool）"
 
-#: ../../tools/tool_composition_tools.rst:16 d8e9925ba65f498faba6b6e77aef5a9f
+#: ../../tools/tool_composition_tools.rst:24 bb52386058104ff781a2c2cd78a0827c
 msgid ""
 "Analyzes two tool specifications to determine if one tool's output can be"
 " used as input for anoth..."
 msgstr "分析两个工具规范，以确定一个工具的输出是否可以作为另一个工具的输入。"
 
-#: ../../tools/tool_composition_tools.rst 6d749e8166ac4eccafcc6c238f5d62c9
+#: ../../tools/tool_composition_tools.rst 78511a4b88564944904e031d46a18bc3
 msgid "ToolCompatibilityAnalyzer tool specification"
 msgstr "ToolCompatibilityAnalyzer 工具规格说明"
 
-#: ../../tools/tool_composition_tools.rst:20
-#: ../../tools/tool_composition_tools.rst:59 19dbd175d6f041638c51bbc3d6532a2e
-#: 263f3659e06b49eba8b6a9d6b45ce4d3
+#: ../../tools/tool_composition_tools.rst:28
+#: ../../tools/tool_composition_tools.rst:67 c8eddc056cf4453597c28d5d60fe000a
+#: fc889effde314f23b4f1f28d93fccabe
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/tool_composition_tools.rst:22 1de2bf2df63442e389512572d0715771
+#: ../../tools/tool_composition_tools.rst:30 3dad91ab9e514d9aa3dae749e88316ce
 msgid "**Name**: ``ToolCompatibilityAnalyzer``"
 msgstr "**名称**：``ToolCompatibilityAnalyzer``"
 
-#: ../../tools/tool_composition_tools.rst:23 9e9c0a720b474b499c99ec8d5b4f774c
+#: ../../tools/tool_composition_tools.rst:31 8c149b5668de490996d11053ab80843e
 msgid "**Type**: ``AgenticTool``"
 msgstr "**类型**：``AgenticTool``"
 
-#: ../../tools/tool_composition_tools.rst:24 55adf09066cb41f29ce4458dc4d77bc7
+#: ../../tools/tool_composition_tools.rst:32 73c9e0a3b4d74ce4b2c0a3e9b6ff06eb
 msgid ""
 "**Description**: Analyzes two tool specifications to determine if one "
 "tool's output can be used as input for another tool. Returns "
 "compatibility information and suggested parameter mappings."
 msgstr "**描述**：分析两个工具的规格，以确定一个工具的输出是否可以作为另一个工具的输入。返回兼容性信息以及建议的参数映射。"
 
-#: ../../tools/tool_composition_tools.rst:26
-#: ../../tools/tool_composition_tools.rst:65 93f5abdac49c4c1684de76f97f8957cf
-#: d5f4a881d9814491931dd6449b45904d
+#: ../../tools/tool_composition_tools.rst:34
+#: ../../tools/tool_composition_tools.rst:73 209795254aaa484e9d8938b7c7fdd9f0
+#: 61f4181297374b7fabb71fb6391627ef
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/tool_composition_tools.rst:28 4a91a44d7b1b43849bc0b1ff7e34fba4
+#: ../../tools/tool_composition_tools.rst:36 eefb9ad7924244a6888bb03701383cde
 msgid ""
 "``source_tool`` (string) (required) The source tool specification (JSON "
 "string with name, description, parameter schema, and example outputs)"
 msgstr "``source_tool``（字符串）（必填）源工具规范（JSON 字符串，包含名称、描述、参数模式和示例输出）"
 
-#: ../../tools/tool_composition_tools.rst:31 6b5b884566f44dca8c84da0df2b90f7d
+#: ../../tools/tool_composition_tools.rst:39 3a2c89e0fd5143d5989c4ab272b5838e
 msgid ""
 "``target_tool`` (string) (required) The target tool specification (JSON "
 "string with name, description, parameter schema)"
 msgstr "``target_tool``（字符串）（必填）目标工具规范（包含名称、描述和参数模式的 JSON 字符串）"
 
-#: ../../tools/tool_composition_tools.rst:34 17069ac67089440cb38dd056aa302f1d
+#: ../../tools/tool_composition_tools.rst:42 5d64677fd55f44a88f6994c2b8e55197
 #, fuzzy
 msgid ""
 "``analysis_depth`` (string) (required) Level of analysis depth - quick "
@@ -104,94 +104,94 @@ msgid ""
 "for semantic analysis"
 msgstr "``analysis_depth``（字符串）（可选）分析深度级别——快速用于基本兼容性，详细用于参数映射，全面用于语义分析"
 
-#: ../../tools/tool_composition_tools.rst:37
-#: ../../tools/tool_composition_tools.rst:85 59342f88ae1942e6b41831a2cab2a8c5
-#: aa25dce0b35540b8b25c4b9c144ccb53
+#: ../../tools/tool_composition_tools.rst:45
+#: ../../tools/tool_composition_tools.rst:93 3800f8baba6842f9a8d8a158cbe248a6
+#: eedb8f55b5ab4a7b82af5fdcbc05e777
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/tool_composition_tools.rst:53 cbd53c54b1304523835c4f84a5dd2aac
+#: ../../tools/tool_composition_tools.rst:61 c1008fa53a07483d9ef9a0288e008215
 msgid "**ToolGraphComposer** (Type: ComposeTool)"
 msgstr "**ToolGraphComposer**（类型：ComposeTool）"
 
-#: ../../tools/tool_composition_tools.rst:55 0b748fbe45bf4d98b0ddba659e2a8647
+#: ../../tools/tool_composition_tools.rst:63 fdb2d0f4724d4da6801df1fe8a3af397
 msgid ""
 "Builds a comprehensive graph of tool compatibility relationships in "
 "ToolUniverse. Analyzes all av..."
 msgstr "在ToolUniverse中构建工具兼容性关系的全面图谱。分析所有可用工具的兼容性关系..."
 
-#: ../../tools/tool_composition_tools.rst 946b065b58be4779b05af6f1a4260f7a
+#: ../../tools/tool_composition_tools.rst d8bdca8a3d27490694a1f454a0801fef
 msgid "ToolGraphComposer tool specification"
 msgstr "ToolGraphComposer 工具规范"
 
-#: ../../tools/tool_composition_tools.rst:61 f00baaab83b54bf981e41e53fc9f646d
+#: ../../tools/tool_composition_tools.rst:69 68cc0a11729d4683ab1b966e0ec250b6
 msgid "**Name**: ``ToolGraphComposer``"
 msgstr "**名称**: ``ToolGraphComposer``"
 
-#: ../../tools/tool_composition_tools.rst:62 1704507e3d1641c0b28c986ae200f5f6
+#: ../../tools/tool_composition_tools.rst:70 d19f458976e741d688457d340109c77f
 msgid "**Type**: ``ComposeTool``"
 msgstr "**类型**: ``ComposeTool``"
 
-#: ../../tools/tool_composition_tools.rst:63 b77778aef77f4d14a1de255993089b9f
+#: ../../tools/tool_composition_tools.rst:71 596c5735954049a2b0e709c51b9eacfe
 msgid ""
 "**Description**: Builds a comprehensive graph of tool compatibility "
 "relationships in ToolUniverse. Analyzes all available tools and creates a"
 " directed graph showing which tools can be composed together."
 msgstr "**描述**：构建ToolUniverse中工具兼容性关系的综合图表。分析所有可用工具，并创建一个有向图，显示哪些工具可以组合使用。"
 
-#: ../../tools/tool_composition_tools.rst:67 4f7f2a087b3249488e5dd5eda0ba9dda
+#: ../../tools/tool_composition_tools.rst:75 251fe440a504400fadfa33e9172a4386
 #, fuzzy
 msgid ""
 "``output_path`` (string) (required) Path to save the generated graph "
 "files (JSON and pickle formats)"
 msgstr "``output_path``（字符串）（可选）用于保存生成的图文件的路径（JSON 和 pickle 格式）"
 
-#: ../../tools/tool_composition_tools.rst:70 003012858e9e47c8b100fa9d78e25e16
+#: ../../tools/tool_composition_tools.rst:78 7123586f415c4973a188834a25ee5665
 #, fuzzy
 msgid ""
 "``analysis_depth`` (string) (required) Level of compatibility analysis to"
 " perform"
 msgstr "``analysis_depth``（字符串）（可选）执行兼容性分析的深度级别"
 
-#: ../../tools/tool_composition_tools.rst:73 0aec5ac4109e43288ff04883ad3ab5e4
+#: ../../tools/tool_composition_tools.rst:81 32cffe5947f341a79f140852abf60cbd
 #, fuzzy
 msgid ""
 "``min_compatibility_score`` (integer) (required) Minimum compatibility "
 "score to create an edge in the graph"
 msgstr "``min_compatibility_score``（整数）（可选）创建图中边所需的最低兼容性分数"
 
-#: ../../tools/tool_composition_tools.rst:76 83c79c34dd93463ba50ada3946296b46
+#: ../../tools/tool_composition_tools.rst:84 994306218c194f6c9e6affad49ac8707
 #, fuzzy
 msgid ""
 "``exclude_categories`` (array) (required) Tool categories to exclude from"
-" analysis (e.g., ['tool_finder', 'special_tools'])"
+" analysis (e.g., ['tool\\_finder', 'special\\_tools'])"
 msgstr ""
 "``exclude_categories``（数组）（可选）要从分析中排除的工具类别（例如：['tool_finder', "
 "'special_tools']）"
 
-#: ../../tools/tool_composition_tools.rst:79 583cce79ce7c4e6ba2867f220069dabd
+#: ../../tools/tool_composition_tools.rst:87 9b1e3a3c4cd248a7bb056748bb206e48
 #, fuzzy
 msgid ""
 "``max_tools_per_category`` (integer) (required) Maximum number of tools "
 "to analyze per category (for performance)"
 msgstr "``max_tools_per_category``（整数）（可选）每个类别中要分析的工具最大数量（用于性能优化）"
 
-#: ../../tools/tool_composition_tools.rst:82 155a04ef6bdf4bdba94ca266cdab58e8
+#: ../../tools/tool_composition_tools.rst:90 b547186f2a3d41339b2a6789595610da
 #, fuzzy
 msgid ""
 "``force_rebuild`` (boolean) (required) Whether to force rebuild even if "
 "cached graph exists"
 msgstr "``force_rebuild``（布尔值）（可选）是否在已存在缓存图的情况下强制重新构建"
 
-#: ../../tools/tool_composition_tools.rst:104 6b8491f277634b4c86a03467cd74264f
+#: ../../tools/tool_composition_tools.rst:112 5ffda61f544a4b92948e389de3199947
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/tool_composition_tools.rst:106 159acdf3adee48bcad2b1c750daf0d1b
+#: ../../tools/tool_composition_tools.rst:114 23c036b3764d403fb9689edcd85cfd29
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/tool_composition_tools.rst:107 e5e98619b80247e3b7bb04528f5f7fac
+#: ../../tools/tool_composition_tools.rst:115 be9b2371e75b48beb720e42c628b85b4
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

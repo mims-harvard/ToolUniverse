@@ -1,0 +1,944 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nvidia_nim_tools.rst:10 2977c172f3a04d68847ac334127d78d8
+msgid "Nvidia Nim Tools"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:12 da647911f30744818aa19a76f6bd965a
+msgid ""
+"**Configuration File**: ``nvidia_nim_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 16"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:16 5a651a9f2ba7487993a6d1977b818566
+msgid ""
+"This page contains all tools defined in the ``nvidia_nim_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:19 a0f3bf6690ef4d1abe7f9c5bd7cd8470
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:22 30a6edcc0deb406dafbe47d709382082
+msgid "**NvidiaNIM_alphafold2** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:24 d7a46e7a18cd475fac30334dcfb32893
+msgid ""
+"Predict protein 3D structure from amino acid sequence using DeepMind's "
+"AlphaFold2 via NVIDIA NIM...."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 7bdaebe0c75b4b8a9e362acab9b1c596
+msgid "NvidiaNIM_alphafold2 tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:28 ../../tools/nvidia_nim_tools.rst:77
+#: ../../tools/nvidia_nim_tools.rst:114 ../../tools/nvidia_nim_tools.rst:160
+#: ../../tools/nvidia_nim_tools.rst:213 ../../tools/nvidia_nim_tools.rst:248
+#: ../../tools/nvidia_nim_tools.rst:279 ../../tools/nvidia_nim_tools.rst:328
+#: ../../tools/nvidia_nim_tools.rst:374 ../../tools/nvidia_nim_tools.rst:430
+#: ../../tools/nvidia_nim_tools.rst:467 ../../tools/nvidia_nim_tools.rst:513
+#: ../../tools/nvidia_nim_tools.rst:550 ../../tools/nvidia_nim_tools.rst:581
+#: ../../tools/nvidia_nim_tools.rst:624 ../../tools/nvidia_nim_tools.rst:668
+#: 1b7d4a73bb1a49b58ae0fe5abc27b48a 24a791ecc3034649876707cccfdf41b5
+#: 3e808efa474e474f893e5089d2c68fe6 52d941c84d77416f825141beaa5d97a9
+#: 6f05b0f710ee4afa8bcf56991d9f601f 7da826303ec244aab8975b0021f0d66f
+#: 90f4c06d1a5749498fa229483e4694fe a14ec7d8520f498f97215a8c71772b85
+#: b2de0a097e00415fa2554636ff44f8a1 c94a639ec2d447399c2a8585eebc48b8
+#: dd915c5487444d9fbc3287c56c70e1f7 ed3629a069564c899cd5a1451f94ac47
+#: eee150e5cee64ceca12d063986bc9269 fd770565792444c585f5d8d7a8a67d9e
+#: fea474de46b3437d8c8152eade273287 ffefa28aaa6d4a0caa80be96fdc5c67a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:30 03f8512a033f4509ac682498cc703132
+msgid "**Name**: ``NvidiaNIM_alphafold2``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:31 ../../tools/nvidia_nim_tools.rst:80
+#: ../../tools/nvidia_nim_tools.rst:117 ../../tools/nvidia_nim_tools.rst:163
+#: ../../tools/nvidia_nim_tools.rst:216 ../../tools/nvidia_nim_tools.rst:251
+#: ../../tools/nvidia_nim_tools.rst:282 ../../tools/nvidia_nim_tools.rst:331
+#: ../../tools/nvidia_nim_tools.rst:377 ../../tools/nvidia_nim_tools.rst:433
+#: ../../tools/nvidia_nim_tools.rst:470 ../../tools/nvidia_nim_tools.rst:516
+#: ../../tools/nvidia_nim_tools.rst:553 ../../tools/nvidia_nim_tools.rst:584
+#: ../../tools/nvidia_nim_tools.rst:627 ../../tools/nvidia_nim_tools.rst:671
+#: 2139a0f6a89c4be583ae55f0da379568 36bb20c9fed34bfba3fca0cb55575ce2
+#: 45d6ac4bf51e4d0fba74fdd76865e0e7 5e9f744a98f1492b88a5c9366be6528f
+#: 62f01ae741644fd08015bdadea2d87db 853393d664e74cc4b3f7e037ecd70080
+#: 9a201ef641ae466dbf28346b2c6d4c87 9fc235c280374e76998deaf332061a23
+#: b389b054426044dc9ea1471121d9bbf6 c5880938f4fa4d98a5099d258d786023
+#: c6277a2dd27846b5958c67561f6c5d5d c84f35d70a204a37ae745c0505d62da9
+#: cfca756766544cf0ab610ca6798aabc0 d896af2acde4462baa7046eebb86f724
+#: dfbd934ff28147cf85b3478592bd8870 e055f0e169144cf193004fc096be5451
+msgid "**Type**: ``NvidiaNIMTool``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:32 6ff9418a7f994d6d9bf101c020d793f4
+msgid ""
+"**Description**: Predict protein 3D structure from amino acid sequence "
+"using DeepMind's AlphaFold2 via NVIDIA NIM. Returns PDB format structure."
+" Requires NVIDIA\\_API\\_KEY. Input: sequence (amino acids), algorithm "
+"(jackhmmer/mmseqs2), databases (uniref90, mgnify, small\\_bfd). Long-"
+"running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:34 ../../tools/nvidia_nim_tools.rst:83
+#: ../../tools/nvidia_nim_tools.rst:120 ../../tools/nvidia_nim_tools.rst:166
+#: ../../tools/nvidia_nim_tools.rst:219 ../../tools/nvidia_nim_tools.rst:254
+#: ../../tools/nvidia_nim_tools.rst:285 ../../tools/nvidia_nim_tools.rst:334
+#: ../../tools/nvidia_nim_tools.rst:380 ../../tools/nvidia_nim_tools.rst:436
+#: ../../tools/nvidia_nim_tools.rst:473 ../../tools/nvidia_nim_tools.rst:519
+#: ../../tools/nvidia_nim_tools.rst:556 ../../tools/nvidia_nim_tools.rst:587
+#: ../../tools/nvidia_nim_tools.rst:630 ../../tools/nvidia_nim_tools.rst:674
+#: 0c81161e408e4842854e7d5af2c51612 10482f55a0f14793b4e30a03b7c670a8
+#: 1327ca083c46451d885da8448cb47ddb 35caf7ed3e68432ea54a1f780824759f
+#: 3d136a9f1e2c443b9180598306ef39bc 544508028e9046ce8a8c6f17ce571cac
+#: 5a2bdb59cfe748dda0d015830d148f75 5c9082cdaa4c4d0c83ef78ff845179f5
+#: 6d8a0afc34954747a945c89b4c11ef1e 89a5b2b339cc4eb9b824f7c97c47183d
+#: a42604f877774a9d9044dd254509cf30 a6304c0c83104e02a3b5ece064317851
+#: ab7835ea19824b86ab9a52fb61b947e4 deb71af8c0ec4d2092d8f475660827a1
+#: e1cc8fcaaca64bb5850302e047ca1783 f2b3d11efea9409e92fcb6ff14894e0f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:36 6fdc71edc2044ff5855ece765df958c5
+msgid ""
+"``sequence`` (string) (required) Amino acid sequence to predict structure"
+" for (single letter codes)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:39 19eed1035bad4d3894b63853365e43e6
+msgid ""
+"``algorithm`` (string) (optional) MSA search algorithm. mmseqs2 is "
+"faster, jackhmmer is more sensitive"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:42 481934d579fe48a590fd0d20dc2fd6f9
+msgid ""
+"``databases`` (array) (optional) Sequence databases for MSA search: "
+"uniref90, mgnify, small\\_bfd"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:45 5f3338cca1a249fab3176dead5e61c77
+msgid "``e_value`` (number) (optional) E-value threshold for MSA search"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:48 a9c8174f27194e3a8649fb6ffffa52e5
+msgid "``iterations`` (integer) (optional) Number of search iterations"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:51 3e65d1abb00343bb94e0713a8fadd2c8
+msgid ""
+"``relax_prediction`` (boolean) (optional) Whether to perform structure "
+"relaxation"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:54 1c6fc8b3f6114265acd49ba67d001935
+msgid ""
+"``skip_template_search`` (boolean) (optional) Skip template-based "
+"prediction"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:57 ../../tools/nvidia_nim_tools.rst:94
+#: ../../tools/nvidia_nim_tools.rst:140 ../../tools/nvidia_nim_tools.rst:192
+#: ../../tools/nvidia_nim_tools.rst:227 ../../tools/nvidia_nim_tools.rst:259
+#: ../../tools/nvidia_nim_tools.rst:308 ../../tools/nvidia_nim_tools.rst:354
+#: ../../tools/nvidia_nim_tools.rst:409 ../../tools/nvidia_nim_tools.rst:447
+#: ../../tools/nvidia_nim_tools.rst:493 ../../tools/nvidia_nim_tools.rst:530
+#: ../../tools/nvidia_nim_tools.rst:561 ../../tools/nvidia_nim_tools.rst:604
+#: ../../tools/nvidia_nim_tools.rst:647 ../../tools/nvidia_nim_tools.rst:682
+#: 1c41814170974d29bd8281f99d8558d6 3be2b6791e344f4abc474c4840894ebe
+#: 46c371eac9fb42daad75da2d34892387 4a82bdae2eb74affa98d3ab51b9604c4
+#: 65607d636ba642d2a38303fba465bf70 81ed48b2069144c88aee1994deb27f9a
+#: a99dae4a0bc84c80b303203fa01de4bc cb3ceeaeb8754dcdadc37e1abc0ac2bd
+#: cf36d14fcf8a4f669da0f1cdbb9a54d3 d0261963ea8b48e38ab61822a2bee4de
+#: d5d028978b7c4afab8513e0116f64a50 d78ceedd41e547adb498b8658d3761e0
+#: deab37f38b5a4219886df6b40535eb10 e96bdf280c9f490785d6d54657736f79
+#: edf3558cf26240eb80d42b1852115d1e fdef9d0a7a544fdfa57ea3b41ba6c9b7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:71 7a7f9132d6c344b89988cd8d441d6b39
+msgid "**NvidiaNIM_alphafold2_multimer** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:73 dd3fa861337646209dfa2df24ed01100
+msgid ""
+"Predict multi-chain protein complex structure using AlphaFold2-Multimer "
+"via NVIDIA NIM. Input: se..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 393bba649b764337ab5250985017df40
+msgid "NvidiaNIM_alphafold2_multimer tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:79 1ff49c198aa643f7b2f1794693623e61
+msgid "**Name**: ``NvidiaNIM_alphafold2_multimer``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:81 c54b5189363c4878ae076df2e93aaa18
+msgid ""
+"**Description**: Predict multi-chain protein complex structure using "
+"AlphaFold2-Multimer via NVIDIA NIM. Input: sequences (array of 1-6 "
+"protein sequences for complex). Returns predicted complex structure. "
+"Long-running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:85 795056c0d654483c8910c6ee87e23af7
+msgid ""
+"``sequences`` (array) (required) Array of 1-6 protein sequences (amino "
+"acid single letter codes) to predict as a complex"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:88 dfe54e5fd28b4bcf8c7e2d7edeea356d
+msgid ""
+"``databases`` (array) (optional) Sequence databases for MSA: uniref90, "
+"small\\_bfd"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:91 86b0b0a012d647a0bf25658ef3b537a2
+msgid ""
+"``relax_prediction`` (boolean) (optional) Whether to relax the predicted "
+"structure"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:108 eee47cf790d04a40b6f533dc2889ffe3
+msgid "**NvidiaNIM_boltz2** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:110 469006771c0a481bbf98e13b0f4a0a4c
+msgid ""
+"Predict multi-molecular complex structure (proteins, DNA, RNA, ligands) "
+"using Boltz2 via NVIDIA N..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 474ca97890df4d8ab2fa444470dd151a
+msgid "NvidiaNIM_boltz2 tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:116 ad63b431c486423c81261e23fa305633
+msgid "**Name**: ``NvidiaNIM_boltz2``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:118 5650de06762344a3a92400218e72c9f7
+msgid ""
+"**Description**: Predict multi-molecular complex structure (proteins, "
+"DNA, RNA, ligands) using Boltz2 via NVIDIA NIM. Supports protein-protein,"
+" protein-DNA/RNA, protein-ligand complexes. Input: polymers "
+"(proteins/DNA/RNA), ligands (SMILES or CCD codes). Long-running async "
+"operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:122 518578bbc5b14b4996fa39b10f56eaba
+msgid "``polymers`` (array) (required) List of polymer molecules (1-12)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:125 31a044ce10e94d1e887fb5429c772804
+msgid ""
+"``ligands`` (array) (optional) Ligands specified by CCD code OR SMILES "
+"(max 20)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:128 a26607519bc342cd91141d2740139bb6
+msgid "``recycling_steps`` (integer) (optional) Number of recycling steps (1-6)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:131 acf7bec8bbd74693b37330dc427f10eb
+msgid "``sampling_steps`` (integer) (optional) Number of sampling steps (10-1000)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:134 f43627ac74064286b0f8a1742401a892
+msgid ""
+"``diffusion_samples`` (integer) (optional) Number of structure samples "
+"(1-5)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:137 bf3979c1062d4c399389e70a2d51b825
+msgid "``output_format`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:154 1f0ffdbd07ce4877bc5b9531e1a91644
+msgid "**NvidiaNIM_diffdock** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:156 294c17bada564712afed9fae14b204ff
+msgid ""
+"Blind molecular docking using DiffDock via NVIDIA NIM. Predict ligand "
+"binding poses without speci..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 33ab1e46253e49dc9ead343b7382ab26
+msgid "NvidiaNIM_diffdock tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:162 b9b9146b0e1d441e814a05d1a4c67c90
+msgid "**Name**: ``NvidiaNIM_diffdock``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:164 f6e9e08deba34586ba1188bb02fd8849
+msgid ""
+"**Description**: Blind molecular docking using DiffDock via NVIDIA NIM. "
+"Predict ligand binding poses without specifying binding pocket. Input: "
+"protein (PDB content or asset ID), ligand (SDF content or asset ID). For "
+"large files, use is\\_staged=true with asset IDs. Returns docking poses "
+"with confidence scores."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:168 75e28efc9532463ab18c830b4e575bab
+msgid ""
+"``protein`` (string) (required) Protein structure: PDB content directly "
+"OR asset ID (if is\\_staged=true)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:171 8744001fef274f46bf96549197f32efa
+msgid ""
+"``ligand`` (string) (required) Ligand structure: SDF/MOL2 content "
+"directly OR asset ID (if is\\_staged=true)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:174 b4c8846deffb4037a5b1c67e6e1f5150
+msgid "``ligand_file_type`` (string) (optional) Ligand file format"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:177 509febc90fcc4953a78ddca93b72ccc1
+msgid ""
+"``num_poses`` (integer) (optional) Number of docking poses to generate "
+"(1-40)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:180 2e5caeabcbef4d449e76f6515545ac9f
+msgid "``time_divisions`` (integer) (optional) Time divisions for diffusion"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:183 aedb5d76b6b7444bb583a176f95dd7a2
+msgid "``steps`` (integer) (optional) Number of diffusion steps"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:186 5e604a30c413471bbc32528f09d23b8a
+msgid "``save_trajectory`` (boolean) (optional) Save diffusion trajectory"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:189 9baf4c78d4814ab089bcaa83c49470ca
+msgid ""
+"``is_staged`` (boolean) (optional) If true, protein and ligand are asset "
+"IDs (uploaded via NVCF assets API). If false, they are raw file content."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:207 3c493edaefd74d15b855360ecef6a1c5
+msgid "**NvidiaNIM_esm2_650m** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:209 dc76ac9697b5459394d1c9d45989276c
+msgid ""
+"Generate protein sequence embeddings using ESM2-650M via NVIDIA NIM. 650 "
+"million parameter langua..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst ed2e824b775641828759be73f1a52366
+msgid "NvidiaNIM_esm2_650m tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:215 f2a7c09e95d64814894d244d06298c1c
+msgid "**Name**: ``NvidiaNIM_esm2_650m``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:217 5fcec764af834b9ca47ebf50e7a89f3a
+msgid ""
+"**Description**: Generate protein sequence embeddings using ESM2-650M via"
+" NVIDIA NIM. 650 million parameter language model for protein sequences. "
+"Input: sequences (array of protein sequences, max 1024 AA each), format "
+"(npz/json). Output: embedding vectors in specified format. Returns binary"
+" npz file or JSON. Fast synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:221 7b94eda35a3d45c6a3c3afd5f69bace6
+msgid ""
+"``sequences`` (array) (required) Array of protein sequences (max 1024 "
+"amino acids each, valid: ARNDCQEGHILKMFPSTWYVXBOU)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:224 f3e75dac631749febc01e15fd98c8d5f
+msgid ""
+"``format`` (string) (required) Output format: npz (binary NumPy archive) "
+"or json"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:242 4e1eb6fd27ed44a1a41d735b9902135b
+msgid "**NvidiaNIM_esmfold** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:244 60aff0bc34d14a4ab8e76ca16f5b8f8d
+msgid ""
+"Fast alignment-free protein structure prediction using ESMFold via NVIDIA"
+" NIM. No MSA required - ..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst a03fff93fe064a128901a406f1ba7bb4
+msgid "NvidiaNIM_esmfold tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:250 a8f26e0365e64c0bb860a61b58f8db40
+msgid "**Name**: ``NvidiaNIM_esmfold``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:252 480b594b7eac4970ad0f1e61721803a2
+msgid ""
+"**Description**: Fast alignment-free protein structure prediction using "
+"ESMFold via NVIDIA NIM. No MSA required - predicts directly from "
+"sequence. Input: sequence (max 1024 amino acids). Returns PDB structure. "
+"Fast synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:256 944dc920ca73482b8bbec5aabe6caee0
+msgid ""
+"``sequence`` (string) (required) Amino acid sequence (max 1024 chars, "
+"valid: ARNDCQEGHILKMFPSTWYVXBOU)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:273 5f435b9764d5441f8c448fc5998fc5d3
+msgid "**NvidiaNIM_evo2** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:275 5e95e63e2d8d4c8fa66f99232995c11c
+msgid ""
+"Generate DNA sequences using Evo2-40B via NVIDIA NIM. 40 billion "
+"parameter model trained on 9 tri..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 3d5cbd328708440d927574ff3388f460
+msgid "NvidiaNIM_evo2 tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:281 f979423002474164a406b326f463f6f0
+msgid "**Name**: ``NvidiaNIM_evo2``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:283 83af720cf9a54f119914795d4281f1f9
+msgid ""
+"**Description**: Generate DNA sequences using Evo2-40B via NVIDIA NIM. 40"
+" billion parameter model trained on 9 trillion nucleotides. Input: DNA "
+"sequence (ACTG), num\\_tokens to generate. Output: generated sequence "
+"with optional per-nucleotide probabilities. Fast synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:287 22370df49f1844c3a88a807fa5b62055
+msgid ""
+"``sequence`` (string) (required) Input DNA sequence (A, C, T, G "
+"characters only)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:290 20bf94e5b95643afa2716b4216598ecf
+msgid "``num_tokens`` (integer) (optional) Number of nucleotides to generate"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:293 0eedf15b4b2f415295d7bb52d61c6da1
+msgid "``temperature`` (number) (optional) Sampling temperature"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:296 06d16b260a1a4251bbc1adae43bb5b49
+msgid "``top_k`` (integer) (optional) Top-k sampling parameter"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:299 041eab8bb8544e08a8304c08c6a203c6
+msgid "``top_p`` (number) (optional) Top-p (nucleus) sampling parameter"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:302 c72d48a0661e40308e782e69d696d572
+msgid ""
+"``enable_sampled_probs`` (boolean) (optional) Return per-nucleotide "
+"probabilities"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:305 c480b58dd572480ba5d02f067a8979a6
+msgid "``enable_logits`` (boolean) (optional) Return raw logits"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:322 3d18cdeed1ff4eaea5b80228ab1f2430
+msgid "**NvidiaNIM_genmol** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:324 e9f0eb433ca245bb889f22721c46d084
+msgid ""
+"Generate molecules using GenMol via NVIDIA NIM. Input: SMILES/SAFE "
+"template with masked regions. ..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 3b1047b6b2134d4b8e03d79a01707e83
+msgid "NvidiaNIM_genmol tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:330 ca80586d59c346269c59b561c46fa5f4
+msgid "**Name**: ``NvidiaNIM_genmol``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:332 3eb07886e80048e09221e42fac569267
+#, python-brace-format
+msgid ""
+"**Description**: Generate molecules using GenMol via NVIDIA NIM. Input: "
+"SMILES/SAFE template with masked regions. Output: generated molecules "
+"with property scores. Use [\\*{min-max}] syntax for masked fragments. "
+"Fast synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:336 2d9664c1def94ec39304acd08c85eb41
+#, python-brace-format
+msgid ""
+"``smiles`` (string) (required) SAFE/SMILES template with masked "
+"fragments. Use [\\*{min-max}] for variable-length masks. Example: "
+"'CC(=O)O[\\*{5-10}]'"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:339 fce86a4e168742709a35c31bd376f753
+msgid ""
+"``num_molecules`` (integer) (optional) Number of molecules to generate "
+"(1-1000)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:342 443a7f828eac439198aefe19e830bc74
+msgid ""
+"``temperature`` (number) (optional) Sampling temperature (0.01-10.0). "
+"Higher = more diverse"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:345 e1fee86af670457cad2d3ca5a666f7a8
+msgid "``noise`` (number) (optional) Noise level for generation (0-2.0)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:348 39e75745b1ea453c91f4846b8fb86c98
+msgid "``step_size`` (integer) (optional) Step size for sampling"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:351 e646a9aecf4447a49552fb029da93eb5
+msgid "``scoring`` (string) (optional) Property to score generated molecules"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:368 aa2fbdff9f3545bf92a18ccf522e05e9
+msgid "**NvidiaNIM_maisi** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:370 cc9f073bcdab48e4a557eeaf5f9fed47
+msgid ""
+"Generate synthetic CT images with segmentation masks using MAISI via "
+"NVIDIA NIM. 3D Latent Diffus..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 55f57bd0d946417e90e7b3e6038dd578
+msgid "NvidiaNIM_maisi tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:376 9d885b2ea4714d999c437f8ea4494b85
+msgid "**Name**: ``NvidiaNIM_maisi``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:378 ea295c65d9ee49baa4cf7be05a2ec607
+msgid ""
+"**Description**: Generate synthetic CT images with segmentation masks "
+"using MAISI via NVIDIA NIM. 3D Latent Diffusion Model for medical imaging"
+" data augmentation. Input: body\\_region, anatomy\\_list, "
+"controllable\\_anatomy\\_size, output\\_size. Returns ZIP file with "
+"NIfTI/NRRD images and labels. Long-running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:382 da2db78120fe4427972445dde5b1ad44
+msgid ""
+"``num_output_samples`` (integer) (required) Number of CT images to "
+"generate"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:385 b179d605d28b426486ef44dda4c7421c
+msgid "``body_region`` (array) (required) Body regions to generate"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:388 f451f739203a4e7083bc4e11c9e6a144
+msgid ""
+"``anatomy_list`` (array) (optional) Specific anatomical structures to "
+"include (e.g., liver, spleen, kidney)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:391 1afea22d40d14622a03818dd0fe704fe
+msgid ""
+"``controllable_anatomy_size`` (array) (optional) Control anatomy sizes as"
+" [[name, ratio], ...]. Example: [['hepatic tumor', 0.3], ['liver', 0.5]]"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:394 7abfb8dbbcf040a2bfeec9d07aea3ec6
+msgid ""
+"``output_size`` (array) (optional) Output volume size [x, y, z]. x,y: "
+"256-512, z: 128-768"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:397 62466660ab7d4c5790362f0ff00643e6
+msgid "``spacing`` (array) (optional) Voxel spacing [x, y, z] in mm"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:400 ba88bb101c604a9aacca007aa22f9c41
+msgid "``image_output_ext`` (string) (optional) Output image format"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:403 731de2217e8740849d7fa839ee90714f
+msgid "``label_output_ext`` (string) (optional) Output segmentation format"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:406 3e188582bab94a1ca1155b7461e91105
+msgid ""
+"``pre_signed_url`` (string) (optional) Optional pre-signed URL to upload "
+"results to"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:424 82752e89712e4f92abcfe13161b366cb
+msgid "**NvidiaNIM_molmim** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:426 e0a0eb05c1c34996ad82efd28113cd3b
+msgid ""
+"Controlled molecule generation using MolMIM via NVIDIA NIM. Generates "
+"molecules with optimized pr..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 52682fe56a4c49378006a7679fa40b19
+msgid "NvidiaNIM_molmim tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:432 ee73e6f1e17e478ab876112e9898c478
+msgid "**Name**: ``NvidiaNIM_molmim``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:434 e2f606a9a5e64c44b05227d4bce376fd
+msgid ""
+"**Description**: Controlled molecule generation using MolMIM via NVIDIA "
+"NIM. Generates molecules with optimized properties based on a reference "
+"molecule. Input: smi (SMILES string), num\\_molecules, algorithm (CMA-ES,"
+" GA, etc.). Output: generated molecules with property scores. Fast "
+"synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:438 71f69352992c495bbe6aecfaaa4e006a
+msgid ""
+"``smi`` (string) (required) Reference SMILES string for molecule "
+"generation"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:441 0f8fee4bf7034bb1ad202646e3019cee
+msgid ""
+"``num_molecules`` (integer) (optional) Number of molecules to generate "
+"(1-100)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:444 3bd5d4edc7e94c1c8f4c37a6894b3b09
+msgid ""
+"``algorithm`` (string) (optional) Optimization algorithm: CMA-ES "
+"(Covariance Matrix Adaptation Evolution Strategy) or GA (Genetic "
+"Algorithm)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:461 461713e290804d889f7eea0f6ac2623a
+msgid "**NvidiaNIM_msa_search** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:463 36b495fc3d454c5a8bafd9e8a274fe53
+msgid ""
+"GPU-accelerated multiple sequence alignment search using "
+"ColabFold/MMseqs2 via NVIDIA NIM. Input:..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 0d8de2a29c2f4ab6836d337d14a748ee
+msgid "NvidiaNIM_msa_search tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:469 60cafc4246d1441baf525fad2c956b5e
+msgid "**Name**: ``NvidiaNIM_msa_search``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:471 49de42f1be644781aa76f69ce9302d7b
+msgid ""
+"**Description**: GPU-accelerated multiple sequence alignment search using"
+" ColabFold/MMseqs2 via NVIDIA NIM. Input: protein sequence. Output: MSA "
+"alignments in a3m/fasta format. Use for structure prediction pipelines. "
+"Long-running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:475 770b34112b5d4d4cb66770fe0de569d2
+msgid ""
+"``sequence`` (string) (required) Protein sequence to search (1-4096 amino"
+" acids)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:478 aed63264784542e7b7aed6cfd4290ec3
+msgid "``e_value`` (number) (optional) E-value threshold for sequence inclusion"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:481 49f5c8d4c1ff4baaa94f76132f0233bc
+msgid ""
+"``iterations`` (integer) (optional) Number of search iterations for "
+"sensitivity"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:484 e9d0c0bc866742f3be298934415c8ed6
+msgid "``output_alignment_formats`` (array) (optional) Output alignment formats"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:487 309764bcdfc440b9bf865f55510a7661
+msgid "``databases`` (array) (optional) Specific databases to search"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:490 5694eb26796542ca88039b35f1ffcca3
+msgid ""
+"``max_msa_sequences`` (integer) (optional) Maximum sequences in output "
+"MSA (max 10000)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:507 173f5e1cb71a4b20bcb18aa78b62c0e1
+msgid "**NvidiaNIM_openfold2** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:509 08030c2fcc23465ca853d5eda4be0338
+msgid ""
+"Predict protein structure from sequence and MSA using OpenFold2 via "
+"NVIDIA NIM. PyTorch reimpleme..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 4b911c64e17c434e965f8cdbad181899
+msgid "NvidiaNIM_openfold2 tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:515 f61e258c55994ce7b83bb25839b2f4a4
+msgid "**Name**: ``NvidiaNIM_openfold2``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:517 e9a43a17a402429db57e1f5b873487f6
+msgid ""
+"**Description**: Predict protein structure from sequence and MSA using "
+"OpenFold2 via NVIDIA NIM. PyTorch reimplementation of AlphaFold2 with "
+"improved speed. Input: sequence plus pre-computed MSA alignments in a3m "
+"format. Long-running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:521 61990bdfaea3407287ce02a63b2cebf5
+msgid "``sequence`` (string) (required) Amino acid sequence to predict"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:524 e59edd3b8e3e4777ae889bffd23d2cc0
+#, python-brace-format
+msgid ""
+"``alignments`` (object) (optional) MSA alignments by database. Format: "
+"{db\\_name: {a3m: {alignment: str, format: 'a3m'}}}"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:527 01373f25813e43db996b75c5a5b9179e
+msgid ""
+"``selected_models`` (array) (optional) Model indices to use for "
+"prediction (1-5)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:544 ead7bb89569441f5aa0f1909c739d6be
+msgid "**NvidiaNIM_openfold3** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:546 c5c0a39b2a434e10af425161d5e24d99
+msgid ""
+"Predict biomolecular complex structure (proteins, DNA, RNA, ligands) "
+"using OpenFold3 via NVIDIA N..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 945c38706d5344ccbea3b50ba944a3ad
+msgid "NvidiaNIM_openfold3 tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:552 56b48a7c421a4b99976d4ef1f6b02e78
+msgid "**Name**: ``NvidiaNIM_openfold3``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:554 9ab3054db42f41dfad01a91577c7df57
+msgid ""
+"**Description**: Predict biomolecular complex structure (proteins, DNA, "
+"RNA, ligands) using OpenFold3 via NVIDIA NIM. AlphaFold3-style prediction"
+" for complete biological assemblies. Input: molecules (proteins with MSA,"
+" DNA, RNA, ligands). Long-running async operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:558 93622e664f3048a8b3cd13d210b725e2
+msgid ""
+"``inputs`` (array) (required) List of input specifications for structure "
+"prediction"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:575 b16b361dfd4a4175a9c2933fc782042c
+msgid "**NvidiaNIM_proteinmpnn** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:577 b6e9ba295e0a4d2cbb3de6958c72f37c
+msgid ""
+"Design protein sequences for a given backbone structure using ProteinMPNN"
+" via NVIDIA NIM (inverse..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 6fd5732b20da44889e9d19159bd8699b
+msgid "NvidiaNIM_proteinmpnn tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:583 4619472b91094816bfc66258c5f473c7
+msgid "**Name**: ``NvidiaNIM_proteinmpnn``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:585 fcf8fff1754c4c32857edc3a4043f5e9
+msgid ""
+"**Description**: Design protein sequences for a given backbone structure "
+"using ProteinMPNN via NVIDIA NIM (inverse folding). Input: PDB structure "
+"text. Output: designed sequences in Multi-FASTA format with log-"
+"probabilities. Fast synchronous response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:589 a4b94ee5041b438f8a331455cdc859d6
+msgid ""
+"``input_pdb`` (string) (required) PDB format text of the backbone "
+"structure (ATOM records)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:592 5cb29747f9634889aa3628b9913c8de8
+msgid "``ca_only`` (boolean) (optional) Use only CA atoms for design"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:595 866c98fd4f5f4063ac5f29922323d30b
+msgid ""
+"``use_soluble_model`` (boolean) (optional) Use model trained on soluble "
+"proteins"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:598 eb99542647b148a693605aada0bce13b
+msgid ""
+"``sampling_temp`` (array) (optional) Sampling temperatures (0.1-0.3 "
+"recommended for high quality)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:601 5f5461c138e54cee8252295fd6dcca18
+msgid ""
+"``num_seq_per_target`` (integer) (optional) Number of sequences to "
+"generate"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:618 bfc192a6057c4ddfa61ba06ed667cfec
+msgid "**NvidiaNIM_rfdiffusion** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:620 76f74ba5a40a428bb3f664072fff0ff1
+msgid ""
+"De novo protein design using RFdiffusion via NVIDIA NIM. Generate novel "
+"protein structures, binde..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 0f9aa2e95ab44d23a586921392bc97e1
+msgid "NvidiaNIM_rfdiffusion tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:626 a32f7bbe093d4d68844af1f4b87a9461
+msgid "**Name**: ``NvidiaNIM_rfdiffusion``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:628 cb910187ad264aed9c927a624115ca26
+msgid ""
+"**Description**: De novo protein design using RFdiffusion via NVIDIA NIM."
+" Generate novel protein structures, binders, or scaffold motifs. Input: "
+"contigs DSL (e.g., 'A20-60/0 50-100'), input\\_pdb (required for "
+"scaffolding), hotspot\\_res for binding sites. Long-running async "
+"operation."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:632 55bb472f4284404a850266f43d557cdb
+msgid ""
+"``contigs`` (string) (required) Contig specification DSL. Format: "
+"'ChainStart-End/gap length'. Example: 'A20-60/0 50-100' keeps residues "
+"A20-60 and generates 50-100 new residues"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:635 d3bf28e7ec0340739ceda63edc0d3590
+msgid ""
+"``input_pdb`` (string) (required) PDB structure for scaffolding/binder "
+"design (ATOM records only). Required by the API."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:638 1936a2616dc74c4aa992e59a28d5f914
+msgid ""
+"``hotspot_res`` (array) (optional) Hotspot residues for binder design "
+"(e.g., ['A50', 'A51', 'A52'])"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:641 1bc266f146b54ad992701e991b1831a0
+msgid "``diffusion_steps`` (integer) (optional) Number of diffusion steps (15-50)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:644 70345203299a4aeb8c643ba0480f6e44
+msgid "``random_seed`` (integer) (optional) Random seed for reproducibility"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:662 091f2bf024fa40ecb3b71d9a95a23c2b
+msgid "**NvidiaNIM_vista3d** (Type: NvidiaNIMTool)"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:664 317ce524869d4468baf2442c6decc51f
+msgid ""
+"3D medical image segmentation using VISTA-3D via NVIDIA NIM. Segment "
+"organs and structures from C..."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst 5e88616168874562a055181f10d2ff54
+msgid "NvidiaNIM_vista3d tool specification"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:670 c15191611339408b8545fca03adf2a01
+msgid "**Name**: ``NvidiaNIM_vista3d``"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:672 9bd35c1f05924a3cbaa496f1525e2859
+msgid ""
+"**Description**: 3D medical image segmentation using VISTA-3D via NVIDIA "
+"NIM. Segment organs and structures from CT scans. Input: image URL "
+"(NIfTI/NRRD), class prompts, optional point prompts for interactive "
+"refinement. Returns ZIP file with segmentation masks. Synchronous "
+"response."
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:676 5824dc4cba6b43cebe3df5cc6881b4ed
+msgid "``image`` (string) (required) URL to NIfTI or NRRD CT image file"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:679 087fe6e5089a4f27b354954f7bfbcf69
+msgid ""
+"``prompts`` (object) (optional) Segmentation prompts: classes and "
+"optional point coordinates"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:696 2603dea0984c4c209971c94b0a6e17ae
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:698 0cd820f7c1aa4f3d82307dac907008e5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nvidia_nim_tools.rst:699 a3dcb278310840f2affcd7f7a538cd14
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

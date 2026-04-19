@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/idr_tools.rst:10 39153d2d43ec44b484515d2d6ecef685
+msgid "Idr Tools"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:12 b9b50cf4bac94d54937e6b1386898628
+msgid ""
+"**Configuration File**: ``idr_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:16 f017df3b72a949f2866ff8d236221491
+msgid ""
+"This page contains all tools defined in the ``idr_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:19 a1c6ac600a4641c096ac77c5db80cfbb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:22 bdc08a15f6b1469eae9d03bba3977feb
+msgid "**IDR_get_study** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:24 ffa628c08f5e436b84d0d91675503759
+msgid ""
+"Get detailed information about a specific imaging study (project) in the "
+"Image Data Resource (IDR..."
+msgstr ""
+
+#: ../../tools/idr_tools.rst 4a4e44dcd4fc422ba00f81b29bd9dc27
+msgid "IDR_get_study tool specification"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:28 ../../tools/idr_tools.rst:59
+#: ../../tools/idr_tools.rst:96 05322fc8885d4b56869d9a4c95393120
+#: 70165a47df1c4715b970f140dd20e999 e44db84b395541e5a9a448edf4037b3d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:30 92974c9698d64b879de07c3ecc035fa4
+msgid "**Name**: ``IDR_get_study``"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:31 ../../tools/idr_tools.rst:62
+#: ../../tools/idr_tools.rst:99 8c3dc9968a9944c78a2088ac8a65d214
+#: a0803fa39e924d6d867aae648a456f8b d4dcc9326f5843f78987dfd3bd707168
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:32 48a37aeb2b644cf7b91a243cdf030289
+msgid ""
+"**Description**: Get detailed information about a specific imaging study "
+"(project) in the Image Data Resource (IDR) by its project ID. Returns "
+"study metadata including name, description, number of datasets, and links"
+" to associated imaging data. Use IDR\\_list\\_studies to find study IDs."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:34 ../../tools/idr_tools.rst:65
+#: ../../tools/idr_tools.rst:102 9a1207d1fb0643d9b1223eb43e1c672e
+#: b502d507964f4935a1b1bc32b606273c e8f25cce89c942ffaf936685f6a2f983
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:36 cad94d27703c48728b883d2cc2f84c6c
+msgid ""
+"``project_id`` (integer) (required) IDR project/study ID (e.g., 101 for "
+"idr0018-neff-histopathology). Obtain from IDR\\_list\\_studies."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:39 ../../tools/idr_tools.rst:76
+#: ../../tools/idr_tools.rst:110 22972a522bd54fdbba3035fd3abf840a
+#: c60c389725e1437eac70858a506d1e26 f8d61b6152cd4617869970ba8ac78293
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:53 a99ee26f3c4e4312938578983010df78
+msgid "**IDR_get_study_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:55 a62a2a8d259d42299d82568e9e164295
+msgid ""
+"Get datasets (image collections) within a specific IDR imaging study. "
+"Each dataset within an IDR ..."
+msgstr ""
+
+#: ../../tools/idr_tools.rst 47daf298119241778e6842d68db1f209
+msgid "IDR_get_study_datasets tool specification"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:61 47218558b1194f36bdbf369297517135
+msgid "**Name**: ``IDR_get_study_datasets``"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:63 2ac57e1cfbdd4c45abd18860d76247b6
+msgid ""
+"**Description**: Get datasets (image collections) within a specific IDR "
+"imaging study. Each dataset within an IDR project corresponds to a set of"
+" related images, often representing a specific experimental condition, "
+"cell line, or time point. Returns dataset names and IDs. Use "
+"IDR\\_list\\_studies to find study IDs first."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:67 da07ca47be264577b7b7027afdcbcddd
+msgid ""
+"``project_id`` (integer) (required) IDR project/study ID (e.g., 101). "
+"Obtain from IDR\\_list\\_studies."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:70 48aef1a9c68e400e94b2cb6859a4b4e2
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of datasets to return"
+" (default 25, max 1000)"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:73 ../../tools/idr_tools.rst:107
+#: 12e9432d4b85404e9528087e66cbf376 958114b9411945a1b9a6874e1b7b0a5d
+msgid "``offset`` (integer, null) (optional) Offset for pagination"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:90 7217ad85ec3d4a779f069a6f7b103af5
+msgid "**IDR_list_studies** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:92 3adbb43c12a44b56ad7c606b476ccbff
+msgid ""
+"List imaging studies (projects) from the Image Data Resource (IDR), the "
+"public repository for ref..."
+msgstr ""
+
+#: ../../tools/idr_tools.rst f30dfad49c5349aabcf1b7eadad3b4c2
+msgid "IDR_list_studies tool specification"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:98 0cc39606c25d4147bcd35fdd69930005
+msgid "**Name**: ``IDR_list_studies``"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:100 fd51dfdccd604bc3901ee5bb32f5596a
+msgid ""
+"**Description**: List imaging studies (projects) from the Image Data "
+"Resource (IDR), the public repository for reference image datasets from "
+"published scientific studies. IDR contains high-content microscopy, "
+"histopathology, and other biological imaging datasets from over 140 "
+"studies. Returns study names (e.g., 'idr0018-neff-"
+"histopathology/experimentA'), descriptions, IDs, and URLs to access "
+"datasets within each study."
+msgstr ""
+
+#: ../../tools/idr_tools.rst:104 11c81fb79d5c43d4b1bf656b23c19525
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of studies to return "
+"(default 25, max 1000)"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:123 4bd49dbe2fed420b8d98fbfeac1d0c03
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:125 3a17e06754dc497293ea093f3759fdd1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/idr_tools.rst:126 730bb58fc1354d959594b610752f357d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

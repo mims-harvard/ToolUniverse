@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openfoodfacts_tools.rst:10 bcac95c34f704c6eb7394dc0c9aaa396
+msgid "Openfoodfacts Tools"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:12 6f3f291920f9414b9efe9435ac7b06e1
+msgid ""
+"**Configuration File**: ``openfoodfacts_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:16 f4ea578a38fb44f69f0bee5e4da936b7
+msgid ""
+"This page contains all tools defined in the ``openfoodfacts_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:19 7d89163385224feba5a853ed8b655fb1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:22 09b9007797004c64917ef7aabb291594
+msgid "**OpenFoodFacts_get_product** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:24 b971c9cf8ccf4a4b805add97c0dafa37
+msgid ""
+"Get detailed information about a specific food product by barcode using "
+"the Open Food Facts datab..."
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst 4c799bfe45b84029ba69ce86b3edb24c
+msgid "OpenFoodFacts_get_product tool specification"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:28
+#: ../../tools/openfoodfacts_tools.rst:59 0891e826b2764158831dcf7ab23678fe
+#: 279a3cd9caa24d4b92cc32c528e885fa
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:30 dfe3e1a6792e4d6b9c32ee5c740fba39
+msgid "**Name**: ``OpenFoodFacts_get_product``"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:31
+#: ../../tools/openfoodfacts_tools.rst:62 1655f728b622406bbcac59f80cc155a5
+#: 5bbd85ee7ee2436bbed63648eeb4e187
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:32 512c5676de294d39a89b53198721714f
+msgid ""
+"**Description**: Get detailed information about a specific food product "
+"by barcode using the Open Food Facts database. Returns complete "
+"nutritional data, ingredients, allergens, Nutri-Score, eco-score, and "
+"product images. No authentication required."
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:34
+#: ../../tools/openfoodfacts_tools.rst:65 47b62b948fe44f0dae8b4c7ecac7f770
+#: ecba6edc6f0349c1af2861b95e98f6b0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:36 ba3ab58d1ffa4cd79b77018a155da9bb
+msgid ""
+"``barcode`` (string) (required) Product barcode (EAN-13 or UPC). "
+"Examples: '3017620422003' (Nutella 400g), '0737628064502' (Annie Chun's),"
+" '8001505005592'"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:39
+#: ../../tools/openfoodfacts_tools.rst:76 5041ca7e8e6f4454a0d7e1efb9491a7c
+#: 6c5e6f3f99fa4994bd53e4587c3ce4f0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:53 d1f95f3ab17a4f8bb0eb9ba62f5b76b9
+msgid "**OpenFoodFacts_search_products** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:55 0f653deda6904a7e890a8ffa3523ae97
+msgid ""
+"Search for food products in the Open Food Facts database by name or "
+"brand. Returns product detail..."
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst 0198fbf43fe84f2395d62fa52f7baa33
+msgid "OpenFoodFacts_search_products tool specification"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:61 f2b4dfdf0148456ab0115c9eca1b1b85
+msgid "**Name**: ``OpenFoodFacts_search_products``"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:63 2ec227356c914086b4b3d37f0ff2e3e1
+msgid ""
+"**Description**: Search for food products in the Open Food Facts database"
+" by name or brand. Returns product details including nutrition grades "
+"(Nutri-Score A-E), ingredients, nutrients (calories, fat, sugar, salt, "
+"protein), and food categories. Over 3 million products from worldwide. No"
+" authentication required."
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:67 21f82d4b47d04cc29b07523da0d2c0be
+msgid ""
+"``search_terms`` (string) (required) Food product name or brand to search"
+" for. Examples: 'nutella', 'coca cola', 'oreo', 'kelloggs cornflakes', "
+"'olive oil'"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:70 1af3cf34b063429882bec4be333a0eaf
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results per page "
+"(1-100). Default: 10"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:73 2644ed98f8d74e6daad7b2b5a07d7cee
+msgid "``page`` (integer, null) (optional) Page number for pagination. Default: 1"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:90 5e92f2a681fa40e3974e5e869be1544f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:92 f9f139a65ece4f9ab2994e96cd7ffece
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openfoodfacts_tools.rst:93 952c16986442451f8884597b38a9bde0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

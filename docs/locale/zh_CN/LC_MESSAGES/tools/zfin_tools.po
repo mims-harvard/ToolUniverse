@@ -1,0 +1,364 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/zfin_tools.rst:10 9a0ca4ff530d4258a8b4669e2935f3de
+msgid "Zfin Tools"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:12 1ebf3efd4dbe46deae7482c76c2eb9cf
+msgid ""
+"**Configuration File**: ``zfin_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 7"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:16 9430c0faee73406f9c03675168d19255
+msgid ""
+"This page contains all tools defined in the ``zfin_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:19 c20381082deb4c64acf5de1bda60ea71
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:22 109742283b0640cc95455a87cfb1ee3c
+msgid "**ZFIN_get_allele** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:24 3119b5fe40584e3d9fe0246610f1f8d7
+msgid ""
+"Get detailed information about a specific zebrafish allele from ZFIN via "
+"the Alliance of Genome R..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst 428ae01cb9c14847b43c93b7d4075692
+msgid "ZFIN_get_allele tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:28 ../../tools/zfin_tools.rst:59
+#: ../../tools/zfin_tools.rst:90 ../../tools/zfin_tools.rst:127
+#: ../../tools/zfin_tools.rst:158 ../../tools/zfin_tools.rst:198
+#: ../../tools/zfin_tools.rst:235 2fb628cae8354dbcad42cad9b36f0c46
+#: 4180e4d92cfc4093b94fccf0d199397f 63360d59816a4b5d9159cddfaab42cdd
+#: 8f95996da769490f85ba949aa8e93c1d 9dc3331a7bb8448bbfa22bda3ef5f64a
+#: bf37d552ae424bf3a96344c6d87c4788 e9fb8e728786448a9a61e102b624715c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:30 f23e67ce9e3e49129c6494ced4dc54df
+msgid "**Name**: ``ZFIN_get_allele``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:31 ../../tools/zfin_tools.rst:62
+#: ../../tools/zfin_tools.rst:93 ../../tools/zfin_tools.rst:130
+#: ../../tools/zfin_tools.rst:161 ../../tools/zfin_tools.rst:201
+#: ../../tools/zfin_tools.rst:238 60d387743b3c41f4ade6cb9264d757a8
+#: 68fe0683cc67498483a0741b7be1c567 9706e8670a1e45eda99d7eac131e2813
+#: a31973113c0b4e6a8c90acb4c920df3c a44ed89bc7bf407f8121eca15a75a96e
+#: b392c07f0dbb4edf8b3fc347bf966abf f04c9ad9ade041bfa24dc74f7c62b9dc
+msgid "**Type**: ``AllianceGenomeTool``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:32 3021349e1ba845fa8f982899fe00222e
+msgid ""
+"**Description**: Get detailed information about a specific zebrafish "
+"allele from ZFIN via the Alliance of Genome Resources. Returns allele "
+"symbol, associated gene, alteration type, species, and synonyms. Useful "
+"for looking up specific zebrafish mutant lines. Example: 'ZFIN:ZDB-"
+"ALT-210706-1' returns the szu2 allele of pax2a with its deletion variant "
+"details."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:34 ../../tools/zfin_tools.rst:65
+#: ../../tools/zfin_tools.rst:96 ../../tools/zfin_tools.rst:133
+#: ../../tools/zfin_tools.rst:164 ../../tools/zfin_tools.rst:204
+#: ../../tools/zfin_tools.rst:241 3e7033f4e9d24c7ea4ef418c0bc2de12
+#: 4f5c4c76ce354db8a25c9dd44b64f3e8 826623565f5c4babbc97153e88feab5a
+#: 9ca9e59e8ac54893b3c1bbcfe94569be a23be87bd38c47afb09fcf5861d410c6
+#: e343b0b61cf64f9297f75a27e389a7d5 e94798bd6ff1403ab7c4fc4dc72f3317
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:36 fb757e8cf6194a8fba767d78ad0f9095
+msgid ""
+"``allele_id`` (string) (required) ZFIN allele ID with 'ZFIN:' prefix. "
+"Examples: 'ZFIN:ZDB-ALT-210706-1' (szu2 allele of pax2a), 'ZFIN:ZDB-"
+"ALT-980203-1590' (tm243a allele of pax2a)."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:39 ../../tools/zfin_tools.rst:70
+#: ../../tools/zfin_tools.rst:107 ../../tools/zfin_tools.rst:138
+#: ../../tools/zfin_tools.rst:178 ../../tools/zfin_tools.rst:215
+#: ../../tools/zfin_tools.rst:249 184e42b8ed7a40cb8d886a9ab9ba0f98
+#: 18a340d73d964da78743dece35de321f 1e7f6d91a362403baaaec9fa5806ac10
+#: 7a7df1e280214455a41db082e9eee722 7d1053756b3e4a858b320e7d018b51e9
+#: 9c6e59d0a67b400f8896defb2b0a3c6e c64b4ba84b09471f82eca76b39bb1c0c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:53 5162b8af94bf496e8720d134a0f27db7
+msgid "**ZFIN_get_gene** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:55 55345ad9c1d34249871e3ec780471f57
+msgid ""
+"Get detailed Danio rerio (zebrafish) gene information from ZFIN via the "
+"Alliance of Genome Resour..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst 1d48d6db040548c381764e00a847456c
+msgid "ZFIN_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:61 ff20850b31cd4bfa9366efd41a1b0d42
+msgid "**Name**: ``ZFIN_get_gene``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:63 23f247fa7ad84cc3a7c33b712f95a39b
+msgid ""
+"**Description**: Get detailed Danio rerio (zebrafish) gene information "
+"from ZFIN via the Alliance of Genome Resources. Returns gene symbol, "
+"name, synopsis, genomic location, synonyms, and cross-references. ZFIN is"
+" the primary database for zebrafish genetics. Example: 'ZFIN:ZDB-"
+"GENE-990415-8' returns pax2a (paired box 2a) with its role in nervous "
+"system development."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:67 7fe481a08f8b42a3a368213e8ce77772
+msgid ""
+"``gene_id`` (string) (required) ZFIN gene ID with 'ZFIN:' prefix. "
+"Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-980526-166' "
+"(shha/sonic hedgehog a), 'ZFIN:ZDB-GENE-990415-72' (tp53/tumor protein "
+"p53), 'ZFIN:ZDB-GENE-030131-7740' (bmp4/bone morphogenetic protein 4)."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:84 e46b931ac4cc46af93fe5cacb18d13e5
+msgid "**ZFIN_get_gene_alleles** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:86 29b278df4b27455cad5696c064a37677
+msgid ""
+"Get alleles and variants for a zebrafish gene from ZFIN via the Alliance "
+"of Genome Resources. Ret..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst 22e1b0aaf8864bbaaa4c89eca4737d3b
+msgid "ZFIN_get_gene_alleles tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:92 2ff4cbf6757b43dcbe9bfdaf44c0c666
+msgid "**Name**: ``ZFIN_get_gene_alleles``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:94 5a2f1aedf94746faa2759728510c3494
+msgid ""
+"**Description**: Get alleles and variants for a zebrafish gene from ZFIN "
+"via the Alliance of Genome Resources. Returns mutant alleles with variant"
+" types (deletion, insertion, point mutation), molecular consequences, and"
+" phenotype/disease associations. Zebrafish genetics benefits from large-"
+"scale mutagenesis screens producing thousands of alleles. Example: 'ZFIN"
+":ZDB-GENE-990415-8' (pax2a) returns alleles like szu2 (deletion) with "
+"start\\_lost consequence."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:98 ../../tools/zfin_tools.rst:166
+#: ../../tools/zfin_tools.rst:206 7ea31b200d824c919dbe03fec1f65ee0
+#: 90d49ee8d1c14194977b1dd93b926e7f dbe1ef19f124486286b7fc35b284b5ba
+msgid ""
+"``gene_id`` (string) (required) ZFIN gene ID with 'ZFIN:' prefix. "
+"Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-990415-72' "
+"(tp53), 'ZFIN:ZDB-GENE-980526-166' (shha)."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:101 0fdd3909667b441aa1acd64b1b9a9d9b
+msgid ""
+"``limit`` (integer) (optional) Maximum number of alleles to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:104 ../../tools/zfin_tools.rst:172
+#: ../../tools/zfin_tools.rst:212 d112373e2e5049a7a583b8bb04e92881
+#: d24e2794f92e477a87a5e310b532ebe0 f90a0ceaa8b541298b938b1373c2d136
+msgid "``page`` (integer) (optional) Page number for pagination. Default: 1."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:121 7cb85cdfd5a64980be03490ec419262f
+msgid "**ZFIN_get_gene_expression** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:123 a8bc6a64f950476eb815be330c5279b4
+msgid ""
+"Get expression summary for a zebrafish gene from the Alliance of Genome "
+"Resources. Returns a ribb..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst af29c7a62a30480183b2774538a31ee3
+msgid "ZFIN_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:129 aa777d3e11a14511a523017e9ea3075d
+msgid "**Name**: ``ZFIN_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:131 91f93bf415f94515b30a6d20436e4a64
+msgid ""
+"**Description**: Get expression summary for a zebrafish gene from the "
+"Alliance of Genome Resources. Returns a ribbon summary of expression "
+"across anatomical systems (nervous system, renal system, sensory system, "
+"etc.) with annotation counts. Zebrafish is a premier model for studying "
+"vertebrate development and expression. Example: 'ZFIN:ZDB-GENE-990415-8' "
+"(pax2a) shows 1092 annotations including nervous system (216), renal "
+"system (60), sensory system (25)."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:135 3f8e68dc7c05492fac1eefd67ce06fa1
+msgid ""
+"``gene_id`` (string) (required) ZFIN gene ID with 'ZFIN:' prefix. "
+"Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-980526-166' "
+"(shha), 'ZFIN:ZDB-GENE-990415-72' (tp53)."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:152 485790fe3ed0411d92793d75e5635d11
+msgid "**ZFIN_get_gene_orthologs** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:154 8fed3e51e57b4dd181ccc32d8a44afde
+msgid ""
+"Get orthologs of a zebrafish gene across other species from the Alliance "
+"of Genome Resources. Ret..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst c430a8ed0c90468da2f025e01037249b
+msgid "ZFIN_get_gene_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:160 e98e7a0fa1d74689b22d7a341e0c547f
+msgid "**Name**: ``ZFIN_get_gene_orthologs``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:162 ffde2caccdb343b1993ff018faf2bef8
+#, python-format
+msgid ""
+"**Description**: Get orthologs of a zebrafish gene across other species "
+"from the Alliance of Genome Resources. Returns orthologous genes in "
+"human, mouse, fly, worm, yeast, and other model organisms. Essential for "
+"translating zebrafish findings to human gene function. Zebrafish share "
+"approximately 70% of genes with humans. Example: 'ZFIN:ZDB-GENE-990415-8'"
+" (pax2a) returns human PAX2 as ortholog."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:169 f322815fc0f74363906609b7099c6955
+msgid ""
+"``limit`` (integer) (optional) Maximum number of orthologs to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:175 89362f27468f4df7a4d2ce4e47c789eb
+msgid ""
+"``stringency`` (string) (optional) Stringency filter for orthology calls:"
+" 'stringent' (high confidence) or 'moderate'. Default: 'stringent'."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:192 da99d92d75884f808f8c94a7a3bc0366
+msgid "**ZFIN_get_gene_phenotypes** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:194 19020233166d47b98df6134401fc038d
+msgid ""
+"Get phenotype annotations for a zebrafish gene from ZFIN via the Alliance"
+" of Genome Resources. Re..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst 50c3ca6e9abb4d74a60fea805e2e384f
+msgid "ZFIN_get_gene_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:200 c10d9ad7c4d040af9cb36e655262caba
+msgid "**Name**: ``ZFIN_get_gene_phenotypes``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:202 aec51e33ff7e4e3d8c0d19a92fb11ded
+msgid ""
+"**Description**: Get phenotype annotations for a zebrafish gene from ZFIN"
+" via the Alliance of Genome Resources. Returns phenotypes observed when "
+"the gene is mutated or knocked out in zebrafish, including affected "
+"anatomical structures and phenotype statements. Zebrafish is widely used "
+"for forward genetic screens and disease modeling. Example: 'ZFIN:ZDB-"
+"GENE-990415-8' (pax2a) returns phenotypes related to eye, kidney, and "
+"nervous system development."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:209 38355bad6e354a4c9d62d23707091f2b
+msgid ""
+"``limit`` (integer) (optional) Maximum number of phenotypes to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:229 87f8bf173dd4404a8a7cbc64c16ecef5
+msgid "**ZFIN_search** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:231 09b074e50ef24a8d9bbbecb8ec98cfce
+msgid ""
+"Search for zebrafish (Danio rerio) genes in ZFIN by keyword (gene symbol "
+"or name). Returns matchi..."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst bcdb96c508f745d0b033082b61112a0f
+msgid "ZFIN_search tool specification"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:237 1731820e29b74b70bd8d9937a261682f
+msgid "**Name**: ``ZFIN_search``"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:239 1f811bf054c54dcdbf4cee2de749c6a1
+msgid ""
+"**Description**: Search for zebrafish (Danio rerio) genes in ZFIN by "
+"keyword (gene symbol or name). Returns matching genes with their ZFIN "
+"IDs, symbols, and names. Use the returned gene\\_id with "
+"ZFIN\\_get\\_gene for full details. Example: query='tp53' returns "
+"zebrafish tumor protein p53."
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:243 323b68157e024315a018f2ff2bc1690c
+msgid ""
+"``query`` (string) (required) Gene symbol or name to search for (e.g., "
+"'tp53', 'sox9a', 'pax2a', 'fgf8a')"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:246 98de5c3ac6dc4dd8ad6068b45cf5a0ce
+msgid "``limit`` (integer) (optional) Maximum number of results (default: 10)"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:263 f265ebfe52d1478c983de5f01a0cba33
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:265 384e83fb6e4a458aaac60cce4ffd8aea
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/zfin_tools.rst:266 63a51221e37a4c6d910089c134919af5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

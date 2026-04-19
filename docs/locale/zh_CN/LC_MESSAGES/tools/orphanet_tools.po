@@ -1,0 +1,549 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/orphanet_tools.rst:10 0d5b109a86314678be735dfaf930fa93
+msgid "Orphanet Tools"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:12 2628d7d5f0054a1e96616626a772fb46
+msgid ""
+"**Configuration File**: ``orphanet_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:16 c0938f4e93934ae3a5b6b089c88e482c
+msgid ""
+"This page contains all tools defined in the ``orphanet_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:19 b68faef1e3f74b7e8bc41ae5d24983a4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:22 0e54cb139ee94ba39c2b9ace43788126
+msgid "**Orphanet_get_classification** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:24 fa26415331814af5bab4479f7a67cb50
+msgid ""
+"Get disease classification hierarchy from Orphanet. Returns parent and "
+"child disease categories s..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 9689beee4d8b4facba63934c009ec153
+msgid "Orphanet_get_classification tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:28 ../../tools/orphanet_tools.rst:70
+#: ../../tools/orphanet_tools.rst:112 ../../tools/orphanet_tools.rst:151
+#: ../../tools/orphanet_tools.rst:187 ../../tools/orphanet_tools.rst:226
+#: ../../tools/orphanet_tools.rst:271 ../../tools/orphanet_tools.rst:310
+#: ../../tools/orphanet_tools.rst:349 ../../tools/orphanet_tools.rst:394
+#: 0e6b03b368434afaafa08afd51858aa9 2292fc4439b842e784c98eab5e56cb12
+#: 2e104f82df184bceacda648324b5e636 46bd7db724474b19b3a07ca72b1584e4
+#: 51bc9806c2b5462d9fd1ed587cd33a74 75e49da5efb7424194a6d5e6937bd530
+#: 88557b0327a6450986127255c0071228 be821c2dd49e4264b66168cc251e4a2d
+#: cfe031267f1b488d80993248601cb441 eb75bde0290a452e8ee265e960167b91
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:30 e7f6797bb0aa436f9d4c72ea91a1f45d
+msgid "**Name**: ``Orphanet_get_classification``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:31 ../../tools/orphanet_tools.rst:73
+#: ../../tools/orphanet_tools.rst:115 ../../tools/orphanet_tools.rst:154
+#: ../../tools/orphanet_tools.rst:190 ../../tools/orphanet_tools.rst:229
+#: ../../tools/orphanet_tools.rst:274 ../../tools/orphanet_tools.rst:313
+#: ../../tools/orphanet_tools.rst:352 ../../tools/orphanet_tools.rst:397
+#: 243bf8a5b55340c683b4f3e5fa3e3096 282a7038210c44d08714b869b35c6299
+#: 9ff0a25a43e04f5d9d38fafb0faa029a a87d6b7f0986401095f5ce04c514af9a
+#: c56fd74f8bdd4f04b2ed71c20d76914b d5bccb975c1b43d4a4d39dd18d28c37b
+#: ddde94728687462991f22d8db93a10e2 ead0272c2f0e447a8d3349fa146908c4
+#: f9a634527f0a4e4ebe7de84848d3b8d0 fabda5750df54eaab4299d9ff8be9917
+msgid "**Type**: ``OrphanetTool``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:32 4b90858b639840d4aacd19b88fc7ce2c
+msgid ""
+"**Description**: Get disease classification hierarchy from Orphanet. "
+"Returns parent and child disease categories showing where a disease fits "
+"in the rare disease taxonomy. Useful for understanding disease "
+"relationships."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:34 ../../tools/orphanet_tools.rst:76
+#: ../../tools/orphanet_tools.rst:118 ../../tools/orphanet_tools.rst:157
+#: ../../tools/orphanet_tools.rst:193 ../../tools/orphanet_tools.rst:232
+#: ../../tools/orphanet_tools.rst:277 ../../tools/orphanet_tools.rst:316
+#: ../../tools/orphanet_tools.rst:355 ../../tools/orphanet_tools.rst:400
+#: 0e2b9282f21b4748b076b98ea0347a95 1c8d55f2a9eb4f9081fcd9486c9dc3b6
+#: 1e8dafcc1bdc4a129d5f728257b0e06a 3a2cf156c21c4de9b9378f026b92de51
+#: 5ea6ce8c78994b5698232d5ef83c19dd 6be12549ba0f425991c871701460ec39
+#: 876f5b3215d34fd1b06eed43ed19274e ab884136106e4bab84e465d4696f97e1
+#: ac54027429eb45eb80731de339fd29f3 ed80c26de6a242518071c9609a331849
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:36 6487d25e40804abd9fa77dc27a0049c2
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_classification)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:39 d6619e20f45242318cb0a74b52b12cc5
+msgid "``orpha_code`` (string, integer) (optional) Orphanet ORPHA code"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:42 ../../tools/orphanet_tools.rst:84
+#: ../../tools/orphanet_tools.rst:243 ../../tools/orphanet_tools.rst:366
+#: 10bb58edb2254b8b86b055840f1a127f 277b8d6d8abf45e497289e2f85cc794e
+#: 65a4d3df2f484d308a427af9b09d67d6 9a8362aeeac94a0ea079ce2e2d5ef01d
+msgid "``lang`` (string) (optional) Language code (default: en)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:45 ../../tools/orphanet_tools.rst:87
+#: ../../tools/orphanet_tools.rst:126 ../../tools/orphanet_tools.rst:201
+#: ../../tools/orphanet_tools.rst:246 ../../tools/orphanet_tools.rst:285
+#: ../../tools/orphanet_tools.rst:327 11b2291d6aee499180c7d8c9f7751258
+#: 25d44dcfaa3e4512a0909c6326d05229 4dc5ad062cd948c08416081eb6047d94
+#: 6a5d21bcc70d4d789ca22ab00c92af9f 6ff28c3abf0f43149fbd6a77f90b642f
+#: 8333484040eb460e9f5f156fa986d452 a46f1b86d98d47cea7111ad3f7fe95ca
+msgid ""
+"``orphacode`` (integer, string) (optional) Alias for orpha\\_code (the "
+"Orphanet disease code)."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:48 ../../tools/orphanet_tools.rst:90
+#: ../../tools/orphanet_tools.rst:129 ../../tools/orphanet_tools.rst:204
+#: ../../tools/orphanet_tools.rst:249 ../../tools/orphanet_tools.rst:288
+#: 13d7027bb5444362b5d1164caa3ba241 20dba831038640e4917930405fd1c6a7
+#: 3fe06d1544df48749e7ba8e178df8169 63ad810f90e349ffb793d3d91b91fc16
+#: 77351d5a473944fa85a9d056b6865660 f0e6af7291c34f00832ea1870ce216a6
+msgid ""
+"``orpha_id`` (integer, string) (optional) Alias for orpha\\_code (the "
+"Orphanet disease code)."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:51 ../../tools/orphanet_tools.rst:93
+#: ../../tools/orphanet_tools.rst:132 ../../tools/orphanet_tools.rst:168
+#: ../../tools/orphanet_tools.rst:207 ../../tools/orphanet_tools.rst:252
+#: ../../tools/orphanet_tools.rst:291 ../../tools/orphanet_tools.rst:330
+#: ../../tools/orphanet_tools.rst:375 ../../tools/orphanet_tools.rst:414
+#: 06b0551beb664c758858da27fe1d1940 47afef202aeb4fb293b0f57ad21b7204
+#: 759d406f251a45dea679c80d14ef2925 8836ec30cd7e49eeaf2b1938c4317f3f
+#: 9edd18f792b84e70befbc29c13f2d97d b31bb9f672e9432db439783a0a6a97e7
+#: b9168e231b4d4e2db876bb2cd069f025 d904ffd9173949e1b49344265270d40b
+#: e309b5b636f04462b50d0be915c97008 e4c169e3bfde437b8ad54148798f5173
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:64 10e0c22102ee458395668d3e9fb725f9
+msgid "**Orphanet_get_disease** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:66 353991bbe1be43febf0a6980ef07442f
+msgid ""
+"Get detailed information about a rare disease by ORPHA code. Returns "
+"disease name, definition, sy..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 72069ee5e37e47c198b44bd5acddbcc9
+msgid "Orphanet_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:72 4927ad0477364c109c2e2333d4716d20
+msgid "**Name**: ``Orphanet_get_disease``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:74 9b0eb49a5ff44beda75b2ed06a173310
+msgid ""
+"**Description**: Get detailed information about a rare disease by ORPHA "
+"code. Returns disease name, definition, synonyms, and classification. "
+"ORPHA codes are unique Orphanet identifiers (e.g., 558 for Marfan "
+"syndrome). No authentication required."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:78 69d58e41e15941a2b25ec523708cf89d
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_disease)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:81 6f21f535519d4760808088de20f2b520
+msgid ""
+"``orpha_code`` (string, integer) (optional) Orphanet ORPHA code (e.g., "
+"558, 166024). Can include ORPHA: prefix."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:106 7d374e41778d471090e62b8be94571ce
+msgid "**Orphanet_get_epidemiology** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:108 5f5df529cad74c62a77c7901d71e0eeb
+msgid ""
+"Get epidemiology data (prevalence, incidence) for a rare disease from "
+"Orphanet. Returns prevalenc..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 898202442ee14d4cb3fae96438f23e6e
+msgid "Orphanet_get_epidemiology tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:114 264ffa2af36746d59d2af6961e5654ac
+msgid "**Name**: ``Orphanet_get_epidemiology``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:116 51b15dc496ea467f89579e16d6932937
+msgid ""
+"**Description**: Get epidemiology data (prevalence, incidence) for a rare"
+" disease from Orphanet. Returns prevalence estimates by geographic region"
+" and type (point prevalence, birth prevalence, annual incidence). Data "
+"includes validation status and literature sources."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:120 354ac77534c042c296319a67c00f82ea
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_epidemiology)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:123 ../../tools/orphanet_tools.rst:237
+#: ../../tools/orphanet_tools.rst:321 7b8e976cff2f4347914489f94d50c4ca
+#: 8842c4a35f674d8db0d9b587edc20b8f 9f37329d82054442bdac439748ec17be
+msgid ""
+"``orpha_code`` (string, integer) (optional) Orphanet ORPHA code (e.g., "
+"558 for Marfan, 586 for Cystic Fibrosis)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:145 f5985b1d09844586bbdd506568effe56
+msgid "**Orphanet_get_gene_diseases** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:147 5ae22fd72306421ba0954b6be8072a21
+msgid ""
+"Get rare diseases associated with a gene from Orphanet. Accepts gene "
+"symbols (e.g., 'FBN1', 'BRCA..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst d68fad6ce9344c88a39ed51472b17814
+msgid "Orphanet_get_gene_diseases tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:153 f8015e0b8ae04e23a493d7a8ce931be4
+msgid "**Name**: ``Orphanet_get_gene_diseases``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:155 f1e037851c694bd6b90c4cd32a7b285f
+msgid ""
+"**Description**: Get rare diseases associated with a gene from Orphanet. "
+"Accepts gene symbols (e.g., 'FBN1', 'BRCA1', 'HTT') or gene name keywords"
+" (e.g., 'fibrillin', 'huntingtin', 'dystrophin'). Gene symbols are auto-"
+"resolved to full names. Returns disease ORPHA codes, gene symbols, "
+"association types, and genomic locus information."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:159 c376a1838613415d87130a0f5afa3d64
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_gene\\_diseases)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:162 9a7895908dbb40b586f4891308656532
+msgid ""
+"``gene_name`` (string) (optional) Gene symbol or name keyword (e.g., "
+"'FBN1', 'BRCA1', 'huntingtin'). Use gene\\_symbol for standard HGNC "
+"symbols. Note: Orphanet uses current HGNC symbols (e.g., 'GBA1' not "
+"'GBA')."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:165 0473a702ea5c4777ad2a7a6548cfac1e
+msgid ""
+"``gene_symbol`` (string, null) (optional) Alternative to gene\\_name: "
+"standard HGNC gene symbol (e.g., 'GBA1', 'FBN1'). Note: Orphanet uses "
+"current HGNC symbols (e.g., 'GBA1' not 'GBA')."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:181 fcb057379b60460b8bf9494513fca136
+msgid "**Orphanet_get_genes** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:183 585799bfb926400ebae00ee8e7054c70
+msgid ""
+"Get genes associated with a rare disease from Orphanet. Returns gene "
+"symbols, names, and associat..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 435cbc726af34995b7a6983c6409d092
+msgid "Orphanet_get_genes tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:189 e7e08ca12c4547fd930bd435b2eb4c13
+msgid "**Name**: ``Orphanet_get_genes``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:191 7ed9e59aaeaf45d98788b10e4bbe8364
+msgid ""
+"**Description**: Get genes associated with a rare disease from Orphanet. "
+"Returns gene symbols, names, and association types (causative, modifier, "
+"susceptibility). Essential for rare disease genetic diagnosis."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:195 11d962bd1304421f99e945e713444282
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_genes)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:198 7ef4df3733974ed08fbc4e52609a3ee2
+msgid ""
+"``orpha_code`` (string, integer) (optional) Orphanet ORPHA code for the "
+"disease"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:220 b20fd475be7f49428ea41a80bd5a28d4
+msgid "**Orphanet_get_icd_mapping** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:222 e4d4353b29c44e8681b1db7953a72887
+msgid ""
+"Get cross-references between Orphanet ORPHA codes and other medical "
+"coding systems (ICD-10, ICD-1..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 22aa7235719a4e44bd0cf5514ca1c5af
+msgid "Orphanet_get_icd_mapping tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:228 3407383b018446d39c1da7cf3d2aeaeb
+msgid "**Name**: ``Orphanet_get_icd_mapping``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:230 6a6aab4d7b044e118b0775a215cd506e
+msgid ""
+"**Description**: Get cross-references between Orphanet ORPHA codes and "
+"other medical coding systems (ICD-10, ICD-11, OMIM, SNOMED-CT). Essential"
+" for mapping rare disease codes across clinical and research "
+"nomenclatures. Returns mapping relationships and validation status."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:234 375c0a5e90d041de99976c9d07961af5
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_icd\\_mapping)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:240 dfe967ace93d499a9d1d79b116b740ab
+msgid ""
+"``coding_system`` (string) (optional) Which coding system to retrieve: "
+"all, icd10, icd11, omim, snomed. Default: all"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:265 ce75b1e26fb840b6928170b7b324a181
+msgid "**Orphanet_get_natural_history** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:267 a97c15d18e9041e491bd48d2f8ddca3b
+msgid ""
+"Get natural history data for a rare disease from Orphanet. Returns "
+"average age of onset and type ..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 98e0d35f8ac547f99220141a01af8a86
+msgid "Orphanet_get_natural_history tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:273 a91920b81ad04b7b914b02f0e01e8a7c
+msgid "**Name**: ``Orphanet_get_natural_history``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:275 e4531a3279b8482ab4a6107f1636b15e
+msgid ""
+"**Description**: Get natural history data for a rare disease from "
+"Orphanet. Returns average age of onset and type of inheritance. Useful "
+"for understanding disease progression patterns and genetic counseling."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:279 a44e2c79bce24c72911736542d81be07
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_natural\\_history)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:282 e3f8b6ca631e4953bb5ba210abe70079
+msgid ""
+"``orpha_code`` (string, integer) (optional) Orphanet ORPHA code (e.g., "
+"558 for Marfan, 399 for Huntington)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:304 b6ccd3e8ddf343fc91d194bf8cbc37a8
+msgid "**Orphanet_get_phenotypes** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:306 2e3dcbb80a7f4b16a48fcf87e93ee429
+msgid ""
+"Get HPO (Human Phenotype Ontology) phenotypes associated with a rare "
+"disease from Orphanet. Retur..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst 88e38f53235a4027b3cb894e83b1cf14
+msgid "Orphanet_get_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:312 974a057c9ea94861ba0dd68ada835e55
+msgid "**Name**: ``Orphanet_get_phenotypes``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:314 8df7c0d4c14b43998675cb335337e7d0
+msgid ""
+"**Description**: Get HPO (Human Phenotype Ontology) phenotypes associated"
+" with a rare disease from Orphanet. Returns HPO terms with their "
+"frequency (Very frequent, Frequent, Occasional, Very rare, Excluded) and "
+"whether they are diagnostic criteria. Essential for phenotype-driven rare"
+" disease diagnosis."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:318 6800ded4b0954ac1b4a47ae62236b7ad
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_phenotypes)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:324 28f28e9abd69434a9c9b336ec6dac754
+msgid ""
+"``orpha_id`` (string, integer) (optional) Alias for orpha\\_code. "
+"Orphanet ORPHA code (e.g., 558 for Marfan)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:343 6aec6611223e476a88af8870df1a9d9e
+msgid "**Orphanet_search_by_name** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:345 c916f9e3dc6a4081869c02223b637e1f
+msgid ""
+"Search for rare diseases by exact or partial name match in Orphanet. More"
+" precise than keyword se..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst e5c97544c38f4d5e87766c10af36c762
+msgid "Orphanet_search_by_name tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:351 238618eaa5414952aa4a9430706790d9
+msgid "**Name**: ``Orphanet_search_by_name``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:353 fa24ec7278eb40b78a525497877d8bac
+msgid ""
+"**Description**: Search for rare diseases by exact or partial name match "
+"in Orphanet. More precise than keyword search. Returns ORPHA codes and "
+"disease names. Supports exact matching mode for disambiguation."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:357 1cc4f3d784f945549f5cdc2e482761fe
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_by\\_name)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:360 f9f695d69744404aa9ac90623394e469
+msgid ""
+"``name`` (string) (optional) Disease name to search (e.g., 'Marfan "
+"syndrome')"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:363 ff67b16f54264de39feb0175bc621285
+msgid ""
+"``exact`` (boolean) (optional) If true, match exact name only. Default: "
+"false"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:369 ca0d717e72e940e499f4a0611bed1466
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 200)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:372 837b5dcde948437a9c9faac2fdce33e2
+msgid ""
+"``query`` (string) (optional) Alias for name. Disease name to search for "
+"in Orphanet."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:388 83a91b99585c4acda22236812e03946c
+msgid "**Orphanet_search_diseases** (Type: OrphanetTool)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:390 ad6a3996e2cc4591af715153cbefe77d
+msgid ""
+"Search Orphanet for rare diseases by keyword. Orphanet is the reference "
+"portal for rare diseases ..."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst cfa84ef05be7463b9a31c9c93c89b4cd
+msgid "Orphanet_search_diseases tool specification"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:396 c518e9acbac04670adf81f4927d78850
+msgid "**Name**: ``Orphanet_search_diseases``"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:398 9e337d6483c84da29c91aed90fbc1713
+msgid ""
+"**Description**: Search Orphanet for rare diseases by keyword. Orphanet "
+"is the reference portal for rare diseases and orphan drugs. Returns "
+"disease names, ORPHA codes, and synonyms. No authentication required. "
+"Supports multiple languages (en, fr, de, es, it, pt, pl, nl)."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:402 402ab1788dad4cca82e6a316389d9705
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_diseases)"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:405 1f25480f22764c22bfb7713525e6b941
+msgid ""
+"``query`` (string) (required) Search query - disease name or keyword "
+"(e.g., 'Marfan', 'muscular dystrophy')"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:408 ed506f79ad634959b5a8a0fe360c9fe6
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 200). The API may return thousands of fuzzy matches; "
+"use this to control output size."
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:411 fa6d6e11ae4b40b2b23fff2f1e49da3f
+msgid ""
+"``lang`` (string) (optional) Language code (en, fr, de, es, it, pt, pl, "
+"nl). Default: en"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:428 053f8c3d4c004990863e69844d382e70
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:430 98eedd0c865743c0a0d70b1a7f1044ff
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/orphanet_tools.rst:431 b5e5eb939b0b403199b4505ea0a6059c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

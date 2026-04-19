@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:2
+#: 5b72a7afd16142b58af3f3bd15c76330
+msgid "MCP Support"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:4
+#: ef77e626bc944cf8893fe1f73eee9d6f
+msgid ""
+"ToolUniverse runs as a `Model Context Protocol "
+"<https://modelcontextprotocol.io/>`_ server, exposing 1000+ scientific "
+"tools to any MCP-compatible AI client."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:6
+#: 44c7e9c5bbbd46b2a5c67b633088a1ab
+msgid "For platform-specific setup, see :doc:`index`."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:9
+#: e5748106153f4e979b7e219394d340e9
+msgid "Server Commands"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:11
+#: 8bcad4efc4d74f6a82e68f4511ad3bad
+msgid "Two server executables are available:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:13
+#: 6f3b982e3e6c4885a3e10f07c2317829
+msgid "``tooluniverse-smcp``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:14
+#: e63d3f7b4c5047d8bca76a094d75d101
+msgid "Full-featured server with configurable transport (HTTP, SSE, stdio)."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:16
+#: f6d4d7d8072b4ba8b2e6e29e9118ebcc
+msgid "``tooluniverse-smcp-stdio``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:17
+#: 9a74ab32f8a54001b5eb89bc72844710
+msgid "Optimized for desktop AI clients (Claude Desktop, Cursor, etc.) via stdio."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:20
+#: 40dbba7876734e65b80ed5ed1a20a298
+msgid "CLI Options"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:66
+#: 84404f3d7db04b86a2c4ac6ce778ef5c
+msgid "Configuration Files"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:68
+#: 9e29b911b5c5428c818ad6c13b02640e
+msgid "**Tools file** — one tool name per line, ``#`` for comments:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:77
+#: b6d0ef225e5f4889808604a3ecf57c0a
+msgid "Pass with ``--tools-file tools.txt``."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:79
+#: 32f3bdac92ea4ff3bfa72472510acf6a
+msgid "**Hook config file**:"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:94
+#: bd196c5276d645e18da56900f1830b61
+msgid "Pass with ``--hook-config-file hooks.json``."
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:97
+#: f05f1f7df9e74012b444669a7d8e90e0
+msgid "Python Client Example"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:111
+#: 3ad28a983ef5498bb66ea77f97393b45
+msgid "Advanced Features"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:113
+#: fdeb65c6c0a94ae9819289321febc8e5
+msgid ""
+":doc:`compact_mode` — reduce context window usage by exposing only core "
+"tools"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:114
+#: 5237fb8775cd471ab5aa2b72850f013d
+msgid ""
+":doc:`../hooks/server_stdio_hooks` — AI-powered output summarization and "
+"file saving"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/mcp_support.rst:115
+#: bf32504c2b6d48eaa8e1da1c60520868
+msgid ""
+":doc:`../python_guide` — use tools directly via the Python API instead of"
+" MCP"
+msgstr ""
+

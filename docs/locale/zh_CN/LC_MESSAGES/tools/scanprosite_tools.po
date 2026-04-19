@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/scanprosite_tools.rst:10 ced048bab4a9428c8bf1eb3006b57019
+msgid "Scanprosite Tools"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:12 78f45315a7284a35b75796c00545859f
+msgid ""
+"**Configuration File**: ``scanprosite_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:16 8034355527fc4d4d9f0b9e7845547197
+msgid ""
+"This page contains all tools defined in the ``scanprosite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:19 224185e1a9a047cb9649370093eacb1f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:22 9aaf39763c204973bdd10eb7e61775af
+msgid "**ScanProsite_scan_protein** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:24 af5d9376a6b44626b8b7c7d2807eabd5
+msgid ""
+"Scan a protein against the PROSITE database of protein motifs, domains, "
+"and families. Given a Uni..."
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst f4f210e43cd042d38d50e62bac8d9b59
+msgid "ScanProsite_scan_protein tool specification"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:28 92700899f29944a9ba450440ed0fc292
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:30 2274ffad4c0c459ea11445f5e2fe3e17
+msgid "**Name**: ``ScanProsite_scan_protein``"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:31 c8eeb24d7e17449e9bebabe42bfe8f70
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:32 254e51ef36834da8907ae0958e1fc658
+msgid ""
+"**Description**: Scan a protein against the PROSITE database of protein "
+"motifs, domains, and families. Given a UniProt accession (e.g., P04637 "
+"for TP53, P01308 for insulin), identifies all PROSITE pattern matches in "
+"the protein sequence. Returns matched PROSITE signature accessions and "
+"IDs with start/end positions. PROSITE is part of the ExPASy/SIB suite and"
+" contains 1,800+ patterns and profiles for protein functional sites and "
+"domains. Essential for identifying conserved motifs like zinc fingers, "
+"kinase activation loops, or receptor binding sites. Note: only patterns "
+"(PS00xxx) are scanned; profile matches require the ScanProsite web "
+"interface."
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:34 9dac3cd70034408cb8c46ce1492fae83
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:36 b88310d7f71948d6bd800844dc9dafa1
+msgid ""
+"``seq`` (string) (required) UniProt accession to scan for PROSITE motifs."
+" Examples: 'P04637' (TP53, returns PS00348 p53 signature), 'P01308' "
+"(insulin, returns PS00262 insulin family), 'Q9UHC1' (MLH3, returns "
+"PS00058 DNA mismatch repair). Can also accept a raw amino acid sequence."
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:39 da000d8d15df4de4b2a80338d2d1da52
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:53 e414f57f003b440bbdb0b30b1991fb21
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:55 bfa520faca674debb7c7db9739b48939
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/scanprosite_tools.rst:56 4658515471da4ddea6080f3a0ae26051
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

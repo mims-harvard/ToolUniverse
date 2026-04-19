@@ -1,0 +1,219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rgd_tools.rst:10 f25c0e86a88d466c9df5ac6b01c870a9
+msgid "Rgd Tools"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:12 400803ef7c9542b2b99122974cbac494
+msgid ""
+"**Configuration File**: ``rgd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:16 eeba06ab07bc4df8b3483e9b4487b971
+msgid ""
+"This page contains all tools defined in the ``rgd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:19 ebc79b444c134b369c99353e7534122a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:22 7e5f84fa59484ae3bee12b663b657592
+msgid "**RGD_get_annotations** (Type: RGDTool)"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:24 bbff170681ae497ca301b4bde6b19a35
+msgid ""
+"Get disease, phenotype, pathway, and GO annotations for a rat gene from "
+"RGD. Returns curated anno..."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst 0890e34b1f134c6187b621f234fe4b16
+msgid "RGD_get_annotations tool specification"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:28 ../../tools/rgd_tools.rst:62
+#: ../../tools/rgd_tools.rst:93 ../../tools/rgd_tools.rst:124
+#: 2aba7e372b854c00a17b5474d8772d7a 38bd85afcbb64edf9337c35b3758f726
+#: ced14902221346d6b9c40b3a7c3ca7d8 e4a616029048492fba500ae361a05da4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:30 172b33bfb43f403ea776d75dec7bf276
+msgid "**Name**: ``RGD_get_annotations``"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:31 ../../tools/rgd_tools.rst:65
+#: ../../tools/rgd_tools.rst:96 ../../tools/rgd_tools.rst:127
+#: 11ad97d0774d4510b74449647e87fe5b 442c28bc4def41008af9c2e9d543d4f0
+#: be95faa065b045b7a4c249b5bc73935c ee224a80c5e3447784d01dd79bfcb67a
+msgid "**Type**: ``RGDTool``"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:32 fa77b7b744494c459b842a90ef2301fe
+msgid ""
+"**Description**: Get disease, phenotype, pathway, and GO annotations for "
+"a rat gene from RGD. Returns curated annotations with ontology terms, "
+"evidence codes, and qualifiers. Filter by aspect: D=Disease, P=Pathway, "
+"W=Phenotype, F=Molecular Function, C=Cellular Component, E=Expression. "
+"Essential for rat disease model research and toxicogenomics."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:34 ../../tools/rgd_tools.rst:68
+#: ../../tools/rgd_tools.rst:99 ../../tools/rgd_tools.rst:130
+#: 64214f5417214d29a975ef7382b2decd c329aff3298546c0b107aa8f840154fa
+#: c68a93d9f85148bbbb8f57cc7af48eac f005b344b5324585bbdcc0c1caae92b1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:36 ../../tools/rgd_tools.rst:101
+#: 122559388c3f4b47af701e1666cdbfe4 9b4f896eee4540f480d614e5f3241d4a
+msgid "``rgd_id`` (string) (required) RGD gene ID (e.g., '2218' for Brca1)"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:39 87346b838b014781b578f309fc3354a2
+msgid ""
+"``aspect`` (string) (optional) Filter by annotation type: 'D' (Disease), "
+"'P' (Pathway), 'W' (Phenotype), 'F' (Function), 'C' (Component), 'E' "
+"(Expression). Leave empty for all."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:42 ../../tools/rgd_tools.rst:73
+#: ../../tools/rgd_tools.rst:104 ../../tools/rgd_tools.rst:138
+#: 3047b122e9154b36a0f546726a2295d6 4555b24d47be4e46a1e05b94f979e5fb
+#: abb711d8bf324bbbb6d23fa0ce999102 f20bfc7752ad4cffbb138506c3a953ba
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:56 258000e987644b758fb6254d480d5a0b
+msgid "**RGD_get_gene** (Type: RGDTool)"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:58 8d1b30697ceb47ef873ac7c0487a4751
+msgid ""
+"Get detailed rat gene information from the Rat Genome Database by RGD ID."
+" Returns gene symbol, na..."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst fda68ba3a4534b88941b290ab9bce9d7
+msgid "RGD_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:64 6a7f1c3d201949f387bd5b14e0452792
+msgid "**Name**: ``RGD_get_gene``"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:66 481b4b8432a84ee38966c9662bab0881
+msgid ""
+"**Description**: Get detailed rat gene information from the Rat Genome "
+"Database by RGD ID. Returns gene symbol, name, description (including "
+"AGR-aggregated functional summary with disease associations, pathways, "
+"and interactions), gene type, and Ensembl cross-reference. Use when "
+"looking up specific rat genes for toxicology, pharmacology, or disease "
+"model research."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:70 57d07041a4674f9bb0919f5c90fd328c
+msgid ""
+"``rgd_id`` (string) (required) RGD gene ID (numeric, e.g., '2218' for "
+"Brca1). Can include 'RGD:' prefix."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:87 a9f27ad7960a409a8348fef75325f81d
+msgid "**RGD_get_orthologs** (Type: RGDTool)"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:89 fb852955e32b4da79c26a4c32c322a5e
+msgid ""
+"Get orthologs of a rat gene across species (human, mouse, chinchilla, "
+"dog, pig, etc.) from RGD. R..."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst 0673ee1822df46598f06118acf985994
+msgid "RGD_get_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:95 69bd9f21db71426f8b9675c5447f2c81
+msgid "**Name**: ``RGD_get_orthologs``"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:97 57f9b77391994446a5e1931c65638eb4
+msgid ""
+"**Description**: Get orthologs of a rat gene across species (human, "
+"mouse, chinchilla, dog, pig, etc.) from RGD. Returns ortholog gene "
+"symbols, RGD IDs, names, and species. Use for cross-species comparison in"
+" model organism genetics, finding human disease gene orthologs in rat."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:118 a01f219fa1eb4e3caf58fd682bf0f1fd
+msgid "**RGD_search_genes** (Type: RGDTool)"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:120 f3d7cb4517814c9ba1aeaa1c0d4a118f
+msgid ""
+"Search for rat genes by symbol or keyword in the Rat Genome Database. "
+"Returns matching genes with..."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst 8ba8c59e894f444799a48f6ac4760d2f
+msgid "RGD_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:126 0f4775349a86457d9b61f258b55e0cbf
+msgid "**Name**: ``RGD_search_genes``"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:128 030eea08df7f4bf689903d2a12448b42
+msgid ""
+"**Description**: Search for rat genes by symbol or keyword in the Rat "
+"Genome Database. Returns matching genes with RGD IDs, symbols, names, "
+"types, and descriptions. Supports rat, human, and mouse species. Use for "
+"finding rat orthologs, toxicology studies, or rat disease model genes."
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:132 07a82a6b9f5446559befa86c8bd12fde
+msgid ""
+"``query`` (string) (required) Gene symbol or keyword (e.g., 'Brca1', "
+"'Tp53', 'insulin')"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:135 12ba59e5a8a14c138a55567006be8b3d
+msgid ""
+"``species`` (string) (optional) Species to search: 'rat' (default), "
+"'human', 'mouse'"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:152 6011e7ac5b044b1b9f745fc591949dca
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:154 58d9f004e86940e79a97dc440423a0ed
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rgd_tools.rst:155 28777ae189944bc7afb17f8057ce5aef
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

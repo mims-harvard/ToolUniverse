@@ -1,0 +1,482 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gnomad_tools.rst:10 96276cd1b7d14c0585c66bf492157939
+msgid "Gnomad Tools"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:12 3c7bd5e701de4670b2e9537ccbcb5424
+msgid ""
+"**Configuration File**: ``gnomad_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:16 8749328ca8b847bd88b2d267c40e1b11
+msgid ""
+"This page contains all tools defined in the ``gnomad_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:19 4a988af3fe3b42158508bd4cc230c704
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:22 c8de7ded103e4fe2b42afadb6ec513ab
+msgid "**gnomad_get_gene** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:24 d177ccc69f8c486a9c0de77a65e92074
+msgid ""
+"Get basic gene metadata from gnomAD by \\`gene\\_symbol\\` or "
+"\\`gene\\_id\\` (Ensembl gene ID). Use \\`..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst ca255dad5c67451bad26004c9a35dea7
+msgid "gnomad_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:28 ../../tools/gnomad_tools.rst:64
+#: ../../tools/gnomad_tools.rst:98 ../../tools/gnomad_tools.rst:143
+#: ../../tools/gnomad_tools.rst:177 ../../tools/gnomad_tools.rst:219
+#: ../../tools/gnomad_tools.rst:250 ../../tools/gnomad_tools.rst:284
+#: ../../tools/gnomad_tools.rst:318 ../../tools/gnomad_tools.rst:352
+#: 2701782641c14e42a5ac0ad0bb313248 2880730926114775ba35a0a1e78276ae
+#: 2e10799a3f3d45ed8d03eee658aee07a 3b85dea87fc743c5a1645dfec637dd9c
+#: 79c3967a8b81440e9efca955d41abba7 877e3fdec73846a683522ec9b6b5876e
+#: 9915070cb42a4f50a1dd836d3974888a a077ea0e7bb64c92b4a0f6555a4ae4db
+#: b03b5fe998ca4d2da2a9233b5c8dffc1 d5571ebc49a24a7aa68d6c44108eb94e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:30 7507ffa53a274bac95256898d46f7cc2
+msgid "**Name**: ``gnomad_get_gene``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:31 ../../tools/gnomad_tools.rst:101
+#: ../../tools/gnomad_tools.rst:146 ../../tools/gnomad_tools.rst:180
+#: ../../tools/gnomad_tools.rst:222 ../../tools/gnomad_tools.rst:253
+#: ../../tools/gnomad_tools.rst:287 ../../tools/gnomad_tools.rst:321
+#: ../../tools/gnomad_tools.rst:355 1060748f0ede4e13ae215c40d99acf3d
+#: 6c27d7ef848344f399fc8d473cb764b6 7e3fad249bf24c98b4c553a3f58b6c67
+#: 9dfd733e293f401dbbc1b99f8837e33c a0e550e4d6c74149ac0a05c80b50514b
+#: af25694814d84f0eb2439df78e67201f b58dc06a9ea74a42b26e91d20100e7b3
+#: e4da4ac9c1bf411693adcbef1b657555 f128b460fe434d44827c4d5d6ce5285f
+msgid "**Type**: ``gnomADGraphQLQueryTool``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:32 b06c88f400cf44c19b5a9f70d2caba87
+msgid ""
+"**Description**: Get basic gene metadata from gnomAD by "
+"\\`gene\\_symbol\\` or \\`gene\\_id\\` (Ensembl gene ID). Use "
+"\\`gnomad\\_search\\_genes\\` to discover \\`gene\\_id\\`. Use the "
+"returned \\`canonical\\_transcript\\_id\\` with "
+"\\`gnomad\\_get\\_transcript\\`."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:34 ../../tools/gnomad_tools.rst:70
+#: ../../tools/gnomad_tools.rst:104 ../../tools/gnomad_tools.rst:149
+#: ../../tools/gnomad_tools.rst:183 ../../tools/gnomad_tools.rst:225
+#: ../../tools/gnomad_tools.rst:256 ../../tools/gnomad_tools.rst:290
+#: ../../tools/gnomad_tools.rst:324 ../../tools/gnomad_tools.rst:358
+#: 1aacc4c972c6427daee9b02910ed50b1 1f17309c253d454b8d4089b937d35d6f
+#: 28e2622e43b647fea00a4aaff069a2b7 2d8255a0867b49dcaf5e50b00814f8b9
+#: 3b3e7203ea7c44c0954f2d3d8506b593 62f228eb681f4eca977dd4f347e63f9e
+#: 85dfdab98b81419eadb56b02a1f445a8 9d863347457a41b79717f69b26210010
+#: d311c323be90425cb0760c41df9b283b d89376a156c4448285d9311ee3ea712b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:36 07df0438f5cc4303b04735d65f99ad1b
+msgid "``gene_symbol`` (string) (optional) Gene symbol (e.g., 'BRCA1')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:39 180a388949bb40d4b83e1c9ba1c2390c
+msgid "``gene_id`` (string) (optional) Ensembl gene ID (e.g., 'ENSG00000012048')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:42 ../../tools/gnomad_tools.rst:75
+#: ../../tools/gnomad_tools.rst:115 ../../tools/gnomad_tools.rst:261
+#: 4586d97cc2d0478bacef9bdbbeef9ce5 6ff7414858904c2f9040f8605deb7ea8
+#: 75fdb6dd9d284a6da0a81adc5fcce0c4 b0f311b8f0c64722a43bbc402298f913
+msgid "``reference_genome`` (string) (optional) Reference genome."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:45 ../../tools/gnomad_tools.rst:78
+#: ../../tools/gnomad_tools.rst:121 ../../tools/gnomad_tools.rst:157
+#: ../../tools/gnomad_tools.rst:197 ../../tools/gnomad_tools.rst:230
+#: ../../tools/gnomad_tools.rst:264 ../../tools/gnomad_tools.rst:298
+#: ../../tools/gnomad_tools.rst:332 ../../tools/gnomad_tools.rst:366
+#: 0ac33e3e416246ceb5344af79961808f 2b7f2c64d3ce419eae5d6e83b17300ff
+#: 3d84aff79f734cd2a574bb3ff89516da 4d6f124682f14dfc834eff34d20e730b
+#: 6ad1e1ba5c8c4674b94e1ab17a7d2850 883ce8a694f14ec6a1c6c38b3a17eb7f
+#: 9d5d9038d00f42b3926c14dd0c2bdbaf a84d44b0961b4229be4b354188d75f56
+#: bf42b061f8a943c7b28a4469a6806957 c48aa24ca7ea419bb99b982f7df3e68f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:58 e7463afcf2484b88a3d6a22ec29c42bf
+msgid "**gnomad_get_gene_constraints** (Type: gnomADGetGeneConstraints)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:60 c235ae2327664dfa9de4b1bfd98695c6
+msgid ""
+"Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). "
+"Returns constraint fields und..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 7df71ce5055b47ad92731a45f982f2b0
+msgid "gnomad_get_gene_constraints tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:66 cd2ada534ad94413887989809669d67e
+msgid "**Name**: ``gnomad_get_gene_constraints``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:67 e6ebf893774440338a55708dc90ccfe1
+msgid "**Type**: ``gnomADGetGeneConstraints``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:68 ebd9ad457acc46d485be68e1152f6ca2
+msgid ""
+"**Description**: Get gene constraint metrics from gnomAD for a gene "
+"symbol (GRCh38). Returns constraint fields under \\`exac\\_constraint\\` "
+"and \\`gnomad\\_constraint\\` (e.g., pLI, oe\\_lof/oe\\_mis/oe\\_syn, "
+"exp/obs counts)."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:72 2faa9b5728884bd393681259f7d897eb
+msgid "``gene_symbol`` (string) (required) Gene symbol (e.g., 'BRCA1', 'TP53')"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:92 dd464a411d234c9584fe23dcddf80779
+msgid "**gnomad_get_region** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:94 2d5e635ec2a84d6ea188ecd57d684ee7
+msgid ""
+"Get basic regional information from gnomAD by genomic interval. Returns "
+"genes overlapping the reg..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst a071f29a2b52408ea73c7eee7986090c
+msgid "gnomad_get_region tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:100 f00bfb0d9f8a4d8783610a6d12d41f3b
+msgid "**Name**: ``gnomad_get_region``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:102 f6a1311fb5cd43a1a6c33159c1b63d1b
+msgid ""
+"**Description**: Get basic regional information from gnomAD by genomic "
+"interval. Returns genes overlapping the region and a list of "
+"\\`variant\\_id\\` values in the region for the selected dataset. Use "
+"those IDs with \\`gnomad\\_get\\_variant\\`. Keep regions small to avoid "
+"large payloads."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:106 7b577fe737fd4e058a061c5638b65d33
+msgid "``chrom`` (string) (required) Chromosome (e.g., '19')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:109 291dd2ff96e74101823cc4401a6931eb
+msgid "``start`` (integer) (required) 1-based start position."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:112 9cf1281ca5d44067a13e34f062ff04a5
+msgid "``stop`` (integer) (required) 1-based stop position."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:118 7cb4ec389c1d4cd89d94f9b087e98e74
+msgid ""
+"``dataset`` (string) (optional) gnomAD dataset ID used for "
+"\\`variants(dataset: ...)\\`. Allowed values: gnomad\\_r4, "
+"gnomad\\_r4\\_non\\_ukb, gnomad\\_r3, "
+"gnomad\\_r3\\_controls\\_and\\_biobanks, gnomad\\_r3\\_non\\_cancer, "
+"gnomad\\_r3\\_non\\_neuro, gnomad\\_r3\\_non\\_topmed, "
+"gnomad\\_r3\\_non\\_v2, gnomad\\_r2\\_1, gnomad\\_r2\\_1\\_controls, "
+"gnomad\\_r2\\_1\\_non\\_neuro, gnomad\\_r2\\_1\\_non\\_cancer, "
+"gnomad\\_r2\\_1\\_non\\_topmed, exac."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:137 6b887fb4a34149dd80fc953af436f7b9
+msgid "**gnomad_get_sv_by_gene** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:139 844c90449c394448a47a191f80595e9e
+msgid ""
+"Get structural variants (SVs) from gnomAD v4 for a gene. Returns "
+"deletions, duplications, inversi..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 55f893e9cb7c4bae8ccd8377cfadd0c4
+msgid "gnomad_get_sv_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:145 e441ddb233eb40f0812f214359f52abb
+msgid "**Name**: ``gnomad_get_sv_by_gene``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:147 f23699889be344158a1abc0a83223bcb
+msgid ""
+"**Description**: Get structural variants (SVs) from gnomAD v4 for a gene."
+" Returns deletions, duplications, inversions, translocations, and complex"
+" SVs with population allele frequencies, SV type, consequence, and "
+"homozygote counts. Essential for interpreting CNVs in clinical genomics."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:151 5083573d16844cc19ec284cbc803e4ce
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'BRCA1', 'TP53', "
+"'MECP2')"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:154 ../../tools/gnomad_tools.rst:194
+#: 2433e64e880341778fc405da336cca7a d093e5ee41da44b5b32d4993154d2706
+msgid "``reference_genome`` (string) (optional) Reference genome assembly."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:171 c5a3b0b4ff7c4f0981662f21585e3a7a
+msgid "**gnomad_get_sv_by_region** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:173 48cb577ff7104ba0b752fe3e66b2cf19
+msgid ""
+"Get structural variants (SVs) from gnomAD v4 overlapping a genomic "
+"region. Returns DEL/DUP/INV/BN..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 08fdf1fb57e94a77ba3696bb8c8caf3d
+msgid "gnomad_get_sv_by_region tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:179 0430d6de1e3c46068f984075736af663
+msgid "**Name**: ``gnomad_get_sv_by_region``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:181 7f50c1837001436dafdcc5a49f6dd234
+msgid ""
+"**Description**: Get structural variants (SVs) from gnomAD v4 overlapping"
+" a genomic region. Returns DEL/DUP/INV/BND/CPX variants with allele "
+"frequencies and consequences. Use for CNV interpretation in specific "
+"chromosomal regions. Region should be < 5Mb."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:185 6b6c62f848664d8abd57771210c669ee
+msgid "``chrom`` (string) (required) Chromosome (e.g., '17', 'X')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:188 558477d98f49453aac24064303f82ea3
+msgid ""
+"``start`` (integer) (required) Start position (1-based, GRCh38 by "
+"default)."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:191 e555b840d4214c3b97abc7f2a417db11
+msgid "``stop`` (integer) (required) Stop position."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:213 2d0a8528309948b4bf5f328733675c52
+msgid "**gnomad_get_sv_detail** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:215 79b45ad1158948b09a5fdaefce89422f
+msgid ""
+"Get detailed information for a specific gnomAD structural variant by its "
+"ID (e.g., DEL\\_chr17\\_24..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst e15680d5a6ad495a939c9b6c0cdb3a02
+msgid "gnomad_get_sv_detail tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:221 7dc58debb82446569967158fb4969388
+msgid "**Name**: ``gnomad_get_sv_detail``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:223 2cbf7d640c1d446fa10eae3c1ae7fd58
+msgid ""
+"**Description**: Get detailed information for a specific gnomAD "
+"structural variant by its ID (e.g., DEL\\_chr17\\_24e4872b). Returns SV "
+"coordinates, type, length, population allele frequency, consequence, and "
+"filter status. Use gnomad\\_get\\_sv\\_by\\_gene or "
+"gnomad\\_get\\_sv\\_by\\_region to discover variant IDs first."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:227 7d58b0e3204e4d00b928fd5fb83ebe6b
+msgid ""
+"``variant_id`` (string) (required) gnomAD structural variant ID (e.g., "
+"'DEL\\_chr17\\_24e4872b', 'DUP\\_chr22\\_abc12345')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:244 201eb47bd1d34851a27bb393036e0c95
+msgid "**gnomad_get_transcript** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:246 b3ac9f03b3c24db7baf2a62ae8b0faf1
+msgid ""
+"Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g.,"
+" ENST...). The response ..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 296368538171495ca7da5ca005868a98
+msgid "gnomad_get_transcript tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:252 8cf9959525e8438282f2652416d8c51b
+msgid "**Name**: ``gnomad_get_transcript``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:254 f7be8c15b3c14a6388ef8dab93163830
+msgid ""
+"**Description**: Get basic transcript metadata from gnomAD by Ensembl "
+"transcript ID (e.g., ENST...). The response includes the linked "
+"\\`gene\\` object (gene ID + symbol). Use \\`gnomad\\_get\\_gene\\` to "
+"find a gene's \\`canonical\\_transcript\\_id\\`."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:258 c6bbb8ad902849efb885435b0f4dc30d
+msgid ""
+"``transcript_id`` (string) (required) Ensembl transcript ID (e.g., "
+"'ENST00000357654')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:278 f901672360364565ac0331d1f4efd50f
+msgid "**gnomad_get_variant** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:280 75657c48582247cda0620561ed9e7fe3
+msgid ""
+"Get basic variant metadata from gnomAD by \\`variant\\_id\\` (format like"
+" '19-44908822-C-T'). Use \\`..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 44cada0ecd064cc9864ad34aa8f328cd
+msgid "gnomad_get_variant tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:286 75853a66df9b49b99dac935ad182ab2f
+msgid "**Name**: ``gnomad_get_variant``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:288 71097a0c513342569eb5f9632af4d4d2
+msgid ""
+"**Description**: Get basic variant metadata from gnomAD by "
+"\\`variant\\_id\\` (format like '19-44908822-C-T'). Use "
+"\\`gnomad\\_search\\_variants\\` to discover valid \\`variant\\_id\\` "
+"values from an rsID query. \\`dataset\\` is required by gnomAD and "
+"defaults to \\`gnomad\\_r3\\`."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:292 1c94386e85c6461aa273d024beda630e
+msgid "``variant_id`` (string) (required) Variant ID (e.g., '19-44908822-C-T')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:295 ../../tools/gnomad_tools.rst:363
+#: 74d508d3009d4daba7c4b993a952adcb d54b8baf37ac461bbbe1d1767637e23f
+msgid ""
+"``dataset`` (string) (optional) gnomAD dataset ID. Allowed values: "
+"gnomad\\_r4, gnomad\\_r4\\_non\\_ukb, gnomad\\_r3, "
+"gnomad\\_r3\\_controls\\_and\\_biobanks, gnomad\\_r3\\_non\\_cancer, "
+"gnomad\\_r3\\_non\\_neuro, gnomad\\_r3\\_non\\_topmed, "
+"gnomad\\_r3\\_non\\_v2, gnomad\\_r2\\_1, gnomad\\_r2\\_1\\_controls, "
+"gnomad\\_r2\\_1\\_non\\_neuro, gnomad\\_r2\\_1\\_non\\_cancer, "
+"gnomad\\_r2\\_1\\_non\\_topmed, exac."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:312 c101c9005c8945b8973e9d5dcff31998
+msgid "**gnomad_search_genes** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:314 1b7798ed9b374e1080ca84876512a6d4
+msgid ""
+"Search for genes in gnomAD by free-text query (typically a gene symbol). "
+"Returns matching \\`ensem..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 2f569b0dcf1943fbbb493255e1b8740f
+msgid "gnomad_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:320 6e2f883365ae410eb0fe550bd7db5281
+msgid "**Name**: ``gnomad_search_genes``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:322 571ec64820eb4bffaa471a03a3c84a69
+msgid ""
+"**Description**: Search for genes in gnomAD by free-text query (typically"
+" a gene symbol). Returns matching \\`ensembl\\_id\\` (Ensembl gene ID) "
+"and \\`symbol\\`. Use \\`ensembl\\_id\\` as \\`gene\\_id\\` for "
+"\\`gnomad\\_get\\_gene\\`."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:326 3c127731b2414e978c5ffc7f59e3a5b9
+msgid "``query`` (string) (required) Gene search string (e.g., 'BRCA1')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:329 66ef28057da5420eaebcaf4a407e13f9
+msgid "``reference_genome`` (string) (optional) Reference genome for the search."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:346 a37a7b9fb719428c951d02f9135442e1
+msgid "**gnomad_search_variants** (Type: gnomADGraphQLQueryTool)"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:348 ac6ee584b80e4ba4bb161f00c5bf88de
+msgid ""
+"Search for variants in gnomAD by free-text query (commonly an rsID like "
+"'rs7412'). Returns matchi..."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst 38263c227f1448fead992fc003b27608
+msgid "gnomad_search_variants tool specification"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:354 744414e84ab54b7daa4f4b0cebb120df
+msgid "**Name**: ``gnomad_search_variants``"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:356 260fa48cf1ae4dc194b39994d3d95b7b
+msgid ""
+"**Description**: Search for variants in gnomAD by free-text query "
+"(commonly an rsID like 'rs7412'). Returns matching \\`variant\\_id\\` "
+"strings. Note: gnomAD's \\`variant\\_search\\` response only exposes "
+"\\`variant\\_id\\`. Use the returned \\`variant\\_id\\` with "
+"\\`gnomad\\_get\\_variant\\`."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:360 423cbf1d7fc348bab705a822122547c9
+msgid "``query`` (string) (required) Variant search query (e.g., 'rs7412')."
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:380 fdbba1533ebd4cf8937d17ba298ec2f3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:382 4e153790c4a948a197443f598c3d0078
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gnomad_tools.rst:383 690bf2e1bf18408e9a413be795705bfb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

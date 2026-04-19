@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-18 23:30-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,136 +18,122 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../about/index.rst:2 095fd090f5cd4f3ab7d61ea650232cbb
+#: ../../about/index.rst:2 b9e116e36ed54b2c94a70059a054f6ef
 msgid "About ToolUniverse"
 msgstr "关于ToolUniverse"
 
-#: ../../about/index.rst:4 59adac12d3454fc9ac0a5f0119fdb7b1
+#: ../../about/index.rst:4 abe35520bf9d4306b2ba5c69fd0d5583
 msgid "**Project information, development, and community resources.**"
 msgstr "**项目信息、开发和社区资源。**"
 
-#: ../../about/index.rst:14 c4cf112b45484dd0ac55ed32f31455f1
-msgid "📋 Project Information"
-msgstr "📋 项目信息"
-
-#: ../../about/index.rst:16 e48c543964e64c218757f66214e26247
-msgid "**Version**: 0.3.0"
-msgstr "**版本**：0.3.0"
-
-#: ../../about/index.rst:18 4cd6816e7d1e44cfa6e166918d6e52b8
-msgid "**License**: MIT License"
-msgstr "**许可证**：MIT 许可证"
-
-#: ../../about/index.rst:20 fd33ea64ab6b4f0aa7e295d9ad156535
-msgid "**Repository**: `GitHub <https://github.com/mims-harvard/ToolUniverse>`_"
-msgstr "**代码仓库**：`GitHub <https://github.com/mims-harvard/ToolUniverse>`_"
-
-#: ../../about/index.rst:22 4692829ed4fd445f948aed733bff825c
-msgid "**Documentation**: You're reading it!"
-msgstr "**文档**：您正在阅读它！"
-
-#: ../../about/index.rst:25 99dec92e803b492d93eb16df7c71b373
-msgid "🎯 Project Goals"
-msgstr "🎯 项目目标"
-
-#: ../../about/index.rst:27 854232ac898341a2a969554bc31a4bc5
-msgid "ToolUniverse aims to:"
-msgstr "ToolUniverse 旨在："
-
-#: ../../about/index.rst:29 a1568792515e418a9efdedfccb03c6fc
+#: ../../about/index.rst:16 a3e9a416778649dc90684f70d48bf289
+#, fuzzy
 msgid ""
-"**Democratize scientific data access** - Make 50+ databases accessible "
-"through one interface"
-msgstr "**实现科学数据访问民主化** - 通过一个界面访问50多个数据库"
+"**Version**: 0.3.0 | **License**: MIT | **Maintainer**: `MIMS Lab, "
+"Harvard <https://github.com/mims-harvard/ToolUniverse>`_"
+msgstr "**版本**：0.3.0 | **许可证**：MIT | **维护者**：`Harvard 的 MIMS Lab <https://github.com/mims-harvard/ToolUniverse>`_"
 
-#: ../../about/index.rst:30 f9afee1b0e3f4528bb21a542af828461
-msgid "**Enable AI-driven research** - Seamless integration with AI assistants"
-msgstr "**启用 AI 驱动的研究** - 与 AI 助手的无缝集成"
-
-#: ../../about/index.rst:31 1dbdfca59a0c4abd8dd662bb7793ba01
-msgid "**Accelerate discovery** - Reduce time from question to insight"
-msgstr "**加速发现** - 缩短从问题到洞察的时间"
-
-#: ../../about/index.rst:32 b974f579349a4572a9aabfffb8721b3e
-msgid "**Foster collaboration** - Community-driven tool development"
-msgstr "**促进协作** - 基于社区驱动的工具开发"
-
-#: ../../about/index.rst:35 31bbcfcd799148e1b45defe6c29f5d4a
-msgid "👥 Community"
-msgstr "👥 社区"
-
-#: ../../about/index.rst:37 164cd47156b34330988a2ff8090fc9c3
-msgid "**Contributors**: Scientists, developers, and researchers worldwide"
-msgstr "**贡献者**：来自全球的科学家、开发人员和研究人员"
-
-#: ../../about/index.rst:38 bf27ac5972bd41958f063281f0bd7064
-msgid "**Maintainers**: MIMS Lab at Harvard Medical School"
-msgstr "**维护者**：哈佛医学院 MIMS 实验室"
-
-#: ../../about/index.rst:39 e4f6500797a44a05a784357ee8b037b6
-msgid "**Users**: Research institutions, pharmaceutical companies, academic labs"
-msgstr "**用户**：研究机构、制药公司、学术实验室"
-
-#: ../../about/index.rst:42 b9c7a6b5d5ff4ecbafdc440888b2f403
-msgid "📈 Development"
-msgstr "📈 开发"
-
-#: ../../about/index.rst:44 e9a87d05959745258a13b1de343dfa38
+#: ../../about/index.rst:18 9eb0f43b565d4bb387865c2bec4da917
 msgid ":doc:`contributing` - How to contribute code, tools, and documentation"
 msgstr ":doc:`contributing` - 如何贡献代码、工具和文档"
 
-#: ../../about/index.rst:45 ac6d3e6b945e45249d4474466a4c2053
-msgid ":doc:`deployment` - Production deployment Tutorial"
-msgstr ":doc:`deployment` - 生产环境部署教程"
+#: ../../about/index.rst:19 22ed1855dfb3452e96ce11b222524b99
+#, fuzzy
+msgid ":doc:`deployment` - Production deployment guide"
+msgstr ":doc:`deployment` - 生产部署指南"
 
-#: ../../about/index.rst:48 110cfdaf125e4afb8aed15a7a79f0f41
-msgid "📄 Legal"
-msgstr "📄 法律"
-
-#: ../../about/index.rst:50 a6aa27a0ab4b4271bb352ebe9f7aec8c
-msgid ":doc:`license` - MIT License terms and data source licenses"
-msgstr ":doc:`license` - MIT许可证条款和数据源许可证"
-
-#: ../../about/index.rst:53 629e8f287c2d4b0494b62dd01693274f
-msgid "🙏 Acknowledgments"
-msgstr "🙏 致谢"
-
-#: ../../about/index.rst:55 49d32b74f86543f3ac8fc2bb82fc0d3e
-msgid "ToolUniverse is built on the work of many scientific databases and APIs:"
-msgstr "ToolUniverse 基于众多科学数据库和 API 的工作成果构建而成："
-
-#: ../../about/index.rst:57 e4f7ffa9e3ef4a09bbb8688cbeea176b
-msgid "**OpenTargets** - Disease-target associations"
-msgstr "**OpenTargets** - 疾病-靶点关联"
-
-#: ../../about/index.rst:58 6c9751e1729346a48f24be5e222b6fc1
-msgid "**FDA/FAERS** - Drug safety and regulatory data"
-msgstr "**FDA/FAERS** - 药物安全性与监管数据"
-
-#: ../../about/index.rst:59 a949dd547a414f819b5258d09c72c660
-msgid "**PubMed/PubTator** - Biomedical literature"
-msgstr "**PubMed/PubTator** - 生物医学文献"
-
-#: ../../about/index.rst:60 1c14465463b34ae2ad59f96b9b707e92
-msgid "**ChEMBL** - Chemical bioactivity data"
-msgstr "**ChEMBL** - 化学生物活性数据"
-
-#: ../../about/index.rst:61 94d7520fda6c41848d3ceade66aebcdf
-msgid "**UniProt** - Protein information"
-msgstr "**UniProt** - 蛋白质信息"
-
-#: ../../about/index.rst:62 9054476bd9b94833a608e05941bf1539
-msgid "And many more..."
-msgstr "以及更多……"
-
-#: ../../about/index.rst:64 1ac576b5bd504cd18ef82fa96bec239b
-msgid ""
-"Special thanks to the scientific community for making their data "
-"accessible and the developers who maintain these valuable resources."
-msgstr "特别感谢科学界为数据的开放共享所做的贡献，以及维护这些宝贵资源的开发者们。"
+#: ../../about/index.rst:20 e051f58d8c1843c3a1fbff4abbea582c
+#, fuzzy
+msgid ":doc:`license` - MIT License and data source licenses"
+msgstr ":doc:`license` - MIT 许可证与数据源许可证"
 
 #~ msgid ":doc:`changelog` - Version history and updates"
 #~ msgstr ":doc:`changelog` - 版本历史与更新"
 
+#~ msgid "📋 Project Information"
+#~ msgstr "📋 项目信息"
+
+#~ msgid "**Version**: 0.3.0"
+#~ msgstr "**版本**：0.3.0"
+
+#~ msgid "**License**: MIT License"
+#~ msgstr "**许可证**：MIT 许可证"
+
+#~ msgid "**Documentation**: You're reading it!"
+#~ msgstr "**文档**：您正在阅读它！"
+
+#~ msgid "🎯 Project Goals"
+#~ msgstr "🎯 项目目标"
+
+#~ msgid "ToolUniverse aims to:"
+#~ msgstr "ToolUniverse 旨在："
+
+#~ msgid ""
+#~ "**Democratize scientific data access** - "
+#~ "Make 50+ databases accessible through "
+#~ "one interface"
+#~ msgstr "**实现科学数据访问民主化** - 通过一个界面访问50多个数据库"
+
+#~ msgid "**Enable AI-driven research** - Seamless integration with AI assistants"
+#~ msgstr "**启用 AI 驱动的研究** - 与 AI 助手的无缝集成"
+
+#~ msgid "**Accelerate discovery** - Reduce time from question to insight"
+#~ msgstr "**加速发现** - 缩短从问题到洞察的时间"
+
+#~ msgid "**Foster collaboration** - Community-driven tool development"
+#~ msgstr "**促进协作** - 基于社区驱动的工具开发"
+
+#~ msgid "👥 Community"
+#~ msgstr "👥 社区"
+
+#~ msgid "**Contributors**: Scientists, developers, and researchers worldwide"
+#~ msgstr "**贡献者**：来自全球的科学家、开发人员和研究人员"
+
+#~ msgid "**Maintainers**: MIMS Lab at Harvard Medical School"
+#~ msgstr "**维护者**：哈佛医学院 MIMS 实验室"
+
+#~ msgid ""
+#~ "**Users**: Research institutions, pharmaceutical "
+#~ "companies, academic labs"
+#~ msgstr "**用户**：研究机构、制药公司、学术实验室"
+
+#~ msgid "📈 Development"
+#~ msgstr "📈 开发"
+
+#~ msgid "📄 Legal"
+#~ msgstr "📄 法律"
+
+#~ msgid "🙏 Acknowledgments"
+#~ msgstr "🙏 致谢"
+
+#~ msgid ""
+#~ "ToolUniverse is built on the work "
+#~ "of many scientific databases and APIs:"
+#~ msgstr "ToolUniverse 基于众多科学数据库和 API 的工作成果构建而成："
+
+#~ msgid "**OpenTargets** - Disease-target associations"
+#~ msgstr "**OpenTargets** - 疾病-靶点关联"
+
+#~ msgid "**FDA/FAERS** - Drug safety and regulatory data"
+#~ msgstr "**FDA/FAERS** - 药物安全性与监管数据"
+
+#~ msgid "**PubMed/PubTator** - Biomedical literature"
+#~ msgstr "**PubMed/PubTator** - 生物医学文献"
+
+#~ msgid "**ChEMBL** - Chemical bioactivity data"
+#~ msgstr "**ChEMBL** - 化学生物活性数据"
+
+#~ msgid "**UniProt** - Protein information"
+#~ msgstr "**UniProt** - 蛋白质信息"
+
+#~ msgid "And many more..."
+#~ msgstr "以及更多……"
+
+#~ msgid ""
+#~ "Special thanks to the scientific "
+#~ "community for making their data "
+#~ "accessible and the developers who "
+#~ "maintain these valuable resources."
+#~ msgstr "特别感谢科学界为数据的开放共享所做的贡献，以及维护这些宝贵资源的开发者们。"

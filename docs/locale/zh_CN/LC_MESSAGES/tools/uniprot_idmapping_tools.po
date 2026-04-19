@@ -1,0 +1,262 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniprot_idmapping_tools.rst:10 014bb5225f064a0ba578ec3972ee1dcc
+msgid "Uniprot Idmapping Tools"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:12 66fcd23cee3c4b90be5555edb3b5b890
+msgid ""
+"**Configuration File**: ``uniprot_idmapping_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:16 d78a0fd39af84c7ebb76ca1a98f52704
+msgid ""
+"This page contains all tools defined in the "
+"``uniprot_idmapping_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:19 16a4fec593434872b67af9f053a8ffab
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:22 2c833d59a5aa43fca452242d223c73d6
+msgid "**UniProtIDMap_convert_ids** (Type: UniProtIDMappingTool)"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:24 10e4e97585144adb92991ed437569a82
+msgid ""
+"Convert protein/gene identifiers between databases using the UniProt ID "
+"Mapping service. Submits ..."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst e46d1672bd2a4b34bd1c77111b754be3
+msgid "UniProtIDMap_convert_ids tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:28
+#: ../../tools/uniprot_idmapping_tools.rst:69
+#: ../../tools/uniprot_idmapping_tools.rst:106
+#: ../../tools/uniprot_idmapping_tools.rst:135 775b82e93fbe42de91424318aa6a6123
+#: 8beeb964d8d54f43a542826cb3a222a3 e8ef3885740747e4a2fb1fb8356646d1
+#: eee078c4f1ca42d1bf3223c53c976fb8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:30 79275dd8459141368e71cac403e3f6bd
+msgid "**Name**: ``UniProtIDMap_convert_ids``"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:31
+#: ../../tools/uniprot_idmapping_tools.rst:72
+#: ../../tools/uniprot_idmapping_tools.rst:109
+#: ../../tools/uniprot_idmapping_tools.rst:138 16114aee1ef64ce981516ddc87827997
+#: 1aebf928e6114cb5acbd09d84a0f34f7 3cc82e5d46914d529f7ffa3657a4e209
+#: 6cf91b7bad5e45279dd58813f3488120
+msgid "**Type**: ``UniProtIDMappingTool``"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:32 d9f2c7ddacb44f59937db35010b5185c
+msgid ""
+"**Description**: Convert protein/gene identifiers between databases using"
+" the UniProt ID Mapping service. Submits a mapping job and polls for "
+"results. Supports 100+ databases including UniProtKB, Gene Names, "
+"Ensembl, RefSeq, PDB, ChEMBL, and more. The canonical service for cross-"
+"database identifier conversion in proteomics and genomics. Example: "
+"convert gene names TP53,BRCA1,EGFR to UniProtKB accessions (P04637, "
+"P38398, P00533). Returns mapped IDs with from/to pairs."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:34
+#: ../../tools/uniprot_idmapping_tools.rst:75
+#: ../../tools/uniprot_idmapping_tools.rst:112
+#: ../../tools/uniprot_idmapping_tools.rst:141 0f0a6ed6efff4caf9d752c001addcf63
+#: 70412ff8ccf84e56ab8a52ed9a4f1c26 7c5fb7e7d5894fb5b56bdc836a9dbf6b
+#: b4b65489fbfd4f1e991d9de95cca63e9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:36 1fa7c82c97cc49dd9b8e677e5ba9e2ce
+msgid ""
+"``ids`` (string) (required) Comma-separated identifiers to convert. "
+"Examples: 'TP53,BRCA1,EGFR' (gene names), 'P04637,P38398' (UniProt ACs), "
+"'ENSG00000141510' (Ensembl)."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:39 db943a39780b4918ad7fdd613c718ef7
+msgid ""
+"``from_db`` (string) (required) Source database. Common values: "
+"'Gene\\_Name', 'UniProtKB\\_AC-ID', 'Ensembl', 'Ensembl\\_Genomes', "
+"'RefSeq\\_Protein', 'PDB', 'ChEMBL', 'GeneCards', 'HGNC'. See UniProt ID "
+"Mapping docs for full list."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:42 46e132ef4c924594a7160135122b7526
+msgid ""
+"``to_db`` (string) (optional) Target database. Common values: "
+"'UniProtKB', 'UniProtKB-Swiss-Prot', 'Gene\\_Name', 'Ensembl', "
+"'RefSeq\\_Protein', 'PDB', 'ChEMBL', 'GeneCards'. Default: 'UniProtKB'."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:45 e96cca82c5dd49caa174f1ca9c17143f
+msgid ""
+"``tax_id`` (integer, null) (optional) NCBI Taxonomy ID to restrict "
+"results. Examples: 9606 (human), 10090 (mouse), 10116 (rat). Optional but"
+" recommended for gene names."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:48
+#: ../../tools/uniprot_idmapping_tools.rst:86
+#: ../../tools/uniprot_idmapping_tools.rst:116
+#: ../../tools/uniprot_idmapping_tools.rst:146 4d22826fa5714f778d2cdc3f7bf4abcb
+#: 5ea233dba2234f919f74f9813f5527e1 bf353ad9d4c84899bdac0322d0861c25
+#: dae92a6d60ea4e2da461e4e89039c49f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:63 08a187580b164cf881e7346d4f8c6fb5
+msgid "**UniProtIDMap_gene_to_uniprot** (Type: UniProtIDMappingTool)"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:65 50c036f9e83c4208a2330d455dd4cd23
+msgid ""
+"Convert gene names or symbols to UniProt accessions using the UniProt ID "
+"Mapping service. Shortcu..."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst d253f8f86a724e1e820d0f79c7796d25
+msgid "UniProtIDMap_gene_to_uniprot tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:71 fa4912a6bd0a411b93130c72d092e340
+msgid "**Name**: ``UniProtIDMap_gene_to_uniprot``"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:73 45d0695dc7374842955f457cb55fb1b6
+msgid ""
+"**Description**: Convert gene names or symbols to UniProt accessions "
+"using the UniProt ID Mapping service. Shortcut for the most common ID "
+"mapping task in bioinformatics: going from gene symbols to UniProt "
+"protein IDs. Restricts to a species via taxonomy ID to avoid ambiguous "
+"results. Example: 'TP53' in human (9606) maps to P04637 (canonical) plus "
+"isoforms."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:77 3bffafd8e1394170a1a5b9ff6e7c4813
+msgid ""
+"``gene_names`` (string) (required) Comma-separated gene symbols. "
+"Examples: 'TP53', 'BRCA1,TP53,EGFR,KRAS', 'INS,GCG'."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:80 c73da53732614852b07d2c3075d09aab
+msgid ""
+"``tax_id`` (integer) (optional) NCBI Taxonomy ID. Required. 9606 = human,"
+" 10090 = mouse, 10116 = rat, 7227 = fruit fly, 6239 = C. elegans."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:83 88c218483ce84c3b895153348e427e38
+msgid ""
+"``reviewed_only`` (boolean, null) (optional) If true, return only Swiss-"
+"Prot (reviewed) entries. Default: false (all UniProtKB entries)."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:100 cb6ced02e3d64d6ea231de94be53890d
+msgid "**UniProtIDMap_list_databases** (Type: UniProtIDMappingTool)"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:102 3adacd2e32a74da79976edebc01b30cd
+msgid ""
+"List all available database identifiers supported by the UniProt ID "
+"Mapping service. Returns grou..."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst b07a03469b004770b812742090315341
+msgid "UniProtIDMap_list_databases tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:108 8e68055cfb7e47958182656ee4e9e84d
+msgid "**Name**: ``UniProtIDMap_list_databases``"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:110 b462a03a21e44974bb072bbeae5249b6
+msgid ""
+"**Description**: List all available database identifiers supported by the"
+" UniProt ID Mapping service. Returns grouped databases with their display"
+" names and whether they can be used as source or target in ID conversion."
+" Use this to discover what databases are available for cross-referencing."
+" Over 100 databases are supported including sequence databases, 3D "
+"structure databases, genome annotation databases, organism-specific "
+"databases, and more."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:114 a12a18bf7b864e12bb23255f00081ac6
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:129 f1caff5362c94d75ba67d5375e392268
+msgid "**UniProtIDMap_to_pdb** (Type: UniProtIDMappingTool)"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:131 6b30e972b0bc441f9628f0d57c1151dc
+msgid ""
+"Convert UniProt accessions to PDB structure IDs using the UniProt ID "
+"Mapping service. Shortcut fo..."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst 50f29e4f0a7f4d5bad7aa2df035be567
+msgid "UniProtIDMap_to_pdb tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:137 b9f921811bc845c797a7ca7933bc80c8
+msgid "**Name**: ``UniProtIDMap_to_pdb``"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:139 9656d17b5d0a49089ec6c8eb96f733d9
+msgid ""
+"**Description**: Convert UniProt accessions to PDB structure IDs using "
+"the UniProt ID Mapping service. Shortcut for the common use case of "
+"finding 3D structures for proteins. Returns all PDB entries associated "
+"with each UniProt accession, useful for structural biology workflows. "
+"Example: P04637 (TP53) maps to dozens of PDB structures; P00533 (EGFR) "
+"maps to hundreds."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:143 a3cb056f7ff0406ab33812e9ce2ec9c0
+msgid ""
+"``uniprot_ids`` (string) (required) Comma-separated UniProt accession "
+"IDs. Examples: 'P04637' (TP53), 'P38398' (BRCA1), 'P00533' (EGFR), "
+"'P04637,P38398,P00533'."
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:160 76e6df3d0a9249b89775a2d381441dbb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:162 dadd6fb17d674cd09c6171451d5dd16a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniprot_idmapping_tools.rst:163 51ecbdad10ef44e3aa07dead304755c5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

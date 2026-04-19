@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nominatim_tools.rst:10 d4557a24814244d0913899429915fb82
+msgid "Nominatim Tools"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:12 ee43ec193e5b4fc4a917a0ced874cfd6
+msgid ""
+"**Configuration File**: ``nominatim_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:16 11cbd051e76a408a9addfb30d166f5ce
+msgid ""
+"This page contains all tools defined in the ``nominatim_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:19 08a6aae347634fab974e0fa83b8aef0a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:22 e3768d8e9bb24f66ad3f7b8dede37534
+msgid "**Nominatim_geocode** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:24 c7a6d869b1e14e1282d005ffee7bb7e7
+msgid ""
+"Geocode addresses and place names to geographic coordinates using the "
+"OpenStreetMap Nominatim ser..."
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst 0167677d650849ceb131dfb8fdfc8c63
+msgid "Nominatim_geocode tool specification"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:28 ../../tools/nominatim_tools.rst:65
+#: 5e15a786c6b243b282f124edcadca55f 70caea1f18074421a4ce6d9d324bbcd2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:30 c1c9c99186c142b182dff759e763c6a6
+msgid "**Name**: ``Nominatim_geocode``"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:31 ../../tools/nominatim_tools.rst:68
+#: 4e0e32aecdd149cea138f24e85adc0ce 7ca2b6445a4349b58ac8c1926dcf3017
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:32 e45c424e3e904aac83e0dc7d2f450f5c
+msgid ""
+"**Description**: Geocode addresses and place names to geographic "
+"coordinates using the OpenStreetMap Nominatim service. Converts human-"
+"readable addresses, landmarks, or place names into latitude/longitude "
+"coordinates. Returns structured address components, bounding box, and "
+"place type. No authentication required. Useful for geospatial analysis, "
+"mapping, and location-based research."
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:34 ../../tools/nominatim_tools.rst:71
+#: 114fc050669045e8aff3aaa38e06b860 ac0e3b9e574e452da4f2aae54d6ef127
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:36 ca0f0df5c7f7489b9761237579603a90
+msgid ""
+"``q`` (string) (required) Free-form address or place name query. "
+"Examples: 'Eiffel Tower Paris', '1600 Pennsylvania Ave Washington DC', "
+"'Big Ben London', 'Mount Everest'"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:39 db30b7e0ae554af0a8939ccd34db05cd
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 5, max 50)"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:42 7b95a5b6d2544035a39a8dfc20103edf
+msgid ""
+"``countrycodes`` (string, null) (optional) Restrict to specific countries"
+" (comma-separated ISO 3166-1 alpha-2 codes). Examples: 'us', 'de,fr', "
+"'gb'"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:45 ../../tools/nominatim_tools.rst:79
+#: 21138ee7a79242dd923b78e22b5ec742 cb3c9daff84341d0b52f218c923b37ba
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:59 d8731d4a20234081a55a9079542db5a1
+msgid "**Nominatim_reverse_geocode** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:61 c6a33fae7d9042218ac6379ad9e9cfd7
+msgid ""
+"Reverse geocode latitude/longitude coordinates to a human-readable "
+"address using OpenStreetMap No..."
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst 5427dc6ce2eb471eae1b190e7af326aa
+msgid "Nominatim_reverse_geocode tool specification"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:67 ce96e2b974114527b7411250e6d0de7f
+msgid "**Name**: ``Nominatim_reverse_geocode``"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:69 2bb58f52f38e43fbb3e8a626be2a38d0
+msgid ""
+"**Description**: Reverse geocode latitude/longitude coordinates to a "
+"human-readable address using OpenStreetMap Nominatim. Converts geographic"
+" coordinates into structured address information including street, city, "
+"country. No authentication required."
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:73 92e12b0dc2de44f6aa41f736549a3e2d
+msgid ""
+"``lat`` (number) (required) Latitude in decimal degrees. Examples: "
+"48.8582 (Paris), 51.5007 (London), 40.7484 (New York)"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:76 22b3d31eb32b491ab36035d95973476e
+msgid ""
+"``lon`` (number) (required) Longitude in decimal degrees. Examples: "
+"2.2945 (Paris), -0.1246 (London), -73.9967 (New York)"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:94 1b43ec5e9a2d4438ad23ba2a9d9eedc3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:96 9324534893844cf08ca97b8d51ee165f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nominatim_tools.rst:97 b570b10da9814233a8680aa8416904a6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

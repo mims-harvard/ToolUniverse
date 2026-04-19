@@ -1,0 +1,305 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/semantic_scholar_ext_tools.rst:10
+#: 52b4b155d4254c3cb4fba5045713f2d1
+msgid "Semantic Scholar Ext Tools"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:12
+#: b446565adf00440aa7430a1204ae9540
+msgid ""
+"**Configuration File**: ``semantic_scholar_ext_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:16
+#: 72aba72bebff4c438aa4d87eb71ddfe7
+msgid ""
+"This page contains all tools defined in the "
+"``semantic_scholar_ext_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:19
+#: c0de39d38bfa4483b204c5f15b4751de
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:22
+#: b2e2aae2ea5b4565894b3ac06b07d22c
+msgid "**SemanticScholar_get_author** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:24
+#: 10497f991309486a8862b233bb7a5acf
+msgid ""
+"Get detailed profile for a specific author on Semantic Scholar by author "
+"ID. Returns name, h-inde..."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst 69deb73e47a04dd092eb3debb16982ee
+msgid "SemanticScholar_get_author tool specification"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:28
+#: ../../tools/semantic_scholar_ext_tools.rst:62
+#: ../../tools/semantic_scholar_ext_tools.rst:96
+#: ../../tools/semantic_scholar_ext_tools.rst:133
+#: 5a59c31aeaa94928a1c7a48952bc69e7 c041d391d9de4c98a38d2ad4a87de0d9
+#: f5a7a6506a1443478b8eea5e9eb61f8b fed184b292bf43f882013f5aeb9cb2a8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:30
+#: 837f9fc2cd314ecdaed7be00671c8249
+msgid "**Name**: ``SemanticScholar_get_author``"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:31
+#: ../../tools/semantic_scholar_ext_tools.rst:65
+#: ../../tools/semantic_scholar_ext_tools.rst:99
+#: ../../tools/semantic_scholar_ext_tools.rst:136
+#: 1a1ae3ec07ad468a96d83a6e6f375691 1a2bdb3c343140609ce2733a5cfbe01f
+#: 69fe1b6da1c941f38c4df04ce1c57587 f3cb81b2e7e141eca30d1fee81d9c9fa
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:32
+#: 74090af33eb04f38bfdfbb4340d9e7d5
+msgid ""
+"**Description**: Get detailed profile for a specific author on Semantic "
+"Scholar by author ID. Returns name, h-index, citation count, paper count,"
+" affiliations, homepage, and optionally their paper list with titles, "
+"years, and citation counts. Use SemanticScholar\\_search\\_authors first "
+"to find the author ID."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:34
+#: ../../tools/semantic_scholar_ext_tools.rst:68
+#: ../../tools/semantic_scholar_ext_tools.rst:102
+#: ../../tools/semantic_scholar_ext_tools.rst:139
+#: 847c5c30bf6847188002ca253ad87376 a03871e363784e3d8c0843478338e0cd
+#: c184138accc443e391f3dacd4395174f d9b2bc163998409bb0333522cba37320
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:36
+#: 533bbb4e97454be9a3e75c1690fe2162
+msgid ""
+"``author_id`` (string) (required) Semantic Scholar author ID (e.g., "
+"'1741101' for Oren Etzioni). Find using "
+"SemanticScholar\\_search\\_authors."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:39
+#: 7d1ef7d27e6942528880192923428109
+msgid ""
+"``fields`` (string) (optional) Comma-separated fields: "
+"name,hIndex,citationCount,paperCount,affiliations,homepage,papers.title,papers.year,papers.citationCount,papers.paperId"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:42
+#: ../../tools/semantic_scholar_ext_tools.rst:76
+#: ../../tools/semantic_scholar_ext_tools.rst:113
+#: ../../tools/semantic_scholar_ext_tools.rst:150
+#: 16a14b18275a44feab1b71ce9618d6e4 bc48d74a5f1c41c4b3a49d97d0952310
+#: c63fe8c04a8b405f827b2a3d27d0ca45 d271dc42ef6849479224a68888fd2fbc
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:56
+#: 2f92a52a51314c4fa5ab19a416857982
+msgid "**SemanticScholar_get_paper** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:58
+#: aec4d7a0958a44c283dfa64420149afe
+msgid ""
+"Get detailed metadata for a specific paper from Semantic Scholar by paper"
+" ID, DOI, PubMed ID, or ..."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst f5c64fbe13864a60aaeaeb923d3aab38
+msgid "SemanticScholar_get_paper tool specification"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:64
+#: a3f7a1bbcbeb4732810ddd178c9a0901
+msgid "**Name**: ``SemanticScholar_get_paper``"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:66
+#: 134e48390d774ff580712d53bf8cb4c3
+msgid ""
+"**Description**: Get detailed metadata for a specific paper from Semantic"
+" Scholar by paper ID, DOI, PubMed ID, or other identifier. Returns title,"
+" abstract, AI-generated TLDR summary, authors, citation count, reference "
+"count, journal, publication types, fields of study, open access PDF link,"
+" and external IDs (DOI, PubMed, ArXiv, etc.). Identifier formats: "
+"Semantic Scholar paper ID (40-char hex), DOI: prefix (e.g., "
+"'DOI:10.1126/science.1225829'), PMID: prefix (e.g., 'PMID:22745249'), "
+"ArXiv: prefix (e.g., 'ArXiv:2106.01345'), or CorpusId: prefix. This "
+"complements SemanticScholar\\_search\\_papers by providing full paper "
+"details."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:70
+#: 0b0afd53d3b44046a1413eed80390400
+msgid ""
+"``paper_id`` (string) (required) Paper identifier. Supports multiple "
+"formats: Semantic Scholar ID (e.g., "
+"'68d962effe5520777791bd6ec8ffa4b963ba4f38'), DOI (e.g., "
+"'DOI:10.1126/science.1225829'), PubMed (e.g., 'PMID:22745249'), ArXiv "
+"(e.g., 'ArXiv:2106.01345'), or CorpusId (e.g., 'CorpusId:14088426')."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:73
+#: 66e4ddd9510540369dde7052855f4e9d
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to return. "
+"Available: "
+"paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,tldr,publicationDate,venue,fieldsOfStudy."
+" Default returns core fields."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:90
+#: 9d25d37bb6cc45b6b7359efea188032f
+msgid "**SemanticScholar_get_recommendations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:92
+#: d6ba942746bd4645a17585efb62f6100
+msgid ""
+"Get paper recommendations from Semantic Scholar for a given paper. "
+"Returns papers similar to or r..."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst fb56694cd09747e0a5dd3cf28bd95b5b
+msgid "SemanticScholar_get_recommendations tool specification"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:98
+#: 61a7ac445b2c4120b43d37490ff46ca2
+msgid "**Name**: ``SemanticScholar_get_recommendations``"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:100
+#: 44e46d3c444144d3b69d57a5b1f04096
+msgid ""
+"**Description**: Get paper recommendations from Semantic Scholar for a "
+"given paper. Returns papers similar to or related to the input paper "
+"based on Semantic Scholar's recommendation algorithm. Useful for "
+"literature discovery - finding related work that you might have missed. "
+"Requires a Semantic Scholar paper ID (40-char hex). Use "
+"SemanticScholar\\_get\\_paper with DOI: prefix first to get the paper ID "
+"if you only have a DOI."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:104
+#: 275c81a14c00472880c698c179ec368f
+msgid ""
+"``paper_id`` (string) (required) Semantic Scholar paper ID (40-char hex, "
+"e.g., '68d962effe5520777791bd6ec8ffa4b963ba4f38'). Get this from "
+"SemanticScholar\\_get\\_paper or SemanticScholar\\_search\\_papers."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:107
+#: 09a3d46719cf43aaa93e4afe007d5bac
+msgid ""
+"``limit`` (integer) (optional) Number of recommendations to return "
+"(default 10, max 500)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:110
+#: 77c88c3cc9124d67b7f4160a3c121ce4
+msgid ""
+"``fields`` (string) (optional) Comma-separated fields for recommended "
+"papers: title,year,citationCount,abstract,authors,externalIds"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:127
+#: cc44e283c7ff4849b1921462811d5759
+msgid "**SemanticScholar_search_authors** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:129
+#: ab431a148f514274b1a627e86f7d15ee
+msgid ""
+"Search for researchers/authors on Semantic Scholar by name. Returns "
+"author IDs, names, h-index, c..."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst 2435f076d6fb47d5be74dd551c592d57
+msgid "SemanticScholar_search_authors tool specification"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:135
+#: 49eba69133f8475984da8c5bddcdaa31
+msgid "**Name**: ``SemanticScholar_search_authors``"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:137
+#: c5b4cf4b1ef8466b9c32752ffd2fae6d
+msgid ""
+"**Description**: Search for researchers/authors on Semantic Scholar by "
+"name. Returns author IDs, names, h-index, citation count, paper count, "
+"and affiliations. Use the authorId from results with "
+"SemanticScholar\\_get\\_author for detailed profiles. Rate limits: 1 "
+"req/sec without API key."
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:141
+#: 0683a57136ac4daeb0e6877793d0ab90
+msgid ""
+"``query`` (string) (required) Author name to search for (e.g., 'Jennifer "
+"Doudna', 'Oren Etzioni', 'Yann LeCun')"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:144
+#: bdd5fb32a3b14800b0c1807e58a48158
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (default 5, max "
+"1000)"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:147
+#: e9cf1ba320e64323b92cefd102477296
+msgid ""
+"``fields`` (string) (optional) Comma-separated fields: "
+"name,hIndex,citationCount,paperCount,affiliations"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:164
+#: 4709e666c1b14dc197e22dcb3ba4bab5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:166
+#: 14542cd9f3f949ecacd20f4991bf6c58
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/semantic_scholar_ext_tools.rst:167
+#: 18f176fca3444b42b37cb601bd813c0d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

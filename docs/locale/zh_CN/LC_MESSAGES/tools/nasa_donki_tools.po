@@ -1,0 +1,298 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nasa_donki_tools.rst:10 70b6645b40134c13b84e2a19e3b544fd
+msgid "Nasa Donki Tools"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:12 8a052e3ed82b469f8f19269da6303842
+msgid ""
+"**Configuration File**: ``nasa_donki_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:16 0848e37be012478199b4cd447d43df6b
+msgid ""
+"This page contains all tools defined in the ``nasa_donki_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:19 4caa82c44d454d28a696b6679d893ad1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:22 7f038ab6abe34706ae7d27daddbe7f31
+msgid "**NASA_DONKI_get_coronal_mass_ejections** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:24 ecbbb7befa254ad59b62e9e474cacf22
+msgid ""
+"Search NASA DONKI (Database Of Notifications, Knowledge, Information) for"
+" Coronal Mass Ejection (..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst 4d0e67da60f14b2fb44e259a8f131522
+msgid "NASA_DONKI_get_coronal_mass_ejections tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:28 ../../tools/nasa_donki_tools.rst:61
+#: ../../tools/nasa_donki_tools.rst:94 ../../tools/nasa_donki_tools.rst:127
+#: ../../tools/nasa_donki_tools.rst:163 ../../tools/nasa_donki_tools.rst:196
+#: 00b22c86a96e4a61b10a2b9e48a10666 13e2b56ab8444728b9b4aa1fbeef7951
+#: b64bcdd9e0fa4dd9be240aec2f496976 c22021aca61840ae8b80adb3cfd802ef
+#: fa10f65e73c1428cab888b3e33894dcf ff386afc69b74c59b559080b3469080d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:30 c608a5b9c13b45c0927c001262cafaed
+msgid "**Name**: ``NASA_DONKI_get_coronal_mass_ejections``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:31 ../../tools/nasa_donki_tools.rst:64
+#: ../../tools/nasa_donki_tools.rst:97 ../../tools/nasa_donki_tools.rst:130
+#: ../../tools/nasa_donki_tools.rst:166 ../../tools/nasa_donki_tools.rst:199
+#: 176f76d697b04670afe614362131090a 306322697bc5492f96fd29c84a534d0d
+#: 4cdbbbd417a344d6abc5d613afd149ba 69540b3837134b41b3399a7013391aad
+#: 8d10f59f66cb45d0a18902b5a35840e6 bdd44c1e930e4885883a0108c9fdcf91
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:32 696f553a25eb41d29283623e318d94be
+msgid ""
+"**Description**: Search NASA DONKI (Database Of Notifications, Knowledge,"
+" Information) for Coronal Mass Ejection (CME) events. Returns CME "
+"observations including start time, source location, active region, speed,"
+" direction, half-angle, and linked geomagnetic storms. No API key "
+"required. Date range defaults to last 30 days if not specified. Essential"
+" for space weather research, satellite operations planning, and aurora "
+"forecasting."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:34 ../../tools/nasa_donki_tools.rst:67
+#: ../../tools/nasa_donki_tools.rst:100 ../../tools/nasa_donki_tools.rst:133
+#: ../../tools/nasa_donki_tools.rst:169 ../../tools/nasa_donki_tools.rst:202
+#: 0dcaa34cd5fc4169876fad2dc4276225 2baad610234e4cdb8fc75151cbe6a73e
+#: 4ef03aa85f8747acaa5127ee5f980de7 7b28ed7bf7664282b24dc9e8a367f9ec
+#: cd599aeb6ef2408abeb4b7cdebdbcab2 e7b9196b80814698b8840ddedd2e8461
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:36 ../../tools/nasa_donki_tools.rst:69
+#: ../../tools/nasa_donki_tools.rst:102 ../../tools/nasa_donki_tools.rst:135
+#: ../../tools/nasa_donki_tools.rst:171 ../../tools/nasa_donki_tools.rst:204
+#: 4b193e9fd11246f3847d7d6a8ee95d15 714b3ba826f5493bb1562efbda41d0d8
+#: 7715c5af83c741e6b69c1aa275303761 7dd020e37fba4fd3a3e23b23a5ed8029
+#: 9238ac02e27748328d45c41961568feb edfd8c59897146aba3e005498fda16bd
+msgid ""
+"``startDate`` (string, null) (optional) Start date in YYYY-MM-DD format "
+"(e.g., '2024-01-01'). Defaults to 30 days before endDate."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:39 ../../tools/nasa_donki_tools.rst:207
+#: 0e4aacc916244e55aa3965a85718893a eca22f30174b46c896ff6fa0f1e99e13
+msgid ""
+"``endDate`` (string, null) (optional) End date in YYYY-MM-DD format "
+"(e.g., '2024-01-31'). Defaults to today."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:42 ../../tools/nasa_donki_tools.rst:75
+#: ../../tools/nasa_donki_tools.rst:108 ../../tools/nasa_donki_tools.rst:144
+#: ../../tools/nasa_donki_tools.rst:177 ../../tools/nasa_donki_tools.rst:210
+#: 0e65d941b0b3413e923286fa82f4939c 62863f931a7b421ca42f971e1082d222
+#: 66384fab8ae342eab0d6d43f04433191 76c13ec6102a4f4b9ffc22b4c237dc97
+#: a315dcea02944d588c1eb2603bcf4256 ec869cc38c4c4b42a5bf076f92c95329
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:55 c86a2fb3526b4c50986dfb5ed1f2e414
+msgid "**NASA_DONKI_get_geomagnetic_storms** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:57 258ff6b95f7c4f60a3eb9a1b22111dbc
+msgid ""
+"Search NASA DONKI for Geomagnetic Storm (GST) events. Returns storm "
+"observations including Kp ind..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst 6134645cf8fd4d57a2dfd2e4dfb56e38
+msgid "NASA_DONKI_get_geomagnetic_storms tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:63 77e8718de9ee49a0b5cbff3ec1993a10
+msgid "**Name**: ``NASA_DONKI_get_geomagnetic_storms``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:65 2a621cc42a394269836935d06ba206e7
+msgid ""
+"**Description**: Search NASA DONKI for Geomagnetic Storm (GST) events. "
+"Returns storm observations including Kp index values (measure of "
+"geomagnetic disturbance: 5=minor storm, 6=moderate, 7=strong, 8=severe, "
+"9=extreme). Geomagnetic storms can cause aurora displays, GPS "
+"disruptions, power grid problems, and satellite drag. No API key "
+"required."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:72 ../../tools/nasa_donki_tools.rst:105
+#: ../../tools/nasa_donki_tools.rst:174 09f92201cb1e44b19a22b6c405edc5e1
+#: 0e3a0e9dfc0c437eba505a72ec09f547 1e9af62f505048698b06994bdcce7bcb
+msgid ""
+"``endDate`` (string, null) (optional) End date in YYYY-MM-DD format "
+"(e.g., '2024-06-30'). Defaults to today."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:88 f25adceed2794015a593cc4751be7da0
+msgid "**NASA_DONKI_get_high_speed_streams** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:90 9cfaea74bb804c669c15ee8d26638a2e
+msgid ""
+"Search NASA DONKI for High Speed Stream (HSS) events in the solar wind. "
+"HSSs originate from coron..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst dcf6ab6afb12437383cb535146bdc186
+msgid "NASA_DONKI_get_high_speed_streams tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:96 959d126040a5412c988efedc34b0685c
+msgid "**Name**: ``NASA_DONKI_get_high_speed_streams``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:98 fe2b5ae6a25f43fb99a367b3b63c6faa
+msgid ""
+"**Description**: Search NASA DONKI for High Speed Stream (HSS) events in "
+"the solar wind. HSSs originate from coronal holes on the Sun and can "
+"cause minor to moderate geomagnetic storming when they interact with "
+"Earth's magnetosphere. They produce recurrent geomagnetic activity "
+"patterns (27-day cycle) and are a major source of space weather "
+"disturbances during solar minimum. No API key required."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:121 5986082fc709447b86d963b0a6ce6af2
+msgid "**NASA_DONKI_get_interplanetary_shocks** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:123 fcfc1d02817d4d7a86a2f282c03c68bc
+msgid ""
+"Search NASA DONKI for Interplanetary Shock (IPS) events detected at Earth"
+" or in the solar wind. I..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst 940d4fc7203448db9ee3a006e5e1c649
+msgid "NASA_DONKI_get_interplanetary_shocks tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:129 7c75376a5f424501b960518978fb7ff7
+msgid "**Name**: ``NASA_DONKI_get_interplanetary_shocks``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:131 691ba5dd4eea4241bcae120feaa204ca
+msgid ""
+"**Description**: Search NASA DONKI for Interplanetary Shock (IPS) events "
+"detected at Earth or in the solar wind. Interplanetary shocks are sudden "
+"increases in solar wind speed, density, and magnetic field strength, "
+"often driven by CMEs or stream interaction regions. They can trigger "
+"geomagnetic storms. Returns event time, location, detecting instruments, "
+"and linked events. No API key required."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:138 e5b9268984144a258d47d7293a615ca4
+msgid ""
+"``endDate`` (string, null) (optional) End date in YYYY-MM-DD format "
+"(e.g., '2024-03-31'). Defaults to today."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:141 878d5c5de5af4c9db68af117cf223d23
+msgid ""
+"``location`` (string, null) (optional) Shock detection location. Options:"
+" 'Earth', 'STEREO A', 'STEREO B', 'MESSENGER', 'Mars'. Default: all "
+"locations."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:157 3876cfc5f3d240e989554f19dcc26097
+msgid "**NASA_DONKI_get_solar_energetic_particles** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:159 dfa832effc6047b6948b1767b67d5747
+msgid ""
+"Search NASA DONKI for Solar Energetic Particle (SEP) events. SEPs are "
+"high-energy particles (prot..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst a9bc6d86cf0141988286288fe4ac326b
+msgid "NASA_DONKI_get_solar_energetic_particles tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:165 b951797f3f324578949123ae1e63848a
+msgid "**Name**: ``NASA_DONKI_get_solar_energetic_particles``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:167 f6990ab9431a43f3b0d0448047f9385b
+msgid ""
+"**Description**: Search NASA DONKI for Solar Energetic Particle (SEP) "
+"events. SEPs are high-energy particles (protons, electrons, heavy ions) "
+"accelerated by solar flares and CME-driven shocks. They pose radiation "
+"hazards to astronauts, satellites, and high-altitude aircraft. Returns "
+"event time, associated instruments, and linked solar events. No API key "
+"required."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:190 70256b45d22d4a8588cb8a096391fdb5
+msgid "**NASA_DONKI_get_solar_flares** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:192 4faf262c214844389960b0394be7d5c7
+msgid ""
+"Search NASA DONKI for Solar Flare (FLR) events. Returns flare "
+"observations including class (C/M/X..."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst d5a6b42fd25c47aba401f529934ce839
+msgid "NASA_DONKI_get_solar_flares tool specification"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:198 771493312362418b8bf3d069ff0a436a
+msgid "**Name**: ``NASA_DONKI_get_solar_flares``"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:200 fb1c633a2238451ba7bcf18db4fe5bac
+msgid ""
+"**Description**: Search NASA DONKI for Solar Flare (FLR) events. Returns "
+"flare observations including class (C/M/X), begin/peak/end times, source "
+"location, and active region. Solar flares are classified by X-ray peak "
+"brightness: C-class (small), M-class (medium, can cause brief radio "
+"blackouts), X-class (major, can cause global radio blackouts). No API key"
+" required."
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:223 13dda4de928444c9bf6c0d79963d7840
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:225 245d87e369e14da2929c38c716def330
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nasa_donki_tools.rst:226 a02e82acd55f4ce69a08ec09e82054ea
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

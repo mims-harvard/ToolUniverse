@@ -1,0 +1,730 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../MCP_TASKS_GUIDE.md:1 97f10c4d0b7e4e20964566e382ba2fd9
+msgid "MCP Tasks: Async Operations in ToolUniverse"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:3 ea8d0c435d2c4037a32ee456b5fcff4d
+msgid ""
+"**Status**: Production Ready **Version**: 1.0.0 **Last Updated**: "
+"2026-02-09"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:9 c0b795ce085c44209cd239fb52789cbf
+msgid "Overview"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:11 528d73fb0d6540c8ba0b7c10775817fe
+msgid ""
+"ToolUniverse now supports **MCP Tasks** ([Model Context Protocol "
+"Tasks](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks)),"
+" enabling non-blocking execution of long-running scientific operations. "
+"This native protocol support allows tools like ProteinsPlus docking (5-60"
+" minutes) and SwissDock simulations (10-30 minutes) to run in the "
+"background while you continue working."
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:13 79c86255c2b24c678b3e9e3f4b1860e3
+msgid "What is MCP Tasks?"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:15 cc94d501452c4b2884f8e74fa847e47f
+msgid ""
+"MCP Tasks is the official Model Context Protocol feature for handling "
+"long-running operations. When a tool supports tasks, clients (like Claude"
+" Code, Claude Desktop, Cursor) automatically:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:17 4799179802764b48a01168d863f6c4fc
+msgid "Get an immediate task ID (no waiting!)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:18 d9b1d1e6182c41249aad1a5fe86eb953
+msgid "Poll for status updates automatically"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:19 7e93a3e017d74461a42537b02a7a3f32
+msgid "Display progress messages to the user"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:20 b512d435d98a4966af13d74893c748bd
+msgid "Retrieve results when complete"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:21 a0089764a07a4f838ac3c400e550fe73
+msgid "Support cancellation"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:23 229d7ecff711433cb57313ad54acaa74
+msgid "**No manual polling or ID tracking required!**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:25 6a7cc80c56c24fa689fc2197f70d08a1
+msgid "Key Benefits"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 8c9a1efa72504b4e9ecf9cbc2aa1ba5f
+msgid "Feature"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 45ced668f696429bad7e630ade175005
+msgid "Before (Blocking)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md b0ba7427b5884e7cab24282ea74a25f0
+msgid "After (MCP Tasks)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md cfb6eabd302746fb858d0a0b6ab176e8
+msgid "**Response Time**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md b3dc67975f784b918f02a88b58373cf0
+msgid "5-60 minutes"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 2e2d57a31e274f25ac9e3f8bed93fd45
+msgid "< 1 second"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md eac81afe1b8543399cd679b98e0bca11
+msgid "**User Experience**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 1256ca41e14e4511a96d10d9726c24b0
+msgid "Frozen, no status"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md db11e08a8ec241d091629c924f7d635c
+msgid "Progress updates"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md fe09cf49bdc04c7ea384ffd4f08d991b
+msgid "**Parallel Jobs**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md f85da9c18c0448da985f330d3d281d25
+msgid "One at a time"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md bd042e6e8a1d40cf9f3b02d17c2ec3d1
+msgid "Run multiple concurrently"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 62a180238d244f198e82eba4ca81061d
+msgid "**Cancellation**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md f53aa957798e4120b44ba8d5f493c564
+msgid "Not supported"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 844ac12b5bed4a4f8617a918aa9d19b0
+msgid "Cancel anytime"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md cbce006938a24600bf0178851ac5365d
+msgid "**Client Integration**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md d9c396f8bfae4b2e9ea66c525092e7f5
+msgid "Custom implementation"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 897eec1e39e74bbe8c65ef1e462502af
+msgid "Native MCP support"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:37 c825ff86c53d4bfe903b3db4e1e5c6cb
+msgid "Quick Start"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:39 d228b9b23ffe4fecbc42266074a5fff2
+msgid "Using MCP Tasks (Recommended)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:41 14633ad52c254bcebb0845113217ac76
+msgid "With MCP-aware clients (Claude Code, Claude Desktop, Cursor):"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:61 0f6fad4a70724fdd93685f4c738da6ca
+msgid "**What you see:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:70 2227129bb0944ba580295a0c777ef086
+msgid "Parallel Execution"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:72 2330b9946de64fba849507abac80a734
+msgid "Run multiple long-running jobs concurrently:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:95 5b61276cdd0b45609f8f6cf220f1b9ad
+msgid "**Performance:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:96 288d6cfed9404595a08db8becb1e5a34
+msgid "Sequential: 15-180 minutes (5-60 min × 3 jobs)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:97 df56143dd07649a696acbd5c53f74729
+msgid "Parallel: 5-60 minutes (fastest of 3 jobs)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:98 a74df34b972d4d5fa1b4a43445f0208f
+msgid "**Speedup: 3x** (or more with more jobs!)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:102 2d8885070032494d8c1da066ba7f560a
+msgid "Unified Async API"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:104 433d174c09584edbab3e4bbbeacb9703
+msgid ""
+"ToolUniverse now has a **context-aware** execution engine that "
+"automatically detects whether you're in a synchronous or asynchronous "
+"context."
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:106 4c285f3c7bc845cfb19a260ceed693ad
+msgid "How It Works"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:123 2d46ec8770b44919be0a8b93c0d80a91
+msgid ""
+"**No separate `arun()` method needed!** The same `run()` API works "
+"everywhere."
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:125 3c2ef196b3e54228ade8140cf1ef7e6b
+msgid "Context Detection"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:127 258e899ff4a44b11b4dd77d1d56ccab1
+msgid ""
+"The system detects your execution context using "
+"`asyncio.get_running_loop()`:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:138 5a35f5b424b84700a1b6225891bee85f
+msgid "Execution Modes"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md b1f4295e323041eb8c4a96f97aef9225
+msgid "Your Context"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md c1400a8235da47d8af81beebb373a259
+msgid "Tool Type"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 739e6c0507d94d6cb40c0194800343d2
+msgid "Behavior"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 794a61514d9b4e85956c90db593bd04c
+#: a97d113752124977985876d833106b13
+msgid "Sync"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 2c4ebe3910ec48a78d74bb18d0a61e10
+#: c8d03f82af274bc38e336347421ae93f
+msgid "Sync tool"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 88012e96d8be4239aeeec48bff59c44e
+msgid "Direct execution"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 6de2003b0faf41c59d0f4c468311fb38
+#: dfc6448d787041038fe1e9cd9d870465
+msgid "Async tool"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md e1c40cb5641d4535a11d8d0830f874cb
+msgid "Wrapped with `asyncio.run()`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 28f880b6d47a477ea93d6dbe7ead1d1c
+#: 354bb8184a0346728207e7c29a7862a2
+msgid "Async"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md 51fd10e755bf46fab648c4cb015ae6be
+msgid "Executed with `asyncio.to_thread()`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md b48d84b180ff41fa9ece37cc1636b680
+msgid "Direct await execution"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:147 41300fc81ab243049cf1441ee408e31c
+msgid "**Result:** Any tool works in any context, automatically!"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:151 f0e633da80434b11b2e243efdcfb8282
+msgid "Task Management"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:153 bb4c5c6bdf2f4c6197d508ace397f203
+msgid "Task Lifecycle"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:163 d29d5c1514a2441f904acb918d5005db
+msgid "**working**: Task is processing"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:164 8ac19f3ef5454c8ab34191e4ec100800
+msgid "**completed**: Task finished successfully"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:165 6708e00b9b244667a6e57a249a2c7eed
+msgid "**failed**: Task failed with error"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:166 251b053700ad480e928623706c1fe9f5
+msgid "**cancelled**: Task was cancelled by user"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:168 161fa3479ba142a49fdbca24610bf8ce
+msgid "Checking Task Status"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:170 447e0cba0a0041e28db49fa135f773da
+msgid "When using MCP clients, this is automatic. For programmatic access:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:205 c52f63ec733b409ba45ec81623fad6db
+msgid "Task Time-to-Live (TTL)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:207 116286572979488b85b329b2b6cf3029
+msgid "Tasks have a configurable lifetime to prevent memory leaks:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:225 4e7f8f883e644dac8a1572e13b5a8fd1
+msgid "After TTL expires, completed task results are cleaned up automatically."
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:229 c95387068239412bbc5500a280999331
+msgid "Creating Async Tools"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:231 49fd187413b9485b808bfd5d881b0fa5
+msgid "Basic Async Tool"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:233 8381e88447d24bd59c6220b0f476ab2f
+msgid "Convert a blocking tool to async:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:299 cecb28b668684cf08ebbd314b924e6ee
+msgid "Progress Reporting"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:301 5e2686dfe55040649b00ba419551e31e
+msgid "The `TaskProgress` object provides methods to update task status:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:318 09a4e86b8f244349ade80df711edb368
+msgid "Tool Configuration"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:320 9808ab529b2548389fbe5053c6fbdc04
+msgid "Register the async tool with task support:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:340 dbc1692ac97b4f21ad56730e325dd69e
+msgid "**Task Support Modes:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:341 f6f16de07bf5418e9a156b3791cbfd63
+msgid "`\"required\"`: Clients MUST use task mode (for long operations)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:342 d448a61fbfb74f4eb7fb728f144afadc
+msgid "`\"optional\"`: Clients MAY use task mode (for variable-time operations)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:343 c9e4450b58984038b3c7cc2cf65e6261
+msgid "`\"forbidden\"`: Tool cannot be used as task (for instant operations)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:347 7599aec8738747acb9aea1fb5deba0a6
+msgid "Real-World Examples"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:349 08a7f8fe58544b0788aee372cc92a693
+msgid "Example 1: Protein Docking Pipeline"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:386 7b5b75ebe2064e509fc201a5a7a6c6c2
+msgid "Example 2: Multi-Target Screening"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:427 cce3aaf018e142488eb02f52212e1690
+msgid "Example 3: Batch Processing with Progress"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:465 6fc4114781044fb9b19f28af056cc8c5
+msgid "Error Handling"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:467 a01dce909fa444aa8a3181873bd551be
+msgid "Handling Task Failures"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:497 f656e461fe3e495d8fef5b66c71d7914
+msgid "Batch Error Isolation"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:499 37b2da53a41e4f63962025e6add4078a
+msgid "When running multiple tasks, one failure doesn't abort others:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:525 7b721c3af53f49c2b12cba46472b315e
+msgid "Performance Optimization"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:527 5bde878c153a49d597b79a981aef0ae3
+msgid "Concurrency Limits"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:529 8d95be3f65df4c318a92ace0c2dec2e7
+msgid "Tools can specify concurrency limits to prevent overloading APIs:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:536 a65eefb86ab643afa2597534cba86ce2
+msgid "`return 0`: No limit (fully parallel)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:537 4a293c51ad4f42ad8e27d6e60b7a337d
+msgid "`return N`: Max N concurrent requests"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:539 a199cc57a6c242ed8fa5829942e981c2
+msgid "Caching Long Operations"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:541 aae5b58009234c92b58fef830c19c508
+msgid "Enable caching for expensive async operations:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:560 485fde65563b4fa8aef34b6560a6ae0f
+msgid "Connection Pooling"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:562 88f9fc2521ae48bb800895ceabd6c0f3
+msgid "For tools making HTTP requests, use connection pooling:"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:589 b721c6103a7044348eaa12c5adfbd961
+msgid "Testing Async Tools"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:591 fb190072e732467db648d06eeb4dd91c
+msgid "Unit Tests"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:639 c7347e9790b14aa3826d90c85287f7e8
+msgid "Integration Tests with TaskManager"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:682 216db1e7dc2b46c28d138f88015d0b27
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:684 895c5744b233433c84c9e6335268f532
+msgid "Task Hangs or Doesn't Complete"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:686 ../../MCP_TASKS_GUIDE.md:716
+#: ../../MCP_TASKS_GUIDE.md:740 054d81bda23e408b9f6b9599bcfa9ea2
+#: 4874963a203f4d8089ca0fe76b649b01 e580f09431d74e208191c9357ec2fde8
+msgid "**Symptoms:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:687 4c0fa894d4d1406d9985d077b8cd80cd
+msgid "Task stuck in \"working\" status"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:688 20aeeb0aef45437fbaed437e5cc0f162
+msgid "No progress updates"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:689 4e7d809566414877ab1d25603d74386a
+msgid "Eventually times out"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:691 ../../MCP_TASKS_GUIDE.md:720
+#: ../../MCP_TASKS_GUIDE.md:744 9b226258d24c48b19e0c3ca274245fd7
+#: c14d7152d2bc4038873341ef10dcdbb4 e861d03e0ff34c6ab16e1ee6c4f588be
+msgid "**Solutions:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:693 6cac6e8e63b74d92a8594683a8b9191f
+msgid "**Check API availability:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:701 dd3884ea4a844b00a529aca74d103592
+msgid "**Verify polling logic:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:702 2e20a3fb4789416f8f6d8f6f2a4cf732
+msgid "Ensure tool checks both HTTP 200 and 202 status codes"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:703 ab6b5e1c1e074652bfe04848a2bb84bf
+msgid "Check `response.json().get(\"status_code\")` for ProteinsPlus"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:705 932fcda9313e435eb0741947c9179124
+msgid "**Increase timeout:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:714 2d08fc2a918944d99c920778c31e2c25
+msgid "Progress Not Updating"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:717 a202f4669a014703ba342904f36a1159
+msgid "Task completes but no progress messages shown"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:718 24635640e63a449e9c9dc213c4b1785b
+msgid "Status always shows generic message"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:722 43c5eceec53742b4b25193e01010f7f5
+msgid "**Ensure tool accepts progress parameter:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:729 93313fcc73bc405baddd03f6eb833d82
+msgid "**Call set_message() regularly:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:738 5f4555b1dc4d4f9f867691c8f125e6cd
+msgid "Memory Leaks with Long-Running Server"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:741 17b9ebd2774e4c2dbe9d080a32d98a56
+msgid "Memory usage grows over time"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:742 38239f7fa7824649b9c81d5f1d072da4
+msgid "Many old completed tasks in memory"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:746 8ef36791c47e462f97d5dc6cbabc2d7e
+msgid "**Set appropriate TTL:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:755 a4a3f5f3dc384bcfa42fc3e838a3ced2
+msgid "**Manually clean up old tasks:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:763 c3949a690d9f4fa89101c5ebdcf9be68
+msgid "Best Practices"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:765 9ed5a48feb9449738544cd7ea04947e4
+msgid "Do"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:767 4149ded39155470d99565ede492d8602
+msgid "**Use MCP Tasks for long operations** (> 5 seconds)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:768 40c961ff069a4669a9a40c0be2aa3262
+msgid "**Report progress regularly** (every 5-10 seconds)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:769 2418d5c477674b34aad0305d56d509a9
+msgid "**Set realistic TTL** (2x expected runtime)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:770 69e9ca24504d44a9aeeab03e245b4133
+msgid "**Handle errors gracefully** (use try/except)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:771 bb7f75aeeb2644ce819d94d8b033c351
+msgid "**Test with real APIs** before production"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:772 d8e12bce850e41f8b6c026b20f024413
+msgid "**Cache expensive operations** when deterministic"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:773 5438a1865c864be69143eb7373baaae4
+msgid "**Use connection pooling** for HTTP-heavy tools"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:775 9bb096bea6ff495d9c3e6beb2bfbe1c1
+msgid "Don't"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:777 5b551ac3d6964c89a211e7a8f0db82b4
+msgid "**Don't use tasks for instant operations** (< 1 second)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:778 f090a055f2b04825969feaef90fad1e2
+msgid ""
+"**Don't block event loop** (use `await asyncio.sleep()`, not "
+"`time.sleep()`)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:779 ff660a81a2bc459396453182a59652c1
+msgid "**Don't ignore HTTP 202** status (ProteinsPlus uses it!)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:780 6344951eea2e4877b7313447ff5ed2bf
+msgid "**Don't swallow exceptions** (log and return error dicts)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:781 5aaf138227584f309845e07813ffc5d2
+msgid "**Don't create infinite loops** without timeout"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:782 c96a32632e274ab0ab3a3371723c6e56
+msgid "**Don't poll too frequently** (< 5 seconds causes API load)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:786 ffb48c8bb0d749dc880fb567c3f4f7ed
+msgid "Migration Guide"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:788 f627e0a1ebe54df8a16cbe25fef5fd09
+msgid "From Blocking to Async"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:790 4791c167b5f14df39bbc96ec920fc327
+msgid "**Before:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:803 7d74785f231b41e1aff7db5bb2a8f441
+msgid "**After:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:823 3a34fe10f87647768ed117248fc93737
+msgid "**Configuration:**"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:836 ef3c9f14679142bea2270250c3069e9f
+msgid "Reference"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:838 72952eec184047228e45eb5b8fe550e4
+msgid "MCP Tasks Specification"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:840 9088cbb1fb0c42e187581264d87ef71b
+msgid ""
+"[MCP Tasks "
+"Protocol](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:841 e18feae555354a419b648d4138f7fb8d
+msgid ""
+"[MCP Tasks "
+"SEP-1686](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1686)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:842 384c995a57e54dcb81fc0df45c2eeaed
+msgid ""
+"[MCP Async Tasks Guide](https://workos.com/blog/mcp-async-tasks-ai-agent-"
+"workflows)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:844 9ae4f31885424c80895cc8e57566e1f0
+msgid "ToolUniverse Components"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:846 b1b11e788db84a88a78f6130986b1660
+msgid "**TaskManager**: `src/tooluniverse/task_manager.py`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:847 69e11db0823445a1be338a170db8f573
+msgid "**TaskProgress**: `src/tooluniverse/task_progress.py`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:848 29a5c6f8bb0e48229d43a684ea9b22bd
+msgid "**Unified Async API**: `src/tooluniverse/execute_function.py`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:849 8a72ec3afe4d4b4f818775ae7b969cbc
+msgid "**MCP Server**: `src/tooluniverse/smcp_server.py`"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:851 a24ccc0350dd411da1d5fb5ce5aa14e0
+msgid "Tests"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:853 f297556f3dfd49c495d15c7a00a36d5c
+msgid ""
+"**MCP Tasks Integration**: `tests/test_mcp_tasks_integration.py` (13 "
+"tests)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:854 4c93a3b6034347108a58318ca9fef6f0
+msgid "**Edge Cases**: `tests/test_edge_cases.py` (12 tests)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:855 f0f703092d4e4cedbc73b1f4d06f2bf7
+msgid "**Unified Async API**: `tests/test_unified_async_api.py` (16 tests)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:857 bb3fb4e8705e4cffb57474f60c05e873
+msgid "**Total Test Coverage**: 28/28 tests passing (100%)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:861 e102a19cca8849409003edbdffb18ddc
+msgid "Support"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:863 35a7b69e1aa3482fa34c87394b2b73c6
+msgid "Need help with MCP Tasks or async operations?"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:865 f2f3e485341c4ffe855a48442b7b65ef
+msgid ""
+"**Slack**: [ToolUniverse "
+"Community](https://join.slack.com/t/tooluniversehq/shared_invite/zt-"
+"3dic3eoio-5xxoJch7TLNibNQn5_AREQ)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:866 15bacc9f0304465aa90fc9254ba1df3b
+msgid ""
+"**GitHub Issues**: [Report Issues](https://github.com/mims-"
+"harvard/ToolUniverse/issues)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:867 6d8785dc4ea14b59b8b1c9b848155f5a
+msgid "**Email**: [Shanghua Gao](mailto:shanghuagao@gmail.com)"
+msgstr ""
+
+#: ../../MCP_TASKS_GUIDE.md:871 1036e6cea8a94b62be44947c2d5af66b
+msgid ""
+"**Ready to use MCP Tasks!** All tools marked with `\"taskSupport\": "
+"\"required\"` will automatically run as background tasks when called from"
+" MCP clients."
+msgstr ""
+

@@ -1,0 +1,105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rcsb_chemcomp_tools.rst:10 0e02120380194e709df75f1ea67d462e
+msgid "Rcsb Chemcomp Tools"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:12 f427924621a04dd986f8aa01646a87c2
+msgid ""
+"**Configuration File**: ``rcsb_chemcomp_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:16 eb03c96e6a9743e7af004f643899bcc6
+msgid ""
+"This page contains all tools defined in the ``rcsb_chemcomp_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:19 e5a225959399499e87dbf165b6906dd7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:22 69bbb036a72a4d0e81145021dda588e1
+msgid "**RCSB_get_chemical_component** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:24 27d9e88f8ca047ebb68ab7081b339a4b
+msgid ""
+"Get detailed chemical component information from the RCSB Protein Data "
+"Bank by 3-letter component..."
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst add3a1f3872942d6b2d0d927f39ec8db
+msgid "RCSB_get_chemical_component tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:28 7411ae8a5c894f61a366a46c581d0972
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:30 75a9be165c564782b4f5b846cd4352c7
+msgid "**Name**: ``RCSB_get_chemical_component``"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:31 23fa78ee374548e4921fab7c5cbf4ba8
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:32 3a2e5df05b3f4a80bff11b07bf48f6b9
+msgid ""
+"**Description**: Get detailed chemical component information from the "
+"RCSB Protein Data Bank by 3-letter component ID. Returns the chemical "
+"name, formula, molecular weight, type (non-polymer, peptide-like, "
+"D-saccharide, etc.), InChI/SMILES descriptors, and synonyms. Chemical "
+"components include ligands, drugs, cofactors, and modified residues found"
+" in PDB structures. Common examples: ATP, HEM (heme), NAG "
+"(N-acetylglucosamine), STI (imatinib/Gleevec), FAD, NAD."
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:34 01c9e22ccda84513a447b5fea46bc7bd
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:36 8017afe1df2a43999fe79fab338917a4
+msgid ""
+"``comp_id`` (string) (required) 3-letter chemical component ID in "
+"uppercase (e.g., 'ATP', 'HEM', 'NAG', 'STI', 'FAD', 'NAD', 'GDP', 'ADP')"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:39 a149de8f3fca4704849f4b0bbc567357
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:53 e77482beb2cb43a896cb72e0484ded9d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:55 ba198ba5632f4b0aad1701f6896c5046
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rcsb_chemcomp_tools.rst:56 4b97c81889e44bfd98ea85138c14e864
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

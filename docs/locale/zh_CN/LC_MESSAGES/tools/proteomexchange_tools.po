@@ -1,0 +1,154 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/proteomexchange_tools.rst:10 41126ecabb14490ebc6ad38e04484865
+msgid "Proteomexchange Tools"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:12 32fd003324bd473c99b4afe0e2f55a3d
+msgid ""
+"**Configuration File**: ``proteomexchange_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:16 8ed831e958b241d9bed88bf71805c01f
+msgid ""
+"This page contains all tools defined in the "
+"``proteomexchange_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:19 77c97f606a8d41f1b76829d14624dc35
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:22 391d3aaa84b74ee3b73fca59f39f7110
+msgid "**ProteomeXchange_get_dataset** (Type: ProteomeXchangeTool)"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:24 236a925c1f7c4e8b941d93f026c5672e
+msgid ""
+"Get detailed metadata for a ProteomeXchange proteomics dataset by PX "
+"identifier. Returns title, s..."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst 962272d3e6b8403b9e93c55ec4f4fa9d
+msgid "ProteomeXchange_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:28
+#: ../../tools/proteomexchange_tools.rst:59 6102f01f844442bea94da949904d7ec7
+#: e61d983068a64c8389a64f76e39626d6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:30 e2aebce876014fabbb91ef49873d1ef5
+msgid "**Name**: ``ProteomeXchange_get_dataset``"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:31
+#: ../../tools/proteomexchange_tools.rst:62 084f2c2e786e4b85bff08cd3adc1c2c6
+#: b3ae25c3ac4749cc82af5e6fff87253c
+msgid "**Type**: ``ProteomeXchangeTool``"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:32 0ddebdcae2424ae886a84a01e6a04ae1
+msgid ""
+"**Description**: Get detailed metadata for a ProteomeXchange proteomics "
+"dataset by PX identifier. Returns title, species, instruments, "
+"publications (PubMed/DOI), file count, and cross-references to partner "
+"repositories (PRIDE, MassIVE, PeptideAtlas, jPOST). ProteomeXchange is "
+"the central hub for proteomics data sharing. Example: PXD000001 returns "
+"the first ProteomeXchange dataset (Erwinia carotovora TMT LC-MS/MS from "
+"Cambridge)."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:34
+#: ../../tools/proteomexchange_tools.rst:65 4fedfd7e9e0d41989dc3b972494770af
+#: b706c79cb90f4994859484a954a54dd0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:36 eeb0511e7d924602ad044152886615c8
+msgid ""
+"``px_id`` (string) (required) ProteomeXchange dataset identifier (PXD "
+"format). Examples: 'PXD000001' (first PX dataset), 'PXD000561' (human "
+"proteome map)."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:39
+#: ../../tools/proteomexchange_tools.rst:73 6d2e2c326a154368babeba89047a12b6
+#: c550a5ee966941268a076b1dd68a44ed
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:53 368b3ab0215a47b2b9eceba12a7a2d24
+msgid "**ProteomeXchange_search_datasets** (Type: ProteomeXchangeTool)"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:55 3d255c39544f46edb299d15ca2977024
+msgid ""
+"Search ProteomeXchange proteomics datasets via the MassIVE PROXI "
+"interface. Returns dataset acces..."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst 03c5933784e94004846830af4f2ad454
+msgid "ProteomeXchange_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:61 a7164ba7c8684a5eabac29e70a68354f
+msgid "**Name**: ``ProteomeXchange_search_datasets``"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:63 9310965c18f74da785ed52d6b4b57cee
+msgid ""
+"**Description**: Search ProteomeXchange proteomics datasets via the "
+"MassIVE PROXI interface. Returns dataset accessions, titles, and species."
+" ProteomeXchange aggregates data from PRIDE, MassIVE, PeptideAtlas, "
+"jPOST, and iProX. Useful for finding proteomics studies related to "
+"specific organisms, diseases, or proteins."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:67 1a1ff8ebc1704ba9951cf4ee20f7b327
+msgid ""
+"``query`` (string, null) (optional) Optional search filter (dataset "
+"accession or keyword). Examples: 'MSV000091816', 'PXD'. Leave empty to "
+"list recent datasets."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:70 30b67dc859cb465da46e26c70c68cece
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (1-50, "
+"default 10)."
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:86 3f81aa4b68724e95aa48be167d46fa68
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:88 417311f315dc40a89cbf63ea6728c0cf
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/proteomexchange_tools.rst:89 37759b65cb4741498d8993d2e67c5dcc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

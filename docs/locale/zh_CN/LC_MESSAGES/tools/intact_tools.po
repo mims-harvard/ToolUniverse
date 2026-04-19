@@ -1,0 +1,470 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/intact_tools.rst:10 0866aa3326c244bcbda7d471bff1a6bb
+msgid "Intact Tools"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:12 a50481aaa7224f41a599b8ffa9532298
+msgid ""
+"**Configuration File**: ``intact_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:16 5209cd0ff3b74ea1baac267b19826101
+msgid ""
+"This page contains all tools defined in the ``intact_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:19 45c58da7cf674639bdb5f2a796d45568
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:22 c440cde3eacf4448b55352cb93619fce
+msgid "**intact_get_complex_details** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:24 ba60413f44d541109a964de3f1e8d5a3
+msgid ""
+"Get detailed information about a specific protein complex by its complex "
+"AC (Complex Accession, e..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst 8540cb2600564708a1848a554af1366e
+msgid "intact_get_complex_details tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:28 ../../tools/intact_tools.rst:62
+#: ../../tools/intact_tools.rst:96 ../../tools/intact_tools.rst:156
+#: ../../tools/intact_tools.rst:190 ../../tools/intact_tools.rst:230
+#: ../../tools/intact_tools.rst:267 ../../tools/intact_tools.rst:301
+#: 1a875280891143b9a4b1960aaf66c79e 20bad6635f834615a9caaa371fd57659
+#: 2e4b6f9523594147a700ba329c651816 9706e23e9c6a439f9cf8c419d6197ff8
+#: cdfd6b7aec24450096131c8ab4669994 e68e473a12684299ba00f00a42b7e755
+#: ec3ac1369db04589b18b95cb56418717 fec10561992f4a03a2663e7bfdff5cb7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:30 faa8f0a7234a46358671c13a223e7584
+msgid "**Name**: ``intact_get_complex_details``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:31 ../../tools/intact_tools.rst:65
+#: ../../tools/intact_tools.rst:99 ../../tools/intact_tools.rst:159
+#: ../../tools/intact_tools.rst:193 ../../tools/intact_tools.rst:233
+#: ../../tools/intact_tools.rst:270 ../../tools/intact_tools.rst:304
+#: 096f23d5be1d4b31ac93aa3c98ecbf74 267b957934ee40c49e248a4157368b59
+#: 2e10647a69694d13bd3b6b00f020a2a3 38c0d76e648b44088706fad5169f1169
+#: a1691d8d58104754bc7969c4a796a474 b7f57beb7a4d490793a8593e616d8682
+#: c6902d324a7d48cda401a59150a5be8f da5c57e899b2472699a5c40961933aaf
+msgid "**Type**: ``IntActRESTTool``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:32 494f52d27d86442ea7b960dbe604f830
+msgid ""
+"**Description**: Get detailed information about a specific protein "
+"complex by its complex AC (Complex Accession, e.g., 'CPX-915'). Returns "
+"comprehensive complex information including: complex AC, name, synonyms, "
+"systematic name, functions, properties, species, ligands, complex "
+"assemblies, participants (with interactor details), and associated "
+"diseases. To find complex ACs, use "
+"intact\\_get\\_interactions\\_by\\_complex to search for complexes first."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:34 ../../tools/intact_tools.rst:68
+#: ../../tools/intact_tools.rst:102 ../../tools/intact_tools.rst:162
+#: ../../tools/intact_tools.rst:196 ../../tools/intact_tools.rst:236
+#: ../../tools/intact_tools.rst:273 ../../tools/intact_tools.rst:307
+#: 0c3f33a21d294680a23f2620179e1ab4 23b6f9ba971b428aa1adebc09eae4ec5
+#: 32d2844756914781a289f14f1fe72f8f 4a1407d3b3284b5da2e846eb8f9a37fe
+#: 6c4e6226e29e453fbb27affbf55aa3b1 8919d47c50d94e86997e1f67cf8788ee
+#: b1434195d2d949119d8a1de636f277e5 d375ca313c974c429ac708916963f961
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:36 85d3edfe10164377b18324c1bc9f994b
+msgid ""
+"``complex_ac`` (string) (required) Complex AC (Complex Accession) in "
+"format 'CPX-XXXXX' (e.g., 'CPX-915', 'CPX-10081'). Get complex ACs from "
+"intact\\_get\\_interactions\\_by\\_complex search results."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:39 ../../tools/intact_tools.rst:73
+#: ../../tools/intact_tools.rst:128 ../../tools/intact_tools.rst:167
+#: ../../tools/intact_tools.rst:207 ../../tools/intact_tools.rst:244
+#: ../../tools/intact_tools.rst:318 108e109b50f04d02a213816b24b06efd
+#: 24053844692442bba9348d4c61b8fa7e 51c0637c076741debcfc493f6ac12667
+#: 84ecbc5be1ee461f99cdc39f0a6146a8 931156c66af945cb93f737c859081e0f
+#: d9c36f0a17034d8db5bdfd27c3d4a18d f68f81ad63cd4b4b80c7fc7c03b854c1
+msgid "``format`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:42 ../../tools/intact_tools.rst:76
+#: ../../tools/intact_tools.rst:137 ../../tools/intact_tools.rst:170
+#: ../../tools/intact_tools.rst:210 ../../tools/intact_tools.rst:247
+#: ../../tools/intact_tools.rst:281 ../../tools/intact_tools.rst:321
+#: 2f26bb069c7540309b9567fd773a205f 319319b0a67744dba547f27d3be47f8a
+#: 42fe6719d3dc48ef96e15ecc036f50ef 5cb82aa0f35a40c480ebc809636e1c39
+#: bb42b3ac97d846c89e631e28c21f0ce5 c57dda81477447a9a5ebc03e02aed88c
+#: db51c2a411dc4c81b677b32db00263ef fa2846b81c3646ee827a9ec3dc4f496a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:56 e76c6ae6a15140b9bba7ef02c89cef19
+msgid "**intact_get_interaction_details** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:58 54d5e63b742742af9868a42b892989d4
+msgid ""
+"Get detailed information about a specific interaction by its IntAct "
+"interaction ID. Requires an I..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst f3785b14781243c3bcc4183b25adde09
+msgid "intact_get_interaction_details tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:64 35c9d7201c1043b8970e7bc31afb642f
+msgid "**Name**: ``intact_get_interaction_details``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:66 b8ccc37b772e49d18ba1a512ab9fe31e
+msgid ""
+"**Description**: Get detailed information about a specific interaction by"
+" its IntAct interaction ID. Requires an IntAct interaction ID in format "
+"'EBI-XXXXXX-EBI-YYYYYY' (e.g., 'EBI-366083-EBI-366083'). To get "
+"interaction IDs: 1) Use intact\\_get\\_interactions with a protein/gene "
+"identifier - it returns 'interaction\\_ids' field, or 2) Use "
+"intact\\_search\\_interactions - it also returns 'interaction\\_ids' "
+"field. Then use one of those IDs with this tool to get detailed "
+"interaction information. Returns complete interaction data including "
+"participants, interaction type, detection methods, and publications."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:70 75fd05565c75444f8c8d4c48a09d6d19
+msgid ""
+"``interaction_id`` (string) (required) IntAct interaction ID in format "
+"'EBI-XXXXXX-EBI-YYYYYY' (e.g., 'EBI-366083-EBI-366083'). Get these IDs "
+"from intact\\_get\\_interactions or intact\\_search\\_interactions "
+"results (see 'interaction\\_ids' field)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:90 554607da6a8e4465b79aecc62b276acc
+msgid "**intact_get_interaction_network** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:92 0083ec4bb7a6467a88a47f4614698904
+msgid ""
+"Get interaction network centered on a specific interactor. Uses EBI "
+"Search API (IntAct domain) fo..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst b78687777dab4f6ca7443305cc7097d3
+msgid "intact_get_interaction_network tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:98 15dcc249df184a3ba0607ab2c24100ff
+msgid "**Name**: ``intact_get_interaction_network``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:100 db7ee90db3b744bd8a317ae5c0804991
+msgid ""
+"**Description**: Get interaction network centered on a specific "
+"interactor. Uses EBI Search API (IntAct domain) for reliable access. "
+"Accepts IntAct identifiers (e.g., 'EBI-1004115'), UniProt IDs (e.g., "
+"'P04637'), or gene names (e.g., 'BRCA1'). Returns interactions with "
+"interaction IDs in the 'interaction\\_ids' field. These IDs can be used "
+"with intact\\_get\\_interaction\\_details for detailed information."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:104 569e164ab06c453580b46e79c20b1da6
+msgid ""
+"``identifier`` (string) (optional) IntAct identifier, UniProt ID, or gene"
+" name. Aliases: uniprot\\_id, protein\\_id, gene\\_symbol, gene\\_name."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:107 cef626ed92df48f99259bc5fd56d1d46
+msgid ""
+"``uniprot_id`` (string) (optional) Alias for identifier: UniProt "
+"accession (e.g., 'P04637')."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:110 3377ff6b24704f839cb4967459f6268d
+msgid ""
+"``protein_id`` (string) (optional) Alias for identifier: protein "
+"identifier."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:113 4b8effed92a4471192f670786bd48170
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for identifier: gene symbol "
+"(e.g., 'BRCA1')."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:116 a6bdcbf6067742259e1761ecddebd7ce
+msgid "``gene_name`` (string) (optional) Alias for identifier: gene name."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:119 a15dc64003954015b31ea17b08c17b1d
+msgid ""
+"``depth`` (integer) (optional) Network depth: 1 for direct interactions "
+"only, 2 for 2-hop network, etc. (default: 1)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:122 37e67229869040f394f3ed704622e3a1
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interactions to return "
+"(default: 50, max: 200). Alias: size."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:125 5bd1cb5661ac41218b0686c2f8f7b901
+msgid ""
+"``size`` (integer) (optional) Alias for limit. Maximum number of "
+"interactions to return (default: 50)."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:131 58452d7736fa4406b1cdd3895c85b212
+msgid ""
+"``protein_name`` (string) (optional) Alias for gene\\_symbol/identifier. "
+"Common protein name (e.g., MDM2, TP53)."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:134 510bc49d8a3342c7aef2899ba8454b97
+msgid ""
+"``protein`` (string) (optional) Alias for identifier. Gene symbol or "
+"protein name (e.g., 'TP53', 'BRCA1')."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:150 a94933418aec431b8c3c0f0d931aeb01
+msgid "**intact_get_interactions** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:152 1c5e1ef8ce4f4cf39aa41914af985cbd
+msgid ""
+"Get all interactions involving a specific interactor (protein or gene) by"
+" identifier. Uses EBI Se..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst 0651061ea29540a797c425c841ddbb9f
+msgid "intact_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:158 b722f0d4a59f4d8398be2815a452b41d
+msgid "**Name**: ``intact_get_interactions``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:160 e5b50918eef34dea8393173599140c54
+msgid ""
+"**Description**: Get all interactions involving a specific interactor "
+"(protein or gene) by identifier. Uses EBI Search API (IntAct domain) for "
+"reliable access. Returns list of interactions with interaction IDs (e.g.,"
+" 'EBI-366083-EBI-366083') in the 'interaction\\_ids' field. These IDs can"
+" be used with intact\\_get\\_interaction\\_details or "
+"intact\\_get\\_interaction\\_network to get detailed information. Accepts"
+" UniProt IDs, gene names, or IntAct identifiers."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:164 8f9278a1459e48e5b5644a755481c06e
+msgid ""
+"``identifier`` (string) (required) IntAct identifier, UniProt ID, or gene"
+" name"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:184 6df14e58feda401db5aeb798f2eac777
+msgid "**intact_get_interactions_by_complex** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:186 15f205f6d30d4cc5b61810354ed938dc
+msgid ""
+"Search for protein complexes in IntAct database using Complex Web "
+"Service. Accepts complex names ..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst ae5e7cab52db4948810aea33f0589114
+msgid "intact_get_interactions_by_complex tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:192 9ce2b8792cd04f8abfe6adb0cb7c6fd2
+msgid "**Name**: ``intact_get_interactions_by_complex``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:194 840c96d755fe441e870fbd96048bf012
+msgid ""
+"**Description**: Search for protein complexes in IntAct database using "
+"Complex Web Service. Accepts complex names (e.g., 'TP53', 'ndc80'), "
+"complex ACs (e.g., 'CPX-915'), or gene names. Returns complex information"
+" including complex AC, name, description, organism, and interactors. Use "
+"the complex ACs from results to find related interactions. Note: This "
+"searches for complexes, not interactions directly. To find interactions "
+"involving a complex, use the complex name or AC with "
+"intact\\_search\\_interactions."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:198 641a6439af1b44f0a3a22cfdded8fb76
+msgid ""
+"``complex_id`` (string) (required) Complex name (e.g., 'TP53', 'ndc80'), "
+"complex AC (e.g., 'CPX-915'), or gene name"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:201 ../../tools/intact_tools.rst:241
+#: 94c23dfb58a94671844376f2909807d4 c2b1a42e8d7b4bb7b50729db8a4f7b41
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default: 25, max: 100)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:204 ../../tools/intact_tools.rst:312
+#: a31f24dc6a55437e9d8c1c438255d2d3 ad0cbc924c0f48b4a9caa3e8c65dc168
+msgid ""
+"``first`` (integer) (optional) First result index for pagination "
+"(default: 0)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:224 97c6e69d16484cec9578f4098b3f36b5
+msgid "**intact_get_interactions_by_organism** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:226 4ab0f566ff084bc8a11709ed9843ee9d
+msgid ""
+"Get all interactions for a specific organism by taxonomy ID. Uses EBI "
+"Search API (IntAct domain) ..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst 42cea204d5374974ab8ea4eb5da0dd90
+msgid "intact_get_interactions_by_organism tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:232 5c6a920d21944ef38ad568e90f2fab3a
+msgid "**Name**: ``intact_get_interactions_by_organism``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:234 0225336fce604c01bb53964c5cabaa12
+msgid ""
+"**Description**: Get all interactions for a specific organism by taxonomy"
+" ID. Uses EBI Search API (IntAct domain) to find interactions involving "
+"proteins from the specified organism. Returns list of interactions with "
+"interaction IDs in the 'interaction\\_ids' field. These IDs can be used "
+"with intact\\_get\\_interaction\\_details to get detailed information. "
+"Common taxonomy IDs: 9606 (Homo sapiens), 10090 (Mus musculus), 10116 "
+"(Rattus norvegicus), 7227 (Drosophila melanogaster), 6239 (Caenorhabditis"
+" elegans), 7955 (Danio rerio)."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:238 1a8ef942436c4ac097731feaafed1d47
+msgid ""
+"``taxid`` (string) (required) NCBI taxonomy ID (e.g., '9606' for human, "
+"'10090' for mouse). Find taxonomy IDs at "
+"https://www.ncbi.nlm.nih.gov/taxonomy"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:261 8666ea1a4a2342328558f59c079c4a2a
+msgid "**intact_get_interactor** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:263 885879330bc740d58a6d8ec293d58d0b
+msgid ""
+"Get detailed information about a specific interactor from IntAct database"
+" by IntAct identifier (e..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst 2f0e07a30c184a11a52111beb4d7cbf7
+msgid "intact_get_interactor tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:269 8e23ac1109b04220be74bacae58cd482
+msgid "**Name**: ``intact_get_interactor``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:271 9f0e926cd79341f5bfc3b94604bfa9ee
+msgid ""
+"**Description**: Get detailed information about a specific interactor "
+"from IntAct database by IntAct identifier (e.g., 'EBI-1004115'). Note: "
+"This requires an IntAct-specific identifier, not UniProt IDs. For UniProt"
+" IDs, use intact\\_get\\_interactions instead. Returns interactor details"
+" including names, aliases, organism, and cross-references."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:275 c26240edfed34739a0ea229004911ce3
+msgid ""
+"``identifier`` (string) (required) IntAct identifier (e.g., "
+"'EBI-1004115') or UniProt ID (e.g., 'P04637') or gene name"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:278 01aa6ec8d4be4aae893adc0687793a48
+msgid "``format`` (string) (optional) Response format"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:295 426229dbe8514cd1869bab07669cce0c
+msgid "**intact_search_interactions** (Type: IntActRESTTool)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:297 a43d0af4e71f473096ceccf046e0f31a
+msgid ""
+"Search for interactions in IntAct database using EBI Search API (IntAct "
+"domain). Supports searchi..."
+msgstr ""
+
+#: ../../tools/intact_tools.rst 8e0ab6bd822e4c0b9373ed1657ee9e01
+msgid "intact_search_interactions tool specification"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:303 cb31c35b04334296bd3f624c80e9bfc5
+msgid "**Name**: ``intact_search_interactions``"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:305 6e44a087aff049d7842eaf77c886b9e1
+msgid ""
+"**Description**: Search for interactions in IntAct database using EBI "
+"Search API (IntAct domain). Supports searching by protein names, gene "
+"names, interaction types, or other criteria. Use '\\*' as query to get "
+"all interactions (may be slow). Returns interaction entries with "
+"interaction IDs (e.g., 'EBI-366083-EBI-366083') in the "
+"'interaction\\_ids' field. These IDs can be used with "
+"intact\\_get\\_interaction\\_details or "
+"intact\\_get\\_interaction\\_network to get detailed information."
+msgstr ""
+
+#: ../../tools/intact_tools.rst:309 4c0c66a78d664c7baa11603766f0f8dd
+msgid ""
+"``query`` (string) (required) Search query string (e.g., protein name, "
+"gene name, interaction type)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:315 82a77c5204b64670a74a04b5f7dad1ce
+msgid ""
+"``max`` (integer) (optional) Maximum number of results to return "
+"(default: 25, max: 100)"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:335 ca87be40584d46e3866d56ddb461ef19
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:337 eb2f7c98258f4bdaa0f1f03032a7129b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/intact_tools.rst:338 4ca6884b9ec14897a2d04c4666adaa0b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

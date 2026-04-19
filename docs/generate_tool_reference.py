@@ -9,6 +9,7 @@ and generates comprehensive RST documentation.
 import json
 import os
 import sys
+import re
 from pathlib import Path
 from collections import defaultdict
 from datetime import datetime
@@ -26,6 +27,26 @@ def get_auto_generated_header(script_name="generate_tool_reference.py"):
 .. Then regenerate: cd docs && python {script_name}
 
 """
+
+
+def escape_rst_text(text):
+    """Escape plain text before embedding it in generated RST."""
+    if text is None:
+        return ""
+    text = str(text)
+    text = text.replace("\\", "\\\\")
+    text = text.replace("`", "\\`")
+    text = text.replace("*", "\\*")
+    text = text.replace("|", "\\|")
+    text = re.sub(r"(?<!\\)_", r"\\_", text)
+    return text
+
+
+def format_param_type(param_type):
+    """Normalize JSON schema type values for display."""
+    if isinstance(param_type, list):
+        return ", ".join(str(t) for t in param_type)
+    return str(param_type)
 
 
 def load_tool_configs(data_dir):
@@ -119,8 +140,10 @@ def format_parameter_docs(parameter_schema):
     required = parameter_schema.get('required', [])
     
     for param_name, param_info in properties.items():
-        param_type = param_info.get('type', 'unknown')
-        description = param_info.get('description', 'No description provided')
+        param_type = format_param_type(param_info.get('type', 'unknown'))
+        description = escape_rst_text(
+            param_info.get('description', 'No description provided')
+        )
         is_required = param_name in required
         
         req_marker = " (required)" if is_required else " (optional)"
@@ -132,7 +155,7 @@ def format_parameter_docs(parameter_schema):
 def generate_tool_section(tool):
     """Generate RST documentation for a single tool."""
     name = tool.get('name', 'Unknown Tool')
-    description = tool.get('description', 'No description provided')
+    description = escape_rst_text(tool.get('description', 'No description provided'))
     parameter_schema = tool.get('parameter', {})
     tool_type = tool.get('type', 'Unknown')
     

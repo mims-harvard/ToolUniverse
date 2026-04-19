@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_ligands_tools.rst:10 1bb3f3b2ba0d492f820b0c6cea488e53
+msgid "Pdbe Ligands Tools"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:12 b03116929fdb42c498cbb96648f0ba97
+msgid ""
+"**Configuration File**: ``pdbe_ligands_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:16 ac4f224d0851426b82df861d1c94baf3
+msgid ""
+"This page contains all tools defined in the ``pdbe_ligands_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:19 751bee902eff4a52b5b228636b21e0e8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:22 daf15a719ef84b81aa2646e0c9b45682
+msgid "**PDBe_get_residue_listing** (Type: PDBeLigandsTool)"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:24 73a42b60bf27471b8c34eeb2e55ea3f7
+msgid ""
+"Get per-residue information for a PDB structure, optionally filtered by "
+"chain. Returns residue nu..."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst abba017003fb4aed977e22e8d852b603
+msgid "PDBe_get_residue_listing tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:28 ../../tools/pdbe_ligands_tools.rst:62
+#: 683767e428b64195a032bd42d914dc4e 9e7566e2aac84ea981cb5315a49a83ec
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:30 7d52d93ada5a48d9a222a7e3e489e9cc
+msgid "**Name**: ``PDBe_get_residue_listing``"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:31 ../../tools/pdbe_ligands_tools.rst:65
+#: ad376eda538c4ff9975e736b9d17f8b5 bae3ddb48bdc4ea585d3f108b57a22b8
+msgid "**Type**: ``PDBeLigandsTool``"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:32 cf1699363d944d9996744e8135d0d93d
+msgid ""
+"**Description**: Get per-residue information for a PDB structure, "
+"optionally filtered by chain. Returns residue numbers (both PDB "
+"sequential and author-assigned), residue names (3-letter amino acid "
+"codes), and observed ratio (fraction of models where this residue has "
+"electron density). Useful for analyzing protein chain composition, "
+"identifying disordered/missing regions (observed\\_ratio < 1.0), or "
+"mapping between PDB and author numbering schemes. Example: '4hhb' chain A"
+" returns 141 residues (alpha globin) all with 1.0 observed ratio; '3ert' "
+"chain A returns 261 residues (estrogen receptor) starting at author "
+"residue 294."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:34 ../../tools/pdbe_ligands_tools.rst:68
+#: 0e1f1608b263400594bd87a8690b9156 4f4d430aada7483a90d591b923f09b4f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:36 b95e4aa36c8d43a280d0be5d53b4e325
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4-character code). Examples:"
+" '4hhb', '3ert', '1tup', '6lu7'. Case-insensitive."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:39 b864c0755537466caad84048417621b3
+msgid ""
+"``chain_id`` (string, null) (optional) Optional chain ID to filter (e.g.,"
+" 'A', 'B'). If not provided, all chains are returned."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:42 ../../tools/pdbe_ligands_tools.rst:73
+#: 71f314d67a2c4802b8ae60fac5dd5339 b21c708289c5486d858102ac9fb3aa63
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:56 3be5677353864ea0b1dd9fcd2b0930e7
+msgid "**PDBe_get_structure_ligands** (Type: PDBeLigandsTool)"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:58 b3646f8673a04781b2bb0123b80c9f14
+msgid ""
+"Get all ligands (drug-like molecules, cofactors, ions) bound in a PDB "
+"crystal structure. Returns ..."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst 774d9c073b5e42de8040947058ac4193
+msgid "PDBe_get_structure_ligands tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:64 532aed1a1ec448949fd210c670daad79
+msgid "**Name**: ``PDBe_get_structure_ligands``"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:66 0cd0d43fb26c4549b39c9ca05b4f0e9e
+msgid ""
+"**Description**: Get all ligands (drug-like molecules, cofactors, ions) "
+"bound in a PDB crystal structure. Returns chemical component IDs, names, "
+"molecular weights, chain assignments, and drug-likeness annotations with "
+"interacting protein entity information. Essential for studying protein-"
+"ligand interactions, identifying bound drugs/inhibitors, or analyzing "
+"binding site occupancy. Example: '4hhb' returns 6 HEM (heme) ligands "
+"bound to hemoglobin alpha and beta chains; '3ert' returns "
+"4-hydroxytamoxifen (OHT, 387 Da) bound to estrogen receptor alpha; '1m17'"
+" returns erlotinib bound to EGFR kinase domain."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:70 97f88f1a0e8d4a3eb80fba70c937f67b
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4-character code). Examples:"
+" '4hhb' (hemoglobin), '3ert' (estrogen receptor + tamoxifen), '1m17' "
+"(EGFR + erlotinib), '6lu7' (SARS-CoV-2 main protease + inhibitor). Case-"
+"insensitive."
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:87 bd611b5e27c24f48891a171d53fd6cdd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:89 7ea0078a937041d994f6c92d272b65f0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_ligands_tools.rst:90 8e60aeee7ad14fdfa3b0ee6483baa6bc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

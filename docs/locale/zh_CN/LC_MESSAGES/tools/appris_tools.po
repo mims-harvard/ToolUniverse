@@ -1,0 +1,235 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/appris_tools.rst:10 721d38bac5d24870bc365423f2b6157d
+msgid "Appris Tools"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:12 f68b96d9d4794dc29d508fd9df36bffe
+msgid ""
+"**Configuration File**: ``appris_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:16 118613f4e4da44e1803e717dc5554896
+msgid ""
+"This page contains all tools defined in the ``appris_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:19 761d4369094b4559ae798008e1757f60
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:22 f82a30fce26d465696b390603e46e4d8
+msgid "**APPRIS_get_functional_annotations** (Type: APPRISTool)"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:24 20fc5eaea5c74566b885ad000dc5a560
+msgid ""
+"Get detailed functional annotations for gene isoforms from APPRIS, "
+"including structural domains (..."
+msgstr ""
+
+#: ../../tools/appris_tools.rst d5789c77a6e841c89b76debd8c7a9c26
+msgid "APPRIS_get_functional_annotations tool specification"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:28 ../../tools/appris_tools.rst:72
+#: ../../tools/appris_tools.rst:110 6d7ce70e7bc841b7bed934bfd1a1ad5e
+#: 8db312e6cc8844fbb38caee88ee269a6 8f676893d05e4b78a1dbc65fbf3ecccb
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:30 3d7b428031734f7c85766c7cbc90eb6d
+msgid "**Name**: ``APPRIS_get_functional_annotations``"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:31 ../../tools/appris_tools.rst:75
+#: ../../tools/appris_tools.rst:113 0cb4435f65ce49159e2000943eeda45d
+#: 33ce54ad99164df4b457c9f5bc7905dc 8fccb9a6e08843f383f152e65bb696a5
+msgid "**Type**: ``APPRISTool``"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:32 2699513448ad4f78ad97986c1a7539b1
+msgid ""
+"**Description**: Get detailed functional annotations for gene isoforms "
+"from APPRIS, including structural domains (spade), functional residues "
+"(firestar), 3D structure coverage (matador3d), cross-species conservation"
+" (corsair), transmembrane helices (thump), signal peptides (crash), and "
+"proteomics evidence (proteo)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:34 16545f1e5e1246dcb37d31ff2c71e45a
+msgid ""
+"Annotations are grouped by type. Optionally filter by transcript\\_id to "
+"focus on a specific isoform."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:36 e30af248b41f47bbbcd778e48422912f
+msgid ""
+"Available methods: appris, firestar, matador3d, spade, corsair, thump, "
+"crash, proteo, tsl"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:38 ../../tools/appris_tools.rst:82
+#: ../../tools/appris_tools.rst:120 2ae36451a57e4b79a63897c4524156d3
+#: 4e55dac66c604f1093b9f31f2d1b8f2b cd7381d0ad924dff839b189501aa8269
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:40 ../../tools/appris_tools.rst:122
+#: 4c0670e0095b435f9305f26f77791249 6cee42efab7f4d4fb01e1b147c90568b
+msgid ""
+"``gene_id`` (string) (required) Ensembl gene ID (e.g., ENSG00000141510 "
+"for TP53)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:43 37d8d891d4e94050a48e90d11ea63232
+msgid "``species`` (string) (optional) Species name (e.g., homo\\_sapiens)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:46 0e17f2f55d7a457f9dacf7f434582f27
+msgid ""
+"``methods`` (string) (optional) Comma-separated analysis methods to "
+"retrieve (e.g., 'firestar,spade,corsair'). Leave empty for all."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:49 aff3a826306d492b893c472bc3599eb1
+msgid ""
+"``transcript_id`` (string) (optional) Optional Ensembl transcript ID to "
+"filter results for a specific isoform (e.g., ENST00000269305)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:52 ../../tools/appris_tools.rst:90
+#: ../../tools/appris_tools.rst:128 2a4151ce476d4bb99dac8cb23c3c8def
+#: d16fb7d52e3a42b7b23dcca35350f2aa fb2139a9c3064d8c8393cbcddae05532
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:66 dae00604b6b94144959aa8935a2dd7d2
+msgid "**APPRIS_get_isoforms** (Type: APPRISTool)"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:68 4c3eb6279a6e477a8400cb66ceac1248
+msgid ""
+"Get all transcript isoforms and their APPRIS annotations for a gene. "
+"APPRIS classifies isoforms a..."
+msgstr ""
+
+#: ../../tools/appris_tools.rst 3abf6d45b6eb467aa48e8bd591d687eb
+msgid "APPRIS_get_isoforms tool specification"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:74 bcd583850b4547999a7baab29ad75a44
+msgid "**Name**: ``APPRIS_get_isoforms``"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:76 2bdff3236c62469685696740bc77b189
+msgid ""
+"**Description**: Get all transcript isoforms and their APPRIS annotations"
+" for a gene. APPRIS classifies isoforms as PRINCIPAL (most functionally "
+"important) or ALTERNATIVE based on structural, functional, and "
+"evolutionary evidence."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:78 6615bde100b54e3f9d71a82ce0164ff8
+msgid ""
+"Requires an Ensembl gene ID (ENSG...). Use "
+"HGNC\\_fetch\\_gene\\_by\\_symbol or Ensembl tools to convert gene "
+"symbols to Ensembl IDs first."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:80 69d8d0bf53704a05ab7674c0dc7f7bf9
+msgid ""
+"Reliability levels: PRINCIPAL:1 (highest) through PRINCIPAL:5, MINOR "
+"(alternative), or 'No Principal Isoform'."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:84 edc55b4239224433b412b6e06b1a4bf8
+msgid ""
+"``gene_id`` (string) (required) Ensembl gene ID (e.g., ENSG00000141510 "
+"for TP53, ENSG00000012048 for BRCA1)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:87 d8a015b51e6e413baa34e9d96c69d629
+msgid ""
+"``species`` (string) (optional) Species name in lowercase with underscore"
+" (e.g., homo\\_sapiens, mus\\_musculus, danio\\_rerio)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:104 62a83464c4b047b7bf3ead5704dc5ad9
+msgid "**APPRIS_get_principal_isoform** (Type: APPRISTool)"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:106 6ae1c175bf7e4123b63583c30e07d9bf
+msgid ""
+"Get the principal (most functionally important) transcript isoform for a "
+"gene as determined by th..."
+msgstr ""
+
+#: ../../tools/appris_tools.rst f00a7eedfa9a484caf677e83c271d95c
+msgid "APPRIS_get_principal_isoform tool specification"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:112 556863d532ae4379ac8ae1564a1bbd6d
+msgid "**Name**: ``APPRIS_get_principal_isoform``"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:114 400f4f19df7b471999d531430c234933
+msgid ""
+"**Description**: Get the principal (most functionally important) "
+"transcript isoform for a gene as determined by the APPRIS database."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:116 2b81435e5df746d79387940e21162fb3
+msgid ""
+"APPRIS selects the principal isoform based on protein structure "
+"(matador3d, spade), functional residues (firestar), cross-species "
+"conservation (corsair), transmembrane topology (thump, crash), and "
+"proteomics evidence (proteo)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:118 d960930dd4174c13a61fb5b347572393
+msgid ""
+"Requires an Ensembl gene ID (ENSG...). Use "
+"HGNC\\_fetch\\_gene\\_by\\_symbol to convert gene symbols first."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:125 ea8803ce0b564302bf9e522b4ba5446e
+msgid ""
+"``species`` (string) (optional) Species name (e.g., homo\\_sapiens, "
+"mus\\_musculus)."
+msgstr ""
+
+#: ../../tools/appris_tools.rst:142 a6541fb583644d57a85242db5340ec93
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:144 ff8924b871e94bb58b66d5c1edd987fe
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/appris_tools.rst:145 289a530df2ad4ea3b1c39e8de20745e2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

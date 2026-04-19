@@ -1,0 +1,709 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/http_api.rst:2 eaaa73b64ef44315a51bf6d14bfcffa5
+msgid "HTTP API - Remote Access"
+msgstr ""
+
+#: ../../guide/http_api.rst:4 d7593374f6aa4b278628971c1e7442f4
+msgid ""
+"The ToolUniverse HTTP API server provides remote access to all "
+"ToolUniverse methods via HTTP/REST endpoints."
+msgstr ""
+
+#: ../../guide/http_api.rst:6 0b5088339ae042e6a45b5404b1868134
+msgid ""
+"**Key Feature**: When you add or modify methods in ToolUniverse, the "
+"server and client automatically support them with zero manual updates!"
+msgstr ""
+
+#: ../../guide/http_api.rst:9 0437b05c4cf94b81ba05c08a6d7cb6df
+msgid "Quick Start"
+msgstr ""
+
+#: ../../guide/http_api.rst:12 d480f31b314c484d966c5cbc0639935b
+msgid "Start Server"
+msgstr ""
+
+#: ../../guide/http_api.rst:14 a3fd49f15b3441eb8bc1508826af2a9e
+msgid "On the machine with ToolUniverse installed:"
+msgstr ""
+
+#: ../../guide/http_api.rst:25 dcd9278d995f4845a81956039e70f0db
+msgid "Use Client"
+msgstr ""
+
+#: ../../guide/http_api.rst:27 ae3f3101f0624b64b654baa3dbdda4f5
+msgid "Install minimal client on any machine:"
+msgstr ""
+
+#: ../../guide/http_api.rst:45 8982bc8b14cd4fd68f5cf0e872decb38
+msgid "Client Usage Details"
+msgstr ""
+
+#: ../../guide/http_api.rst:48 835e1c7afdd34623a36a5ee0d8982215
+msgid "Official Client Features"
+msgstr ""
+
+#: ../../guide/http_api.rst:50 b7669accf0254a0ca898c02afa0fa4c1
+msgid "The official ``ToolUniverseClient`` includes:"
+msgstr ""
+
+#: ../../guide/http_api.rst:52 b537e4d65acc4f13aa3b283e88846f9d
+msgid "Automatic method discovery: ``client.list_available_methods()``"
+msgstr ""
+
+#: ../../guide/http_api.rst:53 a87ca6b423e141859dbf0611d3035a83
+msgid "Built-in help: ``client.help(\"method_name\")``"
+msgstr ""
+
+#: ../../guide/http_api.rst:54 2c4962d592324b30927892661c5054e1
+msgid "Health check: ``client.health_check()``"
+msgstr ""
+
+#: ../../guide/http_api.rst:55 200273d3dedf4a4698b64e61c3556748
+msgid "Context manager support: ``with ToolUniverseClient(url) as client:``"
+msgstr ""
+
+#: ../../guide/http_api.rst:56 1a47e0aa31c74920950c28c8eb328393
+msgid "All ToolUniverse methods via dynamic proxy"
+msgstr ""
+
+#: ../../guide/http_api.rst:59 02d545c737bb45ad9a9cd6828b1613fc
+msgid "Custom Client Implementation"
+msgstr ""
+
+#: ../../guide/http_api.rst:61 03adbfd3e62245f3a049876f51389b61
+msgid ""
+"If you need a custom client, ensure discovery methods are **real "
+"methods** (not proxied):"
+msgstr ""
+
+#: ../../guide/http_api.rst:96 af6996844e634cbe8e1af28bb8d5f24a
+msgid ""
+"**Important**: ``list_available_methods()`` must be a real method, not "
+"proxied through ``__getattr__``, because it needs to use ``GET "
+"/api/methods``, not ``POST /api/call``."
+msgstr ""
+
+#: ../../guide/http_api.rst:99 5542a6a2bbfb4ae9bef4f1fcbb49e307
+msgid "How It Works"
+msgstr ""
+
+#: ../../guide/http_api.rst:102 39a788d31ab9424eba9a4e4615b770ea
+msgid "Auto-Discovery (Server)"
+msgstr ""
+
+#: ../../guide/http_api.rst:104 77868c89fe3f410782d9b67c763fc970
+msgid ""
+"The server uses Python introspection to automatically discover all public"
+" methods:"
+msgstr ""
+
+#: ../../guide/http_api.rst:116 d75f22ba11f4466cbf9aca14c4025d6d
+msgid ""
+"**Result**: 49+ methods including ``load_tools``, "
+"``prepare_tool_prompts``, ``tool_specification``, ``run_one_function``, "
+"etc."
+msgstr ""
+
+#: ../../guide/http_api.rst:119 7ac980ef570e42a7878e4d480fd98c3a
+msgid "Dynamic Proxying (Client)"
+msgstr ""
+
+#: ../../guide/http_api.rst:121 04a2d5193c884cd9b57f781249343503
+msgid "The client uses ``__getattr__`` magic to intercept any method call:"
+msgstr ""
+
+#: ../../guide/http_api.rst:136 ae194046d5f9491aa99a66d12e27a12a
+msgid "**Workflow Example**:"
+msgstr ""
+
+#: ../../guide/http_api.rst:138 c738d3fe95ce43e9b1ab1b50188ac9d7
+msgid "When you call ``client.load_tools(tool_type=['uniprot'])``:"
+msgstr ""
+
+#: ../../guide/http_api.rst:140 069856ff9f994b70924850a9c177f764
+msgid "Python looks for ``load_tools`` attribute → NOT FOUND"
+msgstr ""
+
+#: ../../guide/http_api.rst:141 bf0c016392bc4547a5e98c4cea46dcb6
+msgid "Calls ``__getattr__(\"load_tools\")`` → Returns proxy function"
+msgstr ""
+
+#: ../../guide/http_api.rst:142 d033b4a2b0484d90b9a5cff257e7fc33
+msgid "Proxy called with ``tool_type=['uniprot']``"
+msgstr ""
+
+#: ../../guide/http_api.rst:143 09defa334cf249cc9b18440d815e05b3
+#, python-brace-format
+msgid "HTTP POST to server: ``{\"method\": \"load_tools\", \"kwargs\": {...}}``"
+msgstr ""
+
+#: ../../guide/http_api.rst:144 c1d78fb88204427d8aaf7538b8ebfa45
+msgid "Server calls ``tu.load_tools(tool_type=['uniprot'])``"
+msgstr ""
+
+#: ../../guide/http_api.rst:145 f7a746376fea4e1383411755f9515bfa
+msgid "Result returned to client"
+msgstr ""
+
+#: ../../guide/http_api.rst:147 c993fcb5a2224f1ab30f96409c7f06e1
+msgid ""
+"**Result**: ANY method works automatically, even future ones you haven't "
+"written yet!"
+msgstr ""
+
+#: ../../guide/http_api.rst:150 8294892a66314d9a985f17d72907f7ee
+msgid "API Endpoints"
+msgstr ""
+
+#: ../../guide/http_api.rst:152 8f5ad58b586e4972aff863cef27ba0f2
+msgid "The server exposes the following REST endpoints:"
+msgstr ""
+
+#: ../../guide/http_api.rst:154 733540368f6c44868df137ff880bd5dc
+msgid "API Endpoints Reference"
+msgstr ""
+
+#: ../../guide/http_api.rst:158 f3a8920dc7f84e7782ab80920c07201c
+msgid "Endpoint"
+msgstr ""
+
+#: ../../guide/http_api.rst:159 c8014c7e41eb492a87dc237abb4aaabe
+msgid "Method"
+msgstr ""
+
+#: ../../guide/http_api.rst:160 25bf8b298114450eaf8ec75cef27c413
+msgid "Purpose"
+msgstr ""
+
+#: ../../guide/http_api.rst:161 7d2134bf12144d1785385f28b4c78d1d
+msgid "Client Usage"
+msgstr ""
+
+#: ../../guide/http_api.rst:162 35c58c8d7ee14bdb948a420bb81ebb5b
+msgid "``/health``"
+msgstr ""
+
+#: ../../guide/http_api.rst:163 ../../guide/http_api.rst:167
+#: ../../guide/http_api.rst:179 ../../guide/http_api.rst:183
+#: 0e1b96e64f5c4f90b207958ec6ce9521 7c1abe74ccbe420482d0dfe4f5d3aafa
+#: bb86989e15ad42798007804947329ba1 cbe68665a4b14ce2a2d51a4f6c4f8cc8
+msgid "GET"
+msgstr ""
+
+#: ../../guide/http_api.rst:164 4a56eaf1be3f40e4916c17e10c250156
+msgid "Server health check"
+msgstr ""
+
+#: ../../guide/http_api.rst:165 f4544136a363459d9a60b581c1250f69
+msgid "``client.health_check()``"
+msgstr ""
+
+#: ../../guide/http_api.rst:166 eb4bb183351f4c33ae8fddfa3df1a5b4
+msgid "``/api/methods``"
+msgstr ""
+
+#: ../../guide/http_api.rst:168 be5c1118c97e4845b092235d5eeb0eb4
+msgid "List all ToolUniverse methods"
+msgstr ""
+
+#: ../../guide/http_api.rst:169 19bd0dbc7dd44691a75a019ac375cf70
+msgid "``client.list_available_methods()``"
+msgstr ""
+
+#: ../../guide/http_api.rst:170 1458f0e8b8c347428b5858edf7ecebee
+msgid "``/api/call``"
+msgstr ""
+
+#: ../../guide/http_api.rst:171 ../../guide/http_api.rst:175
+#: 0f7d3798ec294e988418e2876955ae10 3d76c86d63564477b933c64589f2e16e
+msgid "POST"
+msgstr ""
+
+#: ../../guide/http_api.rst:172 50283a9049b24b8e9457f60d805277bf
+msgid "Call any ToolUniverse method"
+msgstr ""
+
+#: ../../guide/http_api.rst:173 8cfba9cbffc847cf89396d89a70ad7a3
+msgid "``client.method_name(**kwargs)``"
+msgstr ""
+
+#: ../../guide/http_api.rst:174 97eb595e40b9442e9582571e88bf5d50
+msgid "``/api/reset``"
+msgstr ""
+
+#: ../../guide/http_api.rst:176 4896395f50244cf89919909fadb5dae6
+msgid "Reset ToolUniverse instance"
+msgstr ""
+
+#: ../../guide/http_api.rst:177 731e62d75b9048668580d91cc7d15ae6
+msgid "``client.reset_server(config)``"
+msgstr ""
+
+#: ../../guide/http_api.rst:178 22ea43c23dd444cf8b5c4734b993fdec
+msgid "``/docs``"
+msgstr ""
+
+#: ../../guide/http_api.rst:180 f499e2ce2c72463581c70a9e3786599e
+msgid "Interactive Swagger UI docs"
+msgstr ""
+
+#: ../../guide/http_api.rst:181 ../../guide/http_api.rst:185
+#: 9d3327a9a6744609bdae6713cedf1279 b1d11d11f0ce48d6af860b68fd186b7e
+msgid "Open in browser"
+msgstr ""
+
+#: ../../guide/http_api.rst:182 ea9c403e06644c9990c028588c767c65
+msgid "``/redoc``"
+msgstr ""
+
+#: ../../guide/http_api.rst:184 ab5fe293eee242058607e3ebf79dcc1c
+msgid "Alternative ReDoc docs"
+msgstr ""
+
+#: ../../guide/http_api.rst:187 2708d85bd46e4294ae208d2cb3a7b671
+msgid "**Key distinction:**"
+msgstr ""
+
+#: ../../guide/http_api.rst:189 36b4daaf5651477bab6b464b70ce126a
+msgid ""
+"**Discovery endpoints** (``/health``, ``/api/methods``): Use GET, handled"
+" by client as real methods"
+msgstr ""
+
+#: ../../guide/http_api.rst:190 245a3edb5c3f444fbf266bb05839370c
+msgid ""
+"**Execution endpoint** (``/api/call``): Use POST, calls actual "
+"ToolUniverse methods"
+msgstr ""
+
+#: ../../guide/http_api.rst:193 4871ec7fcb584d64bd704481429783c3
+msgid "Example Usage"
+msgstr ""
+
+#: ../../guide/http_api.rst:195 54e990dfe8504d53a757503cf58fe028
+msgid ""
+"See ``examples/http_api_usage_example.py`` for comprehensive examples "
+"including:"
+msgstr ""
+
+#: ../../guide/http_api.rst:197 22459c135acc434b890a4cff6475a8cd
+msgid "Listing methods and getting help"
+msgstr ""
+
+#: ../../guide/http_api.rst:198 0dac559024754a46af960f494dcd2e64
+msgid "Loading tools and getting specifications"
+msgstr ""
+
+#: ../../guide/http_api.rst:199 3f6587d15d2b4782b9e68cbd4d836954
+msgid "Executing tools and checking health"
+msgstr ""
+
+#: ../../guide/http_api.rst:200 3d96a37015594730888bf4a8c6f92fcb
+msgid "Tool prompts preparation"
+msgstr ""
+
+#: ../../guide/http_api.rst:203 a6ec78d7e78648a68e6d6eaf97aa09e4
+msgid "Production Deployment"
+msgstr ""
+
+#: ../../guide/http_api.rst:206 c05294b1d0e84b448eb8539e09293429
+msgid "GPU-Optimized Configuration (Recommended)"
+msgstr ""
+
+#: ../../guide/http_api.rst:208 adf8f071ce1443c9ad421f6ae3314d4c
+msgid "For GPU-based inference workloads (default, recommended):"
+msgstr ""
+
+#: ../../guide/http_api.rst:221 b1819a37ac294aff9201c298aae87631
+msgid "**Why single worker for GPU?**"
+msgstr ""
+
+#: ../../guide/http_api.rst:223 c0039be562bd41928975a2deb95270fd
+msgid "Single ToolUniverse instance → Single GPU model in memory (~2GB)"
+msgstr ""
+
+#: ../../guide/http_api.rst:224 28a473693b4940f98b9836d92b94ba43
+msgid "Multiple workers → Multiple GPU model copies (~16GB+ wasted memory)"
+msgstr ""
+
+#: ../../guide/http_api.rst:225 c05839c82c15414794bf4ab43547b35e
+msgid "High concurrency via async thread pool (20-100 concurrent operations)"
+msgstr ""
+
+#: ../../guide/http_api.rst:226 fcf5a39a582c4572a3ed7c0530ceddcd
+msgid "Efficient GPU memory usage"
+msgstr ""
+
+#: ../../guide/http_api.rst:229 10f095ae45984a67878b4d2905f0b2f6
+msgid "Multi-Worker Configuration (CPU-Only Workloads)"
+msgstr ""
+
+#: ../../guide/http_api.rst:231 b2eeaaeaa3a5497b97ebe8bfb216d6f3
+msgid "Only use multiple workers for CPU-only workloads without GPU:"
+msgstr ""
+
+#: ../../guide/http_api.rst:238 423e252eb6264775b888db4d471132f6
+msgid ""
+"**Warning**: Multiple workers create separate ToolUniverse instances, "
+"each consuming GPU memory if GPU is used."
+msgstr ""
+
+#: ../../guide/http_api.rst:241 b42d00e03d844245b3f3ec0c9b9dfb30
+msgid "Development Mode"
+msgstr ""
+
+#: ../../guide/http_api.rst:243 ffa49c72032343d2ba0052601d6c2df0
+msgid "For development with auto-reload:"
+msgstr ""
+
+#: ../../guide/http_api.rst:250 aa656f144d704de886ac0513d49dec50
+msgid "Installation"
+msgstr ""
+
+#: ../../guide/http_api.rst:252 04764edcf6c446a4833363e332a3d690
+msgid "**Server**: ``pip install tooluniverse``"
+msgstr ""
+
+#: ../../guide/http_api.rst:253 274a64fb2cd743fda69dc89c17cc6df6
+msgid ""
+"**Client**: ``pip install tooluniverse[client]`` (only requests + "
+"pydantic)"
+msgstr ""
+
+#: ../../guide/http_api.rst:256 adc13151cfc346f4971f9c61fa89352e
+msgid "Testing"
+msgstr ""
+
+#: ../../guide/http_api.rst:267 839e8cd23f9d4664bf5c1241f1bbd421
+msgid "Implementation Files"
+msgstr ""
+
+#: ../../guide/http_api.rst:270 efa2a0c2f21c41df806ab2b1980edce2
+msgid "Core Implementation"
+msgstr ""
+
+#: ../../guide/http_api.rst:272 47fbfe166e2d444faeb456e451805c82
+msgid ""
+"``src/tooluniverse/http_api_server.py`` - FastAPI server with auto-"
+"discovery"
+msgstr ""
+
+#: ../../guide/http_api.rst:273 d5fc3e9eaa8b49ea888890ed2b36871a
+msgid "``src/tooluniverse/http_api_server_cli.py`` - CLI entry point"
+msgstr ""
+
+#: ../../guide/http_api.rst:274 4f4ec63a7f5f4826b0f04063cb20096a
+msgid ""
+"``src/tooluniverse/http_client.py`` - Auto-proxying client (minimal "
+"dependencies)"
+msgstr ""
+
+#: ../../guide/http_api.rst:277 fa6d44d36a0b45da895595abd2502024
+msgid "Examples & Tests"
+msgstr ""
+
+#: ../../guide/http_api.rst:279 02973465aa194f9eaa00b41ffaccec7d
+msgid "``examples/http_api_usage_example.py`` - 7 comprehensive usage examples"
+msgstr ""
+
+#: ../../guide/http_api.rst:280 8bdf8dad67d5434e98520de2f4a9918f
+msgid "``tests/test_http_api_server.py`` - Comprehensive test suite"
+msgstr ""
+
+#: ../../guide/http_api.rst:283 a1d48971e7254de9ab01162d07fd7ab1
+msgid "Configuration Options"
+msgstr ""
+
+#: ../../guide/http_api.rst:286 0edefabfb96c40e19e82a014b7e6e1ec
+msgid "Command-Line Arguments"
+msgstr ""
+
+#: ../../guide/http_api.rst:292 a2e714ee9e394822a57a7ae3392fcc47
+msgid "Available options:"
+msgstr ""
+
+#: ../../guide/http_api.rst:294 434ff126b4b240a7a71e91d07fd806f8
+msgid "``--host`` - Host to bind to (default: 127.0.0.1)"
+msgstr ""
+
+#: ../../guide/http_api.rst:295 7a3f0835fb5f4d438c7fffd8c7b77159
+msgid "``--port`` - Port to bind to (default: 8080)"
+msgstr ""
+
+#: ../../guide/http_api.rst:296 a6ca04a27ad14fbeba068fe22b6b1568
+msgid ""
+"``--workers`` - Number of worker processes (default: 1, recommended for "
+"GPU)"
+msgstr ""
+
+#: ../../guide/http_api.rst:297 928b1a60b1dd4ba6895e887a0efc49e3
+msgid "``--thread-pool-size`` - Async thread pool size per worker (default: 20)"
+msgstr ""
+
+#: ../../guide/http_api.rst:298 09eb782c469e48f89e5c04863819192f
+msgid "``--log-level`` - Log level: debug, info, warning, error, critical"
+msgstr ""
+
+#: ../../guide/http_api.rst:299 9a980322fbde4878b0dd0334dbefaee2
+msgid "``--reload`` - Enable auto-reload for development"
+msgstr ""
+
+#: ../../guide/http_api.rst:302 089a742b18c942988e08bc5481948cbd
+msgid "Environment Variables"
+msgstr ""
+
+#: ../../guide/http_api.rst:311 6e13e248ea834adeaad2a9ed13d64c5e
+msgid "Performance Tuning"
+msgstr ""
+
+#: ../../guide/http_api.rst:313 6c12687602c341c885f016ac674e23bd
+msgid "For GPU workloads, scale concurrency with thread pool size:"
+msgstr ""
+
+#: ../../guide/http_api.rst:326 c67aa9f388a04005a1cbf08bd87fd686
+msgid "**Rule of thumb**: ``thread_pool_size = GPU_batch_size × 2 to 5``"
+msgstr ""
+
+#: ../../guide/http_api.rst:329 460c3662804e4c77b3f25632cd317a03
+msgid "Benefits"
+msgstr ""
+
+#: ../../guide/http_api.rst:331 8344510f8242409f820a64715c59fa81
+msgid ""
+"**Zero Maintenance** - Add ToolUniverse methods → They automatically work"
+" over HTTP"
+msgstr ""
+
+#: ../../guide/http_api.rst:332 6db3e950308c4c23872846ec8e752ad4
+msgid ""
+"**Minimal Client** - Only needs ``requests`` + ``pydantic`` (no "
+"ToolUniverse package)"
+msgstr ""
+
+#: ../../guide/http_api.rst:333 5f1a0ec5249b4a558d32aac0cd6238dc
+msgid "**Full API Access** - All 49+ ToolUniverse methods available remotely"
+msgstr ""
+
+#: ../../guide/http_api.rst:334 8aedb75299f54991922718ff82dbfa88
+msgid "**Stateful** - Server maintains ToolUniverse instance across requests"
+msgstr ""
+
+#: ../../guide/http_api.rst:335 02caec39346245c0969fea54fb54b034
+msgid "**Type Discovery** - Client can query available methods at runtime"
+msgstr ""
+
+#: ../../guide/http_api.rst:336 edff3ef51a424c7882cecb9125e22e19
+msgid "**Automatic** - Both server and client use introspection/magic methods"
+msgstr ""
+
+#: ../../guide/http_api.rst:337 491a6d9b4c734a6aa54d919fc357633a
+msgid ""
+"**Flexible Install** - Server needs full package, client uses "
+"``tooluniverse[client]``"
+msgstr ""
+
+#: ../../guide/http_api.rst:338 eef29f9c6d1c4d788cc5d5151da484f5
+msgid ""
+"**GPU-Optimized** - Single worker with async thread pool for efficient "
+"GPU usage"
+msgstr ""
+
+#: ../../guide/http_api.rst:339 5f818afae1634830acf01ba57f7556a0
+msgid "**High Concurrency** - 20-100+ concurrent operations via async thread pool"
+msgstr ""
+
+#: ../../guide/http_api.rst:342 8f7f3bef35dc41659daa9530b1708d88
+msgid "Docker Deployment"
+msgstr ""
+
+#: ../../guide/http_api.rst:345 294bba10adfb49e5b528b091582a9838
+msgid "With GPU Support"
+msgstr ""
+
+#: ../../guide/http_api.rst:364 11acfd023dda4545b2e91c70a57f5636
+msgid "Run with GPU:"
+msgstr ""
+
+#: ../../guide/http_api.rst:371 76e5fbc8adfb4313ad31bdb87841519f
+msgid "Without GPU (CPU-Only)"
+msgstr ""
+
+#: ../../guide/http_api.rst:390 e2395998901e477897cfb2e36e5c812b
+msgid "Monitoring"
+msgstr ""
+
+#: ../../guide/http_api.rst:393 2b9a1fd5446e4925990538c6585a554f
+msgid "GPU Memory Usage"
+msgstr ""
+
+#: ../../guide/http_api.rst:395 e57b5d8fb79f46619f97a99967570322
+msgid "Check GPU memory usage:"
+msgstr ""
+
+#: ../../guide/http_api.rst:402 a95d1df4fb9a4d778855be980266b329
+msgid "Expected output with single worker:"
+msgstr ""
+
+#: ../../guide/http_api.rst:413 5bd711f0b16c404ab680a0e4bce1f998
+msgid "Only ONE process should be using GPU memory."
+msgstr ""
+
+#: ../../guide/http_api.rst:416 7c1abc11307b4fce8a7c0604c6f2b99e
+msgid "Server Health"
+msgstr ""
+
+#: ../../guide/http_api.rst:427 97c501e011d344f09ee1967f90da8675
+msgid "Interactive Documentation"
+msgstr ""
+
+#: ../../guide/http_api.rst:429 3f48f3477a9f43089f992e2289b53df1
+msgid "Once the server is running, you can access interactive API documentation:"
+msgstr ""
+
+#: ../../guide/http_api.rst:431 b5adc4dace584bf88a9037df06a77b4e
+msgid "**Swagger UI**: http://server:8080/docs"
+msgstr ""
+
+#: ../../guide/http_api.rst:432 8178649ef2464dd4ac41cce32cdee475
+msgid "**ReDoc**: http://server:8080/redoc"
+msgstr ""
+
+#: ../../guide/http_api.rst:434 8e8260fefd7841ddbf0727fd94aedd74
+msgid "These provide a web interface to explore and test all API endpoints."
+msgstr ""
+
+#: ../../guide/http_api.rst:437 d834cd31926f41adbc7946799e809289
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/http_api.rst:440 20fc97d441d34d24a03f6539bb70489f
+msgid "Most Common Issue"
+msgstr ""
+
+#: ../../guide/http_api.rst:442 f05116dd8a294fc4a85d79e852136120
+msgid "**Error: \"Method 'list_available_methods' not found on ToolUniverse\"**"
+msgstr ""
+
+#: ../../guide/http_api.rst:444 858c2b677f7143f0b14dba2744c5e173
+msgid "This is the most common error when using a custom client."
+msgstr ""
+
+#: ../../guide/http_api.rst:446 956d35364b024331be401c96f8379950
+msgid "**What's happening:**"
+msgstr ""
+
+#: ../../guide/http_api.rst:448 495383e91808481487fa5cde7bd9d025
+msgid ""
+"Your custom client uses ``__getattr__`` to proxy ALL method calls to "
+"``POST /api/call``, including ``list_available_methods()``. But "
+"``list_available_methods()`` is NOT a ToolUniverse method - it's a "
+"client-side utility that should use ``GET /api/methods``."
+msgstr ""
+
+#: ../../guide/http_api.rst:450 5e02c722e3da4f50bf53fbf9caf73a06
+msgid "**Why this happens:**"
+msgstr ""
+
+#: ../../guide/http_api.rst:465 af314cd3b8f0424c95519c1319825d9a
+msgid "**The fix:**"
+msgstr ""
+
+#: ../../guide/http_api.rst:467 1a3119bc27b04359821d239c688497e9
+msgid "**Wrong**: Custom client that proxies everything"
+msgstr ""
+
+#: ../../guide/http_api.rst:489 4e87249b5e7d4ae0baae8e45cbeeb005
+msgid ""
+"Or if implementing a custom client, see the \"Custom Client "
+"Implementation\" section above for the correct pattern."
+msgstr ""
+
+#: ../../guide/http_api.rst:491 6006c52368704ffb938cfc12930f82cb
+msgid ""
+"**Key insight**: ``list_available_methods()`` must be a real method using"
+" ``GET /api/methods``, not proxied through ``__getattr__`` to ``POST "
+"/api/call``."
+msgstr ""
+
+#: ../../guide/http_api.rst:493 785e612b6cb44c53b5ea7061a3a89dd3
+msgid "**Server Not Starting**"
+msgstr ""
+
+#: ../../guide/http_api.rst:503 8350c96bc2de4f4697155ba478351454
+msgid "**High Memory Usage**"
+msgstr ""
+
+#: ../../guide/http_api.rst:505 acec5aab453d4d7b84ef04fd3f08ce63
+msgid "If you see multiple worker processes consuming GPU memory:"
+msgstr ""
+
+#: ../../guide/http_api.rst:515 7f8e332ffe47427fa7ffa9a22077e832
+msgid "**Connection Refused**"
+msgstr ""
+
+#: ../../guide/http_api.rst:517 3c8bba968221406db1c4b866cdcce4ff
+msgid "Ensure server is accessible:"
+msgstr ""
+
+#: ../../guide/http_api.rst:527 d3c0694830d541ceb103564484e5abce
+msgid "**Tool_RAG Tensor Copy Error**"
+msgstr ""
+
+#: ../../guide/http_api.rst:529 7c7c12b7bb034898a4069d6d70c197b3
+msgid "If you encounter a tensor copy error when using ``Tool_RAG``:"
+msgstr ""
+
+#: ../../guide/http_api.rst:535 9bedb36f37a943349300ed2bfdfb019c
+msgid ""
+"This was a device mismatch bug where cached embeddings (CPU) didn't match"
+" the model device (GPU)."
+msgstr ""
+
+#: ../../guide/http_api.rst:537 ce0840e7001047859dcd66ea488d0eaa
+msgid "**Fixed in latest version:**"
+msgstr ""
+
+#: ../../guide/http_api.rst:539 12749aced6734180a67544782a656c35
+msgid "Tool_RAG model automatically loads on GPU if available"
+msgstr ""
+
+#: ../../guide/http_api.rst:540 32d8db18876842f5ab59b620c584b35c
+msgid "Cached embeddings are automatically moved to model's device"
+msgstr ""
+
+#: ../../guide/http_api.rst:541 43f62fc3886d46739510e09d406d77f1
+msgid "Device compatibility checks before tensor operations"
+msgstr ""
+
+#: ../../guide/http_api.rst:543 26fdcb7d32b84db2aff7d1adb9c8dc25
+msgid "**Solution**: Update to the latest version:"
+msgstr ""
+
+#: ../../guide/http_api.rst:549 ed8788da639f4553a3d6ccca91b55491
+msgid ""
+"The model will now automatically use GPU when available for faster "
+"inference."
+msgstr ""
+

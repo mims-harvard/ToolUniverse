@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/pmc_tools.rst:2 9cd3c338d65f4923bc53ded8bf1b5153
+#: ../../tools/pmc_tools.rst:10 e55b3e725cd0459d868686b4c5d98d98
 msgid "Pmc Tools"
 msgstr "Pmc 工具"
 
-#: ../../tools/pmc_tools.rst:4 9db37b11bade4d128038bdca444df75f
+#: ../../tools/pmc_tools.rst:12 37e4e0e2d31e419196b7ea67b221f373
 msgid ""
 "**Configuration File**: ``pmc_tools.json`` **Tool Type**: Local **Tools "
 "Count**: 1"
@@ -33,84 +33,93 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/pmc_tools.rst:8 f61266b24b6e4d3d9eeb02a8876bf648
+#: ../../tools/pmc_tools.rst:16 e8752750d7c6487890853c613908d133
 msgid ""
 "This page contains all tools defined in the ``pmc_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``pmc_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/pmc_tools.rst:11 e83cdf85c2c54f53a5745650d4a8931f
+#: ../../tools/pmc_tools.rst:19 29a885fcb592445dadd1f94a7654aeff
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/pmc_tools.rst:14 b081c9fb549e47138e8b45892ab764a6
+#: ../../tools/pmc_tools.rst:22 ff963fce29df43e6a34b0af831b30a66
 msgid "**PMC_search_papers** (Type: PMCTool)"
 msgstr "**PMC_search_papers**（类型：PMCTool）"
 
-#: ../../tools/pmc_tools.rst:16 99280107d3f34617b3f8f859fce000dc
+#: ../../tools/pmc_tools.rst:24 5383d5d2be8f49f5a9984d6fc1351f3f
+#, fuzzy
 msgid ""
-"Search for full-text biomedical literature using PMC (PubMed Central) "
-"API. PMC is the free full-t..."
+"Search for full-text biomedical literature using the PMC (PubMed Central)"
+" API. PMC is the free fu..."
 msgstr "使用 PMC（PubMed Central）API 搜索全文生物医学文献。PMC 是免费的全文本..."
 
-#: ../../tools/pmc_tools.rst 842094ccd03447f8aeb5abf64371995f
+#: ../../tools/pmc_tools.rst e9243e0ba3f544ae869312bb8d6a833e
 msgid "PMC_search_papers tool specification"
 msgstr "PMC_search_papers 工具规格说明"
 
-#: ../../tools/pmc_tools.rst:20 16fc875971c74644b12ea8175e1b7924
+#: ../../tools/pmc_tools.rst:28 1b1e59f0278047548d4b6bede0cdae67
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/pmc_tools.rst:22 7e3d9a013f5a44ae9e7b6d9627d29a0a
+#: ../../tools/pmc_tools.rst:30 4cf70ab74a4248ceade5113f99ca8e32
 msgid "**Name**: ``PMC_search_papers``"
 msgstr "**名称**：``PMC_search_papers``"
 
-#: ../../tools/pmc_tools.rst:23 65566436082944d2ac1b6b254ac28bf4
+#: ../../tools/pmc_tools.rst:31 0e1354d05d06441bbe5e8e6b31a03a13
 msgid "**Type**: ``PMCTool``"
 msgstr "**类型**：``PMCTool``"
 
-#: ../../tools/pmc_tools.rst:24 66259a64d75f49a381eabcf964f52ca1
+#: ../../tools/pmc_tools.rst:32 4aac4057e40746b7ac9ab62e88a2ab16
+#, fuzzy
 msgid ""
-"**Description**: Search for full-text biomedical literature using PMC "
-"(PubMed Central) API. PMC is the free full-text archive of biomedical and"
-" life sciences journal literature at the U.S. National Institutes of "
-"Health's National Library of Medicine."
+"**Description**: Search for full-text biomedical literature using the PMC"
+" (PubMed Central) API. PMC is the free full-text archive of biomedical "
+"and life sciences journal literature at the U.S. National Institutes of "
+"Health's National Library of Medicine. Uses \\`limit\\` (default 10); "
+"accepts \\`retmax\\` as an alias for \\`limit\\`."
 msgstr ""
 "**描述**：使用PMC（PubMed "
 "Central）API搜索全文生物医学文献。PMC是美国国立卫生研究院国家医学图书馆提供的免费全文生物医学与生命科学期刊文献存档。"
 
-#: ../../tools/pmc_tools.rst:26 1a91a8782a674ada9e9772ee07591497
+#: ../../tools/pmc_tools.rst:34 27c4df56294c45ff8bf999e011b6d1b9
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/pmc_tools.rst:28 32b09f3c75e5449ba7807d38873b4a7a
+#: ../../tools/pmc_tools.rst:36 25c514e857a44e3d9b157224c4e68477
 msgid ""
 "``query`` (string) (required) Search query for PMC papers. Use keywords "
 "separated by spaces to refine your search."
 msgstr "``query``（字符串）（必填）用于搜索PMC论文的查询条件。使用空格分隔的关键词以细化搜索结果。"
 
-#: ../../tools/pmc_tools.rst:31 2946e1db7c9d41d098b5144857955a87
+#: ../../tools/pmc_tools.rst:39 8ee7556dde404a2e8562b9876c625b5b
 #, fuzzy
 msgid ""
-"``limit`` (integer) (required) Maximum number of papers to return. This "
+"``limit`` (integer) (optional) Maximum number of papers to return. This "
 "sets the maximum number of papers retrieved from PMC."
 msgstr "``limit``（整数）（可选）返回的论文最大数量。此参数设置从PMC检索的论文最大数量。"
 
-#: ../../tools/pmc_tools.rst:34 fb48b05b19324302b8e4e7a08ac95923
+#: ../../tools/pmc_tools.rst:42 9629c1bd26e64380b0852e7b95539b63
+msgid ""
+"``retmax`` (integer) (optional) Alias for limit (NCBI eutils naming). If "
+"both retmax and limit are provided, limit is used."
+msgstr ""
+
+#: ../../tools/pmc_tools.rst:45 711d7801428945088b32cfb4f8a0e61d
 msgid ""
 "``date_from`` (string) (optional) Start date for publication date filter "
 "(YYYY/MM/DD format). Optional parameter to limit search to papers "
 "published from this date onwards."
 msgstr "``date_from``（字符串）（可选）出版日期筛选的起始日期（格式：YYYY/MM/DD）。可选参数，用于限制搜索结果为从该日期起发表的论文。"
 
-#: ../../tools/pmc_tools.rst:37 f703c38ce3f04d4db0c01fee909c7bd6
+#: ../../tools/pmc_tools.rst:48 a89a110d00ea45c2b79b435c574adb23
 msgid ""
 "``date_to`` (string) (optional) End date for publication date filter "
 "(YYYY/MM/DD format). Optional parameter to limit search to papers "
 "published up to this date."
 msgstr "``date_to``（字符串）（可选）出版日期筛选的结束日期（格式：YYYY/MM/DD）。可选参数，用于限制搜索范围至该日期之前发表的论文。"
 
-#: ../../tools/pmc_tools.rst:40 9db335ba619d4fdd8faee0fe1f40abde
+#: ../../tools/pmc_tools.rst:51 6f85636f0fca42ed849387e5e6396b3b
 msgid ""
 "``article_type`` (string) (optional) Article type filter (e.g., "
 "'research-article', 'review', 'case-report'). Optional parameter to limit"
@@ -119,19 +128,26 @@ msgstr ""
 "``article_type``（字符串）（可选）文章类型筛选（例如，'research-article'、'review'、'case-"
 "report'）。可选参数，用于限制搜索特定文章类型。"
 
-#: ../../tools/pmc_tools.rst:43 9f497cf961114660a60dd8bb6919d60f
+#: ../../tools/pmc_tools.rst:54 8670ca5176df4ada871fdea663f650df
+msgid ""
+"``include_abstract`` (boolean) (optional) If true, attempts to enrich "
+"results with an abstract (best-effort) by fetching PubMed abstracts for "
+"items that have a PMID."
+msgstr ""
+
+#: ../../tools/pmc_tools.rst:57 b8c285b51c01465c9b3b70ad2302f4da
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/pmc_tools.rst:58 474614848d2746faad24c6d8e8e5184a
+#: ../../tools/pmc_tools.rst:71 c399cabb175b40edb129d4c012423732
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/pmc_tools.rst:60 02246ec9dced4fa39e882801f539c00d
+#: ../../tools/pmc_tools.rst:73 4aba3f299a02488d9098478eeeaf643e
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/pmc_tools.rst:61 38ddb6a6645a44e4a05e323c427f2647
+#: ../../tools/pmc_tools.rst:74 9797ffcadc6449d383093e5753aa806e
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

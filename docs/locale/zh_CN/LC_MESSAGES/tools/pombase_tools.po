@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pombase_tools.rst:10 bd85b94c50c545bda7d7511a6e7a9922
+msgid "Pombase Tools"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:12 b7ca26f50b1945b69bfd0b040c3d8097
+msgid ""
+"**Configuration File**: ``pombase_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:16 b89c302cc6984014aebac55ffb119a47
+msgid ""
+"This page contains all tools defined in the ``pombase_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:19 c97e9bef7de14eba95ae1f53d20a11ae
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:22 6afee8af789c4dc4b66ead5761829876
+msgid "**PomBase_get_gene** (Type: PomBaseTool)"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:24 a0efe87bfec044e2a7083db9ade79193
+msgid ""
+"Get detailed gene information from PomBase for fission yeast (S. pombe) "
+"by systematic ID. Returns..."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst 04e50474cd8e4998b8c359dc99269d2f
+msgid "PomBase_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:28 ../../tools/pombase_tools.rst:59
+#: ../../tools/pombase_tools.rst:90 72ca23c605644f728382eaf897b47faf
+#: 8227e6dbc820482db15686b166720b9b d7f03e1c45bf46edb0f1764d579bb29b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:30 ec8be363dc344ee89a016d140c357fe2
+msgid "**Name**: ``PomBase_get_gene``"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:31 ../../tools/pombase_tools.rst:62
+#: ../../tools/pombase_tools.rst:93 b4213072beab4aefba4e907aac5a0d0b
+#: d38d370eec2047a9aa6b56dc94dfc4ef d7b34a1a9759401eb57baa9a2ea4d629
+msgid "**Type**: ``PomBaseTool``"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:32 e0eed3fbb3d14884b0ef06c871b32bd6
+msgid ""
+"**Description**: Get detailed gene information from PomBase for fission "
+"yeast (S. pombe) by systematic ID. Returns gene name, protein product, "
+"InterPro domain annotations, deletion viability, UniProt cross-reference,"
+" and transmembrane domain coordinates. S. pombe is a key model organism "
+"for cell cycle, chromosome biology, and RNA processing research. Example:"
+" SPBC11B10.09 returns cdc2 (cyclin-dependent kinase), essential for cell "
+"division."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:34 ../../tools/pombase_tools.rst:65
+#: ../../tools/pombase_tools.rst:96 1f0cf74803354735adb6887e901eecc0
+#: 6c551628f6ae4f5ebcb9e1b67d10e799 c285fae08d7342c8ba5a40aa821454d5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:36 fd5b04f282184af3b9fd19cca830b91b
+msgid ""
+"``gene_id`` (string) (required) PomBase systematic gene identifier. "
+"Examples: 'SPBC11B10.09' (cdc2), 'SPAC2F7.03c' (pom1), 'SPAC1002.17c' "
+"(ase1)."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:39 ../../tools/pombase_tools.rst:70
+#: ../../tools/pombase_tools.rst:104 24651f580b8c49e8a3f562c43acb8447
+#: 42d4fe6d069d485cb265ede9e398e179 91681467cc1b46ed8f3da48e0d17cff2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:53 a16a0d9090704236b4c5dfb5da6ff68e
+msgid "**PomBase_get_gene_phenotypes** (Type: PomBaseTool)"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:55 bc6bd42badfb4479ba161d44412f776b
+msgid ""
+"Get phenotype annotations for a fission yeast (S. pombe) gene from "
+"PomBase. Returns deletion viab..."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst 5fd58b7e034b4834a5b2696c9a163e01
+msgid "PomBase_get_gene_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:61 4c9f2fc4cfd741bc95c8eeea52962f46
+msgid "**Name**: ``PomBase_get_gene_phenotypes``"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:63 2a23c61ea1844028b814ddcf2e81176f
+msgid ""
+"**Description**: Get phenotype annotations for a fission yeast (S. pombe)"
+" gene from PomBase. Returns deletion viability, FYPO (Fission Yeast "
+"Phenotype Ontology) term annotations with evidence codes. S. pombe "
+"phenotypes are a key resource for understanding gene function in cell "
+"biology. Example: SPBC11B10.09 (cdc2) is inviable when deleted, "
+"reflecting its essential role in cell division."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:67 d6a23b073a0143a29b86672958b4da52
+msgid ""
+"``gene_id`` (string) (required) PomBase systematic gene identifier. "
+"Examples: 'SPBC11B10.09' (cdc2), 'SPAC2F7.03c' (pom1)."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:84 b76eaaab54384e818d9c9c931f03780e
+msgid "**PomBase_search_genes** (Type: PomBaseTool)"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:86 364326d5a3cb466da60487a48f82373c
+msgid ""
+"Search PomBase for fission yeast (S. pombe) genes by name, systematic ID,"
+" or protein product keyw..."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst 2fda0373c1b34386a73c46927e4398ba
+msgid "PomBase_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:92 e335cc50fd5144bcbffdb8bd9459f7ff
+msgid "**Name**: ``PomBase_search_genes``"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:94 b9a3b80c4d8745e39df9a7eb5f40c259
+msgid ""
+"**Description**: Search PomBase for fission yeast (S. pombe) genes by "
+"name, systematic ID, or protein product keyword. Searches across 12,600+ "
+"gene entries. Returns matching genes with systematic IDs, gene names, and"
+" protein products. Example: searching 'kinase' returns CDK and other "
+"kinase genes; searching 'cdc' returns cell division cycle genes."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:98 e4a3972a4eee455091ac5b778fb14f93
+msgid ""
+"``query`` (string) (required) Search query - gene name, systematic ID "
+"prefix, or product keyword. Examples: 'cdc2', 'kinase', 'SPAC', 'pom1'."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:101 9be271f9672f4f0895d0295e67941d84
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (1-50, "
+"default 10)."
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:118 c508261f0e214550af3c7bedba7f60c5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:120 9918fae200074ca9a9b449104494e244
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pombase_tools.rst:121 8506502af06a42e684260acbba840d38
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

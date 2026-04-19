@@ -1,0 +1,326 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gpcrdb_tools.rst:10 27cc9f8c8ac946c0b9c5a95c8e62d1d8
+msgid "Gpcrdb Tools"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:12 e651c12e432d4d878d78f7be9460c5a4
+msgid ""
+"**Configuration File**: ``gpcrdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:16 dd353fa6aaeb46a685874ed0dde67384
+msgid ""
+"This page contains all tools defined in the ``gpcrdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:19 d29f96edf6d64fee8672fcd49e7ebd8b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:22 03d6d5fc3f47482e9c8f5bc0934ee678
+msgid "**GPCRdb_get_ligands** (Type: GPCRdbTool)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:24 2c3f9bceba1c4bae8eef81d9d30a1b23
+msgid ""
+"Get ligands associated with a GPCR from GPCRdb. Returns ligand names, "
+"types (agonist/antagonist),..."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst fa0fc8d6f65d4a109ca6abf5078b58ac
+msgid "GPCRdb_get_ligands tool specification"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:28 ../../tools/gpcrdb_tools.rst:82
+#: ../../tools/gpcrdb_tools.rst:124 ../../tools/gpcrdb_tools.rst:166
+#: ../../tools/gpcrdb_tools.rst:214 52d05fad573a4b1abe0e5ba47b1e31e5
+#: 743a9eb349a841c88062ae5d1b854d5d 8366be8299714ec18704d5d3772cfa07
+#: cc8eb10baab6429e809ec722432c9a5c d42e147316f04621968a09fef23a144f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:30 663b1c2be18a4c90a0a8790d9795a626
+msgid "**Name**: ``GPCRdb_get_ligands``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:31 ../../tools/gpcrdb_tools.rst:85
+#: ../../tools/gpcrdb_tools.rst:127 ../../tools/gpcrdb_tools.rst:169
+#: ../../tools/gpcrdb_tools.rst:217 007c0e0d7057496facfa3f9868b27991
+#: 1df8906830fb48b58a5c93dadcde0a5c 5feadd6e651f4d528d17e7328b75b1b4
+#: a0483ae5379144f28aef1930f36971cf cc3040ce60d24333b6d735fd25e32703
+msgid "**Type**: ``GPCRdbTool``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:32 5628c722c97b40fbb89dc56a428265db
+msgid ""
+"**Description**: Get ligands associated with a GPCR from GPCRdb. Returns "
+"ligand names, types (agonist/antagonist), and binding data. Essential for"
+" GPCR drug discovery."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:34 ../../tools/gpcrdb_tools.rst:88
+#: ../../tools/gpcrdb_tools.rst:130 ../../tools/gpcrdb_tools.rst:172
+#: ../../tools/gpcrdb_tools.rst:220 173d95e73f1e47519a4b6f04f67ebd25
+#: 3ca0b94c25ee498997953f3f7686c1c8 83d21c6463464b29a1831b1f2ef620e8
+#: f22fc2e181854b59ad7dfac749b72567 f9ee445310374ccfb3b601b71b2d2f28
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:36 7ca8010ed7ac41fc95d6c9260b9f79fe
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_ligands)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:39 ../../tools/gpcrdb_tools.rst:93
+#: 1cd92e8685b64366a86f23c31a8d505f 4f24ce1bc78c4b26af31948a15a5fe51
+msgid "``protein`` (string) (optional) Protein entry name (e.g., adrb2\\_human)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:42 ../../tools/gpcrdb_tools.rst:96
+#: ../../tools/gpcrdb_tools.rst:138 ../../tools/gpcrdb_tools.rst:186
+#: 094b4c17834246fba2befbb1cf7760f3 2ae5fabe12b8488fa82bcce1191f7590
+#: 9f1864500ac645d181f7c3e82567050e c984fb486fa74e33b3d3691176fef17e
+msgid "``protein_id`` (string) (optional) Alias for protein parameter"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:45 ../../tools/gpcrdb_tools.rst:99
+#: ../../tools/gpcrdb_tools.rst:141 ../../tools/gpcrdb_tools.rst:189
+#: 0d7b2a2238e2437daa7847f6e30e44ce 88cdad44023e42ee80668ebbe3446519
+#: a083d2bfb9fc44e5b1712dfa125d4b3c a87ecae12d42488b85f965f2c4a1335e
+msgid ""
+"``receptor_name`` (string) (optional) Alias for protein. GPCRdb entry "
+"name (e.g., adrb2\\_human)."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:48 ../../tools/gpcrdb_tools.rst:102
+#: ../../tools/gpcrdb_tools.rst:144 ../../tools/gpcrdb_tools.rst:192
+#: 74c7288fc9e44fc087d8cc9ecd5cc648 9539bc2fe9fc4c7998fa9f761cf6dfa6
+#: abb113d8fa2a48c2a01e0625feddf141 cf06e0e8dab84a94824f81e9ebc523d0
+msgid ""
+"``protein_name`` (string) (optional) Alias for protein. GPCRdb entry name"
+" (e.g., adrb2\\_human)."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:51 3909c2b28a7b4d7dbbcd364b0ac593de
+msgid ""
+"``type`` (string) (optional) Ligand class filter (e.g., small molecule, "
+"peptide, antibody)."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:54 76fca631fa764582861704c7932b3479
+msgid ""
+"``ligand_type`` (string) (optional) Alias for type. Ligand class filter "
+"(e.g., small molecule, peptide)."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:57 63b718cfc6654686b65c2c364cf00c6e
+msgid ""
+"``limit`` (integer) (optional) Maximum number of ligands to return "
+"(default: all). Use to cap large result sets."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:60 62bec6271c9c431d977758ccb8f99dcb
+msgid ""
+"``max_results`` (integer) (optional) Alias for limit. Maximum number of "
+"ligands to return."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:63 ../../tools/gpcrdb_tools.rst:105
+#: ../../tools/gpcrdb_tools.rst:147 ../../tools/gpcrdb_tools.rst:195
+#: ../../tools/gpcrdb_tools.rst:231 03b1c135a7874511a23341c7fdc711d6
+#: 095c60b98da045d2b4079376527c1bc1 7c06d8db538243728365e70f18b64a16
+#: a607bd12bd464b58b4aad2e1c951909b ec2188201f164f0c8bbfd0fd0651ad69
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:76 23f2947b7ecb4d828cfec46417c7e336
+msgid "**GPCRdb_get_mutations** (Type: GPCRdbTool)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:78 190c985be9e441218ab8a6b5881af578
+msgid ""
+"Get mutation data for a GPCR from GPCRdb. Returns mutation positions, "
+"effects on ligand binding a..."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst e0607c38523f45b89a0db49c2d54af77
+msgid "GPCRdb_get_mutations tool specification"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:84 3dfc329deb8a4ecba2025b8c29a11bed
+msgid "**Name**: ``GPCRdb_get_mutations``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:86 af5ec81479f34073b9751bac662a7a0d
+msgid ""
+"**Description**: Get mutation data for a GPCR from GPCRdb. Returns "
+"mutation positions, effects on ligand binding and signaling. Useful for "
+"understanding structure-function relationships."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:90 0ca46286293a4949b8b6b6acd390845e
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_mutations)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:118 db4e5226188943be8fb7225ec037a14a
+msgid "**GPCRdb_get_protein** (Type: GPCRdbTool)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:120 3c1dec99fcaf459187ce46f9aaf13c82
+msgid ""
+"Get detailed GPCR protein information from GPCRdb. Returns receptor "
+"family, species, sequence, an..."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst 3b2d44a449a14710b6dcc29e72ae68c3
+msgid "GPCRdb_get_protein tool specification"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:126 c6c1f1c28e8242da9171a60f745bea72
+msgid "**Name**: ``GPCRdb_get_protein``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:128 2de2febbf5c247c7b7c9ca21e1dfa7ee
+#, python-format
+msgid ""
+"**Description**: Get detailed GPCR protein information from GPCRdb. "
+"Returns receptor family, species, sequence, and classification. GPCRs are"
+" targets of ~35% of approved drugs. No authentication required."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:132 8d04d3785b434bbdb9c11264a068c481
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_protein)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:135 684d11ddd818450aae518e2fc99caef5
+msgid ""
+"``protein`` (string) (optional) Protein entry name (e.g., adrb2\\_human "
+"for beta-2 adrenergic receptor) or UniProt accession (e.g., P07550)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:160 073494d1f80442c1aab706daae5fe293
+msgid "**GPCRdb_get_structures** (Type: GPCRdbTool)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:162 bb6f40c685e545d8a5ac75686d71239e
+msgid ""
+"Get GPCR crystal/cryo-EM structures from GPCRdb. Returns PDB codes, "
+"resolution, receptor state (a..."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst fcdf9a5047774adfa937b7b91a68abfd
+msgid "GPCRdb_get_structures tool specification"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:168 c457a48ccc404ee5a59103569713a5be
+msgid "**Name**: ``GPCRdb_get_structures``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:170 4621deaf9b21433b988963f68a2be9b7
+msgid ""
+"**Description**: Get GPCR crystal/cryo-EM structures from GPCRdb. Returns"
+" PDB codes, resolution, receptor state (active/inactive), and bound "
+"ligands. Filter by protein or receptor state."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:174 800742c739444ebda239889a4cbcedaa
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_structures)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:177 d95fe1f7df8849aab74dd3c726c9df33
+msgid ""
+"``protein`` (string) (optional) Protein entry name (optional - returns "
+"all structures if not specified)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:180 40ba70c76aa54ab6a928597daf2bd4bb
+msgid ""
+"``state`` (string) (optional) Receptor state filter: active, inactive, "
+"intermediate"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:183 98397dd0f6d74e6f966d03be078b947f
+msgid ""
+"``resolution`` (number) (optional) Maximum resolution in Angstroms "
+"(client-side filter, e.g., 2.5 returns only structures ≤2.5Å)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:208 0c848eaa7a814228bd9387d19ba50e8f
+msgid "**GPCRdb_list_proteins** (Type: GPCRdbTool)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:210 cbd98a690e8a4fd586e0ab9ba289053f
+msgid ""
+"List GPCR protein families or proteins in a specific family from GPCRdb. "
+"Without family parameter..."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst f106c02cb49b4c34b9ace3b32bfecda6
+msgid "GPCRdb_list_proteins tool specification"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:216 ae20bedd7c744c139e59e61614461623
+msgid "**Name**: ``GPCRdb_list_proteins``"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:218 c11c4a074f1548c6aadedfd0a6e3305c
+msgid ""
+"**Description**: List GPCR protein families or proteins in a specific "
+"family from GPCRdb. Without family parameter, returns list of protein "
+"families (Class A, Class B, etc.). With family parameter (e.g., '001') or"
+" protein\\_class (e.g., 'Chemokine receptors'), returns proteins in that "
+"family. No authentication required."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:222 262a846143524434aa1efdce217234ed
+msgid "``operation`` (string) (optional) Operation type (fixed: list\\_proteins)"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:225 771c6649a6b6433894bb07873edd23c1
+msgid ""
+"``protein_class`` (string) (optional) Human-readable GPCR class or family"
+" name (e.g., 'Chemokine receptors', 'Class A', 'Adrenergic'). Alias for "
+"family that accepts plain English names."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:228 abe03d78f79444e692ea1839a1363a19
+msgid ""
+"``family`` (string) (optional) GPCR family code (e.g., '001' for Class A "
+"Rhodopsin, '002' for Class B). If not provided, lists all protein "
+"families."
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:244 d7e88a875c7541599e4793194b948c4e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:246 a09d68a390994f9486ddff1c6dd2ea37
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gpcrdb_tools.rst:247 39a48ffe16d04bda998969472c017d4c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

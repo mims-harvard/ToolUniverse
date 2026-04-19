@@ -1,0 +1,312 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/compact_mode_tools.rst:10 afc7bf740eae4c26a698cb8121e90c5a
+msgid "Compact Mode Tools"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:12 5747067af9eb48d2a28eedae2a5b0f0a
+msgid ""
+"**Configuration File**: ``compact_mode_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:16 cb7f0c113bcf45f9ae732496d807cdd6
+msgid ""
+"This page contains all tools defined in the ``compact_mode_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:19 8462a16df6f8471ab259d53a2b7a5e16
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:22 b26349b6648c4e93bad6de64283c0bc5
+msgid "**execute_tool** (Type: ExecuteTool)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:24 eb40bc6aaedf4712981958e5b988991c
+msgid ""
+"Execute a ToolUniverse tool directly with custom arguments. This is the "
+"primary way to run any to..."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst d26c749cd6494fcc80ff704b4efd32a8
+msgid "execute_tool tool specification"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:28 ../../tools/compact_mode_tools.rst:62
+#: ../../tools/compact_mode_tools.rst:96 ../../tools/compact_mode_tools.rst:142
+#: 4ee99777e98a4831a9b0cdc8d3b74a4f 82e51f6a87b343fd810cbdf0e3e11430
+#: 91baf0ed3f634256bce54a0d8fafd864 ba8f5cc8f8454db5a6c72a387f77b819
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:30 b87fa2dacc2d42dbb4f52eb15f197927
+msgid "**Name**: ``execute_tool``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:31 37f922177a3946b986c39beba267a4f8
+msgid "**Type**: ``ExecuteTool``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:32 8134ce3676e749d58b8adfe64fa04228
+msgid ""
+"**Description**: Execute a ToolUniverse tool directly with custom "
+"arguments. This is the primary way to run any tool in the ToolUniverse "
+"system. You must get the tool definition first to figure out the "
+"arguments to pass."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:34 ../../tools/compact_mode_tools.rst:68
+#: ../../tools/compact_mode_tools.rst:102
+#: ../../tools/compact_mode_tools.rst:148 3cde02e6b3004f3ba2cd54547028281b
+#: a6cfd3f0a9cf48d693e808143c97caf7 bf5129e4368e44d5987a9059a7f838d2
+#: f026d1e119f246db85d91aa26b35be3d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:36 2e48372c878c407e8f46f4d5b2b6c070
+msgid ""
+"``tool_name`` (string) (required) Name of the tool to execute (e.g., "
+"'example\\_tool\\_name')"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:39 7808cf6ce2334626989a49cf68296834
+#, python-brace-format
+msgid ""
+"``arguments`` (unknown) (optional) Tool arguments as either (1) a JSON "
+"object dictionary or (2) a JSON string that decodes to an object. Object "
+"example: {\"param1\": \"value1\", \"param2\": 5}. JSON string example: "
+"\"{\\\\\"param1\\\\\": \\\\\"value1\\\\\", \\\\\"param2\\\\\": 5}\"."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:42 ../../tools/compact_mode_tools.rst:76
+#: ../../tools/compact_mode_tools.rst:122
+#: ../../tools/compact_mode_tools.rst:171 36f970feda0e41e2b6ee1f9fd80c92cd
+#: 5a56e71ae50f49edb792a7fbefb50aa2 d7c9e94df5df4eef8dc79e5ecb2b5f4e
+#: e9a8a7e9b8614a06b39d9b1e1776b3de
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:56 9437b96c772b480fa40605539dbd0234
+msgid "**get_tool_info** (Type: GetToolInfo)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:58 195774d59261409789a9d11c702a87e7
+msgid ""
+"Get tool information with configurable detail level. Supports single tool"
+" (string) or multiple to..."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst db96c9b86c64416c9d2f117183595f49
+msgid "get_tool_info tool specification"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:64 6d084a1ba46141d1a8e3c0ddf8046c23
+msgid "**Name**: ``get_tool_info``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:65 8da5c74504f74b2fb27e8f788d16f94a
+msgid "**Type**: ``GetToolInfo``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:66 ec232b8a54f945c893948fbaf964f51f
+msgid ""
+"**Description**: Get tool information with configurable detail level. "
+"Supports single tool (string) or multiple tools (list). Use "
+"detail\\_level='description' to get only the description field, or "
+"detail\\_level='full' to get complete tool definition including parameter"
+" schema."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:70 c387e844d6484342bc06440f77e81cdd
+msgid ""
+"``tool_names`` (unknown) (required) Single tool name (string) or list of "
+"tool names"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:73 f1746eb62fe94ba886115bf6508214bf
+msgid ""
+"``detail_level`` (string) (optional) Detail level: 'description' returns "
+"only the description field (complete, not truncated), 'full' returns "
+"complete tool definition including parameter schema"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:90 5aa0ee28b9d24b40ba0ff002eba5861a
+msgid "**grep_tools** (Type: GrepTools)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:92 542da634b0894f71a2ae83926bfd3346
+msgid ""
+"Search tools using simple text matching or regex patterns. Supports both "
+"simple text search (defa..."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst 3ed2ca7c0bf7426daf6bae85b655c746
+msgid "grep_tools tool specification"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:98 d2462f0975d142158905ccbe01f3efed
+msgid "**Name**: ``grep_tools``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:99 5c233fb83d0c4d87ba6561800584a243
+msgid "**Type**: ``GrepTools``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:100 3f653a5133da48ccb99147b1ecac7cc4
+msgid ""
+"**Description**: Search tools using simple text matching or regex "
+"patterns. Supports both simple text search (default, agent-friendly) and "
+"regex patterns (advanced). Independent from Tool\\_Finder\\_Keyword, uses"
+" basic text/regex matching without TF-IDF or NLP processing. Fast and "
+"simple for pattern searches."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:104 4a1c3008feef42e8a19b458139e11edb
+msgid ""
+"``pattern`` (string) (required) Search pattern (text or regex depending "
+"on search\\_mode)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:107 f8d7ced5f4944173864ff4cdf17b6e1b
+msgid ""
+"``field`` (string) (optional) Field to search in: name, description, "
+"type, or category"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:110 01249ae8ebd24872ab0e0e7eb58275c8
+msgid ""
+"``search_mode`` (string) (optional) Search mode: 'text' for simple case-"
+"insensitive text matching (default, agent-friendly), 'regex' for regex "
+"pattern matching"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:113 99aa85adaa7e49988b0275e4b185eaf9
+msgid ""
+"``limit`` (integer) (optional) Maximum number of tools to return "
+"(default: 100)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:116
+#: ../../tools/compact_mode_tools.rst:168 3739e575f2bd4088af336abc3f260b1c
+#: eb95590459e8411dbf8c439d39b56d69
+msgid ""
+"``offset`` (integer) (optional) Number of tools to skip (optional, for "
+"pagination, default: 0)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:119 4b5adc87878243569b01c385b84a18f9
+msgid ""
+"``categories`` (array) (optional) Optional list of tool categories to "
+"filter by"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:136 cd34435412ad488ea4384afc25d45dd8
+msgid "**list_tools** (Type: ListTools)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:138 4925e51b1e974711bd5a52dc666d4599
+msgid ""
+"List tools with multiple output modes. Default mode='names' for quick "
+"scanning. Recommended workf..."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst da860fc3e150401bab07f5c2f33db204
+msgid "list_tools tool specification"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:144 efd5bc7d6a194e3e9654ce9c5b82b2cb
+msgid "**Name**: ``list_tools``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:145 7e1103f706fa4a47bdda1df2f06fb4a5
+msgid "**Type**: ``ListTools``"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:146 0d4f92ea3978400db707c3ece2c82cf2
+msgid ""
+"**Description**: List tools with multiple output modes. Default "
+"mode='names' for quick scanning. Recommended workflow: start with default"
+" or mode='categories' for overview, then use 'get\\_tool\\_info' tool to "
+"get descriptions/details for specific tools (supports batch queries). "
+"Warning: modes like 'basic'/'summary' return very large payloads; use "
+"'get\\_tool\\_info' instead for descriptions. If you must use these "
+"modes, use 'limit'/'offset' or filter by 'categories'. Modes: 'names' "
+"(default), 'basic', 'categories', 'by\\_category', 'summary', 'custom'."
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:150 facd63c649084404b32e16f855e39d32
+msgid ""
+"``mode`` (string) (optional) Output mode (default: 'names'). Warning: "
+"non-'names' modes like 'basic'/'summary' can return very large payloads "
+"when many tools are loaded. For getting tool descriptions, use "
+"'get\\_tool\\_info' tool instead. Modes: 'names' (tool names only), "
+"'basic' (name+description), 'categories' (category statistics), "
+"'by\\_category' (grouped by category), 'summary' "
+"(name+description+type+has\\_parameters), 'custom' (user-specified "
+"fields)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:153 55ed91a68eb94611bce6beb0d7c823dd
+msgid ""
+"``categories`` (array) (optional) Optional list of tool categories to "
+"filter by (applies to all modes except 'categories')"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:156 8928c80673ec454d9eabcea0d10b533d
+msgid ""
+"``fields`` (array) (optional) Required for mode='custom'. List of fields "
+"to include (e.g., [\"name\", \"type\", \"category\"])"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:159 c4e1beec0f114a2083e337b3a9b5d731
+msgid ""
+"``group_by_category`` (boolean) (optional) Whether to group results by "
+"category (only for mode='names', 'basic', or 'summary')"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:162 aec5240de7b541f9a94374fdc6db8cfd
+msgid ""
+"``brief`` (boolean) (optional) Whether to truncate description to brief "
+"(only for mode='basic' or 'summary')"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:165 c83c2a2c2f624094a7b9adeb52776fde
+msgid ""
+"``limit`` (integer) (optional) Maximum number of tools to return "
+"(optional, for pagination)"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:184 2bbe29927eb34e7c91a376e6c261e0f5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:186 db608781df504e82909b465aef41c64f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/compact_mode_tools.rst:187 1a7bef0807774693b59cc7fe873e489d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

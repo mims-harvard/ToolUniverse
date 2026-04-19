@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/blast_tools.rst:10 2fcd63cc25a342ed99483d5965096e47
+msgid "Blast Tools"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:12 f565903c36264f55affb4c4c15e13324
+msgid ""
+"**Configuration File**: ``blast_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 2"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:16 995192b4a7ae416e9150af8540dc5f86
+msgid ""
+"This page contains all tools defined in the ``blast_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/blast_tools.rst:19 86a75a0b797e416f90abd1bdc30419e5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:22 91c2d1f868e64be9b40c835ae862f66f
+msgid "**BLAST_nucleotide_search** (Type: NCBIBlastTool)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:24 0c6892421bb5430b957a2e51eb05ad9d
+msgid ""
+"Search nucleotide sequences using NCBI BLAST blastn against nucleotide "
+"databases. Requires Biopyt..."
+msgstr ""
+
+#: ../../tools/blast_tools.rst 8005a91301a0495f97aa2f54a0f7f997
+msgid "BLAST_nucleotide_search tool specification"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:28 ../../tools/blast_tools.rst:68
+#: 7c41e68a203d44aba5d5fa1495a3d9d1 cfb7d536a02a41029e5dedd48146c524
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:30 a911caff1e824c47ad90b9c641adf758
+msgid "**Name**: ``BLAST_nucleotide_search``"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:31 ../../tools/blast_tools.rst:71
+#: 1e0ed1853e6a477bb5b4a6fb8a8579de cbbae73babc9452d8e9e8b50608a3db3
+msgid "**Type**: ``NCBIBlastTool``"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:32 d42d0284bcdf4d5da88a390f44b724f4
+msgid ""
+"**Description**: Search nucleotide sequences using NCBI BLAST blastn "
+"against nucleotide databases. Requires Biopython (pip install biopython)."
+" IMPORTANT: This tool uses NCBI's remote BLAST service which is "
+"inherently SLOW - expect 5-30 minutes per query depending on server load."
+" This is normal NCBI behavior, not a bug. For faster results, use smaller"
+" databases like 'refseq\\_select\\_rna' instead of 'nt'."
+msgstr ""
+
+#: ../../tools/blast_tools.rst:34 ../../tools/blast_tools.rst:74
+#: 1b992cbc965c438bb2cfb437290828c4 400cb163627c4774958699d87769cea6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:36 ce4ea8911af54ceeb3d2657823592029
+msgid ""
+"``sequence`` (string) (required) DNA sequence to search (minimum 10 "
+"nucleotides)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:39 7a3f81f78c71444587c1d4b276b0a275
+msgid ""
+"``database`` (string) (optional) Database to search. Options: 'nt' "
+"(comprehensive but slow), 'refseq\\_select\\_rna' (curated, faster), "
+"'refseq\\_representative\\_genomes' (representative genomes)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:42 ../../tools/blast_tools.rst:82
+#: 0c9c98cf95b04df89b53cb1eb5811412 b75ba9a73b7145ce859a83efab31861a
+msgid "``expect`` (number) (optional) E-value threshold for reporting hits"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:45 ../../tools/blast_tools.rst:85
+#: 20373a02b6c34896bc6c86ffd3839d1c 7035a71bae6d429da838c79167ebf5aa
+msgid "``hitlist_size`` (integer) (optional) Maximum number of hits to return"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:48 ../../tools/blast_tools.rst:88
+#: 8558f8c3bc7143a3932c4fe4b562fef6 ce1aa5395049469aab07124629feeae3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:62 58b7b857f821486f84b6e28cd70d24a9
+msgid "**BLAST_protein_search** (Type: NCBIBlastTool)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:64 81d030fa24e14b72b076706a7785ddca
+msgid ""
+"Search protein sequences using NCBI BLAST blastp against protein "
+"databases. Requires Biopython (p..."
+msgstr ""
+
+#: ../../tools/blast_tools.rst 71364f4cd1cd407183a57390fb9363cc
+msgid "BLAST_protein_search tool specification"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:70 9949211a755e4f51957208425920ede7
+msgid "**Name**: ``BLAST_protein_search``"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:72 53053d2b30c14559b33516377cae5935
+msgid ""
+"**Description**: Search protein sequences using NCBI BLAST blastp against"
+" protein databases. Requires Biopython (pip install biopython). "
+"IMPORTANT: This tool uses NCBI's remote BLAST service which is inherently"
+" SLOW - expect 5-30 minutes per query depending on server load. This is "
+"normal NCBI behavior, not a bug. For faster results, use 'swissprot' or "
+"'pdb' databases instead of 'nr'."
+msgstr ""
+
+#: ../../tools/blast_tools.rst:76 065053019cf6416d909236cffe99a4b9
+msgid ""
+"``sequence`` (string) (required) Protein sequence to search (minimum 10 "
+"amino acids)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:79 885c80aeeb584bbda3216b2f3e26f6cd
+msgid ""
+"``database`` (string) (optional) Database to search. Options: 'nr' "
+"(comprehensive but slow), 'swissprot' (curated, faster), 'pdb' (protein "
+"structures only)"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:102 49994e33144a48c6af0238cc60346deb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:104 bb07c4319a95410cb60d056437a976e6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/blast_tools.rst:105 d538f075fefc42a4aeb7141845efc2af
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

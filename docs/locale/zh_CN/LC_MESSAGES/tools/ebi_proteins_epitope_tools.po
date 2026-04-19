@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:10
+#: ea044496f5ad41d5a29f146231cfae74
+msgid "Ebi Proteins Epitope Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:12
+#: 8438f551a3bc4f398ae38788d4970bf7
+msgid ""
+"**Configuration File**: ``ebi_proteins_epitope_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:16
+#: 15c879fbda9140acad0046a6bec67349
+msgid ""
+"This page contains all tools defined in the "
+"``ebi_proteins_epitope_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:19
+#: 90c79b7c5c144f399b8d5d396af81afd
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:22
+#: 91412f7fb4ac4a7892ed9b0caf461ef6
+msgid "**EBIProteins_get_epitopes** (Type: EBIProteinsEpitopeTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:24
+#: de5967ebf2e8401b9bf46bec6c2bcaed
+msgid ""
+"Get experimentally-determined immune epitope regions for a protein using "
+"the EBI Proteins API. Re..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst 47a39616e23f4f98a40bda27e74ae444
+msgid "EBIProteins_get_epitopes tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:28
+#: dfabecabed804f22a94a8405af6a6329
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:30
+#: f8a29d7ae99b4c58bb06cc64fb3f2ba4
+msgid "**Name**: ``EBIProteins_get_epitopes``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:31
+#: 04feb4ece73d49e88b82ccb1dbef08de
+msgid "**Type**: ``EBIProteinsEpitopeTool``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:32
+#: 779c3e89e7704e86bb61d00333d4306b
+msgid ""
+"**Description**: Get experimentally-determined immune epitope regions for"
+" a protein using the EBI Proteins API. Returns epitope positions, "
+"sequences, and supporting literature from the Immune Epitope Database "
+"(IEDB). Epitopes are regions of proteins recognized by antibodies or "
+"T-cells. Critical for vaccine design, therapeutic antibody development, "
+"immunogenicity assessment, and understanding immune responses. Example: "
+"get epitopes for P04637 (TP53) returns 62 experimentally-mapped epitope "
+"regions; P00533 (EGFR) returns epitopes relevant to cancer immunotherapy."
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:34
+#: 0a02ea1644f84c60a388733799d505a9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:36
+#: 0202e3210a774f5fb49664117b9197d0
+msgid ""
+"``accession`` (string) (required) UniProt accession number for the "
+"protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (insulin), "
+"'P0DTC2' (SARS-CoV-2 spike protein)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:39
+#: 9f65cb77dd234a5fa87e11f45b5f00d3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:53
+#: 00f5de8020814484b21b95eeed4440b2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:55
+#: c26017ac7ab1409b81abba8100bc0c27
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_proteins_epitope_tools.rst:56
+#: 249908f82bba45f993657da314e4e107
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

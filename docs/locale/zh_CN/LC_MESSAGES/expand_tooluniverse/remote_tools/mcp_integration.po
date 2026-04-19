@@ -1,0 +1,204 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:2
+#: 1cb2a2a74de746e8b82c107ca293d3da
+msgid "MCP Integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:4
+#: 091012c60ce540c9ad21266a30d24093
+msgid ""
+"Learn how to integrate MCP (Model Context Protocol) servers with "
+"ToolUniverse using configuration-based loading. This approach "
+"automatically discovers and loads remote tools without manual setup."
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:7
+#: d92ca5df605f467db88804fb77de9c7a
+msgid "What is MCP?"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:9
+#: 3cbe1edbff0243e386b009c578a74566
+msgid ""
+"MCP is a standardized protocol for tool communication that allows: - "
+"**Standardized Interface**: Consistent tool discovery and execution - "
+"**Language Agnostic**: Servers can be written in any language - "
+"**Scalable**: Support for multiple tools on one server - **Secure**: "
+"Built-in authentication and error handling"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:16
+#: 68d8bc68742c42349ac32027547cbde9
+msgid "Configuration-Based Loading"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:18
+#: 27303c462ade43ce9cc13658a45d37a9
+msgid ""
+"Instead of programmatic loading, use configuration files for automatic "
+"tool discovery:"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:20
+#: 84f27d0f8a2a40528e5b07ac33ba917c
+msgid "**Create `mcp_tools_config.json`:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:35
+#: cf29c476a67d4e5a9323b01d16433393
+msgid "**Load in ToolUniverse:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:52
+#: 2390bbe55789409184d1fcf3ca93d774
+msgid "Configuration Options"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:54
+#: 540921d7cd344f799761a8c108234262
+msgid "**MCPAutoLoaderTool Parameters:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:56
+#: 20011d55b8004d438a11d54a02646b87
+msgid "``name``: Unique name for the loader tool (required)"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:57
+#: 62895e3d25664e97af608b4905db7925
+msgid "``description``: Description of what tools this loader provides"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:58
+#: 91397f4503f645e78d4bf23500390f76
+msgid "``type``: Must be \"MCPAutoLoaderTool\" (required)"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:59
+#: e9211f55e27246379b49a75dbc7580dd
+msgid "``tool_prefix``: Prefix for loaded tool names (optional)"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:60
+#: 9670ec6efbd9480f9e0c64bd8053df2b
+msgid "``server_url``: URL of your MCP server (required)"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:61
+#: 1b09aab87ba841a5b4d49594658cbe26
+msgid "``required_api_keys``: Environment variables needed (optional)"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:63
+#: 3438e7b00d214edbb75b9518c04b6737
+msgid "**Environment Variables:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:65
+#: e2a4b7f7e68d46df866e7d8977b9d840
+msgid "Use environment variables for dynamic configuration:"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:80
+#: cfdd8604117e447e8c06182ff31e9449
+msgid "**Multiple Servers:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:82
+#: 49f6ac3904bc48b9b8fe1a4c68dcb923
+msgid "Load tools from multiple MCP servers:"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:106
+#: ee19aefcf3f846f9a85c5d70054c18a6
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:108
+#: 3d608575652345cf9f5635503bd8a7fe
+msgid "**Common Issues:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:110
+#: 0b1952491eb14bd4888683deffa9fa31
+msgid ""
+"**Connection refused** - Check if MCP server is running: `python "
+"your_tool_file.py` - Verify the server URL in configuration - Check "
+"firewall settings"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:115
+#: c324747d9b6f4ac09fdcf5297e37a7aa
+msgid ""
+"**Tool not found** - Verify tool names (check if prefix is correct) - "
+"Check MCP server logs - Ensure tool is properly registered with "
+"`@register_mcp_tool`"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:120
+#: 3f67851af6b74974adfa9744e1478928
+msgid ""
+"**Configuration errors** - Validate JSON configuration syntax - Check "
+"required API keys are set - Verify server URLs are accessible"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:125
+#: 9dae400465934206886d5be21aa6c838
+msgid ""
+"**Environment variable issues** - Ensure all required API keys are set - "
+"Check variable names match exactly - Verify environment is loaded before "
+"ToolUniverse initialization"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:131
+#: 6bf7569e157e4ccaa474d05ed2e59683
+msgid "Next Steps"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:133
+#: 2b11d2ddf1c547719bc4c643fe7dee52
+msgid ""
+"**Contributing**: :doc:`../contributing/remote_tools` - Submit your MCP "
+"server to ToolUniverse"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:134
+#: aaa82a09b85945c9932ccb3f2a1b2c0e
+msgid "**Tutorial**: :doc:`tutorial` - Learn about remote tool integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:135
+#: e3297285dbd849ecacedf8882a46e4ed
+msgid ""
+"**Architecture**: :doc:`../reference/architecture` - Understand "
+"ToolUniverse internals"
+msgstr ""
+
+#: ../../expand_tooluniverse/remote_tools/mcp_integration.rst:138
+#: 12f8219c15e24f629c34d2e4cb4698b5
+msgid ""
+"**Integration tip**: Start with simple MCP servers and gradually add "
+"complexity. Always test your integration thoroughly!"
+msgstr ""
+

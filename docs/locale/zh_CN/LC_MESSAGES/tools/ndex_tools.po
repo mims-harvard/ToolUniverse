@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ndex_tools.rst:10 3743f10f0c1a40c3b4131f452d68e935
+msgid "Ndex Tools"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:12 2c19e6e5bf674b0c81d1248ba78e2045
+msgid ""
+"**Configuration File**: ``ndex_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:16 37eba2e86600457c857f1b46d111a7db
+msgid ""
+"This page contains all tools defined in the ``ndex_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:19 b1526a230e534ebdb610fe886acaea9e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:22 855383ca13da4f65b389d55147b70524
+msgid "**NDEx_get_network** (Type: NDExTool)"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:24 8ea5181b6edb4fda80e37ba6f194039a
+msgid ""
+"Get the full content of a biological network from NDEx including all "
+"nodes (proteins/genes) and e..."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst 54f6ef6f5e8749b2976e0b6beaed2a9a
+msgid "NDEx_get_network tool specification"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:28 ../../tools/ndex_tools.rst:59
+#: ../../tools/ndex_tools.rst:90 ae1ba906d449462ba598f26a3f829071
+#: e8b36947e58c40a2b00cc58e127d963c eb457d3cebfe4a5fa1dbfc6c1ffd7957
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:30 0012fde25af84f6d87916d60fb5375f1
+msgid "**Name**: ``NDEx_get_network``"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:31 ../../tools/ndex_tools.rst:62
+#: ../../tools/ndex_tools.rst:93 192c1c738e0b4c84af6b61af7a5dc5e4
+#: 22b63d0f9e7f4831a91536f5048f8513 b4179631f97343ddbe917c355f02aba2
+msgid "**Type**: ``NDExTool``"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:32 e031b9b9d0374ec9929f0ded7a826f22
+msgid ""
+"**Description**: Get the full content of a biological network from NDEx "
+"including all nodes (proteins/genes) and edges "
+"(interactions/relationships). Returns the network in a structured format "
+"with node names, edge source-target pairs, and interaction types. Large "
+"networks are truncated (max 200 nodes, 500 edges). Use "
+"NDEx\\_search\\_networks to find network UUIDs. Example: retrieves the "
+"BRCA1 interactome showing all protein interaction partners."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:34 ../../tools/ndex_tools.rst:65
+#: ../../tools/ndex_tools.rst:96 07a3e705ab9d484c987bd02f957c9ca1
+#: 11e95512fccd464aa10e17ae66bc3fb3 e384d3b42aa44f9f84c9046c78afc2e7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:36 d0c52c893d904ee7b96b36bb095f43f6
+msgid ""
+"``uuid`` (string) (required) NDEx network UUID. Example: '34eec19d-ab5a-"
+"11ea-aaef-0ac135e8bacf' (BRCA1 interactome)."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:39 ../../tools/ndex_tools.rst:70
+#: ../../tools/ndex_tools.rst:107 317fd42d474545d6b89a68a01e581cf4
+#: 8c63d6cbfe694c6e81d71a1f74ba8e86 97782aad92ae4d3e8863fbf4ba64667b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:53 b20df754f1f14931a15df837b5fe3554
+msgid "**NDEx_get_network_summary** (Type: NDExTool)"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:55 64a24acfdf8e420aaf6e762b9ced6c4b
+msgid ""
+"Get detailed summary information for a specific biological network in "
+"NDEx by its UUID. Returns t..."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst f40d2ef01a494eff9d3804595df7c753
+msgid "NDEx_get_network_summary tool specification"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:61 63fdbb5a647a48a1aabbc04cc4666fb1
+msgid "**Name**: ``NDEx_get_network_summary``"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:63 f0876db1da134c509bd4731fefa16c6e
+msgid ""
+"**Description**: Get detailed summary information for a specific "
+"biological network in NDEx by its UUID. Returns the network name, "
+"description, node and edge counts, owner, DOI, version, "
+"creation/modification dates, and custom properties. Use "
+"NDEx\\_search\\_networks to find network UUIDs first. Example: UUID "
+"'34eec19d-ab5a-11ea-aaef-0ac135e8bacf' returns the BRCA1 interactome "
+"network with 82 nodes and 118 edges."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:67 28d8b431a89846b9980175a76794b749
+msgid ""
+"``uuid`` (string) (required) NDEx network UUID. Get UUIDs from "
+"NDEx\\_search\\_networks results. Example: '34eec19d-ab5a-11ea-aaef-"
+"0ac135e8bacf' (BRCA1 interactome), '35e031eb-45d1-11ed-b7d0-0ac135e8bacf'"
+" (p53 pathway)."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:84 489e76bc6f5249eabe843ed3f19158dd
+msgid "**NDEx_search_networks** (Type: NDExTool)"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:86 60abcfb8f3b44822a6b7ee9ef95fcc3f
+msgid ""
+"Search the NDEx biological network repository for published networks by "
+"keyword. NDEx hosts thous..."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst 4ff57819701747a89cd4047158b7730d
+msgid "NDEx_search_networks tool specification"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:92 ae81142c09da4754967b98b5bea423c7
+msgid "**Name**: ``NDEx_search_networks``"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:94 0de21d3421f341ae8c8c60b0f7953daa
+msgid ""
+"**Description**: Search the NDEx biological network repository for "
+"published networks by keyword. NDEx hosts thousands of curated protein-"
+"protein interaction (PPI) networks, signaling pathways, gene regulatory "
+"networks, and metabolic networks from research publications and databases"
+" like NCI-PID and SIGNOR. Returns network names, node/edge counts, DOIs, "
+"and UUIDs. Example: search 'BRCA1' finds interaction networks involving "
+"BRCA1; search 'p53 signaling' finds p53 pathway networks."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:98 37c4a2f1902c455194f02b2e188b18a6
+msgid ""
+"``query`` (string) (required) Search query for finding biological "
+"networks. Can include gene names, pathway names, diseases, or biological "
+"processes. Examples: 'BRCA1', 'p53 signaling', 'apoptosis', 'insulin "
+"pathway', 'MAPK cascade'."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:101 80d62706fb8d4a52ac046bb0e17db060
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 100)."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:104 d6398b6cf7b34a6e972fa9428e29e0d7
+msgid "``start`` (integer) (optional) Offset for pagination (default: 0)."
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:121 02035384665449e78c267091fede3a3c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:123 72c758f410eb457198595c2e2a7bfdc4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ndex_tools.rst:124 1bf080255e8248dc81e8b26fbcd288a8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

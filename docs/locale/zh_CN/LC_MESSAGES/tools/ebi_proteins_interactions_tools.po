@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:10
+#: 86f8669250ec4f3088332bb78f049775
+msgid "Ebi Proteins Interactions Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:12
+#: 34de433e82064e9493493ecdf42aa941
+msgid ""
+"**Configuration File**: ``ebi_proteins_interactions_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:16
+#: 276d7439d09d479a9dc447f6cd4a267b
+msgid ""
+"This page contains all tools defined in the "
+"``ebi_proteins_interactions_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:19
+#: 97bfd67837454367b80f361a4246ec7e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:22
+#: 59bdcc54c64642a39cb77643359d156b
+msgid ""
+"**EBIProteins_get_interaction_details** (Type: "
+"EBIProteinsInteractionsTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:24
+#: 7777ced3578f4632b2e1bf66f1a135e7
+msgid ""
+"Get detailed protein information along with its interaction partners, "
+"disease associations, and s..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst
+#: 0c658c9f2743474a8898f034eaed6fa8
+msgid "EBIProteins_get_interaction_details tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:28
+#: ../../tools/ebi_proteins_interactions_tools.rst:59
+#: 02248cd884f3423baa3d5edffc875435 94d7203b99c7473eae219f1f4d99c320
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:30
+#: 1b9837579ca6470ab88ad2d91c2b0614
+msgid "**Name**: ``EBIProteins_get_interaction_details``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:31
+#: ../../tools/ebi_proteins_interactions_tools.rst:62
+#: 1bfcc5c6cf4340fb9232265c01bef6b9 2aa6399cbc914a15b5cf7e594b959f5b
+msgid "**Type**: ``EBIProteinsInteractionsTool``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:32
+#: c85688a517af42ee8d9a13ebe665fe30
+msgid ""
+"**Description**: Get detailed protein information along with its "
+"interaction partners, disease associations, and subcellular localizations"
+" from the EBI Proteins API. Returns the full protein record including "
+"name, existence evidence, taxonomy, plus all binary interactions with "
+"partner details. Example: P04637 (TP53) returns 97 protein entries with "
+"interactions, diseases like Li-Fraumeni syndrome, and subcellular "
+"locations."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:34
+#: ../../tools/ebi_proteins_interactions_tools.rst:65
+#: 0caafbc871654cce8f98298904879360 546f855f6caf4d99b6bac423e040c083
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:36
+#: 08c7713973be4170906ad309937155bc
+msgid ""
+"``accession`` (string) (required) UniProt accession of the query protein."
+" Examples: 'P04637' (TP53), 'P00533' (EGFR)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:39
+#: ../../tools/ebi_proteins_interactions_tools.rst:73
+#: dc0e404ae75e45689a5f8cbe173edeb2 dd21482a9d084d648a38d118b51be110
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:53
+#: 59aa434d4c6a4c1b9e031e0d01cd4676
+msgid "**EBIProteins_get_interactions** (Type: EBIProteinsInteractionsTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:55
+#: b7d091b4266b488db69789671e638410
+msgid ""
+"Get protein-protein interaction partners for a protein from the EBI "
+"Proteins API (sourced from In..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst
+#: f0cc550fa28d4aa9a9661003e7a805b2
+msgid "EBIProteins_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:61
+#: 6691629e4941484486e6b9ef652c6816
+msgid "**Name**: ``EBIProteins_get_interactions``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:63
+#: 416361ab8bb84abeb9259aa40da834e7
+msgid ""
+"**Description**: Get protein-protein interaction partners for a protein "
+"from the EBI Proteins API (sourced from IntAct). Returns experimentally "
+"validated binary interactions with partner accessions, gene names, number"
+" of supporting experiments, and whether the interacting proteins are from"
+" different organisms. Example: P04637 (TP53) returns 198 interaction "
+"partners including ABL1 (2 experiments), AIMP2 (6 experiments), EP300 (8 "
+"experiments). Useful for building interaction networks and identifying "
+"key binding partners."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:67
+#: 7a6533e501324593ac5f2c8685e5b61c
+msgid ""
+"``accession`` (string) (required) UniProt accession of the query protein."
+" Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' "
+"(insulin)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:70
+#: 6d2c47df2f674391ac7138df4e8e42cd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interaction partners to "
+"return (default: 50, sorted by experiment count descending)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:87
+#: 03550136b3fd4b3eac50d86beb1cbc00
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:89
+#: 7e07b8781876455f903a1178fb4cfcf2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_proteins_interactions_tools.rst:90
+#: b6f66be9398842fa8204c78193ce8e96
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

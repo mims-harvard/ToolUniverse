@@ -1,0 +1,147 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ror_tools.rst:10 19322ead2ce445ceba28491865537dc8
+msgid "Ror Tools"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:12 83820f956da64d4988656e2e76a6e8f9
+msgid ""
+"**Configuration File**: ``ror_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:16 1fa09ebdeb75408284f402a3d6db1647
+msgid ""
+"This page contains all tools defined in the ``ror_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ror_tools.rst:19 4d0899685c214e099f7597017060ed5d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:22 915fc634501741988442d575dead10a1
+msgid "**ROR_get_organization** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:24 ce30bb957b7648e2991248adc59dd472
+msgid ""
+"Get detailed metadata for a specific research organization by its ROR ID."
+" Returns comprehensive i..."
+msgstr ""
+
+#: ../../tools/ror_tools.rst 44e81ce953634b3bad7d20c6fb82e14f
+msgid "ROR_get_organization tool specification"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:28 ../../tools/ror_tools.rst:59
+#: 5ed63df9c0f74f7b9d1b2ba0e9f8a552 7a3335994adf4ec6a3352ff056f8af97
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:30 837f57e3bad64ea19cd59b55e07be1e5
+msgid "**Name**: ``ROR_get_organization``"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:31 ../../tools/ror_tools.rst:62
+#: 474a2d3d550e42ce9487b2990d2f9ca5 b8e9203ca6a04879a2e95482d1350e2a
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:32 c49aac9b42654973b4ae032c8afa957f
+msgid ""
+"**Description**: Get detailed metadata for a specific research "
+"organization by its ROR ID. Returns comprehensive information including "
+"all name variants (official, aliases, acronyms, labels in different "
+"languages), organization type, establishment year, geographic location, "
+"website/Wikipedia links, external identifiers (GRID, ISNI, Wikidata, "
+"FundRef), and relationships to parent/child/related organizations. Use "
+"ROR\\_search\\_organizations first to find the ROR ID."
+msgstr ""
+
+#: ../../tools/ror_tools.rst:34 ../../tools/ror_tools.rst:65
+#: 52a13f0fe87a4f93b621e9c3aa08376b f0e5693f6ee34aeca99559e47f6f81e2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:36 5d0a4ff86ef54b27871b7fb076a9dc45
+msgid ""
+"``ror_id`` (string) (required) ROR identifier. Can be the short ID (e.g.,"
+" '042nb2s44') or full URL (e.g., 'https://ror.org/042nb2s44'). Find IDs "
+"using ROR\\_search\\_organizations."
+msgstr ""
+
+#: ../../tools/ror_tools.rst:39 ../../tools/ror_tools.rst:70
+#: 49a4183f8c9d467b994dd40107eef85d af69b802443c4468a84d99f9b04eb01b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:53 8695ae558cc045a48c247badc66dcb6e
+msgid "**ROR_search_organizations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:55 1f2bccda0c0349d4889d587ab075d315
+msgid ""
+"Search the Research Organization Registry (ROR) for research "
+"institutions, universities, companie..."
+msgstr ""
+
+#: ../../tools/ror_tools.rst d29536ee153a4bceb0c17d96b380e504
+msgid "ROR_search_organizations tool specification"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:61 f936bea684d14af0b35ff669b3d4ec19
+msgid "**Name**: ``ROR_search_organizations``"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:63 186b868c411347d3a7f8f885db135c2f
+msgid ""
+"**Description**: Search the Research Organization Registry (ROR) for "
+"research institutions, universities, companies, and other organizations. "
+"ROR provides unique persistent identifiers for research organizations "
+"worldwide, similar to ORCID for researchers. Returns organization names, "
+"types, locations, external identifiers (GRID, ISNI, Wikidata), and ROR "
+"IDs. Use this to find organizations by name, identify affiliations, or "
+"get ROR IDs for detailed lookups with ROR\\_get\\_organization. Supports "
+"searching by name, acronym, or keyword."
+msgstr ""
+
+#: ../../tools/ror_tools.rst:67 3d55f4648f6c41b69a4bb28d9421e49a
+msgid ""
+"``query`` (string) (required) Search query for organization name, "
+"acronym, or keyword (e.g., 'MIT', 'Harvard University', 'Max Planck', "
+"'CERN')"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:84 34f2603c689e422e82ac867ef5b1d00b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:86 21f6b6549ab542b8827798e76ef838e3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ror_tools.rst:87 8d009857039941688a56a48a129b5e6e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

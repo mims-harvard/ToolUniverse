@@ -7,135 +7,136 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/transcriptformer_tools.rst:2 b7a85a3c1c554d968793e0c8d9f339cb
+#: ../../tools/transcriptformer_tools.rst:10 8de676db7ea846ae82b63e9389cac362
 msgid "Transcriptformer Tools"
 msgstr "Transcriptformer 工具"
 
-#: ../../tools/transcriptformer_tools.rst:4 fb9528c0316a4c25850f39e821f2d28d
+#: ../../tools/transcriptformer_tools.rst:12 566fb39442bf4139897ad09cf39b27c9
 msgid ""
-"**Configuration File**: ``remote_tools/transcriptformer_tools.json`` **Tool "
-"Type**: Remote **Tools Count**: 1"
+"**Configuration File**: ``remote_tools/transcriptformer_tools.json`` "
+"**Tool Type**: Remote **Tools Count**: 1"
 msgstr ""
 "**配置文件**：``remote_tools/transcriptformer_tools.json``  \n"
 "**工具类型**：远程  \n"
 "**工具数量**：1"
 
-#: ../../tools/transcriptformer_tools.rst:8 0cf29f74a90147c59a3543f26debc51f
+#: ../../tools/transcriptformer_tools.rst:16 80ba54f505264b6e9ffdb23cfbad678d
 msgid ""
-"This page contains all tools defined in the ``transcriptformer_tools.json`` "
-"configuration file."
+"This page contains all tools defined in the "
+"``transcriptformer_tools.json`` configuration file."
 msgstr "此页面包含在 ``transcriptformer_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/transcriptformer_tools.rst:11 277ebc95139145f0a31316a1fd9752c0
+#: ../../tools/transcriptformer_tools.rst:19 bb78caa8ea6540e1ae9f1bf791ea805f
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/transcriptformer_tools.rst:14 d84631b8fcc540ab91fc523e211a8d2f
+#: ../../tools/transcriptformer_tools.rst:22 a8ff86e5bb154a92ac9e3f1aa0b1212d
 msgid "**run_transcriptformer_embedding_retrieval** (Type: RemoteTool)"
 msgstr "**run_transcriptformer_embedding_retrieval**（类型：RemoteTool）"
 
-#: ../../tools/transcriptformer_tools.rst:16 8b78565901c64e588b23ff77ac9c8585
+#: ../../tools/transcriptformer_tools.rst:24 a7229a0bfc3542a6b741eccdfd81f3e9
 msgid ""
-"Retrieves contextualized gene embeddings from Transcriptformer models. This "
-"tool provides access ..."
+"Retrieves contextualized gene embeddings from Transcriptformer models. "
+"This tool provides access ..."
 msgstr "从 Transcriptformer 模型中检索上下文化的基因嵌入。该工具提供访问..."
 
-#: ../../tools/transcriptformer_tools.rst 5ab9b715aa7c4ed5be280ee9b29597e4
+#: ../../tools/transcriptformer_tools.rst 5970301ad6a34b9fbf6b8958be2a97e1
 msgid "run_transcriptformer_embedding_retrieval tool specification"
 msgstr "run_transcriptformer_embedding_retrieval 工具规格说明"
 
-#: ../../tools/transcriptformer_tools.rst:20 299b4796fbe44372acc931d9b7702811
+#: ../../tools/transcriptformer_tools.rst:28 8080197704de4fb58366f739ac29174a
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/transcriptformer_tools.rst:22 c8d6fcfaeb5546acbdd2ab0ed87b5c28
+#: ../../tools/transcriptformer_tools.rst:30 183b86a1468a4d039d7b5db6a5563afd
 msgid "**Name**: ``run_transcriptformer_embedding_retrieval``"
 msgstr "**名称**：``run_transcriptformer_embedding_retrieval``"
 
-#: ../../tools/transcriptformer_tools.rst:23 55c5869406df4271a74fd80d133b7424
+#: ../../tools/transcriptformer_tools.rst:31 f77001d445f6452c8962e36e38bf2125
 msgid "**Type**: ``RemoteTool``"
 msgstr "**类型**：``RemoteTool``"
 
-#: ../../tools/transcriptformer_tools.rst:24 99448caefb7f4db8ac1a5715f2f1c465
+#: ../../tools/transcriptformer_tools.rst:32 1add49342b5846f1969936764b87c7b1
 msgid ""
 "**Description**: Retrieves contextualized gene embeddings from "
 "Transcriptformer models. This tool provides access to pre-computed "
-"Transcriptformer embeddings that capture gene expression patterns learned "
-"from single-cell RNA sequencing data. The embeddings are contextualized for "
-"specific combinations of disease states and cell types, enabling precise "
-"analysis of gene behavior in relevant biological contexts."
-msgstr ""
-"**描述**：从Transcriptformer模型中提取上下文化的基因嵌入。本工具提供对预计算的Transcriptformer嵌入的访问，这些嵌入捕捉了从单细胞RNA测序数据中学习到的基因表达模式。嵌入根据特定的疾病状态和细胞类型组合进行了上下文化，能够在相关的生物学背景中实现对基因行为的精确分析。"
+"Transcriptformer embeddings that capture gene expression patterns learned"
+" from single-cell RNA sequencing data. The embeddings are contextualized "
+"for specific combinations of disease states and cell types, enabling "
+"precise analysis of gene behavior in relevant biological contexts."
+msgstr "**描述**：从Transcriptformer模型中提取上下文化的基因嵌入。本工具提供对预计算的Transcriptformer嵌入的访问，这些嵌入捕捉了从单细胞RNA测序数据中学习到的基因表达模式。嵌入根据特定的疾病状态和细胞类型组合进行了上下文化，能够在相关的生物学背景中实现对基因行为的精确分析。"
 
-#: ../../tools/transcriptformer_tools.rst:26 3918dad565204d47a037caf4d05ab562
+#: ../../tools/transcriptformer_tools.rst:34 0cbfc9256bc3472d865bef5a0e9d2c45
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/transcriptformer_tools.rst:28 99373acccb3c4cca9f08bf84170d6dc2
+#: ../../tools/transcriptformer_tools.rst:36 5186a81954e3457fb8fb75331bd4dd13
 msgid ""
-"``state`` (string) (required) Disease state context for embedding retrieval."
-" Examples: 'control': Healthy/normal condition; 'disease': Disease-affected "
-"state; 'treated': Post-treatment condition; 'untreated': Pre-treatment "
-"condition. Must match available states in the disease-specific store."
-msgstr ""
-"``state``（字符串）（必填）嵌入检索的疾病状态上下文。示例：'control'：健康/正常状态；'disease'：疾病影响状态；'treated'：治疗后状态；'untreated'：治疗前状态。必须与疾病特定存储中的可用状态匹配。"
+"``state`` (string) (required) Disease state context for embedding "
+"retrieval. Examples: 'control': Healthy/normal condition; 'disease': "
+"Disease-affected state; 'treated': Post-treatment condition; 'untreated':"
+" Pre-treatment condition. Must match available states in the disease-"
+"specific store."
+msgstr "``state``（字符串）（必填）嵌入检索的疾病状态上下文。示例：'control'：健康/正常状态；'disease'：疾病影响状态；'treated'：治疗后状态；'untreated'：治疗前状态。必须与疾病特定存储中的可用状态匹配。"
 
-#: ../../tools/transcriptformer_tools.rst:31 31aaa85e65534ed18ea456da564aeec8
+#: ../../tools/transcriptformer_tools.rst:39 48d7aa2e0370441c8aeac0016d776dce
+#, fuzzy
 msgid ""
 "``cell_type`` (string) (required) Cell type context for embeddings. "
-"Examples: 'b_cell': B lymphocytes; 't_cell': T lymphocytes; 'macrophage': "
-"Tissue macrophages; 'epithelial_cell': Epithelial cells; 'fibroblast': "
-"Connective tissue fibroblasts. Must match available cell types in the "
-"disease store."
-msgstr ""
-"``cell_type``（字符串）（必填）嵌入的细胞类型上下文。示例：'b_cell'：B淋巴细胞；'t_cell'：T淋巴细胞；'macrophage'：组织巨噬细胞；'epithelial_cell'：上皮细胞；'fibroblast'：结缔组织成纤维细胞。必须与疾病库中可用的细胞类型匹配。"
+"Examples: 'b\\_cell': B lymphocytes; 't\\_cell': T lymphocytes; "
+"'macrophage': Tissue macrophages; 'epithelial\\_cell': Epithelial cells; "
+"'fibroblast': Connective tissue fibroblasts. Must match available cell "
+"types in the disease store."
+msgstr "``cell_type``（字符串）（必填）嵌入的细胞类型上下文。示例：'b_cell'：B淋巴细胞；'t_cell'：T淋巴细胞；'macrophage'：组织巨噬细胞；'epithelial_cell'：上皮细胞；'fibroblast'：结缔组织成纤维细胞。必须与疾病库中可用的细胞类型匹配。"
 
-#: ../../tools/transcriptformer_tools.rst:34 db8438e3cbd64283a8ab4f6a2833561d
+#: ../../tools/transcriptformer_tools.rst:42 384f711e27df4ee895e439d44dc59013
 msgid ""
-"``gene_names`` (array) (required) Gene identifiers for embedding retrieval: "
-"Gene symbols: ['TP53', 'BRCA1', 'EGFR', 'MYC']; Ensembl IDs: "
-"['ENSG00000141510', 'ENSG00000139618']; Mixed formats supported; Empty list "
-"retrieves all available genes."
+"``gene_names`` (array) (required) Gene identifiers for embedding "
+"retrieval: Gene symbols: ['TP53', 'BRCA1', 'EGFR', 'MYC']; Ensembl IDs: "
+"['ENSG00000141510', 'ENSG00000139618']; Mixed formats supported; Empty "
+"list retrieves all available genes."
 msgstr ""
 "``gene_names``（数组）（必填）用于嵌入检索的基因标识符：基因符号：['TP53', 'BRCA1', 'EGFR', "
 "'MYC']；Ensembl ID：['ENSG00000141510', "
 "'ENSG00000139618']；支持混合格式；空列表将检索所有可用基因。"
 
-#: ../../tools/transcriptformer_tools.rst:37 31216352818343c186dd5d70ca69f35a
+#: ../../tools/transcriptformer_tools.rst:45 eae9a682dc714de5a1763c97e45230a6
+#, fuzzy
 msgid ""
 "``disease`` (string) (required) Disease/dataset identifier. Examples: "
-"'breast_cancer': Breast cancer scRNA-seq data; 'lung_cancer': Lung cancer "
-"contexts; 'diabetes': Diabetes-related datasets; 'alzheimer': Alzheimer's "
-"disease contexts. Must match available disease stores."
+"'breast\\_cancer': Breast cancer scRNA-seq data; 'lung\\_cancer': Lung "
+"cancer contexts; 'diabetes': Diabetes-related datasets; 'alzheimer': "
+"Alzheimer's disease contexts. Must match available disease stores."
 msgstr ""
 "``disease``（字符串）（必填）疾病/数据集标识符。示例：'breast_cancer'：乳腺癌 scRNA-seq "
 "数据；'lung_cancer'：肺癌相关内容；'diabetes'：糖尿病相关数据集；'alzheimer'：阿尔茨海默病相关内容。必须与可用的疾病存储匹配。"
 
-#: ../../tools/transcriptformer_tools.rst:40 bfe0a27c59d94d8ba867ebc19ab18eae
+#: ../../tools/transcriptformer_tools.rst:48 11cd2e7bea244c5baaecc95f20307d10
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/transcriptformer_tools.rst:57 01db793e55764137bd711a12b5e5ce40
+#: ../../tools/transcriptformer_tools.rst:65 02de50b588e3414f95b00f4c7827cf0a
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/transcriptformer_tools.rst:59 66ab7dbb6d5243dbb372036a0ea584c8
+#: ../../tools/transcriptformer_tools.rst:67 43764b974123446080aab4c0faf063a1
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/transcriptformer_tools.rst:60 946dda3f23ad493b894310dcf2294f3f
+#: ../../tools/transcriptformer_tools.rst:68 2d146396d7a34555bdf90afc4c95a09a
 msgid ":doc:`remote_tools` - Remote Tools Setup"
 msgstr ":doc:`remote_tools` - 远程工具设置"
+

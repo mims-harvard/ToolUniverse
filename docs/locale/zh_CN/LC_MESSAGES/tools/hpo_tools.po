@@ -1,0 +1,200 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hpo_tools.rst:10 e76d7e6d049841788271b978a4d6f45b
+msgid "Hpo Tools"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:12 adbab72e70bd4583ab726c3c40e48325
+msgid ""
+"**Configuration File**: ``hpo_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:16 e1fa41ef349844da8f271903cfcf8b49
+msgid ""
+"This page contains all tools defined in the ``hpo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:19 911c95263f5d491c95891df66583e8e2
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:22 d1f12684277d46f7b5aeb83cad83b24c
+msgid "**HPO_get_term** (Type: HPOTool)"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:24 dae9f2e10d0a4b998add6e2b48505b53
+msgid ""
+"Get detailed information about a Human Phenotype Ontology (HPO) term by "
+"its ID. HPO provides stan..."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst 6932878f4c8b432c97fc98d7048e43da
+msgid "HPO_get_term tool specification"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:28 ../../tools/hpo_tools.rst:59
+#: ../../tools/hpo_tools.rst:93 097ca4038d034d0888ce3104bdf29915
+#: 14e6d7ec704b48f59df197a3fd21df5d f8a600408ccd45079e32953c73f2fcba
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:30 774fc5ad753f438c9a8b4146ce02cef8
+msgid "**Name**: ``HPO_get_term``"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:31 ../../tools/hpo_tools.rst:62
+#: ../../tools/hpo_tools.rst:96 e66ce66aee6b431c980d7ce55022d6a1
+#: ee64c65e795a440db92df7c4bbcc0f5a f1c3a81b560d4f03b71c26c6d6a65ed4
+msgid "**Type**: ``HPOTool``"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:32 f07a880efd4a42a5ac7ad64f7611171e
+msgid ""
+"**Description**: Get detailed information about a Human Phenotype "
+"Ontology (HPO) term by its ID. HPO provides standardized descriptions of "
+"phenotypic abnormalities in human disease with over 18,000 terms. Returns"
+" the term name, definition, synonyms, cross-references to UMLS/SNOMED, "
+"descendant count, and translations. Example: HP:0001250 (Seizure) returns"
+" definition, 346 descendants, synonyms including 'Epileptic seizure' and "
+"'Epilepsy', and cross-references to UMLS and SNOMED-CT."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:34 ../../tools/hpo_tools.rst:65
+#: ../../tools/hpo_tools.rst:99 40a00e212de6474a8121f945bb7773a0
+#: 732e653c39034b2f95153a321bf14298 dfe95e9bfaae4af6b580d227e8f3fac1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:36 f038ad7546b4431e915ea52fe8fa1e74
+msgid ""
+"``term_id`` (string) (required) HPO term identifier. Must start with "
+"'HP:' followed by 7 digits. Examples: 'HP:0001250' (Seizure), "
+"'HP:0001263' (Global developmental delay), 'HP:0000252' (Microcephaly), "
+"'HP:0001249' (Intellectual disability)."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:39 ../../tools/hpo_tools.rst:73
+#: ../../tools/hpo_tools.rst:107 79cbd7eff858469f803d7d123b63bb54
+#: 922472f79a6243c08266ee5bbfa9f068 ded47df52e134599a63e8411d3412fb0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:53 f7fff6267af94f958310a20c26376a4a
+msgid "**HPO_get_term_hierarchy** (Type: HPOTool)"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:55 39f30bafe88c4ad681b14443eb882703
+msgid ""
+"Get the parent or child terms of an HPO phenotype term in the ontology "
+"hierarchy. HPO is organize..."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst a4765efacf2f43c4848f191b33c8e684
+msgid "HPO_get_term_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:61 b14c3df302904b189a038823731a62ba
+msgid "**Name**: ``HPO_get_term_hierarchy``"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:63 a7c5d26180914a938a2f5d8923d0ad0e
+msgid ""
+"**Description**: Get the parent or child terms of an HPO phenotype term "
+"in the ontology hierarchy. HPO is organized as a directed acyclic graph "
+"(DAG) where more specific phenotypes are children of broader terms. Use "
+"direction='children' to find more specific sub-phenotypes, or "
+"direction='parents' to find broader categories. Example: children of "
+"HP:0001250 (Seizure) include 'Bilateral tonic-clonic seizure', 'Focal-"
+"onset seizure', 'Febrile seizure', and others. Parents include 'Abnormal "
+"nervous system physiology'."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:67 8032df5220c94c248fa5f95171348b2a
+msgid ""
+"``term_id`` (string) (required) HPO term identifier (e.g., 'HP:0001250')."
+" Must start with 'HP:' followed by 7 digits."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:70 1154f182596b43dfbb071249761629fe
+msgid ""
+"``direction`` (string, null) (optional) Direction to traverse: 'children'"
+" (more specific terms, default) or 'parents' (broader terms)."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:87 bfc56b5358c6409abe730eee13a1853c
+msgid "**HPO_search_terms** (Type: HPOTool)"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:89 1b1a7d33176846b2aa0d576cdb68a180
+msgid ""
+"Search for Human Phenotype Ontology (HPO) terms by keyword. HPO contains "
+"over 18,000 standardized..."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst 69c2080eb5584c6fb4fe5fb38a2b1cc9
+msgid "HPO_search_terms tool specification"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:95 460e79323905497c931a6cbfaae885be
+msgid "**Name**: ``HPO_search_terms``"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:97 9a90c1dbf22246ecafab2edfe851c8e1
+msgid ""
+"**Description**: Search for Human Phenotype Ontology (HPO) terms by "
+"keyword. HPO contains over 18,000 standardized phenotype terms used in "
+"clinical genetics and rare disease research. Returns matching terms with "
+"definitions, synonym counts, and descendant counts. Useful for finding "
+"the correct HPO ID for a clinical phenotype before querying disease or "
+"gene associations. Example: searching 'seizure' returns terms like "
+"'Bilateral tonic-clonic seizure' (HP:0007334), 'Generalized-onset "
+"seizure' (HP:0002197), 'Focal-onset seizure' (HP:0007359)."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:101 22fadf3085b440f880ece3806d62b014
+msgid ""
+"``query`` (string) (required) Search keyword for phenotype terms. "
+"Examples: 'seizure', 'intellectual disability', 'cardiomyopathy', "
+"'scoliosis', 'microcephaly'."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:104 4e2ef02d9b204314aedc1e2141ee06a0
+msgid ""
+"``max_results`` (integer, null) (optional) Maximum number of results to "
+"return (default 10, max 50)."
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:121 2f24139747f74dcc92f5257aa80277a4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:123 45007480b11943ea988eda1f6bfb2d96
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hpo_tools.rst:124 7824305f7ead40d196a2fac366b3da3a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,231 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/panther_tools.rst:10 fc789bdaee0f4e41a551c6fefe35bd24
+msgid "Panther Tools"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:12 6b46a2917ce44816b924dca6bdd0c678
+msgid ""
+"**Configuration File**: ``panther_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:16 500de79f15a1448aa9c1bbf8f786fd13
+msgid ""
+"This page contains all tools defined in the ``panther_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:19 ace2d77b9c2a47d6bcc75a99691cc23e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:22 720745ac5a06458899beff015772f7ee
+msgid "**PANTHER_enrichment** (Type: PANTHERTool)"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:24 ca09c95cb13441189f369042f1f9f68c
+msgid ""
+"Perform gene set enrichment (overrepresentation) analysis using PANTHER. "
+"Given a gene list, ident..."
+msgstr ""
+
+#: ../../tools/panther_tools.rst 623a01258a9c43dea28e25890b194c71
+msgid "PANTHER_enrichment tool specification"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:28 ../../tools/panther_tools.rst:65
+#: ../../tools/panther_tools.rst:99 010dd6271f784399806117fef7ce452b
+#: 72462e37f50a4b38b39a67304e4ad612 e704768b28554ab2b86369567d1668c0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:30 ac80892b46704ef8990dbbd776ce8f54
+msgid "**Name**: ``PANTHER_enrichment``"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:31 ../../tools/panther_tools.rst:68
+#: ../../tools/panther_tools.rst:102 3747566ea7854aabaa74eff959813e5b
+#: b56fb07345c742718a4b79676c9a10be d44313d062724ec5827724f86e8b1c8c
+msgid "**Type**: ``PANTHERTool``"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:32 4cebe592fb5c420b96335a685d8fe5c4
+msgid ""
+"**Description**: Perform gene set enrichment (overrepresentation) "
+"analysis using PANTHER. Given a gene list, identifies statistically "
+"enriched GO terms, PANTHER pathways, Reactome pathways, or protein "
+"classes using Fisher's exact test with FDR correction. PANTHER is one of "
+"the most widely used tools for functional enrichment in bioinformatics. "
+"Example: gene list 'TP53,BRCA1,EGFR,KRAS,PTEN' enriched for GO "
+"biological\\_process returns 'regulation of mitotic cell cycle phase "
+"transition' (FDR=0.003)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:34 ../../tools/panther_tools.rst:71
+#: ../../tools/panther_tools.rst:105 0c8713e7385541d4be67b8b71b02bcaf
+#: b9f1d28e707b48bb8c796a919d0557bd ed5462585b37494f88b28ab68f89ea7e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:36 17105bb6075c4481aad08960c56952ab
+msgid ""
+"``gene_list`` (string) (required) Comma-separated list of gene symbols, "
+"UniProt IDs, or Ensembl IDs. Example: "
+"'TP53,BRCA1,EGFR,KRAS,PTEN,APC,RB1'."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:39 eca71980863041b9a4e5c32b936ddcc5
+msgid ""
+"``organism`` (integer, null) (optional) NCBI taxonomy ID. Default: 9606 "
+"(human). Others: 10090 (mouse), 7227 (fly), 559292 (yeast)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:42 cdef22cdf3194624aa4d0cda8b81ff46
+msgid ""
+"``annotation_dataset`` (string, null) (optional) Annotation dataset for "
+"enrichment. Options: 'GO:0008150' (biological\\_process, default), "
+"'GO:0003674' (molecular\\_function), 'GO:0005575' (cellular\\_component),"
+" 'ANNOT\\_TYPE\\_ID\\_PANTHER\\_PATHWAY' (PANTHER pathway), "
+"'ANNOT\\_TYPE\\_ID\\_REACTOME\\_PATHWAY' (Reactome pathway), "
+"'ANNOT\\_TYPE\\_ID\\_PANTHER\\_PC' (protein class)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:45 ../../tools/panther_tools.rst:79
+#: ../../tools/panther_tools.rst:119 1332c0409b3b4920b5ac0e3f734fa5e8
+#: 886966980b244c0ca1f023814f2ef173 9ae60c74fc0c4f6895fd16b2902474de
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:59 6889bcb549bc4e8bbd170da7f7ee8804
+msgid "**PANTHER_gene_info** (Type: PANTHERTool)"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:61 3a927ac07eba46d1bcc8114e8fe1e9a6
+msgid ""
+"Get gene classification and functional annotation from PANTHER (Protein "
+"ANalysis THrough Evolutio..."
+msgstr ""
+
+#: ../../tools/panther_tools.rst 6c61b1388c1c44818c624afdea4025fa
+msgid "PANTHER_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:67 cec78953b17f41dd98e5d876c20c1fa9
+msgid "**Name**: ``PANTHER_gene_info``"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:69 45a2b48e671d4825a8a4d26ed42176b6
+msgid ""
+"**Description**: Get gene classification and functional annotation from "
+"PANTHER (Protein ANalysis THrough Evolutionary Relationships). Returns "
+"PANTHER family/subfamily, Gene Ontology annotations (molecular function, "
+"biological process, cellular component), PANTHER protein class, and "
+"pathway membership. PANTHER classifies genes by evolutionary "
+"relationships across 144 organisms. Example: P04637 returns TP53 "
+"classified in family PTHR11447 (tumor protein p53) with GO annotations "
+"for DNA-binding transcription factor activity."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:73 8908589496044c21bea83a3d8e6eb4fc
+msgid ""
+"``gene_id`` (string) (required) Gene identifier - UniProt accession, "
+"Ensembl ID, or gene symbol. Examples: 'P04637' (TP53), 'P38398' (BRCA1), "
+"'ENSG00000141510'."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:76 f3044435e0344b2f8a3021ac73be6051
+msgid ""
+"``organism`` (integer, null) (optional) NCBI taxonomy ID. Default: 9606 "
+"(human). Others: 10090 (mouse), 10116 (rat), 7227 (fly), 6239 (worm), "
+"559292 (yeast)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:93 dc1618428a2c48a799af99fe1a6a9f5d
+msgid "**PANTHER_ortholog** (Type: PANTHERTool)"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:95 6b44198bc8da435893d8dcff41c38b92
+msgid ""
+"Find orthologs of a gene across species using PANTHER evolutionary "
+"classification. Returns the or..."
+msgstr ""
+
+#: ../../tools/panther_tools.rst 220b6b4f83e74310ac3e88ad7045271d
+msgid "PANTHER_ortholog tool specification"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:101 ac1c06782dd0485baead218ebf40f25b
+msgid "**Name**: ``PANTHER_ortholog``"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:103 475ec9053a884ade806c269bc9a19196
+msgid ""
+"**Description**: Find orthologs of a gene across species using PANTHER "
+"evolutionary classification. Returns the orthologous gene in a target "
+"species with its persistent ID, gene symbol, and ortholog type (LDO=Least"
+" Diverged Ortholog, O=ortholog, P=paralog, X=xenolog, LDX=least diverged "
+"xenolog). PANTHER classifies orthologs by evolutionary divergence across "
+"144 fully sequenced genomes. Example: P04637 (human TP53) maps to Tp53 "
+"(mouse P02340) as LDO."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:107 652bfc0a23994052be1a140063bcd7fe
+msgid ""
+"``gene_id`` (string) (required) Gene identifier - UniProt accession, "
+"Ensembl ID, or gene symbol. Examples: 'P04637' (TP53), 'P38398' (BRCA1)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:110 90f828b7818744d783023e9f260c81be
+msgid ""
+"``organism`` (integer, null) (optional) Source organism NCBI taxonomy ID."
+" Default: 9606 (human)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:113 d65ac9dda6fc44468cb972977b6c679c
+msgid ""
+"``target_organism`` (integer, null) (optional) Target organism NCBI "
+"taxonomy ID. Default: 10090 (mouse). Others: 10116 (rat), 7227 (fly), "
+"6239 (worm)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:116 d8193a4068434a9aafff029ceafe9faa
+msgid ""
+"``ortholog_type`` (string, null) (optional) Ortholog type filter. "
+"Options: 'LDO' (least diverged ortholog, default), 'O' (all orthologs), "
+"'P' (paralogs), 'X' (xenologs), 'LDX' (least diverged xenolog), 'all' "
+"(all types)."
+msgstr ""
+
+#: ../../tools/panther_tools.rst:133 d7681a503b544dfeaa8861ea4d287274
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:135 a7165675f58b4d329a3b90777538113a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/panther_tools.rst:136 133fc34b8be04007ac78d6a78003e92b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

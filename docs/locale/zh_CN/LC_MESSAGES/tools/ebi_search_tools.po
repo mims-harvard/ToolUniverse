@@ -1,0 +1,395 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_search_tools.rst:10 be26447b25dd430083d356da52ce4c5f
+msgid "Ebi Search Tools"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:12 ab8d52f11ff5405abd39e5070cea6ef4
+msgid ""
+"**Configuration File**: ``ebi_search_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:16 513a4c5cad1842a2bc0cb6020c8c1e4d
+msgid ""
+"This page contains all tools defined in the ``ebi_search_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:19 853fcd22ae2846089eb3d8167440db57
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:22 93ffbf5a2ce54d17a0d6af13373ef51a
+msgid "**ebi_cross_reference_search** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:24 1e1428d27fe54f599fe00e240451a0dd
+msgid ""
+"Search for cross-references between EBI domains. Find entries in one "
+"domain that reference entrie..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst ada3c57ce1c34a32acd472b9ae06d445
+msgid "ebi_cross_reference_search tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:28 ../../tools/ebi_search_tools.rst:69
+#: ../../tools/ebi_search_tools.rst:103 ../../tools/ebi_search_tools.rst:137
+#: ../../tools/ebi_search_tools.rst:178 ../../tools/ebi_search_tools.rst:208
+#: ../../tools/ebi_search_tools.rst:255 0e1836afc23b4b6389543a56895080f0
+#: 1f7cbcd498764a1bb47120e537b90c61 5fc2ae64f3ae4a7bb79f69b207579ddd
+#: 6b20fcb3bfbb4bb7888b1e65ee1d254f b319fd967e27497f8af1efaddab582c0
+#: b89c3edd67a84b2f8e85e4f50ad44aa4 dc1fffd8feae495d808385cb3bb1ea76
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:30 a00a1a64b2f3428faabd0714cb50618d
+msgid "**Name**: ``ebi_cross_reference_search``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:31 ../../tools/ebi_search_tools.rst:72
+#: ../../tools/ebi_search_tools.rst:106 ../../tools/ebi_search_tools.rst:140
+#: ../../tools/ebi_search_tools.rst:181 ../../tools/ebi_search_tools.rst:211
+#: ../../tools/ebi_search_tools.rst:258 0278f98e0b5147308a98f1103942b550
+#: 166d68d6da6f4098b0d619050348fa4a 4fe2eb34c778443c83633a7b9540858f
+#: 743f078ce0654519a0b00e1f74950df3 9022c25116124f868f7b5adad9115b6f
+#: 91b8adaa8bdc48a683e6cd0fffa14330 e8be4b9b0a3344ff93df9e6c7372cd0a
+msgid "**Type**: ``EBISearchRESTTool``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:32 c6ad91df08ba400aa50509c5f0511211
+msgid ""
+"**Description**: Search for cross-references between EBI domains. Find "
+"entries in one domain that reference entries in another domain (e.g., "
+"find UniProt entries referenced by Ensembl genes)."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:34 ../../tools/ebi_search_tools.rst:75
+#: ../../tools/ebi_search_tools.rst:109 ../../tools/ebi_search_tools.rst:143
+#: ../../tools/ebi_search_tools.rst:184 ../../tools/ebi_search_tools.rst:214
+#: ../../tools/ebi_search_tools.rst:261 28f84619ea374e9288137a9957ac824f
+#: 76ae1586a72c4fff8bb029f881c4ea73 90594f243e7a430694a59b2a50c1bfba
+#: b0d0ca5cd1e7413b903fd663008f270e c1a3cf76b0174bb3b96cad80a397966f
+#: cc6a0a47511b40caa8b93415f79b8f29 e1a75c91d98f47e8a71cf0a5260dbc18
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:36 0ac1bd2370c0414c84d1fc4ece32550c
+msgid "``domain`` (string) (required) Source EBI domain to search"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:39 0d494e465084423bb0fe4376487e40c6
+msgid ""
+"``query`` (string) (required) Search query. Can include cross-reference "
+"filters like 'xref\\_uniprot:P04637'"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:42 f840531b0f084373a0c6b6accf95fad2
+msgid "``size`` (integer) (optional) Number of results to return"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:45 ../../tools/ebi_search_tools.rst:80
+#: ../../tools/ebi_search_tools.rst:114 ../../tools/ebi_search_tools.rst:154
+#: ../../tools/ebi_search_tools.rst:278 11a95eef043840488b0bb5f530e7da42
+#: 23b2f2a1d705469ba086a875b8edc2da 5bedc2ba2a6f4da5b2680d825a3fc1e3
+#: 9962e9e7e5d3445fb1104a832393ca68 d9913ceb8f7344bbaa0d5b6b47c1a105
+msgid "``format`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:48 ../../tools/ebi_search_tools.rst:83
+#: ../../tools/ebi_search_tools.rst:117 ../../tools/ebi_search_tools.rst:157
+#: ../../tools/ebi_search_tools.rst:189 ../../tools/ebi_search_tools.rst:234
+#: ../../tools/ebi_search_tools.rst:281 0c318816d71e4e3bbb8e15e8250bea5c
+#: 10e95513a2204365a559239fb729d3d7 24cf835ce5424ae9a08645d0477d6ca6
+#: 4ead1d2b4f60449d9d6bfead3dd0f592 adeb7ab9c259479684bf423c950a9047
+#: ede537b628c443a889fe7a690e5e35a0 ef60acd1ccbb458081fea5b82d107d7f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:63 1531854c27704ac8981c3d70154c7fa8
+msgid "**ebi_get_domain_fields** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:65 0780dd34252a4ee2ac50b939a7cbf75d
+msgid ""
+"Get list of available searchable fields for a specific EBI domain. Useful"
+" for understanding what ..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst 3a48fe03cd5d4728a93dcb77133eebc3
+msgid "ebi_get_domain_fields tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:71 4001f2c1716c4455b80aaa99eda90bab
+msgid "**Name**: ``ebi_get_domain_fields``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:73 b50b33e62b95485c951dccb97094bc3a
+msgid ""
+"**Description**: Get list of available searchable fields for a specific "
+"EBI domain. Useful for understanding what fields can be used in queries "
+"and field-specific searches."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:77 778b223446cc4944a16a963b62617546
+msgid "``domain`` (string) (required) EBI domain name"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:97 332fc180c5964ce2add5d2f25a4f1ee1
+msgid "**ebi_get_domain_info** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:99 9309ab5da3b348bca9513644cc6df3fb
+msgid ""
+"Get metadata and field information for a specific EBI domain. Returns "
+"domain description, availab..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst 909db9d8e31c4477893dcabe6efa18ec
+msgid "ebi_get_domain_info tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:105 1ecc9a26f4324d2b9a665bd824ca4be8
+msgid "**Name**: ``ebi_get_domain_info``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:107 7b1724c3e82e4f5f95a3a0f247a57b8e
+msgid ""
+"**Description**: Get metadata and field information for a specific EBI "
+"domain. Returns domain description, available fields, and search "
+"capabilities."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:111 0261cc970cf64529aa41224d100e3e95
+msgid ""
+"``domain`` (string) (required) EBI domain name (e.g., 'ensembl', "
+"'uniprot', 'interpro')"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:131 6908812f5e10495fbb07c4d9e61f1291
+msgid "**ebi_get_entry** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:133 4e8d8df0ccd34cb199a79e4139b9b729
+msgid ""
+"Get detailed information about a specific entry from an EBI domain by its"
+" ID. IMPORTANT: EBI Sear..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst f1a50212cae24219ae3b04f338df279a
+msgid "ebi_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:139 580388bd231d4d34b2fa8e12831ed1da
+msgid "**Name**: ``ebi_get_entry``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:141 cea2b6c531c94856a7b1fef320846668
+msgid ""
+"**Description**: Get detailed information about a specific entry from an "
+"EBI domain by its ID. IMPORTANT: EBI Search requires specific entry ID "
+"formats (e.g., 'P53\\_HUMAN' not 'P04637'). If entry\\_id doesn't work, "
+"the tool automatically searches for the entry and returns it. For best "
+"results, first use ebi\\_search\\_domain to find entries, then use the "
+"'id' field from search results as entry\\_id. Returns complete entry data"
+" with all available fields."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:145 c2db89a4ef0b48849ce3e016a130127a
+msgid ""
+"``domain`` (string) (required) EBI domain (e.g., 'ensembl', 'uniprot', "
+"'interpro')"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:148 c4c139829d5647cbbc52b7023af17025
+msgid ""
+"``entry_id`` (string) (required) Entry ID in the domain (e.g., Ensembl "
+"gene ID, UniProt accession, InterPro accession)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:151 550fa2cf07864b0980a876ec376e900f
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of specific fields to"
+" return. If not specified, returns all fields."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:172 3edd5c7afa204cccb9ece2105bd57b9b
+msgid "**ebi_list_domains** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:174 634a9c95aa0345a4b9d73c2971168655
+msgid ""
+"List all available EBI Search domains. Returns metadata about all "
+"searchable domains including do..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst 2928228794dd4c33849347d49ef0a7ba
+msgid "ebi_list_domains tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:180 fee6a71b451c41c4ac9e8c89a5767d1a
+msgid "**Name**: ``ebi_list_domains``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:182 c7730cb8dff145c6a7e330604c47ac10
+msgid ""
+"**Description**: List all available EBI Search domains. Returns metadata "
+"about all searchable domains including domain names, descriptions, and "
+"field information."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:186 172cf2592cf74c9d82976cad9ac91f8a
+msgid "``format`` (string) (optional) Response format"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:202 04948523479541edaff4ce95b380c91e
+msgid "**ebi_search_domain** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:204 2cc42b9a1471402d8080e37965c73bb1
+msgid ""
+"Search across a specific EBI domain (e.g., ensembl, uniprot, interpro) "
+"using the unified EBI Sear..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst f24f8ee42be248c082f63c679fbea8af
+msgid "ebi_search_domain tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:210 ce03642d4a714b59a15d7033580ed097
+msgid "**Name**: ``ebi_search_domain``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:212 93fd8d127c4b43a8836cf5125eb998d2
+msgid ""
+"**Description**: Search across a specific EBI domain (e.g., ensembl, "
+"uniprot, interpro) using the unified EBI Search API. Returns search "
+"results with metadata. Use this to search across 160+ EBI data resources."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:216 a8259a4ab02c45b2b443b3d974f3c59d
+msgid ""
+"``domain`` (string) (required) EBI domain to search (e.g., 'ensembl', "
+"'uniprot', 'interpro', 'chembl', 'arrayexpress', 'metabolights'). See "
+"ebi\\_list\\_domains for available domains."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:219 b85e2552d4014e398229c0640e944f09
+msgid ""
+"``query`` (string) (required) Search query string. Supports field-"
+"specific queries like 'name:BRCA1' or 'description:cancer'."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:222 c03e53fc6b4b4a4cac037a304c68ca80
+msgid ""
+"``size`` (integer) (optional) Number of results to return per page "
+"(default: 10, max: 100)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:225 99e7c088ceb04ce38ba3789024b8a4a7
+msgid ""
+"``start`` (integer) (optional) Starting position for pagination (default:"
+" 0)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:228 dde446cfb28e4ebcbf08e6e572394c8d
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to return "
+"(e.g., 'id,name,description'). If not specified, returns all fields."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:231 4d88c318fc4c4703af8eabb37db3af8b
+msgid "``format`` (string) (optional) Response format: 'json' or 'xml'"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:249 03270061b8dd492d9c27a1ababd181a4
+msgid "**ebi_search_with_facets** (Type: EBISearchRESTTool)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:251 d879e22907d143d683446ddd6086dc8e
+msgid ""
+"Search EBI domain with faceted filtering and returns facet information. "
+"Use facetcount to request..."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst 6f4c0a732bcc46809397c2f8a02d312c
+msgid "ebi_search_with_facets tool specification"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:257 23cf66f147e7488c98a3a3c2d0b19bba
+msgid "**Name**: ``ebi_search_with_facets``"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:259 0b6496a432b9482e98b5ce8668dd91ed
+msgid ""
+"**Description**: Search EBI domain with faceted filtering and returns "
+"facet information. Use facetcount to request facets (returned "
+"automatically). To filter results BY facet values, use the 'facets' "
+"parameter with format 'FACET\\_NAME:value' (e.g., 'TAXONOMY:9606' for "
+"human). First run ebi\\_search\\_domain to see available facet IDs in the"
+" response, or use ebi\\_get\\_domain\\_info. Returns search results with "
+"facet categories for advanced filtering."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:263 787fe0a780ba4e73b3821b1d38cbec97
+msgid ""
+"``domain`` (string) (required) EBI domain to search (e.g., 'ensembl', "
+"'uniprot', 'interpro')"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:266 bed3bf5c2bde4f8c9c395160f24628a0
+msgid "``query`` (string) (required) Search query string"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:269 31cd0a1865ae4f8983170c47a2a4ba8c
+msgid ""
+"``facets`` (string) (optional) Optional filter for results using facet "
+"values in format 'FACET\\_NAME:value' (e.g., 'TAXONOMY:9606' for human, "
+"'keyword\\_id:KW-0418' for kinase). Multiple filters can be comma-"
+"separated. IMPORTANT: This is for FILTERING results, not selecting which "
+"facets to return. Facets are returned automatically when facetcount > 0."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:272 747e9bacb3fa465792cb40cba1b8af81
+msgid ""
+"``facetcount`` (integer) (optional) Number of facet values to return per "
+"facet category (default: 10). Set to 0 to disable facet return."
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:275 08d5d3f5fc5c444b8179458cc29435ad
+msgid "``size`` (integer) (optional) Number of results to return (default: 10)"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:296 2862d721fc534c9db3ff7e882e381f7b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:298 1957ca9036e14137a417e3b0610aa7c7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_search_tools.rst:299 7c0516e04278403794b279bc97f271ea
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

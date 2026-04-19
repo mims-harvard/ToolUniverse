@@ -1,0 +1,129 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dataone_tools.rst:10 d5df469fe49b43288a75bf30959a3ba8
+msgid "Dataone Tools"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:12 2c7cfa24c21e4c28903119abe934eee5
+msgid ""
+"**Configuration File**: ``dataone_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:16 d62155a5663b46d0a3d2e095b88d513a
+msgid ""
+"This page contains all tools defined in the ``dataone_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:19 4de1dd49da9c4358b10da8b5742539d0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:22 8453fd4d35b045308b2b46c74978b198
+msgid "**DataONE_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:24 a8fdd8a3e95144a39ae8e25d4c7fef6f
+msgid ""
+"Search DataONE (Data Observation Network for Earth) for open scientific "
+"datasets. DataONE indexes..."
+msgstr ""
+
+#: ../../tools/dataone_tools.rst fe3531bf83694dac85f96c95410d9ba2
+msgid "DataONE_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:28 a2baddcd81394d8db42f1977fb1d6bc8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:30 725b3c3aec684688952f92926d50ee90
+msgid "**Name**: ``DataONE_search_datasets``"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:31 78dad8f347834691b6c0035609e26dbe
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:32 3b04e23ed66445f88c86c83377abc53c
+msgid ""
+"**Description**: Search DataONE (Data Observation Network for Earth) for "
+"open scientific datasets. DataONE indexes 3.2 million+ datasets from 43+ "
+"member repositories including KNB, Dryad, PANGAEA, USGS, NEON, and more. "
+"Search ecology, environmental science, oceanography, climate, and earth "
+"science data. Returns dataset titles, authors, upload dates, keywords, "
+"and format information. DataONE is a federation of data repositories "
+"focused on environmental and biological data."
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:34 7f84715a5ad84164b536b36938ec4b5f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:36 018f9593bf464e56801c399c35f9d197
+msgid ""
+"``q`` (string) (required) Search query using Solr query syntax. Examples:"
+" 'climate change', 'author:Smith', 'keywords:marine ecology', "
+"'title:biodiversity', 'formatId:text/csv', '\\*:\\*' (all)"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:39 dbd91af71a6f429eaf82529672a44c03
+msgid ""
+"``fl`` (string, null) (optional) Comma-separated list of fields to "
+"return. Default: 'id,title,author,dateUploaded,keywords'. Available: "
+"id,title,author,dateUploaded,dateModified,keywords,formatId,size,origin,abstract,geohash\\_1"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:42 3c0bfd75bd7a49adb499aac0ec941fdf
+msgid ""
+"``rows`` (integer, null) (optional) Number of results to return (default "
+"10, max 1000)"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:45 42b38ddc845f4bb9a49ed90b5154680a
+msgid "``start`` (integer, null) (optional) Offset for pagination (default 0)"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:48 6f24a98e01c14438898824f812064430
+msgid ""
+"``sort`` (string, null) (optional) Sort order. Examples: 'dateUploaded "
+"desc', 'score desc', 'title asc'"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:51 fb7fc1a99f9d4f459fa35d7cad2df0dc
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:65 72d2ca76d9c2488084913a3e3762d690
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:67 28e0a0e3a32247c08a007c13c4ab5b36
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dataone_tools.rst:68 649e47461e3c4faf92412bd74445665a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

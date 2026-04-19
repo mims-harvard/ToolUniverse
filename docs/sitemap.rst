@@ -3,16 +3,16 @@ Documentation Sitemap
 
 **Complete navigation of all ToolUniverse documentation**
 
- Get Started
---------------
+Get Started
+-----------
 
 - :doc:`guide/python_guide` - Python Developer Guide
 - :doc:`guide/building_ai_scientists/index` - Choose Your AI Agent Platform
 - :doc:`guide/skills_showcase` - AI Agent Skills
 - :doc:`guide/api_keys` - API Keys Configuration
 
- Tutorials & Workflows
--------------------------
+Tutorials & Workflows
+---------------------
 
 - :doc:`guide/index` - Tutorials Overview
 - :doc:`guide/tooluniverse_case_study` - Case Study
@@ -26,8 +26,8 @@ Documentation Sitemap
 - :doc:`guide/make_your_data_agent_searchable` - Make Your Data Agent Searchable
 - :doc:`guide/visualization_tutorial` - Visualization Tutorial
 
-️ Advanced Features
----------------------
+Advanced Features
+-----------------
 
 - :doc:`guide/building_ai_scientists/compact_mode` - Compact Mode
 - :doc:`guide/toolspace` - Toolspace
@@ -42,8 +42,8 @@ Documentation Sitemap
 - :doc:`guide/http_api` - HTTP API
 - :doc:`help/wechat_community` - WeChat Community
 
- Expand ToolUniverse
------------------------
+Expand ToolUniverse
+-------------------
 
 - :doc:`expand_tooluniverse/index` - Overview
 - :doc:`expand_tooluniverse/quick_start` - Quick Start
@@ -52,19 +52,19 @@ Documentation Sitemap
 - :doc:`expand_tooluniverse/contributing/index` - Contributing
 - :doc:`expand_tooluniverse/architecture` - Architecture
 
- Tools Catalog
------------------
+Tools Catalog
+-------------
 
 - :doc:`tools/tools_config_index` - Tools Configuration Index
 - :doc:`tools/remote_tools` - Remote Tools
 
- API Reference
------------------
+API Reference
+-------------
 
 - :doc:`api/modules` - API Modules
 
- Help & Reference
--------------------
+Help & Reference
+----------------
 
 - :doc:`reference/cli_tools` - CLI Tools
 - :doc:`reference/environment_variables` - Environment Variables
@@ -74,8 +74,8 @@ Documentation Sitemap
 - :doc:`expand_tooluniverse/reference/index` - Reference
 - :doc:`about/index` - About
 
- Legacy Documentation
------------------------
+Legacy Documentation
+--------------------
 
 - :doc:`old/quickstart` - Quick Start (Legacy)
 - :doc:`old/installation` - Installation (Legacy)

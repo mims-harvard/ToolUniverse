@@ -1,0 +1,132 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/open_meteo_flood_tools.rst:10 c951adf78fc349f6ab21f3e0bfff46b2
+msgid "Open Meteo Flood Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:12 6cca6746f3db48d8a9b0e1ff8f5b5003
+msgid ""
+"**Configuration File**: ``open_meteo_flood_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:16 688c2f35b8c34fbea3008b83aef87895
+msgid ""
+"This page contains all tools defined in the "
+"``open_meteo_flood_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:19 a06b4098b0a14d1393359ed4bf9768f2
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:22 2ad6688aa2ba451a8d07362f7585b2a2
+msgid "**OpenMeteo_get_flood_forecast** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:24 1490cfafb03a41149846246499428021
+msgid ""
+"Get river discharge and flood forecast data for any location using Open-"
+"Meteo's free GloFAS (Glob..."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst 5e46f52972a14e1686eba9682322705c
+msgid "OpenMeteo_get_flood_forecast tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:28 c77a7ade209d4be4b33a342d1e1c7293
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:30 fcffdf3d355245d2a25a3a5db7b21daf
+msgid "**Name**: ``OpenMeteo_get_flood_forecast``"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:31 10bef8dcfd404831a2a7b84d0455913e
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:32 97e4c7a38d8e4899aa9720cce6d3becb
+msgid ""
+"**Description**: Get river discharge and flood forecast data for any "
+"location using Open-Meteo's free GloFAS (Global Flood Awareness System) "
+"API. Returns daily river discharge forecasts up to 210 days ahead, based "
+"on the Copernicus Emergency Management Service. Useful for flood risk "
+"assessment, water resource management, hydropower planning, and climate "
+"research. Data resolution is 0.05 degrees (~5km). Latitude/longitude "
+"required (use OpenMeteo\\_geocode\\_location for coordinates)."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:34 0171503b6fcf4646a0db05169fc245ea
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:36 6ff1d251f7dc47ce9faa2eb98e312af0
+msgid ""
+"``latitude`` (number) (required) Latitude in decimal degrees (e.g., 52.52"
+" for Berlin, 48.85 for Paris, 29.76 for Houston)"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:39 f91a37d6fe944458bd521246eb54d875
+msgid ""
+"``longitude`` (number) (required) Longitude in decimal degrees (e.g., "
+"13.41 for Berlin, 2.35 for Paris, -95.37 for Houston)"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:42 21a72b5bfc7548b48e3be756b8ea7679
+msgid ""
+"``daily`` (string, null) (optional) Comma-separated daily variables. "
+"Options: river\\_discharge, river\\_discharge\\_mean, "
+"river\\_discharge\\_median, river\\_discharge\\_max, "
+"river\\_discharge\\_min, river\\_discharge\\_p25, "
+"river\\_discharge\\_p75. Default: river\\_discharge."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:45 1df0183f554146cda55fd77e2d02f6ed
+msgid ""
+"``forecast_days`` (integer, null) (optional) Number of forecast days "
+"(1-210, default 92). GloFAS provides seasonal forecasts up to 210 days."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:48 c133ac067a8a4058b2c609fd22022405
+msgid ""
+"``past_days`` (integer, null) (optional) Number of past days to include "
+"(0-92, default 0). Includes recent historical discharge data."
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:51 32b54dfbae484a209c94009065a4dd1d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:66 98fbecc520a6476fa2386cb894d8053f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:68 9faa57b3f6594a7ebf0aac1f45fe8a89
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/open_meteo_flood_tools.rst:69 f07b61ea656e4cd8afe9177d2269a3ef
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

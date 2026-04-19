@@ -1,0 +1,226 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/swissdock_tools.rst:10 b4a7bb14c40447d3a3f8f3107306005e
+msgid "Swissdock Tools"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:12 cbc85123e08f4dcc99896b672d16638b
+msgid ""
+"**Configuration File**: ``swissdock_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:16 55b603b74ec648449156e3af8e076a49
+msgid ""
+"This page contains all tools defined in the ``swissdock_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:19 eb2f399fda034326b2d76db0ecfe8bef
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:22 421e0f14889a4324b65e32caa0f0bade
+msgid "**SwissDock_check_job_status** (Type: SwissDockTool)"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:24 f7c0ff51eaab4daab299ef043449201f
+msgid ""
+"Check the status of a SwissDock docking job using its session ID. Returns"
+" current job status: RUN..."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst 9ca72971154945abb314c298811c6dfd
+msgid "SwissDock_check_job_status tool specification"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:28 ../../tools/swissdock_tools.rst:59
+#: ../../tools/swissdock_tools.rst:106 0f28aa998a42465ea8c757381b6848ad
+#: 6e970ee2947a4c5e80c928ac7358bfae e207b0e44a6449508f107a1f68d9b74f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:30 111d8e1b74f3406bb4917c5977820bcc
+msgid "**Name**: ``SwissDock_check_job_status``"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:31 ../../tools/swissdock_tools.rst:62
+#: ../../tools/swissdock_tools.rst:109 326200494fa8407da7b079f5df0c8e5e
+#: a312db72d931442ca58c982b6293b862 eeb4c389b55d4922be592f38f3122bf9
+msgid "**Type**: ``SwissDockTool``"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:32 f37f0f821c0348418e111e3ff1d744b7
+msgid ""
+"**Description**: Check the status of a SwissDock docking job using its "
+"session ID. Returns current job status: RUNNING (job in progress, keep "
+"polling), FINISHED (ready to retrieve results), ERROR (job failed), or "
+"NOT\\_FOUND (invalid session). Use this to monitor long-running docking "
+"jobs that were submitted earlier. Poll periodically (every 30-60 seconds)"
+" until status is FINISHED, then use retrieve\\_results to get final "
+"output. Example: After submitting dock\\_ligand, poll this endpoint until"
+" completion."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:34 ../../tools/swissdock_tools.rst:65
+#: ../../tools/swissdock_tools.rst:112 4be533e8523b400e86e59979d1341626
+#: 85a28e55290f47a681592e92e2e9d3c8 f7bdae6451784f3a937f4299549b2b70
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:36 fa15ffb81f20439fa4ce98e868df2524
+msgid ""
+"``session_id`` (string) (required) Session identifier returned from "
+"dock\\_ligand call (format: alphanumeric string). Example: 'abc123def456'"
+" from previous dock\\_ligand response."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:39 ../../tools/swissdock_tools.rst:85
+#: ../../tools/swissdock_tools.rst:117 38c7293a3e7e4b999c776f366ec7f741
+#: 79b779cbd9f24396aa4a8361267f2731 f6f60e73d24d4ac9a15f04aa070cf784
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:53 223166f2d6d94ed79b9b520500bd753f
+msgid "**SwissDock_dock_ligand** (Type: SwissDockTool)"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:55 3742445b3e7a42fa845f73a090ca48fc
+msgid ""
+"Perform protein-ligand molecular docking using SwissDock service with "
+"AutoDock Vina or Attracting..."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst 8884046e6aad4ce3bb23c8ec315c49af
+msgid "SwissDock_dock_ligand tool specification"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:61 e986174d969844b3bc4024a0a9e3665c
+msgid "**Name**: ``SwissDock_dock_ligand``"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:63 0e67a5b4e54b4efeb9280423e72ae4ee
+msgid ""
+"**Description**: Perform protein-ligand molecular docking using SwissDock"
+" service with AutoDock Vina or Attracting Cavities 2.0 engines. Predicts "
+"binding modes, poses, and energies for small molecules against protein "
+"structures. Essential for drug discovery, virtual screening, and "
+"structure-based drug design. Supports blind docking (whole protein) or "
+"targeted docking (specific binding site). Returns docking scores, poses, "
+"and download URL for detailed results. Example: Dock aspirin "
+"(CC(=O)Oc1ccccc1C(=O)O) against COX-2 (PDB: 1CX2) to predict binding mode"
+" and affinity."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:67 d5a888d40d704aceaf0da7506edd28da
+msgid ""
+"``ligand_smiles`` (string) (required) SMILES string of the ligand/small "
+"molecule to dock. Example: 'CC(=O)Oc1ccccc1C(=O)O' for aspirin"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:70 be7fc2f6f0c547d3b52137b40a7b3a98
+msgid ""
+"``pdb_id`` (string) (required) 4-character PDB ID of the target protein "
+"structure. Example: '1ATP' for protein kinase A"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:73 ee21cb58a8c44c0ebb6b0f893de50b64
+msgid ""
+"``exhaustiveness`` (integer) (optional) Search exhaustiveness (1-20). "
+"Higher values increase accuracy but take longer. Default: 8. Use 16-20 "
+"for publication-quality results. Example: Use 8 for quick screening, 16 "
+"for final validation."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:76 2c45ae3c6d6d4d3f84d630654dff2646
+msgid ""
+"``box_center`` (string) (optional) Binding site center coordinates as "
+"'x,y,z' in Angstroms. If not provided, performs blind docking (whole "
+"protein). Example: '10.5,20.3,15.8'"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:79 5f70ee33c1454629b4c74bcfccc4321e
+msgid ""
+"``box_size`` (string) (optional) Search box dimensions as 'a,b,c' in "
+"Angstroms. If not provided, uses default size. Example: '20,20,20' for "
+"20x20x20 Angstrom box."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:82 b3442abeb76148faa4425c09c1671e75
+msgid ""
+"``docking_engine`` (string) (optional) Docking engine: "
+"'attracting\\_cavities' (cavity-based, default, recommended for blind "
+"docking) or 'vina' (AutoDock Vina, faster for targeted docking). Example:"
+" Use 'attracting\\_cavities' for whole-protein screening, 'vina' for "
+"known binding site."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:100 323228aeef1f4763bd96fde8b913ba17
+msgid "**SwissDock_retrieve_results** (Type: SwissDockTool)"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:102 9bc6fc9dad614af8b5959927de12f338
+msgid ""
+"Retrieve results for a completed SwissDock docking job. Returns download "
+"URL and metadata for doc..."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst 4d850e14c84d48199a5f6bc2a735345f
+msgid "SwissDock_retrieve_results tool specification"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:108 5cde3842c8ad411d8136808be1885a51
+msgid "**Name**: ``SwissDock_retrieve_results``"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:110 2411aedbfbf94a1ebbd6564e7e22569d
+msgid ""
+"**Description**: Retrieve results for a completed SwissDock docking job. "
+"Returns download URL and metadata for docking output files. The results "
+"archive (tar.gz) contains: predicted binding poses (PDB files), docking "
+"scores (energies and rankings), cluster information, and visualization "
+"files. Use this only after check\\_job\\_status confirms the job is "
+"FINISHED. Results are available for several days after completion. "
+"Example: Download results to analyze top-ranked poses and binding "
+"energies."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:114 fbe7b210b69a478383e7af491d93c9af
+msgid ""
+"``session_id`` (string) (required) Session identifier from dock\\_ligand "
+"or check\\_job\\_status call (same alphanumeric string). Example: Use the"
+" session\\_id from successful dock\\_ligand submission."
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:131 3f7273e2572a409fb8b55e41291c8df7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:133 584ef0cd1f8e494980dc38b3b85034fa
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/swissdock_tools.rst:134 9929bb7a6cd04ab0966703977cab5a3e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

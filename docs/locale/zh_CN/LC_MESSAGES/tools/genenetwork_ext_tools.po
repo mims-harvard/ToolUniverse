@@ -1,0 +1,151 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/genenetwork_ext_tools.rst:10 3eccb608fe0944bc9243d1c3576ab98d
+msgid "Genenetwork Ext Tools"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:12 c4f393cd2f2d486a98cfaeb6bb9e24ce
+msgid ""
+"**Configuration File**: ``genenetwork_ext_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:16 949db8ed4c7941da9ffd2cac3141fcc7
+msgid ""
+"This page contains all tools defined in the "
+"``genenetwork_ext_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:19 4614e8dc8ef841a2bdc6466162353c0c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:22 7295a4caaf5b4376879fbccb33c7517d
+msgid "**GeneNetwork_get_dataset_info** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:24 36984ccbb89144e892b55e23a9be18f7
+msgid ""
+"Get metadata about a specific GeneNetwork dataset including its full "
+"name, data type, data scale,..."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst a90bbde4161a4e6ba6465d73cb3fab08
+msgid "GeneNetwork_get_dataset_info tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:28
+#: ../../tools/genenetwork_ext_tools.rst:59 577e950fa5624f56a9cd874e00549988
+#: cd64dbf74a934f0a96c2fd34c4bf8599
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:30 7680255112374f618b28b2c3ff2af4e1
+msgid "**Name**: ``GeneNetwork_get_dataset_info``"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:31
+#: ../../tools/genenetwork_ext_tools.rst:62 150915005c864c9093656b958f286cd4
+#: aff2721d21534b829ec591638b52630b
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:32 63344caa17cd49e594abc984f8af439f
+msgid ""
+"**Description**: Get metadata about a specific GeneNetwork dataset "
+"including its full name, data type, data scale, tissue, and public access"
+" status. Returns information about expression profiling datasets from "
+"genetic crosses (BXD, LXS, etc.) covering various tissues and platforms. "
+"Use GeneNetwork\\_list\\_datasets to find available dataset names first."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:34
+#: ../../tools/genenetwork_ext_tools.rst:65 44d8d76853d04571b346c3e803234e17
+#: 5477355da050484e901f034907e6e8cf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:36
+#: ../../tools/genenetwork_ext_tools.rst:67 15c0e9ce2143475a88c23e815ee4e59d
+#: 1fe5331830e54ffba1b846a71deee65e
+msgid ""
+"``dataset_name`` (string) (required) Dataset name/abbreviation. Examples:"
+" 'HC\\_M2\\_0606\\_P' (Hippocampus Consortium M430v2), "
+"'BR\\_M2\\_1106\\_R' (Brain mRNA)."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:39
+#: ../../tools/genenetwork_ext_tools.rst:73 eda9731ab14e4dac94181ea2a8c0855b
+#: f527309f1b6840ca9cfe3bbbe19a38f7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:53 c05e485dbf9e47ec85d9439bfae3f4a9
+msgid "**GeneNetwork_get_trait_info** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:55 ef2903b7bf3d4fab9d4d288b889900f6
+msgid ""
+"Get detailed information about a specific trait (probe/gene) in a "
+"GeneNetwork dataset. Returns tr..."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst de65a38076fa463fa73797db968a6f0d
+msgid "GeneNetwork_get_trait_info tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:61 ef93362b8f4745ccacf5d5bbc2bacd50
+msgid "**Name**: ``GeneNetwork_get_trait_info``"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:63 92fea35c6d864873a68fa7582eb375c8
+msgid ""
+"**Description**: Get detailed information about a specific trait "
+"(probe/gene) in a GeneNetwork dataset. Returns trait metadata including "
+"gene symbol, description, chromosome, megabase position, mean expression "
+"value, linkage statistics (LRS score, locus), additive effect, and "
+"p-value. Requires a dataset name and trait name (probe ID). Use "
+"GeneNetwork\\_list\\_datasets to find available datasets and their names."
+" Common datasets include BXD hippocampus, liver, and brain expression "
+"arrays."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:70 2a463e4ebabc48a2b282a950051a8329
+msgid ""
+"``trait_name`` (string) (required) Trait/probe identifier. Examples: "
+"'1436869\\_at' (Shh probe), '1457211\\_at', '1418701\\_at'. These are "
+"microarray probe IDs for expression datasets."
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:88 f840d601f19748158fdda9169e19a860
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:90 43fb9fdf7f68412c9ed1662d644d7b93
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/genenetwork_ext_tools.rst:91 f1609fd5e3a240a79207cc56075ed4f4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

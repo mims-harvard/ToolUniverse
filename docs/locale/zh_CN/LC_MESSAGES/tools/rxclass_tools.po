@@ -1,0 +1,226 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rxclass_tools.rst:10 214f1aa6d45d49acad12e2d713c360ef
+msgid "Rxclass Tools"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:12 c11ad77f26424c90bd43e78fdcdb58b5
+msgid ""
+"**Configuration File**: ``rxclass_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:16 f25ff13031094c31b2c9900d18c05dae
+msgid ""
+"This page contains all tools defined in the ``rxclass_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:19 f9d1b238b77c4439b557aa7e14296ef6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:22 4a7009eacbb5476cade40e1b4e293e5f
+msgid "**RxClass_find_classes** (Type: RxClassTool)"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:24 492f200eb2dd46f791fa035404e86e92
+msgid ""
+"Search NLM RxClass drug classification database by keyword. Returns "
+"matching class IDs, names, an..."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst ac0674ce0511424292d018f2c6e6d956
+msgid "RxClass_find_classes tool specification"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:28 ../../tools/rxclass_tools.rst:65
+#: ../../tools/rxclass_tools.rst:105 131acb67f36048f491c8bec94bd1647b
+#: 3b4f550f45bb40c69aa3fee4ce581c32 b9ab47de657b4f40a1b26b9ec96b9f79
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:30 b5b903069c444299905934970f852ff0
+msgid "**Name**: ``RxClass_find_classes``"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:31 ../../tools/rxclass_tools.rst:68
+#: ../../tools/rxclass_tools.rst:108 400eb6d4db3a462a973ff60a801045dd
+#: 5db095361b774fe2b68db31fb1999676 f6f218bda7d646dea77f6c377a3ed948
+msgid "**Type**: ``RxClassTool``"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:32 b89d7244b41f4ba0b51fec243571739f
+msgid ""
+"**Description**: Search NLM RxClass drug classification database by "
+"keyword. Returns matching class IDs, names, and types (ATC, EPC, MoA, "
+"etc.). No API key required. Example: query='analgesic' returns pain-"
+"related drug classes; query='beta blocker' returns adrenergic receptor "
+"blocker classes."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:34 ../../tools/rxclass_tools.rst:71
+#: ../../tools/rxclass_tools.rst:111 9040c17396c64dde94cc877285c79ec2
+#: ab5e78d516134567a5f0ddf2edc23deb ba44e188aa7a49fc957d3295fad1e7d3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:36 f99a6b8d38ea492898c9067c7fd363ba
+msgid ""
+"``query`` (string) (required) Keyword to search in class names. Examples:"
+" 'analgesic', 'beta blocker', 'antidiabetic', 'statin', 'NSAID', 'ACE "
+"inhibitor'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:39 1f9d7cd60a1d4d0393a53092e1971a90
+msgid ""
+"``class_type`` (string, null) (optional) Filter by class type. Options: "
+"'ATC1-4' (ATC codes), 'EPC' (Established Pharmacologic Class), 'MOA' "
+"(Mechanism of Action), 'PE' (Physiologic Effect), 'DISEASE', 'VA', "
+"'SCHEDULE'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:42 ../../tools/rxclass_tools.rst:122
+#: 24b7a29e592b4a30b713076022f01dae 341a3f894ada4bab9da63d0401e8e4c0
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (default "
+"20)."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:45 ../../tools/rxclass_tools.rst:85
+#: ../../tools/rxclass_tools.rst:125 1e41dd1785094bc0b5fc11fb1b31699e
+#: 80e29a4a62824c21a7846de93c1f530e 92b05e032b3a4dab88b99b2e8e070bdd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:59 3451c5ceebb346fc96871d008b2fbaa2
+msgid "**RxClass_get_class_members** (Type: RxClassTool)"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:61 a1a95cafca694260a826dced8e69699e
+msgid ""
+"List all drugs belonging to a specific drug class by class ID in NLM "
+"RxClass. Returns RXCUIs and ..."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst 0313c610d03d44ecbd4f5921fe5f276f
+msgid "RxClass_get_class_members tool specification"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:67 61185b4fadfc4218875c45ce2ed2f7f7
+msgid "**Name**: ``RxClass_get_class_members``"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:69 45fc8850d81e4c818839425fdf5fed39
+msgid ""
+"**Description**: List all drugs belonging to a specific drug class by "
+"class ID in NLM RxClass. Returns RXCUIs and drug names for all member "
+"ingredients. No API key required. Example: classId='M01AE' (propionic "
+"acid derivatives) returns ibuprofen, naproxen, ketoprofen, etc."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:73 1d6c6fcb3f64452f8f3774af38874d90
+msgid ""
+"``class_id`` (string) (required) Drug class identifier. ATC class codes: "
+"'M01AE' (propionic acid derivatives), 'N02BA' (salicylic acid "
+"derivatives), 'A10BA' (biguanides). FDA EPC IDs are long numeric strings."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:76 d553a73f230647eba4efbe2f626c33aa
+msgid ""
+"``rela_source`` (string, null) (optional) Classification source system. "
+"Options: 'ATC' (default), 'FDASPL', 'MESH', 'VA', 'DAILYMED'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:79 45470898e4214cb4bfcf24946514065f
+msgid ""
+"``ttys`` (string, null) (optional) RxNorm term types to include. Options:"
+" 'IN' (ingredients, default), 'PIN' (precise ingredients), 'MIN' (multi-"
+"ingredients), 'SCD' (semantic clinical drugs). Default: 'IN'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:82 6156ae45d57f4d588272a6983c0507a2
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of drugs to return "
+"(default 50)."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:99 ffaff788490b42f6ac0c6c414ef3210d
+msgid "**RxClass_get_drug_classes** (Type: RxClassTool)"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:101 a35897a9bd5144d18010b5042664e1b7
+msgid ""
+"Get drug classification from NLM RxClass for a drug name or RXCUI. "
+"Returns ATC codes, EPC (Establ..."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst a6a32db6efe445bfa94529ff8cccc228
+msgid "RxClass_get_drug_classes tool specification"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:107 a950a8c0000d4a71881085d20f24f265
+msgid "**Name**: ``RxClass_get_drug_classes``"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:109 192305cef39245748cd0c34540a84cbe
+msgid ""
+"**Description**: Get drug classification from NLM RxClass for a drug name"
+" or RXCUI. Returns ATC codes, EPC (Established Pharmacologic Class), MoA,"
+" VA drug classes, and more. No API key required. Example: 'metformin' -> "
+"ATC A10BA02 (biguanides); 'aspirin' -> ATC N02BA01, EPC 'Platelet "
+"Aggregation Inhibitor'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:113 6ccb887a33f24511b82b3078065a931b
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name to classify. Examples: "
+"'metformin', 'aspirin', 'ibuprofen', 'metoprolol'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:116 656cdc27e49e4dd7973d9a4af95fc344
+msgid ""
+"``rxcui`` (string, null) (optional) RxNorm RXCUI identifier (alternative "
+"to drug\\_name). Examples: '6809' (metformin), '1191' (aspirin)."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:119 c7862ed363dc4216a707115b7aa5f9dc
+msgid ""
+"``rela_source`` (string, null) (optional) Classification source. Options:"
+" 'ATC' (WHO Anatomical Therapeutic Chemical, default), 'FDASPL' (FDA "
+"pharmacologic classes including EPC/MoA/PE), 'MESH', 'VA', 'DAILYMED', "
+"'ALL'. Default: 'ATC'."
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:138 d0bcb8e11a764a38bcb4f9ee594ada44
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:140 ad0bb1ad418b4adfbf66bda1f72d6f8b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rxclass_tools.rst:141 096747b20ba946f092fa11ca48251851
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

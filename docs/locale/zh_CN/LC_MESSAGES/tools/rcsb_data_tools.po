@@ -1,0 +1,200 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rcsb_data_tools.rst:10 6eff86460f624af097878758acec6acb
+msgid "Rcsb Data Tools"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:12 f8992c16ba4a4fa0b0bb6971ac382713
+msgid ""
+"**Configuration File**: ``rcsb_data_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:16 e0d82458272a4ea4a54db49892b6ef31
+msgid ""
+"This page contains all tools defined in the ``rcsb_data_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:19 959e349535f84bab92ecfcb6699ab956
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:22 a5e58d6c430e48a0a2f9ceb99449014f
+msgid "**RCSBData_get_assembly** (Type: RCSBDataTool)"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:24 f69b4d389b6e4a87bdaadd92e4dd2ebe
+msgid ""
+"Get biological assembly details for a PDB structure from the RCSB Data "
+"API. Returns oligomeric st..."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst 666dd6bc1ef84d89944aca7ffe8a4f0e
+msgid "RCSBData_get_assembly tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:28 ../../tools/rcsb_data_tools.rst:62
+#: ../../tools/rcsb_data_tools.rst:93 0e59cc02ca7e4f64af8c293b6c326a9b
+#: 6b402dccf0db49c6929f211de138321a a5a3693cbddb4f2b99782bb010b44f5e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:30 6212601bb70b482493a258001d2293e8
+msgid "**Name**: ``RCSBData_get_assembly``"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:31 ../../tools/rcsb_data_tools.rst:65
+#: ../../tools/rcsb_data_tools.rst:96 1ff1418b55844017b0dca2b84aec84be
+#: 82387ed844484239bade1bad07d59136 a5025cff64424047b8a5ff3b075e9e31
+msgid "**Type**: ``RCSBDataTool``"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:32 b35ea958942e4a069b0e05bba011a7b0
+msgid ""
+"**Description**: Get biological assembly details for a PDB structure from"
+" the RCSB Data API. Returns oligomeric state (monomeric, dimeric, "
+"tetrameric, etc.), stoichiometry, polymer/nonpolymer entity counts in the"
+" assembly, symmetry operations, and evidence for the biological relevance"
+" of the assembly. Example: '4HHB' assembly 1 returns 'tetrameric' with 2 "
+"polymer entities (alpha and beta hemoglobin)."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:34 ../../tools/rcsb_data_tools.rst:68
+#: ../../tools/rcsb_data_tools.rst:99 2ac4535b603344a39ce1caf2c2b96fb4
+#: 67f17a18b337409db4bffc7590708e33 acc90516f54845428ce485846c18dd8c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:36 55c93e5a6f5c442fae313feca1e15296
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4 characters). Examples: "
+"'4HHB' (hemoglobin tetramer), '1TUP' (p53 dimer), '3PQR' (insulin "
+"hexamer)."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:39 cf3d45ddaf184cdcb1f0647fe2078971
+msgid ""
+"``assembly_id`` (string) (optional) Assembly identifier (default '1' for "
+"the first/preferred assembly). Most structures have assembly 1 as the "
+"biologically relevant form."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:42 ../../tools/rcsb_data_tools.rst:73
+#: ../../tools/rcsb_data_tools.rst:107 04b6eb84a8594516873a4e5c0b7faf54
+#: 7ace25eba5c94344827b47ae6163aece 7d4251d5eea84d8ba4a5d33a67555b62
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:56 d9043e6d2b7e459494d3b124fd34f192
+msgid "**RCSBData_get_entry** (Type: RCSBDataTool)"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:58 14bf3922e30d48a1a9ed8535628ddf51
+msgid ""
+"Get comprehensive structure metadata for a PDB entry from the RCSB Data "
+"API. Returns experimental..."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst 02a2286facbc41cd8b76f8c7d44eecfc
+msgid "RCSBData_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:64 82d677a9a5d348dfbaaa867f350e03ee
+msgid "**Name**: ``RCSBData_get_entry``"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:66 7d915c5ad2094e5c9db55baf183091ee
+msgid ""
+"**Description**: Get comprehensive structure metadata for a PDB entry "
+"from the RCSB Data API. Returns experimental method, resolution, "
+"deposition/release dates, polymer/nonpolymer entity counts, molecular "
+"weight, assembly count, space group, and unit cell dimensions. This is "
+"the direct REST endpoint for PDB entry details, complementing GraphQL-"
+"based tools. Example: '4HHB' returns hemoglobin at 1.74A by X-ray "
+"diffraction, deposited 1984-03-07, 2 polymer entities."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:70 92a7e9e741764251b26e2d6779e572bf
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4 characters). Examples: "
+"'4HHB' (hemoglobin), '1TUP' (p53-DNA complex), '1M17' (EGFR kinase), "
+"'6LU7' (SARS-CoV-2 main protease)."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:87 97c9747cab0f4fa3838d1037f19c93dd
+msgid "**RCSBData_get_nonpolymer_entity** (Type: RCSBDataTool)"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:89 252ab300544240158f91fda2622a233e
+msgid ""
+"Get non-polymer entity (ligand/small molecule) details from a PDB "
+"structure via the RCSB Data API..."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst e14c0655c165446cb1950bc070bcd034
+msgid "RCSBData_get_nonpolymer_entity tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:95 3ef9b3378ebf4306b99b4670f1039159
+msgid "**Name**: ``RCSBData_get_nonpolymer_entity``"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:97 32ffe2a882df4592b8316d384d0cff0b
+msgid ""
+"**Description**: Get non-polymer entity (ligand/small molecule) details "
+"from a PDB structure via the RCSB Data API. Returns the chemical name, "
+"component ID, formula weight, chain assignments, and any DrugBank or "
+"other database annotations. Useful for identifying what ligands, "
+"cofactors, or ions are bound in a structure. Example: '4HHB' entity 3 "
+"returns 'PROTOPORPHYRIN IX CONTAINING FE' (HEM), the heme group bound to "
+"hemoglobin."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:101 1c9a817569674586b0d01fa06790d085
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (4 characters). Examples: "
+"'4HHB' (hemoglobin + heme), '3ERT' (estrogen receptor + tamoxifen), "
+"'6LU7' (SARS-CoV-2 + inhibitor)."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:104 21d378300d174171aaa2decbd23c9ab0
+msgid ""
+"``entity_id`` (string) (required) Entity ID within the PDB entry. Non-"
+"polymer entities typically start after the polymer entities. Use "
+"pdbe\\_get\\_entry\\_molecules or RCSBGraphQL\\_get\\_structure\\_summary"
+" to discover entity IDs."
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:122 9a8d277cef30418c81e4a8b17e7ccaf0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:124 2bc586c056224ccc8a42a31dc2e677df
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rcsb_data_tools.rst:125 50583252c37845a6bb90bb7691f9e2ae
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

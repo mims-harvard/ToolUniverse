@@ -7,120 +7,120 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/hooks/index.rst:90
+#: ../../guide/hooks/index.rst:92
 msgid "Hook Topics"
 msgstr "钩子主题"
 
-#: ../../guide/hooks/index.rst:2 0f6c8136599a45a083268811e81186b6
+#: ../../guide/hooks/index.rst:2 4bc96b67381045b3bca22b5cfc87b170
 msgid "Post-processing Tool Outputs"
 msgstr "后处理工具输出"
 
-#: ../../guide/hooks/index.rst:4 87411897427645ad98599505b229ad98
+#: ../../guide/hooks/index.rst:4 4468b4e62b034ad8adb1127020ebdf3d
 msgid "**Intelligent output processing for ToolUniverse**"
 msgstr "**ToolUniverse 的智能输出处理**"
 
-#: ../../guide/hooks/index.rst:6 dedb0ac96f044ff795b4be541a81b33c
+#: ../../guide/hooks/index.rst:6 57eb93ce59534708b79ee75a742bfae0
 msgid ""
 "The ToolUniverse Hooks system provides automatic post-processing of tool "
-"outputs. Use hooks to summarize long results, save large outputs to files, "
-"and customize behavior per tool or workflow."
+"outputs. Use hooks to summarize long results, save large outputs to "
+"files, and customize behavior per tool or workflow."
 msgstr ""
 "ToolUniverse Hooks 系统提供对工具输出的自动后处理功能。使用 Hooks "
 "可对长结果进行摘要，将大量输出保存到文件中，并根据具体工具或工作流程自定义行为。"
 
-#: ../../guide/hooks/index.rst:9 521f6ce051ec4d67bf3dda79b18ebe9a
+#: ../../guide/hooks/index.rst:9 71155a49b280443196faec3dac4d0925
 msgid "What are Hooks?"
 msgstr "什么是钩子（Hooks）？"
 
-#: ../../guide/hooks/index.rst:11 45caa94d3a30415a8e698e0d3adef968
+#: ../../guide/hooks/index.rst:11 d523287df8d94947b62614ac3acaea3c
 msgid ""
 "Hooks are post-processing functions that automatically transform tool "
 "outputs before they're returned to you. They're designed to:"
 msgstr "Hooks 是一种后处理函数，可在工具输出返回给您之前自动对其进行转换。它们的设计目的包括："
 
-#: ../../guide/hooks/index.rst:13 d849301d8e734a269f08064659c443b8
+#: ../../guide/hooks/index.rst:13 df77349433b74417876e2ed8c8ee0e4e
 msgid ""
 "**Summarize long outputs**: Use AI to condense lengthy results into key "
 "insights"
 msgstr "**总结长输出**：使用人工智能将冗长的结果浓缩为关键洞察"
 
-#: ../../guide/hooks/index.rst:14 8b0bcd34fb024461b90eeacfd2285110
+#: ../../guide/hooks/index.rst:14 6a01a176330f459d8e88eaf45e97e1c6
 msgid "**Save large datasets**: Store massive outputs as files with metadata"
 msgstr "**保存大型数据集**：将大量输出作为带有元数据的文件存储"
 
-#: ../../guide/hooks/index.rst:15 488111135c174defafb810971606ea41
+#: ../../guide/hooks/index.rst:15 f607169230fe42f88c2bd3f08e81c996
 msgid ""
-"**Customize processing**: Apply different logic based on tool type or output"
-" size"
+"**Customize processing**: Apply different logic based on tool type or "
+"output size"
 msgstr "**自定义处理**：根据工具类型或输出尺寸应用不同的逻辑"
 
-#: ../../guide/hooks/index.rst:16 fda097761ed24d5e8f5d228ac6103be5
+#: ../../guide/hooks/index.rst:16 b63c2296b6e84f6a98f69fe626caba69
 msgid "**Improve performance**: Reduce memory usage and processing time"
 msgstr "**提升性能**：减少内存使用和处理时间"
 
-#: ../../guide/hooks/index.rst:19 591a2fb09a6445409a08fc01aa88049e
+#: ../../guide/hooks/index.rst:19 65ae0a45490b48cf980edcccabf55390
 msgid "Quick Start"
 msgstr "快速入门"
 
-#: ../../guide/hooks/index.rst:21 47c829f3231f40f4a07e1cde1ab3a161
+#: ../../guide/hooks/index.rst:21 d5079d0dd6174e57ae819f50cc1e5efc
 msgid "**Enable hooks with one line:**"
 msgstr "**通过一行代码启用钩子：**"
 
-#: ../../guide/hooks/index.rst:37 a0b60e9ac4244ca8bb41ad7b79543c4b
+#: ../../guide/hooks/index.rst:37 45420f62a4b34bb4bb09fa4cc9429d91
 msgid "**Choose different hook types:**"
 msgstr "**选择不同的钩子类型：**"
 
-#: ../../guide/hooks/index.rst:48 da29f4fbc6b74dc9be75d02397ffb430
+#: ../../guide/hooks/index.rst:48 05e00ce2453d428ca4c9d9f341551fd1
 #, fuzzy
 msgid "Hook Types"
 msgstr "钩子主题"
 
-#: ../../guide/hooks/index.rst:50 25d0361e62bd49349176c58841616b7c
+#: ../../guide/hooks/index.rst:50 ed8bf03a44b9486c977387cfc1facd90
 msgid "**SummarizationHook** - AI-powered summarization"
 msgstr "**SummarizationHook** - 基于AI的摘要功能"
 
-#: ../../guide/hooks/index.rst:51 f478638b0e5d4a4cb078265482f262c4
+#: ../../guide/hooks/index.rst:51 e3d4e68ed3d3483091297a6212000e9b
 msgid ""
 "Automatically summarizes long tool outputs using advanced AI models. "
 "Preserves key findings while reducing length."
 msgstr "自动使用先进的人工智能模型对冗长的工具输出进行总结，在缩短长度的同时保留关键结果。"
 
-#: ../../guide/hooks/index.rst:53 fa411e0f78c44f84ae626a2109fd925a
+#: ../../guide/hooks/index.rst:53 93b7718149ba4d15bd4a19251c61e18a
 msgid "**FileSaveHook** - File-based processing"
 msgstr "**FileSaveHook** - 基于文件的处理"
 
-#: ../../guide/hooks/index.rst:54 b51e5af4949447aca8861f0d0f691995
+#: ../../guide/hooks/index.rst:54 19acec83daf9402bb0bc5428facff128
 msgid ""
-"Saves large outputs to disk with metadata. Returns file information instead "
-"of the original output."
+"Saves large outputs to disk with metadata. Returns file information "
+"instead of the original output."
 msgstr "将大型输出保存到磁盘并附加元数据。返回文件信息而非原始输出。"
 
-#: ../../guide/hooks/index.rst:56 efe8a77a90c9451398ad75eada47bf6d
+#: ../../guide/hooks/index.rst:56 1e3219e4a81e4684871f297c229a8782
 msgid "**Custom Hooks** - User-defined processing"
 msgstr "**自定义钩子** - 用户定义的处理"
 
-#: ../../guide/hooks/index.rst:57 f81b789ba7714581897a06fc0520d3c0
+#: ../../guide/hooks/index.rst:57 5247a15411a944bba3934f35f03b0672
 msgid "Create your own hooks for specialized processing needs."
 msgstr "创建您自己的钩子以满足特殊处理需求。"
 
-#: ../../guide/hooks/index.rst:60 0ce8627f97d74810b88efdaa51457e8a
+#: ../../guide/hooks/index.rst:60 84cfb61fd7c34de7a228c632240e4740
 msgid "When to Use Hooks"
 msgstr "何时使用钩子"
 
-#: ../../guide/hooks/index.rst:62 1d697c5285ac48ef8cd3086e290f7963
+#: ../../guide/hooks/index.rst:62 86d7d37abb244831b5b7a9672e3079ad
 msgid ""
 "**Use SummarizationHook when:** - Tool outputs are too long to read "
 "efficiently - You need quick insights from detailed data - Working with "
@@ -132,7 +132,15 @@ msgstr ""
 "- 处理文献搜索结果  \n"
 "- 处理大型科学数据集"
 
-#: ../../guide/hooks/index.rst:68 e9570f2197f042d99f98719181e64a2b
+#: ../../guide/hooks/index.rst:68 035cf3fcb37346d8bfd4f241cc257341
+msgid ""
+"**Note:** Some tools (like Tool_RAG, ToolFinderEmbedding) are "
+"automatically excluded from hook processing to prevent information "
+"missing. You can customize excluded tools using the `exclude_tools` "
+"configuration option."
+msgstr ""
+
+#: ../../guide/hooks/index.rst:70 ee05f4978ee54673bb134d96c87416cf
 msgid ""
 "**Use FileSaveHook when:** - Outputs exceed memory limits - You need to "
 "process outputs as files - Archiving results for later analysis - "
@@ -144,7 +152,7 @@ msgstr ""
 "- 归档结果以供后续分析  \n"
 "- 与外部工具集成"
 
-#: ../../guide/hooks/index.rst:74 872f9bc430a84ad592d73c161fb81e56
+#: ../../guide/hooks/index.rst:76 dcd7be58b6af4b41a2b40d5ceb7fc0ac
 msgid ""
 "**Use Custom Hooks when:** - You have specific processing requirements - "
 "Standard hooks don't meet your needs - You need specialized data "
@@ -155,97 +163,97 @@ msgstr ""
 "- 标准钩子无法满足您的需求  \n"
 "- 您需要进行专门的数据转换"
 
-#: ../../guide/hooks/index.rst:80 199b9e4f481e497cb3bd286e94d06a02
+#: ../../guide/hooks/index.rst:82 98c47ab76bc84b5b8b8f8b04fbbd810b
 msgid "Performance Impact"
 msgstr "性能影响"
 
-#: ../../guide/hooks/index.rst:82 ac73e9053bfd4d869fb3099e54b3bcf1
+#: ../../guide/hooks/index.rst:84 c165869c47ff407aa9c59a30252fbe39
 msgid "Hooks add processing overhead but provide significant benefits:"
 msgstr "钩子会增加处理开销，但能带来显著的优势："
 
-#: ../../guide/hooks/index.rst:84 0456a85850ba4614b87cfaf3cf3b3d21
+#: ../../guide/hooks/index.rst:86 0bf6409949a14c8d86c838f9afc62c41
 #, python-format
 msgid "**SummarizationHook**: 2-5x processing time, 50-80% output reduction"
 msgstr "**SummarizationHook**：处理时间增加2-5倍，输出减少50-80%"
 
-#: ../../guide/hooks/index.rst:85 6f1276bf406b4a7f9983b79c83077195
+#: ../../guide/hooks/index.rst:87 e928312d978d4aed937eed9538e123b1
 msgid "**FileSaveHook**: Minimal overhead, significant memory savings"
 msgstr "**FileSaveHook**：极低的开销，显著的内存节省"
 
-#: ../../guide/hooks/index.rst:86 ee6fdf2a3d3342e0bce79f4a35decf00
+#: ../../guide/hooks/index.rst:88 62a101f3d93d4af1b3ac793fc52a408a
 msgid "**Custom Hooks**: Depends on implementation"
 msgstr "**自定义钩子**：取决于实现"
 
-#: ../../guide/hooks/index.rst:88 0a3b875812e0464786bfe62ed8a51e33
+#: ../../guide/hooks/index.rst:90 b184b93f12ee4f528e5a0627c8d77fc2
 msgid ""
 "The trade-off is usually worth it for large outputs that benefit from "
 "processing."
 msgstr "权衡通常是值得的，尤其是对于从处理过程中获益的大规模输出。"
 
-#: ../../guide/hooks/index.rst:99 0a81389325594d27bec0aef78bf83588
+#: ../../guide/hooks/index.rst:102 2d2eaeda9129487b8e1f9256eed91025
 msgid "**Topic summaries**"
 msgstr "**主题摘要**"
 
-#: ../../guide/hooks/index.rst:101 3ad37a76e052416f98aa9ad3a814dc6e
+#: ../../guide/hooks/index.rst:104 1e219d68bd6544799e82595daa7be2c6
 msgid ""
-":doc:`summarization_hook`: Automatically condenses long tool outputs into "
-"concise, high-signal summaries. Useful for literature results, large "
+":doc:`summarization_hook`: Automatically condenses long tool outputs into"
+" concise, high-signal summaries. Useful for literature results, large "
 "datasets, and multi-step workflows."
-msgstr ""
-":doc:`summarization_hook`：自动将冗长的工具输出浓缩为简洁且高效的信息摘要。适用于文献结果、大型数据集及多步骤工作流程。"
+msgstr ":doc:`summarization_hook`：自动将冗长的工具输出浓缩为简洁且高效的信息摘要。适用于文献结果、大型数据集及多步骤工作流程。"
 
-#: ../../guide/hooks/index.rst:102 17855e33eb4744c4821f042b827aea2c
+#: ../../guide/hooks/index.rst:105 89b73b0281924cbc97b54e5cf7386b6d
 msgid ""
-":doc:`file_save_hook`: Saves large outputs to disk with metadata for later "
-"processing and sharing. Ideal for heavy payloads, audit trails, and external"
-" pipelines."
+":doc:`file_save_hook`: Saves large outputs to disk with metadata for "
+"later processing and sharing. Ideal for heavy payloads, audit trails, and"
+" external pipelines."
 msgstr ":doc:`file_save_hook`：将大型输出及其元数据保存到磁盘，以便后续处理和共享。适用于大容量数据、审计追踪和外部管道。"
 
-#: ../../guide/hooks/index.rst:103 3e0ccfe7aaa74259973618be6e991a77
+#: ../../guide/hooks/index.rst:106 ac517025b20c44bf85033b17ef9cb3b1
 msgid ""
-":doc:`hook_configuration`: Configure which hooks run, when they trigger, and"
-" how they behave. Supports thresholds, per-tool rules, and advanced options."
+":doc:`hook_configuration`: Configure which hooks run, when they trigger, "
+"and how they behave. Supports thresholds, per-tool rules, and advanced "
+"options."
 msgstr ":doc:`hook_configuration`：配置钩子的运行时机、触发条件及行为方式。支持阈值设置、按工具规则及高级选项。"
 
-#: ../../guide/hooks/index.rst:104 b99271fdaa2749ceae0559013cd0b6df
+#: ../../guide/hooks/index.rst:107 96fbf8e06d134723874380f841eb459b
 msgid ""
-":doc:`server_stdio_hooks`: How to use hooks in server (HTTP/SSE) and stdio "
-"modes. Covers CLI flags, Python API, defaults, and best practices."
+":doc:`server_stdio_hooks`: How to use hooks in server (HTTP/SSE) and "
+"stdio modes. Covers CLI flags, Python API, defaults, and best practices."
 msgstr ""
 ":doc:`server_stdio_hooks`：如何在服务器（HTTP/SSE）和标准输入输出模式中使用钩子。涵盖命令行参数、Python "
 "API、默认设置及最佳实践。"
 
-#: ../../guide/hooks/index.rst:107 438c15866e954c1f8adaad663a9c9ffc
+#: ../../guide/hooks/index.rst:110 47a1c6742a2646a586169dbee7558122
 msgid "Examples"
 msgstr "示例"
 
-#: ../../guide/hooks/index.rst:109 4ca378012cc149528f4992d52813879d
+#: ../../guide/hooks/index.rst:112 77c55c2dc823411896b896c0a2704740
 msgid "**Complete Hook Example:**"
 msgstr "**完整的 Hook 示例：**"
 
-#: ../../guide/hooks/index.rst:111 0998b37b39414b77b9cc0ffdd6b4d2f6
+#: ../../guide/hooks/index.rst:114 1ce482b2774a4907843548db97a24166
 msgid ""
-"A comprehensive example demonstrating all hook functionality is available "
-"at:"
+"A comprehensive example demonstrating all hook functionality is available"
+" at:"
 msgstr "一个全面展示所有钩子功能的示例可在以下位置查看："
 
-#: ../../guide/hooks/index.rst:118 95c68d317dab4ff0939c421a60c10f10
+#: ../../guide/hooks/index.rst:121 9a91b4948fd94dacb0242a5aef464257
 msgid "**Example Features:**"
 msgstr "**示例功能：**"
 
-#: ../../guide/hooks/index.rst:120 11a86767c04e4e7a83a311741141ec12
+#: ../../guide/hooks/index.rst:123 84c95fb647e442fdb3140f48d60ab880
 msgid "**Basic Usage**: Simple SummarizationHook and FileSaveHook examples"
 msgstr "**基本用法**：简单的SummarizationHook和FileSaveHook示例"
 
-#: ../../guide/hooks/index.rst:121 ee9395d0cd994db0bc3e1116d60d9fde
+#: ../../guide/hooks/index.rst:124 e9a772e24cfd4dba90c952abe82fa14a
 msgid "**Advanced Configuration**: Custom settings and tool-specific hooks"
 msgstr "**高级配置**：自定义设置和工具专用挂钩"
 
-#: ../../guide/hooks/index.rst:122 715f41242e8340cfa2f2112462cf7955
-msgid ""
-"**Performance Testing**: Comparison between different hook configurations"
+#: ../../guide/hooks/index.rst:125 6465d7c2fb9343869c662e702cf3fac1
+msgid "**Performance Testing**: Comparison between different hook configurations"
 msgstr "**性能测试**：不同钩子配置之间的比较"
 
-#: ../../guide/hooks/index.rst:123 eadfbc3358454d0c9035ba336c0a5041
+#: ../../guide/hooks/index.rst:126 9248113ed5874d0ca01794767ee8492c
 msgid "**Error Handling**: Graceful degradation and error recovery"
 msgstr "**错误处理**：优雅降级与错误恢复"
+

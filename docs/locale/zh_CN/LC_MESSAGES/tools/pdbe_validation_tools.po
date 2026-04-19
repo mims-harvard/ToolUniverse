@@ -1,0 +1,153 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_validation_tools.rst:10 82ea0b5e4b74455fa2ed6e9077a3f5b1
+msgid "Pdbe Validation Tools"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:12 7839ac74ba7d40b78f361d02fafb7294
+msgid ""
+"**Configuration File**: ``pdbe_validation_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:16 092aa38485554ebf804bf765e4ad59ff
+msgid ""
+"This page contains all tools defined in the "
+"``pdbe_validation_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:19 f579a3588b844a149b88e654575bb72a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:22 2bad88d7bf3b4ed18277250b488ee690
+msgid "**PDBeValidation_get_outlier_residues** (Type: PDBeValidationTool)"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:24 96688eb5a2ba4201aa1dc16b9c93faed
+msgid ""
+"Get residue-level validation outliers for a PDB structure from PDBe. "
+"Identifies specific residues..."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst 8493056bafb14057bd089b0086512029
+msgid "PDBeValidation_get_outlier_residues tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:28
+#: ../../tools/pdbe_validation_tools.rst:59 398980e599f64be18c10db3d7a9d38e3
+#: fb0a9c671c5245939a6e8fd9c2ffe6bd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:30 d948108283304f1ab16ce74e4c656bf6
+msgid "**Name**: ``PDBeValidation_get_outlier_residues``"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:31
+#: ../../tools/pdbe_validation_tools.rst:62 a6652b0deaad4576b9e8542e1df527b7
+#: b7840147068346c1b08ca24c8a7a958d
+msgid "**Type**: ``PDBeValidationTool``"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:32 2533ccf764934f578e802d39ee9bd6bf
+msgid ""
+"**Description**: Get residue-level validation outliers for a PDB "
+"structure from PDBe. Identifies specific residues with geometry problems "
+"(Ramachandran outliers, sidechain rotamer outliers, bond angle/length "
+"deviations). Returns problematic residues organized by molecule/chain. "
+"Essential for identifying unreliable regions before using structure data "
+"for molecular docking, mutation analysis, or protein engineering. "
+"Example: 4HHB has residue-level outliers in chains A-D with rotamer and "
+"Ramachandran deviations."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:34
+#: ../../tools/pdbe_validation_tools.rst:65 49e2c2663dd2414dba3762363307dfb6
+#: 9a0098f0992244ca98439b0ee26e21ee
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:36 f38213c760594784829164eff66b7b9d
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (4-character code). Case-"
+"insensitive. Examples: '4hhb', '1tup', '6lu7'."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:39
+#: ../../tools/pdbe_validation_tools.rst:70 01853cfaa1124ff59023dcdf611fb005
+#: 0ae4cd66ac0c4f67bfff7f87628e3216
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:53 7d77168a7b4a466a8ac0533c76d96ec9
+msgid "**PDBeValidation_get_quality_scores** (Type: PDBeValidationTool)"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:55 e17bf5e0c6ec4d85b0dcf8c9358dc33b
+msgid ""
+"Get global quality validation scores for a PDB structure from PDBe. "
+"Returns percentile rankings f..."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst 438eed74d74f4c1c93134b54065c189a
+msgid "PDBeValidation_get_quality_scores tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:61 c7695cfe7c7545f5881759a37c35d546
+msgid "**Name**: ``PDBeValidation_get_quality_scores``"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:63 745ab58ffecc4ed09c124c1049d1e4d7
+msgid ""
+"**Description**: Get global quality validation scores for a PDB structure"
+" from PDBe. Returns percentile rankings for Ramachandran outliers, "
+"rotamer outliers, and clashscore. Each metric has a raw value, an "
+"absolute percentile (compared to all structures), and a relative "
+"percentile (compared to structures at similar resolution). Higher "
+"percentile = better quality. Essential for assessing whether a structure "
+"is reliable enough for downstream analysis. Example: 4HHB (hemoglobin) "
+"has clashscore raw=141.11 (absolute: 0.0%, relative: 0.0% - very poor by "
+"modern standards); 1TUP (p53-DNA complex) has similar vintage quality "
+"issues."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:67 130e8def2beb49048a10e60196fab9e6
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (4-character code). Case-"
+"insensitive. Examples: '4hhb' (hemoglobin), '1tup' (p53-DNA), '6lu7' "
+"(SARS-CoV-2 main protease)."
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:84 8f67dec63604495993541b3dd40cd2f3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:86 a8e4d07489a94f699d14c7604b0603ab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_validation_tools.rst:87 517c72cd0a9448e591be3f8ae72d6d5a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

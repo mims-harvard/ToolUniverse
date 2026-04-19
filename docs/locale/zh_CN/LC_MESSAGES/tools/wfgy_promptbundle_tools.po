@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wfgy_promptbundle_tools.rst:10 af2e99234f6b46a899e77175238df96d
+msgid "Wfgy Promptbundle Tools"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:12 79a2cdc98e514796bbd4f0fb68e92de9
+msgid ""
+"**Configuration File**: ``wfgy_promptbundle_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:16 8142d2b5e2724581a13bed781d64eb26
+msgid ""
+"This page contains all tools defined in the "
+"``wfgy_promptbundle_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:19 d174c01258b0460da413a0f20913d145
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:22 c6ea1a2d7dc44aa29004201ba7c19e25
+msgid "**WFGY_triage_llm_rag_failure** (Type: WFGYPromptBundleTool)"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:24 bcf8408f227f48579e49aab2a5f2ac27
+msgid ""
+"Generate a structured prompt bundle (system + user message) to triage "
+"LLM/RAG failures using the ..."
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst a573f28242da45fc8b46e91605c15216
+msgid "WFGY_triage_llm_rag_failure tool specification"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:28 5a0daf6ca0dd4e54a11ba3f204195096
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:30 45c587cbd8fd4a41bc7922782567d565
+msgid "**Name**: ``WFGY_triage_llm_rag_failure``"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:31 6b5ebdc2f580497ead24e71b85665599
+msgid "**Type**: ``WFGYPromptBundleTool``"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:32 7a4b469b62c1442da8df4c7ee652551b
+msgid ""
+"**Description**: Generate a structured prompt bundle (system + user "
+"message) to triage LLM/RAG failures using the WFGY ProblemMap "
+"(No.1..No.16). Returns prompts, a minimal-fix checklist, and links to the"
+" public ProblemMap. No LLM or external API call is made."
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:34 92f603a8b0d845a4b0e374cb01e5316e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:36 413027aa5bfb4ae484e4dd02ee35bdf0
+msgid ""
+"``bug_description`` (string) (required) Free-text description of the "
+"LLM/RAG incident. Include the user prompt, retrieved context, model "
+"answer, and any relevant logs."
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:39 4802d48518c4462892d34bf0a43ecffb
+msgid ""
+"``audience`` (string) (optional) Target audience for the prompt bundle "
+"tone. 'beginner' uses plain language, 'engineer' is concise and "
+"diagnostic, 'infra' is ops-focused."
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:42 5795a0d7bbc244fa9ac169d63bf797b4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:56 6b704966cde1491bbf7423b094b5901e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:58 c00366fac38e407798c45c8d89f23e1a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wfgy_promptbundle_tools.rst:59 9b8a5e9528cb4fddb3d8d52887f768ff
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

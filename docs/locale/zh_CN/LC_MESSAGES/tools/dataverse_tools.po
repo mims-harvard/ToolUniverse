@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dataverse_tools.rst:10 0f0a09c276bf40899d631b1a7d8d1ef4
+msgid "Dataverse Tools"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:12 c4cf8f51f0e147d99ceb51bce1c8a23a
+msgid ""
+"**Configuration File**: ``dataverse_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:16 243cbcea01784a6dae1a4480ab40a8dd
+msgid ""
+"This page contains all tools defined in the ``dataverse_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:19 2d97b1304d64438a9d8edb37448ed6b3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:22 768e2ffa7ec04373855cbc3f6b88f320
+msgid "**Dataverse_get_dataset** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:24 0d015115c5c04cfd91cd6d268b6a290b
+msgid ""
+"Get detailed metadata for a specific Harvard Dataverse dataset by its "
+"persistent DOI identifier. ..."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst e8e6a02090c9449dbb0cf1371af4f79f
+msgid "Dataverse_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:28 ../../tools/dataverse_tools.rst:59
+#: 7130edf16b96462888961baf89d4b819 74d76e22861747b1a0104cf1925d020d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:30 8516dc317ee54723b1734ef4ab329089
+msgid "**Name**: ``Dataverse_get_dataset``"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:31 ../../tools/dataverse_tools.rst:62
+#: 344d6683161c4ae99d6867a101021b95 eb8ce645953848b593b166176396666d
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:32 5497092e55ac473e963295773a76b6fd
+msgid ""
+"**Description**: Get detailed metadata for a specific Harvard Dataverse "
+"dataset by its persistent DOI identifier. Returns comprehensive "
+"information including dataset ID, version details, citation metadata "
+"(title, authors, description, subjects, keywords), terms of use, and "
+"publication dates. The persistent ID is the DOI from search results "
+"(e.g., 'doi:10.7910/DVN/DUWBBU'). Use Dataverse\\_search\\_datasets first"
+" to find the global\\_id, then pass it here as persistentId."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:34 ../../tools/dataverse_tools.rst:65
+#: 633eb835b3ef41de91884c7aea1114cb 84bb243dfc1b478fa0d121c56470a9bb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:36 d55406980ca34c7a8346756c00525ca3
+msgid ""
+"``persistentId`` (string) (required) Persistent DOI identifier for the "
+"dataset (e.g., 'doi:10.7910/DVN/DUWBBU', 'doi:10.7910/DVN/A6RYXI'). Found"
+" in global\\_id field of search results."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:39 ../../tools/dataverse_tools.rst:79
+#: 0463004ef9ca478a81cb297bf2757572 ac82b910779c419cbe6d7c40da836a0d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:53 5b821f4ddfe74a36978b69fc0f5ecf2e
+msgid "**Dataverse_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:55 b600d5c89cd14291a07832e55fa8f4dc
+msgid ""
+"Search the Harvard Dataverse repository for research datasets, files, and"
+" dataverses. Harvard Dat..."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst 188f6fe3096d481cb1a73fc182455b5c
+msgid "Dataverse_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:61 7b5cddd48378465eaa0ff25f7306adb7
+msgid "**Name**: ``Dataverse_search_datasets``"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:63 be9e965cdfda476cb5d7e0316bf04743
+msgid ""
+"**Description**: Search the Harvard Dataverse repository for research "
+"datasets, files, and dataverses. Harvard Dataverse is one of the largest "
+"open-access research data repositories, hosting datasets from all "
+"academic disciplines including social sciences, natural sciences, "
+"medicine, and humanities. Returns dataset names, DOIs, descriptions, "
+"publication dates, publishers, citations, subjects, authors, and file "
+"counts. Supports filtering by type (dataset, file, dataverse) and "
+"pagination. Essential for finding research datasets with full metadata "
+"and citations."
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:67 a5d8527896654745820346e3dc1d4b5e
+msgid ""
+"``q`` (string) (required) Search query string for dataset title, "
+"description, or keyword (e.g., 'climate change', 'genomics', 'RNA-seq "
+"cancer')"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:70 6fefefb020c84b03a51cf02013225471
+msgid ""
+"``type`` (string, null) (optional) Filter by type: 'dataset', 'file', or "
+"'dataverse' (default: returns all types)"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:73 3e42285fdba740eb9390579ebc8680be
+msgid ""
+"``per_page`` (integer, null) (optional) Number of results per page "
+"(default 10)"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:76 d343e00a81294c3f8b68630e5f8c37ba
+msgid ""
+"``start`` (integer, null) (optional) Result offset for pagination "
+"(0-based, e.g., 0, 10, 20)"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:93 3f63565d2c9e4afb9715060eb451d574
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:95 72440b19e63d4c99836b9e6034446eb6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dataverse_tools.rst:96 a43db48e2fb843928b716a53ce3db7fc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

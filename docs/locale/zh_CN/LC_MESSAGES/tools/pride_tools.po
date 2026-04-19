@@ -1,0 +1,189 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pride_tools.rst:10 7fdf85db8e7f4ace8b153aaff31894c5
+msgid "Pride Tools"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:12 b47cedf816dc44c39c77219719f13519
+msgid ""
+"**Configuration File**: ``pride_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:16 750d51cd6905482abbc0d8ca986156f1
+msgid ""
+"This page contains all tools defined in the ``pride_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:19 cdd8962e8897405cb8f6dc6108727506
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:22 d17bdf1fb25b46b9a53f594b487345bb
+msgid "**PRIDE_get_project** (Type: PRIDERESTTool)"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:24 e659edea77574290882a978a4d0ad1c0
+msgid ""
+"Get comprehensive details for a specific PRIDE Archive project by its "
+"accession ID. Returns compl..."
+msgstr ""
+
+#: ../../tools/pride_tools.rst d219332587874d77a0c47d9a2b89a67a
+msgid "PRIDE_get_project tool specification"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:28 ../../tools/pride_tools.rst:59
+#: ../../tools/pride_tools.rst:90 2be9e7e684924829bac6808b42bdf9e9
+#: 7c91de5e96554f9c963aab50965dfa35 92cb9ff0100d4e68b3fb2705a771744d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:30 b5ae2d66aefa4a89963dc61476e2595e
+msgid "**Name**: ``PRIDE_get_project``"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:31 ../../tools/pride_tools.rst:62
+#: ../../tools/pride_tools.rst:93 29f6a9b25ff944abab9b5402ce82d976
+#: 3f55e32732074314ad9cf35829318e6c 903b09f1765540379090dfbefd2d2e96
+msgid "**Type**: ``PRIDERESTTool``"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:32 1621dc9802974ec386284c4c77950982
+msgid ""
+"**Description**: Get comprehensive details for a specific PRIDE Archive "
+"project by its accession ID. Returns complete project metadata including "
+"experimental design, sample information, instruments used, data "
+"processing methods, publication links, protein identifications, "
+"quantification data, and file download URLs. Use accession IDs from "
+"PRIDE\\_search\\_proteomics (format: PXD######)."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:34 ../../tools/pride_tools.rst:65
+#: ../../tools/pride_tools.rst:96 0691d23542724f5ab1cd306216a0d8ed
+#: 1e5a63e000f844c0820525de74fbc404 e93c5a864a15435ebacaccfbded0ae5e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:36 e89ce3d8cd7248d3a95ab4a03573233f
+msgid ""
+"``accession`` (string) (required) PRIDE project accession identifier in "
+"format PXD###### (e.g., 'PXD000001', 'PXD012345'). Find accessions using "
+"PRIDE\\_search\\_proteomics."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:39 ../../tools/pride_tools.rst:70
+#: ../../tools/pride_tools.rst:104 010afcb1a7dc4e909d5ae2e84616009f
+#: d2556e46ca874a27a87b75c1d9661ac0 ff4fb2041e284a898cda4c945f231cdb
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:53 775e7133b016487f819c8d772a00c61c
+msgid "**PRIDE_get_project_files** (Type: PRIDERESTTool)"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:55 e094b423f7e645b68c4d038296046e40
+msgid ""
+"Get the complete list of data files for a PRIDE Archive project including"
+" raw mass spectrometry f..."
+msgstr ""
+
+#: ../../tools/pride_tools.rst 6ad40f8b48084df584e61a0d58fa0cae
+msgid "PRIDE_get_project_files tool specification"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:61 7d7815238a50486cb4e184bc092c7912
+msgid "**Name**: ``PRIDE_get_project_files``"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:63 847227f40c0942c2a963ecd3c6eeffbb
+msgid ""
+"**Description**: Get the complete list of data files for a PRIDE Archive "
+"project including raw mass spectrometry files, search results, FASTA "
+"databases, and supplementary data. Returns file metadata with names, "
+"types, sizes, FTP/Aspera download URLs, and checksums. Essential for "
+"downloading proteomics datasets for reanalysis or integration. Use "
+"accession from PRIDE\\_search\\_proteomics."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:67 a34b95e6e94646ec96482f5c6ea38d1d
+msgid ""
+"``accession`` (string) (required) PRIDE project accession identifier "
+"(format: PXD######, e.g., 'PXD000001'). Find accessions using "
+"PRIDE\\_search\\_proteomics."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:84 110a7b3ef0264b95800fd45322c3b43e
+msgid "**PRIDE_search_proteomics** (Type: PRIDERESTTool)"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:86 3ccdd5ee0f73457d9a885d702acbdccf
+msgid ""
+"Search the PRIDE Archive for proteomics experiments and mass spectrometry"
+" datasets. Returns proje..."
+msgstr ""
+
+#: ../../tools/pride_tools.rst 12c5ce5ccb5c414d9dfd3f7ecd3bf20f
+msgid "PRIDE_search_proteomics tool specification"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:92 b9d130936a754c348ae7dd8bf5098ca8
+msgid "**Name**: ``PRIDE_search_proteomics``"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:94 662e9ab50f3c40a7ba474594416a2d83
+msgid ""
+"**Description**: Search the PRIDE Archive for proteomics experiments and "
+"mass spectrometry datasets. Returns project metadata including accession "
+"IDs (PXD...), species, tissue types, instruments, publication dates, and "
+"file counts. Use this to discover protein expression data, PTM studies, "
+"and downloadable raw files for reanalysis. Example queries: 'breast "
+"cancer', 'phosphorylation', 'COVID-19 proteome'."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:98 d4e985174aab4cbda8b446b962391bce
+msgid ""
+"``query`` (string) (required) Search keywords for proteomics experiments."
+" Examples: 'cancer', 'phosphorylation', 'liver proteome', 'COVID-19'. "
+"Searches across project titles, descriptions, species, and tissues."
+msgstr ""
+
+#: ../../tools/pride_tools.rst:101 7223b1a782224368801951a6ffa633b4
+msgid ""
+"``page_size`` (integer) (optional) Number of projects to return per page "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:118 f3720a598be84622ae318f39a395874a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:120 fdd7c1ad0c8a4f64822f6c5e8ecce284
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pride_tools.rst:121 86bfb69a9a93445f8bb5a37b1929acde
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

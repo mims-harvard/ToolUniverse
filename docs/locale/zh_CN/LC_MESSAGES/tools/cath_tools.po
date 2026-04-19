@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cath_tools.rst:10 e43017f1479d4e3f9c516887fb75c7bf
+msgid "Cath Tools"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:12 c0c557065a634fe98657be97eb3152ff
+msgid ""
+"**Configuration File**: ``cath_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:16 7b6ac3ce1aa34f36a45f879136352523
+msgid ""
+"This page contains all tools defined in the ``cath_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:19 c237a27172df4509a1bf18653ec33a07
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:22 793ce602ad7d402594c8f47113e628b8
+msgid "**CATH_get_domain_summary** (Type: CATHTool)"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:24 437cc69742b742b68978846ca326a06f
+msgid ""
+"Get CATH structural classification for a specific protein domain from "
+"PDB. Domains are identified..."
+msgstr ""
+
+#: ../../tools/cath_tools.rst 72af8d82aef64b6ea94199ccc2e08d80
+msgid "CATH_get_domain_summary tool specification"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:28 ../../tools/cath_tools.rst:59
+#: ../../tools/cath_tools.rst:94 ../../tools/cath_tools.rst:125
+#: 286cde928bca484da836d78422331b3d 6936396a11b844b5851d2eb342ad87d4
+#: b2afcc986cd04709b900dda8ade291bc bee46449d12a4c78a742e06364ee502a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:30 4c506fe3cc584ff8a3edefd5d1ad1e8e
+msgid "**Name**: ``CATH_get_domain_summary``"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:31 ../../tools/cath_tools.rst:62
+#: ../../tools/cath_tools.rst:97 ../../tools/cath_tools.rst:128
+#: 129eb30be64c4291bb256f232a03917e 810f9393cb2043f19f98092411a66bb1
+#: c2986c7902d84ae8b3bb38345ced4623 fa75cdd38fa24eb587105b38696d9d91
+msgid "**Type**: ``CATHTool``"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:32 58f3eec99ec34a3383d037ded3a473a1
+msgid ""
+"**Description**: Get CATH structural classification for a specific "
+"protein domain from PDB. Domains are identified by PDB code + chain + "
+"domain number (e.g., 1cukA01). Returns the full CATH hierarchy (Class, "
+"Architecture, Topology, Homologous superfamily) and residue count. "
+"Example: '1cukA01' returns CATH ID 2.40.50.140.116.1.1.1.1 (Mainly Beta "
+"class, Nucleic acid-binding proteins superfamily) with 212 residues."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:34 ../../tools/cath_tools.rst:65
+#: ../../tools/cath_tools.rst:100 ../../tools/cath_tools.rst:131
+#: 3b3e5f28cfbe481d8fec960a5d8003d1 c1ed85ee66c04b2b9fe817ce1756628c
+#: cf408e667d26456fb1fb2178b20d4a3a d1927cc50b654b819375353499fb9ec1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:36 9cb0655f19c04be88280571fa7edc6ec
+msgid ""
+"``domain_id`` (string) (required) CATH domain ID: PDB code (4 chars) + "
+"chain (1 char) + domain number (2 digits). Examples: '1cukA01' (ubiquitin"
+" conjugating enzyme), '1x54A01' (DNA-binding domain), '4hhbA00' "
+"(hemoglobin alpha). Use lowercase PDB code."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:39 ../../tools/cath_tools.rst:73
+#: ../../tools/cath_tools.rst:105 ../../tools/cath_tools.rst:139
+#: 118975a090b143b5b4c257691134eaa6 7b0f18c4cd9e454cb28a6819f23cdccd
+#: 7e8385b023594fe08e4d535498bb9f84 a570f61b56844eb09085c881eb2a03ba
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:53 160dac42e2c14fea85c85614a7961c0a
+msgid "**CATH_get_funfam** (Type: CATHTool)"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:55 1356982c77504e6099518a3e8398be00
+msgid ""
+"Get details for a specific functional family (FunFam) within a CATH "
+"superfamily. Returns FunFam n..."
+msgstr ""
+
+#: ../../tools/cath_tools.rst fadbff8e244b4591a1c4899b1a258858
+msgid "CATH_get_funfam tool specification"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:61 bd0d94e4cb6a4b3cafbdd5bd311ede3c
+msgid "**Name**: ``CATH_get_funfam``"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:63 c4c58b4a66cd4c4a80d82a39c5de45d0
+msgid ""
+"**Description**: Get details for a specific functional family (FunFam) "
+"within a CATH superfamily. Returns FunFam name, description, member "
+"count, seed alignment size, DOPS quality score, and representative domain"
+" ID. FunFams represent groups of domains predicted to share the same "
+"biological function. Use CATH\\_list\\_funfams to browse FunFams within a"
+" superfamily, or CATH\\_get\\_domain\\_summary to find which FunFam a "
+"specific domain belongs to."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:67 aaace2632ac0422699a3589f07dc1d4a
+msgid ""
+"``superfamily_id`` (string) (required) CATH superfamily ID (e.g., "
+"'1.10.510.10')."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:70 64fa4f105e7d4238a585f155ab36e4a2
+msgid ""
+"``funfam_number`` (string) (required) FunFam number within the "
+"superfamily (e.g., '1', '83'). Get from CATH\\_list\\_funfams or "
+"CATH\\_get\\_domain\\_summary."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:88 64e4f26e3ea442c09c9cae856c980843
+msgid "**CATH_get_superfamily** (Type: CATHTool)"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:90 c40384d3917845bb90d99ca749fe5f00
+msgid ""
+"Get CATH protein structure superfamily information by CATH ID. CATH "
+"classifies protein domain str..."
+msgstr ""
+
+#: ../../tools/cath_tools.rst 626af2e819dc48389ec9e4bbdbfcc47e
+msgid "CATH_get_superfamily tool specification"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:96 a79cb7b787424aa182ba4a67d75ef831
+msgid "**Name**: ``CATH_get_superfamily``"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:98 dff2796676d4492995ee6fee17d33bc4
+msgid ""
+"**Description**: Get CATH protein structure superfamily information by "
+"CATH ID. CATH classifies protein domain structures into a four-level "
+"hierarchy: Class, Architecture, Topology, Homologous superfamily. "
+"Superfamilies group evolutionarily related domains. Returns "
+"classification name, number of families, and domain counts. Example: "
+"2.40.50.140 returns 'Nucleic acid-binding proteins' with 227 S35 families"
+" and 2,879 total domains."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:102 dd4ef65a65df4f03a8ac76cc8b791f61
+msgid ""
+"``superfamily_id`` (string) (required) CATH superfamily ID in C.A.T.H "
+"format. Examples: '2.40.50.140' (Nucleic acid-binding proteins), "
+"'3.40.50.300' (P-loop NTPases), '1.10.510.10' (Globin-like), '2.60.40.10'"
+" (Immunoglobulin-like)."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:119 71791273b753455185d219564f226011
+msgid "**CATH_list_funfams** (Type: CATHTool)"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:121 8ed8ff152ef04b8ea9779c25fd1f9d6c
+msgid ""
+"List functional families (FunFams) within a CATH superfamily. FunFams "
+"group protein domains that ..."
+msgstr ""
+
+#: ../../tools/cath_tools.rst 376e4b19cba54868a270d42f4d3f516e
+msgid "CATH_list_funfams tool specification"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:127 8153a2935d0f4ec9866ca621aabc0233
+msgid "**Name**: ``CATH_list_funfams``"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:129 b74dee1f484c4d8ea472841b1064bb75
+msgid ""
+"**Description**: List functional families (FunFams) within a CATH "
+"superfamily. FunFams group protein domains that share the same function, "
+"identified by conserved specificity-determining residues. Returns FunFam "
+"numbers, names, member counts, and representative domain IDs. Example: "
+"superfamily 1.10.510.10 (Globin-like) has 4,524 FunFams including CaM "
+"kinase (2,698 members) and Myosin light chain kinase (1,234 members). Use"
+" CATH\\_get\\_superfamily to find superfamily IDs first."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:133 2ffce75a51094c7a87998bb0d79ea829
+msgid ""
+"``superfamily_id`` (string) (required) CATH superfamily ID in C.A.T.H "
+"format. Examples: '1.10.510.10' (Globin-like), '2.40.50.140' (Nucleic "
+"acid-binding), '3.40.50.300' (P-loop NTPases), '2.60.40.10' "
+"(Immunoglobulin-like)."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:136 ac874b9cdc6846cd9bc83b17056b7650
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of FunFams to return "
+"(default: 25)."
+msgstr ""
+
+#: ../../tools/cath_tools.rst:153 319e5e0f26c1474a87b226f64036c128
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:155 38f11eef71884392813c1bb679ff4577
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cath_tools.rst:156 7227d9ce2e1243928957323fcdeae9c2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

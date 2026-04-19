@@ -1,0 +1,279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdc_tools.rst:10 4aa76d1d8f5a4c5c9dfc860404f36577
+msgid "Pdc Tools"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:12 d2f3fba9c74a48c4b7fe4fe53c2b391f
+msgid ""
+"**Configuration File**: ``pdc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:16 31c752ace59542ad95db3c71f257803d
+msgid ""
+"This page contains all tools defined in the ``pdc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:19 7aef97fe25f945ba83ac3147967c6042
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:22 b9e25f33447449e28e6580dda19ecf75
+msgid "**PDC_get_clinical_data** (Type: PDCTool)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:24 f0a9f826dea946c9addaaed6915003ad
+msgid ""
+"Get clinical metadata for patient cases in a cancer proteomics study from"
+" the NCI Proteomics Data..."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst 9c55c72c9d404afa90a9135b101d20fe
+msgid "PDC_get_clinical_data tool specification"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:28 ../../tools/pdc_tools.rst:69
+#: ../../tools/pdc_tools.rst:104 ../../tools/pdc_tools.rst:139
+#: ../../tools/pdc_tools.rst:170 3e181a60bc1f46c087dfc2e171224f86
+#: 4217d2b50c9f4e8ab8a6d13c87ebca79 590af98abb7848bba964fc5ae05f33c0
+#: 7a12451acb5744e6a5a26315def1e912 9c3419a865854e4998680a2496749d25
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:30 6ac9c390b0a249d381762fbf6248ab2a
+msgid "**Name**: ``PDC_get_clinical_data``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:31 ../../tools/pdc_tools.rst:72
+#: ../../tools/pdc_tools.rst:107 ../../tools/pdc_tools.rst:142
+#: ../../tools/pdc_tools.rst:173 16d85b76bad14181ac2dab91fa4b43ad
+#: 290dc1242c404615ae81d7bf334ef923 6af57a38b88e4c1bbf24a248751a755b
+#: c08919c563614ccb8062445677b61212 e7dd63125e514216b6b2b872510da1a0
+msgid "**Type**: ``PDCTool``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:32 cf992af7982240c99e8bed8136bfcdf9
+msgid ""
+"**Description**: Get clinical metadata for patient cases in a cancer "
+"proteomics study from the NCI Proteomics Data Commons (PDC). Given a PDC "
+"study accession number, returns paginated clinical data including case "
+"IDs, disease type, primary site, and demographic information (gender, "
+"ethnicity, race) for each patient. Supports pagination with offset and "
+"limit parameters. Use this to understand the patient population in a "
+"proteomics study for downstream analysis or to link proteomics data with "
+"clinical characteristics."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:34 ../../tools/pdc_tools.rst:75
+#: ../../tools/pdc_tools.rst:110 ../../tools/pdc_tools.rst:145
+#: ../../tools/pdc_tools.rst:176 61ba931126084fadbec0ade1258977f7
+#: 77345b4d071c46c9bd9b0443d3e9f072 9fb803744c6346b8b3ca2b6a5d4a2c11
+#: bef6074432e8436aba04dc1b8b7717d7 dbe5ff8aa9ed41e78d76bb1ce341024b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:36 ../../tools/pdc_tools.rst:77
+#: ../../tools/pdc_tools.rst:112 ../../tools/pdc_tools.rst:147
+#: ../../tools/pdc_tools.rst:178 28f3b1b4f5db46bfb45492f5473ff632
+#: 5a5a0f79e14b4c72850d187ce279310b 703e00aebdc149349415b628ad36740e
+#: a35f1e01fbec47b5a0577fbea941aba9 de13d2f8b0fa433f9f1198783899c42c
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:39 fe00af1fbbc9461ab8b9fa042f8d217f
+msgid ""
+"``pdc_study_id`` (string) (required) PDC study accession number (e.g., "
+"'PDC000127')"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:42 98ee8d7bd7604d86bc6e55facce9e06d
+msgid "``offset`` (integer) (optional) Pagination offset (default: 0)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:45 26fc3c3485b04509a64b1383f4a6ebea
+msgid ""
+"``limit`` (integer) (optional) Number of records to return (default: 20, "
+"max varies by study)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:48 ../../tools/pdc_tools.rst:83
+#: ../../tools/pdc_tools.rst:118 ../../tools/pdc_tools.rst:150
+#: ../../tools/pdc_tools.rst:184 2281a028154042cc9ab068aa60f563d1
+#: 6343f82f89684e19a1a1f21c3e23e72f bcb96420dffb4176b07619828c9fd974
+#: d52894d345c04c7e9f4d061f490b2a9f f35f3cb7e13847fe84420db6a7dbb8ce
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:63 9d1b58ac28cb487298e099b0454976fa
+msgid "**PDC_get_gene_protein** (Type: PDCTool)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:65 8ec0f1b05b7e40a1a427dbf999a3c6cf
+msgid ""
+"Get protein information and proteomics study coverage for a gene from the"
+" NCI Proteomics Data Com..."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst e9ee9b4df87d46fb9df215510e3874e9
+msgid "PDC_get_gene_protein tool specification"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:71 0357a94409a8448c888b1979ce5c2cfd
+msgid "**Name**: ``PDC_get_gene_protein``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:73 8bbd7789db70441caa1e6b197560e2e5
+msgid ""
+"**Description**: Get protein information and proteomics study coverage "
+"for a gene from the NCI Proteomics Data Commons (PDC). Given a gene "
+"symbol (e.g., TP53, EGFR, MYC), returns the gene description, NCBI gene "
+"ID, HGNC authority, associated protein accessions (UniProt, RefSeq, "
+"Ensembl), and spectral count data across all PDC studies where the "
+"protein was detected. Spectral counts indicate protein abundance evidence"
+" in each study. Useful for understanding which cancer proteomics datasets"
+" have measured a specific protein."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:80 06ceeb55be3e4f4b9f9e12e6ccb560c2
+msgid ""
+"``gene_name`` (string) (required) Gene symbol to look up (e.g., 'TP53', "
+"'EGFR', 'BRCA1', 'MYC')"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:98 badde3310cd84495b851771c3f2db242
+msgid "**PDC_get_study_summary** (Type: PDCTool)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:100 944c5ae27f0c4bc4b7576b6cb93a54a0
+msgid ""
+"Get detailed metadata for a specific cancer proteomics study from the NCI"
+" Proteomics Data Commons..."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst 42ef8228c8234c1fb307eab5a7d756ac
+msgid "PDC_get_study_summary tool specification"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:106 8549d26d59394b2881c83eaef23fa719
+msgid "**Name**: ``PDC_get_study_summary``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:108 6b3b6204dc7c4605b4b33ef4bf0ba50b
+msgid ""
+"**Description**: Get detailed metadata for a specific cancer proteomics "
+"study from the NCI Proteomics Data Commons (PDC). Given a PDC study "
+"accession number (e.g., PDC000127), returns comprehensive study "
+"information including disease type, primary site, analytical fraction "
+"(Proteome, Phosphoproteome, Acetylome, Glycoproteome), experiment type "
+"(TMT10, TMT11, iTRAQ, LFQ), sample counts, program/project names, embargo"
+" status, and file counts by data category. Useful for understanding study"
+" scope, data availability, and experimental design before downloading "
+"data."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:115 35ad43e40e334024896360ab4311fd22
+msgid ""
+"``pdc_study_id`` (string) (required) PDC study accession number (e.g., "
+"'PDC000127', 'PDC000120', 'PDC000173')"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:133 e6b0b8991cf54e12ad386698fa93ff70
+msgid "**PDC_list_programs** (Type: PDCTool)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:135 743f5ef0e7e74015b5b73fc7bdd2988e
+msgid ""
+"List all programs and projects in the NCI Proteomics Data Commons (PDC). "
+"Returns the complete hie..."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst a99d090ff14c4a83ab2b024ad74d6c81
+msgid "PDC_list_programs tool specification"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:141 fc9d87d3fde84bd982ab3de46f222641
+msgid "**Name**: ``PDC_list_programs``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:143 5a8e66e59fb5407c9665a9665937bb91
+msgid ""
+"**Description**: List all programs and projects in the NCI Proteomics "
+"Data Commons (PDC). Returns the complete hierarchy of programs (CPTAC, "
+"ICPC, APOLLO, CBTN, Georgetown, Broad Institute, etc.) and their "
+"constituent projects. Each program represents a major cancer proteomics "
+"initiative, and projects within a program correspond to specific cancer "
+"studies or sub-studies. Use program/project IDs to explore associated "
+"studies."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:164 69589a9190db4f92bd3ba4f777735993
+msgid "**PDC_search_studies** (Type: PDCTool)"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:166 9b7098ebce8c42d6a1cc8d3744897b9f
+msgid ""
+"Search the NCI Proteomics Data Commons (PDC) for cancer proteomics "
+"studies by keyword. PDC houses..."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst 94d3665c5b244416b6037e42a191dbdc
+msgid "PDC_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:172 81ee609d983a4b01a971e1eae779fa58
+msgid "**Name**: ``PDC_search_studies``"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:174 88f402f16b87485d8a3225e439b30b8a
+msgid ""
+"**Description**: Search the NCI Proteomics Data Commons (PDC) for cancer "
+"proteomics studies by keyword. PDC houses annotated data from CPTAC, "
+"ICPC, APOLLO, and other cancer proteomics programs covering 19+ cancer "
+"types with 160+ datasets. Search by disease name (e.g., 'Breast', 'Lung',"
+" 'CCRCC'), program name (e.g., 'CPTAC', 'HTAN'), or analytical fraction "
+"(e.g., 'Proteome', 'Phosphoproteome'). Returns matching study IDs, names,"
+" and PDC accession numbers. Use PDC study IDs with "
+"PDC\\_get\\_study\\_summary for detailed metadata."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:181 628447146a9d4e40a4d9786b1f7a4bff
+msgid ""
+"``query`` (string) (required) Search keyword for studies. Can be disease "
+"name (Breast, Lung, Renal), program name (CPTAC, HTAN), or fraction type "
+"(Proteome, Phosphoproteome, Acetylome)."
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:199 3a327ba9145f4ea6b53cd49e5e7b3c8b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:201 045eeddcad61468fb328961532784230
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdc_tools.rst:202 0de54d7790884bc9b187526f0e085619
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

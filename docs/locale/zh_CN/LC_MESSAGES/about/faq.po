@@ -1,0 +1,129 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../about/faq.rst:2 05d225b58fed4b97b83c4bc8b165fa3d
+msgid "Quick FAQ"
+msgstr ""
+
+#: ../../about/faq.rst:4 652a1831466c48d4b6e2005aa35d6868
+msgid "Quick answers to the most common questions about ToolUniverse."
+msgstr ""
+
+#: ../../about/faq.rst:6 93b4cf1f61a5434c9dea031ec7a52312
+msgid "Full FAQ: :doc:`../help/faq`"
+msgstr ""
+
+#: ../../about/faq.rst:9 f5bab317039a4b0fb21a181cf0237feb
+msgid "What is ToolUniverse?"
+msgstr ""
+
+#: ../../about/faq.rst:11 90396943d8ce458f9571f59488d50ea8
+msgid ""
+"ToolUniverse is a collection of 1000+ scientific tools for AI agents, "
+"providing unified access to drug safety data, genomics, literature, "
+"clinical trials, and more."
+msgstr ""
+
+#: ../../about/faq.rst:25 adfb0aa7a77345c594f39868165a5280
+msgid "How do I install it?"
+msgstr ""
+
+#: ../../about/faq.rst:32 9692910930c5484f801606a66628374a
+msgid "Do I need API keys?"
+msgstr ""
+
+#: ../../about/faq.rst:34 3d0459d307e540ebbf42cc428f7bc7a4
+msgid ""
+"Most tools work without API keys! However, some tools require "
+"authentication or provide higher rate limits with API keys."
+msgstr ""
+
+#: ../../about/faq.rst:36 c01b8faba0c742daa252955fe93864c7
+msgid "**Quick answer:**"
+msgstr ""
+
+#: ../../about/faq.rst:38 5dd2c91a165146068b2115cfb15872ab
+msgid "**No API keys needed** for most tools (PubMed, UniProt, ChEMBL, etc.)"
+msgstr ""
+
+#: ../../about/faq.rst:39 991bf5d8f78a44a390ad23969ab7d91f
+msgid ""
+"**Recommended for better performance**: NCBI, OpenTargets, FDA (3-10x "
+"faster)"
+msgstr ""
+
+#: ../../about/faq.rst:40 eba037e9e97f47cab2378bceda0c1859
+msgid ""
+"**Required for specific features**: NVIDIA NIM (structure prediction), "
+"USPTO (patents), DisGeNET, OMIM"
+msgstr ""
+
+#: ../../about/faq.rst:42 6a9d8f75538348ef8404e3b2833bc664
+msgid "**For complete details**, see :doc:`../guide/api_keys` which covers:"
+msgstr ""
+
+#: ../../about/faq.rst:44 05cf81e8de5242ec88449891d25164c5
+msgid "Which APIs are required vs optional"
+msgstr ""
+
+#: ../../about/faq.rst:45 6506a3033c1f42eab759d4eb97211e98
+msgid "How to obtain each API key"
+msgstr ""
+
+#: ../../about/faq.rst:46 a5d790a6053a4583bc50ad723ed44007
+msgid "Rate limits with and without keys"
+msgstr ""
+
+#: ../../about/faq.rst:47 3790da851a084401a121f395781ff813
+msgid "Configuration methods"
+msgstr ""
+
+#: ../../about/faq.rst:50 f947df011af64493879b5fb92c9fad93
+msgid "How do I use it with Claude?"
+msgstr ""
+
+#: ../../about/faq.rst:52 c3391297d2cb440882f80008a69c857c
+msgid "Start the MCP server: ``tooluniverse-smcp``"
+msgstr ""
+
+#: ../../about/faq.rst:53 d2f264865cb54808a065d4cbd5a94cd2
+msgid "Configure Claude Desktop with the MCP server"
+msgstr ""
+
+#: ../../about/faq.rst:54 6cf43438652946c2b515beab2835798e
+msgid "Ask Claude: \"What tools are available from ToolUniverse?\""
+msgstr ""
+
+#: ../../about/faq.rst:57 5b12bf74d2cd4ddbba19b98a54376487
+msgid "Need more help?"
+msgstr ""
+
+#: ../../about/faq.rst:59 ecab76e4e2ed42a4ba4bab7835a03dc6
+msgid "**Troubleshooting**: :doc:`../help/troubleshooting`"
+msgstr ""
+
+#: ../../about/faq.rst:60 df0651b169664e1a9e178a501fadb149
+msgid ""
+"**GitHub Issues**: `Report problems <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
+msgstr ""
+

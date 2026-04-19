@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniprot_ref_tools.rst:10 4f72b421bbe04ea18ac19eedeb8c7286
+msgid "Uniprot Ref Tools"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:12 34e10c74686a4c3dbc312e58d7def689
+msgid ""
+"**Configuration File**: ``uniprot_ref_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:16 02be34cd4b0b425db44b127679b3c56e
+msgid ""
+"This page contains all tools defined in the ``uniprot_ref_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:19 4126b63b95d3415eb23d203d3e6fee70
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:22 702309901e8745fb906be0899ebac925
+msgid "**UniProtRef_get_disease** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:24 6c5db7ca8c8646cd94fa64d94325903c
+msgid ""
+"Get detailed information about a specific disease from the UniProt "
+"controlled disease vocabulary ..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst c6590cb4851748c0b4ae977332bdc382
+msgid "UniProtRef_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:28 ../../tools/uniprot_ref_tools.rst:59
+#: ../../tools/uniprot_ref_tools.rst:90 ../../tools/uniprot_ref_tools.rst:121
+#: ../../tools/uniprot_ref_tools.rst:155 ../../tools/uniprot_ref_tools.rst:189
+#: 1660ca444bb548c78f212abcdcf5576a 1970138f3b2148319ebfcf4dfe2db510
+#: 4fbe9f37e5804c47b4229c16f14c6590 614abe49c931486bac28d16186f5d624
+#: 989b61cd84a144e4b15162a02b311326 a80e05813a724ea483751b6126e88e51
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:30 a5e6f8b58c304a41adaa96050d98d8fd
+msgid "**Name**: ``UniProtRef_get_disease``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:31 ../../tools/uniprot_ref_tools.rst:62
+#: ../../tools/uniprot_ref_tools.rst:93 ../../tools/uniprot_ref_tools.rst:124
+#: ../../tools/uniprot_ref_tools.rst:158 ../../tools/uniprot_ref_tools.rst:192
+#: 0624ec29222c40ba9e2fcb958bd71bae 07849dfee6624390a90ab125cfdb6950
+#: 230eeda6ef424f96b1a262078cb35322 9960210b19424e658387ad9d7ff9b04f
+#: d1f73dfa423d437895125561b788d0c0 dc14c3bd73444befa3f14374d46dd70e
+msgid "**Type**: ``UniProtRefTool``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:32 91fe958671a34113b261f9e127ceb83e
+msgid ""
+"**Description**: Get detailed information about a specific disease from "
+"the UniProt controlled disease vocabulary by its ID. Returns the full "
+"disease definition, alternative names, cross-references to "
+"OMIM/MeSH/MedGen/SNOMED, and protein association counts. Example: "
+"DI-01559 returns 'Breast-ovarian cancer, familial, 1' with links to "
+"OMIM:604370 and MeSH:D001943."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:34 ../../tools/uniprot_ref_tools.rst:65
+#: ../../tools/uniprot_ref_tools.rst:96 ../../tools/uniprot_ref_tools.rst:127
+#: ../../tools/uniprot_ref_tools.rst:161 ../../tools/uniprot_ref_tools.rst:195
+#: 54fd702865fc4f04bcecfa58ffebd49d 78a07a18d3b5431c8e2a825f40921dfd
+#: 8a2472a36a5642a78ab97e25ebd8fdd6 a699346d50bd470e88282c1c6253d565
+#: c1269d511a074c88a14dee24926b8b35 d20d50db1cd3465a8f3f412fcbfdd7a1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:36 406e8b0ef84447e3895d7105975e7630
+msgid ""
+"``disease_id`` (string) (required) UniProt disease ID in format DI-XXXXX."
+" Get IDs from UniProtRef\\_search\\_diseases. Examples: 'DI-01559' "
+"(familial breast-ovarian cancer 1), 'DI-01465' (Cystathioninuria)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:39 ../../tools/uniprot_ref_tools.rst:70
+#: ../../tools/uniprot_ref_tools.rst:101 ../../tools/uniprot_ref_tools.rst:135
+#: ../../tools/uniprot_ref_tools.rst:169 ../../tools/uniprot_ref_tools.rst:203
+#: 85a5d4976f2c4eacabce32f98fbabc7e 8ac165ab7aa74f80b7a3c95688b7aca8
+#: 97275bf6003a4bcf825098e331ee8b21 9ca937fbafea46cd93114c25b45e8621
+#: ad469085e92c483d9d195060197227f9 bffcf37d77de47d8b587f58a7be82211
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:53 b377ddbcf4b9407e93f8df5825ea7cd4
+msgid "**UniProtRef_get_keyword** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:55 ea349aa7465b4e4ca91b4a0b92c0c624
+msgid ""
+"Get detailed information about a specific UniProt keyword by its ID. "
+"Returns the full definition,..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst 8ca2710dd45847958b0894db033319d1
+msgid "UniProtRef_get_keyword tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:61 a630ddb9788540f5aa3bb5b691eb8ed9
+msgid "**Name**: ``UniProtRef_get_keyword``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:63 f791dc94500b49798f6aebf94e131580
+msgid ""
+"**Description**: Get detailed information about a specific UniProt "
+"keyword by its ID. Returns the full definition, category (Biological "
+"process, Molecular function, Cellular component, Disease, etc.), parent "
+"keywords in the hierarchy, GO term mappings, and protein counts. Example:"
+" KW-0053 returns 'Apoptosis' in the 'Biological process' category with "
+"GO:0006915 mapping and count of annotated proteins."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:67 b7933514d06b4eea92ee8de0fee8a3c0
+msgid ""
+"``keyword_id`` (string) (required) UniProt keyword ID in format KW-XXXX. "
+"Get IDs from UniProtRef\\_search\\_keywords. Examples: 'KW-0053' "
+"(Apoptosis), 'KW-0418' (Kinase), 'KW-0002' (3D-structure)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:84 b3ea0c96bb8c4078a8eb8712932738a8
+msgid "**UniProtRef_get_proteome** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:86 b21be48bd2af42c1a38c79b8d7a23a87
+msgid ""
+"Get reference proteome information from UniProt by proteome ID. Returns "
+"the proteome description,..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst f8e730d2a5fe4424a4e75f6f3e87153a
+msgid "UniProtRef_get_proteome tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:92 2e4e3c9c62364ec3bb82725fd85eec2f
+msgid "**Name**: ``UniProtRef_get_proteome``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:94 74f55f79667a4d3e8bf8740e45ecb776
+msgid ""
+"**Description**: Get reference proteome information from UniProt by "
+"proteome ID. Returns the proteome description, organism taxonomy, "
+"assembly information, chromosome-level protein counts, and genome "
+"annotation sources. Essential for understanding the protein complement of"
+" a species. Example: UP000005640 returns the human reference proteome "
+"(Homo sapiens, GRCh38.p14) with 24 chromosomes + mitochondrion and ~80K "
+"total proteins."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:98 1814530afb864002b6aed18c9c8947b6
+msgid ""
+"``proteome_id`` (string) (required) UniProt proteome ID. Examples: "
+"'UP000005640' (human), 'UP000000589' (mouse), 'UP000002311' (yeast), "
+"'UP000000625' (E. coli K-12)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:115 3ee25f8e3be24b569b238fcac6753e6f
+msgid "**UniProtRef_search_diseases** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:117 02fe7ca4f115498bb2c57edae042ed31
+msgid ""
+"Search the UniProt controlled disease vocabulary for disease definitions."
+" Returns disease entries..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst 242e372cd7064616b30fc4e8f1608f89
+msgid "UniProtRef_search_diseases tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:123 4734a62ed79f4f7f90972ec7262c2a1d
+msgid "**Name**: ``UniProtRef_search_diseases``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:125 9021b87a2a454479aadb4b004c467b89
+msgid ""
+"**Description**: Search the UniProt controlled disease vocabulary for "
+"disease definitions. Returns disease entries with OMIM, MeSH, MedGen, and"
+" SNOMED cross-references plus the number of reviewed proteins associated "
+"with each disease. Use this to find UniProt disease IDs (DI-XXXXX) for "
+"downstream analysis. Example: searching 'breast cancer' returns DI-03803 "
+"(lobular breast cancer), DI-01559 (familial breast-ovarian cancer 1), "
+"DI-02603 (familial breast-ovarian cancer 2)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:129 65ba313a587246839ed60ba5b2397621
+msgid ""
+"``query`` (string) (required) Search query for diseases. Can be disease "
+"name, symptom keyword, or gene name. Examples: 'breast cancer', "
+"'diabetes', 'Alzheimer', 'cystic fibrosis', 'TP53'."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:132 ../../tools/uniprot_ref_tools.rst:166
+#: ../../tools/uniprot_ref_tools.rst:200 29c1ce2f4c704133ac5040db695d9c84
+#: 42bba21a99f24bdaa80fecc05d6ae12c f9022ca6b0a64f48928cae46aa9a2316
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 25)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:149 1f0aed1e2896460fbd8f1977e284a19e
+msgid "**UniProtRef_search_keywords** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:151 42851ccdc0ab493e8e91e7ed06fd4ad6
+msgid ""
+"Search the UniProt keyword controlled vocabulary. Keywords are "
+"standardized terms used to annotat..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst 7d8628bac75944188fd986966a365d60
+msgid "UniProtRef_search_keywords tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:157 b421c1455e8e445bbefac9292eaad518
+msgid "**Name**: ``UniProtRef_search_keywords``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:159 e8dbee12d51847dd8ac384ff17778fac
+msgid ""
+"**Description**: Search the UniProt keyword controlled vocabulary. "
+"Keywords are standardized terms used to annotate protein functions, "
+"biological processes, cellular components, diseases, and technical "
+"features in UniProt. Returns keyword IDs, categories, definitions, and "
+"protein counts. Example: searching 'kinase' returns KW-0418 (Kinase), "
+"KW-0723 (Serine/threonine-protein kinase), etc. with their definitions "
+"and how many proteins carry each keyword."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:163 74732fbf718c469282f434a124f64204
+msgid ""
+"``query`` (string) (required) Search query for keywords. Examples: "
+"'kinase', 'apoptosis', 'membrane', 'phosphorylation', 'zinc finger'."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:183 c133ed735f7f47afb02d22f91fe4e526
+msgid "**UniProtRef_search_proteomes** (Type: UniProtRefTool)"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:185 3935b0a1aa8d4651b16352e12e94ecd3
+msgid ""
+"Search UniProt reference proteomes by organism name, taxon ID, or "
+"keyword. Returns proteome IDs, ..."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst f2ff2f1565054ec5959591570d16b6ad
+msgid "UniProtRef_search_proteomes tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:191 13ecf2f2bf6c4cf7815e1066aa7c6af7
+msgid "**Name**: ``UniProtRef_search_proteomes``"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:193 fa816e88029541b18b0966b9a8d63a96
+msgid ""
+"**Description**: Search UniProt reference proteomes by organism name, "
+"taxon ID, or keyword. Returns proteome IDs, organism names, proteome "
+"types, and total protein counts. Use this to find the reference proteome "
+"ID for an organism before using UniProtRef\\_get\\_proteome for detailed "
+"data. Example: searching 'Arabidopsis thaliana' returns UP000006548 "
+"(reference proteome with 39K+ proteins)."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:197 7cdf5b992b364cf9a62d440ec55f19ca
+msgid ""
+"``query`` (string) (required) Search query for proteomes. Can be organism"
+" name or taxon ID. Examples: 'homo sapiens', 'mouse', 'Arabidopsis "
+"thaliana', '9606', 'Escherichia coli'."
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:217 c294cc4455e143988a2024ec9345df01
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:219 999a5b182dd74afe80ea646bab32d83c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniprot_ref_tools.rst:220 dc0c3aa941f84b5ca1a6e63b79dd1f06
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

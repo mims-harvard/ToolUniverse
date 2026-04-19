@@ -1,0 +1,195 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/lipidmaps_tools.rst:10 a8c2f808987d4620bceadfb9ff036bbb
+msgid "Lipidmaps Tools"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:12 2e87d0150e2246298f07d5fcb81f713f
+msgid ""
+"**Configuration File**: ``lipidmaps_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:16 d9cfa000043b405d9148f5617f3e9cda
+msgid ""
+"This page contains all tools defined in the ``lipidmaps_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:19 d9e8a8fa221243a6aa822063e3298e5f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:22 10a91d80caa74d0dbfdee0d9b88616b7
+msgid "**LipidMaps_get_compound_by_id** (Type: LipidMapsTool)"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:24 9dad593448904316809148a6ac2755a8
+msgid ""
+"Get lipid structure and classification by LIPID MAPS ID (LMID). Returns "
+"full lipid record includi..."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst 99ae7caa293f49e3b4c7c3c5cf799f69
+msgid "LipidMaps_get_compound_by_id tool specification"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:28 ../../tools/lipidmaps_tools.rst:62
+#: ../../tools/lipidmaps_tools.rst:96 017f5621e4d64b5ea28ae30b4c07647a
+#: 15bcac2071e447c49d4bcb46bb0badb6 be451ca940cf40f6a24211d162b98ca7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:30 986647a2b4964052904fa45898c383f1
+msgid "**Name**: ``LipidMaps_get_compound_by_id``"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:31 ../../tools/lipidmaps_tools.rst:65
+#: ../../tools/lipidmaps_tools.rst:99 538ecbb409f54286a080e68320cab91b
+#: 6a66d78387c747658ca7cfe6641abd8c 93b9bcb416704eebaa1ec4457aa56ba4
+msgid "**Type**: ``LipidMapsTool``"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:32 cb6b3409d6d649d0913c7bc31b57c3fa
+msgid ""
+"**Description**: Get lipid structure and classification by LIPID MAPS ID "
+"(LMID). Returns full lipid record including name, formula, exact mass, "
+"SMILES, InChI, cross-references to KEGG/HMDB/ChEBI/PubChem. Example: "
+"'LMFA08040013' returns Palmitoyl-EA."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:34 ../../tools/lipidmaps_tools.rst:68
+#: ../../tools/lipidmaps_tools.rst:102 5afcbc2bb8914dfe9ab520eaaf07f58e
+#: c9b659a051404dcb86544c07c8ec4488 ea74740b3b5d4dd1a904936b53d4be1e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:36 17063dd35080473f89f328315a86dd1e
+msgid ""
+"``input_value`` (string) (required) LIPID MAPS ID (LMID), e.g., "
+"'LMFA08040013'. Format: LM + 2-letter category + 8-digit number."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:39 0af40f8470ae40f993382a155997c6d6
+msgid ""
+"``output_item`` (string) (optional) Type of output. Options: 'all' "
+"(complete record), 'name', 'formula', 'exactmass', 'smiles', "
+"'classification', 'molfile'."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:42 ../../tools/lipidmaps_tools.rst:76
+#: ../../tools/lipidmaps_tools.rst:110 b1e1dd6390934cfeafd86de20ae2e649
+#: e70fd50968ed4acf8fa7c3103c5b3aef f0bc8d36f1a44b54b0fa1edb7476ef26
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:56 a8e1ffe176924b1eadfb2f21364c7700
+msgid "**LipidMaps_search_by_formula** (Type: LipidMapsTool)"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:58 a8f2c95a3cbb4126856249d649dcf7aa
+msgid ""
+"Search lipids by molecular formula in LIPID MAPS Structure Database. "
+"Returns all lipids matching ..."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst 6a0723c5cbae407091ab0de23148dc25
+msgid "LipidMaps_search_by_formula tool specification"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:64 3d1bff0f907d4812a6cfb430a714931d
+msgid "**Name**: ``LipidMaps_search_by_formula``"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:66 c4784fa1ea4c453d983304c8f13e6527
+msgid ""
+"**Description**: Search lipids by molecular formula in LIPID MAPS "
+"Structure Database. Returns all lipids matching the given formula. "
+"Example: 'C22H32O2' finds DHA and related C22:6 fatty acids."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:70 f8bf3257da57429b86bc3ee5b2d5df9c
+msgid ""
+"``input_value`` (string) (required) Molecular formula (e.g., 'C22H32O2', "
+"'C16H32O2'). Standard chemical formula format."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:73 8cece75243e64ff2b0ebe2169d393fcd
+msgid ""
+"``output_item`` (string) (optional) Type of output. Options: 'all', "
+"'name', 'smiles', 'classification'."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:90 31714888240b4826a4e0e0345471d6f0
+msgid "**LipidMaps_search_by_name** (Type: LipidMapsTool)"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:92 dff8d71a24214ded91c10b6ecf5a3eab
+msgid ""
+"Search for lipids by exact abbreviation in LIPID MAPS Structure Database."
+" IMPORTANT: Only exact l..."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst a19dab85d9624accae6753f86a38f4bf
+msgid "LipidMaps_search_by_name tool specification"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:98 793bee1e292b47da8a1192075762b2a2
+msgid "**Name**: ``LipidMaps_search_by_name``"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:100 6b0ddda6aa964dedba6a56830ca999db
+msgid ""
+"**Description**: Search for lipids by exact abbreviation in LIPID MAPS "
+"Structure Database. IMPORTANT: Only exact lipidomics abbreviations work "
+"(e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like "
+"'ceramide' or 'sphingomyelin' will NOT match — use "
+"LipidMaps\\_search\\_by\\_formula for class-level searches. Returns "
+"matching lipid records with structures and classification."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:104 846f9c1300cd4e8fbd3718c561f68783
+msgid ""
+"``input_value`` (string) (required) Exact lipid abbreviation used in "
+"lipidomics (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names "
+"like 'ceramide' will not match — use exact abbreviations only."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:107 072bdbea44b34c40a506fe7a4f42fedd
+msgid ""
+"``output_item`` (string) (optional) Type of output. Options: 'all', "
+"'name', 'formula', 'exactmass', 'smiles', 'classification'."
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:124 58c446c1ed9f414dbfef10e16786752a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:126 172eec88c5d14e588ed7596393232464
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/lipidmaps_tools.rst:127 7292335f050442c6b176f20e4b806275
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

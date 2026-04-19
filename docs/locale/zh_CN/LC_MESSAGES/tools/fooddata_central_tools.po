@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/fooddata_central_tools.rst:10 bd35730425364dd3be9c34b3dde5afb1
+msgid "Fooddata Central Tools"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:12 19d0497709554b4690da54f622cda556
+msgid ""
+"**Configuration File**: ``fooddata_central_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:16 3c6c00f8cdf14cf6ad4f01e3adcb5e13
+msgid ""
+"This page contains all tools defined in the "
+"``fooddata_central_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:19 adfbca20957947059bfac32155ff0e9e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:22 69b5c3a462414e1ea2f18fd62a4b3962
+msgid "**FoodDataCentral_get_food** (Type: FoodDataCentralTool)"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:24 a0058dff05b746ebb1c30f8a5d66ae0a
+msgid ""
+"Get detailed food information by FDC ID from USDA FoodData Central. "
+"Returns complete nutrient pro..."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst cb0339fd16f44761b64c0cb67eb5ca59
+msgid "FoodDataCentral_get_food tool specification"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:28
+#: ../../tools/fooddata_central_tools.rst:59 4fb8e69906b44f418dd4e2f1d4d2b48c
+#: 9c93c2c9fa8f47f0989853e081ceb105
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:30 6bd21a2a5df641b09dcc4929a6eaf514
+msgid "**Name**: ``FoodDataCentral_get_food``"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:31
+#: ../../tools/fooddata_central_tools.rst:62 2f7a11db35fc4106a5e7e1823df01073
+#: f7839237dd2c4c4bb2af25094df5b843
+msgid "**Type**: ``FoodDataCentralTool``"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:32 e846bf03350d42fbb8f4c7ec18e179ad
+msgid ""
+"**Description**: Get detailed food information by FDC ID from USDA "
+"FoodData Central. Returns complete nutrient profile, ingredients, serving"
+" size, and food attributes. Example: FDC ID 2344723 returns 'Bananas, "
+"raw' with 70+ nutrients."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:34
+#: ../../tools/fooddata_central_tools.rst:65 4c74c1996bed4031b3e46bbfb9e775b8
+#: 86cdc8875efa428380b50d76fa65a8e1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:36 9175a93192a640f0885eb83845472d1c
+msgid ""
+"``fdc_id`` (integer, string) (required) FoodData Central food ID (e.g., "
+"2344723 for bananas, 2012128 for branded banana product). Get IDs from "
+"FoodDataCentral\\_search\\_foods."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:39
+#: ../../tools/fooddata_central_tools.rst:79 28dce0e8edce42ba81ca009f5b583a13
+#: 5322639a66c8431486fb95c636230245
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:53 05436c4b36b7405295f571b20b3a79db
+msgid "**FoodDataCentral_search_foods** (Type: FoodDataCentralTool)"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:55 5a513d79639e403d9b950220cef20c5b
+msgid ""
+"Search USDA FoodData Central for foods by keyword. Returns matching foods"
+" with nutrient data, bra..."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst 10250a39afc047219410e780fa8ff6fc
+msgid "FoodDataCentral_search_foods tool specification"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:61 ffbd92d04ef14203acab96c5b3a3e55a
+msgid "**Name**: ``FoodDataCentral_search_foods``"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:63 0beb685e5176406c956d81137b5b8030
+msgid ""
+"**Description**: Search USDA FoodData Central for foods by keyword. "
+"Returns matching foods with nutrient data, brand info, and ingredients. "
+"Covers Foundation, Branded, SR Legacy, and Survey data. Example: 'banana'"
+" finds all banana products."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:67 8959d0303ddc4279900caed41d2d9da9
+msgid ""
+"``query`` (string) (required) Search keywords (e.g., 'cheddar cheese', "
+"'banana', 'chicken breast'). Supports multi-word search."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:70 0dc66f88da3f4207b831652ea248e6d3
+msgid ""
+"``page_size`` (integer) (optional) Number of results per page (default "
+"25, max 200)."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:73 4b10c0fe42984db78637be6be3e049b5
+msgid ""
+"``page_number`` (integer) (optional) Page number for pagination (starts "
+"at 1)."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:76 309c4238e8e84264af71c042c1951eaf
+msgid ""
+"``data_type`` (string) (optional) Filter by data type. Options: "
+"'Foundation' (reference foods), 'Branded' (commercial products), 'SR "
+"Legacy' (USDA standard reference), 'Survey (FNDDS)' (national dietary "
+"survey)."
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:93 1c90d0657e824b04980135515fd04213
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:95 5d3725494669481c9b80fd4beaaf5ee0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/fooddata_central_tools.rst:96 17bb194d8dec49129886f5228a20c752
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

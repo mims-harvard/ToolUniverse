@@ -7,564 +7,462 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../about/changelog.rst:2 f43f93f2802a445281ef53379a92d552
+#: ../../about/changelog.rst:2 e7a07210218b4e37943c35a649f44238
 msgid "Changelog"
 msgstr "更新日志"
 
-#: ../../about/changelog.rst:4 86892c338c3d4ce88d2a7988e1a1f3e9
-msgid "All notable changes to ToolUniverse will be documented in this file."
-msgstr "所有对 ToolUniverse 的重要更改均将记录在此文件中。"
-
-#: ../../about/changelog.rst:6 7b77eed3a36746b4b07acb8b7b80bd65
-msgid ""
-"The format is based on `Keep a Changelog "
-"<https://keepachangelog.com/en/1.0.0/>`_, and this project adheres to "
-"`Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_."
-msgstr ""
-"该格式基于 `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_，本项目遵循 "
-"`语义化版本控制 <https://semver.org/spec/v2.0.0.html>`_。"
-
-#: ../../about/changelog.rst:10 d36599464f5540b3931688674fcaecf4
-msgid "[Unreleased]"
-msgstr "[未发布]"
-
-#: ../../about/changelog.rst:13 ../../about/changelog.rst:33
-#: ../../about/changelog.rst:62 ../../about/changelog.rst:81
-#: a78f6cac79d34cce98f44073fabda865 b42763e05e364d3d8912e5d73b8c932e
-#: cfed610e8e83411689e5ecc2be6d9ec4 e5839ebb965a4fafac7b2c7fd5a9cff8
-msgid "Added"
-msgstr "已添加"
-
-#: ../../about/changelog.rst:14 da0a35b996b04aa881bf4b68cae65be5
-msgid "Complete Sphinx documentation system"
-msgstr "完整的 Sphinx 文档系统"
-
-#: ../../about/changelog.rst:15 e314c09272544089afb6f5a7dfba37b5
-msgid "MCP server auto-generation from tools"
-msgstr "工具自动生成MCP服务器"
-
-#: ../../about/changelog.rst:16 94703fa86a2f4114bda2cc5bf94fa3af
-msgid "Advanced error handling and retry mechanisms"
-msgstr "高级错误处理与重试机制"
-
-#: ../../about/changelog.rst:17 65cfb85fc1ed415c975d57d42e137d66
-msgid "Performance optimization for batch queries"
-msgstr "批量查询的性能优化"
-
-#: ../../about/changelog.rst:20 ../../about/changelog.rst:48
-#: ../../about/changelog.rst:69 0a143ce30474447ebbc52aaf2460f544
-#: 37a8fdc3e8bd47feb6ecdbc865910387 852e0d5124274c21bb839c059f44a8c2
-msgid "Changed"
-msgstr "已更改"
-
-#: ../../about/changelog.rst:21 5daf797afb0d4233bbb5b48b37fa025b
-msgid "Improved API consistency across all tools"
-msgstr "改进了所有工具的API一致性"
-
-#: ../../about/changelog.rst:22 cd7fa39a03584f66bf6cdc1c4668bb58
-msgid "Enhanced configuration management"
-msgstr "增强的配置管理"
-
-#: ../../about/changelog.rst:25 ../../about/changelog.rst:73
-#: 8925403e28f849108e9a336472a03719 b894ef5a69484b62b8d3eb3da24141af
-msgid "Fixed"
-msgstr "已修复"
-
-#: ../../about/changelog.rst:26 047c43247e1e4f10bbe467b6d077a484
-msgid "Memory leaks in long-running MCP server"
-msgstr "长时间运行的MCP服务器中的内存泄漏"
-
-#: ../../about/changelog.rst:27 824f2e51f6494c37a277781f1c659d81
-msgid "Rate limiting edge cases"
-msgstr "速率限制的边缘情况"
-
-#: ../../about/changelog.rst:30 0d06aa711b7748d5a6dc411ef96b6509
-msgid "[0.3.0] - 2024-12-XX"
-msgstr ""
-"[0.3.0] - 2024-12-XX\n"
-"\n"
-"上下文：技术文档"
-
-#: ../../about/changelog.rst:34 d791fda376a64656bf33a57616607151
-msgid "Model Context Protocol (MCP) server integration"
-msgstr "模型上下文协议（MCP）服务器集成"
-
-#: ../../about/changelog.rst:35 a3a1d7a083604bbd9d36e61b44f0e78e
-msgid "Claude Desktop support"
-msgstr "Claude 桌面支持"
-
-#: ../../about/changelog.rst:36 6ff4a0a179194c8a8fdc8e6b1b385d72
-msgid "100+ scientific tools across multiple databases"
-msgstr "跨多个数据库的100多种科学工具"
-
-#: ../../about/changelog.rst:37 89df330294c14fd4a2e49f00d8ad9492
-msgid "OpenTargets Platform integration"
-msgstr "OpenTargets 平台集成"
-
-#: ../../about/changelog.rst:38 c91c0dddf7c446309d7d816e9b950f9e
-msgid "FDA/FAERS adverse event analysis"
-msgstr "FDA/FAERS 不良事件分析"
-
-#: ../../about/changelog.rst:39 24b85366f0fb47fa862fadb86b3a9252
-msgid "PubTator literature search"
-msgstr "PubTator 文献检索"
-
-#: ../../about/changelog.rst:40 edacd72730af499083c76e01badf8a15
-msgid "Clinical trials data access"
-msgstr "临床试验数据访问"
-
-#: ../../about/changelog.rst:41 56f47a03a5aa4c479db9479b20c34fc2
-msgid "Chemical similarity search via ChEMBL"
-msgstr "通过 ChEMBL 进行化学相似性搜索"
-
-#: ../../about/changelog.rst:42 62e99ee150a647b1bb3f9cb582d4ccc9
-msgid "Gene enrichment analysis"
-msgstr "基因富集分析"
-
-#: ../../about/changelog.rst:43 c3279bbbdf6743c9aeb513333bc5981e
-msgid "Protein-protein interaction networks"
-msgstr "蛋白质-蛋白质相互作用网络"
-
-#: ../../about/changelog.rst:44 0d8cfbbc7c8c4e65b79219bff1ac583a
-msgid "AI-powered text analysis tools"
-msgstr "基于AI的文本分析工具"
-
-#: ../../about/changelog.rst:45 36c83847b50f495dbd8d0a5bc778ce04
-msgid "Hypothesis generation capabilities"
-msgstr "假设生成功能"
-
-#: ../../about/changelog.rst:49 e108290b0aa84b5ca1f3078cdc4aa45a
-msgid "Restructured codebase for better modularity"
-msgstr "为实现更好的模块化重构代码库"
-
-#: ../../about/changelog.rst:50 6f5f62a26ba547eab10d2e07a36d7190
-msgid "Unified configuration system"
-msgstr "统一配置系统"
-
-#: ../../about/changelog.rst:51 0b5cc7797dcf4ebd84aa04dc0334c6b4
-msgid "Improved error handling"
-msgstr "改进的错误处理"
-
-#: ../../about/changelog.rst:54 7475d43a68774569b2f7c16114c34c11
-msgid "Security"
-msgstr "安全性"
-
-#: ../../about/changelog.rst:55 446f13e5a36344eb9ca773c9f1a311b4
-msgid "Added API key management"
-msgstr "新增 API 密钥管理功能"
-
-#: ../../about/changelog.rst:56 163ef3b5b87449a686b44b407823184e
-msgid "Implemented secure token handling"
-msgstr "已实现安全令牌处理"
-
-#: ../../about/changelog.rst:59 50caaef0de15488fa2507f5c739e4daf
-msgid "[0.2.0] - 2024-11-XX"
-msgstr ""
-"[0.2.0] - 2024-11-XX\n"
-"\n"
-"上下文：文档"
-
-#: ../../about/changelog.rst:63 a95de66be65349c09d69dd02ca6fa0ab
-msgid "Basic tool framework"
-msgstr "基础工具框架"
-
-#: ../../about/changelog.rst:64 9d907f4d45cc481d83f7299074d34ac8
-msgid "OpenTargets GraphQL integration"
-msgstr "OpenTargets GraphQL 集成"
-
-#: ../../about/changelog.rst:65 9f9496c786dc47f48d17836f36f9ea03
-msgid "RESTful API support"
-msgstr "RESTful API 支持"
-
-#: ../../about/changelog.rst:66 782f65274b6e4f37b33338a89173da4f
-msgid "Initial documentation"
-msgstr "初始文档"
-
-#: ../../about/changelog.rst:70 7af01a919b5a45d6835c8ab9406f9e83
-msgid "Refactored base tool architecture"
-msgstr "重构基础工具架构"
-
-#: ../../about/changelog.rst:74 3eb3321213d144ecbfa0cdf70ad001ac
-msgid "Connection timeout issues"
-msgstr "连接超时问题"
-
-#: ../../about/changelog.rst:75 02f7358384f04718913c51bf08c2be09
-msgid "JSON parsing errors"
-msgstr "JSON 解析错误"
-
-#: ../../about/changelog.rst:78 491772c11ec94cdb9d04c83ccb9de574
-msgid "[0.1.0] - 2024-10-XX"
-msgstr ""
-"[0.1.0] - 2024-10-XX\n"
-"\n"
-"上下文：文档"
-
-#: ../../about/changelog.rst:82 29ba2d2419ba4cb89b51542a99031db0
-msgid "Initial release"
-msgstr "初始版本发布"
-
-#: ../../about/changelog.rst:83 ae9136bd6a8f4a1995477e03f6881ab6
-msgid "Basic scientific data access"
-msgstr "基础科学数据访问"
-
-#: ../../about/changelog.rst:84 0979db760c8d43a2aa9902aaf1d67ecf
-msgid "Simple tool interface"
-msgstr "简单工具界面"
-
-#: ../../about/changelog.rst:87 8cdda045b9744122bd2601d0b31d544d
-msgid "Features by Version"
-msgstr "按版本划分的功能"
-
-#: ../../about/changelog.rst:90 36958914d0754aeba998b4197ba78f2d
-msgid "Version 0.3.0 Features"
-msgstr "版本 0.3.0 功能介绍"
-
-#: ../../about/changelog.rst:92 8f17dbca623e4cec9aa6632e2bab7e06
-msgid ""
-"**Data Sources**: - OpenTargets Platform (50+ tools) - FDA Drug Labeling / "
-"FAERS (20+ tools) - PubMed/PubTator (5+ tools) - ClinicalTrials.gov (10+ "
-"tools) - ChEMBL (3+ tools) - DrugBank (2+ tools) - Europe PMC (1+ tools) - "
-"Semantic Scholar (1+ tools) - OpenAlex (1+ tools)"
-msgstr ""
-"**数据来源**：  \n"
-"- OpenTargets 平台（50+ 工具）  \n"
-"- FDA 药物标签 / FAERS（20+ 工具）  \n"
-"- PubMed/PubTator（5+ 工具）  \n"
-"- ClinicalTrials.gov（10+ 工具）  \n"
-"- ChEMBL（3+ 工具）  \n"
-"- DrugBank（2+ 工具）  \n"
-"- Europe PMC（1+ 工具）  \n"
-"- Semantic Scholar（1+ 工具）  \n"
-"- OpenAlex（1+ 工具）"
-
-#: ../../about/changelog.rst:103 271a010a58bf42938f7122628ce83570
-msgid ""
-"**Analysis Tools**: - Gene enrichment analysis (Enrichr) - Protein-protein "
-"interactions (HumanBase) - Network analysis - Statistical analysis"
-msgstr ""
-"**分析工具**：  \n"
-"- 基因富集分析（Enrichr）  \n"
-"- 蛋白质相互作用（HumanBase）  \n"
-"- 网络分析  \n"
-"- 统计分析"
-
-#: ../../about/changelog.rst:109 dc53d9637c4f4b3d92724626749181d5
-msgid ""
-"**AI Integration**: - MCP server for AI assistants - Claude Desktop "
-"integration - Scientific text summarization - Literature review automation -"
-" Hypothesis generation - Experimental design scoring"
-msgstr ""
-"**AI 集成**：  \n"
-"- 用于 AI 助手的 MCP 服务器  \n"
-"- Claude 桌面集成  \n"
-"- 科学文本摘要  \n"
-"- 文献综述自动化  \n"
-"- 假设生成  \n"
-"- 实验设计评分"
-
-#: ../../about/changelog.rst:117 81c199316a7d49dd9354790cf7f9c06d
-msgid ""
-"**Utilities**: - Medical term normalization - Data validation - Batch "
-"processing - Caching system"
-msgstr ""
-"**工具**：  \n"
-"- 医学术语规范化  \n"
-"- 数据验证  \n"
-"- 批量处理  \n"
-"- 缓存系统"
-
-#: ../../about/changelog.rst:124 adc0599951724dcba7a3415374dc2bc0
-msgid "Migration Tutorial"
-msgstr "迁移教程"
-
-#: ../../about/changelog.rst:127 ff6784b0ca1e479ba64dc90d66f08d42
-msgid "From 0.2.x to 0.3.x"
-msgstr "从 0.2.x 版本升级到 0.3.x 版本"
-
-#: ../../about/changelog.rst:129 f379921c477045e18d6d9171703d4c17
-msgid "**Breaking Changes**:"
-msgstr "**重大变更**："
-
-#: ../../about/changelog.rst:132 72179956c3564759969672445e8f9937
-msgid "1. **Configuration System**:"
-msgstr "1. **配置系统**："
-
-#: ../../about/changelog.rst:133 72e953427a244d20903a21c02aba388a
-msgid "Old:"
-msgstr "旧版："
-
-#: ../../about/changelog.rst:139 1ecff98ebfae479981614ee5625070dc
-msgid "New:"
-msgstr "新增："
-
-#: ../../about/changelog.rst:146 a16c363c54d84e8d958acbbe83d4ec0e
-msgid "2. **Method Names**:"
-msgstr "2. **方法名称**："
-
-#: ../../about/changelog.rst:147 af3ec8589e7040f891f0e3e462ec4856
-msgid "Some methods were renamed for consistency:"
-msgstr "为保持一致性，部分方法名称已被重命名："
-
-#: ../../about/changelog.rst:149 cb1b3d9e489547ab8b2ebdf4efb55d96
-msgid ""
-"``get_disease_targets()`` → ``get_associated_targets_by_disease_efoId()``"
-msgstr ""
-
-#: ../../about/changelog.rst:150 67675f90a3b949eeb150d9d893f09ec7
-msgid "``search_drugs()`` → ``get_drug_id_description_by_name()``"
-msgstr ""
-
-#: ../../about/changelog.rst:153 becbfb32a68646fb82b6a01f4663c7b8
-msgid "3. **Return Format**:"
-msgstr "3. **返回格式**："
-
-#: ../../about/changelog.rst:154 fd1ab4557d8f433c8319a1b1b4e71ceb
-msgid "All tools now return consistent dictionary format:"
-msgstr "所有工具现均返回一致的字典格式："
-
-#: ../../about/changelog.rst:165 f29b866e7eb348ca939cbc8a36a9d34a
-msgid "**Migration Steps**:"
-msgstr "**迁移步骤**："
-
-#: ../../about/changelog.rst:167 7f9356fe79a241c59eb466e738f70054
-msgid "Update configuration calls"
-msgstr "更新配置调用"
-
-#: ../../about/changelog.rst:168 25146a242c484d839c6839ce5a607e46
-msgid "Review method names in your code"
-msgstr "审查代码中的方法名称"
-
-#: ../../about/changelog.rst:169 49b174d8a6794e4d8e920405b465f67c
-msgid "Update result processing logic"
-msgstr "更新结果处理逻辑"
-
-#: ../../about/changelog.rst:170 b215a5cf8c6b43c286abbdaccb9f3caa
-msgid "Test thoroughly with new version"
-msgstr "使用新版本进行全面测试"
-
-#: ../../about/changelog.rst:173 6f6e9c5ec77e427c807fdedf48650e62
-msgid "Deprecation Notices"
-msgstr "弃用通知"
-
-#: ../../about/changelog.rst:175 877228970d6340b7a1fd2ae8ebc45b60
-msgid ""
-"**Version 0.4.0** (planned): - Legacy configuration format will be removed -"
-" Old method names will be removed - Python 3.9 support will be dropped"
-msgstr ""
-"**版本 0.4.0**（计划中）：  \n"
-"- 旧版配置格式将被移除  \n"
-"- 旧的方法名称将被移除  \n"
-"- 将停止支持 Python 3.9"
-
-#: ../../about/changelog.rst:181 3a5475ec234d4692840a2a032ccdcc3f
-msgid "Known Issues"
-msgstr "已知问题"
-
-#: ../../about/changelog.rst:184 482848c520494a4a8219ac35bcae0136
-msgid "Current Known Issues"
-msgstr "当前已知问题"
-
-#: ../../about/changelog.rst:186 10dcc2fae7df49938ba1921bf73a0718
-msgid "**Rate Limiting**: Some APIs may throttle requests during peak hours"
-msgstr "**速率限制**：某些 API 可能会在高峰时段限制请求速率。"
-
-#: ../../about/changelog.rst:187 cef43e2e10264286a081352ddfc6ee3c
-msgid "**Memory Usage**: Large batch queries may consume significant memory"
-msgstr "**内存使用**：大批量查询可能会消耗大量内存"
-
-#: ../../about/changelog.rst:188 d7588544e96d4b3bb32467317ccc19b4
-msgid "**Async Support**: Not all tools support async operations yet"
-msgstr "**异步支持**：并非所有工具目前都支持异步操作"
-
-#: ../../about/changelog.rst:191 785d0f78292b483ba70c310e23ef8b8b
-msgid "Workarounds"
-msgstr "变通方法"
-
-#: ../../about/changelog.rst:193 d9ea2b02b2f54cbfb77d9c55ce75abf2
-msgid ""
-"**Rate Limiting**: - Enable caching to reduce API calls - Use batch "
-"processing when available - Implement delays between requests"
-msgstr ""
-"**速率限制**：  \n"
-"- 启用缓存以减少 API 调用  \n"
-"- 在可用时使用批处理  \n"
-"- 在请求之间实现延迟"
-
-#: ../../about/changelog.rst:198 ed617c9625fa4899808114aa83115a27
-msgid ""
-"**Memory Usage**: - Process large datasets in chunks - Clear results cache "
-"periodically - Use generators for large result sets"
-msgstr ""
-"**内存使用**：  \n"
-"- 分块处理大型数据集  \n"
-"- 定期清理结果缓存  \n"
-"- 对于大型结果集使用生成器"
-
-#: ../../about/changelog.rst:204 efe73b0d34584fbea239f3ebe08dbec4
-msgid "Performance Notes"
-msgstr "性能说明"
-
-#: ../../about/changelog.rst:207 d3f3bcde54264296b46100d93677751e
-msgid "Version 0.3.0 Performance"
-msgstr "版本 0.3.0 性能"
-
-#: ../../about/changelog.rst:209 841e3cd5b062443fb341cd5419cd8850
-msgid "**API Response Time**: Average 200-500ms per request"
-msgstr "**API 响应时间**：每次请求平均 200-500 毫秒"
-
-#: ../../about/changelog.rst:210 a73396f7309c43a9bc6855b9fa77ac29
-msgid "**Batch Processing**: Up to 10x faster for multiple queries"
-msgstr "**批量处理**：多查询时速度提升最多达10倍"
-
-#: ../../about/changelog.rst:211 ce7534d021b040258096fa9ab0e6ee54
-msgid "**Memory Usage**: ~50MB base, +10MB per 1000 cached results"
-msgstr "**内存使用**：基础约50MB，每缓存1000个结果增加约10MB"
-
-#: ../../about/changelog.rst:212 e14e039773fe450a81e654b9c6d8ccb6
-msgid "**Concurrent Requests**: Supports up to 10 concurrent API calls"
-msgstr "**并发请求**：支持最多10个并发API调用"
-
-#: ../../about/changelog.rst:215 df960b9767eb49acaf71a76cef99f591
-msgid "Benchmarks"
-msgstr "基准测试"
-
-#: ../../about/changelog.rst:217 0d4ece01c8ff44408d50cae784c93778
-msgid "Tested on Python 3.10, Ubuntu 20.04, 16GB RAM:"
-msgstr "在 Python 3.10、Ubuntu 20.04、16GB 内存环境下测试："
-
-#: ../../about/changelog.rst:219 83b8cd5d66f548b789e56b7f5f0161bb
-msgid "**Simple Query**: 0.2-0.5 seconds"
-msgstr "**简单查询**：0.2-0.5秒"
-
-#: ../../about/changelog.rst:220 9384cb45e5a24b448bf8fcc9dca63fd8
-msgid "**Complex GraphQL**: 1-3 seconds"
-msgstr "**复杂 GraphQL**：1-3 秒"
-
-#: ../../about/changelog.rst:221 a6ea82ae659b4f78b2862c0e549ed32f
-msgid "**Batch of 100 queries**: 30-60 seconds"
-msgstr "**100条查询批处理**：30-60秒"
-
-#: ../../about/changelog.rst:222 49b26f0d9aff4ed7ae1144e349b969ae
-msgid "**Literature search**: 2-5 seconds"
-msgstr "**文献检索**：2-5秒"
-
-#: ../../about/changelog.rst:223 e0fa16800b0146319a8807c98ea99c85
-msgid "**MCP server startup**: <2 seconds"
-msgstr "**MCP 服务器启动时间**：<2 秒"
-
-#: ../../about/changelog.rst:226 4c3815e5f2104366b4dd78d0ba1edadd
-msgid "Security Updates"
-msgstr "安全更新"
-
-#: ../../about/changelog.rst:229 88c50111de8a4a2d87c36cb330b70a64
-msgid "Version 0.3.0 Security"
-msgstr "版本 0.3.0 安全性"
-
-#: ../../about/changelog.rst:231 94b5ba049812408a998d54cbcd6f37f1
-msgid "**CVE-2024-XXXX**: Fixed potential XSS in tool descriptions"
-msgstr "**CVE-2024-XXXX**：修复工具描述中的潜在跨站脚本（XSS）漏洞"
-
-#: ../../about/changelog.rst:232 784c26387c784e308cd8e6c9f15a75f2
-msgid "**API Keys**: Enhanced secure storage and transmission"
-msgstr "**API 密钥**：增强的安全存储与传输"
-
-#: ../../about/changelog.rst:233 970d4d64d1444782a42bbe2bbef5f676
-msgid "**Input Validation**: Strengthened against injection attacks"
-msgstr "**输入验证**：增强防注入攻击能力"
-
-#: ../../about/changelog.rst:234 c93c2ddde6fd4144a483e3072fa533d6
-msgid "**Dependencies**: Updated all dependencies to latest secure versions"
-msgstr "**依赖项**：已将所有依赖项更新至最新安全版本"
-
-#: ../../about/changelog.rst:237 5ff36d6045e24bccaec1fa7bf808ba4d
-msgid "Security Best Practices"
-msgstr "安全最佳实践"
-
-#: ../../about/changelog.rst:239 8aba6cffdfc5470eb1858e9a0e955ac9
-msgid "**API Keys**: Never commit API keys to version control"
-msgstr "**API 密钥**：切勿将 API 密钥提交到版本控制系统中"
-
-#: ../../about/changelog.rst:240 e82e84a0104d49bfbebda70dd65d6734
-msgid "**Input Validation**: Always validate user inputs"
-msgstr "**输入验证**：始终对用户输入进行验证"
-
-#: ../../about/changelog.rst:241 8d47673365b44c869a692544bfa60e04
-msgid "**HTTPS**: Use HTTPS for all API communications"
-msgstr "**HTTPS**：所有 API 通信均应使用 HTTPS"
-
-#: ../../about/changelog.rst:242 a6dab3d4bd044d3e91371c9e373d0052
-msgid "**Updates**: Keep ToolUniverse updated to latest version"
-msgstr "**更新**：保持 ToolUniverse 为最新版本"
-
-#: ../../about/changelog.rst:245 e4c1e35035034e61a0615af3d9de5d16
-msgid "Acknowledgments"
-msgstr "致谢"
-
-#: ../../about/changelog.rst:248 9fb912bfced44cb492d1e6844b3b9776
-msgid "Contributors to 0.3.0"
-msgstr "0.3.0 版本的贡献者"
-
-#: ../../about/changelog.rst:250 a57e94b05f2f4b3ebc5aa3573e046e5f
-msgid "**Shanghua Gao** - Lead developer and maintainer"
-msgstr "**高尚华** - 首席开发者兼维护者"
-
-#: ../../about/changelog.rst:251 f098daab3b834519ab224c1af350d36c
-msgid "**Contributors** - Community bug reports and feature requests"
-msgstr "**贡献者** - 社区错误报告与功能请求"
-
-#: ../../about/changelog.rst:252 20236060f6734e9093084a705e497ef7
-msgid "**Beta Testers** - Early adoption and feedback"
-msgstr "**测试用户** - 早期采用与反馈"
-
-#: ../../about/changelog.rst:255 2c0d7451f4144b94ab28838eb172b541
-msgid "Special Thanks"
-msgstr "特别鸣谢"
-
-#: ../../about/changelog.rst:257 3c8fa07fe85a404ba508de91742940d1
-msgid "**OpenTargets Team** - API support and collaboration"
-msgstr "**OpenTargets 团队** - API 支持与协作"
-
-#: ../../about/changelog.rst:258 51dd54bc5301439ba99b4cf6f64319c1
-msgid "**FastMCP Team** - MCP protocol implementation"
-msgstr "**FastMCP 团队** - MCP 协议实现"
-
-#: ../../about/changelog.rst:259 5052d73764db4f86b932b23d44bdb88f
-msgid "**Sphinx Team** - Documentation framework"
-msgstr "**Sphinx团队** - 文档框架"
-
-#: ../../about/changelog.rst:260 60f3df62733349f9ae339df45cafd22d
-msgid "**Python Community** - Foundational libraries"
-msgstr "**Python 社区** - 基础库"
-
-#: ../../about/changelog.rst:263 ecabf9b11f63473189f2922d90cd00d4
-msgid "Support and Resources"
-msgstr "支持与资源"
-
-#: ../../about/changelog.rst:265 355d6cf238a144378d90fa2277adcb60
-msgid "**Documentation**: https://tooluniverse.readthedocs.io"
-msgstr "**文档**: https://tooluniverse.readthedocs.io"
-
-#: ../../about/changelog.rst:266 281d84c04a6d4d1d959fd06d7f9d490c
-msgid "**GitHub Repository**: https://github.com/mims-harvard/TxAgent"
-msgstr "**GitHub 仓库**: https://github.com/mims-harvard/TxAgent"
-
-#: ../../about/changelog.rst:267 d89e80ee09d74761a541a1b92715d458
-msgid "**Issue Tracker**: https://github.com/mims-harvard/TxAgent/issues"
-msgstr "**问题追踪器**: https://github.com/mims-harvard/TxAgent/issues"
-
-#: ../../about/changelog.rst:268 a9821c9346f140e9817d4080b441663d
-msgid "**Discussions**: https://github.com/mims-harvard/TxAgent/discussions"
-msgstr "**讨论**：https://github.com/mims-harvard/TxAgent/discussions"
+#~ msgid "All notable changes to ToolUniverse will be documented in this file."
+#~ msgstr "所有对 ToolUniverse 的重要更改均将记录在此文件中。"
+
+#~ msgid ""
+#~ "The format is based on `Keep a "
+#~ "Changelog <https://keepachangelog.com/en/1.0.0/>`_, and"
+#~ " this project adheres to `Semantic "
+#~ "Versioning <https://semver.org/spec/v2.0.0.html>`_."
+#~ msgstr ""
+#~ "该格式基于 `Keep a Changelog "
+#~ "<https://keepachangelog.com/en/1.0.0/>`_，本项目遵循 `语义化版本控制 "
+#~ "<https://semver.org/spec/v2.0.0.html>`_。"
+
+#~ msgid "[Unreleased]"
+#~ msgstr "[未发布]"
+
+#~ msgid "Added"
+#~ msgstr "已添加"
+
+#~ msgid "Complete Sphinx documentation system"
+#~ msgstr "完整的 Sphinx 文档系统"
+
+#~ msgid "MCP server auto-generation from tools"
+#~ msgstr "工具自动生成MCP服务器"
+
+#~ msgid "Advanced error handling and retry mechanisms"
+#~ msgstr "高级错误处理与重试机制"
+
+#~ msgid "Performance optimization for batch queries"
+#~ msgstr "批量查询的性能优化"
+
+#~ msgid "Changed"
+#~ msgstr "已更改"
+
+#~ msgid "Improved API consistency across all tools"
+#~ msgstr "改进了所有工具的API一致性"
+
+#~ msgid "Enhanced configuration management"
+#~ msgstr "增强的配置管理"
+
+#~ msgid "Fixed"
+#~ msgstr "已修复"
+
+#~ msgid "Memory leaks in long-running MCP server"
+#~ msgstr "长时间运行的MCP服务器中的内存泄漏"
+
+#~ msgid "Rate limiting edge cases"
+#~ msgstr "速率限制的边缘情况"
+
+#~ msgid "[0.3.0] - 2024-12-XX"
+#~ msgstr ""
+#~ "[0.3.0] - 2024-12-XX\n"
+#~ "\n"
+#~ "上下文：技术文档"
+
+#~ msgid "Model Context Protocol (MCP) server integration"
+#~ msgstr "模型上下文协议（MCP）服务器集成"
+
+#~ msgid "Claude Desktop support"
+#~ msgstr "Claude 桌面支持"
+
+#~ msgid "100+ scientific tools across multiple databases"
+#~ msgstr "跨多个数据库的100多种科学工具"
+
+#~ msgid "OpenTargets Platform integration"
+#~ msgstr "OpenTargets 平台集成"
+
+#~ msgid "FDA/FAERS adverse event analysis"
+#~ msgstr "FDA/FAERS 不良事件分析"
+
+#~ msgid "PubTator literature search"
+#~ msgstr "PubTator 文献检索"
+
+#~ msgid "Clinical trials data access"
+#~ msgstr "临床试验数据访问"
+
+#~ msgid "Chemical similarity search via ChEMBL"
+#~ msgstr "通过 ChEMBL 进行化学相似性搜索"
+
+#~ msgid "Gene enrichment analysis"
+#~ msgstr "基因富集分析"
+
+#~ msgid "Protein-protein interaction networks"
+#~ msgstr "蛋白质-蛋白质相互作用网络"
+
+#~ msgid "AI-powered text analysis tools"
+#~ msgstr "基于AI的文本分析工具"
+
+#~ msgid "Hypothesis generation capabilities"
+#~ msgstr "假设生成功能"
+
+#~ msgid "Restructured codebase for better modularity"
+#~ msgstr "为实现更好的模块化重构代码库"
+
+#~ msgid "Unified configuration system"
+#~ msgstr "统一配置系统"
+
+#~ msgid "Improved error handling"
+#~ msgstr "改进的错误处理"
+
+#~ msgid "Security"
+#~ msgstr "安全性"
+
+#~ msgid "Added API key management"
+#~ msgstr "新增 API 密钥管理功能"
+
+#~ msgid "Implemented secure token handling"
+#~ msgstr "已实现安全令牌处理"
+
+#~ msgid "[0.2.0] - 2024-11-XX"
+#~ msgstr ""
+#~ "[0.2.0] - 2024-11-XX\n"
+#~ "\n"
+#~ "上下文：文档"
+
+#~ msgid "Basic tool framework"
+#~ msgstr "基础工具框架"
+
+#~ msgid "OpenTargets GraphQL integration"
+#~ msgstr "OpenTargets GraphQL 集成"
+
+#~ msgid "RESTful API support"
+#~ msgstr "RESTful API 支持"
+
+#~ msgid "Initial documentation"
+#~ msgstr "初始文档"
+
+#~ msgid "Refactored base tool architecture"
+#~ msgstr "重构基础工具架构"
+
+#~ msgid "Connection timeout issues"
+#~ msgstr "连接超时问题"
+
+#~ msgid "JSON parsing errors"
+#~ msgstr "JSON 解析错误"
+
+#~ msgid "[0.1.0] - 2024-10-XX"
+#~ msgstr ""
+#~ "[0.1.0] - 2024-10-XX\n"
+#~ "\n"
+#~ "上下文：文档"
+
+#~ msgid "Initial release"
+#~ msgstr "初始版本发布"
+
+#~ msgid "Basic scientific data access"
+#~ msgstr "基础科学数据访问"
+
+#~ msgid "Simple tool interface"
+#~ msgstr "简单工具界面"
+
+#~ msgid "Features by Version"
+#~ msgstr "按版本划分的功能"
+
+#~ msgid "Version 0.3.0 Features"
+#~ msgstr "版本 0.3.0 功能介绍"
+
+#~ msgid ""
+#~ "**Data Sources**: - OpenTargets Platform "
+#~ "(50+ tools) - FDA Drug Labeling /"
+#~ " FAERS (20+ tools) - PubMed/PubTator "
+#~ "(5+ tools) - ClinicalTrials.gov (10+ "
+#~ "tools) - ChEMBL (3+ tools) - "
+#~ "DrugBank (2+ tools) - Europe PMC "
+#~ "(1+ tools) - Semantic Scholar (1+ "
+#~ "tools) - OpenAlex (1+ tools)"
+#~ msgstr ""
+#~ "**数据来源**：  \n"
+#~ "- OpenTargets 平台（50+ 工具）  \n"
+#~ "- FDA 药物标签 / FAERS（20+ 工具）  \n"
+#~ "- PubMed/PubTator（5+ 工具）  \n"
+#~ "- ClinicalTrials.gov（10+ 工具）  \n"
+#~ "- ChEMBL（3+ 工具）  \n"
+#~ "- DrugBank（2+ 工具）  \n"
+#~ "- Europe PMC（1+ 工具）  \n"
+#~ "- Semantic Scholar（1+ 工具）  \n"
+#~ "- OpenAlex（1+ 工具）"
+
+#~ msgid ""
+#~ "**Analysis Tools**: - Gene enrichment "
+#~ "analysis (Enrichr) - Protein-protein "
+#~ "interactions (HumanBase) - Network analysis"
+#~ " - Statistical analysis"
+#~ msgstr ""
+#~ "**分析工具**：  \n"
+#~ "- 基因富集分析（Enrichr）  \n"
+#~ "- 蛋白质相互作用（HumanBase）  \n"
+#~ "- 网络分析  \n"
+#~ "- 统计分析"
+
+#~ msgid ""
+#~ "**AI Integration**: - MCP server for "
+#~ "AI assistants - Claude Desktop "
+#~ "integration - Scientific text summarization"
+#~ " - Literature review automation - "
+#~ "Hypothesis generation - Experimental design"
+#~ " scoring"
+#~ msgstr ""
+#~ "**AI 集成**：  \n"
+#~ "- 用于 AI 助手的 MCP 服务器  \n"
+#~ "- Claude 桌面集成  \n"
+#~ "- 科学文本摘要  \n"
+#~ "- 文献综述自动化  \n"
+#~ "- 假设生成  \n"
+#~ "- 实验设计评分"
+
+#~ msgid ""
+#~ "**Utilities**: - Medical term normalization"
+#~ " - Data validation - Batch processing"
+#~ " - Caching system"
+#~ msgstr ""
+#~ "**工具**：  \n"
+#~ "- 医学术语规范化  \n"
+#~ "- 数据验证  \n"
+#~ "- 批量处理  \n"
+#~ "- 缓存系统"
+
+#~ msgid "Migration Tutorial"
+#~ msgstr "迁移教程"
+
+#~ msgid "From 0.2.x to 0.3.x"
+#~ msgstr "从 0.2.x 版本升级到 0.3.x 版本"
+
+#~ msgid "**Breaking Changes**:"
+#~ msgstr "**重大变更**："
+
+#~ msgid "1. **Configuration System**:"
+#~ msgstr "1. **配置系统**："
+
+#~ msgid "Old:"
+#~ msgstr "旧版："
+
+#~ msgid "New:"
+#~ msgstr "新增："
+
+#~ msgid "2. **Method Names**:"
+#~ msgstr "2. **方法名称**："
+
+#~ msgid "Some methods were renamed for consistency:"
+#~ msgstr "为保持一致性，部分方法名称已被重命名："
+
+#~ msgid ""
+#~ "``get_disease_targets()`` → "
+#~ "``get_associated_targets_by_disease_efoId()``"
+#~ msgstr ""
+
+#~ msgid "``search_drugs()`` → ``get_drug_id_description_by_name()``"
+#~ msgstr ""
+
+#~ msgid "3. **Return Format**:"
+#~ msgstr "3. **返回格式**："
+
+#~ msgid "All tools now return consistent dictionary format:"
+#~ msgstr "所有工具现均返回一致的字典格式："
+
+#~ msgid "**Migration Steps**:"
+#~ msgstr "**迁移步骤**："
+
+#~ msgid "Update configuration calls"
+#~ msgstr "更新配置调用"
+
+#~ msgid "Review method names in your code"
+#~ msgstr "审查代码中的方法名称"
+
+#~ msgid "Update result processing logic"
+#~ msgstr "更新结果处理逻辑"
+
+#~ msgid "Test thoroughly with new version"
+#~ msgstr "使用新版本进行全面测试"
+
+#~ msgid "Deprecation Notices"
+#~ msgstr "弃用通知"
+
+#~ msgid ""
+#~ "**Version 0.4.0** (planned): - Legacy "
+#~ "configuration format will be removed -"
+#~ " Old method names will be removed "
+#~ "- Python 3.9 support will be "
+#~ "dropped"
+#~ msgstr ""
+#~ "**版本 0.4.0**（计划中）：  \n"
+#~ "- 旧版配置格式将被移除  \n"
+#~ "- 旧的方法名称将被移除  \n"
+#~ "- 将停止支持 Python 3.9"
+
+#~ msgid "Known Issues"
+#~ msgstr "已知问题"
+
+#~ msgid "Current Known Issues"
+#~ msgstr "当前已知问题"
+
+#~ msgid "**Rate Limiting**: Some APIs may throttle requests during peak hours"
+#~ msgstr "**速率限制**：某些 API 可能会在高峰时段限制请求速率。"
+
+#~ msgid "**Memory Usage**: Large batch queries may consume significant memory"
+#~ msgstr "**内存使用**：大批量查询可能会消耗大量内存"
+
+#~ msgid "**Async Support**: Not all tools support async operations yet"
+#~ msgstr "**异步支持**：并非所有工具目前都支持异步操作"
+
+#~ msgid "Workarounds"
+#~ msgstr "变通方法"
+
+#~ msgid ""
+#~ "**Rate Limiting**: - Enable caching to"
+#~ " reduce API calls - Use batch "
+#~ "processing when available - Implement "
+#~ "delays between requests"
+#~ msgstr ""
+#~ "**速率限制**：  \n"
+#~ "- 启用缓存以减少 API 调用  \n"
+#~ "- 在可用时使用批处理  \n"
+#~ "- 在请求之间实现延迟"
+
+#~ msgid ""
+#~ "**Memory Usage**: - Process large "
+#~ "datasets in chunks - Clear results "
+#~ "cache periodically - Use generators for"
+#~ " large result sets"
+#~ msgstr ""
+#~ "**内存使用**：  \n"
+#~ "- 分块处理大型数据集  \n"
+#~ "- 定期清理结果缓存  \n"
+#~ "- 对于大型结果集使用生成器"
+
+#~ msgid "Performance Notes"
+#~ msgstr "性能说明"
+
+#~ msgid "Version 0.3.0 Performance"
+#~ msgstr "版本 0.3.0 性能"
+
+#~ msgid "**API Response Time**: Average 200-500ms per request"
+#~ msgstr "**API 响应时间**：每次请求平均 200-500 毫秒"
+
+#~ msgid "**Batch Processing**: Up to 10x faster for multiple queries"
+#~ msgstr "**批量处理**：多查询时速度提升最多达10倍"
+
+#~ msgid "**Memory Usage**: ~50MB base, +10MB per 1000 cached results"
+#~ msgstr "**内存使用**：基础约50MB，每缓存1000个结果增加约10MB"
+
+#~ msgid "**Concurrent Requests**: Supports up to 10 concurrent API calls"
+#~ msgstr "**并发请求**：支持最多10个并发API调用"
+
+#~ msgid "Benchmarks"
+#~ msgstr "基准测试"
+
+#~ msgid "Tested on Python 3.10, Ubuntu 20.04, 16GB RAM:"
+#~ msgstr "在 Python 3.10、Ubuntu 20.04、16GB 内存环境下测试："
+
+#~ msgid "**Simple Query**: 0.2-0.5 seconds"
+#~ msgstr "**简单查询**：0.2-0.5秒"
+
+#~ msgid "**Complex GraphQL**: 1-3 seconds"
+#~ msgstr "**复杂 GraphQL**：1-3 秒"
+
+#~ msgid "**Batch of 100 queries**: 30-60 seconds"
+#~ msgstr "**100条查询批处理**：30-60秒"
+
+#~ msgid "**Literature search**: 2-5 seconds"
+#~ msgstr "**文献检索**：2-5秒"
+
+#~ msgid "**MCP server startup**: <2 seconds"
+#~ msgstr "**MCP 服务器启动时间**：<2 秒"
+
+#~ msgid "Security Updates"
+#~ msgstr "安全更新"
+
+#~ msgid "Version 0.3.0 Security"
+#~ msgstr "版本 0.3.0 安全性"
+
+#~ msgid "**CVE-2024-XXXX**: Fixed potential XSS in tool descriptions"
+#~ msgstr "**CVE-2024-XXXX**：修复工具描述中的潜在跨站脚本（XSS）漏洞"
+
+#~ msgid "**API Keys**: Enhanced secure storage and transmission"
+#~ msgstr "**API 密钥**：增强的安全存储与传输"
+
+#~ msgid "**Input Validation**: Strengthened against injection attacks"
+#~ msgstr "**输入验证**：增强防注入攻击能力"
+
+#~ msgid "**Dependencies**: Updated all dependencies to latest secure versions"
+#~ msgstr "**依赖项**：已将所有依赖项更新至最新安全版本"
+
+#~ msgid "Security Best Practices"
+#~ msgstr "安全最佳实践"
+
+#~ msgid "**API Keys**: Never commit API keys to version control"
+#~ msgstr "**API 密钥**：切勿将 API 密钥提交到版本控制系统中"
+
+#~ msgid "**Input Validation**: Always validate user inputs"
+#~ msgstr "**输入验证**：始终对用户输入进行验证"
+
+#~ msgid "**HTTPS**: Use HTTPS for all API communications"
+#~ msgstr "**HTTPS**：所有 API 通信均应使用 HTTPS"
+
+#~ msgid "**Updates**: Keep ToolUniverse updated to latest version"
+#~ msgstr "**更新**：保持 ToolUniverse 为最新版本"
+
+#~ msgid "Acknowledgments"
+#~ msgstr "致谢"
+
+#~ msgid "Contributors to 0.3.0"
+#~ msgstr "0.3.0 版本的贡献者"
+
+#~ msgid "**Shanghua Gao** - Lead developer and maintainer"
+#~ msgstr "**高尚华** - 首席开发者兼维护者"
+
+#~ msgid "**Contributors** - Community bug reports and feature requests"
+#~ msgstr "**贡献者** - 社区错误报告与功能请求"
+
+#~ msgid "**Beta Testers** - Early adoption and feedback"
+#~ msgstr "**测试用户** - 早期采用与反馈"
+
+#~ msgid "Special Thanks"
+#~ msgstr "特别鸣谢"
+
+#~ msgid "**OpenTargets Team** - API support and collaboration"
+#~ msgstr "**OpenTargets 团队** - API 支持与协作"
+
+#~ msgid "**FastMCP Team** - MCP protocol implementation"
+#~ msgstr "**FastMCP 团队** - MCP 协议实现"
+
+#~ msgid "**Sphinx Team** - Documentation framework"
+#~ msgstr "**Sphinx团队** - 文档框架"
+
+#~ msgid "**Python Community** - Foundational libraries"
+#~ msgstr "**Python 社区** - 基础库"
+
+#~ msgid "Support and Resources"
+#~ msgstr "支持与资源"
+
+#~ msgid "**Documentation**: https://tooluniverse.readthedocs.io"
+#~ msgstr "**文档**: https://tooluniverse.readthedocs.io"
+
+#~ msgid "**GitHub Repository**: https://github.com/mims-harvard/TxAgent"
+#~ msgstr "**GitHub 仓库**: https://github.com/mims-harvard/TxAgent"
+
+#~ msgid "**Issue Tracker**: https://github.com/mims-harvard/TxAgent/issues"
+#~ msgstr "**问题追踪器**: https://github.com/mims-harvard/TxAgent/issues"
+
+#~ msgid "**Discussions**: https://github.com/mims-harvard/TxAgent/discussions"
+#~ msgstr "**讨论**：https://github.com/mims-harvard/TxAgent/discussions"
+

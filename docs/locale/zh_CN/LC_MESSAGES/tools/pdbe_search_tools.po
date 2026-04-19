@@ -1,0 +1,196 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_search_tools.rst:10 50375af7e9f44d9c80155e9aa2198226
+msgid "Pdbe Search Tools"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:12 1f6f2dfe159246df865e5b792a9c909a
+msgid ""
+"**Configuration File**: ``pdbe_search_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:16 841037348ffc493ea8c9d7c5bed6d0ea
+msgid ""
+"This page contains all tools defined in the ``pdbe_search_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:19 1582958d1562482f94597b4b6ef33e8c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:22 9119067d7b5f4d4d9e8a27cb54ca925b
+msgid "**PDBeSearch_get_compound** (Type: PDBeSearchTool)"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:24 d346f12864214adc868b31ae13435755
+msgid ""
+"Get PDB ligand/compound information by compound ID from PDBe. Returns "
+"chemical name, formula, mol..."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst d756bdd533c24b94b2192b098b94a0a7
+msgid "PDBeSearch_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:28 ../../tools/pdbe_search_tools.rst:59
+#: ../../tools/pdbe_search_tools.rst:96 1b1dbbcc76fc4716ac95136b1f00b4e8
+#: 30f26f0262424f62b13b415a5887719c 871cc7f6b57c4c348892484282156c5b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:30 12031d38299e4ecbb976fb7c2f755d63
+msgid "**Name**: ``PDBeSearch_get_compound``"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:31 ../../tools/pdbe_search_tools.rst:62
+#: ../../tools/pdbe_search_tools.rst:99 2af7fe38721648b39a69c3837d92485c
+#: db979ea650354d5bba866a968146f948 e66c666afd334d73b8d4f089a97e3794
+msgid "**Type**: ``PDBeSearchTool``"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:32 3cb6732f5787447081198e1cc1ef1b96
+msgid ""
+"**Description**: Get PDB ligand/compound information by compound ID from "
+"PDBe. Returns chemical name, formula, molecular weight, InChI, InChI key,"
+" SMILES, and systematic names. Useful for looking up small molecules that"
+" co-crystallize with proteins. Example: 'ATP' returns "
+"adenosine-5'-triphosphate (C10H16N5O13P3, MW 507.18); 'HEM' returns "
+"protoporphyrin IX containing iron."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:34 ../../tools/pdbe_search_tools.rst:65
+#: ../../tools/pdbe_search_tools.rst:102 7d7adb45306d461db556a3e4be72a7ec
+#: d0fb190e48e64e3390db6e12f7c81071 ff2055a9a0ee4a7ba931b6fa14269064
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:36 f3f988979aa546c59717a26ba199aa82
+msgid ""
+"``compound_id`` (string) (required) PDB ligand/compound 3-letter code. "
+"Examples: 'ATP' (adenosine triphosphate), 'HEM' (heme), 'NAG' "
+"(N-acetyl-D-glucosamine), 'FAD' (flavin adenine dinucleotide)."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:39 ../../tools/pdbe_search_tools.rst:76
+#: ../../tools/pdbe_search_tools.rst:110 18b24097189b447981af71bbaeca4087
+#: 22144f3a3d99412ba15ab9ebf903060c a3100bf0ed9949e68b1f4f7b983cb334
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:53 2d30b46d9733415fb16c8b14e1bf9c77
+msgid "**PDBeSearch_search_by_organism** (Type: PDBeSearchTool)"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:55 5ee0957bed33408f873f7839b3e9179f
+msgid ""
+"Search PDB structures filtered by organism through PDBe's Solr search. "
+"Combines keyword search wi..."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst bed47b30a96a43678d2500bd6425d22a
+msgid "PDBeSearch_search_by_organism tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:61 45a53e34ec3f4513aefbbc131c9460bf
+msgid "**Name**: ``PDBeSearch_search_by_organism``"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:63 3537dc8779f94f8780ef5f787d0da0b4
+msgid ""
+"**Description**: Search PDB structures filtered by organism through "
+"PDBe's Solr search. Combines keyword search with organism name filtering."
+" Useful for finding species-specific protein structures. Example: "
+"searching for 'kinase' in 'Homo sapiens' returns human protein kinase "
+"structures sorted by resolution."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:67 d5013a61b154452ca979f870356beaac
+msgid ""
+"``organism`` (string) (required) Scientific name of organism. Examples: "
+"'Homo sapiens', 'Escherichia coli', 'Mus musculus', 'Saccharomyces "
+"cerevisiae'."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:70 ccbf275adfb44b59bc18a82d5ad1aa9a
+msgid ""
+"``query`` (string, null) (optional) Optional keyword query to combine "
+"with organism filter. Examples: 'kinase', 'receptor'. Default searches "
+"all structures for the organism."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:73 ../../tools/pdbe_search_tools.rst:107
+#: 4e91e28ad1d74c1f8c357fc1cfb0c7b1 cf1e9ad01c0a4cda838e4d56ed1d5492
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (1-50, "
+"default 10)."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:90 8d24b8a8212b400aaea3b6972b693552
+msgid "**PDBeSearch_search_structures** (Type: PDBeSearchTool)"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:92 08187bc0f4ae4b49b11c336c4eff6e40
+msgid ""
+"Search PDB structures through PDBe's Solr search interface by keyword, "
+"protein name, or gene name..."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst 90d9261a5bec4d62827b7a7960083631
+msgid "PDBeSearch_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:98 b6f824c6d81e42db969e59cc656de60f
+msgid "**Name**: ``PDBeSearch_search_structures``"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:100 675fe9473b5b465b8d5532c1306f0ccd
+msgid ""
+"**Description**: Search PDB structures through PDBe's Solr search "
+"interface by keyword, protein name, or gene name. Returns PDB IDs, "
+"titles, resolution, experimental methods, deposition dates, and "
+"organisms, sorted by resolution (best first). Complements RCSB PDB tools "
+"with powerful full-text search. Example: searching 'insulin' returns 400+"
+" structures; 'BRCA1' returns 148 structures including BRCT domains."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:104 b6e66eebf6554b2eadd4caf9bde5bd08
+msgid ""
+"``query`` (string) (required) Search query - protein name, gene name, or "
+"keyword. Supports Solr syntax. Examples: 'insulin', 'BRCA1', 'kinase AND "
+"human', 'TP53'."
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:124 440580bd52cc4c2696ff7229e814e805
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:126 cff74c4ec92843908f4702a365f2bbf1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_search_tools.rst:127 070f7b369c154052a74f6c044990f9f3
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

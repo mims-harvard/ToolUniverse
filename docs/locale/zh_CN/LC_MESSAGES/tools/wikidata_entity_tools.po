@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wikidata_entity_tools.rst:10 1a97b336774e4232b89b69b1a0ba4bd6
+msgid "Wikidata Entity Tools"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:12 19bf17c973154c1882fa3e7144409895
+msgid ""
+"**Configuration File**: ``wikidata_entity_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:16 ac9bf7c53a8a4b98807ac35e3a08d8d4
+msgid ""
+"This page contains all tools defined in the "
+"``wikidata_entity_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:19 d0eb2854ed16478ca4ba372df034a267
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:22 8329377fc3184814ac5e25e492f069eb
+msgid "**Wikidata_get_entity** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:24 b05fadcb87ec44ed8c6f6ef76aef3ca5
+msgid ""
+"Get detailed structured data for one or more specific Wikidata entities "
+"by their Q-numbers. Retur..."
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst 113a7db47b03407398ad1c0aaa6e6ea4
+msgid "Wikidata_get_entity tool specification"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:28
+#: ../../tools/wikidata_entity_tools.rst:65 46d0693cf19a4872b2b518fb4b43981c
+#: cb1cc26af7c54d51b6b29bb3ffedbba5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:30 e83c09888b154bf2965924246a38f694
+msgid "**Name**: ``Wikidata_get_entity``"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:31
+#: ../../tools/wikidata_entity_tools.rst:68 1d903c90424a4672b390abd31857d3c9
+#: f182ea1cb7dc4b42ba12141a24a961a2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:32 65b629f321e9460183120cc0cb783612
+msgid ""
+"**Description**: Get detailed structured data for one or more specific "
+"Wikidata entities by their Q-numbers. Returns labels, descriptions, "
+"aliases, sitelinks, and claims (statements). Use "
+"Wikidata\\_search\\_entities first to find entity IDs. Essential for "
+"extracting structured facts from the Wikidata knowledge graph without "
+"writing SPARQL queries."
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:34
+#: ../../tools/wikidata_entity_tools.rst:71 4b84e91d6790456aab0bdb5b675a21c7
+#: 70edde7f20e04ea59cfd67d3e0e22383
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:36 a7625bd733df49929a3baf84fde0fa63
+msgid ""
+"``ids`` (string) (required) Wikidata entity ID(s) to retrieve. Use pipe "
+"\\| separator for multiple. Examples: 'Q937' (Einstein), 'Q937\\|Q7251' "
+"(multiple)"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:39 d42512a89b5c48bda57eeb0f1b2142fb
+msgid ""
+"``languages`` (string, null) (optional) Language code(s) for labels and "
+"descriptions. Default: 'en'. Pipe-separated for multiple: 'en\\|fr\\|de'"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:42 14743726274e413ba1582f5dc799e034
+msgid ""
+"``props`` (string, null) (optional) Which properties to return (pipe-"
+"separated). Options: 'labels', 'descriptions', 'aliases', 'claims', "
+"'sitelinks'. Default: 'labels\\|descriptions\\|aliases\\|sitelinks'"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:45
+#: ../../tools/wikidata_entity_tools.rst:85 8ac26685102c4b9899f761f401a08386
+#: f989108ce39f496da77331cd7d76daa3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:59 435159c7a5024016890ef8f166dbb5b2
+msgid "**Wikidata_search_entities** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:61 40aa28ef6dda4662acedfbe515dd08ae
+msgid ""
+"Search Wikidata for entities (items, properties, or lexemes) by label or "
+"description using the Me..."
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst dcf682c301254f3385065036cc32db6f
+msgid "Wikidata_search_entities tool specification"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:67 669c735e498446008ddd5b86f889cb98
+msgid "**Name**: ``Wikidata_search_entities``"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:69 a6a40f416fd64c8c94a9483710273fb4
+msgid ""
+"**Description**: Search Wikidata for entities (items, properties, or "
+"lexemes) by label or description using the MediaWiki Wikibase API. "
+"Wikidata is the world's largest open knowledge graph with 100M+ data "
+"items. Returns entity IDs (Q-numbers), labels, descriptions, and aliases."
+" Complementary to Wikidata\\_SPARQL\\_query for finding entity IDs before"
+" constructing SPARQL queries."
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:73 a6aada4bc4ee49b2a3beff29553229ab
+msgid ""
+"``search`` (string) (required) Search term to find Wikidata entities. "
+"Examples: 'CRISPR', 'Albert Einstein', 'HIV', 'perovskite', 'insulin'"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:76 0c07c79519de483f909b1be8763743b5
+msgid ""
+"``language`` (string, null) (optional) Language code for search and "
+"results. Default: 'en'. Examples: 'fr', 'de', 'zh', 'ja', 'es'"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:79 75f4341b431a4ebcbcf106fc736055c0
+msgid ""
+"``type`` (string, null) (optional) Entity type to search. Values: 'item' "
+"(Q-numbers, default), 'property' (P-numbers), 'lexeme' (L-numbers)"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:82 0c59eb5bb3ef43d482eaa64689d3b5bb
+msgid ""
+"``limit`` (integer, null) (optional) Number of results to return (default"
+" 7, max 50)"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:99 a14bc0568c5f4229894ae75525f9d6fe
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:101 cab087cf07ea4258b933d7911d4dc5a3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wikidata_entity_tools.rst:102 36dd5cf29b95478a9f48a7fbb22742b5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

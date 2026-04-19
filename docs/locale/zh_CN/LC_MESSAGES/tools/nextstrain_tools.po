@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nextstrain_tools.rst:10 1152435d60f5404aa527c363b647a477
+msgid "Nextstrain Tools"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:12 55adcf7f4b5a47cd8f3db5676b2a5ad5
+msgid ""
+"**Configuration File**: ``nextstrain_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:16 61c8a3f8e09d4640902e11042d997d8c
+msgid ""
+"This page contains all tools defined in the ``nextstrain_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:19 b94909ee1bf64f4c863b6258bbcf8426
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:22 8377979f79994dd68cfe109f4a1708c5
+msgid "**Nextstrain_get_dataset** (Type: NextstrainTool)"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:24 0f962b629b464b6b8ba91f6a5d27f9b3
+msgid ""
+"Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. "
+"Returns title, last upda..."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst 4db05601e22a4acfa6c6880a36884d94
+msgid "Nextstrain_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:28 ../../tools/nextstrain_tools.rst:59
+#: 5f239f8c82d947db8a98a460727597bb d6f4298f80c34c3fb428012009553fb6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:30 a917b69b065e499f891e420869175dc9
+msgid "**Name**: ``Nextstrain_get_dataset``"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:31 ../../tools/nextstrain_tools.rst:62
+#: 4eaf9665e9964606bfff2f075c8adb4e 68fe694e1ecb4a1d8c3c511aed36a59a
+msgid "**Type**: ``NextstrainTool``"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:32 59e6e643b1fc47ceb0e81dfe596fb329
+msgid ""
+"**Description**: Get metadata and phylogenetic summary for a Nextstrain "
+"pathogen dataset. Returns title, last update date, number of sequences, "
+"data provenance, maintainers, root node attributes, and available "
+"coloring options. Useful for understanding the scope and currency of "
+"pathogen genomic surveillance data. Example: 'zika' returns 1044 "
+"sequences tracking Zika virus evolution, last updated Dec 2025."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:34 ../../tools/nextstrain_tools.rst:65
+#: 4a1399996c584181a5d793d04aae0289 6ad42bd6a9804ed0a6c3342de37ea8de
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:36 2afb16e56145481b995570f7a4f0fefc
+msgid ""
+"``dataset`` (string) (required) Nextstrain dataset path. Examples: "
+"'zika', 'ebola', 'flu/seasonal/h3n2/ha/2y', 'dengue/denv1', 'mpox/clade-"
+"IIb'."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:39 ../../tools/nextstrain_tools.rst:70
+#: 56a6c44902fe4ba2a6a196a3bc279300 7dcdd1903e544bfca4e1cebdfb971798
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:53 87bbd2c4d0cc4c2ab5294a449f370615
+msgid "**Nextstrain_list_datasets** (Type: NextstrainTool)"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:55 5b866ff2f71f40799fcb9476c523b0ea
+msgid ""
+"List available pathogen phylogenetic datasets from Nextstrain. Returns "
+"datasets grouped by pathog..."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst f6912f7626894e9daff78c2013f7c290
+msgid "Nextstrain_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:61 ce7d714cd46c495b94dd20664a8763ec
+msgid "**Name**: ``Nextstrain_list_datasets``"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:63 5a7b7b040545444da66113a9a5247c5a
+msgid ""
+"**Description**: List available pathogen phylogenetic datasets from "
+"Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, "
+"dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika). Optionally filter "
+"by pathogen name. Nextstrain provides real-time molecular epidemiology "
+"for public health, tracking how pathogens evolve and spread worldwide."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:67 8457e44419ba41cbb619c57cdd7ebf46
+msgid ""
+"``pathogen`` (string, null) (optional) Optional pathogen name filter. "
+"Examples: 'flu', 'ebola', 'zika', 'dengue', 'mpox'. Leave empty for all "
+"pathogens."
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:83 c56f5d3a55e64f22910d806fdc5f780b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:85 92ef093ccbc54301b187d76e538f854b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nextstrain_tools.rst:86 27658b86189e403ab32bd35a1241f598
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

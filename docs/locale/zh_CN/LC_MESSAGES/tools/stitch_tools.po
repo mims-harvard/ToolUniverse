@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/stitch_tools.rst:10 05a022d22e2d450583a0173012214480
+msgid "Stitch Tools"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:12 ebf620a67027472ebb8ba7e17c0b2b4c
+msgid ""
+"**Configuration File**: ``stitch_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:16 9fa6b4c9e16e46fca58bfff31a0916fd
+msgid ""
+"This page contains all tools defined in the ``stitch_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:19 6630064ba33246b7853eba7d5e939075
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:22 471ed3761c05414fb256927380133e7e
+msgid "**STITCH_get_chemical_protein_interactions** (Type: STITCHTool)"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:24 05d93e1fbf1b4ce9a6b49e22bd2efae3
+msgid ""
+"Get chemical-protein interactions from STITCH. Returns known and "
+"predicted interactions between c..."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst 51b8b32358a14311a6c3fd427715d95d
+msgid "STITCH_get_chemical_protein_interactions tool specification"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:28 ../../tools/stitch_tools.rst:70
+#: ../../tools/stitch_tools.rst:107 59124a4ad94440598c3cf661ef953696
+#: 92a4fb957fe548129ce030afa901a074 9907c933dbfe4992a8ecec691def5389
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:30 6fc6465347ed40cf9716f5830e8f69b7
+msgid "**Name**: ``STITCH_get_chemical_protein_interactions``"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:31 ../../tools/stitch_tools.rst:73
+#: ../../tools/stitch_tools.rst:110 d1949577acad46a2a9cf7b296131b191
+#: dd20b934add84a26b4d4a71cfd2b1702 fa1b680ce43d45fd90a5d2b55fd19f31
+msgid "**Type**: ``STITCHTool``"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:32 e5b5ef9c7cfd4e0095efdcf4943759aa
+msgid ""
+"**Description**: Get chemical-protein interactions from STITCH. Returns "
+"known and predicted interactions between chemicals and proteins with "
+"confidence scores."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:34 ../../tools/stitch_tools.rst:76
+#: ../../tools/stitch_tools.rst:113 7dcec9fc60b147dfa9d13f631f98dfb3
+#: 89eeb75f388a4adfa01870efe8fc4635 ce183d39dadb41248c8c6f9f261e7f61
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:36 85b14669fcb346099ba6fa9bfe6dd545
+msgid ""
+"``identifiers`` (array) (optional) Chemical names, drug names, or STITCH "
+"IDs (e.g., ['aspirin', 'ibuprofen'] or ['CIDm00002244']). Alias: "
+"'chemical'."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:39 52cb79313f1448799c429f7711de34b9
+msgid ""
+"``chemical`` (string) (optional) Single chemical name or STITCH ID (alias"
+" for identifiers, e.g., 'aspirin' or 'CIDm00002244')."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:42 b7b58b015b3a43b68365ec886cf3cd12
+msgid ""
+"``species`` (integer) (optional) NCBI taxonomy ID (9606 for human, 10090 "
+"for mouse)."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:45 73c9de8a77e444dbbef3bd2d87541baf
+msgid ""
+"``required_score`` (integer) (optional) Minimum confidence score "
+"(0-1000). 400=medium, 700=high, 900=highest."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:48 dd5654e5e2964e8c9c2ddf2720c3b2ab
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interaction partners per"
+" query."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:51 ../../tools/stitch_tools.rst:87
+#: ../../tools/stitch_tools.rst:121 6ab7644629294a219803f5a35c85b7b2
+#: 8a77c494b5c84ae4a5543b8d5bf28339 ba8a3863b20d4666a99391f259935a30
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:64 0297433ef8b347cb935d76f4950c0886
+msgid "**STITCH_get_interaction_partners** (Type: STITCHTool)"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:66 7d6166ec3bda4d9a89f7a06eaac05bc4
+msgid ""
+"Get all interaction partners (chemicals and proteins) for a given "
+"identifier. Returns network of ..."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst 8722d9222969443595e255b712c83b1e
+msgid "STITCH_get_interaction_partners tool specification"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:72 23c4778219164b9a8900bd079ea91875
+msgid "**Name**: ``STITCH_get_interaction_partners``"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:74 02c60175a2314960af0ca92c44558b21
+msgid ""
+"**Description**: Get all interaction partners (chemicals and proteins) "
+"for a given identifier. Returns network of related molecules."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:78 651ade2c193d4ac182ee35855a9d5532
+msgid ""
+"``identifiers`` (array) (required) Chemical or protein identifiers to "
+"query."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:81 ../../tools/stitch_tools.rst:118
+#: 520812f767bf4ffd870b2911270d488c b0cb33b8fb1b4617bdc38365f7b302c1
+msgid "``species`` (integer) (optional) NCBI taxonomy ID."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:84 7f734b041df8419d8eb71120cdc6df4c
+msgid "``limit`` (integer) (optional) Maximum number of partners."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:101 1cea11d0d62f4e5082eea4dd8b8a7abe
+msgid "**STITCH_resolve_identifier** (Type: STITCHTool)"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:103 e832af5dea7649eea36b5926ea69c484
+msgid ""
+"Resolve a chemical or protein name to STITCH database identifiers. Useful"
+" for mapping common name..."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst 9551a26eefdd41deaf1427a3362b784a
+msgid "STITCH_resolve_identifier tool specification"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:109 41c5c57be69a43ca88b9316431fe0ec1
+msgid "**Name**: ``STITCH_resolve_identifier``"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:111 28d4101bcfa34808b55f054d529932e7
+msgid ""
+"**Description**: Resolve a chemical or protein name to STITCH database "
+"identifiers. Useful for mapping common names to database IDs."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:115 a532da16d93d463b9ba4c2f14364f1fd
+msgid ""
+"``identifier`` (string) (required) Chemical or protein name to resolve "
+"(e.g., 'aspirin', 'TP53')."
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:135 94a55a7aabc844eaaa45837fadfcbae4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:137 6e3f4b00d9014d10acc80c59f815b607
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/stitch_tools.rst:138 ef6d02cc43d24690addb1d46f568f4b2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

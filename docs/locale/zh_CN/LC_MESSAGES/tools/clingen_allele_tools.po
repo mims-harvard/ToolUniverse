@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clingen_allele_tools.rst:10 afcc6c3f9e634e37a94dae0b0a306938
+msgid "Clingen Allele Tools"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:12 9a21641b68764286a883991018f2a6a8
+msgid ""
+"**Configuration File**: ``clingen_allele_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:16 a743ed71b9034e53a1971e02bfedf57e
+msgid ""
+"This page contains all tools defined in the ``clingen_allele_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:19 07eaab33046d4f10881ea83eded5ff70
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:22 3fba4a4c62a2402a9631e9919496daa5
+msgid "**ClinGenAllele_get_allele** (Type: ClinGenAlleleTool)"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:24 824a71000101404c9a63518472c6a981
+msgid ""
+"Get detailed information for a canonical allele by its ClinGen Allele "
+"Registry CA ID. Returns cro..."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst d9dc5577c1764789bbfe2b9610b0823f
+msgid "ClinGenAllele_get_allele tool specification"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:28
+#: ../../tools/clingen_allele_tools.rst:61 4d6f2482602142168cfbf8e68c4abdce
+#: b9f7079e501d4b269db59f6c4e5a4f59
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:30 2dc77183cfb04e0baa7e061f4216eb33
+msgid "**Name**: ``ClinGenAllele_get_allele``"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:31
+#: ../../tools/clingen_allele_tools.rst:64 021fed917cee455d8eb710f4e5e68356
+#: 759ac801807b47089390a49022e9c612
+msgid "**Type**: ``ClinGenAlleleTool``"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:32 e730509930d94260afde23e69d498e6a
+msgid ""
+"**Description**: Get detailed information for a canonical allele by its "
+"ClinGen Allele Registry CA ID. Returns cross-references to ClinVar, "
+"dbSNP, COSMIC, gnomAD, genomic coordinates, and transcript-level HGVS "
+"expressions."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:34
+#: ../../tools/clingen_allele_tools.rst:67 6b06f18dab5846aaa896e92154c9ac86
+#: 8f6d191c428d41e99114587df795ac12
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:36 36b1effd461942af8238d7800e0220a5
+msgid ""
+"``ca_id`` (string, null) (optional) ClinGen canonical allele identifier "
+"(e.g., 'CA000387'). Obtain from ClinGenAllele\\_lookup\\_hgvs or ClinVar."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:39 a1de9e7b55e44c13a436b86b73db23b6
+msgid ""
+"``allele_id`` (string, null) (optional) Alias for ca\\_id. ClinGen "
+"canonical allele identifier (e.g., 'CA000387')."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:42
+#: ../../tools/clingen_allele_tools.rst:72 d36c031b4bbd4d6194a1d879bae16f04
+#: dad9e7059e3a41018bbab5f3b74dcfc8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:55 ed201717cf10412184cdfb55dedb97fd
+msgid "**ClinGenAllele_lookup_hgvs** (Type: ClinGenAlleleTool)"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:57 65dc2554683e4a00bf9f79a187774a4c
+msgid ""
+"Look up a genetic variant by HGVS expression in the ClinGen Allele "
+"Registry to get its canonical ..."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst b9aaa97c91d24dd2923990764128fab3
+msgid "ClinGenAllele_lookup_hgvs tool specification"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:63 d05e2eb49f8b4c7ea29598e00885ba76
+msgid "**Name**: ``ClinGenAllele_lookup_hgvs``"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:65 68046641b3d44e4084c2bd273729d344
+msgid ""
+"**Description**: Look up a genetic variant by HGVS expression in the "
+"ClinGen Allele Registry to get its canonical allele identifier (CA ID) "
+"and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other "
+"databases. Accepts genomic (NC\\_\\*), coding (NM\\_\\*), or protein "
+"(NP\\_\\*) HGVS expressions."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:69 f80262280c9c435aaea385ade4997474
+msgid ""
+"``hgvs`` (string) (required) HGVS expression for the variant. Examples: "
+"'NC\\_000017.11:g.7674220C>T' (genomic), 'NM\\_000546.6:c.743G>A' "
+"(coding). Must use a valid reference sequence accession."
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:86 d08b4ab0b04d40f6a42683a61cc9ff28
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:88 e0301ab5ef1545e2bf3d3b1461b42c73
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clingen_allele_tools.rst:89 1cb563dc55cb4f288b77ede137e0ffcc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

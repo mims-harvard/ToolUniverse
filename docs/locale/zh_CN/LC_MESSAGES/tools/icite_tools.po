@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/icite_tools.rst:10 c4e48e9e7abf45f883b8656355215b72
+msgid "Icite Tools"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:12 feb8adedfba74829bdb612928125cc33
+msgid ""
+"**Configuration File**: ``icite_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 2"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:16 c6d751b3525a4e60995d435010a53a24
+msgid ""
+"This page contains all tools defined in the ``icite_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/icite_tools.rst:19 60babfa6c1074883b632fe5461059955
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:22 4062fd0aa9c54093aa27f9101059d292
+msgid "**iCite_get_publications** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:24 6b84c3117f0a4f5aa252722875ee1457
+msgid ""
+"Get citation metrics and research context for PubMed publications using "
+"NIH's iCite API. iCite pr..."
+msgstr ""
+
+#: ../../tools/icite_tools.rst ac78ff463d6e4ed2877a06901e29f903
+msgid "iCite_get_publications tool specification"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:28 ../../tools/icite_tools.rst:59
+#: 51fc1976f1ea43b08e90ed367ee89bfd 6b26732163234e8295b2aa3c814b5b69
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:30 09ef5d4356874753b3a6e64bdcee2d80
+msgid "**Name**: ``iCite_get_publications``"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:31 a1db20f3bd9446a99fc400c2c466284e
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:32 405ff9ae1498483e9f08d5e5b98cc346
+msgid ""
+"**Description**: Get citation metrics and research context for PubMed "
+"publications using NIH's iCite API. iCite provides evidence-based metrics"
+" including citation counts, relative citation ratios (RCR), approximate "
+"potential to translate (APT) scores for clinical translation, NIH "
+"percentile rankings, and research category flags (human/animal/molecular-"
+"cellular). Returns all available citations and the full list of citing "
+"PMIDs. Essential for evaluating scientific impact, identifying highly-"
+"cited papers, and assessing translational potential of biomedical "
+"research. Example: PMID 31510562 has citation\\_count=6, "
+"nih\\_percentile=29.0."
+msgstr ""
+
+#: ../../tools/icite_tools.rst:34 ../../tools/icite_tools.rst:65
+#: 3eb679e3740a44129c89d9d6291c39c5 55725e543813413b9dc0b2f4a344b63f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:36 bb2bf0d986a844a7bc545cc7564315cd
+msgid ""
+"``pmids`` (string) (required) Comma-separated PubMed IDs to look up "
+"(e.g., '24453150,24453148,31510562'). Maximum ~100 PMIDs per request."
+msgstr ""
+
+#: ../../tools/icite_tools.rst:39 ../../tools/icite_tools.rst:76
+#: 2b62893fd45b480da7ad1ce3a1fc9fbf 7909812abc4a44ab81dfd69d4922448b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:53 089f8781ca754cecb9d457111ccaa397
+msgid "**iCite_search_publications** (Type: ICiteSearchPublicationsTool)"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:55 7e83dade25a044abbdcf5442f7dab2e6
+msgid ""
+"Search PubMed publications by query and get citation metrics from NIH's "
+"iCite API. Returns papers..."
+msgstr ""
+
+#: ../../tools/icite_tools.rst e13dd41eb4e24a1480a2301b4db28724
+msgid "iCite_search_publications tool specification"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:61 b4a3fd22441649d5829792ea697f4c57
+msgid "**Name**: ``iCite_search_publications``"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:62 0ae3fd2015fc427cad8bc9c48c95acdb
+msgid "**Type**: ``ICiteSearchPublicationsTool``"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:63 81e4ea7f75624dee89a642615ced0aba
+msgid ""
+"**Description**: Search PubMed publications by query and get citation "
+"metrics from NIH's iCite API. Returns papers matching the search query "
+"with citation counts, NIH percentile rankings, approximate potential to "
+"translate (APT) scores, and research category flags. Useful for finding "
+"highly-cited papers in a specific topic area and evaluating their "
+"translational potential. Returns up to 1000 results sorted by citation "
+"count."
+msgstr ""
+
+#: ../../tools/icite_tools.rst:67 d85c46f58b534019ad54efcdb9df8bb3
+msgid ""
+"``query`` (string) (required) Search query for PubMed (e.g., 'BRCA1 "
+"cancer', 'COVID-19 vaccine efficacy', 'CRISPR gene editing')"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:70 0935f6372ce04f52b4c3775687b0486a
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results (default "
+"10, max 1000)"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:73 cce8a0572d3c4c9291bc46042eb9c769
+msgid "``offset`` (integer, null) (optional) Offset for pagination (default 0)"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:90 2a7e9596cfe44a7cb5f01878474eae19
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:92 1f71b548194c4c59b38d620a1983308d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/icite_tools.rst:93 0050898162a44d179d34a2c7720e918c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,184 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/lotus_tools.rst:10 b3ba86ec7392481498a980431739838d
+msgid "Lotus Tools"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:12 1d9ab87d543841b5960210294338e3ad
+msgid ""
+"**Configuration File**: ``lotus_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:16 8092a771fa22422a916cb2d3662f50dc
+msgid ""
+"This page contains all tools defined in the ``lotus_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:19 12dc0ce9bfc14dbaa849967f3c02f805
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:22 222ef72cebb24ba0b12174f8f1b44c55
+msgid "**LOTUS_get_compound** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:24 609cef9da12e45879cccfefbcc517f02
+msgid ""
+"Get detailed information about a specific natural product from LOTUS by "
+"its internal compound ID...."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst c3eb087c1a17497b9173773b22b32776
+msgid "LOTUS_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:28 ../../tools/lotus_tools.rst:59
+#: ../../tools/lotus_tools.rst:90 29cbc9ae575b4aea875189390fbe225e
+#: 376ec3f6ad3d4495aa1497033d817f97 dca204b20ae842b69cf0ea13c1fe22ec
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:30 95e4333268e943ad8e33cbfd8685bf5e
+msgid "**Name**: ``LOTUS_get_compound``"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:31 ../../tools/lotus_tools.rst:62
+#: ../../tools/lotus_tools.rst:93 398347e68c6c4afda4fcba43ed9549c0
+#: b383f886f1214bdd962d6e367880b547 f7276a20b0e64f8ab0a240b5b35d130f
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:32 d647531a10c146d5acb8893c538accca
+msgid ""
+"**Description**: Get detailed information about a specific natural "
+"product from LOTUS by its internal compound ID. Returns comprehensive "
+"data including structure (SMILES, InChI), molecular properties (weight, "
+"formula, LogP, PSA), drug-likeness metrics (Lipinski violations, H-bond "
+"donors/acceptors), chemical taxonomy (NPClassifier and ClassyFire "
+"classifications), and source organism data. Use "
+"LOTUS\\_search\\_natural\\_products to find the compound ID first."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:34 ../../tools/lotus_tools.rst:65
+#: ../../tools/lotus_tools.rst:96 1143af8b29e54ae283af76256a43e9ad
+#: ca5763278aab41d4ad02e0a2a4c825e1 e0216243923b4325a012ef80641d59bb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:36 fc1146890b614ccaabaadecd7863ed87
+msgid ""
+"``compound_id`` (string) (required) LOTUS internal compound ID (MongoDB "
+"ObjectId, e.g., '604b8da112e4996162764b83' for caffeine). Obtain from "
+"LOTUS\\_search\\_natural\\_products."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:39 ../../tools/lotus_tools.rst:70
+#: ../../tools/lotus_tools.rst:101 1c177ced79dd49b288fdcc63569a23d8
+#: 4c7214cea7f846d696c6af7aa7c6927a bdf1afb0097245aaa4990dbca14c174c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:53 5c897960cf5e455f9bf63f2d3716c1a9
+msgid "**LOTUS_search_by_inchikey** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:55 eafcf741890544329a375a195d102c09
+msgid ""
+"Search the LOTUS natural products database specifically by InChIKey, "
+"which provides exact structu..."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst f8e496916c9c440ea7a964e05dbf2c03
+msgid "LOTUS_search_by_inchikey tool specification"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:61 53c5858929ce4cb6ab26a8c829d8504f
+msgid "**Name**: ``LOTUS_search_by_inchikey``"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:63 f2b63d032b214ef39cd7cd189f43def5
+msgid ""
+"**Description**: Search the LOTUS natural products database specifically "
+"by InChIKey, which provides exact structural matching. InChIKey is a "
+"27-character hash that uniquely identifies a chemical structure. This is "
+"the most precise way to look up a natural product in LOTUS. Returns the "
+"same results as LOTUS\\_search\\_natural\\_products but is optimized for "
+"InChIKey lookups."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:67 66f5c0765cda44e8958bdb5075ac43cb
+msgid ""
+"``inchikey`` (string) (required) InChIKey to search for (e.g., "
+"'RYYVLZVUVIJVGH-UHFFFAOYSA-N' for caffeine, 'IQBMWEYFKNVACH-MEBVLIOMSA-N'"
+" for quercetin)"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:84 155d13227f3f40ddb1bfae1dbfc3411e
+msgid "**LOTUS_search_natural_products** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:86 43aec9fe37d241c888d938d39f05736c
+msgid ""
+"Search the LOTUS (naturaL prOducTs occUrrenceS) database for natural "
+"products by name, SMILES, or..."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst 58e2f824d5ba40e7a7faab3f2954a01e
+msgid "LOTUS_search_natural_products tool specification"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:92 376d8f9661f146bc9cf351c320d279f4
+msgid "**Name**: ``LOTUS_search_natural_products``"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:94 38776577669b48de95621b8b00ebc24a
+msgid ""
+"**Description**: Search the LOTUS (naturaL prOducTs occUrrenceS) database"
+" for natural products by name, SMILES, or InChIKey. LOTUS is the largest "
+"open natural products database, containing 750,000+ structure-organism "
+"pairs from 35,000+ references. Returns compound IDs, structures (SMILES, "
+"InChI), molecular properties, and chemical taxonomy classifications. "
+"Supports searching by common name (e.g., 'caffeine'), SMILES string, or "
+"InChIKey."
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:98 3724d10dbde446b6a45747b7581d4053
+msgid ""
+"``query`` (string) (required) Search query: compound name (e.g., "
+"'caffeine', 'quercetin'), SMILES string, or InChIKey"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:115 ef4d1e6afc294bc6b92014a5dce4a8cd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:117 24dd11876add413090c5fa82813c886b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/lotus_tools.rst:118 0f21da5adfc940c487b870b14bfa047a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

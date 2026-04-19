@@ -1,0 +1,430 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openfda_tools.rst:10 6fbfb3d6dfca445e9b334bad1b3268bf
+msgid "Openfda Tools"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:12 6c6712a288424bc2b4d3f3691412b3d3
+msgid ""
+"**Configuration File**: ``openfda_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:16 82f0fb371bb8494d9385d1bc46abdd17
+msgid ""
+"This page contains all tools defined in the ``openfda_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:19 54defa882d2b4dcfb9751a066d42acb3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:22 9aaa33539deb41fa81f3831af18f7661
+msgid "**OpenFDA_search_device_510k** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:24 add68620023848039e51185325f2ec6c
+msgid ""
+"Search the FDA 510(k) premarket notification database via openFDA. "
+"Contains clearances for medica..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst 1aa614810f2f4393a0893d54d787ca55
+msgid "OpenFDA_search_device_510k tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:28 ../../tools/openfda_tools.rst:62
+#: ../../tools/openfda_tools.rst:98 ../../tools/openfda_tools.rst:134
+#: ../../tools/openfda_tools.rst:179 ../../tools/openfda_tools.rst:213
+#: ../../tools/openfda_tools.rst:247 1bae3cafbd21402bb6a61de9230dcfab
+#: 2b0ac07c77b845c6b1915301ac6691f1 4ba5648ef6474b21bdc10831d8a1cc3e
+#: 74fcd3b6d81c44c7a78f4dc8da5af5ae 8b45c6d610b84d7292026e216e891730
+#: 9c0efbff3f984b11a50adfd9b327c298 b304e6cc9e164bc485bacd4c9ba5ee1d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:30 0a358c57893541daa3280e5956598f23
+msgid "**Name**: ``OpenFDA_search_device_510k``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:31 ../../tools/openfda_tools.rst:65
+#: ../../tools/openfda_tools.rst:101 ../../tools/openfda_tools.rst:182
+#: ../../tools/openfda_tools.rst:216 ../../tools/openfda_tools.rst:250
+#: 052f6208a1074ceab20d8094ab8b4644 56dda26e8c1c4b91951c18f0cf0b97f0
+#: 601cf19fa4494006b9fc8a4cde480864 9b71daa29b244f6aa332545b45ff3f93
+#: 9f05251f1f4243e4a3586f9b9aefa29f ce5680be8c354175b97139b29fb11d09
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:32 dba4c017e0ee472581341ebb862c26aa
+msgid ""
+"**Description**: Search the FDA 510(k) premarket notification database "
+"via openFDA. Contains clearances for medical devices through the 510(k) "
+"pathway (substantial equivalence). Returns device names, applicant "
+"companies, decision dates, advisory committee classifications, and FDA "
+"decision types. Useful for medical device research, competitive landscape"
+" analysis, and understanding regulatory pathways for specific device "
+"categories."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:34 ../../tools/openfda_tools.rst:68
+#: ../../tools/openfda_tools.rst:104 ../../tools/openfda_tools.rst:140
+#: ../../tools/openfda_tools.rst:185 ../../tools/openfda_tools.rst:219
+#: ../../tools/openfda_tools.rst:253 8dd8f49db5d0437b8026c6c2667f5cb0
+#: 903a380edf8f438ba2db7ceebd3c6f85 b14efb77ff884feab6cad72b0acb45cb
+#: cfd608f3da274caf8955cff52a9b77f6 d53a197433454cb1a3d44e2970e1aaff
+#: dbe165e7788845c5861a96ed467c17fc fe5705daf7ff46b28987a324fc752640
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:36 00030c07c864428a9f371d2a7018b29c
+msgid ""
+"``search`` (string) (required) Lucene query for 510(k) devices (e.g., "
+"'device\\_name:stethoscope', 'applicant:siemens', "
+"'decision\\_date\\_year:2023', "
+"'advisory\\_committee\\_description:radiology')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:39 ../../tools/openfda_tools.rst:73
+#: ../../tools/openfda_tools.rst:109 ../../tools/openfda_tools.rst:224
+#: ../../tools/openfda_tools.rst:258 0b1024ab2e9e4539abccc5fafc975b7e
+#: 8df5b42c50224b908ce7602d677fde75 c2b8296276f44c1e99590ebeba7a33d8
+#: d1f70ead002a44a796c325a79aa5e434 f5dd5c22c93a468ca32bb9a199dedb43
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results (default "
+"5, max 100)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:42 ../../tools/openfda_tools.rst:79
+#: ../../tools/openfda_tools.rst:115 ../../tools/openfda_tools.rst:160
+#: ../../tools/openfda_tools.rst:193 ../../tools/openfda_tools.rst:227
+#: ../../tools/openfda_tools.rst:264 1932df5ca52a459f84930e48189165ff
+#: 1d554c6b9bd7443fb7a693955ef6f284 22d24fe3502f43dcb6e5c1f6fd44b422
+#: 2343b21dac194f47904b236e2292f8a1 645af8121797488f8208297ca2269c26
+#: c66ee179d1804a11921cbafff6310b24 e928898a17674f4aa7b2dbd8792db760
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:56 8dfbd24db99a4b1fae59cf730977da9d
+msgid "**OpenFDA_search_device_enforcement** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:58 218093bc68764f78b582146837f496f1
+msgid ""
+"Search the FDA medical device enforcement (recall) database via openFDA. "
+"Contains medical device ..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst 0f4c7972807447c6b4aedc7d8f651a28
+msgid "OpenFDA_search_device_enforcement tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:64 439a912cc1424a7a91c39f819aa4f919
+msgid "**Name**: ``OpenFDA_search_device_enforcement``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:66 2f4f18cf039440a699dec0811e4d9d32
+msgid ""
+"**Description**: Search the FDA medical device enforcement (recall) "
+"database via openFDA. Contains medical device recalls, corrections, and "
+"removals. Use Lucene query syntax: 'classification:\"Class I\"' (most "
+"serious), 'status:Ongoing', 'recalling\\_firm:\"Medtronic\"'. Returns "
+"recall details including product description, reason for recall, and "
+"distribution pattern. Medical devices include implants, diagnostic "
+"equipment, surgical tools, and consumer medical devices."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:70 688b3a2f6f9e4621b13d06ad81072bac
+msgid ""
+"``search`` (string, null) (optional) Lucene query for device recalls "
+"(e.g., 'classification:\"Class I\"', 'status:Ongoing', "
+"'product\\_description:pacemaker', 'recalling\\_firm:medtronic'). Leave "
+"null to get recent recalls."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:76 37aba20cb373429e8161e2bf4474adf3
+msgid ""
+"``count`` (string, null) (optional) Field to count by (e.g., "
+"'classification', 'status', 'recalling\\_firm.exact')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:92 5b6808d1190d496b9ebd03177454d92f
+msgid "**OpenFDA_search_drug_enforcement** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:94 d94f16e121d443c4b09202d0d3398360
+msgid ""
+"Search the FDA drug enforcement (recall) database via openFDA. Contains "
+"drug recalls, withdrawals..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst 04ae11eaa5df4ba9b298bf6e07516d46
+msgid "OpenFDA_search_drug_enforcement tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:100 070265f35b67429b8e91a85544e1de54
+msgid "**Name**: ``OpenFDA_search_drug_enforcement``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:102 753a4632db3a4da9ae2a6768398ce76c
+msgid ""
+"**Description**: Search the FDA drug enforcement (recall) database via "
+"openFDA. Contains drug recalls, withdrawals, and field corrections "
+"submitted to the FDA. Use Lucene query syntax: 'classification:\"Class "
+"I\"' (most serious, may cause death), 'recalling\\_firm:pfizer', "
+"'status:Ongoing'. Returns recall details including reason, product "
+"description, distribution pattern, classification, firm, and dates. Use "
+"count parameter for frequency analysis (e.g., count='classification' to "
+"see recall counts by class)."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:106 3f6c33c2c89946308fd0f8e213d50b0a
+msgid ""
+"``search`` (string, null) (optional) Lucene query for drug recalls (e.g.,"
+" 'classification:\"Class I\"', 'status:Ongoing', "
+"'recalling\\_firm:pfizer', 'reason\\_for\\_recall:contamination'). Leave "
+"null to get recent recalls."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:112 080877234f53466d97a1971e999d7116
+msgid ""
+"``count`` (string, null) (optional) Field to count by for frequency "
+"analysis (e.g., 'classification', 'recalling\\_firm.exact', "
+"'voluntary\\_mandated.exact')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:128 b3db6a8812c143f2a55757049110ae19
+msgid "**OpenFDA_search_drug_events** (Type: OpenFDADrugEventsTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:130 5feacc943ac64b6591b1476afbf3a12b
+msgid ""
+"Search the FDA Adverse Event Reporting System (FAERS) database via "
+"openFDA for drug safety report..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst df2e44906fc044598477aae688bef6c1
+msgid "OpenFDA_search_drug_events tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:136 e1a03750d49f4f18b81135d539b0aebb
+msgid "**Name**: ``OpenFDA_search_drug_events``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:137 edb00635b90648a7b4c63922b815b181
+msgid "**Type**: ``OpenFDADrugEventsTool``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:138 f6eb3ae690354d3ab92c36a01ebe54cc
+msgid ""
+"**Description**: Search the FDA Adverse Event Reporting System (FAERS) "
+"database via openFDA for drug safety reports. Accepts convenience "
+"parameters drug\\_name and reaction (e.g., drug\\_name='warfarin', "
+"reaction='haemorrhage'), or a raw Lucene 'search' string for advanced "
+"queries. Contains 20+ million adverse event reports. IMPORTANT: MedDRA "
+"reaction terms use British English spelling (e.g., 'haemorrhage' not "
+"'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events"
+" with outcomes (hospitalization, death), suspect drugs, and MedDRA "
+"reactions."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:142 adce64b3af034a528fccd0beba50fff6
+msgid ""
+"``search`` (string) (optional) Lucene query for adverse event reports. "
+"Use AND/OR with spaces (not +AND+). Examples: "
+"'patient.drug.medicinalproduct:aspirin', "
+"'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1"
+" AND patient.drug.medicinalproduct:warfarin'. Combine drugs: "
+"'patient.drug.medicinalproduct:metformin AND "
+"patient.drug.medicinalproduct:atorvastatin'."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:145 a414ea6461d544958e48a6a51788713b
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of reports to return "
+"(default 1, max 100)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:148 bb49fca351e1470fb7d67ba6b85ad69a
+msgid ""
+"``count`` (string, null) (optional) Field to count by for frequency "
+"analysis (e.g., 'patient.reaction.reactionmeddrapt.exact' to get most "
+"common reactions)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:151 82d034dbdc354426a2946c1f1b5ce3e6
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name to search for adverse "
+"events (e.g., 'warfarin', 'metformin'). Alternative to writing a full "
+"Lucene 'search' query."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:154 176e31471e0e4db4bb0b6c209c98238b
+msgid ""
+"``reaction`` (string, null) (optional) MedDRA adverse reaction term "
+"(British spelling: 'haemorrhage' not 'hemorrhage', 'haematoma' not "
+"'hematoma'). Used with drug\\_name to filter by reaction."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:157 9fc07bac5d5b492f90762a9d8ac66e7a
+msgid ""
+"``adverse_event`` (string, null) (optional) Alias for reaction. MedDRA "
+"adverse reaction term (British spelling)."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:173 46e13c315dc843b9bccc21a0742ce66a
+msgid "**OpenFDA_search_drug_labels** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:175 dd47167ac3344cc4a41d1cb123130447
+msgid ""
+"Search the FDA drug label (SPL - Structured Product Labeling) database "
+"via openFDA. Contains appr..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst 8bdf85e5638945f3a106878e776dc35d
+msgid "OpenFDA_search_drug_labels tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:181 d90582a3172b47228f0fef04288900e8
+msgid "**Name**: ``OpenFDA_search_drug_labels``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:183 2eaed69e5eae4301ac50fc78745bd78a
+msgid ""
+"**Description**: Search the FDA drug label (SPL - Structured Product "
+"Labeling) database via openFDA. Contains approved prescription and OTC "
+"drug labels including indications, warnings, dosage, adverse reactions, "
+"contraindications, and pharmacology sections. Use Lucene query syntax: "
+"'openfda.brand\\_name:aspirin', 'openfda.generic\\_name:ibuprofen', "
+"'openfda.manufacturer\\_name:pfizer'. Returns label text sections and "
+"openFDA cross-references (brand name, generic name, substance name, "
+"product type)."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:187 7bb6033f1e854722864ad729b5ac8696
+msgid ""
+"``search`` (string) (required) Lucene query to search drug labels (e.g., "
+"'openfda.brand\\_name:aspirin', 'openfda.generic\\_name:metformin', "
+"'indications\\_and\\_usage:diabetes', 'openfda.pharm\\_class\\_epc:\"beta"
+" blocker\"')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:190 db132fec10e14795b46238008d574e77
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results (default "
+"1, max 100)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:207 dc35a99c0a204c9e8ed1f54381375afc
+msgid "**OpenFDA_search_drug_ndc** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:209 92a056b5a35448e79a123e076a78c8fe
+msgid ""
+"Search the FDA National Drug Code (NDC) Directory via openFDA. The NDC "
+"directory identifies drugs..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst 561492e4d1a34ae6b7a18024360aa7a9
+msgid "OpenFDA_search_drug_ndc tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:215 74ee0120b5f94ae9a2674f8581c37dbf
+msgid "**Name**: ``OpenFDA_search_drug_ndc``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:217 ad32d3264bd1447abd9eefcd050588e2
+msgid ""
+"**Description**: Search the FDA National Drug Code (NDC) Directory via "
+"openFDA. The NDC directory identifies drugs listed under Section 510 of "
+"the FDA Act, covering finished dosage forms, unfinished APIs, and non-"
+"prescription drugs. Returns product/package codes, brand/generic names, "
+"dosage forms, routes of administration, active ingredients, and marketing"
+" information."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:221 8a8679e3c1f24c82b4d186c9f55e01f6
+msgid ""
+"``search`` (string) (required) Lucene query for NDC products (e.g., "
+"'brand\\_name:lipitor', 'generic\\_name:atorvastatin', "
+"'active\\_ingredients.name:metformin', 'finished:true AND "
+"marketing\\_status:\"Prescription\"')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:241 491e057663ac464a950644ea01ddd67f
+msgid "**OpenFDA_search_food_enforcement** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:243 6739086fc2ae47f4a5231c92f2ab29dd
+msgid ""
+"Search the FDA food enforcement (recall) database via openFDA. Contains "
+"food recalls, market with..."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst bdfa6d190234477395a68690bffc9b2a
+msgid "OpenFDA_search_food_enforcement tool specification"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:249 a4778cb969714a8baf054f7724e6f8fe
+msgid "**Name**: ``OpenFDA_search_food_enforcement``"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:251 db57a2381bb442489a2f8baa705fe7b7
+msgid ""
+"**Description**: Search the FDA food enforcement (recall) database via "
+"openFDA. Contains food recalls, market withdrawals, and safety alerts. "
+"Use Lucene query syntax: 'classification:\"Class I\"' (most serious), "
+"'status:Ongoing', 'recalling\\_firm:\"Company Name\"'. Returns recall "
+"details including product description, reason for recall, distribution "
+"pattern, and classification. Useful for food safety research, supply "
+"chain analysis, and identifying contamination patterns."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:255 6e4f15115220468a8a4f0aa844772858
+msgid ""
+"``search`` (string, null) (optional) Lucene query for food recalls (e.g.,"
+" 'classification:\"Class I\"', 'reason\\_for\\_recall:salmonella', "
+"'status:Ongoing', 'product\\_description:peanut'). Leave null to get "
+"recent recalls."
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:261 28b14b21517545e5a234aed189ae14f6
+msgid ""
+"``count`` (string, null) (optional) Field to count by (e.g., "
+"'classification', 'state', 'recalling\\_firm.exact')"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:277 e20afa1714ea4c13aae824f9d71c6850
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:279 524552dfc3c94aadab8f9e712eb0f576
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openfda_tools.rst:280 3d1d3d40e9834ab78a32717373932e38
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

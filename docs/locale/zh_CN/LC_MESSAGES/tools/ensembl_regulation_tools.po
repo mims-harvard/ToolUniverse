@@ -1,0 +1,215 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_regulation_tools.rst:10 0cbe334c7aa14c14b2faa2bfb91e6f60
+msgid "Ensembl Regulation Tools"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:12 63c731959d27401291ebfdb41846d021
+msgid ""
+"**Configuration File**: ``ensembl_regulation_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:16 71ec8080e7364fa1bd268c61e8adef61
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_regulation_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:19 18a0380d49c84734a0b3f5102fca9c15
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:22 e495467908824dc8b447ac8ca31f1f4c
+msgid "**EnsemblReg_get_binding_matrix** (Type: EnsemblRegulationTool)"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:24 54832dd2d8b048e788579acfb787acb1
+msgid ""
+"Get a transcription factor binding matrix (position weight matrix/PWM) by"
+" stable ID from the Ense..."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst f4fa0861f2e543f2a8b81f0d3f8a5fc2
+msgid "EnsemblReg_get_binding_matrix tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:28
+#: ../../tools/ensembl_regulation_tools.rst:62
+#: ../../tools/ensembl_regulation_tools.rst:96 5345f7fa28dd430f89d11f7bb0b66d11
+#: 620d1bdf7b0144598f212277e0b50347 6de1b6e735b743b7811b3f688d973992
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:30 eace7021bcc04a74b67ac6541e66b46d
+msgid "**Name**: ``EnsemblReg_get_binding_matrix``"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:31
+#: ../../tools/ensembl_regulation_tools.rst:65
+#: ../../tools/ensembl_regulation_tools.rst:99 02de567d09754e4ba536e95e4d0fb49d
+#: 1a14cfe3c4bf45aab9cd8fa38bbe710b b05721f6dc5248acbfe22b1bb6505c7d
+msgid "**Type**: ``EnsemblRegulationTool``"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:32 4f66cbed5057435a80264093eed900a9
+msgid ""
+"**Description**: Get a transcription factor binding matrix (position "
+"weight matrix/PWM) by stable ID from the Ensembl REST API. Returns the "
+"nucleotide frequency matrix, threshold, associated TF complexes, and "
+"consensus sequence. Binding matrices describe the DNA sequence "
+"preferences of transcription factors and are essential for predicting TF "
+"binding sites and understanding gene regulation. Example: ENSPFM0320 "
+"returns the PAX5 binding matrix with 18 positions."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:34
+#: ../../tools/ensembl_regulation_tools.rst:68
+#: ../../tools/ensembl_regulation_tools.rst:102
+#: 4be81c7a25db47f9ae14b6125301d9ef 58a47a2802ba44c5b5239fab74d18cfb
+#: adc4f41f4f2d443c9a9e2b0d550f2766
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:36
+#: ../../tools/ensembl_regulation_tools.rst:70 69e4ff907ca1472e9f44fe296d61cf31
+#: a9a63f3fe03442269c67d93569c60625
+msgid ""
+"``species`` (string) (optional) Species name. Use 'homo\\_sapiens' for "
+"human. Default: 'homo\\_sapiens'."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:39 00c8b7d705db4d9cb6f008f50ff16767
+msgid ""
+"``binding_matrix_id`` (string) (required) Ensembl binding matrix stable "
+"ID. Format: 'ENSPFM0XXX'. Examples: 'ENSPFM0320' (PAX5), 'ENSPFM0423' "
+"(NR2F1), 'ENSPFM0001' (ALX3)."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:42
+#: ../../tools/ensembl_regulation_tools.rst:76
+#: ../../tools/ensembl_regulation_tools.rst:110
+#: 1ef1ec70286d4974b5bb56ad916c40f6 23857096e7254119a1f7311d2f2ac38f
+#: 370445b46ef646a48d3bc6364dba7154
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:56 53df0bc20f51423f965e48a4edb9ed57
+msgid "**EnsemblReg_get_constrained_elements** (Type: EnsemblRegulationTool)"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:58 7f730f9b95464a5f862aa2ac0fe8ccc1
+msgid ""
+"Get evolutionarily constrained elements in a genomic region from the "
+"Ensembl Compara database. Co..."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst 2a544c3de50b4d53aeb64b5ae5567db7
+msgid "EnsemblReg_get_constrained_elements tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:64 e491031049c4445b80422902b83a5062
+msgid "**Name**: ``EnsemblReg_get_constrained_elements``"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:66 0c95b3db511046c6bc5865ccc9a10c68
+msgid ""
+"**Description**: Get evolutionarily constrained elements in a genomic "
+"region from the Ensembl Compara database. Constrained elements are "
+"regions under purifying selection across species, indicating functional "
+"importance. Higher scores indicate stronger conservation. Use this to "
+"identify regulatory regions, coding exons, or other functional elements "
+"that are preserved across evolution. Essential for prioritizing non-"
+"coding variants and understanding regulatory conservation. Example: TP53 "
+"locus (chr17:7661779-7687538) returns 20 constrained elements with "
+"conservation scores up to 47."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:73 f015d26bb56f4a459c3716ff0a23516f
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end'. Example: '17:7661779-7687538' for TP53, "
+"'7:140424943-140624564' for BRAF."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:90 b040ed77c73c4637a8371297b61fb851
+msgid "**EnsemblReg_get_motif_features** (Type: EnsemblRegulationTool)"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:92 e90020f5cea84ddf822f62cecef7eb6d
+msgid ""
+"Get transcription factor (TF) binding motif features in a genomic region "
+"from the Ensembl REST AP..."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst 5b68d69cacf6469eb408469ef14683a8
+msgid "EnsemblReg_get_motif_features tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:98 e304532c9bcb42279f24b77696109c52
+msgid "**Name**: ``EnsemblReg_get_motif_features``"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:100
+#: 37136af0663a4a1fa2387ee3063dfe02
+msgid ""
+"**Description**: Get transcription factor (TF) binding motif features in "
+"a genomic region from the Ensembl REST API. Returns motif instances with "
+"their binding matrix IDs, TF complex names, scores, and genomic "
+"positions. Use this to identify which transcription factors may bind to a"
+" specific genomic region, essential for understanding gene regulation, "
+"epigenomics, and cis-regulatory elements. Example: BRAF locus "
+"(chr7:140424943-140524564) returns 50 TF binding motif instances "
+"including PAX5, NR2F1, CEBPA."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:104
+#: 05d2e029af3f4db7b65ca9a38ba1995d
+msgid ""
+"``species`` (string) (optional) Species name. Use 'homo\\_sapiens' for "
+"human, 'mus\\_musculus' for mouse. Default: 'homo\\_sapiens'."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:107
+#: 7407567223ab4efda77f244fcb388fe2
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chromosome"
+":start-end'. Example: '7:140424943-140524564' for the BRAF locus, "
+"'17:7661779-7687538' for the TP53 locus."
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:124
+#: 09869da6f91848a79c14c8aafcfbf130
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:126
+#: 2808cb0de3194d7e9eb46aa965886368
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_regulation_tools.rst:127
+#: b1e940561d9a4871891ec4b8c5d0d45c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

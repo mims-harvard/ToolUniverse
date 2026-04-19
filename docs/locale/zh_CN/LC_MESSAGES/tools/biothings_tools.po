@@ -1,0 +1,434 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biothings_tools.rst:10 8318c1d547aa48a8bd21f47630de8af6
+msgid "Biothings Tools"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:12 a08775d7acc540909091a8f7e609e5cc
+msgid ""
+"**Configuration File**: ``biothings_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:16 4e9fb65a011f4af1a2d158dcfd5c3625
+msgid ""
+"This page contains all tools defined in the ``biothings_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:19 c19f6847029941f09dd571a855fbfd77
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:22 fd5eade3ce6d4faeb3ef13b20393c412
+msgid "**MyChem_get_chemical_annotation** (Type: MyChemTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:24 edc0e0d44dca40cab834d3597312612b
+msgid ""
+"Get detailed annotation for a specific chemical/drug by its InChIKey or "
+"other ID. Returns compreh..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst db96b77a63834e3eaa5cf55e4601840a
+msgid "MyChem_get_chemical_annotation tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:28 ../../tools/biothings_tools.rst:62
+#: ../../tools/biothings_tools.rst:99 ../../tools/biothings_tools.rst:136
+#: ../../tools/biothings_tools.rst:170 ../../tools/biothings_tools.rst:210
+#: ../../tools/biothings_tools.rst:244 ../../tools/biothings_tools.rst:278
+#: 42f1e87c5c004e27a11ee7f0d2fd5272 50c5ce3224d44724937f25eaf6a9b792
+#: 7ad53efd1d8f4f93a7ab2307b6448752 a69bf3af03da46d3ae425028e205d0f5
+#: bb2ca47e31f149de889e7bc8f22c5780 bf2be78fafd9460f97496341a0ddd35c
+#: c5e856ce4b0a4f788b9904200c129071 fc53ca1dc6804b32b941c01147cfb8ad
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:30 cabcdf4979884234a25b447437b24d74
+msgid "**Name**: ``MyChem_get_chemical_annotation``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:31 ../../tools/biothings_tools.rst:65
+#: 3d40ce8a7877476f9e8d6c12396b741d 4a99623dd662486798a839138c3c6bc3
+msgid "**Type**: ``MyChemTool``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:32 7efce37408054c42a0ff66ae9a329129
+msgid ""
+"**Description**: Get detailed annotation for a specific chemical/drug by "
+"its InChIKey or other ID. Returns comprehensive drug information "
+"including mechanisms, targets, interactions, and indications."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:34 ../../tools/biothings_tools.rst:68
+#: ../../tools/biothings_tools.rst:105 ../../tools/biothings_tools.rst:142
+#: ../../tools/biothings_tools.rst:176 ../../tools/biothings_tools.rst:216
+#: ../../tools/biothings_tools.rst:250 ../../tools/biothings_tools.rst:284
+#: 0d2838c146964b598f6034075c618f94 110df03134f049af8e03919da831a066
+#: 5491a999a7164ad7b3e320ac7d2fc5a1 550d68a8542c4811bff88a396f64b1e8
+#: 6501041d0b7240f89fb471afb17826d7 97ff6696e58e4990be8ed1a0ff7d013f
+#: a253ac48a5b44d3eae5b358319ac4e24 cd5fd272c42c461e9ff7a0f37ea5df98
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:36 edcb04fd71eb46bbbe1651abce10db3c
+msgid ""
+"``chem_id`` (string) (required) Chemical ID. InChIKey recommended (e.g., "
+"'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' for aspirin). Also accepts DrugBank ID or "
+"ChEMBL ID."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:39 353ead0bbbee4959a18c51a1e602436d
+msgid ""
+"``fields`` (string) (optional) Fields to return. Useful: drugbank "
+"(comprehensive), chebi, pubchem, chembl, drugcentral, aeolus (adverse "
+"events)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:42 ../../tools/biothings_tools.rst:79
+#: ../../tools/biothings_tools.rst:116 ../../tools/biothings_tools.rst:150
+#: ../../tools/biothings_tools.rst:190 ../../tools/biothings_tools.rst:224
+#: ../../tools/biothings_tools.rst:258 ../../tools/biothings_tools.rst:295
+#: 16e7ac003186404c9a0fecbc2b59d700 4c8df997cc034029b4af0328b055f227
+#: 5799272c8f4e4d259b3655fdb225dc37 5c418fd14b7a4ae7a7e111259acd0dd9
+#: 6205d655e5fb46db99af7bebb793d5e2 648cda4bdaca42cca860a8a0c6fc26d7
+#: 70a5516a6fbb49c69eb3c9a62ca33da1 c472ec70f61548779a47deffc669e353
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:56 12782ac54eca4fbe8c24202e45b1cd3c
+msgid "**MyChem_query_chemicals** (Type: MyChemTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:58 cab5fdd32e124841a81c3481e0dfdceb
+msgid ""
+"Search for chemicals and drugs by name, structure (InChIKey, SMILES), or "
+"database ID. Returns ann..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst 380b7325d3ca4a0880395b60d5dcaeb3
+msgid "MyChem_query_chemicals tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:64 09f815792c6a404dbcedb0b48bb51126
+msgid "**Name**: ``MyChem_query_chemicals``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:66 d363cb7ed3dc41d4b1a9737c641dc428
+msgid ""
+"**Description**: Search for chemicals and drugs by name, structure "
+"(InChIKey, SMILES), or database ID. Returns annotations from sources like"
+" DrugBank, ChEMBL, ChEBI, and PubChem."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:70 6ac0fba54b41477cbbb0ea1eed0e10c0
+msgid ""
+"``query`` (string) (required) Search query. Examples: 'aspirin' (name), "
+"'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (InChIKey), 'drugbank.id:DB00945', "
+"'chembl.molecule\\_chembl\\_id:CHEMBL25'."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:73 4925563da3a9495b9cf3041afccb593d
+msgid ""
+"``fields`` (string) (optional) Comma-separated fields to return. Common: "
+"drugbank, chebi, pubchem, chembl, drugcentral, unii."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:76 ../../tools/biothings_tools.rst:292
+#: af8e37df97514f5ba75d6a0f62ae8574 c81fabdd48504daabd5b76f57e81ce51
+msgid "``size`` (integer) (optional) Maximum number of results (1-100)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:93 557b8976e8d945ba9d5f27d721a97ef5
+msgid "**MyGene_batch_query** (Type: MyGeneTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:95 2e3afef596ee4f8bb7fc7555d2f7708d
+msgid ""
+"Query multiple genes at once using a list of gene identifiers. Efficient "
+"for retrieving annotatio..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst b132b35ad30e4114b6cc19979bfe6f80
+msgid "MyGene_batch_query tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:101 0ead863b719f475c995df31f72daf1ce
+msgid "**Name**: ``MyGene_batch_query``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:102 ../../tools/biothings_tools.rst:139
+#: ../../tools/biothings_tools.rst:173 0d014e8340a04c60be1cc19670b702f8
+#: 60dd946898cb41b6b5bdea3c3fa0f13f 789a6585c025487ebc3fdd3db49c2787
+msgid "**Type**: ``MyGeneTool``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:103 d23de7697b8246fb87b85af4e2981361
+msgid ""
+"**Description**: Query multiple genes at once using a list of gene "
+"identifiers. Efficient for retrieving annotations for a gene set or "
+"performing ID mapping between different gene ID types."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:107 71c2b02fed134a559db8008144549398
+msgid ""
+"``gene_ids`` (array) (required) List of gene IDs to query. Can mix "
+"different ID types (Entrez, Ensembl, symbols)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:110 51fe25d07c524163a857c7cb25256c0e
+msgid "``species`` (string) (optional) Species filter for the query."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:113 af6f3c6d73634342bda85de816ad30ef
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to return "
+"for each gene."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:130 4212fca1e18b4d34bd55fe44fb8935b4
+msgid "**MyGene_get_gene_annotation** (Type: MyGeneTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:132 b28676e60a1e48ac9a95d712c99b18a8
+msgid ""
+"Get detailed annotation for a specific gene by its ID (Entrez or "
+"Ensembl). Returns comprehensive ..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst f3b9eed77c2442e98a858e106016a668
+msgid "MyGene_get_gene_annotation tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:138 fdead6f574694a05b5c980a7aada112c
+msgid "**Name**: ``MyGene_get_gene_annotation``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:140 6bc40eea397545bc9659e7fc8b233947
+msgid ""
+"**Description**: Get detailed annotation for a specific gene by its ID "
+"(Entrez or Ensembl). Returns comprehensive information including gene "
+"ontology, pathways, protein domains, and literature references."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:144 e7e26991fb684b59bca384533b12e4e9
+msgid ""
+"``gene_id`` (string) (required) Gene ID to query. Can be Entrez Gene ID "
+"(e.g., '1017' for CDK2) or Ensembl ID (e.g., 'ENSG00000123374')."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:147 de56c829cd2c479d92c5788769dd9f4e
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to return. "
+"Available fields include: symbol, name, summary, go (gene ontology), "
+"pathway (KEGG/Reactome), interpro (protein domains), generif (gene "
+"references), pdb, uniprot."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:164 23813a87b7184938b02577b642924b22
+msgid "**MyGene_query_genes** (Type: MyGeneTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:166 e8f0d3c39d374cf5b15a2112245ffb3c
+msgid ""
+"Search for genes by keyword, symbol, name, or other identifiers. Returns "
+"gene annotations from 30..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst 6730717bdcd24c04868e28875ff5db9d
+msgid "MyGene_query_genes tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:172 31c0a2b5baf44fe6be1b7311977c934c
+msgid "**Name**: ``MyGene_query_genes``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:174 67661ee185eb4cd096c3570397aaca86
+msgid ""
+"**Description**: Search for genes by keyword, symbol, name, or other "
+"identifiers. Returns gene annotations from 30+ sources including Entrez "
+"Gene, Ensembl, UniProt, HGNC. Useful for finding gene IDs, symbols, "
+"descriptions, and basic annotations."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:178 98a586c83d8b45e3a9217d55f28a017e
+msgid ""
+"``query`` (string) (required) Search query. Can be gene symbol (e.g., "
+"'CDK2'), name ('cyclin dependent kinase'), Entrez ID ('1017'), or Ensembl"
+" ID ('ENSG00000123374'). Supports wildcards (\\*) and boolean operators "
+"(AND, OR, NOT)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:181 7be14bef3b2a49e6b164e8a7f7644426
+msgid ""
+"``species`` (string) (optional) Species filter. Use common name or NCBI "
+"taxonomy ID. Examples: 'human', 'mouse', '9606' (human), 'all'."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:184 bd540ff701764887b6988cd17883395a
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to return. "
+"Common fields: symbol, name, entrezgene, ensembl.gene, summary, go, "
+"pathway, interpro."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:187 2e46e11cc7574897aec518b130572de3
+msgid "``size`` (integer) (optional) Maximum number of results to return (1-100)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:204 b48bb70334ed45ffa7b167e8d3c8144f
+msgid "**MyVariant_get_pathogenicity_scores** (Type: MyVariantTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:206 c62b60615de64109bf3c8cf28ba91505
+msgid ""
+"Get comprehensive pathogenicity prediction scores for a variant from "
+"dbNSFP. Returns REVEL, CADD,..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst ec2f2116e5d04e4292579495180eb4af
+msgid "MyVariant_get_pathogenicity_scores tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:212 e269c129c3f742ab808a7b84d4240e6f
+msgid "**Name**: ``MyVariant_get_pathogenicity_scores``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:213 ../../tools/biothings_tools.rst:247
+#: ../../tools/biothings_tools.rst:281 670c357676d54e35a717bb4b9ddfe9a3
+#: 676b829cd6cd424b88d52b1dae4b78e7 cb23ed5660e54bd18e287aa03151b5da
+msgid "**Type**: ``MyVariantTool``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:214 ee2934f58c9048e6a4d9f366734a6b2c
+msgid ""
+"**Description**: Get comprehensive pathogenicity prediction scores for a "
+"variant from dbNSFP. Returns REVEL, CADD, AlphaMissense, SIFT, "
+"PolyPhen-2, MetaRNN, GERP, PhyloP, and PhastCons scores in a single call."
+" Use this when MyVariant\\_query\\_variants does not return dbnsfp data, "
+"or when you specifically need REVEL/AlphaMissense scores for ACMG PP3/BP4"
+" classification."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:218 3099f260d2094595939d82e046a54bd3
+msgid ""
+"``variant_id`` (string) (required) Variant ID: rsID (e.g., rs45478192) or"
+" HGVS genomic (e.g., chr16:g.23635348A>C). Both formats work."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:221 db70534be34a451d93afbf04d5f682fc
+msgid ""
+"``fields`` (string) (optional) Fields to return (pre-configured for "
+"pathogenicity scores)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:238 856fa4173086457f8da40ac59c814480
+msgid "**MyVariant_get_variant_annotation** (Type: MyVariantTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:240 8c40490033134d8fa797979dafe123ba
+msgid ""
+"Get detailed annotations for a specific variant by its HGVS ID (e.g., "
+"'chr1:g.2186318G>A'). Retur..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst 49e76409d2da4ad8857a2fc0e7c439dc
+msgid "MyVariant_get_variant_annotation tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:246 6375b319338843bda897c5781bffc471
+msgid "**Name**: ``MyVariant_get_variant_annotation``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:248 516c61c98b874b04ab9f153026187efc
+msgid ""
+"**Description**: Get detailed annotations for a specific variant by its "
+"HGVS ID (e.g., 'chr1:g.2186318G>A'). Returns information from dbSNP, "
+"ClinVar, CADD, and other sources."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:252 7929298810994fde9380200c8e39b935
+msgid ""
+"``variant_id`` (string) (required) HGVS variant ID (e.g., "
+"'chr1:g.2186318G>A' or 'rs123')."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:255 df47e5a9d0814ab9ae6caebb2e437b30
+msgid ""
+"``fields`` (string) (optional) Fields to return. Useful fields: dbsnp, "
+"clinvar, cadd, gnomad\\_genome, gnomad\\_exome, dbnsfp (functional "
+"predictions)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:272 09a878e8cd524fa5adb952e3a510b023
+msgid "**MyVariant_query_variants** (Type: MyVariantTool)"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:274 d0e7129469ec4f48a70df59870bddd32
+msgid ""
+"Search for genetic variants by various criteria including rsID, gene, "
+"chromosome position, or cli..."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst 88db6ea1b81b4ad981d7a3a0a206b42e
+msgid "MyVariant_query_variants tool specification"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:280 661bb1ac513642c49deb288cc825f05a
+msgid "**Name**: ``MyVariant_query_variants``"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:282 8e6bd04e780a43608b2774d93e9956ad
+msgid ""
+"**Description**: Search for genetic variants by various criteria "
+"including rsID, gene, chromosome position, or clinical significance. "
+"Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and"
+" CADD."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:286 6c52887d1d3f42b5b6891e07be4aaa7f
+msgid ""
+"``query`` (string) (required) Search query. Examples: 'rs58991260' "
+"(rsID), 'chr7:g.55249071G>A' (HGVS), 'clinvar.gene.symbol:BRCA1' (gene in"
+" ClinVar), 'cadd.phred:>30' (high CADD score)."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:289 ab85d68d8ee14a208ee48b4626fd0d41
+msgid ""
+"``fields`` (string) (optional) Comma-separated fields to return. Common: "
+"dbsnp, clinvar, cadd, gnomad\\_genome, dbnsfp."
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:309 00ded044616e4e09bd3c222263471ce5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:311 cce3573b0e1f49d28ab3f3f6f1b8471d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biothings_tools.rst:312 df247654138d40b09601ee8dc11b738f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

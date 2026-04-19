@@ -1,0 +1,216 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_proteins_features_tools.rst:10
+#: a3724b2e461e4780a9998a9634d662d1
+msgid "Ebi Proteins Features Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:12
+#: 9c67f7ed90d84fb29baef8cfa0d8b073
+msgid ""
+"**Configuration File**: ``ebi_proteins_features_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:16
+#: 175b852169f64a178c90d56d3dbbb1e6
+msgid ""
+"This page contains all tools defined in the "
+"``ebi_proteins_features_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:19
+#: 89570fe4c0474b2d96ca9d77b849d533
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:22
+#: 4ab25e4b960147d99a0653cc5ae488a0
+msgid "**EBIProteins_get_domains_sites** (Type: EBIProteinsFeaturesTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:24
+#: d4954dc6136c49c2a1f30935dc4bd555
+msgid ""
+"Get domain and site features for a protein from the EBI Proteins API. "
+"Returns binding sites, DNA-..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst 6732d61abaed4217a9328cf2a7222eca
+msgid "EBIProteins_get_domains_sites tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:28
+#: ../../tools/ebi_proteins_features_tools.rst:59
+#: ../../tools/ebi_proteins_features_tools.rst:90
+#: 0bf214ea81d2476396a7f382146b964f 26a9578533d24ef9ba613ef003c99076
+#: e9f4480ba54e444596a975eca464eab1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:30
+#: 7fc4872398404564a0d43b01aab8bf31
+msgid "**Name**: ``EBIProteins_get_domains_sites``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:31
+#: ../../tools/ebi_proteins_features_tools.rst:62
+#: ../../tools/ebi_proteins_features_tools.rst:93
+#: 134870e57bad4ec287b09dfec299665b b7f2fc476e204069b27411e9b5c159ba
+#: e0ec7bcfb3c54ecf983eaff01ccbabfb
+msgid "**Type**: ``EBIProteinsFeaturesTool``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:32
+#: 43f84b4741ad49968d675bba9f29cb61
+msgid ""
+"**Description**: Get domain and site features for a protein from the EBI "
+"Proteins API. Returns binding sites, DNA-binding regions, active sites, "
+"motifs, regions of interest, and zinc finger domains annotated in "
+"UniProtKB. Complements InterPro domain annotations by providing more "
+"granular functional site information. Example: P04637 (TP53) returns 31 "
+"features including DNA-binding domain (residues 102-292), interaction "
+"regions with MDM2/CCAR2/HRMT1L2, zinc binding sites, and p53 "
+"transactivation motifs."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:34
+#: ../../tools/ebi_proteins_features_tools.rst:65
+#: ../../tools/ebi_proteins_features_tools.rst:96
+#: 11131b70aafc45fc8ab890670db31a6f 8b26d10d848d449690e473ca653b8bdc
+#: cdb03d83aeb84d5f8de636b80df7e8fb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:36
+#: 788645baa6ca47ef97386f0295ab07cb
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53/p53), 'P00533' (EGFR), 'P01308' (Insulin), 'P31749' (AKT1)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:39
+#: ../../tools/ebi_proteins_features_tools.rst:70
+#: ../../tools/ebi_proteins_features_tools.rst:101
+#: 11d4c9e84e214aa4b6f7babf9b13ebf7 86623346c5db4f19b549dda8a04b1b85
+#: cf1194b168d0411d8c7d22aa4b4cdca0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:53
+#: 28a573e3e18d40b4a401b4fdb5ed595b
+msgid "**EBIProteins_get_molecule_processing** (Type: EBIProteinsFeaturesTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:55
+#: 6fb9d47895db4d6d88026d52a13a8c3d
+msgid ""
+"Get molecule processing features for a protein from the EBI Proteins API."
+" Returns signal peptides..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst 8d1105ad99bf4b85bb363f4c760e0d4a
+msgid "EBIProteins_get_molecule_processing tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:61
+#: 6177df72d8c84a4a8d646fd17473591e
+msgid "**Name**: ``EBIProteins_get_molecule_processing``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:63
+#: 9e5c08bb64104a2790a08f1a2974caa6
+msgid ""
+"**Description**: Get molecule processing features for a protein from the "
+"EBI Proteins API. Returns signal peptides, transit peptides, mature "
+"protein chains, propeptides, and initiator methionine annotations. "
+"Essential for understanding how a protein precursor is processed into its"
+" functional form. Example: P01308 (Insulin) returns signal peptide "
+"(1-24), B chain (25-54), C peptide (57-87), and A chain (90-110) showing "
+"the complete insulin processing pathway."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:67
+#: 4171fb9e342a4dd6a10f7e37283cd1a2
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P01308' "
+"(Insulin - classic example), 'P01375' (TNF-alpha), 'P01189' (POMC - "
+"multiple peptides), 'P06213' (Insulin receptor)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:84
+#: ddaa7b5c31d84f81a6c8c377275e4728
+msgid "**EBIProteins_get_structural_features** (Type: EBIProteinsFeaturesTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:86
+#: eae1cac6ae7144b9ab512f1e2c3b4887
+msgid ""
+"Get secondary structure annotations for a protein from the EBI Proteins "
+"API. Returns helix, beta ..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst 6f6c47a80d5d4f658d15207c9627984e
+msgid "EBIProteins_get_structural_features tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:92
+#: 5d4371aae91f4660989915bb945000b0
+msgid "**Name**: ``EBIProteins_get_structural_features``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:94
+#: 642bbf472d924eeb9316e37b91262a4e
+msgid ""
+"**Description**: Get secondary structure annotations for a protein from "
+"the EBI Proteins API. Returns helix, beta strand, and turn assignments "
+"mapped to the UniProt protein sequence. These are derived from "
+"experimental 3D structures and mapped to the canonical sequence, "
+"providing a comprehensive secondary structure profile. Example: P04637 "
+"(TP53) returns 40 structural features including helices (residues 19-29, "
+"165-172, etc.), strands (residues 112-114, 141-143, etc.), and turns."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:98
+#: 7d873ea6efcb4e1a813c5621a881ab1c
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53/p53), 'P69905' (Hemoglobin alpha), 'P00533' (EGFR), 'P38398' "
+"(BRCA1)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:115
+#: 5bdf9668d7b94c8db50400ee4e7ca1bb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:117
+#: 89108ca9f4a5493fa6e4cd0e3e74b3ab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_proteins_features_tools.rst:118
+#: 1bbda59d4fdb4ff6aade0977d783cef2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

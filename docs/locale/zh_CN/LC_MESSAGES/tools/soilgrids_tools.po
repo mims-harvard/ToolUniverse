@@ -1,0 +1,137 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/soilgrids_tools.rst:10 adde61c8c9094fcba0159952b13161b1
+msgid "Soilgrids Tools"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:12 e5d77b94f9614ef5a184230ef4e5a59c
+msgid ""
+"**Configuration File**: ``broken_apis/soilgrids_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:16 52c137c394b8473da8fca4b24ec4cfd3
+msgid ""
+"This page contains all tools defined in the ``soilgrids_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:19 8de535a039fc47649274224d42e50735
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:22 08fe9b907b5f413ea0ae6137843660e5
+msgid "**SoilGrids_get_properties** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:24 984332c35af3443dadd23a9bfe4f5636
+msgid ""
+"Get soil properties for any location on Earth using the ISRIC SoilGrids "
+"API. Returns quantitative..."
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst 16ebcd475b3e4f8aab740aa93f5ea788
+msgid "SoilGrids_get_properties tool specification"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:28 fe63c43f04144ae3ad087705e098b655
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:30 58fff596aca2401c802a85943f95d97d
+msgid "**Name**: ``SoilGrids_get_properties``"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:31 f10a5f7e6cbf48b4abd36d7f600d73b8
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:32 5f41859a354445048ef9c5bb6478ff5a
+msgid ""
+"**Description**: Get soil properties for any location on Earth using the "
+"ISRIC SoilGrids API. Returns quantitative soil data including pH, organic"
+" carbon (SOC), clay/sand/silt content, bulk density, cation exchange "
+"capacity, and more at multiple soil depth intervals (0-5cm, 5-15cm, "
+"15-30cm, 30-60cm, 60-100cm, 100-200cm). Predictions are based on global "
+"machine learning models trained on 240K+ soil profiles. Essential for "
+"soil science, agriculture, climate modeling, and ecosystem research."
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:34 18e4fe6eed1a4bbaa0d17f60ced4b31c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:36 b19042d2d8b24c2a90e83361480f1847
+msgid ""
+"``lon`` (number) (required) Longitude in decimal degrees (-180 to 180). "
+"Examples: 5.1 (Netherlands), -122.4 (California), 139.7 (Tokyo), 18.4 "
+"(South Africa)"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:39 65a06a7575ca453d92e3888ec6f47c9f
+msgid ""
+"``lat`` (number) (required) Latitude in decimal degrees (-90 to 90). "
+"Examples: 52.1 (Netherlands), 37.8 (California), 35.7 (Tokyo), -33.9 "
+"(South Africa)"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:42 2c94421fdafc43f59473d52379f4dff3
+msgid ""
+"``property`` (string, null) (optional) Soil property to retrieve. "
+"Multiple allowed (repeat param). Properties: 'bdod' (bulk density), 'cec'"
+" (cation exchange capacity), 'cfvo' (coarse fragments), 'clay', 'sand', "
+"'silt', 'nitrogen', 'phh2o' (pH in water), 'soc' (soil organic carbon), "
+"'ocd' (organic carbon density), 'ocs' (organic carbon stocks). Default: "
+"all properties"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:45 5ef65221c3184d0485101583b64cb06b
+msgid ""
+"``depth`` (string, null) (optional) Soil depth interval. Values: '0-5cm',"
+" '5-15cm', '15-30cm', '30-60cm', '60-100cm', '100-200cm'. Default: all "
+"depths"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:48 4b2a69a2598447339eedf9c5d0b5912e
+msgid ""
+"``value`` (string, null) (optional) Statistical value to return. Values: "
+"'mean' (default), 'Q0.05' (5th percentile), 'Q0.50' (median), 'Q0.95' "
+"(95th percentile), 'uncertainty'"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:51 a75d1de55e574250928b9126d89167e1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:66 a76d40643fa94df09c9dd6265211b929
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:68 8ddfc37419d7495cb279a3d08cb281d5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/soilgrids_tools.rst:69 ecee2d0795744d0fba78708b0f6118c4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

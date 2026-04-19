@@ -1,0 +1,224 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/file_download_tools.rst:10 e34da449d48f4e7f8dfbe1c7087f5892
+msgid "File Download Tools"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:12 59810ae8e1d149dab576bd2d505ba770
+msgid ""
+"**Configuration File**: ``file_download_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:16 c9e1fb8320614154bef61c4c3f321e3f
+msgid ""
+"This page contains all tools defined in the ``file_download_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:19 770400496e5442c89384f9e55d537052
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:22 def53d80f96c46948f40e46e72024d60
+msgid "**download_binary_file** (Type: BinaryDownloadTool)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:24 7a47b0b383f64414b20f05a974b1b8bb
+msgid ""
+"Download binary files (images, videos, executables) with chunked "
+"streaming for better memory mana..."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst c3df1acf00ac42058b3f7a08e207997e
+msgid "download_binary_file tool specification"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:28
+#: ../../tools/file_download_tools.rst:69
+#: ../../tools/file_download_tools.rst:115 5941e87eaa8c4ea6b4d71f215278c138
+#: db0ebb9912714627994282586685b7de e1b7bf6d706e426b948456f2ebe82ec9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:30 b7e840b1ccfd430892d650329b251b18
+msgid "**Name**: ``download_binary_file``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:31 21fb4710c95f4c45b5c52b5d3c2a96f2
+msgid "**Type**: ``BinaryDownloadTool``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:32 11e8aa4c9d43448da59427c89816cc19
+msgid ""
+"**Description**: Download binary files (images, videos, executables) with"
+" chunked streaming for better memory management. Optimized for large "
+"files."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:34
+#: ../../tools/file_download_tools.rst:75
+#: ../../tools/file_download_tools.rst:121 48a54ce59c15432a84fbb1ade91f761b
+#: d1973025b00a43c2be0e44b276a0a409 efa1d56d1e1a48c78ab46889926b8791
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:36 2e9b497a96f34b7db0647ce30fc15261
+msgid "``url`` (string) (required) HTTP or HTTPS URL to download from"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:39 c44dc3b3a2d147dbb087bdb7fa9bb294
+msgid ""
+"``output_path`` (string) (required) Full path where to save the binary "
+"file (e.g., /tmp/image.jpg or C:\\\\Users\\\\Downloads\\\\video.mp4)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:42 c91d66604bfe4ff7a2cb51b0e06f317b
+msgid ""
+"``chunk_size`` (integer) (optional) Download chunk size in bytes "
+"(default: 1MB for binary files)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:45
+#: ../../tools/file_download_tools.rst:83
+#: ../../tools/file_download_tools.rst:129 63550ead3f8147579f1110af2205e609
+#: aa89c170b9364ca49b3a1a11e8e24869 e61da00055d74e8e8d7e55ea4f24e416
+msgid "``timeout`` (integer) (optional) Request timeout in seconds"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:48
+#: ../../tools/file_download_tools.rst:95
+#: ../../tools/file_download_tools.rst:132 4fbe2e70a9ae49659e865bb92996e1cf
+#: 958ce8c74fe34ec2bd7d08b658a3c8ce aee663ae40db4f56b6ab940851d0f476
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:63 7bc698e3265546879b5b09ab912c0768
+msgid "**download_file** (Type: FileDownloadTool)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:65 683c8deb7e9b4a5db9b2c595435d4481
+msgid ""
+"Download files from HTTP/HTTPS URLs with cross-platform support (Windows,"
+" Mac, Linux). Similar to..."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst c7fa1053b82349da9e2c02715719c95d
+msgid "download_file tool specification"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:71 dd6ab29a6b3b44adb64700fd2d5631f2
+msgid "**Name**: ``download_file``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:72 d57024e2edd94f27bc0dffe8d1d057b3
+msgid "**Type**: ``FileDownloadTool``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:73 261302991a0c4ba4bbccec126c5b1d73
+msgid ""
+"**Description**: Download files from HTTP/HTTPS URLs with cross-platform "
+"support (Windows, Mac, Linux). Similar to curl but platform-independent. "
+"Can save to specified path or temporary directory."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:77 99542e47ee8f4a4b9141d10a125a6b4c
+msgid ""
+"``url`` (string) (required) HTTP or HTTPS URL to download from (e.g., "
+"https://example.com/file.txt)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:80 636979ae2e3540dbaaf70a5bbd483158
+msgid ""
+"``output_path`` (string) (optional) Optional path to save the file. If "
+"not specified, file will be saved to system temp directory."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:86 28e960afac16447cb6217684bb4f3dd4
+msgid ""
+"``return_content`` (boolean) (optional) If true, return file content as "
+"text instead of saving to disk (default: false)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:89 78e0701f50b04c9e8c37ee9d838dd87e
+msgid ""
+"``chunk_size`` (integer) (optional) Download chunk size in bytes "
+"(default: 8192)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:92 2ec78e49b718444bb1675fb486188ea1
+msgid ""
+"``follow_redirects`` (boolean) (optional) Follow HTTP redirects (default:"
+" true)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:109 52cf510940dc4527a2353680e3720fc7
+msgid "**download_text_content** (Type: TextDownloadTool)"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:111 7a1d350012cc4bb98adec4bd418680b1
+msgid ""
+"Download and return text content from URLs. Optimized for text files with"
+" automatic encoding dete..."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst 766be70ad0e04e8fb65a9ff5fc2fe28c
+msgid "download_text_content tool specification"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:117 6fe56bef503741c3b3cd630e8ffae18c
+msgid "**Name**: ``download_text_content``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:118 78027ed52d814455b5a15f8a7aa34d29
+msgid "**Type**: ``TextDownloadTool``"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:119 91e49dc240f042ee9325e0b448bc03ee
+msgid ""
+"**Description**: Download and return text content from URLs. Optimized "
+"for text files with automatic encoding detection."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:123 88c9727c7a1d49b6b4703c7efa311956
+msgid "``url`` (string) (required) HTTP or HTTPS URL to download text from"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:126 cc6c940791ab46d48d99228d35683932
+msgid ""
+"``encoding`` (string) (optional) Text encoding (e.g., utf-8, latin1). "
+"Auto-detected if not specified."
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:146 171d2c48790445b88c8a424ae61d6580
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:148 d4fd16ebf6c14394858aa494b10f5f01
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/file_download_tools.rst:149 da6ac5a9fec54a0382290085f94861e5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,117 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sunrise_sunset_tools.rst:10 485657d4a3134211aa51aaf82af4b65c
+msgid "Sunrise Sunset Tools"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:12 40d7be84e551479b98db7b92aa8789b3
+msgid ""
+"**Configuration File**: ``sunrise_sunset_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:16 ded551a8fab14feda209282262d9ad38
+msgid ""
+"This page contains all tools defined in the ``sunrise_sunset_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:19 a63732a10fac4fd28580b56ed07bb375
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:22 590f15e0b22d4154b58f50bfd6fd4dab
+msgid "**SunriseSunset_get_times** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:24 13ba96b62d5444038ddadf1b413a6bdc
+msgid ""
+"Get sunrise, sunset, solar noon, and twilight times for any location on "
+"Earth using the Sunrise-S..."
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst 5ac4f58277034932833393e6af86ffed
+msgid "SunriseSunset_get_times tool specification"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:28 d8119470ac664e37a4c1d8b313d9b00b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:30 2d37c9905fa74d5e87486bd704eff2e4
+msgid "**Name**: ``SunriseSunset_get_times``"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:31 32d3802450d1453b986ba4b221410030
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:32 ed0d53a4667f4e85971a41619d328843
+msgid ""
+"**Description**: Get sunrise, sunset, solar noon, and twilight times for "
+"any location on Earth using the Sunrise-Sunset.org API. Returns times in "
+"UTC ISO 8601 format. Supports historical dates. No authentication "
+"required. Useful for astronomy, agriculture, photography planning, "
+"circadian rhythm research, and solar energy calculations."
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:34 f45f2b5af74a487cbb6fce3fcfd8c9e9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:36 a1725f379a124644b3af9705b10bae95
+msgid ""
+"``lat`` (number) (required) Latitude in decimal degrees (-90 to 90). "
+"Examples: 40.7128 (New York), 51.5074 (London), 35.6762 (Tokyo), 48.8566 "
+"(Paris), -33.8688 (Sydney)"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:39 4c6c7bbda93448638e2adeb4e8f77696
+msgid ""
+"``lng`` (number) (required) Longitude in decimal degrees (-180 to 180). "
+"Examples: -74.0060 (New York), -0.1278 (London), 139.6503 (Tokyo), 2.3522"
+" (Paris), 151.2093 (Sydney)"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:42 127ca1e02c2a4745b967b2abfb850c4c
+msgid ""
+"``date`` (string, null) (optional) Date in YYYY-MM-DD format, or 'today'."
+" Default: today. Examples: '2024-06-21', '2024-12-21', 'today'"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:45 5f719255dee84c54a0c890c56c4fcf69
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:60 bd6b4dbf074d46808dc031860252f9d5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:62 5bfa31d3b4e544a7968cea7110fcb6e5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sunrise_sunset_tools.rst:63 bd238774062a4ec5858b6bdf6de21934
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

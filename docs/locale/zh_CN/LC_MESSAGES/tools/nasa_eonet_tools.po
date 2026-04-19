@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nasa_eonet_tools.rst:10 c79ef51fdea340fd95a0f49c20fb68a4
+msgid "Nasa Eonet Tools"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:12 fbc83465c5384e1ab03599d73a37ad25
+msgid ""
+"**Configuration File**: ``nasa_eonet_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:16 b0ef082d817d481882ceba093311cf5c
+msgid ""
+"This page contains all tools defined in the ``nasa_eonet_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:19 1e449d7ebba549a6b11c9a1107e2d13f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:22 89488e9606024fbda15e3a01c5a0a2ee
+msgid "**NASAEONET_get_categories** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:24 4c0129e910bf400fa3c0ff6a30826f2a
+msgid ""
+"Get the list of natural event categories tracked by NASA EONET (Earth "
+"Observatory Natural Event T..."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst 49903603b8764ddcba13fda56b0cc822
+msgid "NASAEONET_get_categories tool specification"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:28 ../../tools/nasa_eonet_tools.rst:57
+#: 1d50721adee64766bf190044c493a168 af1181469aa7461ca0efd94cfabbd1ca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:30 4aaeb1c7102d44ad94b3e89c3d4775f2
+msgid "**Name**: ``NASAEONET_get_categories``"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:31 ../../tools/nasa_eonet_tools.rst:60
+#: 8617e09824914f3f8ffa79c0a35f7d93 c75e735cd07a4e38b694f4d22af7c423
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:32 d53fb7111d5c479a895c1e58662a247e
+msgid ""
+"**Description**: Get the list of natural event categories tracked by NASA"
+" EONET (Earth Observatory Natural Event Tracker). Returns all event "
+"category types with their IDs, titles, descriptions, and layer "
+"information. Use the category ID/slug with NASAEONET\\_get\\_events to "
+"filter events by type."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:34 ../../tools/nasa_eonet_tools.rst:63
+#: 118f945e3b3b4c14882a2e282828769f c3f211c2df274c47abada479ee4f3fb2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:36 7a6bcd1570c2422fa0fcee69b5f78f58
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:38 ../../tools/nasa_eonet_tools.rst:89
+#: 0f1cf55afbd64f91b35ac1bc0e869916 e67f435f9f184c23beab8704d353f055
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:51 3b2661f858a94cd490bcac250a798408
+msgid "**NASAEONET_get_events** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:53 98c0145e5ccc4050875ab2ae96d0ec91
+msgid ""
+"Get natural event data from NASA Earth Observatory Natural Event Tracker "
+"(EONET). EONET tracks on..."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst 2aa9f1680ee04d3fb1bfca9744bbbcc4
+msgid "NASAEONET_get_events tool specification"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:59 5bb66fbe3f534cc98322dcc92cc6d7f2
+msgid "**Name**: ``NASAEONET_get_events``"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:61 bbd14c5bd9a04317a0b44d41cabdf253
+msgid ""
+"**Description**: Get natural event data from NASA Earth Observatory "
+"Natural Event Tracker (EONET). EONET tracks ongoing and historical "
+"natural events including wildfires, storms, volcanoes, floods, sea ice "
+"changes, landslides, earthquakes, and more. Returns event details with "
+"geographic coordinates, time series, and source references. Useful for "
+"disaster monitoring, environmental research, and geospatial analysis."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:65 19553ab1a3b14f85bc9167bce873e5de
+msgid ""
+"``status`` (string, null) (optional) Event status: 'open' (ongoing "
+"events) or 'closed' (past events). Default: both"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:68 9d47bd8bdc6e40a587342b1fd1c5aadc
+msgid ""
+"``category`` (string, null) (optional) Filter by event category. Values: "
+"'wildfires', 'severeStorms', 'volcanoes', 'seaLakeIce', 'earthquakes', "
+"'floods', 'landslides', 'manmade', 'snow'. Use the exact slug."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:71 6e729b2a4ba04b6caaf65a688986bd8c
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of events to return "
+"(default 10, max 1000)"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:74 5c445dabcc394883b0d1196a2cef3762
+msgid ""
+"``days`` (integer, null) (optional) Return events in the last N days. "
+"Example: 7 for last week. Ignored if start/end are set."
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:77 fae207a769e54139a6f89b706b489f56
+msgid ""
+"``start`` (string, null) (optional) Filter events starting from this date"
+" (YYYY-MM-DD). Example: '2024-01-01'"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:80 3e9d0e1ad2ac4a12b570a8361ae16c63
+msgid ""
+"``end`` (string, null) (optional) Filter events up to this date (YYYY-MM-"
+"DD). Example: '2024-12-31'"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:83 902e0056372d43bd9060bcff9d2213fe
+msgid ""
+"``bbox`` (string, null) (optional) Bounding box filter: "
+"'minLon,minLat,maxLon,maxLat'. Example: '-120,30,-100,50' for western US"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:86 747d52868662414bb433c9d796013ffa
+msgid ""
+"``source`` (string, null) (optional) Filter by data source. Examples: "
+"'GDACS', 'InciWeb', 'IRWIN'"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:102 250ee9d4e90b4993a956f9cbb40f1093
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:104 10558a2ae4f84b9ead7b48c0dac35e24
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nasa_eonet_tools.rst:105 68d2a784b306447387150de10ba86100
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -7,129 +7,290 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/building_ai_scientists/index.rst:31
-#: ../../guide/building_ai_scientists/index.rst:33
-#: f80c288799b34f88aadb0649afb2cd5d
-msgid "Integration Methods"
-msgstr "集成方法"
+#: ../../guide/building_ai_scientists/index.rst:159
+msgid "Platform Setup Guides"
+msgstr "平台接入指南"
+
+#: ../../guide/building_ai_scientists/index.rst:176
+#, fuzzy
+msgid "MCP & Integration"
+msgstr "MCP 与集成"
 
 #: ../../guide/building_ai_scientists/index.rst:2
-#: 4305a413daba4c7abe024d7994f57241
-msgid "Building AI Scientists"
-msgstr "构建人工智能科学家"
+#: 77d6a95a16814281aafe040ab831bd9b
+msgid "Set Up ToolUniverse"
+msgstr "配置 ToolUniverse"
 
-#: ../../guide/building_ai_scientists/index.rst:5
-#: f06c9ff42e12461dbc70e5908e0d11e9
-msgid "Overview"
-msgstr "概述"
+#: ../../guide/building_ai_scientists/index.rst:4
+#: 3f44371bea8d4684baa00af63f0a2727
+msgid "Open your AI agent and run this single prompt to get started:"
+msgstr "打开你的 AI Agent，运行下面这条提示词即可开始："
 
-#: ../../guide/building_ai_scientists/index.rst:7
-#: da2897c7890d47769a3e8371748da1b3
+#: ../../guide/building_ai_scientists/index.rst:10
+#: 97f3e69ebc65450b804399c16743936c
 msgid ""
-"A customized AI scientist can be developed by integrating ToolUniverse with "
-"LLMs, reasoning models, and AI agents. In this configuration, the LLMs and "
-"reasoning models provide the core capabilities for reasoning and tool usage,"
-" while ToolUniverse serves as the scientific environment for interaction and"
-" experimentation."
-msgstr ""
-"通过将 ToolUniverse 与大型语言模型（LLMs）、推理模型及 AI 智能体集成，可以开发定制化的 AI 科学家。在此配置中，LLMs "
-"和推理模型提供推理及工具使用的核心能力，而 ToolUniverse 则作为科学环境，支持交互与实验。"
-
-#: ../../guide/building_ai_scientists/index.rst:9
-#: 4115cf93c1fd4d329bcef6a59a83aacf
-msgid "The development process typically involves three steps:"
-msgstr "开发过程通常包括三个步骤："
-
-#: ../../guide/building_ai_scientists/index.rst:11
-#: bd94e3fc2e0a4b47a8888f488c0102bd
-msgid ""
-"Installing ToolUniverse with a single command (``pip install tooluniverse``)"
-msgstr "使用单条命令安装 ToolUniverse（``pip install tooluniverse``）"
-
-#: ../../guide/building_ai_scientists/index.rst:12
-#: a437604559ba47389e33b71f405d62ec
-msgid ""
-"Connecting ToolUniverse to the chosen model so it can access the tools "
-"provided by ToolUniverse"
-msgstr "将 ToolUniverse 连接到所选模型，以便其能够访问 ToolUniverse 提供的工具"
+"Your agent will walk you through MCP configuration, API keys, and "
+"validation step by step."
+msgstr "你的 Agent 会一步步带你完成 MCP 配置、API Key 设置和验证流程。"
 
 #: ../../guide/building_ai_scientists/index.rst:13
-#: dd1e205a9778433383ef9629fa4c6e5c
-msgid ""
-"Instructing the model to use these tools to address a given scientific "
-"problem"
-msgstr "指导模型使用这些工具来解决特定的科学问题"
-
-#: ../../guide/building_ai_scientists/index.rst:16
-#: 8b985f5bb68a46e092ad40d1fe6dfc00
-msgid "How AI Scientists Operate"
-msgstr "人工智能科学家的工作方式"
-
-#: ../../guide/building_ai_scientists/index.rst:18
-#: dae4a3f711db4f0fa1bacc7d3346e34b
-msgid ""
-"Once the setup is complete, the AI scientist operates as follows: given a "
-"user instruction or task, it formulates a plan or hypothesis, employs the "
-"tool finder in ToolUniverse to identify relevant tools, and iteratively "
-"applies these tools to gather information, conduct experiments, verify "
-"hypotheses, and request human feedback when necessary. For each required "
-"tool call, the AI scientist generates arguments that conform to the "
-"ToolUniverse protocol, after which ToolUniverse executes the tool and "
-"returns the results for further reasoning."
-msgstr ""
-"设置完成后，AI科学家的运行流程如下：针对用户指令或任务，制定计划或假设，利用ToolUniverse中的工具查找器识别相关工具，并迭代应用这些工具以收集信息、进行实验、验证假设，必要时请求人工反馈。对于每次所需的工具调用，AI科学家生成符合ToolUniverse协议的参数，随后ToolUniverse执行该工具并返回结果以供进一步推理。"
-
-#: ../../guide/building_ai_scientists/index.rst:21
-#: 38aebe62a4414c08a007e5b3f290bc05
-msgid "Model Types"
-msgstr "模型类型"
-
-#: ../../guide/building_ai_scientists/index.rst:23
-#: fa64ed5331c0406e952c46311667622c
-msgid "The models used to construct AI scientists can include:"
-msgstr "用于构建人工智能科学家的模型包括："
+#: d3aea4c4ee664366b294ca78b249c41e
+msgid "Choose your platform"
+msgstr "选择你的平台"
 
 #: ../../guide/building_ai_scientists/index.rst:25
-#: ff2d0fb8ec5d4f8d9ced9ddbae7d3c27
-msgid ""
-"**LLMs**: API-based (GPT, Claude, Gemini) or open-weight models (LLaMA, "
-"DeepSeek, Qwen)"
+#: aa888d3a755b40fb91cd89389862f771
+msgid "**Claude Desktop**"
 msgstr ""
-"**大型语言模型（LLMs）**：基于API的模型（GPT、Claude、Gemini）或开源权重模型（LLaMA、DeepSeek、Qwen）"
-
-#: ../../guide/building_ai_scientists/index.rst:26
-#: 7f23cb2a58024410987ecbdd72b8b87b
-msgid ""
-"**Reasoning Models**: Enhance problem-solving capabilities by applying "
-"built-in chains of thought to analyze the current step before interacting "
-"with ToolUniverse"
-msgstr "**推理模型**：通过应用内置的思维链，在与ToolUniverse交互之前分析当前步骤，从而增强问题解决能力。"
 
 #: ../../guide/building_ai_scientists/index.rst:27
-#: 9808a8edaf3b4c47a51db0c9fee8a7b3
-msgid ""
-"**Agentic Systems**: Such as Gemini CLI or Claude Code, integrate reasoning "
-"models with agentic feedback loops to autonomously manage multi-step problem"
-" solving and tool use"
-msgstr ""
-"**智能智能体系统**：如 Gemini CLI 或 Claude Code，将推理模型与智能智能体反馈循环相结合，实现多步骤问题解决和工具使用的自主管理。"
+#: 680e7795c7ee4c6eb59ebf2302187b3a
+msgid "Desktop app with native MCP integration"
+msgstr "原生支持 MCP 集成的桌面应用"
 
-#: ../../guide/building_ai_scientists/index.rst:28
-#: 154a844a43324e7b9f70b0f3cc143d6d
+#: ../../guide/building_ai_scientists/index.rst:35
+#: a269ede5b7314b0eb2207b55ecb1faab
+msgid "**Claude Code**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:37
+#: 2ff233ec92a24de9b3e9f77fa84faacc
+msgid "Terminal-based AI coding agent"
+msgstr "基于终端的 AI 编码 Agent"
+
+#: ../../guide/building_ai_scientists/index.rst:45
+#: 90f6d376346e46c281634ca4fa14989f
+msgid "**Cursor**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:47
+#: 1d77e1d595b043d3b6e81fcc6a5761e8
+msgid "AI-first code editor with MCP support"
+msgstr "支持 MCP 的 AI 优先代码编辑器"
+
+#: ../../guide/building_ai_scientists/index.rst:55
+#: 9b3765582e4347c69ee9370ad5bac55f
+msgid "**Windsurf**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:57
+#: 52311146c6dd41f69f34671bf09cc79e
+msgid "Agentic IDE with autonomous coding agents"
+msgstr "带有自主编码 Agent 的 Agentic IDE"
+
+#: ../../guide/building_ai_scientists/index.rst:65
+#: 4f2f534523234d09b5a2f97e23c510f9
+msgid "**Antigravity**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:67
+#: 25c119d2427f40b3911b9021aaa9a4e7
+msgid "Google's free agentic IDE with parallel agents"
+msgstr "Google 免费的 Agentic IDE，支持并行 Agent"
+
+#: ../../guide/building_ai_scientists/index.rst:75
+#: 01471220a0ea4b3e91744aea4b6057c0
+msgid "**Cline**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:77
+#: fd9718e2aa6e4f248eacd2f74535c533
+msgid "VS Code extension with MCP integration"
+msgstr "带有 MCP 集成的 VS Code 扩展"
+
+#: ../../guide/building_ai_scientists/index.rst:85
+#: 531596ed6efd41b9874f564c03638c83
+msgid "**Trae**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:87
+#: 6da56605e02146b6811125213604aa5a
+msgid "AI coding assistant with MCP support"
+msgstr "支持 MCP 的 AI 编码助手"
+
+#: ../../guide/building_ai_scientists/index.rst:95
+#: 121a0b30339a4128965e430b9571462a
+msgid "**OpenCode**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:97
+#: 18ff080fd01c4233baaa7e2046b69fd2
+msgid "Open-source AI coding platform"
+msgstr "开源 AI 编码平台"
+
+#: ../../guide/building_ai_scientists/index.rst:105
+#: 307c173246d147698560f8fee71d82d0
+msgid "**Gemini CLI**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:107
+#: 26ddc1d9ea0048afafd7ee94bb126476
+msgid "Command-line interface with Google Gemini"
+msgstr "基于 Google Gemini 的命令行界面"
+
+#: ../../guide/building_ai_scientists/index.rst:115
+#: bef47b687916458fab96dde7189e80f5
+msgid "**Qwen Code**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:117
+#: 971caf795d334352af1102b5544418e9
+msgid "Code editor for AI scientist workflows"
+msgstr "面向 AI Scientist 工作流的代码编辑器"
+
+#: ../../guide/building_ai_scientists/index.rst:125
+#: fddd8b8b377b49499e0cf5b33e44dd42
+msgid "**Codex CLI**"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/index.rst:127
+#: e2a5822ae94c47f7b23e699106e3a8f5
+msgid "Terminal-based interface with OpenAI Codex"
+msgstr "基于终端的 OpenAI Codex 接口"
+
+#: ../../guide/building_ai_scientists/index.rst:130
+#: c2674d57800c43eb85fe9cb9a5261417
+msgid "MCP configuration"
+msgstr "MCP 配置"
+
+#: ../../guide/building_ai_scientists/index.rst:132
+#: aeae5d7e46284fd3a8d84bdfa7268f20
+msgid "All platforms use the same MCP config snippet:"
+msgstr "所有平台都使用同一份 MCP 配置片段："
+
+#: ../../guide/building_ai_scientists/index.rst:146
+#: a5b5f7b72ae948768797fbe044b68f18
+msgid "For advanced MCP options, see :doc:`mcp_support`."
+msgstr "更多高级 MCP 选项请参见 :doc:`mcp_support`。"
+
+#: ../../guide/building_ai_scientists/index.rst:149
+#: 9d05b78d17504b678b45a9b9be79a4b6
+msgid "Agent skills"
+msgstr "Agent 技能"
+
+#: ../../guide/building_ai_scientists/index.rst:151
+#: 48e7a17e686c43ff949b4f153aa90e48
 msgid ""
-"**Specialized Agents**: Trained for specific scientific domains, enabling "
-"stronger performance on targeted tasks"
-msgstr "**专业智能体**：针对特定科学领域进行培训，提升在目标任务上的表现能力"
+"Skills are pre-built research workflows that guide your agent through "
+"complex tasks. Install all skills with one command:"
+msgstr "Skills 是预构建的研究工作流，可引导你的 Agent 完成复杂任务。使用一条命令即可安装全部技能："
+
+#: ../../guide/building_ai_scientists/index.rst:157
+#: 7b05ce1f9ea44e29a109f44c3dd8965d
+msgid ""
+"Then ask your agent: *\"research the drug metformin\"*, *\"find targets "
+"for Alzheimer's disease\"*, or *\"analyze protein structure for EGFR\"*. "
+"See the full :doc:`../skills_showcase`."
+msgstr "然后你可以让 Agent 执行：*\"research the drug metformin\"*、*\"find targets for Alzheimer's disease\"*，或 *\"analyze protein structure for EGFR\"*。完整列表见 :doc:`../skills_showcase`。"
+
+#~ msgid "Building AI Scientists"
+#~ msgstr "构建人工智能科学家"
+
+#~ msgid "Overview"
+#~ msgstr "概述"
+
+#~ msgid ""
+#~ "A customized AI scientist can be "
+#~ "developed by integrating ToolUniverse with "
+#~ "LLMs, reasoning models, and AI agents."
+#~ " In this configuration, the LLMs and"
+#~ " reasoning models provide the core "
+#~ "capabilities for reasoning and tool "
+#~ "usage, while ToolUniverse serves as the"
+#~ " scientific environment for interaction and"
+#~ " experimentation."
+#~ msgstr ""
+#~ "通过将 ToolUniverse 与大型语言模型（LLMs）、推理模型及 AI "
+#~ "智能体集成，可以开发定制化的 AI 科学家。在此配置中，LLMs "
+#~ "和推理模型提供推理及工具使用的核心能力，而 ToolUniverse 则作为科学环境，支持交互与实验。"
+
+#~ msgid "The development process typically involves three steps:"
+#~ msgstr "开发过程通常包括三个步骤："
+
+#~ msgid ""
+#~ "Installing ToolUniverse with a single "
+#~ "command (``pip install tooluniverse``)"
+#~ msgstr "使用单条命令安装 ToolUniverse（``pip install tooluniverse``）"
+
+#~ msgid ""
+#~ "Connecting ToolUniverse to the chosen "
+#~ "model so it can access the tools"
+#~ " provided by ToolUniverse"
+#~ msgstr "将 ToolUniverse 连接到所选模型，以便其能够访问 ToolUniverse 提供的工具"
+
+#~ msgid ""
+#~ "Instructing the model to use these "
+#~ "tools to address a given scientific "
+#~ "problem"
+#~ msgstr "指导模型使用这些工具来解决特定的科学问题"
+
+#~ msgid "How AI Scientists Operate"
+#~ msgstr "人工智能科学家的工作方式"
+
+#~ msgid ""
+#~ "Once the setup is complete, the AI"
+#~ " scientist operates as follows: given "
+#~ "a user instruction or task, it "
+#~ "formulates a plan or hypothesis, employs"
+#~ " the tool finder in ToolUniverse to"
+#~ " identify relevant tools, and iteratively"
+#~ " applies these tools to gather "
+#~ "information, conduct experiments, verify "
+#~ "hypotheses, and request human feedback "
+#~ "when necessary. For each required tool"
+#~ " call, the AI scientist generates "
+#~ "arguments that conform to the "
+#~ "ToolUniverse protocol, after which "
+#~ "ToolUniverse executes the tool and "
+#~ "returns the results for further "
+#~ "reasoning."
+#~ msgstr "设置完成后，AI科学家的运行流程如下：针对用户指令或任务，制定计划或假设，利用ToolUniverse中的工具查找器识别相关工具，并迭代应用这些工具以收集信息、进行实验、验证假设，必要时请求人工反馈。对于每次所需的工具调用，AI科学家生成符合ToolUniverse协议的参数，随后ToolUniverse执行该工具并返回结果以供进一步推理。"
+
+#~ msgid "Model Types"
+#~ msgstr "模型类型"
+
+#~ msgid "The models used to construct AI scientists can include:"
+#~ msgstr "用于构建人工智能科学家的模型包括："
+
+#~ msgid ""
+#~ "**LLMs**: API-based (GPT, Claude, "
+#~ "Gemini) or open-weight models (LLaMA,"
+#~ " DeepSeek, Qwen)"
+#~ msgstr "**大型语言模型（LLMs）**：基于API的模型（GPT、Claude、Gemini）或开源权重模型（LLaMA、DeepSeek、Qwen）"
+
+#~ msgid ""
+#~ "**Reasoning Models**: Enhance problem-solving"
+#~ " capabilities by applying built-in "
+#~ "chains of thought to analyze the "
+#~ "current step before interacting with "
+#~ "ToolUniverse"
+#~ msgstr "**推理模型**：通过应用内置的思维链，在与ToolUniverse交互之前分析当前步骤，从而增强问题解决能力。"
+
+#~ msgid ""
+#~ "**Agentic Systems**: Such as Gemini CLI"
+#~ " or Claude Code, integrate reasoning "
+#~ "models with agentic feedback loops to"
+#~ " autonomously manage multi-step problem "
+#~ "solving and tool use"
+#~ msgstr ""
+#~ "**智能智能体系统**：如 Gemini CLI 或 Claude "
+#~ "Code，将推理模型与智能智能体反馈循环相结合，实现多步骤问题解决和工具使用的自主管理。"
+
+#~ msgid ""
+#~ "**Specialized Agents**: Trained for specific"
+#~ " scientific domains, enabling stronger "
+#~ "performance on targeted tasks"
+#~ msgstr "**专业智能体**：针对特定科学领域进行培训，提升在目标任务上的表现能力"

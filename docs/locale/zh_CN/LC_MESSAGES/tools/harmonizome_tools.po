@@ -1,0 +1,277 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/harmonizome_tools.rst:10 651323f2be644eb4b2ea09f135008bd5
+msgid "Harmonizome Tools"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:12 facdb1fd044446b1a0ad075966867446
+msgid ""
+"**Configuration File**: ``harmonizome_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:16 9be26dfde47d4cf18e77e0d5b3c700e1
+msgid ""
+"This page contains all tools defined in the ``harmonizome_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:19 6f7387af8e5e4eceb744facbee6e11a1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:22 e826141deb5d495fad0e8006b9cb3cb7
+msgid "**Harmonizome_get_dataset** (Type: HarmonizomeTool)"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:24 2aa40c6f28db4b088819f0344157b8f9
+msgid ""
+"Get detailed information about a specific dataset integrated in "
+"Harmonizome (Ma'ayan Lab). Return..."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst 4fff5f77eba54f0b981e46ed2a733845
+msgid "Harmonizome_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:28 ../../tools/harmonizome_tools.rst:62
+#: ../../tools/harmonizome_tools.rst:93 ../../tools/harmonizome_tools.rst:122
+#: ../../tools/harmonizome_tools.rst:159 0770d2af57ee4e96aaf666f45199d802
+#: 14f82a97abc04d369f0247852b414680 2b6ccc67c88c48c6b73bbfdcdd502964
+#: a6138279368d4b648042fd2736592260 e89d78f2da594b349b7b124f0f0d5417
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:30 ebd2e797bc3840028bc70df487c9ae14
+msgid "**Name**: ``Harmonizome_get_dataset``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:31 ../../tools/harmonizome_tools.rst:65
+#: ../../tools/harmonizome_tools.rst:96 ../../tools/harmonizome_tools.rst:125
+#: ../../tools/harmonizome_tools.rst:162 1deef847765c45a6bf2cedecb063ae18
+#: 3d1dfc2de1c0460082705743ee838d4e 5a62b646fc594e96a015709c16cbf6d5
+#: 5d3fce2957b84b5797055f726fa6d169 9bc09e090a6743fa8a2b4670e410b9e1
+msgid "**Type**: ``HarmonizomeTool``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:32 9c8780197ea048ceb103adea0c6f8b01
+msgid ""
+"**Description**: Get detailed information about a specific dataset "
+"integrated in Harmonizome (Ma'ayan Lab). Returns the dataset description,"
+" association type, measurement method, attribute type, PubMed references,"
+" and a catalog of gene sets within the dataset. Use "
+"Harmonizome\\_list\\_datasets first to find available dataset names. "
+"Example: 'CTD Gene-Disease Associations' returns 5218 gene sets with "
+"curated disease-gene associations."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:34 ../../tools/harmonizome_tools.rst:68
+#: ../../tools/harmonizome_tools.rst:99 ../../tools/harmonizome_tools.rst:128
+#: ../../tools/harmonizome_tools.rst:165 5640ef70008f41a5bbb8f345ef0ea29e
+#: 6f8aa4168cf7400bb1d76db4def12b4f 799d903d165b4cb88e53603775992968
+#: c6f876cdeb0a4fe1b7f41475a54abf28 d1a734aae592489cbfdd2d0f631b4ef6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:36 7f8dc3fa792248c8b774d1c950f4a5bc
+msgid ""
+"``dataset_name`` (string) (required) Exact dataset name from Harmonizome."
+" Examples: 'CTD Gene-Disease Associations', 'KEGG Pathways', 'BioGRID "
+"Protein-Protein Interactions'. Use Harmonizome\\_list\\_datasets to find "
+"names."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:39 d2a12b259dbf419888203954b5b71c4e
+msgid ""
+"``gene_set_limit`` (integer) (optional) Maximum number of gene set names "
+"to return (default: 50)."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:42 ../../tools/harmonizome_tools.rst:73
+#: ../../tools/harmonizome_tools.rst:103 ../../tools/harmonizome_tools.rst:139
+#: ../../tools/harmonizome_tools.rst:173 05dc8dd1936243eda1d661c28fdd3520
+#: 2178878dd9f44dea93fec1f4ccf4e7f5 548d0ca59864453bace7918e403a2e97
+#: 8ea43e359f854cf18e3574707723f47c a7e09d7c31144cb9b035003245a5cc36
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:56 f11e6c36599e487290620c01ed97508b
+msgid "**Harmonizome_get_gene** (Type: HarmonizomeTool)"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:58 3d3126c1d53e4e08bd4453611cdbe46e
+msgid ""
+"Get comprehensive gene information from Harmonizome (Ma'ayan Lab), which "
+"integrates data from 100..."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst b4b77bb3535d4a249e7eda0276336149
+msgid "Harmonizome_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:64 95de954f345a42899b82d6a596c04890
+msgid "**Name**: ``Harmonizome_get_gene``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:66 58d4d9fb61ac41f285e97ec7853dbf93
+msgid ""
+"**Description**: Get comprehensive gene information from Harmonizome "
+"(Ma'ayan Lab), which integrates data from 100+ genomics datasets covering"
+" gene expression, protein interactions, pathways, diseases, drug targets,"
+" and more. Returns gene symbol, name, NCBI Entrez ID, description, "
+"synonyms, and linked protein identifiers. Useful as a quick gene summary "
+"with curated descriptions from RefSeq. Example: TP53 returns description "
+"about tumor suppressor protein, NCBI ID 7157, synonyms [TRP53, LFS1, P53,"
+" BMFS5, BCC7], and linked UniProt protein P53\\_HUMAN."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:70 c22a8c1b536b4492b7a5054d3f36f89d
+msgid ""
+"``gene_symbol`` (string) (required) Official gene symbol (case-"
+"insensitive). Examples: 'TP53', 'BRCA1', 'EGFR', 'KRAS', 'CDK2'."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:87 1f66d91128824a7d9bc336ba1e0cbc7f
+msgid "**Harmonizome_list_datasets** (Type: HarmonizomeTool)"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:89 980f3cf6985a4b5fb85e15f6333c6849
+msgid ""
+"List all 100+ integrated genomics datasets available in Harmonizome "
+"(Ma'ayan Lab). Returns datase..."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst ce919b72c72e4fea932dc60907619b07
+msgid "Harmonizome_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:95 72a9bf99857d42d1b6c3bf40115bc4d7
+msgid "**Name**: ``Harmonizome_list_datasets``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:97 8f7ab14205424a74b9f50c185c61d17e
+msgid ""
+"**Description**: List all 100+ integrated genomics datasets available in "
+"Harmonizome (Ma'ayan Lab). Returns dataset names that can be used to "
+"explore gene-gene set associations. Covers gene expression (Allen Brain "
+"Atlas, GTEx, BioGPS, CCLE, TCGA), pathways (BioCarta, KEGG, Reactome, "
+"WikiPathways), protein interactions (BioGRID, PPI Hub), gene regulation "
+"(ChEA, ENCODE, JASPAR), drug targets (DrugBank, CTD), disease "
+"associations (OMIM, ClinVar, GAD, GWAS), phenotypes (MGI, HPO), and more."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:101 2af7ea95f5914145aa57cd1c67ab0495
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:116 bbaf4a93de4a4f9d8016b4558978af25
+msgid "**Harmonizome_search** (Type: HarmonizomeTool)"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:118 5622b022ca2d43489893d7a85cefcb31
+msgid ""
+"Search Harmonizome across genes, datasets, or attributes by keyword. For "
+"gene search, returns mat..."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst b4bab01da5af4d45869a30f39029da2c
+msgid "Harmonizome_search tool specification"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:124 ab009434e82042b2b022afa73cdd4716
+msgid "**Name**: ``Harmonizome_search``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:126 ca2c0c4522f64287be1a83abf7cedeec
+msgid ""
+"**Description**: Search Harmonizome across genes, datasets, or attributes"
+" by keyword. For gene search, returns matching gene symbols with names "
+"and NCBI IDs via exact lookup and suggest API. For dataset search, "
+"filters the 100+ dataset catalog by keyword. For attribute search, "
+"returns auto-complete suggestions. Use entity\\_type to control what is "
+"searched."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:130 c77a4f6a3d9b4bcf91427b570b575d41
+msgid ""
+"``query`` (string) (required) Search query. Examples: 'TP53', 'BRCA1', "
+"'kinase', 'expression', 'pathway'."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:133 9461ace5051b4b8bb9882b51b81cf230
+msgid ""
+"``entity_type`` (string) (optional) What to search for: 'gene' (default),"
+" 'dataset', or 'attribute'."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:136 ../../tools/harmonizome_tools.rst:170
+#: 54e70a065d2948b6b520c02bd977c6d5 5c2555424598486cb277f63c1eb96983
+msgid "``limit`` (integer) (optional) Maximum results to return (default: 20)."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:153 2763ec6bde9d4c46864efb1895915eed
+msgid "**Harmonizome_search_genes** (Type: HarmonizomeTool)"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:155 3247637dfe1645e5ba2a833341abaf70
+msgid ""
+"Search for genes by keyword in Harmonizome (Ma'ayan Lab). Returns "
+"matching gene symbols that can ..."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst 6b54d32df36e4319a2fa69dd2218d1b6
+msgid "Harmonizome_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:161 ecf8606b470345649d4fe3900e1e0371
+msgid "**Name**: ``Harmonizome_search_genes``"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:163 1420fecdaf9b46baa870b5f5198bdda3
+msgid ""
+"**Description**: Search for genes by keyword in Harmonizome (Ma'ayan "
+"Lab). Returns matching gene symbols that can be used with "
+"Harmonizome\\_get\\_gene for detailed information. Note: Harmonizome API "
+"does not support server-side text filtering; this endpoint returns a "
+"paginated list from the gene catalog. Use Harmonizome\\_search with "
+"entity\\_type='gene' for keyword-based gene search."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:167 58b8c0bd9a1d44a3b632ebdfd8b2f2f5
+msgid ""
+"``query`` (string) (required) Search keyword. Examples: 'kinase', 'tumor "
+"suppressor', 'receptor'."
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:187 42d1fbbbeeb74facb9969d3fc5b57d0a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:189 da97a8609e924327a22c10a0ddf67a01
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/harmonizome_tools.rst:190 96bba7b3b96545399caff63a12428ed4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

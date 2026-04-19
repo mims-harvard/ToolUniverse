@@ -1,0 +1,204 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/timer_tools.rst:10 eea3016656e842828e1ef1741a8743f8
+msgid "Timer Tools"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:12 f6445381b682457ea2788c94a1182692
+msgid ""
+"**Configuration File**: ``timer_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:16 d047423521374dca95f436924ded6e9b
+msgid ""
+"This page contains all tools defined in the ``timer_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/timer_tools.rst:19 ec700255047d4196b9259ab7d68ebc01
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:22 78bb8ec8661e4f198948eb1c2ec43208
+msgid "**TIMER2_gene_correlation** (Type: TIMERTool)"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:24 f81eca3132384a16bd22794545a4f170
+msgid ""
+"Analyze Spearman correlation between two genes across TCGA cancer samples"
+" using cBioPortal data. ..."
+msgstr ""
+
+#: ../../tools/timer_tools.rst 59d4dd3895964719b74fc3b1790c87b8
+msgid "TIMER2_gene_correlation tool specification"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:28 ../../tools/timer_tools.rst:71
+#: ../../tools/timer_tools.rst:109 1afefe9647644582967c1b8dd30eca9a
+#: 3733393ede5145a6af4d4e0c1ea9610e 41d0357d5c944ffa93f52eea52ee54ea
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:30 8aeebfbe8069411ca1d2d1d6dec3442f
+msgid "**Name**: ``TIMER2_gene_correlation``"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:31 ../../tools/timer_tools.rst:74
+#: ../../tools/timer_tools.rst:112 1281a74973ee420f8712a50e87b0a0e1
+#: 78349bc1f65748faa375884372513bc4 fea7475e1a2c4f6eb051083d837ed008
+msgid "**Type**: ``TIMERTool``"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:32 c52f14a5c5be466b861af2f6266a1120
+msgid ""
+"**Description**: Analyze Spearman correlation between two genes across "
+"TCGA cancer samples using cBioPortal data. Returns correlation "
+"coefficient and p-value. Useful for identifying co-expressed genes in "
+"tumor microenvironment. Note: TIMER2.0/3.0 REST API is no longer public; "
+"uses cBioPortal as data source. Example: Correlate CD8A and PDCD1 "
+"expression in BRCA."
+msgstr ""
+
+#: ../../tools/timer_tools.rst:34 ../../tools/timer_tools.rst:77
+#: ../../tools/timer_tools.rst:115 6919ef087a07411d8af044b43e1f89e3
+#: a1c63917c89349689d76819f9acfc863 dfba3adc4195446ca4f57da31a85d8f9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:36 ../../tools/timer_tools.rst:79
+#: ../../tools/timer_tools.rst:117 016a6acbe83b4f08968f06202458b23e
+#: 28676d549d6946769fde4a1c52feec54 d149581e0cc348c197137da11f254361
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:39 ea1b1f9ebdea4a72a4896795568d53b5
+msgid "``cancer`` (string) (required) TCGA cancer type (e.g., 'BRCA', 'LUAD')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:42 ab2b9cb494064d4e8c9814f1a296ecb1
+msgid "``gene1`` (string) (required) First gene symbol (e.g., 'CD8A')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:45 86bc0e8aa0ad4e11b3e8c5bbbe75291b
+msgid "``gene2`` (string) (required) Second gene symbol (e.g., 'PDCD1')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:48 ../../tools/timer_tools.rst:88
+#: ../../tools/timer_tools.rst:126 1bc00705b47c4dcdad63b89056f746d6
+#: 32243b77dbf546f4aa166a3e4afec88a 650119325a3f46bca313042d96128ad4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:65 d7c553f9e06442628f9fd96cf292738d
+msgid "**TIMER2_immune_estimation** (Type: TIMERTool)"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:67 2b3dc7b6ba3d43bdb6da684425f16f81
+msgid ""
+"Estimate immune cell abundance in TCGA cancer samples using TIMER-"
+"equivalent marker gene expressi..."
+msgstr ""
+
+#: ../../tools/timer_tools.rst fa729113eae54800ad342baf14389248
+msgid "TIMER2_immune_estimation tool specification"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:73 b4569a108ce046e7869ef3f1eb3b8d4a
+msgid "**Name**: ``TIMER2_immune_estimation``"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:75 5286a80bffc041aa9286d5414e0298ef
+msgid ""
+"**Description**: Estimate immune cell abundance in TCGA cancer samples "
+"using TIMER-equivalent marker gene expression from cBioPortal. Returns "
+"infiltration proxies for 6 immune cell types (B cells, CD4+ T cells, CD8+"
+" T cells, neutrophils, macrophages, dendritic cells) using canonical "
+"marker genes (CD19, CD4, CD8A, FCGR3B, CD68, ITGAX). Note: TIMER2.0/3.0 "
+"REST API is no longer public; this tool uses cBioPortal TCGA data as a "
+"proxy."
+msgstr ""
+
+#: ../../tools/timer_tools.rst:82 860ffe108dc0430abb77a186d1c7b770
+msgid ""
+"``cancer`` (string) (required) TCGA cancer type abbreviation (e.g., "
+"'BRCA', 'LUAD', 'COAD', 'SKCM', 'GBM')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:85 f50880c594294f2b87157c2d2dc12c8c
+msgid ""
+"``gene`` (string, null) (optional) Optional gene symbol to correlate with"
+" immune infiltration (e.g., 'CD8A', 'PDCD1')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:103 4100cefb3ebf45f3906c9f1b95556567
+msgid "**TIMER2_survival_association** (Type: TIMERTool)"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:105 1990375f3d7546f0bc0b2d62b5761ded
+msgid ""
+"Analyze overall survival association of gene expression in TCGA cancer "
+"patients using cBioPortal ..."
+msgstr ""
+
+#: ../../tools/timer_tools.rst 11d735196c4f48bea2c313e9ab1bdde8
+msgid "TIMER2_survival_association tool specification"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:111 b4114b90acb14030a83e592ed920a177
+msgid "**Name**: ``TIMER2_survival_association``"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:113 93b5ae7011cc402bbffe08f061cfb805
+msgid ""
+"**Description**: Analyze overall survival association of gene expression "
+"in TCGA cancer patients using cBioPortal data. Performs log-rank test "
+"comparing high vs. low gene expression groups (median split). Returns "
+"log-rank p-value, median survival times, and event counts. Note: "
+"TIMER2.0/3.0 REST API is no longer public; uses cBioPortal TCGA data."
+msgstr ""
+
+#: ../../tools/timer_tools.rst:120 ccbe6dc4b43d45bd94d874af60cca996
+msgid ""
+"``cancer`` (string) (required) TCGA cancer type (e.g., 'BRCA', 'LUAD', "
+"'COAD')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:123 6fa1edf76a904311a13d2f0bf2edaebb
+msgid ""
+"``gene`` (string) (required) Gene symbol for survival analysis (e.g., "
+"'CD8A', 'TP53', 'BRCA1')"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:142 52a44ceaff3440959b57752da5898be7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:144 4b497cd2402241c6b777a9bb91b36490
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/timer_tools.rst:145 ad3e7ef9a5b44f72a3b0c371ab2689a8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

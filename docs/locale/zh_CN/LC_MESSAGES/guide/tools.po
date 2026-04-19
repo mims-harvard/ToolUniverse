@@ -7,331 +7,349 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/tools.rst:2 1b2197567f1141c6a0e38348949cfa4f
+#: ../../guide/tools.rst:2 00c481fbf8364c99add03fc023f4191a
 msgid "Available Tools Reference"
 msgstr "可用工具参考"
 
-#: ../../guide/tools.rst:4 8bdcafcc0ccf4c899d46bd3addc6e3fd
+#: ../../guide/tools.rst:4 f1463d37e93d49cab7e56f48f2da5413
 msgid ""
 "**Complete reference of all ToolUniverse scientific tools and their "
 "capabilities.**"
 msgstr "**ToolUniverse所有科学工具及其功能的完整参考。**"
 
-#: ../../guide/tools.rst:6 2b7b825826844602b669c41d7a9ac355
+#: ../../guide/tools.rst:6 346b55c68519431898e364ad59e407eb
 msgid ""
 "ToolUniverse provides 1000+ tools across eight major categories, each "
 "serving specific computational and analytical requirements in scientific "
 "research."
 msgstr "ToolUniverse提供1000+工具，涵盖八个主要类别，每个类别都服务于科学研究中的特定计算和分析需求。"
 
-#: ../../guide/tools.rst:9 27a9fd99d43b4754bb0a361932240daf
+#: ../../guide/tools.rst:9 00e477f9e7c54542a055e953543cc46a
 msgid "Tool Ecosystem Overview"
 msgstr "工具生态系统概览"
 
-#: ../../guide/tools.rst:11 6767ab83e3d7415f950d6ba90a2626d1
+#: ../../guide/tools.rst:11 0373a7bca9de4152b060448468f647ba
 msgid "ToolUniverse integrates tools across eight major categories:"
 msgstr "ToolUniverse 集成了八大类别的工具："
 
-#: ../../guide/tools.rst:58 616d110234494b888f6d58a263d510e8
+#: ../../guide/tools.rst:58 1b22de8c60e44ff5b5e7800dc4fa5d51
 msgid "Tool Categories Summary"
 msgstr "工具类别摘要"
 
-#: ../../guide/tools.rst:60 387d69db62a54387b874abbfeeeb4378
+#: ../../guide/tools.rst:60 c242ea9aca1744bab3110c1671e66542
 msgid "Tool Distribution by Category"
 msgstr "工具按类别分布"
 
-#: ../../guide/tools.rst:64 8e44c2cd13264705b68645902096c4a4
+#: ../../guide/tools.rst:64 f52ed531ddd84f228367190f3fd120f5
 msgid "Category"
 msgstr "类别"
 
-#: ../../guide/tools.rst:65 ffd31c7087ad486e9b907a379fc1164d
+#: ../../guide/tools.rst:65 40e7c8fba7224fd281b56c19ea11135b
 msgid "Count"
 msgstr "计数"
 
-#: ../../guide/tools.rst:66 a5a406ed5e804e2aa686c32d02da7f23
+#: ../../guide/tools.rst:66 96fcf76b3cc145108baa5f0f92a01235
 msgid "Percentage"
 msgstr "百分比"
 
-#: ../../guide/tools.rst:67 12de11cc9e6c4efdbaf8f1967200b073
+#: ../../guide/tools.rst:67 5db6ab5d250a4824936bf6c3454671ce
 msgid "Primary Use Cases"
 msgstr "主要使用案例"
 
-#: ../../guide/tools.rst:68 dde4c01d396e4c21a1550edb959c25de
+#: ../../guide/tools.rst:68 fb8d685fc00742cea3659df1f88f9980
 msgid "APIs"
 msgstr "API（应用程序编程接口）"
 
-#: ../../guide/tools.rst:69 9ceda0b06530450f970efcee15eab022
+#: ../../guide/tools.rst:69 fd8d9084cde94dd2b0b2b5598bfc8baf
 msgid "281"
 msgstr ""
 
-#: ../../guide/tools.rst:70 a4b3b0ff58514ef897f98a0210882165
+#: ../../guide/tools.rst:70 f2cf597d79cd40509f05f5229c50144b
 msgid "48.4%"
 msgstr ""
 
-#: ../../guide/tools.rst:71 c9cbb433e405457594f259aa728154d8
+#: ../../guide/tools.rst:71 090a61a03767471f9eee393a463bc5bc
 msgid "External data access, real-time information"
 msgstr "外部数据访问，实时信息"
 
-#: ../../guide/tools.rst:72 064ae47816324c99b14d2b4ddd4ca59b
+#: ../../guide/tools.rst:72 228d493061cc4816a6b748359c0111f4
 msgid "Software Packages"
 msgstr "软件包"
 
-#: ../../guide/tools.rst:73 4e805fbc9fc44268a351172c8a89651c
+#: ../../guide/tools.rst:73 c76dcd16a2fb467091a0bac7602ce543
 msgid "164"
 msgstr "请提供完整的英文文本以便进行翻译。"
 
-#: ../../guide/tools.rst:74 eee85c0c68ea460eb58f170910499c9d
+#: ../../guide/tools.rst:74 4f211052800340d698aced558c4402e2
 msgid "28.3%"
 msgstr ""
 
-#: ../../guide/tools.rst:75 5abc6c9fb62445059e603d3a93d27a79
+#: ../../guide/tools.rst:75 f39fc38748114c0c8fd278bb518baf64
 msgid "Computational analysis, local processing"
 msgstr "计算分析，本地处理"
 
-#: ../../guide/tools.rst:76 ba11a06eb12042d09dc35fd544fd7f90
+#: ../../guide/tools.rst:76 8f6dd064734746e5a6e2d575755f5eee
 msgid "Databases"
 msgstr "数据库"
 
-#: ../../guide/tools.rst:77 d44d84a3022d42d3ae9cbbaeeeb292cf
+#: ../../guide/tools.rst:77 928d582c1be6419dbf7d5effe4b937c2
 msgid "84"
 msgstr ""
 
-#: ../../guide/tools.rst:78 d02cb124903548ff992a2eb6b845c01f
+#: ../../guide/tools.rst:78 bd8b4865dc28440f96c44fd9d530491f
 msgid "14.5%"
 msgstr ""
 
-#: ../../guide/tools.rst:79 594badf1788d4cd88912b686b16f0695
+#: ../../guide/tools.rst:79 d3d820925f3341528e8bf9ea4741a5d0
 msgid "Structured data storage and retrieval"
 msgstr "结构化数据存储与检索"
 
-#: ../../guide/tools.rst:80 77a4c7473c7049bfa7294551ed255ae8
+#: ../../guide/tools.rst:80 17a00136290040faa759fae6a1d38363
 msgid "AI Agents"
 msgstr "AI智能体"
 
-#: ../../guide/tools.rst:81 578c5377cbef44a293b7e8da9250de12
+#: ../../guide/tools.rst:81 2f0d2d549b5b4cbfa71b2038484a323d
 msgid "33"
 msgstr ""
 
-#: ../../guide/tools.rst:82 fb6dac87412c4f7386111b0d74ded70c
+#: ../../guide/tools.rst:82 5d1ed342172b46838ffc5c805e1d267d
 msgid "5.7%"
 msgstr ""
 
-#: ../../guide/tools.rst:83 6551c8aa7e1c46169d18a8f8c573db06
+#: ../../guide/tools.rst:83 2f8a6f7395d2460c9dd38a83348a69ff
 msgid "Autonomous reasoning and planning"
 msgstr "自主推理与规划"
 
-#: ../../guide/tools.rst:84 4e2f5c6a61fd4d3faab17ca0be34bbf6
+#: ../../guide/tools.rst:84 e9afd4f2b2224b6e8e724f153e35f5e8
 msgid "ML Models"
 msgstr "ML模型"
 
-#: ../../guide/tools.rst:85 8ec3ccda60374a10b55db779cc3b7457
+#: ../../guide/tools.rst:85 90acfdb4c6184c3d9d21f301fc50e381
 msgid "15"
 msgstr ""
 
-#: ../../guide/tools.rst:86 eb53d826dc6c4b5eabe4da617a4388c1
+#: ../../guide/tools.rst:86 86c2ced58ac94721815b75798f159f21
 msgid "2.6%"
 msgstr ""
 
-#: ../../guide/tools.rst:87 4f9f961b0bc84825aae1c881fae842a5
+#: ../../guide/tools.rst:87 76205c35ff8c44c285111ef9bf8c509e
 msgid "Prediction and classification tasks"
 msgstr "预测与分类任务"
 
-#: ../../guide/tools.rst:88 b636bd082b53418ea6be3d415c841883
+#: ../../guide/tools.rst:88 9bb9c40dda9344a282643cca5c175e0f
 msgid "Expert Feedback"
 msgstr "专家反馈"
 
-#: ../../guide/tools.rst:89 1760fd63a21f4a53af0d64cbb4944f0d
+#: ../../guide/tools.rst:89 4a76deda325649b4be626c790ca76692
 msgid "6"
 msgstr ""
 
-#: ../../guide/tools.rst:90 e7b508dfe2e5450d9e42dc9fb501bee7
+#: ../../guide/tools.rst:90 30ce453f735143bab18eddc3404f1a48
 msgid "1.0%"
 msgstr ""
 
-#: ../../guide/tools.rst:91 f03b2823835247ee89a573584e805290
+#: ../../guide/tools.rst:91 de2dec96fba7476d933bbd7e7c44878f
 msgid "Human validation and guidance"
 msgstr "人工验证与指导"
 
-#: ../../guide/tools.rst:92 14d07c5097234d8096de6f79945883db
+#: ../../guide/tools.rst:92 5b0329008b07413ba08e2567de2a2c77
 msgid "Embedding Stores"
 msgstr "嵌入存储"
 
-#: ../../guide/tools.rst:93 c97439c0b7c34ce0ad5dad255d9e3931
+#: ../../guide/tools.rst:93 59ec7d8c5e8d4d71949b49d19418a7be
 msgid "4"
 msgstr ""
 
-#: ../../guide/tools.rst:94 f0ecafc528344ab4b63c3da8909cc616
+#: ../../guide/tools.rst:94 cd39d0481f144b41ba60a77c2660a9f1
 msgid "0.7%"
 msgstr ""
 
-#: ../../guide/tools.rst:95 f24812a2b5a24271a4061b207e4c4a0d
+#: ../../guide/tools.rst:95 533e0da2cd5c46e5b620f9fb29d96783
 msgid "Semantic search and similarity"
 msgstr "语义搜索与相似性"
 
-#: ../../guide/tools.rst:96 ba40feeb299347d890d065328bc1af0c
+#: ../../guide/tools.rst:96 663e606bab5d44e89a3caeb094abe9ea
 msgid "Robotics"
 msgstr "机器人技术"
 
-#: ../../guide/tools.rst:97 2d2d28beb0fe4d4693b10496066c6680
+#: ../../guide/tools.rst:97 82104d90130a43049171118767002165
 msgid "1"
 msgstr "请提供完整的英文文本以便进行翻译。"
 
-#: ../../guide/tools.rst:98 0acf7f750cc449ce9031bb7634c40d18
+#: ../../guide/tools.rst:98 0afb6a8eff764920b7c24f17c278ac39
 msgid "0.2%"
 msgstr ""
 
-#: ../../guide/tools.rst:99 fd1cd8b18cca4a93bd230c114f88f3ab
+#: ../../guide/tools.rst:99 d8212591a979496295c9d15623ba52a3
 msgid "Laboratory automation"
 msgstr "实验室自动化"
 
-#: ../../guide/tools.rst:100 9e93f9d248c44d97837dc797961d87d1
+#: ../../guide/tools.rst:100 db85fcde568f42c4a2550d21a51902c8
 msgid "**Total**"
 msgstr "**总计**"
 
-#: ../../guide/tools.rst:101 a24ec333df8e4b5bbb3a2a086a7d7ee3
+#: ../../guide/tools.rst:101 654941acaf484f91981aaeb2c2922b52
 msgid "**588**"
 msgstr ""
 
-#: ../../guide/tools.rst:102 07c0536898634f5b97bd03e611d853a0
+#: ../../guide/tools.rst:102 3915538d65344cbcbefc8d97c11e7c3b
 msgid "**100%**"
 msgstr ""
 
-#: ../../guide/tools.rst:103 b527783656fb473f85bb056cc5083bb1
+#: ../../guide/tools.rst:103 e811dacca7e64aa78b6687001580a46c
 msgid "**Comprehensive scientific ecosystem**"
 msgstr "**全面的科学生态系统**"
 
-#: ../../guide/tools.rst:106 553854a9c18b484da92dfdb965bf7651
-msgid "🧬 Molecular & Genetic Data"
+#: ../../guide/tools.rst:106 6dfbf6b8e4c44c959eff81eff8b8fbd5
+#, fuzzy
+msgid "Molecular & Genetic Data"
 msgstr "🧬 分子与遗传数据"
 
-#: ../../guide/tools.rst:109 2f59a13f517a499eaf4d2ea8591ee670
+#: ../../guide/tools.rst:109 fc7e3243d76f4fd99265a08e48400eab
 msgid "UniProt - Protein Information"
 msgstr "UniProt - 蛋白质信息"
 
-#: ../../guide/tools.rst:111 20e0482aa2f74f74bb4326fc6250ed53
+#: ../../guide/tools.rst:111 439b5a66adfc4ad49f09f72d52517757
 msgid "Access comprehensive protein and gene information."
 msgstr "访问全面的蛋白质和基因信息。"
 
-#: ../../guide/tools.rst:113 53f5c6671e9445a3bbc36ccbea3618e2
-msgid ""
-"**Key Functions:** * ``UniProt_get_function_by_accession`` - Get functional "
-"annotations by UniProt accession * ``UniProt_search_proteins`` - Search "
-"proteins by keywords * ``UniProt_get_protein_sequence`` - Retrieve protein "
-"sequences"
-msgstr ""
-"**主要功能：**  \n"
-"* ``UniProt_get_function_by_accession`` - 通过 UniProt 访问号获取功能注释  \n"
-"* ``UniProt_search_proteins`` - 通过关键词搜索蛋白质  \n"
-"* ``UniProt_get_protein_sequence`` - 获取蛋白质序列"
+#: ../../guide/tools.rst:113 ../../guide/tools.rst:178
+#: 7c00c621be1b438186ff11c0f5f1a8fb dea364fb05bd41bfad133eef07290632
+#, fuzzy
+msgid "**Key Functions:**"
+msgstr "**按功能分类：**"
 
-#: ../../guide/tools.rst:118 ../../guide/tools.rst:138
-#: ../../guide/tools.rst:157 ../../guide/tools.rst:184
-#: ../../guide/tools.rst:204 ../../guide/tools.rst:227
-#: ../../guide/tools.rst:247 ../../guide/tools.rst:270
-#: ../../guide/tools.rst:296 ../../guide/tools.rst:319
-#: ../../guide/tools.rst:344 ../../guide/tools.rst:365
-#: ../../guide/tools.rst:384 ../../guide/tools.rst:416
-#: ../../guide/tools.rst:435 ../../guide/tools.rst:571
-#: ../../guide/tools.rst:595 073c917aaf54425d980384a8d932daf7
-#: 075014fef80a4a8db09faf433fcb1014 1327f8bff2904cbca2288ad3a3a538fe
-#: 20259161840648f08e3747fe6ef34e9a 352a5de2d7a843fa865711c388d17fc6
-#: 37c91b57b44a4065a7e77f01036ea98d 38544eeca1734fef8087d9d3da123b02
-#: 4794ea658f2d4edbb05932cd72ef8ec6 71c22a9070104908b11bc35e92144de4
-#: 88e8b88ee5714d90b1445bb7c8ed84e0 a21742d29c3a438db6b856a888f124e9
-#: a6861e57af294623a6a8ddcc45f0bb6c ad037ecd47794728b9208a69c9825ca1
-#: b08a6138372047eeb2b4859c3448855d b680d1b8a9af42d9919fe3d8fde67f5e
-#: c9538d40b7a543ae9eb43fc72aa84a7a cdd1a8f1f3e948039f5501a7e7ecff4b
+#: ../../guide/tools.rst:115 eefa628e4d6b40bd8c42a9b5993a4baf
+msgid ""
+"``UniProt_get_function_by_accession`` - Get functional annotations by "
+"UniProt accession"
+msgstr ""
+
+#: ../../guide/tools.rst:116 69ea4b914f5c459e968311af2b36f406
+msgid "``UniProt_search_proteins`` - Search proteins by keywords"
+msgstr ""
+
+#: ../../guide/tools.rst:117 da9c78d4d8fe4c3eb359ad6ea4566198
+msgid "``UniProt_get_protein_sequence`` - Retrieve protein sequences"
+msgstr ""
+
+#: ../../guide/tools.rst:119 ../../guide/tools.rst:139
+#: ../../guide/tools.rst:158 ../../guide/tools.rst:186
+#: ../../guide/tools.rst:206 ../../guide/tools.rst:229
+#: ../../guide/tools.rst:249 ../../guide/tools.rst:272
+#: ../../guide/tools.rst:298 ../../guide/tools.rst:321
+#: ../../guide/tools.rst:346 ../../guide/tools.rst:367
+#: ../../guide/tools.rst:386 ../../guide/tools.rst:418
+#: ../../guide/tools.rst:437 ../../guide/tools.rst:573
+#: ../../guide/tools.rst:597 02abbdfa52164851a41e4f1a7a23ef63
+#: 11328d1dfd594db69bf52e9eb7049c99 1c75e0df38664461906eed4f8f6cc467
+#: 3c8a2d7d33194c4d86f36217393e4cfd 481f1d93e9d449d8b1b4a6f9045df2bb
+#: 486c4bf4635a43fca05e52cf5d3130c7 49c5fcb5f92b4b5ea8859abe7c4fbebf
+#: 54303ae03de2454ba98d3f9700b3d539 5e68308ee9a446f8bf318da9543f6c8b
+#: 6f2a3887996b4723a90f8146031ccdab 79401e79fd80426da9253b05bce06fc2
+#: 82bd8ae27da24352acaaf0de8a1f87f4 d3fc54c8c07f494aa01464ea9bfa979d
+#: d99c1c5bd4944338be7f10e783bef8fa e3e6a3a2763846afa9730fae924670f6
+#: e44e845afc8b4ede8f24962a9831249f fbd69dafded343d39e9be2a18b6e4578
 msgid "**Example:**"
 msgstr "**示例：**"
 
-#: ../../guide/tools.rst:129 8fcbd8ae120e40aaa0ee0a71f3aaeec8
+#: ../../guide/tools.rst:130 2290f1f282c84d7c8da35bc916510439
 msgid "Gene Ontology - Functional Annotation"
 msgstr "基因本体论 - 功能注释"
 
-#: ../../guide/tools.rst:131 e3d0738106124d188523808bb10820cc
+#: ../../guide/tools.rst:132 2c540decd7ac4ba99eaf3df3f5f67838
 msgid "Gene Ontology annotations and functional analysis."
 msgstr "基因本体注释与功能分析。"
 
-#: ../../guide/tools.rst:133 4c5fac0c561049b2a426175d2c4c7072
+#: ../../guide/tools.rst:134 c1638fcdffea41fbafb1e62c816416da
 msgid ""
-"**Key Functions:** * ``GeneOntology_get_annotations`` - Get GO annotations "
-"for genes * ``GeneOntology_search_terms`` - Search GO terms * "
-"``GeneOntology_get_enrichment`` - Functional enrichment analysis"
+"**Key Functions:** * ``GeneOntology_get_annotations`` - Get GO "
+"annotations for genes * ``GeneOntology_search_terms`` - Search GO terms *"
+" ``GeneOntology_get_enrichment`` - Functional enrichment analysis"
 msgstr ""
 "**主要功能：**  \n"
 "* ``GeneOntology_get_annotations`` - 获取基因的GO注释  \n"
 "* ``GeneOntology_search_terms`` - 搜索GO术语  \n"
 "* ``GeneOntology_get_enrichment`` - 功能富集分析"
 
-#: ../../guide/tools.rst:148 3c0ba97ff9dd4eef9b7cf74b086a591f
+#: ../../guide/tools.rst:149 db6cd95f177249208db163896d52299f
 msgid "Enrichr - Gene Set Analysis"
 msgstr "Enrichr - 基因集分析"
 
-#: ../../guide/tools.rst:150 dba95dc8e3fe49fb8e0c1e813f717ab4
+#: ../../guide/tools.rst:151 3e44b732073641da96da1dc9efaabf0b
 msgid "Comprehensive gene set enrichment analysis."
 msgstr "全面的基因集富集分析。"
 
-#: ../../guide/tools.rst:152 7f144feec3074fd68f9311e62063e962
+#: ../../guide/tools.rst:153 0a20166f23a64e5899f56be3d32d04ff
 msgid ""
-"**Key Functions:** * ``Enrichr_analyze_gene_list`` - Enrichment analysis for"
-" gene lists * ``Enrichr_get_libraries`` - List available gene set libraries "
-"* ``Enrichr_download_results`` - Download enrichment results"
+"**Key Functions:** * ``Enrichr_analyze_gene_list`` - Enrichment analysis "
+"for gene lists * ``Enrichr_get_libraries`` - List available gene set "
+"libraries * ``Enrichr_download_results`` - Download enrichment results"
 msgstr ""
 "**主要功能：**  \n"
 "* ``Enrichr_analyze_gene_list`` - 基因列表的富集分析  \n"
 "* ``Enrichr_get_libraries`` - 列出可用的基因集库  \n"
 "* ``Enrichr_download_results`` - 下载富集分析结果"
 
-#: ../../guide/tools.rst:170 e20d10a415f144e7a6efb629c49bd18a
-msgid "🎯 Disease & Target Data"
+#: ../../guide/tools.rst:171 5a66683492af4d2291a001345b343a92
+#, fuzzy
+msgid "Disease & Target Data"
 msgstr "🎯 疾病与靶点数据"
 
-#: ../../guide/tools.rst:173 f2eb688aa06b46ba9940954d225e3105
+#: ../../guide/tools.rst:174 ba695ed4f44543efb008cbf0fc3a4f01
 msgid "OpenTargets Platform"
 msgstr "OpenTargets 平台"
 
-#: ../../guide/tools.rst:175 a7d9b371d6fe4106b799e5f60e0198c4
+#: ../../guide/tools.rst:176 2b5a1ae2d66e4e73952e514f44a865bb
 msgid "Comprehensive disease-target association data."
 msgstr "全面的疾病-靶点关联数据。"
 
-#: ../../guide/tools.rst:177 bf50aad088a9455ebaaa4925e9565e41
+#: ../../guide/tools.rst:180 4db9204a308d459e9cf1ffddd37a6eae
 msgid ""
-"**Key Functions:** * ``OpenTargets_get_associated_targets_by_disease_efoId``"
-" - Disease-associated targets * "
-"``OpenTargets_get_associated_diseases_by_target`` - Target-associated "
-"diseases * ``OpenTargets_get_disease_id_description_by_name`` - Disease "
-"lookup * ``OpenTargets_get_evidence`` - Evidence for associations * "
-"``OpenTargets_get_drug_info`` - Drug information and mechanisms"
+"``OpenTargets_get_associated_targets_by_disease_efoId`` - Disease-"
+"associated targets"
 msgstr ""
-"**主要功能：**  \n"
-"* ``OpenTargets_get_associated_targets_by_disease_efoId`` - 疾病相关靶点  \n"
-"* ``OpenTargets_get_associated_diseases_by_target`` - 靶点相关疾病  \n"
-"* ``OpenTargets_get_disease_id_description_by_name`` - 疾病查询  \n"
-"* ``OpenTargets_get_evidence`` - 关联证据  \n"
-"* ``OpenTargets_get_drug_info`` - 药物信息及作用机制"
 
-#: ../../guide/tools.rst:195 a92d3a39f5144ca1a41ed684a448bd1d
+#: ../../guide/tools.rst:181 575ac5e4039d48e98683f9008f5f3000
+msgid ""
+"``OpenTargets_get_associated_diseases_by_target`` - Target-associated "
+"diseases"
+msgstr ""
+
+#: ../../guide/tools.rst:182 8218e209c33b4fec8c21be6455c11683
+msgid "``OpenTargets_get_disease_id_description_by_name`` - Disease lookup"
+msgstr ""
+
+#: ../../guide/tools.rst:183 e317502db84a4acc9585f727c03f3bbd
+msgid "``OpenTargets_get_evidence`` - Evidence for associations"
+msgstr ""
+
+#: ../../guide/tools.rst:184 0033da91b7914912bd20e0c9f54a376a
+msgid "``OpenTargets_get_drug_info`` - Drug information and mechanisms"
+msgstr ""
+
+#: ../../guide/tools.rst:197 dc83e690ed00410fa220dce9e7e026d0
 msgid "EFO - Experimental Factor Ontology"
 msgstr "EFO - 实验因子本体"
 
-#: ../../guide/tools.rst:197 75da76a0513445d3acc4f3a81eea17e5
+#: ../../guide/tools.rst:199 aceebdd9b0d24762b113d7fd0475a5f8
 msgid "Disease and experimental factor ontology."
 msgstr "疾病与实验因素本体论。"
 
-#: ../../guide/tools.rst:199 fed3ff03cfa74357bfc40719125da619
+#: ../../guide/tools.rst:201 e8ca767ef8044942bfa6700040b92cc4
 msgid ""
 "**Key Functions:** * ``EFO_search_diseases`` - Search diseases by name * "
 "``EFO_get_disease_hierarchy`` - Get disease relationships * "
@@ -342,24 +360,25 @@ msgstr ""
 "* ``EFO_get_disease_hierarchy`` - 获取疾病关系层级  \n"
 "* ``EFO_get_synonyms`` - 获取疾病同义词"
 
-#: ../../guide/tools.rst:214 b51875754c2f4808a52a0479db6c6711
-msgid "💊 Drug & Chemical Data"
+#: ../../guide/tools.rst:216 2fc093c095c44a0eb3eafd48f985113e
+#, fuzzy
+msgid "Drug & Chemical Data"
 msgstr "💊 药物与化学数据"
 
-#: ../../guide/tools.rst:217 9bbce562324e4d44be516c2d144c7423
+#: ../../guide/tools.rst:219 01e17fd411984887a89180c0f8365e0a
 msgid "PubChem - Chemical Information"
 msgstr "PubChem - 化学信息"
 
-#: ../../guide/tools.rst:219 344429825ac64dcb976d9e7cddde953e
+#: ../../guide/tools.rst:221 72fb6642028f469c8e328f8884a39ec4
 msgid "Comprehensive chemical compound database."
 msgstr "全面的化学化合物数据库。"
 
-#: ../../guide/tools.rst:221 231a547f7c284d1d89bf36ecd140df25
+#: ../../guide/tools.rst:223 45ac96167583444eb1ebcd34881a39ae
 msgid ""
 "**Key Functions:** * ``PubChem_get_compound_info`` - Get compound "
-"information by name/ID * ``PubChem_search_compounds`` - Search compounds by "
-"structure/properties * ``PubChem_get_compound_properties`` - Molecular "
-"properties * ``PubChem_similarity_search`` - Chemical similarity search"
+"information by name/ID * ``PubChem_search_compounds`` - Search compounds "
+"by structure/properties * ``PubChem_get_compound_properties`` - Molecular"
+" properties * ``PubChem_similarity_search`` - Chemical similarity search"
 msgstr ""
 "**主要功能：**  \n"
 "* ``PubChem_get_compound_info`` - 通过名称或ID获取化合物信息  \n"
@@ -367,15 +386,15 @@ msgstr ""
 "* ``PubChem_get_compound_properties`` - 分子性质  \n"
 "* ``PubChem_similarity_search`` - 化学相似性搜索"
 
-#: ../../guide/tools.rst:237 015168f6c5284f5f9fa1d8e2b5bcfb1d
+#: ../../guide/tools.rst:239 85813ad741784a368950d511e15dbf86
 msgid "ChEMBL - Bioactivity Data"
 msgstr "ChEMBL - 生物活性数据"
 
-#: ../../guide/tools.rst:239 965b516b0e05477d8228f48488b9e3c2
+#: ../../guide/tools.rst:241 5bd3e82099ee4c5d84ac094642f8f650
 msgid "Chemical bioactivity and drug discovery data."
 msgstr "化学生物活性与药物发现数据。"
 
-#: ../../guide/tools.rst:241 45318bdd6d814753b9d37babf1a7fb81
+#: ../../guide/tools.rst:243 6942e7ea51c7417ca1ab145942dfc5a5
 msgid ""
 "**Key Functions:** * ``ChEMBL_get_compound_targets`` - Get targets for "
 "compounds * ``ChEMBL_get_compounds_by_target`` - Get compounds targeting "
@@ -388,23 +407,24 @@ msgstr ""
 "* ``ChEMBL_get_bioactivity_data`` - 生物活性测量数据  \n"
 "* ``ChEMBL_search_similar_compounds`` - 化学相似性搜索"
 
-#: ../../guide/tools.rst:257 200f0e43a8e8437f8492fb21191fe672
-msgid "🛡️ Drug Safety & Regulatory"
+#: ../../guide/tools.rst:259 36c25a8a391542899201c98046c5ee9f
+#, fuzzy
+msgid "️ Drug Safety & Regulatory"
 msgstr "🛡️ 药品安全与法规"
 
-#: ../../guide/tools.rst:260 cfa9969bf79b4d22b09c95ca623b3668
+#: ../../guide/tools.rst:262 102e3e1b88d748f3b16e9add0568837b
 msgid "OpenFDA - FDA Data"
 msgstr "OpenFDA - FDA 数据"
 
-#: ../../guide/tools.rst:262 b6649fe256c54180beea1f3dcc79275f
+#: ../../guide/tools.rst:264 742a008610c84c658a41892951fbfaa1
 msgid "FDA drug labeling and adverse event data."
 msgstr "FDA药品标签和不良事件数据。"
 
-#: ../../guide/tools.rst:264 2dbd38bbe78f435da0ea3a4dd18f99c1
+#: ../../guide/tools.rst:266 5db770785d3f42079329494083e06aa9
 msgid ""
-"**Key Functions:** * ``FAERS_count_reactions_by_drug_event`` - Count adverse"
-" reactions by drug * ``openfda_get_warnings_by_drug_name`` - Get FDA "
-"warnings * ``OpenFDA_get_drug_labels`` - Drug labeling information * "
+"**Key Functions:** * ``FAERS_count_reactions_by_drug_event`` - Count "
+"adverse reactions by drug * ``openfda_get_warnings_by_drug_name`` - Get "
+"FDA warnings * ``OpenFDA_get_drug_labels`` - Drug labeling information * "
 "``OpenFDA_search_recalls`` - Drug recall information"
 msgstr ""
 "**主要功能：**  \n"
@@ -413,18 +433,18 @@ msgstr ""
 "* ``OpenFDA_get_drug_labels`` - 药品标签信息  \n"
 "* ``OpenFDA_search_recalls`` - 药品召回信息"
 
-#: ../../guide/tools.rst:287 9b159eb07f1441e381e4adf262a437d2
+#: ../../guide/tools.rst:289 d9df09f638e740459327014614dbaea8
 msgid "DailyMed - Drug Labeling"
 msgstr "每日药典 - 药品标签"
 
-#: ../../guide/tools.rst:289 ae31e7d60aa840b998945ca809671ba5
+#: ../../guide/tools.rst:291 97d37c89946f47849e9644b384f49c16
 msgid "Official FDA drug labeling information."
 msgstr "官方FDA药品标签信息"
 
-#: ../../guide/tools.rst:291 4f237eb51e3d45eba995abfcb44bd718
+#: ../../guide/tools.rst:293 97936c7732274baaa94b5692c40b7822
 msgid ""
-"**Key Functions:** * ``DailyMed_get_drug_label`` - Get official drug labels "
-"* ``DailyMed_search_drugs`` - Search drugs by name * "
+"**Key Functions:** * ``DailyMed_get_drug_label`` - Get official drug "
+"labels * ``DailyMed_search_drugs`` - Search drugs by name * "
 "``DailyMed_get_NDC_info`` - NDC (drug code) information"
 msgstr ""
 "**主要功能：**  \n"
@@ -432,22 +452,23 @@ msgstr ""
 "* ``DailyMed_search_drugs`` - 按名称搜索药品  \n"
 "* ``DailyMed_get_NDC_info`` - 获取NDC（药品代码）信息"
 
-#: ../../guide/tools.rst:306 3e2fc930976a4e53a25bb5d43224cab4
-msgid "🧪 Clinical Research"
+#: ../../guide/tools.rst:308 8b5aced5995a4e5b9980a815d3208caa
+#, fuzzy
+msgid "Clinical Research"
 msgstr "🧪 临床研究"
 
-#: ../../guide/tools.rst:309 4a1949cc6bf145139d590b10c9ce6b3e
+#: ../../guide/tools.rst:311 7a7ac1caa2bd49d890c059919ff7d19c
 msgid "ClinicalTrials.gov"
 msgstr ""
 "ClinicalTrials.gov\n"
 "\n"
 "临床试验注册平台 (ClinicalTrials.gov)"
 
-#: ../../guide/tools.rst:311 9b8304cdbf624359bca20b708604f616
+#: ../../guide/tools.rst:313 5ba955b571334b7283d6dc05f638e1da
 msgid "Clinical trial registry and results database."
 msgstr "临床试验注册与结果数据库"
 
-#: ../../guide/tools.rst:313 b2f3adda25524f5cabfde88b97c1db34
+#: ../../guide/tools.rst:315 e426ea001f7c46e4aad9d049841afbba
 msgid ""
 "**Key Functions:** * ``ClinicalTrials_search_studies`` - Search clinical "
 "trials * ``ClinicalTrials_get_study_details`` - Get detailed study "
@@ -460,22 +481,23 @@ msgstr ""
 "* ``ClinicalTrials_get_trial_results`` - 获取试验结果  \n"
 "* ``ClinicalTrials_search_by_condition`` - 根据医疗条件查找试验"
 
-#: ../../guide/tools.rst:332 42c44c5ceec546cd8f960f794ea29ec2
-msgid "📚 Literature & Publications"
+#: ../../guide/tools.rst:334 10ed209ada444bc18a81f09095a3b36d
+#, fuzzy
+msgid "Literature & Publications"
 msgstr "📚 文献与出版物"
 
-#: ../../guide/tools.rst:335 2a1f5cb38e194edb8965bd69df551a26
+#: ../../guide/tools.rst:337 099fb39e0d994800beddc820a1576161
 msgid "PubTator - Biomedical Literature"
 msgstr "PubTator - 生物医学文献"
 
-#: ../../guide/tools.rst:337 6a248d56fd4f46c3b9eb2185d685ec31
+#: ../../guide/tools.rst:339 d4b866ef909e4c9d812a6efd23b1f59d
 msgid "PubMed literature with named entity recognition."
 msgstr "使用命名实体识别的PubMed文献。"
 
-#: ../../guide/tools.rst:339 457e6451aa8c4957baf7766c2199e949
+#: ../../guide/tools.rst:341 daba159544a24d379e782300e1da31ad
 msgid ""
-"**Key Functions:** * ``PubTator_search_publications`` - Search literature "
-"with entities * ``PubTator_get_annotations`` - Get entity annotations * "
+"**Key Functions:** * ``PubTator_search_publications`` - Search literature"
+" with entities * ``PubTator_get_annotations`` - Get entity annotations * "
 "``PubTator_search_by_entity`` - Search by specific entities"
 msgstr ""
 "**主要功能：**  \n"
@@ -483,15 +505,15 @@ msgstr ""
 "* ``PubTator_get_annotations`` - 获取实体注释  \n"
 "* ``PubTator_search_by_entity`` - 根据特定实体进行搜索"
 
-#: ../../guide/tools.rst:356 57d9410b98c84beba9c7bfe03feb90c8
+#: ../../guide/tools.rst:358 cc78daec2cbc45a8b4d6220659da9d79
 msgid "Europe PMC"
 msgstr "欧洲PMC"
 
-#: ../../guide/tools.rst:358 c951d63625b04d9c85177a33b2955b42
+#: ../../guide/tools.rst:360 f48b8c778c364683869a0523ce1cafa9
 msgid "European literature database with full-text access."
 msgstr "欧洲文学数据库，提供全文访问。"
 
-#: ../../guide/tools.rst:360 7937d21f66874bb5ac87629dbe393603
+#: ../../guide/tools.rst:362 bba1d6d4b1a94f319d4eaded003ba1a5
 msgid ""
 "**Key Functions:** * ``EuropePMC_search_articles`` - Search articles and "
 "abstracts * ``EuropePMC_get_full_text`` - Get full-text when available * "
@@ -502,34 +524,35 @@ msgstr ""
 "* ``EuropePMC_get_full_text`` - 获取可用的全文  \n"
 "* ``EuropePMC_get_citations`` - 获取引用数据"
 
-#: ../../guide/tools.rst:375 9616b0012a254dde9dba5542023ae5c6
+#: ../../guide/tools.rst:377 500f42f32dc546eabc3a9caecd90a96a
 msgid "Semantic Scholar"
 msgstr "语义学者"
 
-#: ../../guide/tools.rst:377 c75ce75084d040d0b25b038fac639775
+#: ../../guide/tools.rst:379 fa43d603b0f943ec9a03f2af9e26c365
 msgid "AI-powered academic search engine."
 msgstr "基于AI的学术搜索引擎"
 
-#: ../../guide/tools.rst:379 2b7af78b7cc247839cd0b03b07dc06e2
+#: ../../guide/tools.rst:381 9665898ed862432786f0c468961939e5
 msgid ""
 "**Key Functions:** * ``SemanticScholar_search_papers`` - Search academic "
 "papers * ``SemanticScholar_get_paper_details`` - Get detailed paper "
-"information * ``SemanticScholar_get_citations`` - Citation network analysis"
+"information * ``SemanticScholar_get_citations`` - Citation network "
+"analysis"
 msgstr ""
 "**主要功能：**  \n"
 "* ``SemanticScholar_search_papers`` - 搜索学术论文  \n"
 "* ``SemanticScholar_get_paper_details`` - 获取论文详细信息  \n"
 "* ``SemanticScholar_get_citations`` - 引用网络分析"
 
-#: ../../guide/tools.rst:394 22bb791f56e04d5fb1484fc203f36ea2
+#: ../../guide/tools.rst:396 415e549ad2eb4ed1b0699c98e50645bf
 msgid "OpenAlex"
 msgstr ""
 
-#: ../../guide/tools.rst:396 90676f56a0874482a9e2b994a37ef9e5
+#: ../../guide/tools.rst:398 9fefcff553264682ab9b24bc7feac3a7
 msgid "Open academic publication database."
 msgstr "开放学术出版物数据库"
 
-#: ../../guide/tools.rst:398 4d60ac011c1e4c368587e3c2ed54e335
+#: ../../guide/tools.rst:400 b600f28e2db54259b73ea3ba26f1dd13
 msgid ""
 "**Key Functions:** * ``OpenAlex_search_works`` - Search academic works * "
 "``OpenAlex_get_author_info`` - Author information and metrics * "
@@ -540,19 +563,20 @@ msgstr ""
 "* ``OpenAlex_get_author_info`` - 获取作者信息和指标  \n"
 "* ``OpenAlex_get_institution_data`` - 获取机构研究数据"
 
-#: ../../guide/tools.rst:404 8af25c00bbe1417ab3c03effe4475489
-msgid "📊 Specialized Databases"
+#: ../../guide/tools.rst:406 9288e3d5d1cc4e72bdd68c8ec56d940e
+#, fuzzy
+msgid "Specialized Databases"
 msgstr "📊 专用数据库"
 
-#: ../../guide/tools.rst:407 01cb5f1454444230a5b32d2f45c46fe4
+#: ../../guide/tools.rst:409 f9b79fd7f55e439cb0e6168f09a8d262
 msgid "Human Protein Atlas"
 msgstr "人类蛋白质图谱"
 
-#: ../../guide/tools.rst:409 c43e6f55214a474498288df744e1e2d6
+#: ../../guide/tools.rst:411 0f164b35b9364dc9b176da9bf7a2c4ff
 msgid "Tissue and cell expression data."
 msgstr "组织和细胞表达数据"
 
-#: ../../guide/tools.rst:411 bc704f9739e846b8af89bc26a92a2ede
+#: ../../guide/tools.rst:413 4a98df731e0c431ebe6e1b9a9e51f004
 msgid ""
 "**Key Functions:** * ``HPA_get_tissue_expression`` - Tissue expression "
 "patterns * ``HPA_get_cell_expression`` - Single-cell expression data * "
@@ -563,21 +587,21 @@ msgstr ""
 "* ``HPA_get_cell_expression`` - 单细胞表达数据  \n"
 "* ``HPA_get_protein_localization`` - 亚细胞定位"
 
-#: ../../guide/tools.rst:426 4794eaa071c54efb96ee6789871c9813
+#: ../../guide/tools.rst:428 31460bf61d5340b6b6f154754c81e68e
 msgid "Reactome Pathways"
 msgstr ""
 "Reactome Pathways\n"
 "\n"
 "Reactome 路径"
 
-#: ../../guide/tools.rst:428 87674f501b1f4148b4c76aa43b3f9008
+#: ../../guide/tools.rst:430 9d7b4fb45a0c4dfeaeb32cb23d67cea0
 msgid "Biological pathway database."
 msgstr "生物通路数据库"
 
-#: ../../guide/tools.rst:430 0a64e99a8ede47f38f45708902f99917
+#: ../../guide/tools.rst:432 c4eca97f634d48638bfca338f903c549
 msgid ""
-"**Key Functions:** * ``Reactome_get_pathways_by_gene`` - Pathways for genes "
-"* ``Reactome_search_pathways`` - Search pathway database * "
+"**Key Functions:** * ``Reactome_get_pathways_by_gene`` - Pathways for "
+"genes * ``Reactome_search_pathways`` - Search pathway database * "
 "``Reactome_get_pathway_details`` - Detailed pathway information"
 msgstr ""
 "**主要功能：**  \n"
@@ -585,135 +609,137 @@ msgstr ""
 "* ``Reactome_search_pathways`` - 搜索通路数据库  \n"
 "* ``Reactome_get_pathway_details`` - 获取通路详细信息"
 
-#: ../../guide/tools.rst:445 478bef82f9c34f1aa54d9e2e5e316899
+#: ../../guide/tools.rst:447 47706e8a22694660b76bf0d4592ce43a
 msgid "HumanBase"
 msgstr "人类数据库"
 
-#: ../../guide/tools.rst:447 29c4d97f55bb416685816fa4d5b8cb70
+#: ../../guide/tools.rst:449 0c0c318ade6949f88f6bf5c93e655e6c
 msgid "Tissue-specific gene networks."
 msgstr "组织特异性基因网络"
 
-#: ../../guide/tools.rst:449 c18770d28d8c4083b5aaa37778edfccb
+#: ../../guide/tools.rst:451 aaad9f6e9c2246d2ae2624e0ce1f4bdc
 msgid ""
 "**Key Functions:** * ``HumanBase_get_gene_networks`` - Tissue-specific "
-"networks * ``HumanBase_predict_gene_function`` - Gene function prediction * "
-"``HumanBase_get_tissue_expression`` - Tissue expression patterns"
+"networks * ``HumanBase_predict_gene_function`` - Gene function prediction"
+" * ``HumanBase_get_tissue_expression`` - Tissue expression patterns"
 msgstr ""
 "**主要功能：**  \n"
 "* ``HumanBase_get_gene_networks`` - 组织特异性网络  \n"
 "* ``HumanBase_predict_gene_function`` - 基因功能预测  \n"
 "* ``HumanBase_get_tissue_expression`` - 组织表达模式"
 
-#: ../../guide/tools.rst:455 84cb20193be94ac99ec349606fdb8f3b
+#: ../../guide/tools.rst:457 8b457008665d45709f012cd322364488
 msgid "MedlinePlus"
 msgstr ""
 
-#: ../../guide/tools.rst:457 422a6549431947d6a9fe68f2403252a1
+#: ../../guide/tools.rst:459 4aaea96e578c457195c1eb60f5f27180
 msgid "Consumer health information."
 msgstr "消费者健康信息"
 
-#: ../../guide/tools.rst:459 5663bbe20446446aae011cfec654b6ac
+#: ../../guide/tools.rst:461 26d1a0f139e0489392bad5cf48d1a5d9
 msgid ""
 "**Key Functions:** * ``MedlinePlus_get_health_topics`` - Health topic "
-"information * ``MedlinePlus_search_conditions`` - Search medical conditions "
-"* ``MedlinePlus_get_drug_info`` - Consumer drug information"
+"information * ``MedlinePlus_search_conditions`` - Search medical "
+"conditions * ``MedlinePlus_get_drug_info`` - Consumer drug information"
 msgstr ""
 "**主要功能：**  \n"
 "* ``MedlinePlus_get_health_topics`` - 健康主题信息  \n"
 "* ``MedlinePlus_search_conditions`` - 搜索医疗状况  \n"
 "* ``MedlinePlus_get_drug_info`` - 消费者药物信息"
 
-#: ../../guide/tools.rst:465 1a851549375f4fd6846de626f15ddc0c
-msgid "🤖 AI-Powered Tools"
+#: ../../guide/tools.rst:467 6f3d9e9a024241b48c122a8dbed11360
+#, fuzzy
+msgid "AI-Powered Tools"
 msgstr "🤖 基于AI的工具"
 
-#: ../../guide/tools.rst:468 0f355a5064f84de9b301629c7ad0a550
+#: ../../guide/tools.rst:470 ffbe41fd401e43adbe9b3a91c5d34fc0
 msgid "Machine Learning Models (15 tools)"
 msgstr "机器学习模型（15种工具）"
 
-#: ../../guide/tools.rst:470 f618010c3a194788b1661dd7360017ef
+#: ../../guide/tools.rst:472 809f4e5a98114b9da4c166e5242793f5
 msgid ""
 "Apply machine learning algorithms for prediction, classification, and "
 "generation tasks."
 msgstr "将机器学习算法应用于预测、分类和生成任务。"
 
-#: ../../guide/tools.rst:472 4a85847968ed49c1af799acb7fd89e4e
+#: ../../guide/tools.rst:474 98a8fbbbb8e94e758925ca74b773e655
 msgid "**Core ML Tools:**"
 msgstr "**Core ML 工具：**"
 
-#: ../../guide/tools.rst:474 7280897325a94c83a6721d110b2178c4
+#: ../../guide/tools.rst:476 c01f4046cf7445f9ba8f418ddfdf0f67
 msgid "**boltz2_docking** - Protein-ligand binding prediction"
 msgstr "**boltz2_docking** - 蛋白质-配体结合预测"
 
-#: ../../guide/tools.rst:487 ed7390656824472ab87c8ea2df37588c
+#: ../../guide/tools.rst:489 0e46a582226a4b08b6f181e2f0a32e0d
 msgid "**ADMET_predict_CYP_interactions** - Drug metabolism prediction"
 msgstr "**ADMET_predict_CYP_interactions** - 药物代谢预测"
 
-#: ../../guide/tools.rst:500 0f702c0df8ed4f13a81ac1796198f952
+#: ../../guide/tools.rst:502 d0aecb2238e141f1b2fe9b42117fb805
 msgid "**run_TxAgent_biomedical_reasoning** - Therapeutic reasoning"
 msgstr "**run_TxAgent_biomedical_reasoning** - 治疗推理"
 
-#: ../../guide/tools.rst:514 34118cfa7f8849a2a19d8807402ccc60
+#: ../../guide/tools.rst:516 27db2f8b7c894f339967d35cd0b13607
 msgid "AI Agents (33 tools)"
 msgstr "AI代理（33个工具）"
 
-#: ../../guide/tools.rst:516 edc0a85656dc4627bfededd26706cf80
+#: ../../guide/tools.rst:518 5c1ae422902a4fd38e445c1d0d49790c
 msgid ""
 "Autonomous tools that perceive environments, make decisions, and take "
 "actions toward research goals."
 msgstr "能够感知环境、做出决策并采取行动以实现研究目标的自主工具。"
 
-#: ../../guide/tools.rst:518 70dfb65a9bc64429a8840528a777609f
+#: ../../guide/tools.rst:520 2e4cbb48ecdc4bb5bf3425d72f5893d0
 msgid "**Literature & Analysis Agents:**"
 msgstr "**文献与分析代理：**"
 
-#: ../../guide/tools.rst:520 63957196068b4e84b57be479490c0bf6
+#: ../../guide/tools.rst:522 ea25fdc2917c4594890a3821b6ee7628
 msgid "**HypothesisGenerator** - Generate research hypotheses"
 msgstr "**HypothesisGenerator** - 生成研究假设"
 
-#: ../../guide/tools.rst:534 eb6bb41f6ebd4808987bce55b157781e
+#: ../../guide/tools.rst:536 e1c3824af04c40f29ae0c3cc242dfa38
 msgid "**ExperimentalDesignScorer** - Evaluate experimental designs"
 msgstr "**ExperimentalDesignScorer** - 评估实验设计"
 
-#: ../../guide/tools.rst:547 737229fff14145c7befb5c64bd99185f
+#: ../../guide/tools.rst:549 39d0a5771e554be3ad9b6028f929d1ab
 msgid "**MedicalLiteratureReviewer** - Comprehensive literature analysis"
 msgstr "**MedicalLiteratureReviewer** - 全面文献分析"
 
-#: ../../guide/tools.rst:562 700b6df6ce3341c18f57e9f7c83d1ea8
+#: ../../guide/tools.rst:564 75e4ba7a98b04583929335b5d8326006
 msgid "Tool Discovery & Composition"
 msgstr "工具发现与组合"
 
-#: ../../guide/tools.rst:564 fec4e834b50d49e3be7d56d1afcc15bb
+#: ../../guide/tools.rst:566 1a24b0dcdb4e48ccaf65512bf3f8d58f
 msgid "AI tools for discovering and combining other tools."
 msgstr "用于发现和组合其他工具的AI工具。"
 
-#: ../../guide/tools.rst:566 5a8d90a9e2c64195bc3f22046ad4bffa
+#: ../../guide/tools.rst:568 cd8e82f5fd6640cba372bc71b41c8093
 msgid ""
 "**Key Functions:** * ``discover_tools_by_description`` - Find tools by "
-"natural language * ``compose_tools_for_workflow`` - Create tool workflows * "
-"``optimize_tool_descriptions`` - Improve tool descriptions"
+"natural language * ``compose_tools_for_workflow`` - Create tool workflows"
+" * ``optimize_tool_descriptions`` - Improve tool descriptions"
 msgstr ""
 "**主要功能：**  \n"
 "* ``discover_tools_by_description`` - 根据自然语言查找工具  \n"
 "* ``compose_tools_for_workflow`` - 创建工具工作流  \n"
 "* ``optimize_tool_descriptions`` - 优化工具描述"
 
-#: ../../guide/tools.rst:583 447cd5a501234d2790b12dcd7737e842
-msgid "🔍 Search & Integration Tools"
+#: ../../guide/tools.rst:585 25c695af3da341fdb58143617d91054c
+#, fuzzy
+msgid "Search & Integration Tools"
 msgstr "🔍 搜索与集成工具"
 
-#: ../../guide/tools.rst:586 e2eea2d3860942e1b782983bf3b78437
+#: ../../guide/tools.rst:588 db1c7906f7ba433cbe7ccba9f8fe212e
 msgid "Tool Finder"
 msgstr "工具查找器"
 
-#: ../../guide/tools.rst:588 e7e0ce4b60194d34afc66236a2c2e032
+#: ../../guide/tools.rst:590 ae44823fa4044473b2f2fb520c79c509
 msgid "Find appropriate tools for your research needs."
 msgstr "为您的研究需求寻找合适的工具。"
 
-#: ../../guide/tools.rst:590 593fd6b4fefd4e34ba114245a4c70bfc
+#: ../../guide/tools.rst:592 e8fe8d38e0714931989cd8b724728ff8
 msgid ""
-"**Key Functions:** * ``find_tools_by_keyword`` - Keyword-based tool search *"
-" ``find_tools_by_category`` - Browse tools by category * "
+"**Key Functions:** * ``find_tools_by_keyword`` - Keyword-based tool "
+"search * ``find_tools_by_category`` - Browse tools by category * "
 "``get_tool_recommendations`` - Get tool recommendations"
 msgstr ""
 "**主要功能：**  \n"
@@ -721,167 +747,170 @@ msgstr ""
 "* ``find_tools_by_category`` - 按类别浏览工具  \n"
 "* ``get_tool_recommendations`` - 获取工具推荐"
 
-#: ../../guide/tools.rst:605 03fc0d7337ed473fb17b4070e7b39b03
+#: ../../guide/tools.rst:607 20c1dc0c794841e8b9d67226ee9aea00
 msgid "Embedding Stores (4 tools)"
 msgstr "嵌入存储（4种工具）"
 
-#: ../../guide/tools.rst:607 eb2c76bf14444824b745e4aa16ee4a9c
+#: ../../guide/tools.rst:609 86850d8759c64832b538961ab0b624b1
 msgid ""
 "Store and retrieve vectorized representations of scientific data for "
 "semantic search."
 msgstr "存储和检索科学数据的向量化表示，以支持语义搜索。"
 
-#: ../../guide/tools.rst:609 f1efc4b64ac04340acec777fe4444b6c
+#: ../../guide/tools.rst:611 2a6ead975df44ccf9d85fd76912da322
 msgid "**Core Embedding Tools:**"
 msgstr "**核心嵌入工具：**"
 
-#: ../../guide/tools.rst:611 60446116d65541f5aefd209760047e03
+#: ../../guide/tools.rst:613 c1a64435461241719f55a35a87320048
 msgid "**embedding_tool_finder** - Semantic tool discovery"
 msgstr "**embedding_tool_finder** - 语义工具发现"
 
-#: ../../guide/tools.rst:625 4e791f4bb03145e1be6d7dbdb6c62895
+#: ../../guide/tools.rst:627 2b80c696f5a942cb8ad4943d1677d87d
 msgid "**embedding_database_search** - Vector similarity search"
 msgstr "**embedding_database_search** - 向量相似度搜索"
 
-#: ../../guide/tools.rst:640 29d78f7eee054e3b9a78964e76264025
+#: ../../guide/tools.rst:642 5038ff3354354de08673d559304fec53
 msgid "Data Integration"
 msgstr "数据集成"
 
-#: ../../guide/tools.rst:642 1cc740ebe13d4e47a82af13d9cfb15c6
+#: ../../guide/tools.rst:644 e2589df65e664a6da51e8f6784bbd2c4
 msgid "Tools for combining data from multiple sources."
 msgstr "用于合并来自多个来源的数据的工具。"
 
-#: ../../guide/tools.rst:644 e6d5a377668f4c35b9cddbd99f835231
+#: ../../guide/tools.rst:646 3e54d6959c524a438b3a798b57280f28
 msgid ""
 "**Key Functions:** * ``integrate_gene_data`` - Combine gene data from "
-"multiple sources * ``cross_reference_identifiers`` - Map between different "
-"ID systems * ``validate_data_consistency`` - Check data consistency"
+"multiple sources * ``cross_reference_identifiers`` - Map between "
+"different ID systems * ``validate_data_consistency`` - Check data "
+"consistency"
 msgstr ""
 "**主要功能：**  \n"
 "* ``integrate_gene_data`` - 整合来自多个来源的基因数据  \n"
 "* ``cross_reference_identifiers`` - 在不同的ID系统之间进行映射  \n"
 "* ``validate_data_consistency`` - 检查数据的一致性"
 
-#: ../../guide/tools.rst:650 69236f53c938431bbee6f26baf261f6b
-msgid "🛠️ Tool Usage Patterns"
+#: ../../guide/tools.rst:652 580e4c5042b64b4b811a8bafc735a9a5
+#, fuzzy
+msgid "️ Tool Usage Patterns"
 msgstr "🛠️ 工具使用模式"
 
-#: ../../guide/tools.rst:653 7284a570d31f4ca0bb8e5b43a24adef3
+#: ../../guide/tools.rst:655 de8d381e25344175b66a47537c6ab8d1
 msgid "Single Tool Queries"
 msgstr "单工具查询"
 
-#: ../../guide/tools.rst:655 8320df7085434dfc959c9c814f48f28b
+#: ../../guide/tools.rst:657 c292ef9747774b2987b8e664c798b345
 msgid "Simple, focused queries for specific information:"
 msgstr "简单、专注于特定信息的查询："
 
-#: ../../guide/tools.rst:672 ../../guide/tools.rst:721
-#: 1f736cdcd1244aa5b09340eaf5e0b7ed 2ba77653c05a438eaf4dc6b8723ed070
+#: ../../guide/tools.rst:674 ../../guide/tools.rst:723
+#: a8bb2d39cd684efd819a5859fe0c7cc1 f50edd42e66e486599150acf6a5fe530
 msgid "Multi-Tool Workflows"
 msgstr "多工具工作流程"
 
-#: ../../guide/tools.rst:674 ../../guide/tools.rst:723
-#: 008cd59e50bf488290ead5e1801b9336 3d93be218a2c4a6e9f5523692ace4e36
+#: ../../guide/tools.rst:676 ../../guide/tools.rst:725
+#: 68bb36b69d374a48bb1fb5a6a3f53f49 de080aa38d4c4ee5a3929d02aa7a47dd
 msgid "Combine multiple tools for comprehensive analysis:"
 msgstr "结合多种工具进行全面分析："
 
-#: ../../guide/tools.rst:700 6ea0096a536c4b8a8c685f018a1c1877
+#: ../../guide/tools.rst:702 01f9ed61293e41c093876051cc202832
 msgid "Batch Processing"
 msgstr "批量处理"
 
-#: ../../guide/tools.rst:702 7b2cd10623a6491b9a0eb22327d3ac11
+#: ../../guide/tools.rst:704 297bb14efc6e4b749ced10b91674b3e8
 msgid "Process multiple related queries efficiently:"
 msgstr "高效处理多个相关查询："
 
-#: ../../guide/tools.rst:718 4d8732d0b42d4ada8e118bcee5e6d037
+#: ../../guide/tools.rst:720 a1a185c3c61e4b3aa56170a48be33371
 msgid "Integration Patterns"
 msgstr "集成模式"
 
-#: ../../guide/tools.rst:774 a055f0792ee64a79b8b23801654f6680
+#: ../../guide/tools.rst:778 986ac2decad14a35a2928cc7eb03a6f9
 msgid "Tool Composition Patterns"
 msgstr "工具组成模式"
 
-#: ../../guide/tools.rst:776 c5d7af77e5a44a0db303a07093e7c1eb
+#: ../../guide/tools.rst:780 bfad06a8c10843789e5289902b043785
 msgid "**Sequential Workflows:**"
 msgstr "**顺序工作流：**"
 
-#: ../../guide/tools.rst:788 420d41230d374d459de238d46408ae41
+#: ../../guide/tools.rst:792 037e96af7421478583913c4fc05b0178
 msgid "**Parallel Data Gathering:**"
 msgstr "**并行数据收集：**"
 
-#: ../../guide/tools.rst:799 960ad05406b94621ae08478b8232f00c
+#: ../../guide/tools.rst:803 04bc72de01d84eadab6a5667e7550a3b
 msgid "**Feedback Loops:**"
 msgstr "**反馈回路：**"
 
-#: ../../guide/tools.rst:813 e1b5db94625c44a6a3960b28742ee50e
-msgid "📈 Tool Performance Tips"
+#: ../../guide/tools.rst:817 e7788df060164b71b3d02ee437e273cc
+#, fuzzy
+msgid "Tool Performance Tips"
 msgstr "📈 工具性能优化提示"
 
-#: ../../guide/tools.rst:816 9fe135efb11b4cc6bbd2d9a7cfebc9b0
+#: ../../guide/tools.rst:820 ab02ded3222b4c82b5a297d4bbd325d5
 msgid "Optimization Strategies"
 msgstr "优化策略"
 
-#: ../../guide/tools.rst:818 8bcfbb03ea2845cbb7f3c4897ad9c7b3
+#: ../../guide/tools.rst:822 7e58cc42e184450bbe8e6bdcc0e577f8
 msgid "**Use specific queries**: More specific queries return faster"
 msgstr "**使用特定查询**：更具体的查询可以更快返回结果"
 
-#: ../../guide/tools.rst:819 793a6b8494b64796a1dbf88791385cb6
+#: ../../guide/tools.rst:823 bf9b373195e044e38c6d6a7716692b73
 msgid "**Limit results**: Use ``limit`` parameter to control result size"
 msgstr "**限制结果**：使用 ``limit`` 参数来控制结果大小"
 
-#: ../../guide/tools.rst:820 3a793a82c95b4564b5e5bb5eb42c2955
+#: ../../guide/tools.rst:824 500dd0dd6fa24f76ad85382ee6842be9
 msgid "**Cache results**: Enable caching for repeated queries"
 msgstr "**缓存结果**：启用缓存以加速重复查询"
 
-#: ../../guide/tools.rst:821 b15b08b3679c4cb788788fcc3c6d00da
+#: ../../guide/tools.rst:825 48b86cdb81944f639ca303d5cc5f0cae
 msgid "**Batch when possible**: Some tools support batch operations"
 msgstr "**尽量批量处理**：某些工具支持批量操作"
 
-#: ../../guide/tools.rst:824 6274993e2d9e4dfcb85628723aa7ead0
+#: ../../guide/tools.rst:828 11daca9bc14245e59e8117e3ebd5db08
 msgid "Rate Limiting"
 msgstr "速率限制"
 
-#: ../../guide/tools.rst:826 01f772dfa7d647ef85e7a28f7d8a5295
-msgid ""
-"ToolUniverse automatically handles API rate limits, but you can optimize:"
+#: ../../guide/tools.rst:830 d2ceadf386974f47a23866b80f1f88cd
+msgid "ToolUniverse automatically handles API rate limits, but you can optimize:"
 msgstr "ToolUniverse 会自动处理 API 速率限制，但您可以进行优化："
 
-#: ../../guide/tools.rst:838 96964ade62454636add0774a52301ead
+#: ../../guide/tools.rst:842 a747880f165b4a539e0577f217ec3625
 msgid "Error Handling"
 msgstr "错误处理"
 
-#: ../../guide/tools.rst:840 87455473532347fd994a66c809c22b19
+#: ../../guide/tools.rst:844 0aaa5c7c87ee427cb31b2b73454d9b82
 msgid "Always include error handling for robust applications:"
 msgstr "始终包含错误处理以确保应用程序的健壮性："
 
-#: ../../guide/tools.rst:855 4f32d1bec2fb4d759435df7e5467c944
+#: ../../guide/tools.rst:859 88b66a82ff394891a0cc65452d1239e0
 msgid "Performance Optimization"
 msgstr "性能优化"
 
-#: ../../guide/tools.rst:858 94426389eddb4a07804557733fa68b07
+#: ../../guide/tools.rst:862 c5272c7097ec4ded8924a7ec22c106d4
 msgid "Category-Specific Considerations"
 msgstr "类别特定注意事项"
 
-#: ../../guide/tools.rst:860 0995c9fcf38f4f0593c1d4209bf91309
+#: ../../guide/tools.rst:864 26595a6989b840d1a56670302c0875b0
 msgid ""
 "**ML Models**: - Remote execution reduces local resource requirements - "
-"Batch predictions when possible - Cache results for expensive computations"
+"Batch predictions when possible - Cache results for expensive "
+"computations"
 msgstr ""
 "**ML 模型**：  \n"
 "- 远程执行可减少本地资源需求  \n"
 "- 尽可能进行批量预测  \n"
 "- 对于高成本计算结果进行缓存"
 
-#: ../../guide/tools.rst:865 88bdb0d660834353ac615ac72b30a00c
+#: ../../guide/tools.rst:869 b1d0b72c450b4c5990266d83be1fe3fa
 msgid ""
-"**APIs**: - Respect rate limits and implement backoff - Use pagination for "
-"large datasets - Cache frequent queries"
+"**APIs**: - Respect rate limits and implement backoff - Use pagination "
+"for large datasets - Cache frequent queries"
 msgstr ""
 "**API**：  \n"
 "- 遵守速率限制并实现退避机制  \n"
 "- 对于大型数据集使用分页  \n"
 "- 对频繁查询结果进行缓存"
 
-#: ../../guide/tools.rst:870 3ae8e342e6d748c8962af7ae24eab8e7
+#: ../../guide/tools.rst:874 36090239985f4cd195004954302c30f6
 msgid ""
 "**Databases**: - Use specific field queries instead of full searches - "
 "Implement result limits for exploration - Index frequently accessed data"
@@ -891,78 +920,77 @@ msgstr ""
 "- 为数据检索设置结果限制  \n"
 "- 为经常访问的数据建立索引"
 
-#: ../../guide/tools.rst:875 4a8b67daae094d9e8f10fcc5336dc3ca
+#: ../../guide/tools.rst:879 a17de348246445a8a5048c61eeb4fe0a
 msgid ""
-"**Agents**: - Configure appropriate timeout values - Use streaming for long-"
-"running tasks - Implement progress monitoring"
+"**Agents**: - Configure appropriate timeout values - Use streaming for "
+"long-running tasks - Implement progress monitoring"
 msgstr ""
 "**代理**：  \n"
 "- 配置适当的超时值  \n"
 "- 对于长时间运行的任务使用流式处理  \n"
 "- 实现进度监控"
 
-#: ../../guide/tools.rst:881 3f40d1acb2de4152b7e5b16d36557a45
+#: ../../guide/tools.rst:885 72c6c8443b09445fbb7adf3fae648716
 msgid "Best Practices"
 msgstr "最佳实践"
 
-#: ../../guide/tools.rst:883 4337340745214b72a440f177c3b8bcd5
+#: ../../guide/tools.rst:887 818651aec657463194b967d4d8c10495
 msgid "**Tool Selection**: Choose the right tool for your specific use case"
 msgstr "**工具选择**：根据您的具体使用场景选择合适的工具"
 
-#: ../../guide/tools.rst:884 3f4b826a2384492ab8d371a88e5d1098
+#: ../../guide/tools.rst:888 f3b8a6e9d4254c3587bcf8f6e29e7598
 msgid "**Rate Limiting**: Respect API rate limits to avoid blocking"
 msgstr "**速率限制**：遵守 API 速率限制以避免被阻止"
 
-#: ../../guide/tools.rst:885 aa4c38f7948a4eeeb1a1049aaf82281d
+#: ../../guide/tools.rst:889 4bf6b5c316684a5390e36e05b5c8c750
 msgid "**Error Handling**: Always handle potential API errors gracefully"
 msgstr "**错误处理**：始终以优雅的方式处理潜在的 API 错误"
 
-#: ../../guide/tools.rst:886 32b54bcc87f04a50ac50c03618c76de6
+#: ../../guide/tools.rst:890 19a5a689c08e4867836aae8167398ac6
 msgid "**Caching**: Use caching for frequently accessed data"
 msgstr "**缓存**：对经常访问的数据使用缓存"
 
-#: ../../guide/tools.rst:887 03894c69a31a460cac91704c92bbd03e
-msgid ""
-"**Batch Processing**: Use batch operations when available for efficiency"
+#: ../../guide/tools.rst:891 f2bf8d3f89f048bd97eb02e48b185c83
+msgid "**Batch Processing**: Use batch operations when available for efficiency"
 msgstr "**批量处理**：在可能的情况下使用批量操作以提高效率"
 
-#: ../../guide/tools.rst:888 f0f2d2f4cb8148d3b6a64136919b4e9c
+#: ../../guide/tools.rst:892 f99f2790a53c4cc58e915b29008d2c33
 msgid "**Configuration**: Configure tools appropriately for your environment"
 msgstr "**配置**：根据您的环境适当配置工具"
 
-#: ../../guide/tools.rst:891 5f12f10e825b49489c238e8a3bf5f35a
+#: ../../guide/tools.rst:895 4e5bc073874d46cbbf54d259a4f099c4
 msgid "Tool Discovery & Selection"
 msgstr "工具发现与选择"
 
-#: ../../guide/tools.rst:894 e623c889a3bd4442b2821de131dcd2df
+#: ../../guide/tools.rst:898 d0ff95f443c848ffbad3cd250953e047
 msgid "Finding the Right Tools"
 msgstr "选择合适的工具"
 
-#: ../../guide/tools.rst:896 b105c91bf3904e40b3db5d061c35fe13
+#: ../../guide/tools.rst:900 e2dffe8b0a7f4e8eb18e183b32f92ebe
 msgid "**By Category:**"
 msgstr "**按类别：**"
 
-#: ../../guide/tools.rst:905 b2c10369f0bb4f2c9a8220679cfca79c
+#: ../../guide/tools.rst:910 f01e8c45fe58498ca8489ce918c2e9e7
 msgid "**By Functionality:**"
 msgstr "**按功能分类：**"
 
-#: ../../guide/tools.rst:923 dbeff0cc410f4d958a5c981be4c40b33
+#: ../../guide/tools.rst:928 d707ba75546c43cdae33a6c634d00028
 msgid "**By Domain:**"
 msgstr "**按领域：**"
 
-#: ../../guide/tools.rst:936 1820d22263d442e78aa23f146c51c7c7
+#: ../../guide/tools.rst:941 190c96a084964e239fc2baefd2e8d2c9
 msgid "API Authentication"
 msgstr "API 身份验证"
 
-#: ../../guide/tools.rst:955 cc690b982a614d7682a33c9f48a3b4a5
+#: ../../guide/tools.rst:957 4c615363272244a5b4ff3e92fc889714
 msgid "Future Extensions"
 msgstr "未来扩展"
 
-#: ../../guide/tools.rst:957 37eb158ef7f940358a4a548e044ecb65
+#: ../../guide/tools.rst:959 52aff0af8b144ccaa53c6a641c2e1660
 msgid ""
-"**Planned Categories**: - **Visualization Tools**: Interactive plotting and "
-"dashboard generation - **Workflow Engines**: Advanced orchestration and "
-"scheduling - **Cloud Services**: Distributed computing and storage - "
+"**Planned Categories**: - **Visualization Tools**: Interactive plotting "
+"and dashboard generation - **Workflow Engines**: Advanced orchestration "
+"and scheduling - **Cloud Services**: Distributed computing and storage - "
 "**Compliance Tools**: Regulatory and ethics validation"
 msgstr ""
 "**计划类别**：  \n"
@@ -971,7 +999,7 @@ msgstr ""
 "- **云服务**：分布式计算和存储  \n"
 "- **合规工具**：法规与伦理验证"
 
-#: ../../guide/tools.rst:963 22a4c2bc792f4f94ad59501b7620f574
+#: ../../guide/tools.rst:965 983cbd95f90b435c99e3f0eb937aaa40
 msgid ""
 "**Community Contributions**: - Tool submission guidelines - Quality "
 "assurance processes - Community voting and validation - Maintenance and "
@@ -983,47 +1011,88 @@ msgstr ""
 "- 社区投票与验证  \n"
 "- 维护与更新"
 
-#: ../../guide/tools.rst:970 79ab12f88d3949fc95b8f1f093920532
-msgid "🎯 Next Steps"
+#: ../../guide/tools.rst:972 e5e8b897f774482d80919b228f07cae8
+#, fuzzy
+msgid "Next Steps"
 msgstr "🎯 下一步"
 
-#: ../../guide/tools.rst:972 9e3548442d2643fb9587e65a3640b3d2
+#: ../../guide/tools.rst:974 327cc52105eb4dd1952244c02ca2340e
 msgid "Now that you know what tools are available:"
 msgstr "现在您已经了解有哪些可用的工具："
 
-#: ../../guide/tools.rst:974 991a62623b034ae28349ea622494f9c4
-msgid "🚀 **Try Examples**: :doc:`examples` - See tools in action"
+#: ../../guide/tools.rst:976 4b41426e68c042898717eba4b32ee46b
+#, fuzzy
+msgid "**Try Examples**: :doc:`examples` - See tools in action"
 msgstr "🚀 **尝试示例**：:doc:`examples` - 查看工具的实际应用"
 
-#: ../../guide/tools.rst:975 72436b98d1b2432cb4b51fade84fada8
+#: ../../guide/tools.rst:977 1e2582f7afb44512b9280950954d255c
+#, fuzzy
 msgid ""
-"🔬 **Build Workflows**: :doc:`scientific_workflows` - Combine tools for "
+"**Build Workflows**: :doc:`scientific_workflows` - Combine tools for "
 "research"
 msgstr "🔬 **构建工作流**：:doc:`scientific_workflows` - 组合工具以支持研究"
 
-#: ../../guide/tools.rst:976 3aa3b199b5744d2daaa44fd6fdf1dfd2
+#: ../../guide/tools.rst:978 c67c8459a4c74e248a993bd572767070
 msgid ""
-"⚡ **Optimize**: :doc:`best_practices` - Performance and production tips"
-msgstr "⚡ **优化**：:doc:`best_practices` - 性能与生产环境优化提示"
+"**Extend ToolUniverse**: :doc:`../expand_tooluniverse/index` - Create "
+"custom tools"
+msgstr ""
 
-#: ../../guide/tools.rst:977 7c9d5b7650454597b93f9945d2b42c61
+#: ../../guide/tools.rst:981 1ccf9b7b068f4ed99d579695fba8269e
 msgid ""
-"🛠️ **Create Custom**: :doc:`../tutorials/custom_tools` - Build your own "
-"tools"
-msgstr "🛠️ **创建自定义工具**: :doc:`../tutorials/custom_tools` - 构建您自己的工具"
-
-#: ../../guide/tools.rst:980 6f2d35d55ba34806aa26e95d86dc4a20
-msgid ""
-"**Discovery tip**: Use the AI-powered tool discovery features to find the "
-"right tools for your specific research questions!"
+"**Discovery tip**: Use the AI-powered tool discovery features to find the"
+" right tools for your specific research questions!"
 msgstr "**发现提示**：使用人工智能驱动的工具发现功能，找到适合您特定研究问题的正确工具！"
 
-#: ../../guide/tools.rst:983 06664afd699c4c9db110298264f7403e
+#: ../../guide/tools.rst:984 6f5ecab6d60f4ffc9e36c060d42c4155
 msgid ""
 "**Tool ecosystem synergy**: The eight categories are designed to work "
 "together. APIs provide data access, ML models add intelligence, agents "
-"orchestrate complex workflows, while databases and embedding stores enable "
-"efficient information management."
+"orchestrate complex workflows, while databases and embedding stores "
+"enable efficient information management."
 msgstr ""
 "**工具生态系统协同**：这八个类别旨在协同工作。API 提供数据访问，ML "
 "模型增加智能，代理负责协调复杂的工作流，而数据库和嵌入存储支持高效的信息管理。"
+
+#~ msgid ""
+#~ "**Key Functions:** * "
+#~ "``UniProt_get_function_by_accession`` - Get "
+#~ "functional annotations by UniProt accession"
+#~ " * ``UniProt_search_proteins`` - Search "
+#~ "proteins by keywords * "
+#~ "``UniProt_get_protein_sequence`` - Retrieve protein"
+#~ " sequences"
+#~ msgstr ""
+#~ "**主要功能：**  \n"
+#~ "* ``UniProt_get_function_by_accession`` - 通过 UniProt 访问号获取功能注释  \n"
+#~ "* ``UniProt_search_proteins`` - 通过关键词搜索蛋白质  \n"
+#~ "* ``UniProt_get_protein_sequence`` - 获取蛋白质序列"
+
+#~ msgid ""
+#~ "**Key Functions:** * "
+#~ "``OpenTargets_get_associated_targets_by_disease_efoId`` - "
+#~ "Disease-associated targets * "
+#~ "``OpenTargets_get_associated_diseases_by_target`` - "
+#~ "Target-associated diseases * "
+#~ "``OpenTargets_get_disease_id_description_by_name`` - "
+#~ "Disease lookup * ``OpenTargets_get_evidence`` "
+#~ "- Evidence for associations * "
+#~ "``OpenTargets_get_drug_info`` - Drug information "
+#~ "and mechanisms"
+#~ msgstr ""
+#~ "**主要功能：**  \n"
+#~ "* ``OpenTargets_get_associated_targets_by_disease_efoId`` - 疾病相关靶点  \n"
+#~ "* ``OpenTargets_get_associated_diseases_by_target`` - 靶点相关疾病  \n"
+#~ "* ``OpenTargets_get_disease_id_description_by_name`` - 疾病查询  \n"
+#~ "* ``OpenTargets_get_evidence`` - 关联证据  \n"
+#~ "* ``OpenTargets_get_drug_info`` - 药物信息及作用机制"
+
+#~ msgid "⚡ **Optimize**: :doc:`best_practices` - Performance and production tips"
+#~ msgstr "⚡ **优化**：:doc:`best_practices` - 性能与生产环境优化提示"
+
+#~ msgid ""
+#~ "🛠️ **Create Custom**: "
+#~ ":doc:`../tutorials/custom_tools` - Build your "
+#~ "own tools"
+#~ msgstr "🛠️ **创建自定义工具**: :doc:`../tutorials/custom_tools` - 构建您自己的工具"
+

@@ -1,0 +1,267 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bindingdb_tools.rst:10 1e4ecf5617594199b93b71b4be6c5e0d
+msgid "Bindingdb Tools"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:12 b562e19a353f4d60934d0c8c7175df4e
+msgid ""
+"**Configuration File**: ``bindingdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:16 2f6a82f6c4c5406a88ed153f214d1662
+msgid ""
+"This page contains all tools defined in the ``bindingdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:19 fd63a8c7345446f4a93cda8b31e47334
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:22 0f4bff97d47f4697b4ebc97cf12884d3
+msgid "**BindingDB_get_ligands_by_pdb** (Type: BindingDBTool)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:24 89ff915a961d4863bbf2ce6efe7461a2
+msgid ""
+"Get binding affinity data for proteins by PDB structure ID. Returns "
+"ligands with measured affinit..."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst 6596e47862104436981718e5b50aa1e0
+msgid "BindingDB_get_ligands_by_pdb tool specification"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:28 ../../tools/bindingdb_tools.rst:65
+#: ../../tools/bindingdb_tools.rst:99 ../../tools/bindingdb_tools.rst:133
+#: ../../tools/bindingdb_tools.rst:167 4d273bc79f3044369be32bad08f68679
+#: 50a489fc44354886bb8af538ef633c91 63d5ddd3f1814da7bf6189e10f2f8509
+#: 97fb2c00f55c4830921684025784ef99 d1d273721e5b420ba463eaccaf433c82
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:30 887fdfa863c54457b8786947f4f1b864
+msgid "**Name**: ``BindingDB_get_ligands_by_pdb``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:31 ../../tools/bindingdb_tools.rst:68
+#: ../../tools/bindingdb_tools.rst:102 ../../tools/bindingdb_tools.rst:136
+#: ../../tools/bindingdb_tools.rst:170 98f44472a54a431989629b8c7466676b
+#: ac7bb3925e2c47c58f8e8620ae01a1cb b4c6d7cca5bc4ca7a65197aeed647ad6
+#: b8893938a48445ca9f07018f46217e73 d4df3eea368a441e842019a025156829
+msgid "**Type**: ``BindingDBTool``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:32 4c78f966e1f14eca9f1cc8241f7f4f50
+msgid ""
+"**Description**: Get binding affinity data for proteins by PDB structure "
+"ID. Returns ligands with measured affinities for the protein structure. "
+"Useful for structure-activity relationship analysis when you have co-"
+"crystal structures."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:34 ../../tools/bindingdb_tools.rst:71
+#: ../../tools/bindingdb_tools.rst:105 ../../tools/bindingdb_tools.rst:139
+#: ../../tools/bindingdb_tools.rst:173 0a177542883a4ead8cb981d77efa7552
+#: 191803d2b356402798abae07437c428e 2c8411e221ac4121abf85f0b845ef7da
+#: b6846bf0468e4892b3b67345065e1ea4 ed17589c3635475f824e957992dbb301
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:36 affa9c37b91f4cc0891b5b464a1b2571
+msgid "``pdb_ids`` (string) (required) Comma-separated PDB IDs (e.g., 1Q0L,3ANM)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:39 ../../tools/bindingdb_tools.rst:73
+#: ../../tools/bindingdb_tools.rst:107 001f95c4559d4dc1ae7743e80ab0b138
+#: 0d4727d0dbed42a095569dc11ba98afd 7f39887ebcdb4c749edb5f53ead79410
+msgid ""
+"``affinity_cutoff`` (integer) (optional) Maximum affinity in nM (default:"
+" 10000)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:42 b1f067e970064cc6b7b1ea9e2bce2b70
+msgid ""
+"``sequence_identity`` (integer) (optional) Minimum sequence identity % "
+"(default: 100)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:45 ../../tools/bindingdb_tools.rst:79
+#: ../../tools/bindingdb_tools.rst:113 ../../tools/bindingdb_tools.rst:147
+#: ../../tools/bindingdb_tools.rst:181 225ad69a212c4e18aed9e500ea4f75ed
+#: 74a1e03091b94a44826826715a946760 9460850c41bd4dd39091425b3f272371
+#: 96619a41455e44d2839f055f1c70347a f3936f27004d4bc3b4ed0d0a614a7d58
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:59 30f18582ef3d4903989137b2dc900100
+msgid "**BindingDB_get_ligands_by_uniprot** (Type: BindingDBTool)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:61 8f224a0616084d1c930ce93ad6f07d9d
+msgid ""
+"Get binding affinity data (Ki, IC50, Kd) for a single protein by UniProt "
+"ID. Returns SMILES struc..."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst 86d216da3da747fc93e44cb5d357f1b6
+msgid "BindingDB_get_ligands_by_uniprot tool specification"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:67 71251223e4084bb8823fabeb09d68a7d
+msgid "**Name**: ``BindingDB_get_ligands_by_uniprot``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:69 e2f4722b64704751aba49d983a27e555
+msgid ""
+"**Description**: Get binding affinity data (Ki, IC50, Kd) for a single "
+"protein by UniProt ID. Returns SMILES structures and measured affinities "
+"from BindingDB. Essential for drug discovery target analysis. Example: "
+"P00533 (EGFR) returns known inhibitors with binding constants."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:76 ff639cb76f374e29810c75f4bece7bf7
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession ID (e.g., P00533 for"
+" EGFR)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:93 ab1f9905db4846d78654698c9756f007
+msgid "**BindingDB_get_ligands_by_uniprots** (Type: BindingDBTool)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:95 28449224737c47999e2f604534537286
+msgid ""
+"Get binding affinity data for multiple proteins by UniProt IDs. Returns "
+"SMILES and affinities for..."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst 03911437247d4973a3c1df103061f8d6
+msgid "BindingDB_get_ligands_by_uniprots tool specification"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:101 94542cac981d4ce5af13397fa8ff5c71
+msgid "**Name**: ``BindingDB_get_ligands_by_uniprots``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:103 169ec1d819e84f0e9397932101814c01
+msgid ""
+"**Description**: Get binding affinity data for multiple proteins by "
+"UniProt IDs. Returns SMILES and affinities for all matching ligands. Use "
+"for comparing binding profiles across protein family members or paralogs."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:110 094dfe001d30453bb1de16eea9b05ea4
+msgid ""
+"``uniprot_ids`` (string) (required) Comma-separated UniProt IDs (e.g., "
+"P00176,P00183)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:127 99cf41ea2374485682595fd185749c6f
+msgid "**BindingDB_get_targets_by_compound** (Type: BindingDBTool)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:129 bf88c45cce4c43f78e932120322fb053
+msgid ""
+"Find protein targets for a compound by SMILES structure. Returns proteins"
+" with binding affinity d..."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst 30d2ae29aa7f49f89930c1556e8c04d6
+msgid "BindingDB_get_targets_by_compound tool specification"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:135 4312cc54f7194193b9eddff514019a76
+msgid "**Name**: ``BindingDB_get_targets_by_compound``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:137 c4641f417a484a939bd73abe54842b74
+msgid ""
+"**Description**: Find protein targets for a compound by SMILES structure."
+" Returns proteins with binding affinity data for similar compounds. "
+"Essential for polypharmacology analysis and off-target prediction."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:141 26f75a2d16bd40978787846c7940ac49
+msgid "``smiles`` (string) (required) SMILES structure of compound"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:144 2cc777379b9a46c8b566214a06f62cea
+msgid ""
+"``similarity_cutoff`` (number) (optional) Similarity threshold 0-1 "
+"(default: 0.85)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:161 21dfaf94187a4c7d950c3886cca177bd
+msgid "**BindingDB_search_by_target** (Type: BindingDBTool)"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:163 37b76a1328074044b01a5da53fcf9b7e
+msgid ""
+"Search BindingDB for binding affinity data by target gene name or protein"
+" name. NOTE: BindingDB R..."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst 8f66aafe4c1740e7904d7aa88fb8b65a
+msgid "BindingDB_search_by_target tool specification"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:169 a46a7618ec9b43c38dc57f175fa5e63b
+msgid "**Name**: ``BindingDB_search_by_target``"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:171 41815db9df01472c91412dd85fbaea5e
+msgid ""
+"**Description**: Search BindingDB for binding affinity data by target "
+"gene name or protein name. NOTE: BindingDB REST API is currently "
+"unavailable (requests time out). Use ChEMBL\\_get\\_target\\_activities "
+"or PubChem BioAssay as alternatives. To query by UniProt ID, use "
+"BindingDB\\_get\\_ligands\\_by\\_uniprot instead."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:175 de5fa4efdc554412938f7188ba0371d9
+msgid ""
+"``query`` (string) (required) Target gene symbol or protein name (e.g., "
+"'EGFR', 'BRAF', 'kinase')"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:178 ac131fae0f654e56a2fe06057abd8dc5
+msgid ""
+"``target`` (string) (optional) Alias for query. Target gene symbol or "
+"protein name."
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:195 7b57dbcebf0842e2bba8176b8b9980d1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:197 a2f262dffb8c4158bb1481e371c1793f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bindingdb_tools.rst:198 d3befae1feea449187d02fdab6e1eaa0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,1210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/api_keys.rst:2 aa7df24f597b4d5ea95aaf407a5cb291
+msgid "API Keys and Authentication"
+msgstr ""
+
+#: ../../guide/api_keys.rst:5 f8f9215f5fe34700b5d1e97ab499bc19
+msgid "**Looking for other environment variables?**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:7 484ebb7523af42f8b371b6af5a197c7e
+msgid ""
+"This page covers API keys only. For cache, logging, LLM, and other "
+"configuration options, see :doc:`../reference/environment_variables`."
+msgstr ""
+
+#: ../../guide/api_keys.rst:10 e95a1bbfbc6b494b80b4e9dfb9cfbd87
+msgid "Overview"
+msgstr ""
+
+#: ../../guide/api_keys.rst:12 5a4f2b76501846b6857a71a1373e12db
+msgid ""
+"ToolUniverse provides access to 1000+ scientific tools across various "
+"domains. Many tools work without API keys, but some require "
+"authentication for full functionality or enhanced rate limits."
+msgstr ""
+
+#: ../../guide/api_keys.rst:15 56eff4eaa48c44219f3c596e7e924af9
+msgid "API Key Categories"
+msgstr ""
+
+#: ../../guide/api_keys.rst:18 a0f7b91a025b4fb7b1eda0fcd4fd0df4
+msgid "Required API Keys (Essential Features)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:20 36eb6ea1c1144174a03470d399516d7a
+msgid "These API keys are required for specific tool categories to function:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:22 cc26d522d0dd40e885af4db3112c0f1a
+msgid "**NVIDIA NIM Healthcare APIs**"
+msgstr ""
+
+#: ../../guide/api_keys.rst 18cac5d9afdf4a5c8d492735f8fb5802
+#: 3db3e359856148e69feca9d901d82e96 4ad5b74aad1f49eba936d1d15a7aeb46
+#: 4dacdc11598e4709922802f82492e1ba 5dba79b349414d8c86011901afd35355
+#: 6d126551cef04064992149bb8a1d854a 7e5d5c41b6694ac3b4129bab9591e2e5
+#: 928f659aaeb545d68d51cf2a7661d349 94ab2ed36a2b4cd0abf94266b50ce6b2
+#: c06760e5d1c0417ba059e64e0a0f73af e7a1bed1d6464ed1829e8aa469b37ebd
+#: ed1758fc6a8649e5bbf51a207857ced9 fc30043abcbd4135b5efb13139738e37
+msgid "API Key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:24 2101d1db859b4ed58745ae4e16cdee8c
+msgid "``NVIDIA_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst 16232307c4914af192ae24b8fe64abe0
+#: 2011951399ea4be0abc954570d7a0712 2701867ec7544bf19754eeaf899bb01d
+#: 3878c9e4d30c40398a036e037983ef9d 42cc0e2f8e9949ac92880aff3864dc73
+#: 5544428f242443d2aa8b807e11db5a65 55b88fae8ccb4520a092d0b34a3a85bd
+#: 67fc9247e9674132adc21ed4b8727b6e 683af7afa9d74e3f9e9992693c0ee1f9
+#: 746ee59744f34e4bb5ecf625d105723a 785d2cc8ba634c0484a44c515601b5e2
+#: 84cf2298ba5c4d459401eaf9036299e2 8555799f41f040b2b419633cf3d471ce
+#: 90e02347b51b49ec9edd639477e230b6 a2aaaf4c2e0d44109875c6b7e482dd6f
+#: ae0d6025754e4323b4dfb36e4b6b29fe b409ba4362334e4da043ac09ddd39ea3
+#: b48da5c6cbc54a3fb2c752ed98ae5e9f b54fe541ae6f4870abb251b326cb9d4d
+#: ce7dcc46ac124e658a884195eefa3a99 d25905acde5e499591c82385caa01724
+#: e4856fb1ef214dbcb60b9ec3ccf0065b
+msgid "Required For"
+msgstr ""
+
+#: ../../guide/api_keys.rst:25 7010b225f20b4ff3a132ad72ac5c0b4e
+msgid ""
+"Protein structure prediction (AlphaFold2, ESMFold, OpenFold2, Boltz2), "
+"molecular docking (DiffDock), protein design (ProteinMPNN, RFdiffusion), "
+"genomics tools (Evo2-40B, MSA-Search, ESM2-650M), medical imaging (MAISI,"
+" Vista3D)"
+msgstr ""
+
+#: ../../guide/api_keys.rst 0f935030185a471583324f9ffe86de70
+#: 10d70a2152f74e92bc2832853043b8d4 11bc68b20cee42279eefa90d985739f6
+#: 1be5aa53d89f4677881e691a22186853 27a443d728af4861a955ac4a5b5a1252
+#: 30b917fe62a5437388f2028b787cedff 721b04a1be5040338892a13ae493a27f
+#: 7dcfd2a284ad4c5b953b7170fabf552a 81e25b8b5aea437188bc6c12e9c19c59
+#: 8f7dd255c5b14337a0a4327fbd87700c 9b7731a8b5e74998bec51dc056fb1d7f
+#: a22ecb12af5c4a689db9dfb242392e9f f306bf3a523e46f9b8385a5ac67c5d41
+msgid "How to Get"
+msgstr ""
+
+#: ../../guide/api_keys.rst:26 b83bd7eadd4e42efbfc4835758729930
+msgid ""
+"Visit https://build.nvidia.com and sign up for a free account. Navigate "
+"to your API keys section to generate a key."
+msgstr ""
+
+#: ../../guide/api_keys.rst 141e3937bee54f0db4dd9e8da37a06d0
+#: 1fe9fe6fb5364202badfbc7ec5136b2f 2f6b67fda2d94979af11bdeec1679041
+#: 508a5f708cc341638362f7510cf6d9a2 89bbf5815f48463ea7b74ffa550a68f8
+#: 91dcf53ba41b46ec9a25dcc1f6b5c6f1 973ef5e4c35946849f2cbb701d955252
+#: 9bb0d5ce578648e6ba984f9fb592a10b c72452d333b943e896554035eebbe2ca
+#: d28949ed318041c2b6527bfce366949e e0a4210e4ae74befae894e6410259180
+msgid "Rate Limits"
+msgstr ""
+
+#: ../../guide/api_keys.rst:27 c3a07c4b8dfa4acb9694dbc1c31f8170
+msgid "40 requests per minute (free tier)"
+msgstr ""
+
+#: ../../guide/api_keys.rst 00ebd51f387a49ea94bc61a0978f7aa4
+#: 026b1cd91bf44a998eebabc2d2fcb2ef 06dd3021e5664d68849397cf8201823d
+#: 1d0152d50554415c8a14a6cdac133fad 33b3419dfa4e4326874615e4ad8e6287
+#: 3f0801c95d5f4b65a708121386bfbcfe 68cb80cc623b44608b8a36f04d75ac8a
+#: 7bcc52fbfab14872bd707260057d7467 881332cb00b14a188af32c689a01ba7e
+#: 914cfd5a09d24072a8bb81f189ee8d62 98a663fb09ce48fdab0df1bee2023795
+#: a005d2fabafb41e7bf3177338b9fdc3a a6b007852e5d46d19375471232f43d0f
+#: d01f7b0055cf47c9b9a69bdb334dcfb8 d58a7357d3874de08c1c3dff2b84c78a
+#: e048b913b468460db9a028632be131af eb590185eb7e449e9785c5f7fe862f9f
+#: ff28360c68db46058a143a1eafa83aa0
+msgid "Tool Categories"
+msgstr ""
+
+#: ../../guide/api_keys.rst:28 99cc27ee76e740fd95c9d78ebd56867b
+msgid "``nvidia_nim``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:31 4ede931b55eb4c35ba10295e2980177a
+msgid "Recommended API Keys (Enhanced Performance)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:33 17b50af3b68a42ec95b46d65a3f906ad
+msgid ""
+"These API keys are optional but provide better performance, higher rate "
+"limits, or additional features:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:35 c11f7ac8c9b14f93aabdfb2332cc4d86
+msgid "**USPTO Patent API**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:37 1c811e26974d4beba3fb1b8eed7dbae4
+msgid "``USPTO_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:38 a9b08b0fc5f243af8ee637aa8def36b3
+msgid "Patent search, patent document retrieval, patent data analysis"
+msgstr ""
+
+#: ../../guide/api_keys.rst:39 8d034c1c99a0498cb687471af9d73769
+msgid "Visit https://developer.uspto.gov/ and register for API access"
+msgstr ""
+
+#: ../../guide/api_keys.rst:40 033dd39d3e07422ab097f7f0d39df6fb
+msgid "Varies by endpoint"
+msgstr ""
+
+#: ../../guide/api_keys.rst:41 9aa24bac17b645cbb4dc84d4c174d16e
+msgid "``uspto``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:43 06c20a5ccddf40de9c06565c86359640
+msgid "**Hugging Face**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:45 117e1f2517e14131b57b343ddbcd0b6a
+msgid "``HF_TOKEN``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:46 f5d3f649cf394edb98b8926db51dc2e1
+msgid ""
+"Access to Hugging Face models and datasets, required for certain machine "
+"learning tools"
+msgstr ""
+
+#: ../../guide/api_keys.rst:47 2677f63a099f462bb952da2007cc1c7c
+msgid "Visit https://huggingface.co/settings/tokens and create a new access token"
+msgstr ""
+
+#: ../../guide/api_keys.rst:48 01620d7232c64e2bb1ab3657d878f0d0
+msgid "Varies by model/dataset"
+msgstr ""
+
+#: ../../guide/api_keys.rst:49 584f0531f3cc47938a35a305cb92f66f
+msgid "``agentic_tools`` (some models), model hosting features"
+msgstr ""
+
+#: ../../guide/api_keys.rst:51 c5c5d71daff345b39e0009c07d959a43
+msgid "**NCBI E-utilities**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:53 d48bc5674386434c9264cdfea89538e6
+msgid "``NCBI_API_KEY`` (environment variable)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:54 f60b2890c97644489ea50172fb9ba4f6
+msgid "PubMed, Nucleotide, Protein, and other NCBI database searches"
+msgstr ""
+
+#: ../../guide/api_keys.rst:55 ae0452ee355c4bbc94c7cd5c00cd3e5e
+msgid ""
+"Create a free NCBI account at https://www.ncbi.nlm.nih.gov/account/, then"
+" visit account settings to generate an API key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:56 90c4e3aecbf2418d9c36c7a54574e250
+msgid "10 requests/second with key vs 3 requests/second without key"
+msgstr ""
+
+#: ../../guide/api_keys.rst 1d6b602821c04052a7a14868e31ec47a
+#: 272583d1111b45d881884034be71588d b2443906251c4583ab8379f2d0ecc6e4
+msgid "Benefits"
+msgstr ""
+
+#: ../../guide/api_keys.rst:57 af04a50f7a014e8caa5e8177599365ac
+msgid "3x faster rate limit for literature and sequence searches"
+msgstr ""
+
+#: ../../guide/api_keys.rst:58 8ef443e9896e425aa13369329f8f96d0
+msgid "``pubmed``, ``ncbi_nucleotide``, ``pmc``"
+msgstr ""
+
+#: ../../guide/api_keys.rst a7a2a20ab93d44fcacb1d3837976a8c2
+#: d01b14ce41a444d593d5d87c094ce711
+msgid "Configuration"
+msgstr ""
+
+#: ../../guide/api_keys.rst:59 14616d4e2864450e9dd5b010769c4f1e
+msgid ""
+"Set ``NCBI_API_KEY=your_key`` - automatically used by all NCBI tools. "
+"Tools work without this key at reduced rate limits."
+msgstr ""
+
+#: ../../guide/api_keys.rst:61 6483bb6946d24bac88cd145fd347aa77
+msgid "**Semantic Scholar**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:63 a80e76b05a1348c9bdba2628c016555a
+msgid "``SEMANTIC_SCHOLAR_API_KEY`` (environment variable)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:64 baa9d718b3d64e578256ee9e37c09959
+msgid "Academic literature search with enhanced rate limits"
+msgstr ""
+
+#: ../../guide/api_keys.rst:65 53fe336ccb504a42bad61fa5c667e9d6
+msgid "Visit https://www.semanticscholar.org/product/api and request an API key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:66 18192f1e16024f4cb67e7d1d7b7156d1
+msgid "100 requests/second with key vs 1 request/second without key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:67 d366599b08e44d1cac26424fec6dac35
+msgid "100x faster rate limit for literature searches"
+msgstr ""
+
+#: ../../guide/api_keys.rst:68 823281c3afbb4d19b29a260990b3f698
+msgid "``semantic_scholar``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:69 8518e657a126449399cc1c2aa6f35e81
+msgid ""
+"Set ``SEMANTIC_SCHOLAR_API_KEY=your_key`` - automatically used. Tools "
+"work without this key at reduced rate limits."
+msgstr ""
+
+#: ../../guide/api_keys.rst:71 7be40f8968334fd49fd24533bbf7d97c
+msgid "**FDA OpenFDA**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:73 a08c3047b3834e0e8f6a9c9924b7ed89
+msgid "``FDA_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:74 148ba0244f3b4d6c9fbfff9893f516db
+msgid "Drug adverse events, drug labeling, device adverse events"
+msgstr ""
+
+#: ../../guide/api_keys.rst:75 0b2eec183f2d44e7873affc191c61e75
+msgid ""
+"Visit https://open.fda.gov/apis/authentication/ and sign up for a free "
+"API key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:76 bbd98aa6af7a4798b7e87318422bfbc8
+msgid "240 requests/minute with key vs 40 requests/minute without key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:77 6df81509f7634c07bb43ba72a1ac5d8e
+msgid "6x rate limit increase for drug safety and labeling queries"
+msgstr ""
+
+#: ../../guide/api_keys.rst:78 5dce01e8ded34a10a92ef1bb23a17c0a
+msgid "``fda_drug_adverse_event``, ``fda_drug_label``, ``adverse_event``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:80 cb27842a93ea46e8b131ca0533faadcb
+msgid "**DisGeNET**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:82 c9794bc73cf2458cb399b5cc1da8ebbc
+msgid "``DISGENET_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:83 e3b8001925fd4c678db1c5603c0f423e
+msgid "Gene-disease associations, variant-disease associations"
+msgstr ""
+
+#: ../../guide/api_keys.rst:84 22671c79e351460b8c59ab75ef70c18d
+msgid "Register at https://www.disgenet.org/ for free academic access"
+msgstr ""
+
+#: ../../guide/api_keys.rst:85 8501fdc0d1c04313a2d74dff0d9a45a6
+msgid "Required for API access"
+msgstr ""
+
+#: ../../guide/api_keys.rst:86 c866b78cedb6402d925e2a83e4965a87
+msgid "``disgenet``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:88 34500f6c646140d4b43294fb123de99f
+msgid "**OMIM (Online Mendelian Inheritance in Man)**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:90 e0768a50d1f344a3a1107806890aceb0
+msgid "``OMIM_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:91 bc22b81be42e486783528c5eac27fb77
+msgid ""
+"Genetic disorder information, clinical synopses, gene-phenotype "
+"relationships"
+msgstr ""
+
+#: ../../guide/api_keys.rst:92 cb46948f45b1424092e904ffc0a13d48
+msgid "Request access at https://www.omim.org/api (academic license required)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:93 ../../guide/api_keys.rst:109
+#: 0f5cee192cfc41e0bc62c05896ef02a5 911b18dec78a406d894efc46093805a2
+msgid "Specified in license agreement"
+msgstr ""
+
+#: ../../guide/api_keys.rst:94 d232d89f50364543b1671fb16eedfa68
+msgid "``omim``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:96 6940f9eb0bce4dfa85e81a44b12861cc
+msgid "**BioGRID**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:98 c4d492a3090b430a896dbc1ba53e0493
+msgid "``BIOGRID_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:99 85c5e4a374d246b08c975a7dff834cc2
+msgid "Protein-protein interaction data"
+msgstr ""
+
+#: ../../guide/api_keys.rst:100 677a739c35dd4ccbb72f0e3edad78647
+msgid "Register at https://thebiogrid.org/ and request API access"
+msgstr ""
+
+#: ../../guide/api_keys.rst:101 3a123324abbc4807b560dae71225605c
+msgid "Varies by license"
+msgstr ""
+
+#: ../../guide/api_keys.rst:102 bf2ee3dfc1284914a117afdc08b26417
+msgid "``ppi``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:104 185496651927425bb1b28757b4554aed
+msgid "**UMLS (Unified Medical Language System)**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:106 3b09f75e106841bc83c36e9fc9b2a49b
+msgid "``UMLS_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:107 babd7be668104db386b3290213457237
+msgid "Medical terminology, concept mapping, semantic relationships"
+msgstr ""
+
+#: ../../guide/api_keys.rst:108 624818d3ced9450d916f70cf4c0ef1d1
+msgid ""
+"Register at https://uts.nlm.nih.gov/uts/signup-login (requires UMLS "
+"license)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:110 dd14a71de922444c85a7cc0fe1033bdc
+msgid "``umls``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:113 fe622a958db545349deba5f43595a10c
+msgid "LLM Provider API Keys (For Agentic Tools)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:115 d05f9719c0014382ae61843a6f2d0995
+msgid ""
+"These API keys enable AI-powered tools that use large language models for"
+" reasoning and analysis:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:117 ae94e3d0f1b2473d9e6941983fbb1fbd
+msgid "**OpenAI (ChatGPT, GPT-4)**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:119 48f2d0eeb3d54a29bb1d860e48e36a3e
+msgid "``OPENAI_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst 47bfd6179b58423389a729ecd3df0841
+msgid "Base URL"
+msgstr ""
+
+#: ../../guide/api_keys.rst:120 6314cea10e7e4e0e824858c3f17b2f9a
+msgid "``OPENAI_BASE_URL`` (optional, default: ``https://api.openai.com/v1``)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:121 5d85b0b5de814f61bf2dfcdb8afe1b8a
+msgid "Agentic tools, summarization, complex reasoning tasks"
+msgstr ""
+
+#: ../../guide/api_keys.rst:122 1da943f4faca46748fa7d9a43b2a7026
+msgid "Visit https://platform.openai.com/api-keys and create a new API key"
+msgstr ""
+
+#: ../../guide/api_keys.rst a542229cfe564e9b88b919380b39c688
+#: d862a645080342cba17936096afed14a f7ae8a361c814f76b4be3f21ceecef52
+msgid "Cost"
+msgstr ""
+
+#: ../../guide/api_keys.rst:123 07b5aa094b8549f882274cb9a28c55d8
+msgid "Pay-per-use (varies by model)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:124 73eab30b007041599089ded126a4884b
+msgid "``agents``, ``output_summarization``, ``tool_discovery_agents``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:126 3dde3ade182843f080cbd59e1fecd795
+msgid "**Azure OpenAI**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:128 6079d01b0ac2403baff73c51c6d6df47
+msgid "``AZURE_OPENAI_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst 70816b9a15b94f56b822d93540560125
+msgid "Endpoint"
+msgstr ""
+
+#: ../../guide/api_keys.rst:129 3dff7e1da89f491399f6dad0db39297d
+msgid ""
+"``AZURE_OPENAI_ENDPOINT`` (required, e.g., ``https://your-"
+"endpoint.openai.azure.com``)"
+msgstr ""
+
+#: ../../guide/api_keys.rst 2715b4411f7c4d2d925348e4063b06cc
+msgid "API Version"
+msgstr ""
+
+#: ../../guide/api_keys.rst:130 c099a86115bb4bf598a0716802ba9b6f
+msgid "``AZURE_OPENAI_API_VERSION`` (required, e.g., ``2024-02-15-preview``)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:131 095249ada96c4fa0b770befb9158370d
+msgid "Alternative to OpenAI for enterprise deployments"
+msgstr ""
+
+#: ../../guide/api_keys.rst:132 6258b312030b4b429b46783dbc884bcc
+msgid "Azure subscription required. Set up Azure OpenAI service in Azure Portal."
+msgstr ""
+
+#: ../../guide/api_keys.rst:133 c0611ea233874e6d85901255f2b73fb0
+msgid "Based on Azure pricing"
+msgstr ""
+
+#: ../../guide/api_keys.rst:134 243a52c0d9cd49d892b57c14f962f295
+msgid "Same as OpenAI"
+msgstr ""
+
+#: ../../guide/api_keys.rst:136 f2a20774d8a846efaf5f1c5500f53823
+msgid "**Google Gemini**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:138 9008830e9a4047d8ae1277b8f1ecc70c
+msgid "``GEMINI_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst 65546f03de3642639a8bac34934547e1
+msgid "Model ID"
+msgstr ""
+
+#: ../../guide/api_keys.rst:139 40bb4ff6da6b479ca22b83f2690021a5
+msgid "``GEMINI_MODEL_ID`` (optional, default: ``gemini-2.0-flash``)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:140 bd55feb1a89d49d6890029276d65824f
+msgid "Agentic tools using Google's Gemini models"
+msgstr ""
+
+#: ../../guide/api_keys.rst:141 d46e012836984263961dace8977f0d82
+msgid "Visit https://ai.google.dev/ and get an API key (free tier available)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:142 efa3eeaa170d448bb928e2206ab4458e
+msgid "60 requests/minute (free tier), higher with paid tiers"
+msgstr ""
+
+#: ../../guide/api_keys.rst:143 7aa192a01e4b4384b370257498acfc7f
+msgid "``agents``, ``output_summarization``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:145 e4d096f85cbe4c62af7effebe1a9cd30
+msgid "**VLLM (Self-Hosted LLMs)**"
+msgstr ""
+
+#: ../../guide/api_keys.rst 09b03262dc8d4fa9a97208c455f19a85
+msgid "Server URL"
+msgstr ""
+
+#: ../../guide/api_keys.rst:147 62839ec1a6994f3c8c585324ef55c633
+msgid "``VLLM_SERVER_URL``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:148 5d95ab879e80457283c1b5db39fc445a
+msgid "Self-hosted open-source LLMs"
+msgstr ""
+
+#: ../../guide/api_keys.rst 273c38a651fb443c918b896af899d88f
+#: 36e91e0823c94aeaaef27d7cd2cb253b 3c7db5f46ab741fa83e290fa581ffe73
+#: 7d55e24a3b8f4b96adb2442aad796ee1 9140ee1909334ec49429781e465a2b4d
+#: a93ae271716b4b1eb5064b85ab886d90 bb37d49e9fdd4e34a5ab4d1e213f392c
+#: ed89e465d4ee488fbc7879146e5ff899 eff2c58e477e45f898c592792a9ea1ce
+msgid "How to Setup"
+msgstr ""
+
+#: ../../guide/api_keys.rst:149 bdc6edb84b514c16b57bbc8fd4173b4c
+msgid "Deploy your own VLLM server (see https://docs.vllm.ai/)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:150 49c46b69f8e84a1eaac10979918811a1
+msgid "Self-hosted (free, but requires GPU infrastructure)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:151 3ca49e6bc9c549219364b78e8cc02a02
+msgid "``agents`` (when configured)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:154 2b09d544fe7247bfb8f7ddb6f4d34cab
+msgid "MCP Server Configurations"
+msgstr ""
+
+#: ../../guide/api_keys.rst:156 2ccfa75d91764526aa76cebd6a4a27c4
+msgid ""
+"These settings configure connections to external Model Context Protocol "
+"(MCP) servers:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:158 fb1f2f6bfd1a4a238e1baec716bbab98
+msgid "**Expert Feedback System**"
+msgstr ""
+
+#: ../../guide/api_keys.rst 3c31adb917b140a2a9e8385bf8b96274
+msgid "URL"
+msgstr ""
+
+#: ../../guide/api_keys.rst:160 a1f6759e4423470ba542c79e9517a90b
+msgid "``EXPERT_FEEDBACK_MCP_SERVER_URL``"
+msgstr ""
+
+#: ../../guide/api_keys.rst 1c0984e3e53b4053bb2febe5b2d55238
+#: 7d6880a8b61b4ec99571f503d4dd8089
+msgid "Default"
+msgstr ""
+
+#: ../../guide/api_keys.rst:161 1e88fef0fa8a470a80e188620e02e872
+msgid "``http://localhost:9877``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:162 aade9636391e4f7890dee1251e04bef2
+msgid "Human-in-the-loop consultation and expert feedback workflows"
+msgstr ""
+
+#: ../../guide/api_keys.rst:163 38f331123a704d37b7867f39dcaecf1c
+msgid "Run the expert feedback server locally or deploy to a remote server"
+msgstr ""
+
+#: ../../guide/api_keys.rst:164 abcc1c6952af4609ab1b2982cfe3b6aa
+msgid "``mcp_auto_loader_expert_feedback``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:166 8ca3817fcbd44157a6fa4008ed9936c0
+msgid "**TxAgent MCP Server**"
+msgstr ""
+
+#: ../../guide/api_keys.rst 48917b93927a4e44be70a5bd23f9151a
+#: 4cb6a30c17c1479596c85363b4628d76 540ebad7ea654a6e97db4c06074b513b
+msgid "Host"
+msgstr ""
+
+#: ../../guide/api_keys.rst:168 1aa7e1554dc94c43af885b65d4b349d0
+msgid "``TXAGENT_MCP_SERVER_HOST``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:169 2c14268db8494e3a91c71ba7fb47acac
+msgid "Transcriptomics analysis and gene expression workflows"
+msgstr ""
+
+#: ../../guide/api_keys.rst:170 dca8cc3cf6774945a1a8d08a68923ec4
+msgid "Deploy the TxAgent MCP server (see TxAgent documentation)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:171 351c72aadf2a4cc88c3780ff5626f62b
+msgid "``mcp_auto_loader_txagent``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:173 31761bbfdc2940458b441a285f981793
+msgid "**Boltz Structure Prediction**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:175 ce4f5a239d244e1a895c910b3edc80c0
+msgid "``BOLTZ_MCP_SERVER_HOST``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:176 1a867e243e73471791679f24a51bcfee
+msgid "Boltz protein structure prediction via MCP"
+msgstr ""
+
+#: ../../guide/api_keys.rst:177 3a84280b355f407caf89fa72d74b8961
+msgid "Deploy the Boltz MCP server"
+msgstr ""
+
+#: ../../guide/api_keys.rst:178 f52fbbd5e3bd4749834225c6d4918a2e
+msgid "``mcp_auto_loader_boltz``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:180 98669fd6da7c4140a7cc0828be693a5c
+msgid "**USPTO Patent Downloader**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:182 a8fa98f4063942fabb5f6442c83b9012
+msgid "``USPTO_MCP_SERVER_HOST``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:183 054fbebc944b44d29f9582fb18af2c4f
+msgid "Bulk patent document downloads"
+msgstr ""
+
+#: ../../guide/api_keys.rst:184 b2720784520c46f98bab67c549f43b60
+msgid "Deploy the USPTO MCP server"
+msgstr ""
+
+#: ../../guide/api_keys.rst:185 e982dde949a441ccb759a9731fb606c8
+msgid "``mcp_auto_loader_uspto_downloader``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:188 fc458dad07e1416ab5eb239b21075bfa
+msgid "Data Path Configurations"
+msgstr ""
+
+#: ../../guide/api_keys.rst:190 b9536b8dfe1b48efbf064b38c2a28ed7
+msgid ""
+"These environment variables specify paths to local data stores for "
+"specific tools:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:192 6c2fd2478ddc4bb8b9f042960410560b
+msgid "**COMPASS Model**"
+msgstr ""
+
+#: ../../guide/api_keys.rst 1533dad3f416498295d65ea54deab891
+#: 1a1b8a4ac2b6450793b00310e277116d 2dee2a814c7046bc8453460c21511351
+#: e488f069d6ff45d8850145202b0bac6c
+msgid "Path"
+msgstr ""
+
+#: ../../guide/api_keys.rst:194 31814d8162784968ac0b3f4003665459
+msgid "``COMPASS_MODEL_PATH``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:195 0a5e8d21563e474ab42b3c4e33218e2d
+msgid "Immune cell type annotation and COMPASS model inference"
+msgstr ""
+
+#: ../../guide/api_keys.rst:196 d778d783f88e4382b1f1b8bb8d5c01e7
+msgid "Download COMPASS model files and set path to model directory"
+msgstr ""
+
+#: ../../guide/api_keys.rst:198 0ddabc2a887c4e89a623e7bc6b76e6d2
+msgid "**Pinnacle Embeddings**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:200 0ca3c9867b0d4ee288b2c54e50b486df
+msgid "``PINNACLE_DATA_PATH``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:201 f72f7e6d370e40ab8f106e569654f4f2
+msgid "Protein-protein interaction embeddings"
+msgstr ""
+
+#: ../../guide/api_keys.rst:202 bb0e42b29a444b14aae8f8ec83961622
+msgid "Download Pinnacle embedding data and set path to data directory"
+msgstr ""
+
+#: ../../guide/api_keys.rst:204 3dec9f23be21414b8157f7d3fba99c62
+msgid "**Transcriptformer Data**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:206 d38653cdc64e4b9db84f69953e8f4877
+msgid "``TRANSCRIPTFORMER_DATA_PATH``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:207 530db5d6998e47238ffb43cfa844a021
+msgid "``/root/PrismDB``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:208 53717ce7d383498bb8e01c86ef1f6175
+msgid "Transcriptomics embeddings and predictions"
+msgstr ""
+
+#: ../../guide/api_keys.rst:209 1b584d87ac464b29b10e5197dd6e16d1
+msgid "Download Transcriptformer data and set path"
+msgstr ""
+
+#: ../../guide/api_keys.rst:211 b5ed8dca37264bad8104294d4964c77b
+msgid "**DepMap Data**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:213 17febbd6c9e84165a272ac41c804eec6
+msgid "``DEPMAP_DATA_PATH``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:214 778c95de9fe54626856d0ebb8e36fc7d
+msgid "Cancer dependency data analysis"
+msgstr ""
+
+#: ../../guide/api_keys.rst:215 6b50f7f5f1fc450786aa99e0394683f3
+msgid "Download DepMap 24Q2 data release and set path"
+msgstr ""
+
+#: ../../guide/api_keys.rst:218 2e80e2beacc449eb9e705dd48c367d6e
+msgid "Configuration Methods"
+msgstr ""
+
+#: ../../guide/api_keys.rst:220 6afff1b8fcdd46fcbeabdae8842af0ba
+msgid "Choose the method that best fits your use case:"
+msgstr ""
+
+#: ../../guide/api_keys.rst 12e3ec40679c40319701c221361ed326
+msgid "MCP Configuration"
+msgstr ""
+
+#: ../../guide/api_keys.rst:226 fef86b674bd9475e9ab8247b0179ef84
+msgid "**For AI agents using Model Context Protocol (Claude, Cursor, etc.)**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:228 aa1bff4acfaf486a9632bf0c4fb5299f
+msgid "Add API keys to your MCP configuration file's ``env`` section:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:249 ef1e2c46bdb6408e94d5dc5c79ac383b
+msgid "**MCP config file locations:**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:251 1c3d94dd07eb4cdd826e8a5d9ca08218
+msgid ""
+"**Claude Desktop**: ``~/Library/Application "
+"Support/Claude/claude_desktop_config.json`` (macOS) or "
+"``%APPDATA%\\Claude\\claude_desktop_config.json`` (Windows)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:252 f7666300760a44ce8c848717504912fc
+msgid "**Cursor**: ``.cursor/mcp_config.json`` in your project"
+msgstr ""
+
+#: ../../guide/api_keys.rst:253 2dc3644e9a224855b0b1bbfd56bc681b
+msgid "**Other agents**: Check your agent's documentation"
+msgstr ""
+
+#: ../../guide/api_keys.rst ../../guide/api_keys.rst:392
+#: 33255b87e3ec4e5088aa8e06b75cd4f1 ce533062faba49dca0449f92be91c970
+msgid "Environment Variables"
+msgstr ""
+
+#: ../../guide/api_keys.rst:257 a8abcb29f7614d568db470dee3ca59f2
+msgid "**For Python scripts and command-line usage**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:259 4859caf3c5de41b98a7a385d8e792c5e
+msgid "Set environment variables in your shell:"
+msgstr ""
+
+#: ../../guide/api_keys.rst 4e564f38dddd49a183539e79659f78dd
+msgid ".env File"
+msgstr ""
+
+#: ../../guide/api_keys.rst:278 f0042e007c19423f81a2cf8d51eb97ee
+msgid "**For Python projects with persistent configuration**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:280 da7da8765f2543f0b453af85325675cd
+msgid "Create a ``.env`` file in your project root:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:283 e4964da6a5bd4faaad28f686de0f42bd
+msgid ""
+"**Use the template**: Copy ``.env.template`` from the project root as a "
+"starting point. It includes all available environment variables with "
+"documentation."
+msgstr ""
+
+#: ../../guide/api_keys.rst:290 e856fc068ead4c679b5bf353952f968c
+msgid "Create a ``.env`` file manually:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:330 4edea08e170444f8aabb44ff62161354
+msgid "Load the ``.env`` file in your Python code:"
+msgstr ""
+
+#: ../../guide/api_keys.rst 3a11c32e89ac427d99e8de47b3ddca2e
+msgid "Python Code"
+msgstr ""
+
+#: ../../guide/api_keys.rst:343 5efb5f6ce10f404399a0a73803eab1ca
+msgid "**For setting API keys programmatically in Python**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:345 9a45485355da4c6e80070553aebcb9a1
+msgid "Set environment variables in your Python code:"
+msgstr ""
+
+#: ../../guide/api_keys.rst 60179eff15224585bf02a36ff9bc2bd3
+msgid "Docker"
+msgstr ""
+
+#: ../../guide/api_keys.rst:362 6b49d68c1fa94cb19da1e8c46e8826d9
+msgid "**For containerized deployments**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:364 bef55944e23b48bab89f12d083578c87
+msgid "Pass environment variables to Docker:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:373 00a7a21675864fda9d6d98682fb11056
+msgid "Or use a ``.env`` file with Docker Compose:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:387 55e0f68e40cb457cbc5ce957afe55963
+msgid "Agentic Tool Configuration"
+msgstr ""
+
+#: ../../guide/api_keys.rst:389 fa22c7332a7d4b29b789590a12e1077d
+msgid "For tools that use LLMs, additional configuration options are available:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:414 2ac2356880244e4ebeb829744e23edbd
+msgid "Configuration Modes"
+msgstr ""
+
+#: ../../guide/api_keys.rst:416 123bfcf31a6c44b1879a64945eb039d4
+msgid "**default**: Use tool-specific configuration from JSON files"
+msgstr ""
+
+#: ../../guide/api_keys.rst:417 5cd660a9f82a4799b8c8b2144d14704b
+msgid "**env_override**: Environment variables override tool configuration"
+msgstr ""
+
+#: ../../guide/api_keys.rst:418 9902edd640d745a0b52dc3f56dce74db
+msgid "**fallback**: Try multiple providers in sequence if one fails"
+msgstr ""
+
+#: ../../guide/api_keys.rst:421 afe9425172b34b63b5c44d6af3fa1347
+msgid "Verifying API Keys"
+msgstr ""
+
+#: ../../guide/api_keys.rst:423 9986d000097e47b6b26b6cf35b55a64c
+msgid "Test your API key configuration:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:460 796111e6b3144547b83308c1599f5c3d
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/api_keys.rst:463 506c108995fd4fc78513142d3d36daf1
+msgid "Common Issues"
+msgstr ""
+
+#: ../../guide/api_keys.rst:465 0da53aaeacba44abb58fb36ce7f24821
+msgid "**\"API key required\" error**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:467 76cd7ff52bb244d6937bc5db4984d96a
+msgid "Verify the environment variable is set: ``echo $NVIDIA_API_KEY``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:468 ca414a1218a64ae5b99cb0b0357f19bc
+msgid "Check for typos in variable names"
+msgstr ""
+
+#: ../../guide/api_keys.rst:469 68e4ef83856547ee9b36540130dd25ea
+msgid "Ensure the ``.env`` file is in the correct location"
+msgstr ""
+
+#: ../../guide/api_keys.rst:470 a4be3b2df1b94bc5b956bb53ef45b563
+msgid "Reload environment: ``source .env`` or restart your shell"
+msgstr ""
+
+#: ../../guide/api_keys.rst:472 aafa4cd5f5ff416ea813223cc4c1a962
+msgid "**\"Invalid API key\" error**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:474 21b004b1d94a4ea08dd115a1d58bdd98
+msgid "Verify the key is correct and not expired"
+msgstr ""
+
+#: ../../guide/api_keys.rst:475 19fb475b81304363a56f4766faae7d8a
+msgid "Check if the key has necessary permissions"
+msgstr ""
+
+#: ../../guide/api_keys.rst:476 a2f90dfcff384e38aa08a8d0e6f104db
+msgid "Some APIs require activation after registration"
+msgstr ""
+
+#: ../../guide/api_keys.rst:478 f86072b627614fcaaf40726b204f1179
+msgid "**\"Rate limit exceeded\" error**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:480 8cbb49bf25cf45f0b13c8d56f63678d3
+msgid "Wait before retrying (most APIs have time-based limits)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:481 1ca28117a4da43d2b730a34c084a125e
+msgid "Consider getting an API key for higher limits"
+msgstr ""
+
+#: ../../guide/api_keys.rst:482 ../../guide/api_keys.rst:543
+#: 2a5f422935c046e59663614ebeebd227 7dae43489bd842b98ce35f9ec0515a72
+msgid "Use batch operations when available"
+msgstr ""
+
+#: ../../guide/api_keys.rst:484 3cec6a2b610a46adbb3f5492fe8a5c83
+msgid "**Tools not loading**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:486 c8fb5bdbbfe64418ae79cf98826a2b18
+msgid "Check tool category is included in load_tools()"
+msgstr ""
+
+#: ../../guide/api_keys.rst:487 a33626ff0d05413b9840598897c3b45c
+msgid "Verify tool configuration files exist"
+msgstr ""
+
+#: ../../guide/api_keys.rst:488 aa0a612c00e34f2aa04a6e615401acd1
+msgid "Check logs for specific error messages"
+msgstr ""
+
+#: ../../guide/api_keys.rst:491 9ec5aa4827604e1aa1a001bd98c16c9c
+msgid "Rate Limits Summary"
+msgstr ""
+
+#: ../../guide/api_keys.rst:497 a9004dfd32e84e3cb48025c3aea29b60
+msgid "Service"
+msgstr ""
+
+#: ../../guide/api_keys.rst:498 8ab1155de8874c189b86c93fa7442b25
+msgid "Without API Key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:499 c3935225bbbf428eaa08e0042eb70c60
+msgid "With API Key"
+msgstr ""
+
+#: ../../guide/api_keys.rst:500 18c292955c974b0fa1dfd0bb578de47c
+msgid "Notes"
+msgstr ""
+
+#: ../../guide/api_keys.rst:501 9b4efca220cc47db9ec6111c435079c2
+msgid "NVIDIA NIM"
+msgstr ""
+
+#: ../../guide/api_keys.rst:502 ../../guide/api_keys.rst:518
+#: 8cce930416f0481687992da77844ef9f e7529957b0fd48cf8c8f657b47dc20a9
+msgid "Not available"
+msgstr ""
+
+#: ../../guide/api_keys.rst:503 ../../guide/api_keys.rst:514
+#: 94101e866d6246ab86fbd6e4cbac32fb c9c974889354400180101d76fd0bc9f6
+msgid "40 req/min"
+msgstr ""
+
+#: ../../guide/api_keys.rst:504 ../../guide/api_keys.rst:520
+#: 896e1f9789d342108c0c3cfe20c2adf6 a273144bd3c44cc1a0a30a92418b1c5a
+msgid "Required"
+msgstr ""
+
+#: ../../guide/api_keys.rst:505 d306471f1fe541619cd87c5347d3cd0b
+msgid "NCBI E-utilities"
+msgstr ""
+
+#: ../../guide/api_keys.rst:506 6f5cab5175784fa0b705affe559a1821
+msgid "3 req/sec"
+msgstr ""
+
+#: ../../guide/api_keys.rst:507 eb9b11843ad2484792b3fbba09b4cc66
+msgid "10 req/sec"
+msgstr ""
+
+#: ../../guide/api_keys.rst:508 ../../guide/api_keys.rst:512
+#: 6f828d07912b45738460cc18e91a6c4a d1ef749f326e4fe7a6760a10c2147e7d
+msgid "Optional (env var only)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:509 66e792229a8b46129ac28bf8c3cdba04
+msgid "Semantic Scholar"
+msgstr ""
+
+#: ../../guide/api_keys.rst:510 79264146fec8496c8e0164396c2b60d1
+msgid "1 req/sec"
+msgstr ""
+
+#: ../../guide/api_keys.rst:511 dead977b6cdc41f288833601a4895d47
+msgid "100 req/sec"
+msgstr ""
+
+#: ../../guide/api_keys.rst:513 044bd00c0df14033aba47abab3987f26
+msgid "OpenFDA"
+msgstr ""
+
+#: ../../guide/api_keys.rst:515 f7fa224696a8430a8c6b3385cafbedf1
+msgid "240 req/min"
+msgstr ""
+
+#: ../../guide/api_keys.rst:516 093b6bedfb954a9fb327f1443eec207c
+msgid "Recommended (env var)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:517 0825032481374ffcbd22c29428ab0756
+msgid "DisGeNET"
+msgstr ""
+
+#: ../../guide/api_keys.rst:519 6ab183147ce94d4d9817e51a99f9e7bf
+msgid "As per license"
+msgstr ""
+
+#: ../../guide/api_keys.rst:523 67b596719552434692ce964f95774f96
+msgid "Best Practices"
+msgstr ""
+
+#: ../../guide/api_keys.rst:525 bcf79ab14b2a4a9d8d2d8dd979947c4b
+msgid "**Store API Keys Securely**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:527 b7fab758db4f413387483c447521d9dc
+msgid "Never commit API keys to version control"
+msgstr ""
+
+#: ../../guide/api_keys.rst:528 e48902ecdc93447c82ac489cb0e0a50f
+msgid "Add ``.env`` to ``.gitignore``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:529 ee74b10784b94253bd3c1a691868437d
+msgid "Use environment variables in production"
+msgstr ""
+
+#: ../../guide/api_keys.rst:530 8fc5a6de98384ce0bbbc7268437306e8
+msgid "Rotate keys periodically"
+msgstr ""
+
+#: ../../guide/api_keys.rst:532 01876a5f46c34c54a51dae7e85bc9b5d
+msgid "**Use .env Files for Development**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:534 e332ae75d63c46e78b6dde5ff7c917b1
+msgid "Use the provided ``.env.template`` at project root as a starting point"
+msgstr ""
+
+#: ../../guide/api_keys.rst:535 fffefb6b94cb436ba70dedbb83911e0e
+msgid "Each developer maintains their own ``.env``"
+msgstr ""
+
+#: ../../guide/api_keys.rst:536 08f9eea6324a4c778c97776aeddb9c01
+msgid "Never commit ``.env`` to version control (add to ``.gitignore``)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:537 722218e653f64ea99c61a6f734cda1ba
+msgid "Document which keys are required vs optional in the template"
+msgstr ""
+
+#: ../../guide/api_keys.rst:539 6f9b6f95554a47f7bab809c06283b6d8
+msgid "**Implement Rate Limiting**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:541 59a126bc66b94357ae9b71ceb17fb7b1
+msgid "ToolUniverse handles rate limiting internally for most APIs"
+msgstr ""
+
+#: ../../guide/api_keys.rst:542 ea1c2ee1acca43cc8c0047eb34a6e726
+msgid "Be mindful of daily/monthly quotas"
+msgstr ""
+
+#: ../../guide/api_keys.rst:545 461a7670b9004766a22d5bc019627a21
+msgid "**Monitor Usage**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:547 55639172026d4cccbc5256128a3e5a61
+msgid "Track API usage in provider dashboards"
+msgstr ""
+
+#: ../../guide/api_keys.rst:548 245de7ee0c534834947be5dcf2a989eb
+msgid "Set up billing alerts for paid APIs"
+msgstr ""
+
+#: ../../guide/api_keys.rst:549 172de96aae274928af6e375a5f99dd0a
+msgid "Cache responses when appropriate"
+msgstr ""
+
+#: ../../guide/api_keys.rst:551 4f49be9ed1d049338d88a913f9a85fc1
+msgid "**Prioritize Key Types**"
+msgstr ""
+
+#: ../../guide/api_keys.rst:553 d128631e465546788041809a09c98f15
+msgid "Start with required keys for core functionality"
+msgstr ""
+
+#: ../../guide/api_keys.rst:554 3a0be52e8fe8455fad7524a9cc2a15aa
+msgid "Add recommended keys based on usage patterns"
+msgstr ""
+
+#: ../../guide/api_keys.rst:555 cc51fd2a17a4400c935ea389058f9ec8
+msgid "Only configure LLM providers if using agentic tools"
+msgstr ""
+
+#: ../../guide/api_keys.rst:558 f7c78a62e21a4dcea4294bbd0f34ae6b
+msgid "Getting Help"
+msgstr ""
+
+#: ../../guide/api_keys.rst:560 3bb36589394d466fa2020488a6adf590
+msgid "If you encounter issues with API keys or authentication:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:562 87e13a1b4d7e4cd584634de1d466acae
+msgid ""
+"Check the `Troubleshooting Guide "
+"<https://tooluniverse.readthedocs.io/help/troubleshooting>`_"
+msgstr ""
+
+#: ../../guide/api_keys.rst:563 45513837d5f142b2b52f6b03784bfe98
+msgid "Review the `FAQ <https://tooluniverse.readthedocs.io/faq>`_"
+msgstr ""
+
+#: ../../guide/api_keys.rst:564 af501b0321ef4b2191e89de5e03b0e77
+msgid ""
+"Search `GitHub Issues <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
+msgstr ""
+
+#: ../../guide/api_keys.rst:565 93b771721fbf4664bab8e4009da8ca72
+msgid "Open a new issue with:"
+msgstr ""
+
+#: ../../guide/api_keys.rst:567 3ac06b5c2ba54644a37f7ee4971f3925
+msgid "Tool category and specific tool name"
+msgstr ""
+
+#: ../../guide/api_keys.rst:568 43c569c9617e45f6862940cb0781768a
+msgid "Error messages (redact actual API keys!)"
+msgstr ""
+
+#: ../../guide/api_keys.rst:569 d52dce42a9324d3a8342da4b1c28c6d0
+msgid "Your configuration method"
+msgstr ""
+
+#: ../../guide/api_keys.rst:570 fa6b348df80b4640a8a72569299bd982
+msgid "Python and ToolUniverse versions"
+msgstr ""
+
+#: ../../guide/api_keys.rst:573 2d603d513d0441739feeeed803991298
+msgid "See Also"
+msgstr ""
+
+#: ../../guide/api_keys.rst:575 2c2f6351f3934f5f8a0bdc987dce2fe8
+msgid ":doc:`building_ai_scientists/index` - AI agent platform setup"
+msgstr ""
+
+#: ../../guide/api_keys.rst:576 10c05b1c2952410fb9c0eaec5bf3b292
+msgid ":doc:`hooks/hook_configuration` - Advanced hook configuration"
+msgstr ""
+

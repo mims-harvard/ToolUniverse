@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bioimage_archive_tools.rst:10 68afbddc8da14f17a59ff388ed03c1bb
+msgid "Bioimage Archive Tools"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:12 659a90393c8c40a6952367f86c5f5d61
+msgid ""
+"**Configuration File**: ``bioimage_archive_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:16 75fbcfd79a7b4e90898b459a2aa7086d
+msgid ""
+"This page contains all tools defined in the "
+"``bioimage_archive_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:19 3a6de220f7224a889d593e1e21bc9b59
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:22 d57fff6491284e7082d449421d3b1a89
+msgid "**BioImageArchive_get_study** (Type: BioImageArchiveTool)"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:24 d9b9828f9a6f42089ff7851107128a1d
+msgid ""
+"Get detailed information about a specific BioImage Archive study by "
+"accession number. Returns com..."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst 8d1eea9dbdbf4f0793a2b9f8e4fca3a6
+msgid "BioImageArchive_get_study tool specification"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:28
+#: ../../tools/bioimage_archive_tools.rst:59
+#: ../../tools/bioimage_archive_tools.rst:93 1866556008364450ac1c7198cfcbea47
+#: 482d575173f347e8b5abb5b5e428a2d7 e0d752c5ca4e47c3b016a2e55e8e9216
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:30 64ae3ec3ef9c42719a0693901e74471f
+msgid "**Name**: ``BioImageArchive_get_study``"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:31
+#: ../../tools/bioimage_archive_tools.rst:62
+#: ../../tools/bioimage_archive_tools.rst:96 3875ce1171b14118a8725497ef09d323
+#: 9ca0a62b2da84d65b4931906c694ad99 f0c9484ab972477885e2ef901cfbaa4a
+msgid "**Type**: ``BioImageArchiveTool``"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:32 4f6bd6be27894e118819b91e12c619bf
+msgid ""
+"**Description**: Get detailed information about a specific BioImage "
+"Archive study by accession number. Returns comprehensive metadata "
+"including title, description, imaging methods, organism, and file "
+"information. Example: 'S-BIAD634' returns an annotated fluorescence image"
+" dataset."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:34
+#: ../../tools/bioimage_archive_tools.rst:65
+#: ../../tools/bioimage_archive_tools.rst:99 392d7fe0e68044ae98be9af221fe5eb9
+#: a6ea8bb121604f5c85b5d407dfac9ab5 cc8e39dacd7047238fb31a2accb89d42
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:36 23b26c18e61d4bb9a2092666c22e7585
+msgid ""
+"``accession`` (string) (required) BioImage Archive study accession "
+"number. Format: S-BIAD#### or S-BSST#### or S-EPMC#######. Examples: "
+"'S-BIAD634', 'S-BIAD928'."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:39
+#: ../../tools/bioimage_archive_tools.rst:73
+#: ../../tools/bioimage_archive_tools.rst:110 7c27332f26c0453095bc4b619ab53897
+#: b15a383477ec4692969207d06312fa22 f449192a4dbf4b789db78cc8a5e8bec9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:53 3eec89e61815495988044f43deb7c44c
+msgid "**BioImageArchive_search_bioimages** (Type: BioImageArchiveTool)"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:55 10fab3e50ed7461d97cd4a2ae26711a1
+msgid ""
+"Search the BioImage Archive specifically for biological image datasets "
+"(BioImages collection). Th..."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst c8f873846154477a932664a3b65d5acb
+msgid "BioImageArchive_search_bioimages tool specification"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:61 9de33d1a47f94e418736bd588cf8c733
+msgid "**Name**: ``BioImageArchive_search_bioimages``"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:63 f95fd08068aa4d53b3d15dac5799800e
+msgid ""
+"**Description**: Search the BioImage Archive specifically for biological "
+"image datasets (BioImages collection). This targets the BioImages-"
+"specific collection at EBI, returning imaging studies with microscopy-"
+"specific metadata. Example: 'cell division' finds imaging datasets of "
+"cell division processes."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:67 2ce69ced6f404e8794162f3336a90dbf
+msgid ""
+"``query`` (string) (required) Search query for biological imaging data. "
+"Examples: 'cell division', 'neuron morphology', 'tissue section', 'live "
+"cell imaging'."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:70
+#: ../../tools/bioimage_archive_tools.rst:104 c5b21a28b60f4344aef88c462c84887f
+#: d3b1437e3dc74c2f839faf5ba2fa25e8
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results per page. "
+"Default: 10. Max: 100."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:87 d113cf3882224e0aae38bec11d6a2af2
+msgid "**BioImageArchive_search_studies** (Type: BioImageArchiveTool)"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:89 721e134564fa484dbcca72460973afdc
+msgid ""
+"Search the BioImage Archive (EBI BioStudies) for biological imaging "
+"datasets. The BioImage Archiv..."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst c34d5552db924a31b8c4da379de2df43
+msgid "BioImageArchive_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:95 a6414195ba7d4a52a043ffb67d840516
+msgid "**Name**: ``BioImageArchive_search_studies``"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:97 f8f2326fe225484583478b3539857763
+msgid ""
+"**Description**: Search the BioImage Archive (EBI BioStudies) for "
+"biological imaging datasets. The BioImage Archive hosts open microscopy, "
+"imaging, and visualization data from life sciences research. Search by "
+"imaging modality (cryo-EM, fluorescence, confocal), organism, technique, "
+"or scientific topic. Returns study accessions, titles, and metadata. "
+"Example: 'fluorescence microscopy cell' finds fluorescence imaging "
+"studies."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:101 a58d306c81414aefb478307afe9c5bfc
+msgid ""
+"``query`` (string) (required) Search query - imaging modality, organism, "
+"technique, or topic. Examples: 'cryo-EM', 'fluorescence microscopy', "
+"'cell segmentation', 'brain imaging', 'protein localization'."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:107 ac95341b226a487e8e3567ebd0eedcb0
+msgid "``page`` (integer, null) (optional) Page number (1-indexed). Default: 1."
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:124 cda9b7c5b4ea4c45a67f3f14973cefee
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:126 50dd5f1f43a84eb9bbeaeb4f30e09a78
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bioimage_archive_tools.rst:127 26190ce1826d44be9d5eede7ae8280a2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

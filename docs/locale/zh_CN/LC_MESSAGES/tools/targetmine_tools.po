@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/targetmine_tools.rst:10 42582fbc7d8143bc8039131dd6d2a6e6
+msgid "Targetmine Tools"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:12 b41ec2f557c7497ca5f291e1d1cf7f9d
+msgid ""
+"**Configuration File**: ``targetmine_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:16 ddcfcfae41c84bd9a0d4d2d0317d493f
+msgid ""
+"This page contains all tools defined in the ``targetmine_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:19 9fe30eb6926e44d5894871da29d31ec6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:22 94857adfd94a458eb39280c85050e383
+msgid "**TargetMine_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:24 12fd40f96d3a4fbfb09b0c922f4fbadb
+msgid ""
+"Search TargetMine, the InterMine data warehouse focused on drug target "
+"discovery and prioritizati..."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst 90ee5be2000242ca9904a637ef86444d
+msgid "TargetMine_search tool specification"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:28 ../../tools/targetmine_tools.rst:68
+#: 662c119599b74c3593a42c2e3110721b ce1566ece81c44c9930f09dcc57fc7a9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:30 0a897f953ff04aa0ae53fb54606931ad
+msgid "**Name**: ``TargetMine_search``"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:31 ../../tools/targetmine_tools.rst:71
+#: 552732a10a5245f6996201d02cd7315e 9341e4deee7947d3835d6132cf46b063
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:32 361ba18521f44886af7bb4ee28f8521b
+msgid ""
+"**Description**: Search TargetMine, the InterMine data warehouse focused "
+"on drug target discovery and prioritization. TargetMine integrates data "
+"from UniProt, PDB, ChEMBL, Reactome, KEGG, DrugBank, TTD, and clinical "
+"trials databases. Searches across genes, proteins, pathways, disease "
+"terms, drugs, and biomarkers. Use this to find drug targets, investigate "
+"target-disease associations, and explore chemical-genomics data. Filter "
+"by facet\\_Category for specific entity types (e.g., 'Gene', 'Protein', "
+"'Pathway', 'DiseaseTerm', 'IPFBiomarker', 'IPFTrial')."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:34 ../../tools/targetmine_tools.rst:74
+#: a64425c0d7004105aecacb564b4c638b ecfdc068ad224f43b23ae9d43b769f02
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:36 743ef703612a4a39bbc4233c72510aae
+msgid ""
+"``q`` (string) (required) Search query: gene symbol (e.g., 'TP53', "
+"'EGFR', 'BRCA1'), protein name, drug name, disease term, or free text."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:39 ../../tools/targetmine_tools.rst:79
+#: 093abe509a5b462ebb8c17665b8fd092 4849e80ff5204e69bcd3af937450582e
+msgid "``size`` (integer) (optional) Number of results to return (default: 10)."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:42 ee442ad4f2f444168a3599a7f25918a4
+msgid "``format`` (string) (optional) Response format. Must be 'json'."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:45 f56264ce3c294441a1a112e2dbb0c6f1
+msgid ""
+"``facet_Category`` (string) (optional) Filter by entity category. "
+"Options: 'Gene', 'Protein', 'Pathway', 'DiseaseTerm', 'DiseaseConcept', "
+"'IPFBiomarker', 'IPFTrial', 'WHOTrial', 'IPF', 'UMLSTerm', 'MeshTerm', "
+"'EFOTerm', 'DOTerm', 'GOTerm', 'Transcript', 'Exon', 'MRNA', "
+"'IntegratedPathwayCluster', 'TbcAnnotation'."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:48 ../../tools/targetmine_tools.rst:82
+#: 019ea1364e0b4e7686331efc3997ae81 ff80ae1bab67426fab8fed2114ff28be
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:62 3d48ffa9fb494aad84ec4b5829829a78
+msgid "**TargetMine_search_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:64 3e3e198b6bc742d0895c87237d369dc5
+msgid ""
+"Search TargetMine specifically for genes relevant to drug target "
+"discovery. This convenience wrap..."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst b848dc22f3d64d51b066d743bd5537a3
+msgid "TargetMine_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:70 43f53f144bba4312a6a9f9067287e6f1
+msgid "**Name**: ``TargetMine_search_genes``"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:72 4c6505e2334b45cbabd0b5c732079bb5
+msgid ""
+"**Description**: Search TargetMine specifically for genes relevant to "
+"drug target discovery. This convenience wrapper filters results to the "
+"Gene category. Returns gene symbols, NCBI Gene IDs, organism information,"
+" and gene names. TargetMine covers human, rat, mouse, and other model "
+"organism genes with extensive drug target annotations. For broader "
+"searches across all entity types, use TargetMine\\_search instead."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:76 ca63d34cc41a451e9c4dd7fa9611cadd
+msgid ""
+"``q`` (string) (required) Gene search query: gene symbol (e.g., 'TP53', "
+"'EGFR', 'BRCA1'), Entrez Gene ID, or keyword."
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:96 89b2ff89bf824a05af656a448ebdffec
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:98 79b778a22fc049ff981aef5f7429fb97
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/targetmine_tools.rst:99 9c7fe5bbb76c44ba9efaba9a29e08938
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

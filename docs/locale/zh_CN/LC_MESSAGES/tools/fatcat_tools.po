@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,13 +18,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/fatcat_tools.rst:2 1defa8de6e644a72b3ab44368798fd85
+#: ../../tools/fatcat_tools.rst:10 034537c8ca714eb3b398aa55e51a49c0
 msgid "Fatcat Tools"
 msgstr "Fatcat 工具"
 
-#: ../../tools/fatcat_tools.rst:4 e18168f97158465d8359063bd1bfe1a8
+#: ../../tools/fatcat_tools.rst:12 fd6d3949eb88446a83970865cbcb16d1
 msgid ""
 "**Configuration File**: ``fatcat_tools.json`` **Tool Type**: Local "
 "**Tools Count**: 1"
@@ -33,83 +33,86 @@ msgstr ""
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/fatcat_tools.rst:8 8710be01a27c494f8800014966f49bcb
+#: ../../tools/fatcat_tools.rst:16 b3777380cff84f3f883b222b2146035c
 msgid ""
 "This page contains all tools defined in the ``fatcat_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``fatcat_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/fatcat_tools.rst:11 1d385df6789e4245a90457b0715fd4ba
+#: ../../tools/fatcat_tools.rst:19 3ea2c8246c8a41cc80af9173d37d314e
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/fatcat_tools.rst:14 a1023bb81ed04da19fca6f5e5d5d40d7
+#: ../../tools/fatcat_tools.rst:22 6257f095fd094f44b2a7041115ec186c
 msgid "**Fatcat_search_scholar** (Type: FatcatScholarTool)"
 msgstr "**Fatcat_search_scholar**（类型：FatcatScholarTool）"
 
-#: ../../tools/fatcat_tools.rst:16 8823edf29c5d42da9053c9c5e3272734
+#: ../../tools/fatcat_tools.rst:24 d0544e16d95d49d1a39595a06e0a0a40
+#, fuzzy
 msgid ""
-"Search Internet Archive Scholar via Fatcat releases search. Fatcat is the"
-" underlying database pow..."
+"Search Internet Archive Scholar via Fatcat releases search and retrieve "
+"detailed metadata includi..."
 msgstr "通过 Fatcat 发布搜索功能搜索 Internet Archive Scholar。Fatcat 是底层数据库，支持..."
 
-#: ../../tools/fatcat_tools.rst 489c82d2cf5d453eb8e17a49a20e484a
+#: ../../tools/fatcat_tools.rst da4e34bd022e4668ae56fb327800c7a2
 msgid "Fatcat_search_scholar tool specification"
 msgstr "Fatcat_search_scholar 工具规格说明"
 
-#: ../../tools/fatcat_tools.rst:20 404a8a9b79b0464db7686d3814bed318
+#: ../../tools/fatcat_tools.rst:28 40616b910e94420db6ccbb0faa5d4c50
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/fatcat_tools.rst:22 5ee439d003334c78b6a87881a44afe71
+#: ../../tools/fatcat_tools.rst:30 f9d78ee1f0664e1598fbfa7096f61b0c
 msgid "**Name**: ``Fatcat_search_scholar``"
 msgstr "**名称**：``Fatcat_search_scholar``"
 
-#: ../../tools/fatcat_tools.rst:23 9c7f471f56fd40cb961d7c9912c6e192
+#: ../../tools/fatcat_tools.rst:31 8d3e54909af9480bb5d9666ee404ce2a
 msgid "**Type**: ``FatcatScholarTool``"
 msgstr "**类型**：``FatcatScholarTool``"
 
-#: ../../tools/fatcat_tools.rst:24 babeb867cd6c46b3b926745f5f4ca16a
+#: ../../tools/fatcat_tools.rst:32 af33a8b2257c4228927875edc104dbad
+#, fuzzy
 msgid ""
 "**Description**: Search Internet Archive Scholar via Fatcat releases "
-"search. Fatcat is the underlying database powering Internet Archive "
-"Scholar, providing access to millions of research papers and academic "
-"publications."
+"search and retrieve detailed metadata including authors, publication "
+"year, DOI, journal, publisher, abstract, and PDF links. Fatcat is the "
+"underlying database powering Internet Archive Scholar, providing access "
+"to 140+ million research papers and academic publications."
 msgstr ""
 "**描述**：通过 Fatcat 发布搜索功能检索 Internet Archive Scholar。Fatcat 是支持 Internet "
 "Archive Scholar 的底层数据库，提供数百万篇研究论文和学术出版物的访问。"
 
-#: ../../tools/fatcat_tools.rst:26 597a3ae844d047bfa8d70548a20a840f
+#: ../../tools/fatcat_tools.rst:34 18401840430448db91dff1085887ac3d
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/fatcat_tools.rst:28 84306e2990fc4414b0d817eceaaa734f
+#: ../../tools/fatcat_tools.rst:36 5be118c4e975472fa805e98d77a317ec
 msgid ""
 "``query`` (string) (required) Search query for Fatcat releases. Use "
 "keywords to search across titles, abstracts, and metadata of research "
 "papers."
 msgstr "``query``（字符串）（必填）用于搜索Fatcat版本的查询条件。使用关键词在研究论文的标题、摘要和元数据中进行搜索。"
 
-#: ../../tools/fatcat_tools.rst:31 1ffae0352b7d4fb680a9b3e0f3ab6479
+#: ../../tools/fatcat_tools.rst:39 260038ad74c94eebb73fa96254930896
 #, fuzzy
 msgid ""
 "``max_results`` (integer) (required) Maximum number of results to return."
 " Default is 10, maximum is 100."
 msgstr "``max_results``（整数）（可选）返回的最大结果数。默认值为10，最大值为100。"
 
-#: ../../tools/fatcat_tools.rst:34 9444482ee1a8474faff4743121b720d4
+#: ../../tools/fatcat_tools.rst:42 397a084ba4b84e059be591629f9a8bd2
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/fatcat_tools.rst:49 f76df100c02a4d03b1514f26e20e618b
+#: ../../tools/fatcat_tools.rst:57 45fb8668d79d45d58b10f59ee0dce1b6
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/fatcat_tools.rst:51 671e3f3e329e4e6db275c0544f278e1e
+#: ../../tools/fatcat_tools.rst:59 29f23855848144268430ad762700785a
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/fatcat_tools.rst:52 bbf8f5313c1849d78649845746748703
+#: ../../tools/fatcat_tools.rst:60 a254b8d9df854d2d9618c2d5e5788cdd
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

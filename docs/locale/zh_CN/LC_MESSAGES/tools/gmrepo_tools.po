@@ -1,0 +1,151 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gmrepo_tools.rst:10 be2d9616d33c4a2cb9445a1461effa41
+msgid "Gmrepo Tools"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:12 b746e8b15bea43d8abf75cc20866967f
+msgid ""
+"**Configuration File**: ``gmrepo_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:16 41abe9b17e1b4856bcaf221ccbf924d6
+msgid ""
+"This page contains all tools defined in the ``gmrepo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:19 6f70af56883946edb63f0af35f53e4a8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:22 0c6cceacf76f4b0ea1af5442292b1deb
+msgid "**GMrepo_get_phenotypes** (Type: GmrepoTool)"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:24 238e1d8958514eccb3e8b5a3b92504e0
+msgid ""
+"List phenotypes and health conditions with gut microbiome data in the "
+"GMrepo database. Returns Me..."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst 36e8fb735956451b8c21f912d32a0573
+msgid "GMrepo_get_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:28 ../../tools/gmrepo_tools.rst:61
+#: 1a74acaec3d14ee3a17349beeaa67789 a0d7da6c6976457593b6e3304ec1ecb3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:30 3dfe9b5feede486c9353ee84f2f3d8e5
+msgid "**Name**: ``GMrepo_get_phenotypes``"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:31 ../../tools/gmrepo_tools.rst:64
+#: 73c34a4b23504283b3594fed45a5b694 ad50259139e74f038abf8c480e7af66e
+msgid "**Type**: ``GmrepoTool``"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:32 04d5d9c03da74d609d21d47f2a8018c5
+msgid ""
+"**Description**: List phenotypes and health conditions with gut "
+"microbiome data in the GMrepo database. Returns MeSH disease IDs, sample "
+"counts, and species/genus diversity for each phenotype. Optionally filter"
+" by keyword (e.g., 'diabetes', 'obesity', 'cancer'). GMrepo covers 350+ "
+"phenotypes including healthy controls. Use this to find what conditions "
+"have microbiome data available."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:34 ../../tools/gmrepo_tools.rst:67
+#: 05fe7e2a880a4c0ebb2bda9c3d498f22 c434139fdf1748009412c9117491389d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:36 441c7192eb724b368bae0cca006feba8
+msgid ""
+"``query`` (string) (optional) Optional keyword to filter phenotypes. "
+"Examples: 'diabetes', 'obesity', 'cancer', 'Healthy', 'Crohn'. Leave "
+"empty to list all phenotypes."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:39 ../../tools/gmrepo_tools.rst:72
+#: d3279600a8a64fe5afd9d4b3c77797ef e6781008dd8d4ecb953b1656d38a1beb
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return. "
+"Default: 20."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:42 ../../tools/gmrepo_tools.rst:75
+#: 2905f81743c1469e9123702b3d54c2bb 50fcac9342064f8ca58feccd1bf37fb2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:55 ac75809d78b3482ca5c350751c9c3b4e
+msgid "**GMrepo_search_species** (Type: GmrepoTool)"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:57 d857122a6a944ea4be72d41c878497ad
+msgid ""
+"Search the GMrepo database for gut microbiome species by name. Returns "
+"species with NCBI taxon ID..."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst 9195746100404afa838a2ae18ee2e12f
+msgid "GMrepo_search_species tool specification"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:63 9665ac7f725346d3baa496f43f983f5c
+msgid "**Name**: ``GMrepo_search_species``"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:65 ed1648400fd0438e95f7f0087e2b9b60
+msgid ""
+"**Description**: Search the GMrepo database for gut microbiome species by"
+" name. Returns species with NCBI taxon IDs, sample counts, prevalence "
+"across conditions, and number of associated phenotypes. GMrepo is a "
+"curated human gut microbiome repository with data from 96,000+ samples "
+"across 350+ phenotypes. Use this to find specific bacteria and their "
+"prevalence in human gut studies."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:69 70c5cf8f781948ac8478e505e60b28d5
+msgid ""
+"``query`` (string) (required) Species name or partial name to search. "
+"Examples: 'Akkermansia', 'Bacteroides', 'Lactobacillus', "
+"'Faecalibacterium prausnitzii', 'Bifidobacterium'."
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:89 98c4af997340465092b49e31fe9213c1
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:91 c3e490a449a14f82ae664263b1f5f58b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gmrepo_tools.rst:92 dd19b77473494028bb4d5dc3cddd5a83
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

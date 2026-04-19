@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/humanmine_tools.rst:10 e3ed7b56c43e46d090be66d9634a91fa
+msgid "Humanmine Tools"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:12 a8c03497e44f4291bf789890c33c08e9
+msgid ""
+"**Configuration File**: ``humanmine_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:16 7bec3bf6c08e4df48682d99e6362719c
+msgid ""
+"This page contains all tools defined in the ``humanmine_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:19 0604c1cbf3174b0e836020ad97408924
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:22 aa2d2865c1db4fee888845779d058307
+msgid "**HumanMine_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:24 fe29455cb42d49578814bbc2756545fe
+msgid ""
+"Search HumanMine (InterMine) for genes, proteins, pathways, diseases, and"
+" other biological entiti..."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst 43d840f7602d437e82bdc10609346313
+msgid "HumanMine_search tool specification"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:28 ../../tools/humanmine_tools.rst:65
+#: ../../tools/humanmine_tools.rst:99 198dcf2c75e94125bc5b0b510cc76cb7
+#: 3e0647e95d2c49baae152f73953f5053 ba57cb59c9584b6d93cb6ab455c9ef5d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:30 e2856d25a65642ac8c8cdc034ccd80c2
+msgid "**Name**: ``HumanMine_search``"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:31 ../../tools/humanmine_tools.rst:68
+#: ../../tools/humanmine_tools.rst:102 0aa86d881b2a4f098971373cbea5ce36
+#: 6b810d96c8e545878b6361fd14e83c5f 7f72ad7c83b74f0fa46327890d21507c
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:32 6a71688ac30d42baa98cac048990c2cd
+msgid ""
+"**Description**: Search HumanMine (InterMine) for genes, proteins, "
+"pathways, diseases, and other biological entities related to human, "
+"mouse, and rat. HumanMine integrates data from 30+ sources including NCBI"
+" Gene, UniProt, Ensembl, GO, KEGG, Reactome, OMIM, and GWAS Catalog. "
+"Returns entity IDs, types, names, symbols, and organism information. Use "
+"the facet\\_Category parameter to filter results to a specific type "
+"(Gene, Protein, Pathway, Disease, Publication, etc.)."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:34 ../../tools/humanmine_tools.rst:71
+#: ../../tools/humanmine_tools.rst:105 58b3ba1408ad423ca45a0bed9d0865f6
+#: 76a7f226acda4c64928d3ddbbfa99025 c5ad97d12e054ab59c1c39ac982cb67f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:36 2a8fa504ec0440b8b92c9bb77233ecaa
+msgid ""
+"``q`` (string) (required) Search query: gene symbol (e.g., 'TP53', "
+"'BRCA1'), gene name, disease name, pathway name, or any biological term"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:39 ../../tools/humanmine_tools.rst:76
+#: ../../tools/humanmine_tools.rst:110 0d8c9e04c77e4d8493ddad0c289d2b93
+#: ade48f31972746ef930cf72ce6019776 dd1686c782f74266a535712a7ebd8c77
+msgid ""
+"``size`` (integer, null) (optional) Maximum number of results to return "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:42 e4dbc647c6d74df89c240775e4b82422
+msgid ""
+"``facet_Category`` (string, null) (optional) Filter by entity type: "
+"'Gene', 'Protein', 'Pathway', 'Disease', 'Publication', 'GWASResult', "
+"'GOTerm', 'ProteinDomain', etc."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:45 ../../tools/humanmine_tools.rst:79
+#: ../../tools/humanmine_tools.rst:113 227dd2e9bf734d5494056f15d7495469
+#: 5a0464d7ad72470eb9aa9d1a131171ae ae668f26ae3144fc819d8dd05000961d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:59 c09d367ce3024c99804c38fa67ba986e
+msgid "**HumanMine_search_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:61 98bdd2263bb44e9ea105fd781f4120fc
+msgid ""
+"Search HumanMine specifically for genes by symbol, name, or ID across "
+"human, mouse, and rat. Huma..."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst 6f3e5cd9c8ae4465a42f396e0fe20a14
+msgid "HumanMine_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:67 40cf4ceede2643deb3346ce695cc909d
+msgid "**Name**: ``HumanMine_search_genes``"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:69 685a80a2cc384738be12a81684863e15
+msgid ""
+"**Description**: Search HumanMine specifically for genes by symbol, name,"
+" or ID across human, mouse, and rat. HumanMine integrates gene data from "
+"NCBI Gene, Ensembl, UniProt, and other sources. Returns gene symbols, "
+"Entrez IDs, Ensembl IDs, gene names, and organism information. More "
+"focused than HumanMine\\_search as it pre-filters to Gene category only."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:73 b2ae38461c0b46929dc07c1dbb82000d
+msgid ""
+"``q`` (string) (required) Gene search query: gene symbol (e.g., 'EGFR', "
+"'TP53'), gene name (e.g., 'tumor protein p53'), or Entrez Gene ID"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:93 312286c2089f4c169529155a0502e7ab
+msgid "**HumanMine_search_pathways** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:95 bbd9a5bd533d4b6d9fe1f5f93bd0a114
+msgid ""
+"Search HumanMine specifically for biological pathways by name or "
+"identifier. Integrates pathway d..."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst 528cd13d66ec4ab8b34f491a93006d89
+msgid "HumanMine_search_pathways tool specification"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:101 93f673158fea4ae389baa3dcd6d4fab0
+msgid "**Name**: ``HumanMine_search_pathways``"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:103 33d35b19d1204b2db4aa90ea289ddc31
+msgid ""
+"**Description**: Search HumanMine specifically for biological pathways by"
+" name or identifier. Integrates pathway data from Reactome, KEGG, and "
+"other sources. Returns pathway names, identifiers (Reactome IDs like "
+"R-HSA-109581), and associated organisms. Useful for finding pathway IDs "
+"for downstream enrichment analysis."
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:107 e99be901dc74455c8d2aa99eec587104
+msgid ""
+"``q`` (string) (required) Pathway search query: pathway name (e.g., "
+"'apoptosis', 'cell cycle', 'PI3K-Akt signaling'), or Reactome ID"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:127 73316562c4bf4815a0c73a363345b223
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:129 46d79ff4eb1e4a56bddbf029f963dce5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/humanmine_tools.rst:130 af4e1415c9204f689278eebec3d11c06
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/string_ext_tools.rst:10 b8b0dfd43fc34792a29c4743897e1ea9
+msgid "String Ext Tools"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:12 d9cae648ed234aad96e58a500744d1c8
+msgid ""
+"**Configuration File**: ``string_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:16 9f20163500fd42e48588a76d21427792
+msgid ""
+"This page contains all tools defined in the ``string_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:19 13083ce1c8924bcd98fee88825ed96b5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:22 769012995f6e4fd5b48386e7fd51d440
+msgid "**STRING_get_enrichment** (Type: STRINGExtTool)"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:24 730c0951b45f4a4eb5ab16a99e48edff
+msgid ""
+"Perform functional enrichment analysis on a set of proteins using the "
+"STRING database. Tests whet..."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst e1617eccfc774b96ba9f27b11496feac
+msgid "STRING_get_enrichment tool specification"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:28 ../../tools/string_ext_tools.rst:65
+#: 2764eee837e243bca4b98183ffa7c0e7 3ea5a37c08d64a8380d95502be82c2b7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:30 2135d293a30c4deeb6dc36616a849e72
+msgid "**Name**: ``STRING_get_enrichment``"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:31 ../../tools/string_ext_tools.rst:68
+#: 434986de0a544436950fa7a271a833c3 abdb9ba6dddf43f088e352b9446052db
+msgid "**Type**: ``STRINGExtTool``"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:32 7c380b9ec68b49e18aa6be53e8992291
+msgid ""
+"**Description**: Perform functional enrichment analysis on a set of "
+"proteins using the STRING database. Tests whether the input protein list "
+"is statistically enriched for Gene Ontology terms, KEGG pathways, "
+"Reactome pathways, WikiPathways, InterPro domains, TISSUES, DISEASES, "
+"COMPARTMENTS, and other functional categories. Returns enriched terms "
+"with p-values, FDR-corrected q-values, and the matching proteins. Useful "
+"for interpreting gene lists from RNA-seq, GWAS, proteomics experiments."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:34 ../../tools/string_ext_tools.rst:71
+#: 11ab25ce5a764c8e93c9608f8a44e323 55155fae2b6943eeae95d9f19e34eb89
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:36 c056f2dc453144b187d0a9ace58ac149
+msgid ""
+"``identifiers`` (string) (required) Newline-separated list of protein "
+"identifiers (gene names or STRING IDs). Example: "
+"'BRCA1\\\\nBRCA2\\\\nTP53\\\\nATM'. Minimum 2 proteins, recommended 5-100"
+" for meaningful enrichment."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:39 ../../tools/string_ext_tools.rst:76
+#: 91c7c46fbe064763b8fcf6dd22a3d8df cbf5ad3cd7554e93822674ab83b5c97c
+msgid ""
+"``species`` (integer) (optional) NCBI taxonomy ID (default 9606 for "
+"human). Examples: 9606 (human), 10090 (mouse), 7227 (fly), 6239 (worm)."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:42 64b88a0d40d142ad9d34d70b9298ec2e
+msgid ""
+"``background_string_identifiers`` (string, null) (optional) Optional "
+"newline-separated background gene set. If not provided, the entire genome"
+" proteome is used as background."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:45 ../../tools/string_ext_tools.rst:82
+#: d11e7b8a6de1438d9807a714ace2b6d6 ecef2a8d0111421e8207c34a5e3f458e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:59 b22bf60e945a4cca90f295fb05e6517b
+msgid "**STRING_get_functional_annotations** (Type: STRINGExtTool)"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:61 e00ef63f80a6460fbc94585c7754c2c0
+msgid ""
+"Get comprehensive functional annotations for a protein from STRING "
+"database. Returns per-protein ..."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst 466ca6d9986943118a0e84f5fd113c7c
+msgid "STRING_get_functional_annotations tool specification"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:67 074fa2196e1d4f478e8a852712220944
+msgid "**Name**: ``STRING_get_functional_annotations``"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:69 051a2bc6bf63461eb4da0f41f3dd3972
+msgid ""
+"**Description**: Get comprehensive functional annotations for a protein "
+"from STRING database. Returns per-protein annotations from Gene Ontology "
+"(Process, Function, Component), KEGG pathways, Reactome, WikiPathways, "
+"InterPro domains, Pfam, HPO phenotypes, DISEASES, TISSUES expression, and"
+" COMPARTMENTS subcellular localization. Different from "
+"STRING\\_functional\\_enrichment which tests for statistical enrichment "
+"of a protein SET - this tool returns all known annotations for individual"
+" proteins. Example: 'TP53' returns 1,877 annotations across 13 categories"
+" including 655 biological processes, 462 HPO phenotypes, 212 disease "
+"associations."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:73 ad83c0be122e4baba1ba839b7de72c2a
+msgid ""
+"``identifiers`` (string) (required) Protein identifier (gene name or "
+"STRING ID). Examples: 'TP53', 'BRCA1', 'EGFR', '9606.ENSP00000269305'."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:79 532c1ade345e4bd4907cc6c9dfed57e9
+msgid ""
+"``category`` (string) (optional) Filter by annotation category. Options: "
+"'Process' (GO BP), 'Function' (GO MF), 'Component' (GO CC), 'KEGG', "
+"'RCTM' (Reactome), 'WikiPathways', 'InterPro', 'Pfam', 'HPO', 'DISEASES',"
+" 'TISSUES', 'COMPARTMENTS', 'Keyword'. Leave null for all categories."
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:96 9b0ce1be90a04b5ba14c4abe6316ad1e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:98 e7f20c85ecf346b68b795168e3611e42
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/string_ext_tools.rst:99 dc99f5fb4bea479094e279f7dcd092dc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

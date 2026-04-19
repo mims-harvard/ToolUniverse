@@ -1,0 +1,94 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mcp_auto_loader_esm.rst:10 0e407eb9c3774a8887a3a33f20ad49d5
+msgid "Mcp Auto Loader Esm"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:12 adde9a487e92468fafb1cd7576d3a172
+msgid ""
+"**Configuration File**: ``mcp_auto_loader_esm.json`` **Tool Type**: Local"
+" **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:16 47309f87b46b454d84e5f183239ea461
+msgid ""
+"This page contains all tools defined in the ``mcp_auto_loader_esm.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:19 d0f0cb6c2c924e5693f7cff24df5fef3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:22 73a6a166f66e4df0a086693d363cd73f
+msgid "**mcp_auto_loader_esm** (Type: MCPAutoLoaderTool)"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:24 c835bb27acc34aeaaca97fd1cc71ba71
+msgid ""
+"Automatically discover and load ESM-C protein embedding tools from MCP "
+"Server"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst 1fd4c4cd8da14697b52418133e8a279a
+msgid "mcp_auto_loader_esm tool specification"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:28 e6bcb22aa96d457c8ccb35ca92b9b6ce
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:30 1ab98dfc92164cd990040a0bca28114a
+msgid "**Name**: ``mcp_auto_loader_esm``"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:31 54ba378fa2404d069dbdb87728eb4f05
+msgid "**Type**: ``MCPAutoLoaderTool``"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:32 3e2f3f716ad64821a7177c6a559162de
+msgid ""
+"**Description**: Automatically discover and load ESM-C protein embedding "
+"tools from MCP Server"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:34 a30193ba5f244bd795463445fb55d7f9
+msgid "**Parameters:** No parameters required."
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:36 99a0a6b1fbca4e759599dd720f8e8c23
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:49 6aceced00fc5440a9ae34b85ae59326b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:51 8ad89d09306a4cd4962eef8606eec4c6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mcp_auto_loader_esm.rst:52 5d79f41342f841c1b902d51d55b71ce9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

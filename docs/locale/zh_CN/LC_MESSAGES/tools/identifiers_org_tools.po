@@ -1,0 +1,248 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/identifiers_org_tools.rst:10 d84ba02d5a034526aa5729cc5856e009
+msgid "Identifiers Org Tools"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:12 21fb5e684eb245f590fbe3ec2b7db53a
+msgid ""
+"**Configuration File**: ``identifiers_org_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:16 9cbe7b6d373d432fb2c73b52034d447f
+msgid ""
+"This page contains all tools defined in the "
+"``identifiers_org_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:19 dca0de3e95c349b8babb8671e5365cdc
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:22 6494e1dc1d7d46fd83b00fc373542c7a
+msgid "**IdentifiersOrg_get_namespace** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:24 afff2019377c46fa85a2bd15c4e3c444
+msgid ""
+"Get detailed information about a specific Identifiers.org namespace "
+"(database prefix). Returns th..."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst 3214f74133be4075967d976d6cb6765e
+msgid "IdentifiersOrg_get_namespace tool specification"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:28
+#: ../../tools/identifiers_org_tools.rst:59
+#: ../../tools/identifiers_org_tools.rst:92
+#: ../../tools/identifiers_org_tools.rst:127 9f8ad5a5b51846c387639f89fa9cb71d
+#: e8bc0f9285344bcd84d74aef795d7a43 f731bf86bd7b4f598baef6a08cd9dec0
+#: fff45a727cf14c66bd1ef9e734cf9c5d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:30 1e34020aa90f4cc3a2c7529dcf944996
+msgid "**Name**: ``IdentifiersOrg_get_namespace``"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:31
+#: ../../tools/identifiers_org_tools.rst:62
+#: ../../tools/identifiers_org_tools.rst:95
+#: ../../tools/identifiers_org_tools.rst:130 77e87866775e46829382117f48b21be6
+#: 92fff3ad9c9349de9521398b1ca39e51 a6d4f2ef6d2a475ebd185753d001ff95
+#: fde27d1addf94e10ab60df754981733a
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:32 ef26687767a8444cbea6b8b9ec28ec55
+msgid ""
+"**Description**: Get detailed information about a specific "
+"Identifiers.org namespace (database prefix). Returns the namespace name, "
+"ID pattern regex, description, sample ID, and provider resources. Use "
+"this to understand the identifier format for a specific database (e.g., "
+"what a valid UniProt ID looks like). The prefix is the part before the "
+"colon in a compact ID (e.g., 'uniprot' in 'uniprot:P04637'). There are "
+"800+ registered namespaces covering most major biological databases."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:34
+#: ../../tools/identifiers_org_tools.rst:65
+#: ../../tools/identifiers_org_tools.rst:98
+#: ../../tools/identifiers_org_tools.rst:133 b96622b0154e41cf919dd4cebed83531
+#: dca44de2e8164750a3a6785029e2c35c de9f146ca5fd464896a94e511d9240df
+#: f9ae918031bb4be1bc3913bcf8941046
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:36 dacfc9b567574df49124c5caff9d08f3
+msgid ""
+"``prefix`` (string) (required) The namespace prefix to look up. Examples:"
+" 'uniprot', 'pdb', 'ensembl', 'go', 'chebi', 'ncbigene', 'taxonomy', "
+"'reactome', 'kegg.compound', 'interpro', 'pfam', 'doi'."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:39
+#: ../../tools/identifiers_org_tools.rst:73
+#: ../../tools/identifiers_org_tools.rst:106
+#: ../../tools/identifiers_org_tools.rst:144 3a802a68dd6c4c9d89bea99f303b5943
+#: 3fb3fdd0b04244d3b4d8208cb90e7585 49197c3c350f4989883e767b29e2b0dd
+#: 8d087fe2644e419c9053e1d3a8778686
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:53 76b95af52efd4668a2e4a6928ab7780b
+msgid "**IdentifiersOrg_list_namespaces** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:55 342ce2a36e2f473d8f4124076c0f34a9
+msgid ""
+"List all registered namespaces in the Identifiers.org registry with "
+"pagination. Returns database ..."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst 13ff4e18d9fc46d68db88bacf9e51d4c
+msgid "IdentifiersOrg_list_namespaces tool specification"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:61 067601b745d34394bd43e322564566d4
+msgid "**Name**: ``IdentifiersOrg_list_namespaces``"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:63 f698907ac61748fe9c37f1e9128ba696
+msgid ""
+"**Description**: List all registered namespaces in the Identifiers.org "
+"registry with pagination. Returns database prefixes, names, ID patterns, "
+"and descriptions for all 800+ registered biological databases. Use this "
+"to browse available namespaces or find databases you may not have known "
+"about. Results are paginated with configurable page size."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:67
+#: ../../tools/identifiers_org_tools.rst:138 34fea2b07dc4414bbffad1c253a1df5b
+#: 5608d2cb67bb4eec8f7e4d10eeb8dc0d
+msgid "``page`` (integer) (optional) Page number (0-based). Default: 0."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:70 24794c861e9e4945ab37172cbc75e6f2
+msgid "``size`` (integer) (optional) Results per page. Default: 20."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:86 f29588bba1ad4c8591c0fe1205572b36
+msgid "**IdentifiersOrg_resolve** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:88 2f58639ac6b04887a81b13db5d6cbe3d
+msgid ""
+"Resolve a biological identifier to its resource URLs using "
+"Identifiers.org. Given a namespace (e...."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst 65ef905ebdae44b6a283b6ed92f89db0
+msgid "IdentifiersOrg_resolve tool specification"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:94 b0906a271b204c899d4dca93d59c5423
+msgid "**Name**: ``IdentifiersOrg_resolve``"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:96 e59610f944f94d0e8024bacb9f38cf99
+msgid ""
+"**Description**: Resolve a biological identifier to its resource URLs "
+"using Identifiers.org. Given a namespace (e.g., 'uniprot') and local ID "
+"(e.g., 'P04637'), returns all resolved URLs across different providers "
+"(NCBI, EBI, UniProt, etc.). Identifiers.org is an ELIXIR service that "
+"provides persistent identifiers for life science data. Supports 800+ "
+"namespaces including uniprot, pdb, ensembl, go, reactome, kegg, ncbigene,"
+" taxonomy, and many more. Use this to find where a biological entity can "
+"be accessed across databases."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:100 a38ffda2e8884ed196c4241720c5ac0f
+msgid ""
+"``namespace`` (string) (required) Database namespace prefix. Examples: "
+"'uniprot', 'pdb', 'ncbigene', 'go', 'taxonomy', 'reactome', 'ensembl', "
+"'kegg.compound', 'interpro', 'pfam'. Find available namespaces using "
+"IdentifiersOrg\\_search\\_namespaces."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:103 0e602d38b0f24f98948a03b6c00713d8
+msgid ""
+"``local_id`` (string) (required) The local identifier within the "
+"namespace. Examples: 'P04637' (for uniprot), '4HHB' (for pdb), '7157' "
+"(for ncbigene), '0006915' (for go), '9606' (for taxonomy), 'R-HSA-73857' "
+"(for reactome), 'ENSG00000141510' (for ensembl)."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:121 758ad1285870466e9a2b1f1214d0f894
+msgid "**IdentifiersOrg_search_namespaces** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:123 04cea9891b7f4146ba449eb71c9ceb11
+msgid ""
+"Search the Identifiers.org registry for namespaces (database prefixes) by"
+" keyword. Returns namesp..."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst 5d5f8db7f8424c92871a33acf75502c8
+msgid "IdentifiersOrg_search_namespaces tool specification"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:129 c2681365609e4d249c62abf5cdea3cb0
+msgid "**Name**: ``IdentifiersOrg_search_namespaces``"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:131 8fc46d3cd5094ed5b3198787e074d831
+msgid ""
+"**Description**: Search the Identifiers.org registry for namespaces "
+"(database prefixes) by keyword. Returns namespaces whose prefix contains "
+"the search term. Use this to discover what database prefixes are "
+"available for resolving identifiers. For example, search 'pdb' to find "
+"PDB-related namespaces, or 'gene' to find all gene-related databases "
+"registered in Identifiers.org."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:135 b436134f2edf4426a716563f0b821a6b
+msgid ""
+"``content`` (string) (required) Search term to find in namespace "
+"prefixes. Examples: 'pdb', 'gene', 'protein', 'uniprot', 'ensembl', "
+"'kegg', 'chebi', 'pathway'."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:141 57d17a2ca84c4a0daffe34a700a1236b
+msgid "``size`` (integer) (optional) Results per page. Default: 10."
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:158 778baadaafe04f1794a72ac3e94870fc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:160 43ccf03cb45f4447b9624ee805c2b510
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/identifiers_org_tools.rst:161 bd44b8246b0340e48a56b9ea85b76d3b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

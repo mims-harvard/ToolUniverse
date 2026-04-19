@@ -1,0 +1,153 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/smolagent_tools.rst:10 a461a8a3ec3449dc8dc70308dc9b0431
+msgid "Smolagent Tools"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:12 4ee24f2bb3b44dddba8cb633b56a76c0
+msgid ""
+"**Configuration File**: ``smolagent_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:16 8b99eed4204f4f49ab967def2557afab
+msgid ""
+"This page contains all tools defined in the ``smolagent_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:19 73f1f872a3884997a94a524e4af4e409
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:22 bf9c1d14b92b400a82bae6d6dc7be690
+msgid "**advanced_literature_search_agent** (Type: SmolAgentTool)"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:24 8ee0245cb21a4ebfa09a889f36f8f1ac
+msgid ""
+"Advanced multi-agent deep literature search system. This is a SEARCH-"
+"FIRST system: agents must ex..."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst 2c58435973fd4ea5bac4af218329f888
+msgid "advanced_literature_search_agent tool specification"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:28 ../../tools/smolagent_tools.rst:59
+#: 142f7762eb2a4fc6a139c935ada96cc0 233ec6bcc2f947668f078bf2825b43b3
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:30 d2b75188b77b475a859394cec3088ad5
+msgid "**Name**: ``advanced_literature_search_agent``"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:31 ../../tools/smolagent_tools.rst:62
+#: 0420eeaeac9f4fdf99d8768126f7d016 b878c2355861445b9fd035e2d795965b
+msgid "**Type**: ``SmolAgentTool``"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:32 d6122312923d42bd9b31d1d8e1b9b0bf
+msgid ""
+"**Description**: Advanced multi-agent deep literature search system. This"
+" is a SEARCH-FIRST system: agents must extensively use ToolUniverse "
+"literature search tools to gather information, NOT rely on their own "
+"knowledge. Required pipeline: (1) query\\_planner analyzes the query to "
+"identify key search aspects and generates 3-8 focused search queries; (2)"
+" FIRST call web\\_foundation\\_searcher (base web tools only) to produce "
+"seeds/sources/keywords; (3) For EACH seed query, parallel call ALL THREE "
+"specialized searchers: medical\\_literature\\_searcher (PubMed, "
+"EuropePMC, PMC, MedRxiv, BioRxiv), computer\\_science\\_searcher (ArXiv, "
+"DBLP, SemanticScholar), and general\\_literature\\_searcher (openalex, "
+"Crossref, DOAJ, CORE) using concurrent.futures.ThreadPoolExecutor; (4) "
+"result\\_analyzer deduplicates and scores results from all searchers; (5)"
+" literature\\_synthesizer generates the final report strictly from "
+"searched results. CRITICAL: All information must come from tool searches,"
+" not pre-existing knowledge."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:34 ../../tools/smolagent_tools.rst:65
+#: 5e7d386f56c74ed18ba2224bcfc9dcc0 ffaa39b4f1fa4f6d931a67a0731711c0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:36 6d243f198461414ba4c13978398d7d62
+msgid ""
+"``query`` (string) (required) Research query or topic to search in "
+"academic literature. The agent will automatically determine search "
+"strategy, database selection, filters, and result limits based on the "
+"query content and research domain."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:39 ../../tools/smolagent_tools.rst:70
+#: 065b99769f014a228c836e25759ae57d 0e8abb24088a44149f01a58dca203425
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:53 64601b94cbef42e68f4753d548c389c0
+msgid "**open_deep_research_agent** (Type: SmolAgentTool)"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:55 fed91f8f50944b73b2990a1a64e8536c
+msgid ""
+"Research manager agent that decomposes the user task, delegates focused "
+"subtasks to domain sub‑ag..."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst 71b35714166d4526b15aa65102a2df96
+msgid "open_deep_research_agent tool specification"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:61 26842376f22c477db2ad4733620488df
+msgid "**Name**: ``open_deep_research_agent``"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:63 46b4d750cdf24f3084ecb714b51651ac
+msgid ""
+"**Description**: Research manager agent that decomposes the user task, "
+"delegates focused subtasks to domain sub‑agents (web researcher, "
+"synthesizer), enforces evidence use, requires numeric outputs with units,"
+" and returns a concise final answer with citations. It should: (1) draft "
+"a brief plan, (2) ask web\\_researcher to gather authoritative facts "
+"(URLs + extracted numbers), (3) validate consistency across sources, (4) "
+"instruct synthesizer to compute/compose the final result, and (5) output "
+"only the final, unit‑aware answer plus one short rationale line."
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:67 fcc5284be66c454fbe9392b114fa4613
+msgid "``task`` (string) (required) Research query/task to execute"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:84 397da3a57a8445f6813409f68e9cb2f3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:86 df7bafe4107f4d2aa950b66b64460273
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/smolagent_tools.rst:87 3e3d075e8b2f4b1eaae4f0a9120d0b58
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

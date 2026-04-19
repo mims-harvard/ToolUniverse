@@ -1,0 +1,107 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nasa_ned_tools.rst:10 646029fc11474d2b924df9d18b6edb78
+msgid "Nasa Ned Tools"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:12 97b1256a18e04831bf8e592484be6eb3
+msgid ""
+"**Configuration File**: ``nasa_ned_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:16 98889a890aa94b24bad1950c094c17ed
+msgid ""
+"This page contains all tools defined in the ``nasa_ned_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:19 9a11f59a692a4d1786313563f6e985dd
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:22 4c49c6b8bf264240a62cb7c6a04e32f2
+msgid "**NASANED_lookup_object** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:24 e4326f6d537746acb661d458d6a8aeb2
+msgid ""
+"Look up an extragalactic astronomical object by name in the NASA/IPAC "
+"Extragalactic Database (NED..."
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst fc1bd44cc4fa4c8ba8b72886ad8cc0ae
+msgid "NASANED_lookup_object tool specification"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:28 e1040848044c49d4a5c7881d7f6ca3b6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:30 3a9efe199cb44c38b4a61a1bd88db329
+msgid "**Name**: ``NASANED_lookup_object``"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:31 25da00de65b54f36844decc9b894c843
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:32 40795c3cd42440e484c7c7790b0c0857
+msgid ""
+"**Description**: Look up an extragalactic astronomical object by name in "
+"the NASA/IPAC Extragalactic Database (NED). NED is the authoritative "
+"database for extragalactic objects (galaxies, quasars, AGN, galaxy "
+"clusters) containing 1 billion+ photometry measurements for 60 million+ "
+"objects. Returns the preferred name, coordinates (RA/Dec), object type, "
+"redshift with uncertainty, distance estimates, morphology, and all "
+"alternative names. Object types: G (galaxy), QSO (quasar), GPair (galaxy "
+"pair), GClstr (galaxy cluster), AGN, RadioS (radio source)."
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:34 0f588cce64294bb99aa08863dcebef16
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:36 f36915f047e34fe28096fef0f1cac4ae
+msgid ""
+"``name`` (string) (required) Object name in NED format. Examples: 'NGC "
+"1300', 'M31', 'Andromeda Galaxy', 'Coma Cluster', '3C 273', 'Markarian "
+"421', 'Arp 299', 'NGC 4889'"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:39 7bf73fe38f0f48e999fe377fad87768c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:53 92fc8bb7c4b448ef91d8b15ebf2bc9bb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:55 f3e1bc8cbe214efcb16d34e1f57959b4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nasa_ned_tools.rst:56 55a9d3e4f9824835aff635caa9ef9da5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,139 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pharmvar_tools.rst:10 78a9bc1a45ec40cfb7439d87bcefea90
+msgid "Pharmvar Tools"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:12 3e7b52dfe1e4447f8b3428b0956fcdbd
+msgid ""
+"**Configuration File**: ``pharmvar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:16 96209d5e550a4f34bbee52a5abafcffd
+msgid ""
+"This page contains all tools defined in the ``pharmvar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:19 d0bb2b5cd7d940de8c6e4bea5f4e4a48
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:22 31ac33da93bb42a3a89782c59cb3cfb0
+msgid "**PharmVar_get_alleles** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:24 a84bf3e2782d4edda3b842be185f292a
+msgid ""
+"Get all allele definitions for a pharmacogene from PharmVar (Pharmacogene"
+" Variation Consortium). ..."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst 98e09d74765745839231131c16db1d22
+msgid "PharmVar_get_alleles tool specification"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:28 ../../tools/pharmvar_tools.rst:59
+#: 95f00f2fbee14555b0fd0ff2c1d57f1b dbf81516fdd242c59e380b8cc9727037
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:30 069380959c924d7a89e66d60c6209f20
+msgid "**Name**: ``PharmVar_get_alleles``"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:31 ../../tools/pharmvar_tools.rst:62
+#: 14a1d0d2a0524c73a5b38790e9f68b2f 6b16a28f44cd4639a3f756a054b9ef1b
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:32 c1058d2498414cad887ca10819603d3e
+msgid ""
+"**Description**: Get all allele definitions for a pharmacogene from "
+"PharmVar (Pharmacogene Variation Consortium). Returns star allele names "
+"(e.g., CYP2D6\\*1, \\*4, \\*17), functional status, activity scores, "
+"variant details (HGVS notation, rsIDs, genomic positions), and evidence "
+"levels. PharmVar is the authoritative source for pharmacogenomic star "
+"allele nomenclature used in CPIC guidelines."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:34 ../../tools/pharmvar_tools.rst:65
+#: 7952ab170dba4ef9bb5643071b660ed7 d0655de8ccc14816a8a1922f08026db4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:36 ce7fd3d970d84316bd27996032b467da
+msgid ""
+"``gene`` (string) (required) Gene symbol (e.g., 'CYP2D6', 'CYP2C9', "
+"'CYP2C19', 'CYP2B6', 'DPYD', 'SLCO1B1', 'UGT1A1', 'VKORC1')"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:39 ../../tools/pharmvar_tools.rst:69
+#: 7da064eb7e844d5da41f44c23d565502 f898c222c16a4de4b22bf8680160c501
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:53 d46eca40358548388f3fee74abf42894
+msgid "**PharmVar_list_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:55 cd23404c5a3f46738cd99d622552ff8f
+msgid ""
+"List all pharmacogenes curated by PharmVar (Pharmacogene Variation "
+"Consortium). PharmVar is the a..."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst b7a90363e92446a297796981a13fe633
+msgid "PharmVar_list_genes tool specification"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:61 64e85ae9ace54dbaaff99c1a909ee70c
+msgid "**Name**: ``PharmVar_list_genes``"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:63 450056f6b9044e8aa0006910c49be9b0
+msgid ""
+"**Description**: List all pharmacogenes curated by PharmVar (Pharmacogene"
+" Variation Consortium). PharmVar is the authoritative repository for "
+"pharmacogene allele nomenclature and variant data, defining star (\\*) "
+"alleles for genes like CYP2D6, CYP2C9, CYP2C19, CYP2B6, and DPYD. Returns"
+" 15+ genes with their allele counts and descriptions."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:67 50683366581f4a94a6457928b49abf9c
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:82 c86c9a675ac5453caf66ff6cf1a1dedb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:84 1171220089de461ba3c1945a94c4ada9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pharmvar_tools.rst:85 75b3dda10b164ffeb8232bd603df1a82
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,133 +18,125 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/compose_tools.rst:2 bf95c9344f2f4c64b99d1f9e89db992b
+#: ../../tools/compose_tools.rst:10 2c7735e409ef44df9c5eb60319a28717
 msgid "Compose Tools"
 msgstr "撰写工具"
 
-#: ../../tools/compose_tools.rst:4 a4d2b0a6a94241a394ca6a6f8eadf126
+#: ../../tools/compose_tools.rst:12 50417a8c6d6a46f48e52f17ce653949e
 #, fuzzy
 msgid ""
 "**Configuration File**: ``compose_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 8"
+"**Tools Count**: 6"
 msgstr ""
 "**配置文件**：``compose_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：8"
 
-#: ../../tools/compose_tools.rst:8 df543edc7f7c45f8b877a5c2aec5398e
+#: ../../tools/compose_tools.rst:16 fa3823916bff496fbb5cd3676cd7c6bd
 msgid ""
 "This page contains all tools defined in the ``compose_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``compose_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/compose_tools.rst:11 1a183c5d6abb4631b8c7380d22cd8e55
+#: ../../tools/compose_tools.rst:19 b5b3032694d84d5bbeed4bc435235d69
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/compose_tools.rst:14 d729c9a15c324836bd56d66740febdd8
+#: ../../tools/compose_tools.rst:22 0ac044de46d445fcb8259fd6edcbb3e4
 msgid "**BiomarkerDiscoveryWorkflow** (Type: ComposeTool)"
 msgstr "**BiomarkerDiscoveryWorkflow**（类型：ComposeTool）"
 
-#: ../../tools/compose_tools.rst:16 326c9028f54e43ab9ab9ec5a4d7313f2
+#: ../../tools/compose_tools.rst:24 6db2677ebb5a4e23907571372b326ca7
 msgid ""
 "Discover and validate biomarkers for a specific disease condition using "
 "literature analysis, expr..."
 msgstr "通过文献分析发现并验证特定疾病状态的生物标志物，表达..."
 
-#: ../../tools/compose_tools.rst 08a3b177b8064a119795a8cab78d5c62
+#: ../../tools/compose_tools.rst 8f6e1d21e1a3408b87cc3421e06670a1
 msgid "BiomarkerDiscoveryWorkflow tool specification"
 msgstr "BiomarkerDiscoveryWorkflow 工具规范"
 
-#: ../../tools/compose_tools.rst:20 ../../tools/compose_tools.rst:55
-#: ../../tools/compose_tools.rst:86 ../../tools/compose_tools.rst:125
-#: ../../tools/compose_tools.rst:156 ../../tools/compose_tools.rst:203
-#: ../../tools/compose_tools.rst:246 ../../tools/compose_tools.rst:289
-#: 0a28ad7a2dcc429fb2f89f71a3caf39d 0fe9e2fa810746af8dcd7ece67f5550d
-#: 2d25b893c352452b8f4e86baeb799b93 51e6b351189d4c46b7737323d9e1b473
-#: 779b6aa5bdc14227adf579c5fb67a4b7 7af0c21d8a7c45ab878e08688a9de939
-#: b5df0ef74fd64e5f88204802dd42a1f4 f382b62e84404e40808affaf43593fe6
+#: ../../tools/compose_tools.rst:28 ../../tools/compose_tools.rst:63
+#: ../../tools/compose_tools.rst:94 ../../tools/compose_tools.rst:133
+#: ../../tools/compose_tools.rst:164 ../../tools/compose_tools.rst:204
+#: 0a7a268d5dcf4805b6f858218bd33e7c 0cbc37b404e741ccaae4d46b893b05c5
+#: 5a24f29038154db8a818f3d086710229 614b4fc45e85414eb9cd4b7fa4c34fdb
+#: 79ac044e15444ffeaa66558ec430e62f 9c6ff33a6536463cabca5d03c01ba207
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/compose_tools.rst:22 f3f8da6943f1487ea42971972dc1ef70
+#: ../../tools/compose_tools.rst:30 63fe98b0f35f46d99cd9bc5a2b6db851
 msgid "**Name**: ``BiomarkerDiscoveryWorkflow``"
 msgstr "**名称**：``BiomarkerDiscoveryWorkflow``"
 
-#: ../../tools/compose_tools.rst:23 ../../tools/compose_tools.rst:58
-#: ../../tools/compose_tools.rst:89 ../../tools/compose_tools.rst:128
-#: ../../tools/compose_tools.rst:159 ../../tools/compose_tools.rst:206
-#: ../../tools/compose_tools.rst:249 ../../tools/compose_tools.rst:292
-#: 3bf58541c3d144f3b0a6f3b29ba2c3e4 472cd5af1bda4ea982cab5e1c39f7f68
-#: 4cd9a58d0d3e4cbb9c92a223e1df0800 813ac872c2ea4f7c9069da000bf54350
-#: a4abc70f2f2048b495a4a47057f2759d a954ec663b26440badffca2332180af8
-#: acfad34e98694cf6b8d519d22e1ea53e c51203eb5ed14251afb72906864c9a75
+#: ../../tools/compose_tools.rst:31 ../../tools/compose_tools.rst:66
+#: ../../tools/compose_tools.rst:97 ../../tools/compose_tools.rst:136
+#: ../../tools/compose_tools.rst:167 ../../tools/compose_tools.rst:207
+#: 04caa4556e2040d6bdc320fa4565e79b 42c83e9ee9af4ba398cb02c405753da3
+#: 4831ec89467f453194adc8d8d331e21c ac69a389e37f46c7b76c20bdc1a2c40b
+#: adbdb161eed84471b966b7a1d54d77a6 bf09016470224151bd5ad66ca1e6a39c
 msgid "**Type**: ``ComposeTool``"
 msgstr "**类型**：``ComposeTool``"
 
-#: ../../tools/compose_tools.rst:24 bc2911f2f1e34e6da4be51f4b988f263
+#: ../../tools/compose_tools.rst:32 68d09d2664e14d27b88985369af84b56
 msgid ""
 "**Description**: Discover and validate biomarkers for a specific disease "
 "condition using literature analysis, expression data, pathway enrichment,"
 " and clinical validation."
 msgstr "**描述**：通过文献分析、表达数据、通路富集以及临床验证，发现并验证特定疾病状态的生物标志物。"
 
-#: ../../tools/compose_tools.rst:26 ../../tools/compose_tools.rst:61
-#: ../../tools/compose_tools.rst:92 ../../tools/compose_tools.rst:131
-#: ../../tools/compose_tools.rst:162 ../../tools/compose_tools.rst:209
-#: ../../tools/compose_tools.rst:252 ../../tools/compose_tools.rst:295
-#: 1bd4683d04f14aa897a6974c8686a56b 8c2fed1a6fc34b2080f3ae63e1f44b67
-#: b0abb50eda354c7b8098d559870d5de5 c4d69ec60df34cdba45ee7f084984a12
-#: c812ae2b08f94e738385c241081931d3 c88378f365704dbda51ce17142b8aad2
-#: d848ed774b7842e3b7790408c1ff055b f97e32110fc1428cb8f9b36abf5c96e1
+#: ../../tools/compose_tools.rst:34 ../../tools/compose_tools.rst:69
+#: ../../tools/compose_tools.rst:100 ../../tools/compose_tools.rst:139
+#: ../../tools/compose_tools.rst:170 ../../tools/compose_tools.rst:210
+#: 141fccc8e93941bdae083eb98a218aeb 43257b64458e4c4991707e5437e28ea0
+#: 5695b514f40b4fe2ac82e0d95755802b 94b3e604d5594e7ba159911cacde5cbe
+#: ad9e37e5a7b74d349ab43c410179843b e6d52eedc6724084864561e0a1b8f37a
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/compose_tools.rst:28 b05e92994481461eb84477d1bb0f0168
+#: ../../tools/compose_tools.rst:36 093005656c80450194ddeba9975c29c2
 msgid ""
 "``disease_condition`` (string) (required) The disease condition to "
 "discover biomarkers for (e.g., 'breast cancer', 'Alzheimer's disease')"
 msgstr "``disease_condition``（字符串）（必填）用于发现生物标志物的疾病状况（例如，“乳腺癌”、“阿尔茨海默病”）"
 
-#: ../../tools/compose_tools.rst:31 717126e5b6d647c2aa9eab4b78ec1f1c
+#: ../../tools/compose_tools.rst:39 fb5160f15e724d2fa3ac3a3584640dbf
 #, fuzzy
 msgid ""
 "``sample_type`` (string) (required) The type of sample to analyze (e.g., "
 "'blood', 'tissue', 'plasma')"
 msgstr "``sample_type``（字符串）（可选）要分析的样本类型（例如：'血液'、'组织'、'血浆'）"
 
-#: ../../tools/compose_tools.rst:34 ../../tools/compose_tools.rst:66
-#: ../../tools/compose_tools.rst:103 ../../tools/compose_tools.rst:136
-#: ../../tools/compose_tools.rst:179 ../../tools/compose_tools.rst:223
-#: ../../tools/compose_tools.rst:266 ../../tools/compose_tools.rst:309
-#: 0cd313198afd41d4aa3df93f655d8423 31baeebd8d4d4eb4a892c2728933051b
-#: 3ce03eee70274b628af79a52059a1f78 3d4f86da3c5847aab9a3d8a5407c102b
-#: 788e8e58ef174a0eb237e5089f787607 7b8d52fe412e4a51b19fa992e55b7044
-#: 8e9716a823ba4ab3b24e4750a5252fc2 b2965662af1f48c19084f1bf9d85ab77
+#: ../../tools/compose_tools.rst:42 ../../tools/compose_tools.rst:74
+#: ../../tools/compose_tools.rst:111 ../../tools/compose_tools.rst:144
+#: ../../tools/compose_tools.rst:184 ../../tools/compose_tools.rst:224
+#: 251ec58c295e42259a97cfaaeaddf767 33fed6c7b05a471aab779812ee73bb57
+#: 34cfd99cdbe94e399109a58d5655fd37 4c31bb72a32a45ce84823fae7c5e76fe
+#: 797358252e0440d6bac230443343e2a6 b323293564b141b4a5f64908dae7ac3d
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/compose_tools.rst:49 db5b77f6f76d462dbd5c0370e182f6be
+#: ../../tools/compose_tools.rst:57 2728261079574625a3f381e0d74ce76d
 msgid "**ComprehensiveDrugDiscoveryPipeline** (Type: ComposeTool)"
 msgstr "**ComprehensiveDrugDiscoveryPipeline**（类型：ComposeTool）"
 
-#: ../../tools/compose_tools.rst:51 f8ea051fcd304aacae4876abe4d5bfc8
+#: ../../tools/compose_tools.rst:59 1af8d343ddce4d0f8eeaf00ed47d320f
 msgid ""
 "Complete end-to-end drug discovery workflow from disease to optimized "
 "candidates. Identifies targ..."
 msgstr "完整的端到端药物发现工作流程，从疾病到优化候选化合物。识别靶点..."
 
-#: ../../tools/compose_tools.rst 99218ce69e4c4c63a84986f99349b5f4
+#: ../../tools/compose_tools.rst 1dd4d0ecce9748e68c27840ff9b331f3
 msgid "ComprehensiveDrugDiscoveryPipeline tool specification"
 msgstr "ComprehensiveDrugDiscoveryPipeline 工具规范"
 
-#: ../../tools/compose_tools.rst:57 399eb860a98d4fc68f81c08b1c966a79
+#: ../../tools/compose_tools.rst:65 1b37734fce604768a142e601c11431ea
 msgid "**Name**: ``ComprehensiveDrugDiscoveryPipeline``"
 msgstr "**名称**: ``ComprehensiveDrugDiscoveryPipeline``"
 
-#: ../../tools/compose_tools.rst:59 8236babd03034089a42915b7c53be88c
+#: ../../tools/compose_tools.rst:67 d0f1136854b94fc2aa33daa2fc25fa9b
 msgid ""
 "**Description**: Complete end-to-end drug discovery workflow from disease"
 " to optimized candidates. Identifies targets, discovers lead compounds, "
@@ -152,275 +144,151 @@ msgid ""
 "literature."
 msgstr "**描述**：完整的端到端药物发现工作流程，从疾病到优化候选化合物。包括靶点识别、先导化合物发现、ADMET性质筛选、安全性评估，并通过文献验证。"
 
-#: ../../tools/compose_tools.rst:63 d29d09a9ba3c48dc97441e8622a0a0ac
+#: ../../tools/compose_tools.rst:71 c43560b6deb345b6b800b46f31a9d285
+#, fuzzy
 msgid ""
 "``disease_efo_id`` (string) (required) The EFO ID of the disease for drug"
-" discovery (e.g., 'EFO_0001074' for Alzheimer's disease)"
+" discovery (e.g., 'EFO\\_0001074' for Alzheimer's disease)"
 msgstr "``disease_efo_id``（字符串）（必填）用于药物研发的疾病EFO ID（例如，阿尔茨海默病的EFO ID为'EFO_0001074'）"
 
-#: ../../tools/compose_tools.rst:80 dc1c2a59d87a432a809c12116003dc9c
+#: ../../tools/compose_tools.rst:88 55cff4d381544a3da12545f6f2f2c81f
 msgid "**DrugSafetyAnalyzer** (Type: ComposeTool)"
 msgstr "**DrugSafetyAnalyzer**（类型：ComposeTool）"
 
-#: ../../tools/compose_tools.rst:82 3b6a214522414180baf91e8666e8aff2
+#: ../../tools/compose_tools.rst:90 562fd1013cdc42eda6be3ef623632432
 msgid ""
 "Comprehensive drug safety analysis combining adverse event data, "
 "literature review, and molecular..."
 msgstr "综合药物安全性分析，结合不良事件数据、文献综述和分子..."
 
-#: ../../tools/compose_tools.rst a74071a39c384aef87d996877299a5c7
+#: ../../tools/compose_tools.rst 7e2d372b94d14b04ad4feafe44ad0bfe
 msgid "DrugSafetyAnalyzer tool specification"
 msgstr "DrugSafetyAnalyzer工具规格"
 
-#: ../../tools/compose_tools.rst:88 ae371e40f4a04e238d6a67f991347a71
+#: ../../tools/compose_tools.rst:96 f6ec522aa9b2491780bef3c2fca28909
 msgid "**Name**: ``DrugSafetyAnalyzer``"
 msgstr "**名称**: ``DrugSafetyAnalyzer``"
 
-#: ../../tools/compose_tools.rst:90 8cc7b63e709945bf9017b58e2c5ad343
+#: ../../tools/compose_tools.rst:98 92efaf0b6e5a4e2eac738e6787817b7b
 msgid ""
 "**Description**: Comprehensive drug safety analysis combining adverse "
 "event data, literature review, and molecular information"
 msgstr "**描述**：综合药物安全性分析，结合不良事件数据、文献综述和分子信息"
 
-#: ../../tools/compose_tools.rst:94 7ef87507ab6a4a8cae28bd3b179c2ccc
+#: ../../tools/compose_tools.rst:102 71a81e4757bb4fe89469f481554adbf6
 msgid "``drug_name`` (string) (required) Name of the drug to analyze"
 msgstr "``drug_name``（字符串）（必填）要分析的药物名称"
 
-#: ../../tools/compose_tools.rst:97 e6b6f8f94ade4281a9ebd4e65398c25c
+#: ../../tools/compose_tools.rst:105 76f4ebf118054501b6c661f5255a6065
 #, fuzzy
 msgid "``patient_sex`` (string) (required) Filter by patient sex (optional)"
 msgstr "``patient_sex``（字符串）（可选）按患者性别筛选（可选）"
 
-#: ../../tools/compose_tools.rst:100 66b9ac555c6742099691e00f2e53603c
+#: ../../tools/compose_tools.rst:108 da40aa3c5af843e696c75c0ad08bcb35
 #, fuzzy
 msgid ""
 "``serious_events_only`` (boolean) (required) Focus only on serious "
 "adverse events"
 msgstr "``serious_events_only``（布尔值）（可选）仅关注严重不良事件"
 
-#: ../../tools/compose_tools.rst:119 e3740038a60f42b4945eeec3dfb35049
+#: ../../tools/compose_tools.rst:127 fe3e7736eed346448ecc9ee122729cfd
 msgid "**LiteratureSearchTool** (Type: ComposeTool)"
 msgstr "**文献搜索工具**（类型：撰写工具）"
 
-#: ../../tools/compose_tools.rst:121 0ced6d84dc0744ac90f1cf5d5f723cc4
+#: ../../tools/compose_tools.rst:129 55ffd1295cc6489ba3e8b00c9eb92947
 msgid ""
 "Comprehensive literature search and summary tool that searches multiple "
 "databases (EuropePMC, Ope..."
 msgstr "综合文献检索与汇总工具，支持多数据库检索（EuropePMC、Ope..."
 
-#: ../../tools/compose_tools.rst 9ca05378a0e4415c9cef972094860816
+#: ../../tools/compose_tools.rst b2c484e1a0f9432580b1fcbe7374dab3
 msgid "LiteratureSearchTool tool specification"
 msgstr "LiteratureSearchTool 工具规格说明"
 
-#: ../../tools/compose_tools.rst:127 d554e32b117b4f658b7958129df4cedf
+#: ../../tools/compose_tools.rst:135 cf78ec71b0e1492d91191f6268a582ec
 msgid "**Name**: ``LiteratureSearchTool``"
 msgstr "**名称**：``LiteratureSearchTool``"
 
-#: ../../tools/compose_tools.rst:129 db2735b0e2c74538a52af7aca104b515
+#: ../../tools/compose_tools.rst:137 22d120f62afe4120ba9a3385a5bf3215
 msgid ""
 "**Description**: Comprehensive literature search and summary tool that "
 "searches multiple databases (EuropePMC, OpenAlex, PubTator) and generates"
 " AI-powered summaries of research findings"
 msgstr "**描述**：一款综合文献检索与摘要工具，能够检索多个数据库（EuropePMC、OpenAlex、PubTator），并生成基于人工智能的研究成果摘要。"
 
-#: ../../tools/compose_tools.rst:133 20ceeb292f5d4eb1baa59e304f4dcdcc
+#: ../../tools/compose_tools.rst:141 1142fe0fc9634bfeb030d4347eef06be
 msgid ""
 "``research_topic`` (string) (required) The research topic or query to "
 "search for in the literature"
 msgstr "``research_topic``（字符串）（必填）用于在文献中搜索的研究主题或查询内容"
 
-#: ../../tools/compose_tools.rst:150 5195d574b8814c39b831a9925016b6cb
-msgid "**ToolDescriptionOptimizer** (Type: ComposeTool)"
-msgstr "**ToolDescriptionOptimizer**（类型：ComposeTool）"
-
-#: ../../tools/compose_tools.rst:152 81acb8cbbfa54ea8b2029ac644bc51cf
-msgid ""
-"Optimizes a tool's description and parameter descriptions by generating "
-"test cases, executing the..."
-msgstr "通过生成测试用例并执行，优化工具的描述及参数说明..."
-
-#: ../../tools/compose_tools.rst 6e41cf376d7348b9a11f42827a8fc569
-msgid "ToolDescriptionOptimizer tool specification"
-msgstr "工具描述优化器工具规格"
-
-#: ../../tools/compose_tools.rst:158 d17fca7679524a29934ca630d91af517
-msgid "**Name**: ``ToolDescriptionOptimizer``"
-msgstr "**名称**：``ToolDescriptionOptimizer``"
-
-#: ../../tools/compose_tools.rst:160 3df2690ac7cf4b7bb365a2e0168c2027
-msgid ""
-"**Description**: Optimizes a tool's description and parameter "
-"descriptions by generating test cases, executing them, analyzing the "
-"results, and suggesting improved descriptions for both the tool and its "
-"arguments. Optionally saves a comprehensive optimization report to a file"
-" without overwriting the original."
-msgstr "**描述**：通过生成测试用例、执行测试、分析结果，优化工具的描述及参数说明，并为工具及其参数提供改进建议。可选地将完整的优化报告保存至文件，且不覆盖原始文件。"
-
-#: ../../tools/compose_tools.rst:164 f6e1dabf51a54e788a0158858ebe61d4
-msgid ""
-"``tool_config`` (object) (required) The full configuration of the tool to"
-" optimize."
-msgstr "``tool_config``（对象）（必填） 要优化的工具的完整配置。"
-
-#: ../../tools/compose_tools.rst:167 20a0a317ee5848d7b081ff4793cbbbc8
-#, fuzzy
-msgid ""
-"``save_to_file`` (boolean) (required) If true, save the optimized "
-"description to a file (do not overwrite the original)."
-msgstr "``save_to_file``（布尔值）（可选）如果为 true，则将优化后的描述保存到文件中（不覆盖原文件）。"
-
-#: ../../tools/compose_tools.rst:170 c4da1d269bd9451ea8a13923a11857e1
-#, fuzzy
-msgid ""
-"``output_file`` (string) (required) Optional file path to save the "
-"optimized description. If not provided, use "
-"'<tool_name>_optimized_description.txt'."
-msgstr ""
-"``output_file``（字符串）（可选）可选的文件路径，用于保存优化后的描述。如果未提供，则使用 "
-"'<tool_name>_optimized_description.txt'。"
-
-#: ../../tools/compose_tools.rst:173 56bfde887bc54bd48fb81db7dd8474a7
-#, fuzzy
-msgid ""
-"``max_iterations`` (integer) (required) Maximum number of optimization "
-"rounds to perform."
-msgstr "``max_iterations``（整数）（可选）最大优化轮次数。"
-
-#: ../../tools/compose_tools.rst:176 cfc52658e4c048b7b73d990c98175d3a
-#, fuzzy
-msgid ""
-"``satisfaction_threshold`` (number) (required) Quality score threshold "
-"(1-10) to consider optimization satisfactory."
-msgstr "``satisfaction_threshold``（数字）（可选）用于判断优化是否满意的质量分数阈值（1-10）。"
-
-#: ../../tools/compose_tools.rst:197 d38178402fda46ccb202517253d0e6a4
-msgid "**ToolDiscover** (Type: ComposeTool)"
-msgstr "**ToolDiscover**（类型：ComposeTool）"
-
-#: ../../tools/compose_tools.rst:199 0ef77974cf8d48459c6cc469071be699
-msgid ""
-"Generates new ToolUniverse-compliant tools based on short descriptions "
-"through an intelligent dis..."
-msgstr "基于简短描述，通过智能分解生成符合 ToolUniverse 标准的新工具..."
-
-#: ../../tools/compose_tools.rst 37b7766840d94e4ca2fc6e2680019018
-msgid "ToolDiscover tool specification"
-msgstr "ToolDiscover 工具规格"
-
-#: ../../tools/compose_tools.rst:205 528ec24753574515bea9539e7052996e
-msgid "**Name**: ``ToolDiscover``"
-msgstr "**名称**：``ToolDiscover``"
-
-#: ../../tools/compose_tools.rst:207 67c9e4864d69462fb1584ca72dbacb2a
-msgid ""
-"**Description**: Generates new ToolUniverse-compliant tools based on "
-"short descriptions through an intelligent discovery and refinement "
-"process. Automatically determines the optimal tool type and category, "
-"discovers similar existing tools, generates initial specifications, and "
-"iteratively refines the tool configuration using agentic optimization "
-"tools until it meets quality standards."
-msgstr ""
-"**描述**：通过智能发现与优化流程，根据简短描述生成符合 ToolUniverse "
-"标准的新工具。自动确定最佳工具类型和类别，发现相似的现有工具，生成初始规格，并利用智能体优化工具迭代完善工具配置，直至达到质量标准。"
-
-#: ../../tools/compose_tools.rst:211 6fecbd966f234b93be999d7bc4cb8cb0
-msgid ""
-"``tool_description`` (string) (required) Short description of the desired"
-" tool functionality and purpose. Tool Discover will automatically analyze"
-" this to determine the optimal tool type (PackageTool, RESTTool, XMLTool,"
-" or AgenticTool) and appropriate category."
-msgstr ""
-"``tool_description``（字符串）（必填）所需工具功能和用途的简要描述。Tool Discover "
-"将自动分析该描述，以确定最佳工具类型（PackageTool、RESTTool、XMLTool 或 AgenticTool）及其适用类别。"
-
-#: ../../tools/compose_tools.rst:214 0c2320886c99481896562d5ae5ea2c36
-#, fuzzy
-msgid ""
-"``max_iterations`` (integer) (required) Maximum number of refinement "
-"iterations to perform."
-msgstr "``max_iterations``（整数）（可选）执行的最大细化迭代次数。"
-
-#: ../../tools/compose_tools.rst:217 06ef16af073f4d07ac1e0c2ef656f3f9
-#, fuzzy
-msgid ""
-"``save_to_file`` (boolean) (required) Whether to save the generated tool "
-"configuration and report to a file."
-msgstr "``save_to_file``（布尔值）（可选）是否将生成的工具配置和报告保存到文件。"
-
-#: ../../tools/compose_tools.rst:220 09f997c7308347328f2373ff1d7fb624
-#, fuzzy
-msgid ""
-"``output_file`` (string) (required) Optional file path to save the "
-"generated tool. If not provided, uses auto-generated filename."
-msgstr "``output_file``（字符串）（可选）用于保存生成工具的可选文件路径。如果未提供，则使用自动生成的文件名。"
-
-#: ../../tools/compose_tools.rst:240 c85fc4be6d534beaa16aa0ce84679653
+#: ../../tools/compose_tools.rst:158 8adb14c0334548858ea3edb048c990aa
 msgid "**ToolGraphGenerationPipeline** (Type: ComposeTool)"
 msgstr "**ToolGraphGenerationPipeline**（类型：ComposeTool）"
 
-#: ../../tools/compose_tools.rst:242 001d3a6d17d74297851d6671c312063a
+#: ../../tools/compose_tools.rst:160 4ee694819b22473eac27acc9d4cb3c9e
 msgid ""
 "Generates a directed tool relationship graph among provided tool configs "
 "using ToolRelationshipDe..."
 msgstr "使用 ToolRelationshipDe 生成所提供工具配置之间的有向工具关系图。"
 
-#: ../../tools/compose_tools.rst caf3d0bf401b429eaf71cb0803d1149a
+#: ../../tools/compose_tools.rst a48a56bc9e2b4d208a7f4231aced7bb0
 msgid "ToolGraphGenerationPipeline tool specification"
 msgstr "ToolGraphGenerationPipeline 工具规范"
 
-#: ../../tools/compose_tools.rst:248 1c6ba6ab6459462e9f64e8973d7487d7
+#: ../../tools/compose_tools.rst:166 bf01241b05af4c0d969e5d90869dc6b7
 msgid "**Name**: ``ToolGraphGenerationPipeline``"
 msgstr "**名称**：``ToolGraphGenerationPipeline``"
 
-#: ../../tools/compose_tools.rst:250 a62157ef74a549cd8c96317c3b90b2ef
+#: ../../tools/compose_tools.rst:168 2fa193a1a5da4959809e020d64ff3a1f
 msgid ""
 "**Description**: Generates a directed tool relationship graph among "
 "provided tool configs using ToolRelationshipDetector to infer data-flow "
 "compatibility."
 msgstr "**描述**：使用 ToolRelationshipDetector 在提供的工具配置之间生成有向工具关系图，以推断数据流兼容性。"
 
-#: ../../tools/compose_tools.rst:254 3cc27628c4ae49e690461963d8d1ca29
+#: ../../tools/compose_tools.rst:172 bd96cff75feb4e89b98b5adc7cedc4d2
 msgid "``tool_configs`` (array) (required) List of tool configuration objects"
 msgstr "``tool_configs``（数组）（必填）工具配置对象列表"
 
-#: ../../tools/compose_tools.rst:257 460e0347c3bb45cb96d0404f47bc6c8c
+#: ../../tools/compose_tools.rst:175 f2ab314e54e8414baac1c51706f7e8c9
 #, fuzzy
 msgid ""
-"``max_tools`` (integer) (required) Optional max number of tools to "
+"``max_tools`` (integer) (optional) Optional max number of tools to "
 "process (debug)"
 msgstr "``max_tools``（整数）（可选） 可选的最大处理工具数量（调试用）"
 
-#: ../../tools/compose_tools.rst:260 3c749db31873435d95c17b3249e70885
+#: ../../tools/compose_tools.rst:178 283ef4ab0f464ae29f5a3ab34a11b803
 #, fuzzy
-msgid "``output_path`` (string) (required) Path for output graph JSON"
+msgid "``output_path`` (string) (optional) Path for output graph JSON"
 msgstr "``output_path``（字符串）（可选）输出图 JSON 的路径"
 
-#: ../../tools/compose_tools.rst:263 0914b1ae6b714323b9c9fd3e86d89564
+#: ../../tools/compose_tools.rst:181 ba77ba648e22455cacbc212fcd6b4e91
 #, fuzzy
 msgid ""
-"``save_intermediate_every`` (integer) (required) Checkpoint every N "
+"``save_intermediate_every`` (integer) (optional) Checkpoint every N "
 "processed pairs"
 msgstr "``save_intermediate_every``（整数）（可选）每处理 N 对时保存一次检查点"
 
-#: ../../tools/compose_tools.rst:283 7d345cddf3fc4c489d981a2c4c4664d6
+#: ../../tools/compose_tools.rst:198 9af1ea1f0fe4478db576f06436230f41
 msgid "**ToolMetadataGenerationPipeline** (Type: ComposeTool)"
 msgstr "**ToolMetadataGenerationPipeline**（类型：ComposeTool）"
 
-#: ../../tools/compose_tools.rst:285 7ed438e24b1b41a4ae92a241a11cda06
+#: ../../tools/compose_tools.rst:200 dae7d876e5ab43a8b97019fb1961a3ed
 msgid ""
 "Generates standardized metadata for a batch of ToolUniverse tool "
 "configurations by calling ToolMe..."
 msgstr "通过调用 ToolMe，为一批 ToolUniverse 工具配置生成标准化元数据..."
 
-#: ../../tools/compose_tools.rst 5eda4861a92842b68cc67d425be7bf7c
+#: ../../tools/compose_tools.rst 67b3dc362c7044aabaa997f37fbfcbdd
 msgid "ToolMetadataGenerationPipeline tool specification"
 msgstr "ToolMetadataGenerationPipeline 工具规范"
 
-#: ../../tools/compose_tools.rst:291 7c97c6c8cf6c4d92876ffe2cdc06ad66
+#: ../../tools/compose_tools.rst:206 9ff34c5837ab4270bb38933e83f2ca92
 msgid "**Name**: ``ToolMetadataGenerationPipeline``"
 msgstr "**名称**：``ToolMetadataGenerationPipeline``"
 
-#: ../../tools/compose_tools.rst:293 97050b90dee14c018a44f84fe6180833
+#: ../../tools/compose_tools.rst:208 ae8d2c517e7d474ab9959cb048f80250
 msgid ""
 "**Description**: Generates standardized metadata for a batch of "
 "ToolUniverse tool configurations by calling ToolMetadataGenerator, "
@@ -429,26 +297,26 @@ msgstr ""
 "**描述**：通过调用 ToolMetadataGenerator、LabelGenerator 和 "
 "ToolMetadataStandardizer，为一批 ToolUniverse 工具配置生成标准化元数据，包括来源和标签。"
 
-#: ../../tools/compose_tools.rst:297 7a912713df8d470ea4e7a30a61400ea6
+#: ../../tools/compose_tools.rst:212 b070c12df76349f9b254221b5892d554
 msgid ""
 "``tool_configs`` (array) (required) List of raw tool configuration JSON "
 "objects to extract and standardize metadata for"
 msgstr "``tool_configs``（数组）（必填）用于提取和标准化元数据的原始工具配置 JSON 对象列表"
 
-#: ../../tools/compose_tools.rst:300 052ddf7488dc4eac8ababe3092c02283
+#: ../../tools/compose_tools.rst:215 39ff3c50da7e47ddad107cc594a3ecd5
 #, fuzzy, python-brace-format
 msgid ""
-"``tool_type_mappings`` (object) (required) Mapping of simplified toolType"
+"``tool_type_mappings`` (object) (optional) Mapping of simplified toolType"
 " (keys) to lists of tool 'type' values belonging to each simplified "
 "category (e.g., {'Databases': ['XMLTool']})"
 msgstr ""
 "``tool_type_mappings``（对象）（可选） 简化的 "
 "toolType（键）与属于每个简化类别的工具“type”值列表之间的映射（例如，{'Databases': ['XMLTool']}）"
 
-#: ../../tools/compose_tools.rst:303 f928405299d94c3b9c3d886ed1d38e7d
+#: ../../tools/compose_tools.rst:218 da5466c4b2ab447b9bd8d9893cb6ccfb
 #, fuzzy
 msgid ""
-"``add_existing_tooluniverse_labels`` (boolean) (required) Whether to "
+"``add_existing_tooluniverse_labels`` (boolean) (optional) Whether to "
 "include labels from existing ToolUniverse tools when labeling the "
 "metadata configs of the new tools. It is strongly recommended that this "
 "is set to true to minimize the number of new labels created and the "
@@ -457,10 +325,10 @@ msgstr ""
 "``add_existing_tooluniverse_labels``（布尔值）（可选）是否在为新工具的元数据配置添加标签时包含来自现有 "
 "ToolUniverse 工具的标签。强烈建议将此项设置为 true，以尽量减少新标签的创建数量及冗余标签的可能性。"
 
-#: ../../tools/compose_tools.rst:306 453b46f7ae87497290ea9018e378259c
+#: ../../tools/compose_tools.rst:221 7c4fe78bba59463eb787bcee7de03fab
 #, fuzzy
 msgid ""
-"``max_new_tooluniverse_labels`` (integer) (required) The maximum number "
+"``max_new_tooluniverse_labels`` (integer) (optional) The maximum number "
 "of new ToolUniverse labels to use in the metadata configs of the new "
 "tools. The existing ToolUniverse labels will be used first, and then new "
 "labels will be created as needed up to this limit. If the limit is "
@@ -471,15 +339,15 @@ msgstr ""
 "标签的最大数量。系统将优先使用现有的 ToolUniverse "
 "标签，随后根据需要创建新的标签，直至达到该限制。若达到上限，相关性最低的新标签将被丢弃。请尽量减少新标签的使用，以避免标签过多。"
 
-#: ../../tools/compose_tools.rst:326 5b24a1e9d6de440884ff7a7bdf9f8719
+#: ../../tools/compose_tools.rst:238 e8c8174a0213451eb89527b6f9567555
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/compose_tools.rst:328 62a628ae3c02461b8bf722b01fb55cb3
+#: ../../tools/compose_tools.rst:240 f409ea61f3724393acd4202a4b5cfba0
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/compose_tools.rst:329 9dd33a9bd44944399f55945f10843036
+#: ../../tools/compose_tools.rst:241 ece88e28d38142f2b3774f3dcdea5b65
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 
@@ -518,4 +386,126 @@ msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 #~ "``quality_threshold`` (number) (optional) Quality"
 #~ " threshold for completion (default: 0.7)"
 #~ msgstr "``satisfaction_threshold``（数字）（可选）用于判断优化是否满意的质量分数阈值（1-10）。"
+
+#~ msgid "**ToolDescriptionOptimizer** (Type: ComposeTool)"
+#~ msgstr "**ToolDescriptionOptimizer**（类型：ComposeTool）"
+
+#~ msgid ""
+#~ "Optimizes a tool's description and "
+#~ "parameter descriptions by generating test "
+#~ "cases, executing the..."
+#~ msgstr "通过生成测试用例并执行，优化工具的描述及参数说明..."
+
+#~ msgid "ToolDescriptionOptimizer tool specification"
+#~ msgstr "工具描述优化器工具规格"
+
+#~ msgid "**Name**: ``ToolDescriptionOptimizer``"
+#~ msgstr "**名称**：``ToolDescriptionOptimizer``"
+
+#~ msgid ""
+#~ "**Description**: Optimizes a tool's "
+#~ "description and parameter descriptions by "
+#~ "generating test cases, executing them, "
+#~ "analyzing the results, and suggesting "
+#~ "improved descriptions for both the tool"
+#~ " and its arguments. Optionally saves "
+#~ "a comprehensive optimization report to a"
+#~ " file without overwriting the original."
+#~ msgstr "**描述**：通过生成测试用例、执行测试、分析结果，优化工具的描述及参数说明，并为工具及其参数提供改进建议。可选地将完整的优化报告保存至文件，且不覆盖原始文件。"
+
+#~ msgid ""
+#~ "``tool_config`` (object) (required) The full"
+#~ " configuration of the tool to "
+#~ "optimize."
+#~ msgstr "``tool_config``（对象）（必填） 要优化的工具的完整配置。"
+
+#~ msgid ""
+#~ "``save_to_file`` (boolean) (required) If true,"
+#~ " save the optimized description to a"
+#~ " file (do not overwrite the "
+#~ "original)."
+#~ msgstr "``save_to_file``（布尔值）（可选）如果为 true，则将优化后的描述保存到文件中（不覆盖原文件）。"
+
+#~ msgid ""
+#~ "``output_file`` (string) (required) Optional "
+#~ "file path to save the optimized "
+#~ "description. If not provided, use "
+#~ "'<tool_name>_optimized_description.txt'."
+#~ msgstr ""
+#~ "``output_file``（字符串）（可选）可选的文件路径，用于保存优化后的描述。如果未提供，则使用 "
+#~ "'<tool_name>_optimized_description.txt'。"
+
+#~ msgid ""
+#~ "``max_iterations`` (integer) (required) Maximum "
+#~ "number of optimization rounds to "
+#~ "perform."
+#~ msgstr "``max_iterations``（整数）（可选）最大优化轮次数。"
+
+#~ msgid ""
+#~ "``satisfaction_threshold`` (number) (required) "
+#~ "Quality score threshold (1-10) to "
+#~ "consider optimization satisfactory."
+#~ msgstr "``satisfaction_threshold``（数字）（可选）用于判断优化是否满意的质量分数阈值（1-10）。"
+
+#~ msgid "**ToolDiscover** (Type: ComposeTool)"
+#~ msgstr "**ToolDiscover**（类型：ComposeTool）"
+
+#~ msgid ""
+#~ "Generates new ToolUniverse-compliant tools "
+#~ "based on short descriptions through an"
+#~ " intelligent dis..."
+#~ msgstr "基于简短描述，通过智能分解生成符合 ToolUniverse 标准的新工具..."
+
+#~ msgid "ToolDiscover tool specification"
+#~ msgstr "ToolDiscover 工具规格"
+
+#~ msgid "**Name**: ``ToolDiscover``"
+#~ msgstr "**名称**：``ToolDiscover``"
+
+#~ msgid ""
+#~ "**Description**: Generates new ToolUniverse-"
+#~ "compliant tools based on short "
+#~ "descriptions through an intelligent discovery"
+#~ " and refinement process. Automatically "
+#~ "determines the optimal tool type and "
+#~ "category, discovers similar existing tools,"
+#~ " generates initial specifications, and "
+#~ "iteratively refines the tool configuration "
+#~ "using agentic optimization tools until "
+#~ "it meets quality standards."
+#~ msgstr ""
+#~ "**描述**：通过智能发现与优化流程，根据简短描述生成符合 ToolUniverse "
+#~ "标准的新工具。自动确定最佳工具类型和类别，发现相似的现有工具，生成初始规格，并利用智能体优化工具迭代完善工具配置，直至达到质量标准。"
+
+#~ msgid ""
+#~ "``tool_description`` (string) (required) Short "
+#~ "description of the desired tool "
+#~ "functionality and purpose. Tool Discover "
+#~ "will automatically analyze this to "
+#~ "determine the optimal tool type "
+#~ "(PackageTool, RESTTool, XMLTool, or "
+#~ "AgenticTool) and appropriate category."
+#~ msgstr ""
+#~ "``tool_description``（字符串）（必填）所需工具功能和用途的简要描述。Tool Discover "
+#~ "将自动分析该描述，以确定最佳工具类型（PackageTool、RESTTool、XMLTool 或 "
+#~ "AgenticTool）及其适用类别。"
+
+#~ msgid ""
+#~ "``max_iterations`` (integer) (required) Maximum "
+#~ "number of refinement iterations to "
+#~ "perform."
+#~ msgstr "``max_iterations``（整数）（可选）执行的最大细化迭代次数。"
+
+#~ msgid ""
+#~ "``save_to_file`` (boolean) (required) Whether "
+#~ "to save the generated tool configuration"
+#~ " and report to a file."
+#~ msgstr "``save_to_file``（布尔值）（可选）是否将生成的工具配置和报告保存到文件。"
+
+#~ msgid ""
+#~ "``output_file`` (string) (required) Optional "
+#~ "file path to save the generated "
+#~ "tool. If not provided, uses auto-"
+#~ "generated filename."
+#~ msgstr "``output_file``（字符串）（可选）用于保存生成工具的可选文件路径。如果未提供，则使用自动生成的文件名。"
 

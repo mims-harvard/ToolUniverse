@@ -1,0 +1,151 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/crystal_structure_tools.rst:10 32945fa2f8cf481b826f7f5ac36ec621
+msgid "Crystal Structure Tools"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:12 f735e4682662440ca5d9d88545cf47c4
+msgid ""
+"**Configuration File**: ``crystal_structure_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:16 70ab8c15203940629b7795c69c28c2ca
+msgid ""
+"This page contains all tools defined in the "
+"``crystal_structure_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:19 80e9765b311c4763909f318d5ba50913
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:22 55b5e0dc198f405eb225c4b99b374167
+msgid "**CrystalStructure_validate** (Type: CrystalStructureTool)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:24 0937220555684cfb8d18eaaf3ab8747e
+msgid ""
+"Validate crystal structure by computing theoretical density from unit "
+"cell parameters (a, b, c in..."
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst 295bb3b5b79a42b0a080541c773b2d30
+msgid "CrystalStructure_validate tool specification"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:28 08700fd6d9294126ab508276e94a25b0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:30 4ea25df6ff4449779e17fac7af459c13
+msgid "**Name**: ``CrystalStructure_validate``"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:31 935595edc5194d3aa89407459302b8c0
+msgid "**Type**: ``CrystalStructureTool``"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:32 aefe5fb1d387472f89f0eb004a4b67b2
+msgid ""
+"**Description**: Validate crystal structure by computing theoretical "
+"density from unit cell parameters (a, b, c in Angstroms; alpha, beta, "
+"gamma in degrees), Z (formula units per cell), and molecular weight "
+"(g/mol). Compares against an optional reported density and flags "
+"deviations >1% (warning) or >5% (mismatch). Auto-detects crystal system "
+"(cubic, tetragonal, orthorhombic, hexagonal, trigonal, monoclinic, "
+"triclinic). Uses V = abc\\*sqrt(1 - cos2a - cos2b - cos2g + "
+"2\\*cos(a)\\*cos(b)\\*cos(g)) and d = Z\\*MW/(V\\*Na). Angles default to "
+"90 degrees; b and c default to a for cubic systems."
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:34 be11646068e840f4b2a60eb72490516f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:36 68dd9896386348c69c4935eb1c3da572
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:39 9832949b23214c0980d00df6541faab7
+msgid "``a`` (number) (required) Unit cell parameter a in Angstroms"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:42 381d6420472747dda65a853adfa03547
+msgid ""
+"``b`` (number) (optional) Unit cell parameter b in Angstroms (defaults to"
+" a)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:45 aa403c092d2e44b5aeac4b9d91e98395
+msgid ""
+"``c`` (number) (optional) Unit cell parameter c in Angstroms (defaults to"
+" a)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:48 92f0a598157c4d96b736a972fbdff114
+msgid ""
+"``alpha`` (number) (optional) Unit cell angle alpha in degrees (default "
+"90)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:51 dfb8b30bf488462baeb535603e245515
+msgid "``beta`` (number) (optional) Unit cell angle beta in degrees (default 90)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:54 a2ba7f898616435498ae9971dfc73818
+msgid ""
+"``gamma`` (number) (optional) Unit cell angle gamma in degrees (default "
+"90)"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:57 cb9f814b6cfe42bebebe843601b3b7f3
+msgid "``Z`` (integer) (required) Number of formula units per unit cell"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:60 ab88c59ce24a4903ac388b5b5b877086
+msgid "``mw`` (number) (required) Molecular weight in g/mol"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:63 fa5629bf795346f4aebcab016ef1b093
+msgid ""
+"``reported_density`` (number) (optional) Optional reported density in "
+"g/cm^3 to compare against"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:66 5c44f8d7c7474e13aeb6e348360a87d6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:83 998c55b8245147b0b8ed5d46a1ef6175
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:85 d09f346466b64d3786b0a8ca9e391c29
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/crystal_structure_tools.rst:86 51b174aca43144e59589a518db0acfeb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

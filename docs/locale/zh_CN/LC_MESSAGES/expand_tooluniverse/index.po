@@ -7,89 +7,101 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 16:01-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../expand_tooluniverse/index.rst:2 359fcc524291453dac060bfa0f03ac16
+#: ../../expand_tooluniverse/index.rst:2 5912a0d37e87464db4062c3276ad71e4
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../expand_tooluniverse/index.rst:4 42cc711c50dc4a4b90329683b0be9332
+#: ../../expand_tooluniverse/index.rst:4 f60bfb94a72246029a8a838e92aaa723
 msgid ""
-"Learn how to extend ToolUniverse with your own custom tools. This section "
-"provides comprehensive guides for creating, registering, and contributing "
-"tools to the ToolUniverse ecosystem."
-msgstr ""
-"学习如何使用您自己的自定义工具扩展 ToolUniverse。本节提供创建、注册和向 ToolUniverse 生态系统贡献工具的综合指南。"
+"Learn how to extend ToolUniverse with your own custom tools. This section"
+" provides comprehensive guides for creating, registering, and "
+"contributing tools to the ToolUniverse ecosystem."
+msgstr "学习如何使用您自己的自定义工具扩展 ToolUniverse。本节提供创建、注册和向 ToolUniverse 生态系统贡献工具的综合指南。"
 
-#: ../../expand_tooluniverse/index.rst:7 97cc6ce055e04796ba2f7a2090eee7c6
+#: ../../expand_tooluniverse/index.rst:7 fc0231f0d24e46a3a8d2aff8b93a3a04
 #, fuzzy
 msgid "What You'll Learn"
 msgstr "**您将学到：**"
 
-#: ../../expand_tooluniverse/index.rst:9 164f0e32432b4be3a533a30cfef448a2
-msgid ""
-"🏠 **Local Tool Development**: Create tools that run within ToolUniverse"
+#: ../../expand_tooluniverse/index.rst:9 05436de599f24fc1bd3016905b06557b
+#, fuzzy
+msgid "**Local Tool Development**: Create tools that run within ToolUniverse"
 msgstr "🏠 **本地工具开发**：创建在 ToolUniverse 中运行的工具"
 
-#: ../../expand_tooluniverse/index.rst:10 068b137f212b40198362ccbe3102910f
-msgid "🔗 **Remote Tool Integration**: Connect with external services and APIs"
+#: ../../expand_tooluniverse/index.rst:10 84ecee16bc644d2fb13e0f00d7aa0a67
+msgid ""
+"⏱️ **Async Tool Development**: Handle long-running operations with "
+"AsyncPollingTool"
+msgstr "⏱️ **异步工具开发**：使用 AsyncPollingTool 处理长时间运行的任务"
+
+#: ../../expand_tooluniverse/index.rst:11 1169ee6b8eee4f61988ebbe50ed0cced
+#, fuzzy
+msgid "**Remote Tool Integration**: Connect with external services and APIs"
 msgstr "🔗 **远程工具集成**：与外部服务和 API 连接"
 
-#: ../../expand_tooluniverse/index.rst:11 8c9439aa8a6245c699a081a2cdb87251
+#: ../../expand_tooluniverse/index.rst:12 b910be9ba3e645cbb2099f831f9f41cd
+#, fuzzy
 msgid ""
-"📤 **Community Contributions**: Submit your tools to the ToolUniverse "
+"**Community Contributions**: Submit your tools to the ToolUniverse "
 "repository"
 msgstr "📤 **社区贡献**：将您的工具提交到 ToolUniverse 仓库"
 
-#: ../../expand_tooluniverse/index.rst:12 a132c38e7e83415aa1ce6fa33b4484f9
-msgid ""
-"🔧 **Advanced Patterns**: Best practices and advanced development techniques"
+#: ../../expand_tooluniverse/index.rst:13 8d8658e3d52640c5b6025a73c6c4904c
+#, fuzzy
+msgid "**Advanced Patterns**: Best practices and advanced development techniques"
 msgstr "🔧 **高级模式**：最佳实践和高级开发技术"
 
-#: ../../expand_tooluniverse/index.rst:15 fa2ebe44b3b74671a28f00db3fa75219
+#: ../../expand_tooluniverse/index.rst:16 892ade7035ed4c4aae97befcfc268367
 msgid "Quick Start"
 msgstr "快速开始"
 
-#: ../../expand_tooluniverse/index.rst:17 428e204c15434872ae86266d5e71438e
+#: ../../expand_tooluniverse/index.rst:18 138bc70e4d8a4e38bca27a7a5ccddd8e
 msgid ""
-"**I want to quickly try creating a tool:** → :doc:`quick_start` - 5-minute "
-"tutorial to create your first tool"
+"**I want to quickly try creating a tool:** → :doc:`quick_start` - "
+"5-minute tutorial to create your first tool"
 msgstr "**我想快速尝试创建一个工具：** → :doc:`quick_start` - 5分钟教程，帮助您创建第一个工具"
 
-#: ../../expand_tooluniverse/index.rst:20 426e2eb04f934a7ca25ee13c77cf45c4
-msgid ""
-"**I want to learn tool development systematically:** → Choose your path:"
+#: ../../expand_tooluniverse/index.rst:21 cc81f7ea98454b848cf41bda30f0c921
+msgid "**I want to learn tool development systematically:** → Choose your path:"
 msgstr "**我想系统地学习工具开发：** → 选择您的路径："
 
-#: ../../expand_tooluniverse/index.rst:22 eb0c33d357b84ad1b93cc0168ac6bd6c
+#: ../../expand_tooluniverse/index.rst:24 ea69c0453a2b4d0ba7df692e2f3d7e97
+#, fuzzy
 msgid ""
-"**Local tools**: :doc:`local_tools/tutorial` - Python classes for API "
-"wrappers, data processing"
+"**Local tools**: :doc:`local_tools/local_tools_tutorial` - Python classes"
+" for API wrappers, data processing"
 msgstr "**本地工具**：:doc:`local_tools/tutorial` - 用于API封装和数据处理的Python类"
 
-#: ../../expand_tooluniverse/index.rst:23 2bd5e0211b714387ba4c88ace20e6dcb
+#: ../../expand_tooluniverse/index.rst:25 88c501be8c3745e4a3daaf0a2e2bd7fe
+msgid ""
+"**Async tools**: :doc:`async_tools_guide` - Long-running operations with "
+"automatic polling"
+msgstr "**异步工具**：:doc:`async_tools_guide` - 通过自动轮询处理长时运行操作"
+
+#: ../../expand_tooluniverse/index.rst:26 3386b76475e4482498db1f256a4efbf0
 msgid ""
 "**Remote tools**: :doc:`remote_tools/tutorial` - MCP servers for "
 "microservices, heavy computation"
 msgstr "**远程工具**: :doc:`remote_tools/tutorial` - 用于微服务和高强度计算的MCP服务器"
 
-#: ../../expand_tooluniverse/index.rst:25 65bc77a9bf734bbbb170e0fe29e98b42
-msgid ""
-"**I want to contribute tools to the community:** → Choose your tool type:"
+#: ../../expand_tooluniverse/index.rst:28 a3ce64c01272481da9d5b64b76f3f0ea
+msgid "**I want to contribute tools to the community:** → Choose your tool type:"
 msgstr "**我想为社区贡献工具：** → 选择您的工具类型："
 
-#: ../../expand_tooluniverse/index.rst:27 d14170e868c74be08aed2e64c53fb8f8
+#: ../../expand_tooluniverse/index.rst:31 b39ea39d3a974eca95bc082d37b69d3a
 msgid ""
 "**Local tools**: :doc:`contributing/local_tools` - Submit Python tools "
 "(requires modifying ``__init__.py``)"
@@ -97,270 +109,300 @@ msgstr ""
 "**本地工具**：:doc:`contributing/local_tools` - 提交 Python 工具（需要修改 "
 "``__init__.py``）"
 
-#: ../../expand_tooluniverse/index.rst:28 6c1e58d3142845c2af7e46f09e717e6f
+#: ../../expand_tooluniverse/index.rst:32 b66086b89df24f6785e8614684da321f
 msgid ""
 "**Remote tools**: :doc:`contributing/remote_tools` - Submit MCP servers "
 "(requires deployment)"
 msgstr "**远程工具**: :doc:`contributing/remote_tools` - 提交MCP服务器（需要部署）"
 
-#: ../../expand_tooluniverse/index.rst:29 5e9a1ddefe4c47ccad158e32114930cb
+#: ../../expand_tooluniverse/index.rst:33 fc2886ae94df42ad9f879b99175b8d52
 msgid ""
-"**Complete guide**: :doc:`contributing/index` - Full contribution guidelines"
-" with code examples"
+"**Complete guide**: :doc:`contributing/index` - Full contribution "
+"guidelines with code examples"
 msgstr "**完整指南**：:doc:`contributing/index` - 包含代码示例的完整贡献指南"
 
-#: ../../expand_tooluniverse/index.rst:31 6bfc8e5d7faa44738d1edbfe8dedb3a5
+#: ../../expand_tooluniverse/index.rst:35 264e41cafe454c119e6f6c2096e8b453
 #, fuzzy
 msgid ""
-"**I want to understand the differences:** → :doc:`reference/index` - Compare"
-" tool types and usage scenarios"
+"**I want to understand the differences:** → :doc:`reference/index` - "
+"Compare tool types and usage scenarios"
 msgstr "**我想了解这些差异：** → :doc:`reference/comparison` - 比较工具类型和使用场景"
 
-#: ../../expand_tooluniverse/index.rst:35 6c3aa4c3641d4d65aefa8843df29a357
+#: ../../expand_tooluniverse/index.rst:39 d2c2f53f08f64b8584a968c7aac79d28
 #, fuzzy
 msgid "Tool Types Overview"
 msgstr "工具类型"
 
-#: ../../expand_tooluniverse/index.rst:38 37e6425531834591b5c5cab354993ab6
+#: ../../expand_tooluniverse/index.rst:42 4743000420bc4afcb67b665305f74b1c
 msgid "Local Tools"
 msgstr "本地工具"
 
-#: ../../expand_tooluniverse/index.rst:40 4a7c8ea2212a4abba4e4ac998368e30f
+#: ../../expand_tooluniverse/index.rst:44 1f593e9712e54ec1aab231ca310006a0
 msgid ""
 "Local tools are Python classes that run within the same process as "
 "ToolUniverse. They provide:"
 msgstr "本地工具是在与 ToolUniverse 相同进程中运行的 Python 类。它们提供："
 
-#: ../../expand_tooluniverse/index.rst:42 9d22cb052b634914b9ff1b12b8adf8c2
+#: ../../expand_tooluniverse/index.rst:46 4083c53ef07949a892ff9769e9ff21f1
 msgid "**High Performance**: No network overhead"
 msgstr "**高性能**：无网络开销"
 
-#: ../../expand_tooluniverse/index.rst:43 99e7416c8a34462f868525aa211119ef
+#: ../../expand_tooluniverse/index.rst:47 f740eab05fd2499daf650e7b14331f0f
 msgid "**Easy Development**: Simple Python classes"
 msgstr "**易于开发**：简单的 Python 类"
 
-#: ../../expand_tooluniverse/index.rst:44 65b8234ee15e4c658aa632002a7c2e9a
+#: ../../expand_tooluniverse/index.rst:48 ab3a509691474bb6be2f050504ceac69
 msgid "**Automatic Discovery**: Tools auto-register with decorators"
 msgstr "**自动发现**：工具使用装饰器自动注册"
 
-#: ../../expand_tooluniverse/index.rst:45 6fdd14bc0206493684176c3affc80523
+#: ../../expand_tooluniverse/index.rst:49 c8b106cd794740c38381b55338a888e8
 msgid "**Full Integration**: Access to all ToolUniverse features"
 msgstr "**完全集成**：访问所有 ToolUniverse 功能"
 
-#: ../../expand_tooluniverse/index.rst:47 e6a4ea72737a4a738094bc1018f8b120
+#: ../../expand_tooluniverse/index.rst:51 f2d74afb505e455e82b0b8e56a1e09d8
 #, fuzzy
 msgid ""
 "**Best for:** - API wrappers and data processing - File manipulation "
 "utilities - Lightweight computational tools"
 msgstr "**最适合：** - 数据处理和分析 - 文件操作 工具 - 简单的 API 包装器 - 计算工具"
 
-#: ../../expand_tooluniverse/index.rst:52 a61f87cbb2a943149c0878f7584911ab
+#: ../../expand_tooluniverse/index.rst:56 5ee1b81d3008499da00c069f125325bd
 msgid ""
-"**Key Point**: Contributing local tools requires modifying ``__init__.py`` "
-"in 4 specific locations."
+"**Key Point**: Contributing local tools requires modifying "
+"``__init__.py`` in 4 specific locations."
 msgstr "**关键点**：贡献本地工具需要在 4 个特定位置修改 ``__init__.py`` 文件。"
 
-#: ../../expand_tooluniverse/index.rst:55 47bbe8d7de8b48cfb5aee31d08e594e9
+#: ../../expand_tooluniverse/index.rst:59 1ba399be8e944289857cb22ac11ff2e6
 msgid "Remote Tools"
 msgstr "远程工具"
 
-#: ../../expand_tooluniverse/index.rst:57 6bf0ab6d68684127bcbedda4d94dd0e6
+#: ../../expand_tooluniverse/index.rst:61 a1c0dada59cb454c8c6a545e0c58e5cd
 msgid ""
 "Remote tools allow you to integrate external services, APIs, or tools "
 "running on different servers. They provide:"
 msgstr "远程工具允许您集成外部服务、API 或在不同服务器上运行的工具。它们提供："
 
-#: ../../expand_tooluniverse/index.rst:59 393f7572759d477581208bffd03aaab1
+#: ../../expand_tooluniverse/index.rst:63 63ab291456f7477eb120831d76f15fcc
 msgid "**Scalability**: Offload heavy computation to dedicated servers"
 msgstr "**可扩展性**：将繁重计算卸载到专用服务器"
 
-#: ../../expand_tooluniverse/index.rst:60 6004ab3026424fe295b929547d8383f4
+#: ../../expand_tooluniverse/index.rst:64 cb63c371dba44832bf346164e46472b7
 msgid "**Integration**: Connect with existing systems and services"
 msgstr "**集成**：与现有系统和服务连接"
 
-#: ../../expand_tooluniverse/index.rst:61 423edddaff474b4d84c48bf2246d8ade
+#: ../../expand_tooluniverse/index.rst:65 2ccf4d0a268343a6af24d4fabdcc882f
 msgid "**Flexibility**: Use tools in different programming languages"
 msgstr "**灵活性**：使用不同编程语言的工具"
 
-#: ../../expand_tooluniverse/index.rst:62 1987114aa51d4a1d9a3666accad048fa
+#: ../../expand_tooluniverse/index.rst:66 fbdc2cc422364d3dbb99dcba55952271
 msgid "**Isolation**: Keep sensitive operations separate"
 msgstr "**隔离**：保持敏感操作分离"
 
-#: ../../expand_tooluniverse/index.rst:64 55d3fd9a49ef4c4a8656f99ad71f651a
+#: ../../expand_tooluniverse/index.rst:68 58f62f4d010c4a648130123c3c735754
 msgid ""
 "**Best for:** - External API integrations - Microservice connections - "
 "Cloud-based AI services - Proprietary system connections"
 msgstr "**最适合：** - 外部 API 集成 - 微服务连接 - 基于云的 AI 服务 - 专有系统连接"
 
-#: ../../expand_tooluniverse/index.rst:70 a8b5d99a7f904bd9a996baba6fc36e32
+#: ../../expand_tooluniverse/index.rst:74 37619688fd6d47408a707efb0475ea20
 msgid ""
 "**Key Point**: Contributing remote tools requires providing a publicly "
 "accessible server or detailed deployment documentation."
 msgstr "**关键点**：贡献远程工具需要提供一个公开可访问的服务器或详细的部署文档。"
 
-#: ../../expand_tooluniverse/index.rst:73 be6270a8f0444d35a100566f69831e37
+#: ../../expand_tooluniverse/index.rst:77 072d335ffc0b4c5b8cfdd724bb7d8d91
 msgid "Development Workflow"
 msgstr "开发工作流程"
 
-#: ../../expand_tooluniverse/index.rst:75 369d9b21bee14378b66941fbf1df66da
-msgid ""
-"**Plan Your Tool** - Define functionality and requirements - Choose between "
-"local or remote implementation - Design API and parameter structure"
-msgstr "**规划您的工具** - 定义功能和需求 - 在本地或远程实现之间选择 - 设计 API 和参数 结构"
+#: ../../expand_tooluniverse/index.rst:79 0e430834993042248cb5ef2031a2c945
+msgid "**Plan Your Tool**"
+msgstr "**规划你的工具**"
 
-#: ../../expand_tooluniverse/index.rst:80 b7f6825bdb1944aeb5b550782c5c32af
-msgid ""
-"**Develop Your Tool** - Implement core functionality - Add proper error "
-"handling - Write comprehensive tests"
-msgstr "**开发您的工具** - 实现核心功能 - 添加适当的错误 处理 - 编写全面的测试"
+#: ../../expand_tooluniverse/index.rst:81 f92b290b4cc64711bd2b34f076709018
+msgid "Define functionality and requirements"
+msgstr "定义功能和需求"
 
-#: ../../expand_tooluniverse/index.rst:85 9a3b164c13c2499591333558d6ba61b8
-msgid ""
-"**Document Your Tool** - Create clear documentation - Provide usage examples"
-" - Document all parameters and outputs"
-msgstr "**记录您的工具** - 创建清晰的文档 - 提供使用 示例 - 记录所有参数和输出"
+#: ../../expand_tooluniverse/index.rst:82 02b2a64c031d4c7d8ddf31d78b8f0ab0
+msgid "Choose between local or remote implementation"
+msgstr "选择本地实现还是远程实现"
 
-#: ../../expand_tooluniverse/index.rst:90 cf66da8f88ca4b18881770250b893e8b
-msgid ""
-"**Test Thoroughly** - Unit tests for all functionality - Integration tests "
-"with ToolUniverse - Test edge cases and error conditions"
-msgstr "**彻底测试** - 所有功能的单元测试 - 与 ToolUniverse 的集成 测试 - 测试边界情况和错误条件"
+#: ../../expand_tooluniverse/index.rst:83 c95be948fd9647fdade4676f0b93ab9e
+msgid "Design API and parameter structure"
+msgstr "设计 API 和参数结构"
 
-#: ../../expand_tooluniverse/index.rst:95 318650fff8d944589eeee904231472a7
+#: ../../expand_tooluniverse/index.rst:85 f82be885c841402c985236a04aacd1dc
+msgid "**Develop Your Tool**"
+msgstr "**开发你的工具**"
+
+#: ../../expand_tooluniverse/index.rst:87 cf8b269083984e6fb900ef23b2c6b71b
+msgid "Implement core functionality"
+msgstr "实现核心功能"
+
+#: ../../expand_tooluniverse/index.rst:88 144aebeeb1584ff8925685a759adb6d0
+msgid "Add proper error handling"
+msgstr "补充合适的错误处理"
+
+#: ../../expand_tooluniverse/index.rst:89 6c96e7dc72f646bb894e624bd0f62aee
+msgid "Write comprehensive tests"
+msgstr "编写完整测试"
+
+#: ../../expand_tooluniverse/index.rst:91 b4027db276a04861be5b0f7efc32697c
+msgid "**Document Your Tool**"
+msgstr "**编写工具文档**"
+
+#: ../../expand_tooluniverse/index.rst:93 b3f351e1e1b24970a5c83d9d60669e6b
+msgid "Create clear documentation"
+msgstr "编写清晰文档"
+
+#: ../../expand_tooluniverse/index.rst:94 32fe37ca5cb3474d9d53fb8ed08c4770
+msgid "Provide usage examples"
+msgstr "提供使用示例"
+
+#: ../../expand_tooluniverse/index.rst:95 9a2eeed77d5249569a4c4b326fd19229
+msgid "Document all parameters and outputs"
+msgstr "记录所有参数和输出"
+
+#: ../../expand_tooluniverse/index.rst:97 09cd18a30f294ffcab9ad90b41cf6b7c
+msgid "**Test Thoroughly**"
+msgstr "**充分测试**"
+
+#: ../../expand_tooluniverse/index.rst:99 f01f64b5940d46f6b75d48f0d0893100
+msgid "Unit tests for all functionality"
+msgstr "为全部功能编写单元测试"
+
+#: ../../expand_tooluniverse/index.rst:100 6753ebe781c1438a9068819673158fbc
 #, fuzzy
-msgid ""
-"**Submit for Review** (if contributing) - Follow contribution guidelines - "
-"Create pull request - Address review feedback"
-msgstr "**提交审查** - 遵循贡献指南 - 创建拉取 请求 - 处理审查反馈"
+msgid "Integration tests with ToolUniverse"
+msgstr "与 ToolUniverse 进行集成测试"
 
-#: ../../expand_tooluniverse/index.rst:101 2a58df88828c4d69a721ba37fe116fda
+#: ../../expand_tooluniverse/index.rst:101 f22c12a38ed04d3da1cef01710e1cca8
+msgid "Test edge cases and error conditions"
+msgstr "测试边界情况和错误条件"
+
+#: ../../expand_tooluniverse/index.rst:103 a17cf9fb28274f3c9cd4ee24d8665aa7
+msgid "**Submit for Review** (if contributing)"
+msgstr "**提交评审**（如果你要贡献到社区）"
+
+#: ../../expand_tooluniverse/index.rst:105 fc5c9884eeff45679f481eef76391ae8
+msgid "Follow contribution guidelines"
+msgstr "遵循贡献指南"
+
+#: ../../expand_tooluniverse/index.rst:106 f8bf35b3faa94bec9843e34f63361a5d
+msgid "Create pull request"
+msgstr "创建 Pull Request"
+
+#: ../../expand_tooluniverse/index.rst:107 4af9ae7fea064d8d9144c2f9de65bc28
+msgid "Address review feedback"
+msgstr "处理评审反馈"
+
+#: ../../expand_tooluniverse/index.rst:110 dc2ea719760047f7acba2bcba0d2ed13
 msgid "Examples"
 msgstr "示例"
 
-#: ../../expand_tooluniverse/index.rst:103 003a5c129ee247a1bd49e6c508f20ba4
+#: ../../expand_tooluniverse/index.rst:112 d4ce2208d8ea4b348d848ded0b0e0fb7
 msgid "For detailed examples and code samples, see:"
 msgstr "有关详细示例和代码样本，请参见："
 
-#: ../../expand_tooluniverse/index.rst:105 0f1ea3760277487186ecc3e99f2cfd8d
+#: ../../expand_tooluniverse/index.rst:114 173f2a989d6046fba60db32a32cf9503
 #, fuzzy
 msgid ""
-"**Local Tools**: :doc:`local_tools/tutorial` - Complete examples with step-"
-"by-step instructions"
+"**Local Tools**: :doc:`local_tools/local_tools_tutorial` - Complete "
+"examples with step-by-step instructions"
 msgstr "**本地工具**：:doc:`local_tools/tutorial` - 用于API封装和数据处理的Python类"
 
-#: ../../expand_tooluniverse/index.rst:106 55c5a81047164050bd3461ee9aac7a59
+#: ../../expand_tooluniverse/index.rst:115 42d92d52a027440aa4419ca1646e06a3
 #, fuzzy
 msgid ""
 "**Remote Tools**: :doc:`remote_tools/tutorial` - MCP integration and API "
 "examples"
 msgstr "🔗 **远程工具**：:doc:`remote_tool_registration` - 了解远程集成"
 
-#: ../../expand_tooluniverse/index.rst:107 c8d72b55fd404783beab64eb0e7833e6
+#: ../../expand_tooluniverse/index.rst:116 c56a187b8ea6494abb673389ba4ee0b9
 #, fuzzy
 msgid ""
-"**Quick Start**: :doc:`quick_start` - Simple 5-minute example to get started"
+"**Quick Start**: :doc:`quick_start` - Simple 5-minute example to get "
+"started"
 msgstr "🚀 **快速开始**：:doc:`quick_start` - 在5分钟内创建您的第一个工具"
 
-#: ../../expand_tooluniverse/index.rst:110 a9e268f6564b45be868835939e74a58d
+#: ../../expand_tooluniverse/index.rst:119 37c5093424f74104b889b1f65e2d4f31
 msgid "Getting Help"
 msgstr "获取帮助"
 
-#: ../../expand_tooluniverse/index.rst:112 6faf4a717c164e20aa281811cddfff33
+#: ../../expand_tooluniverse/index.rst:121 7af0ce0370224f0d9130a3276c0bf148
 msgid "If you need help with tool development:"
 msgstr "如果您需要工具开发的帮助："
 
-#: ../../expand_tooluniverse/index.rst:114 b1609038994048a8a75120c1e3ae3081
+#: ../../expand_tooluniverse/index.rst:123 fee998faddfc4c9d8ce8d82bb99d03f2
 msgid "**Documentation**: Check the specific guides for detailed information"
 msgstr "**文档**：查看特定指南以获取详细信息"
 
-#: ../../expand_tooluniverse/index.rst:115 cbacbb443a4d41af9c5c32dc8f54c9e1
+#: ../../expand_tooluniverse/index.rst:124 131c019637884bc8a929ebaa7e71783b
 msgid "**Examples**: Look at existing tools in the codebase"
 msgstr "**示例**：查看代码库中的现有工具"
 
-#: ../../expand_tooluniverse/index.rst:116 f7bd2583ce594b05b249ba2a21dbcbfb
+#: ../../expand_tooluniverse/index.rst:125 912cf9da53284fffbb422a7b00e7529b
 msgid "**Community**: Ask questions in GitHub discussions"
 msgstr "**社区**：在 GitHub 讨论区提问"
 
-#: ../../expand_tooluniverse/index.rst:117 2a558c29a79a47139aabc278f172fc30
+#: ../../expand_tooluniverse/index.rst:126 027f2cbcd7a341b38dae5b6572895615
 msgid "**Issues**: Report bugs or request features"
 msgstr "**问题**：报告错误或请求功能"
 
-#: ../../expand_tooluniverse/index.rst:120 a33c34a58aa94ae186924b6e8f58ea7e
-msgid "Resources"
-msgstr "资源"
-
-#: ../../expand_tooluniverse/index.rst:122 0dcd6cfd29c84c6a9686600823cbe0e5
-#, fuzzy
-msgid ""
-"**ToolUniverse Repository**: https://github.com/mims-harvard/ToolUniverse"
-msgstr "**ToolUniverse 仓库**：https://github.com/original/ToolUniverse"
-
-#: ../../expand_tooluniverse/index.rst:123 dc4f036e8df149f59fa178b3757fde56
-#, fuzzy
-msgid "**Issue Tracker**: https://github.com/mims-harvard/ToolUniverse/issues"
-msgstr "**问题跟踪器**：https://github.com/original/ToolUniverse/issues"
-
-#: ../../expand_tooluniverse/index.rst:124 a052232a25804e55be6f98a5f0f62950
-#, fuzzy
-msgid ""
-"**Discussions**: https://github.com/mims-harvard/ToolUniverse/discussions"
-msgstr "**讨论区**：https://github.com/original/ToolUniverse/discussions"
-
-#: ../../expand_tooluniverse/index.rst:125 08dda194f20d45f98bbe92d8f6f61f0b
-msgid "**Documentation**: https://tooluniverse.readthedocs.io"
-msgstr "**文档**：https://tooluniverse.readthedocs.io"
-
-#: ../../expand_tooluniverse/index.rst:128 e7078c8242784224b99b89f7b8d7056a
+#: ../../expand_tooluniverse/index.rst:129 4ec06966321f4024839d9975b0ca1992
 msgid "Next Steps"
 msgstr "下一步措施"
 
-#: ../../expand_tooluniverse/index.rst:130 bf791e44d0eb4b0fad77c44f78769408
+#: ../../expand_tooluniverse/index.rst:131 28ad869334ea4412a22bfd6ce4ddb94e
 msgid "Ready to start? Choose your path:"
 msgstr "准备开始？请选择您的路径："
 
-#: ../../expand_tooluniverse/index.rst:132 41f63ba5c82a49449739f825250ebf0b
-msgid ""
-"🚀 **Quick Start**: :doc:`quick_start` - Create your first tool in 5 minutes"
+#: ../../expand_tooluniverse/index.rst:133 72b470b7f91047ddb88c08668e5a86be
+#, fuzzy
+msgid "**Quick Start**: :doc:`quick_start` - Create your first tool in 5 minutes"
 msgstr "🚀 **快速开始**：:doc:`quick_start` - 在5分钟内创建您的第一个工具"
 
-#: ../../expand_tooluniverse/index.rst:133 6fd954787842483fa5a76da1fa44c6e1
+#: ../../expand_tooluniverse/index.rst:134 eb4e5b4c54ea40b2bb14b32e722b224e
 #, fuzzy
 msgid ""
-"🏠 **Local Tools**: :doc:`local_tools/tutorial` - Learn local tool "
-"development"
+"**Local Tools**: :doc:`local_tools/local_tools_tutorial` - Learn local "
+"tool development"
 msgstr "🏠 **本地工具**：:doc:`local_tool_registration` - 从本地工具开发开始"
 
-#: ../../expand_tooluniverse/index.rst:134 a7fe6d49bc6a438ebc3f147b98e7d134
+#: ../../expand_tooluniverse/index.rst:135 ed317012617d4a0ea9fe579612a31426
 #, fuzzy
 msgid ""
-"🔗 **Remote Tools**: :doc:`remote_tools/tutorial` - Learn remote tool "
+"**Remote Tools**: :doc:`remote_tools/tutorial` - Learn remote tool "
 "integration"
 msgstr "🔗 **远程工具**：:doc:`remote_tool_registration` - 了解远程集成"
 
-#: ../../expand_tooluniverse/index.rst:135 c11689a8f209476fb26e79ba6c70bac0
+#: ../../expand_tooluniverse/index.rst:136 16aab73e5273459e9ef686831c55f2b4
+#, fuzzy
 msgid ""
-"🎁 **Contributing**: :doc:`contributing/index` - Submit tools to the "
+"**Contributing**: :doc:`contributing/index` - Submit tools to the "
 "community"
 msgstr "🎁 **贡献**：:doc:`contributing/index` - 向社区提交工具"
 
-#: ../../expand_tooluniverse/index.rst:136 4bd46925135645938176a825380b7e92
+#: ../../expand_tooluniverse/index.rst:137 79e4f2e7f5744804b526e6266ea6ba9b
+#, fuzzy
 msgid ""
-"🔍 **Understanding**: Review the tool type comparison table in "
+"**Understanding**: Review the tool type comparison table in "
 ":doc:`contributing/index`"
 msgstr "🔍 **理解**：查看 :doc:`contributing/index` 中的工具类型对比表"
 
-#: ../../expand_tooluniverse/index.rst:139 a54c30b9d80b4d3e82e47d8e090b7ad0
+#: ../../expand_tooluniverse/index.rst:140 ceca3cc0c4a64961a38267dd1509d9ec
 #, fuzzy
 msgid ""
-"**Getting Started**: We recommend starting with the quick start tutorial to "
-"understand the basics, then choosing the appropriate detailed guide based on"
-" your needs. The community is here to help you succeed!"
+"**Getting Started**: We recommend starting with the quick start tutorial "
+"to understand the basics, then choosing the appropriate detailed guide "
+"based on your needs. The community is here to help you succeed!"
 msgstr "**入门指南**：我们建议先从一个简单的本地工具开始，以了解整个流程，然后再逐步过渡到更复杂的集成。社区将随时为您的成功提供支持！"
 
 #~ msgid ""
-#~ "#: ../../expand_tooluniverse/index.rst:281 54a4942705de413185e62cf98aa1252"
+#~ "#: ../../expand_tooluniverse/index.rst:281 "
+#~ "54a4942705de413185e62cf98aa1252"
 #~ msgstr ""
-#~ "#: ../../expand_tooluniverse/index.rst:281 54a4942705de413185e62cf98aa1252\n"
+#~ "#: ../../expand_tooluniverse/index.rst:281 "
+#~ "54a4942705de413185e62cf98aa1252\n"
 #~ "\n"
 #~ "上下文：文档"
 
@@ -374,9 +416,12 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr "概述"
 
 #~ msgid ""
-#~ "ToolUniverse is designed to be extensible, allowing you to add custom tools "
-#~ "for your specific research needs. Whether you want to integrate with "
-#~ "external APIs, create specialized analysis tools, or contribute to the "
+#~ "ToolUniverse is designed to be "
+#~ "extensible, allowing you to add custom"
+#~ " tools for your specific research "
+#~ "needs. Whether you want to integrate "
+#~ "with external APIs, create specialized "
+#~ "analysis tools, or contribute to the "
 #~ "community, this section has you covered."
 #~ msgstr ""
 #~ "ToolUniverse 设计为可扩展的，允许您为特定的研究需求添加自定义工具。无论您是想与外部 API "
@@ -386,19 +431,23 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr "根据您的需求选择路径："
 
 #~ msgid ""
-#~ "**I want to create a tool for my own use:** → Start with "
-#~ ":doc:`local_tool_registration` for simple, fast tools"
+#~ "**I want to create a tool for "
+#~ "my own use:** → Start with "
+#~ ":doc:`local_tool_registration` for simple, fast "
+#~ "tools"
 #~ msgstr "**我想为自己创建一个工具：** → 从 :doc:`local_tool_registration` 开始，适用于简单、快速的工具"
 
 #~ msgid ""
-#~ "**I want to integrate with external services:** → Start with "
+#~ "**I want to integrate with external "
+#~ "services:** → Start with "
 #~ ":doc:`remote_tool_registration` for API integrations"
 #~ msgstr "**我想与外部服务集成：** → 从 :doc:`remote_tool_registration` 开始，适用于 API 集成"
 
 #~ msgid ""
-#~ "**I want to contribute to the community:** → Start with "
-#~ ":doc:`comprehensive_tool_guide` for the complete step-by-step contribution "
-#~ "process"
+#~ "**I want to contribute to the "
+#~ "community:** → Start with "
+#~ ":doc:`comprehensive_tool_guide` for the complete "
+#~ "step-by-step contribution process"
 #~ msgstr "**我想为社区做贡献：** → 从 :doc:`comprehensive_tool_guide` 开始，了解完整的逐步贡献流程"
 
 #~ msgid "Guides"
@@ -411,39 +460,51 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr ":doc:`local_tool_registration`"
 
 #~ msgid ""
-#~ "Learn how to create, register, and use custom tools locally within "
-#~ "ToolUniverse. This Tutorial covers everything from basic tool creation to "
-#~ "advanced patterns and best practices."
+#~ "Learn how to create, register, and "
+#~ "use custom tools locally within "
+#~ "ToolUniverse. This Tutorial covers everything"
+#~ " from basic tool creation to advanced"
+#~ " patterns and best practices."
 #~ msgstr "学习如何在 ToolUniverse 中本地创建、注册和使用自定义工具。本教程涵盖从基本工具创建到高级模式和最佳实践的所有内容。"
 
 #~ msgid ""
-#~ "**Key Topics:** - Quick start with decorator registration - Step-by-step "
-#~ "tool creation - Common tool patterns (API wrappers, file processors, "
-#~ "database tools) - Advanced features (caching, rate limiting, error handling)"
-#~ " - Testing and troubleshooting"
+#~ "**Key Topics:** - Quick start with "
+#~ "decorator registration - Step-by-step"
+#~ " tool creation - Common tool patterns"
+#~ " (API wrappers, file processors, database"
+#~ " tools) - Advanced features (caching, "
+#~ "rate limiting, error handling) - Testing"
+#~ " and troubleshooting"
 #~ msgstr ""
-#~ "**关键主题：** - 使用装饰器注册的快速开始 - 逐步工具创建 - 常见工具模式（API 包装器、文件处理器、数据库工具） - "
-#~ "高级功能（缓存、速率限制、错误处理） - 测试和故障排除"
+#~ "**关键主题：** - 使用装饰器注册的快速开始 - 逐步工具创建 - "
+#~ "常见工具模式（API 包装器、文件处理器、数据库工具） - 高级功能（缓存、速率限制、错误处理） "
+#~ "- 测试和故障排除"
 
 #~ msgid ":doc:`remote_tool_registration`"
 #~ msgstr ":doc:`remote_tool_registration`"
 
 #~ msgid ""
-#~ "Learn how to integrate external services, APIs, and tools running on "
-#~ "different servers with ToolUniverse. This Tutorial covers MCP integration, "
-#~ "REST API wrappers, and advanced remote tool patterns."
+#~ "Learn how to integrate external "
+#~ "services, APIs, and tools running on "
+#~ "different servers with ToolUniverse. This "
+#~ "Tutorial covers MCP integration, REST "
+#~ "API wrappers, and advanced remote tool"
+#~ " patterns."
 #~ msgstr ""
-#~ "学习如何将外部服务、API 和在不同服务器上运行的工具与 ToolUniverse 集成。本教程涵盖 MCP 集成、REST API "
-#~ "包装器和高级远程工具模式。"
+#~ "学习如何将外部服务、API 和在不同服务器上运行的工具与 ToolUniverse 集成。本教程涵盖"
+#~ " MCP 集成、REST API 包装器和高级远程工具模式。"
 
 #~ msgid ""
-#~ "**Key Topics:** - MCP (Model Context Protocol) integration - REST API "
-#~ "wrapper creation - Specialized API wrappers (OpenAI, Weather, Database) - "
-#~ "Microservice integration patterns - Authentication and security - "
-#~ "Performance optimization"
+#~ "**Key Topics:** - MCP (Model Context "
+#~ "Protocol) integration - REST API wrapper"
+#~ " creation - Specialized API wrappers "
+#~ "(OpenAI, Weather, Database) - Microservice "
+#~ "integration patterns - Authentication and "
+#~ "security - Performance optimization"
 #~ msgstr ""
-#~ "**关键主题：** - MCP（模型上下文协议）集成 - REST API 包装器创建 - 专用 API 包装器（OpenAI、天气、数据库） - "
-#~ "微服务集成模式 - 身份验证和安全性 - 性能优化"
+#~ "**关键主题：** - MCP（模型上下文协议）集成 - REST API"
+#~ " 包装器创建 - 专用 API 包装器（OpenAI、天气、数据库） -"
+#~ " 微服务集成模式 - 身份验证和安全性 - 性能优化"
 
 #~ msgid "Contributing Tools to ToolUniverse - Complete Tutorial"
 #~ msgstr "为 ToolUniverse 贡献工具 - 完整教程"
@@ -452,36 +513,50 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr ":doc:`comprehensive_tool_guide`"
 
 #~ msgid ""
-#~ "A comprehensive, step-by-step Tutorial that combines tool reference "
-#~ "documentation with detailed contribution instructions. This Tutorial covers "
-#~ "everything from understanding existing tools to creating, testing, and "
-#~ "submitting your own tools with detailed code examples and best practices."
-#~ msgstr ""
-#~ "一个综合的、逐步的教程，将工具参考文档与详细的贡献说明相结合。本教程涵盖从理解现有工具到创建、测试和提交您自己的工具的所有内容，包括详细的代码示例和最佳实践。"
+#~ "A comprehensive, step-by-step Tutorial"
+#~ " that combines tool reference documentation"
+#~ " with detailed contribution instructions. "
+#~ "This Tutorial covers everything from "
+#~ "understanding existing tools to creating, "
+#~ "testing, and submitting your own tools"
+#~ " with detailed code examples and best"
+#~ " practices."
+#~ msgstr "一个综合的、逐步的教程，将工具参考文档与详细的贡献说明相结合。本教程涵盖从理解现有工具到创建、测试和提交您自己的工具的所有内容，包括详细的代码示例和最佳实践。"
 
 #~ msgid ""
-#~ "**Key Topics:** - Understanding ToolUniverse tool structure and categories -"
-#~ " Complete development environment setup - Step-by-step tool implementation "
-#~ "with templates - Comprehensive testing strategies and examples - Code "
-#~ "quality standards and documentation requirements - Pull request submission "
-#~ "and review process - Advanced topics including performance optimization and "
-#~ "security"
+#~ "**Key Topics:** - Understanding ToolUniverse"
+#~ " tool structure and categories - "
+#~ "Complete development environment setup - "
+#~ "Step-by-step tool implementation with"
+#~ " templates - Comprehensive testing "
+#~ "strategies and examples - Code quality"
+#~ " standards and documentation requirements -"
+#~ " Pull request submission and review "
+#~ "process - Advanced topics including "
+#~ "performance optimization and security"
 #~ msgstr ""
-#~ "**关键主题：** - 理解 ToolUniverse 工具结构和 类别 - 完整的开发环境设置 - 使用模板的逐步工具 实现 - 全面的测试策略和 "
-#~ "示例 - 代码质量标准和文档要求 - 拉取 请求提交和审查流程 - 高级主题包括 性能优化和安全性"
+#~ "**关键主题：** - 理解 ToolUniverse 工具结构和 类别 "
+#~ "- 完整的开发环境设置 - 使用模板的逐步工具 实现 - "
+#~ "全面的测试策略和 示例 - 代码质量标准和文档要求 - 拉取 "
+#~ "请求提交和审查流程 - 高级主题包括 性能优化和安全性"
 
 #~ msgid ":doc:`contributing_tools`"
 #~ msgstr ":doc:`contributing_tools`"
 
 #~ msgid ""
-#~ "Quick reference for submitting tools to the ToolUniverse repository (legacy "
-#~ "Tutorial - use comprehensive_tool_guide for detailed instructions)."
+#~ "Quick reference for submitting tools to"
+#~ " the ToolUniverse repository (legacy "
+#~ "Tutorial - use comprehensive_tool_guide for"
+#~ " detailed instructions)."
 #~ msgstr ""
-#~ "将工具提交到 ToolUniverse 仓库的快速参考 （旧版教程 - 使用 comprehensive_tool_guide 获取详细说明）。"
+#~ "将工具提交到 ToolUniverse 仓库的快速参考 （旧版教程 - 使用"
+#~ " comprehensive_tool_guide 获取详细说明）。"
 
 #~ msgid ""
-#~ "**Key Topics:** - Basic contribution process - Testing and documentation "
-#~ "requirements - Pull request submission overview"
+#~ "**Key Topics:** - Basic contribution "
+#~ "process - Testing and documentation "
+#~ "requirements - Pull request submission "
+#~ "overview"
 #~ msgstr "**关键主题：** - 基本贡献流程 - 测试和文档 要求 - 拉取请求提交概述"
 
 #~ msgid "Best Practices"
@@ -563,8 +638,9 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr "API 集成工具"
 
 #~ msgid ""
-#~ "📤 **Contributing**: :doc:`comprehensive_tool_guide` - Complete step-by-step "
-#~ "Tutorial for contributing tools to the community"
+#~ "📤 **Contributing**: :doc:`comprehensive_tool_guide` "
+#~ "- Complete step-by-step Tutorial "
+#~ "for contributing tools to the community"
 #~ msgstr "📤 **贡献**：:doc:`comprehensive_tool_guide` - 为社区贡献工具的完整分步教程"
 
 #~ msgid "Simple Local Tool"
@@ -577,6 +653,58 @@ msgstr "**入门指南**：我们建议先从一个简单的本地工具开始�
 #~ msgstr "扩展 ToolUniverse"
 
 #~ msgid ""
-#~ "🔍 **Understanding**: :doc:`reference/comparison` - Compare different "
-#~ "approaches"
+#~ "🔍 **Understanding**: :doc:`reference/comparison` -"
+#~ " Compare different approaches"
 #~ msgstr "🔍 **理解**: :doc:`reference/comparison` - 比较不同方法"
+
+#~ msgid ""
+#~ "**Plan Your Tool** - Define "
+#~ "functionality and requirements - Choose "
+#~ "between local or remote implementation -"
+#~ " Design API and parameter structure"
+#~ msgstr "**规划您的工具** - 定义功能和需求 - 在本地或远程实现之间选择 - 设计 API 和参数 结构"
+
+#~ msgid ""
+#~ "**Develop Your Tool** - Implement core"
+#~ " functionality - Add proper error "
+#~ "handling - Write comprehensive tests"
+#~ msgstr "**开发您的工具** - 实现核心功能 - 添加适当的错误 处理 - 编写全面的测试"
+
+#~ msgid ""
+#~ "**Document Your Tool** - Create clear"
+#~ " documentation - Provide usage examples "
+#~ "- Document all parameters and outputs"
+#~ msgstr "**记录您的工具** - 创建清晰的文档 - 提供使用 示例 - 记录所有参数和输出"
+
+#~ msgid ""
+#~ "**Test Thoroughly** - Unit tests for "
+#~ "all functionality - Integration tests "
+#~ "with ToolUniverse - Test edge cases "
+#~ "and error conditions"
+#~ msgstr "**彻底测试** - 所有功能的单元测试 - 与 ToolUniverse 的集成 测试 - 测试边界情况和错误条件"
+
+#~ msgid ""
+#~ "**Submit for Review** (if contributing) "
+#~ "- Follow contribution guidelines - "
+#~ "Create pull request - Address review "
+#~ "feedback"
+#~ msgstr "**提交审查** - 遵循贡献指南 - 创建拉取 请求 - 处理审查反馈"
+
+#~ msgid "Resources"
+#~ msgstr "资源"
+
+#~ msgid ""
+#~ "**ToolUniverse Repository**: https://github.com/mims-"
+#~ "harvard/ToolUniverse"
+#~ msgstr "**ToolUniverse 仓库**：https://github.com/original/ToolUniverse"
+
+#~ msgid "**Issue Tracker**: https://github.com/mims-harvard/ToolUniverse/issues"
+#~ msgstr "**问题跟踪器**：https://github.com/original/ToolUniverse/issues"
+
+#~ msgid ""
+#~ "**Discussions**: https://github.com/mims-"
+#~ "harvard/ToolUniverse/discussions"
+#~ msgstr "**讨论区**：https://github.com/original/ToolUniverse/discussions"
+
+#~ msgid "**Documentation**: https://tooluniverse.readthedocs.io"
+#~ msgstr "**文档**：https://tooluniverse.readthedocs.io"

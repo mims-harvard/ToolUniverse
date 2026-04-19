@@ -1,0 +1,232 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gene2phenotype_tools.rst:10 472f876020324983aa9faffc099b0108
+msgid "Gene2Phenotype Tools"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:12 889461438b014eaa86c4b1f1d8603e50
+msgid ""
+"**Configuration File**: ``gene2phenotype_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:16 88efed1bacdd47128d40a3e28de9523a
+msgid ""
+"This page contains all tools defined in the ``gene2phenotype_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:19 cbc4f6f5ba414a81a23652f1e47a7c95
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:22 62c4cf575a144c2aa3068892215f1528
+msgid "**G2P_get_gene** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:24 fb94f60222154cacb242f3f46e780ce9
+msgid ""
+"Get Gene2Phenotype information for a specific gene by symbol. Returns "
+"gene location, cross-refere..."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst d7e47c98d7e148d7957c580a96997d82
+msgid "G2P_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:28
+#: ../../tools/gene2phenotype_tools.rst:59
+#: ../../tools/gene2phenotype_tools.rst:90
+#: ../../tools/gene2phenotype_tools.rst:121 31303007d1ed4e9994b00a3ab3e1eb72
+#: 564a2ba973464a0499a85d959d2cf310 eaa50051096746b6b04295278c70486a
+#: f86a1cd9ecaf4b949b116d541a19a0fe
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:30 cbac61855ccf4aa2b37ca563e3a7f6fe
+msgid "**Name**: ``G2P_get_gene``"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:31
+#: ../../tools/gene2phenotype_tools.rst:62
+#: ../../tools/gene2phenotype_tools.rst:93
+#: ../../tools/gene2phenotype_tools.rst:124 2e9528a05e4d4cdbbda30191a1ef7468
+#: 54c2b086e0ab49b0adf72e544d8870e1 679453f10c8b442bbc2aafadc60b9fca
+#: 80f5d47b20d14e36950b90406225120c
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:32 c35e7399dee74ce58f03cf63d481940e
+msgid ""
+"**Description**: Get Gene2Phenotype information for a specific gene by "
+"symbol. Returns gene location, cross-references to HGNC/Ensembl/OMIM, "
+"gene synonyms, and genomic coordinates. This provides the gene-level data"
+" without disease associations. For disease associations, use G2P\\_search"
+" with the gene name instead."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:34
+#: ../../tools/gene2phenotype_tools.rst:65
+#: ../../tools/gene2phenotype_tools.rst:96
+#: ../../tools/gene2phenotype_tools.rst:127 2b7d06b8cda5420ba69bca8fb82fd617
+#: 3fb1672f6c41415987c4c2e5aa8f38c8 a5a4cbc8fa3840578812fc941400a27b
+#: ff5fda827ed9463bafda5cf3092adfeb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:36 867b17aa735440529cc684253c400772
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'BRCA1', 'TP53', "
+"'EGFR', 'SCN1A')"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:39
+#: ../../tools/gene2phenotype_tools.rst:70
+#: ../../tools/gene2phenotype_tools.rst:101
+#: ../../tools/gene2phenotype_tools.rst:135 06f8934fbda446988c33bfa5e1df410f
+#: 7714f177f5db4b8abab1581be874e0e3 81697e84ba564c7da9b798804b7b238d
+#: 9b0e040525954e8989d515f1c59350ef
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:53 b8d4e2b691dc473f83c9615f089e655b
+msgid "**G2P_get_panel** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:55 550f2aaeae6f4bebb195a4d93408fd9f
+msgid ""
+"Get summary statistics for a Gene2Phenotype clinical panel. G2P organizes"
+" gene-disease associatio..."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst e82ca42a33324f66b9383bf9f1b0e620
+msgid "G2P_get_panel tool specification"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:61 b48b08f13e4544198b3312c387335d77
+msgid "**Name**: ``G2P_get_panel``"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:63 9127210f075449f7b66f010b30531941
+msgid ""
+"**Description**: Get summary statistics for a Gene2Phenotype clinical "
+"panel. G2P organizes gene-disease associations into expert-curated "
+"panels: DD (developmental disorders), Cancer, Skeletal, Eye, Cardiac, "
+"Ear, Skin, and Prenatal. Returns panel name, description, last update "
+"date, total records count, total genes, and breakdown by confidence level"
+" (definitive, strong, moderate, limited)."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:67 1b4083ad34c74868a50db4d502077a9b
+msgid ""
+"``panel`` (string) (required) Panel name: 'cancer', 'dd' (developmental "
+"disorders), 'skeletal', 'eye', 'cardiac', 'ear', 'skin', 'prenatal'"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:84 739319577362476aa7ad3f361b4bf9eb
+msgid "**G2P_get_record** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:86 674d8bab17234e95bd48eabe80f2c63c
+msgid ""
+"Get detailed Gene2Phenotype (G2P) record for a specific gene-disease "
+"association by its stable ID..."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst 747edbd60dd24eb9a05634ef5b1b7932
+msgid "G2P_get_record tool specification"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:92 4e2ac13117c644369d4b14b03ec08cc2
+msgid "**Name**: ``G2P_get_record``"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:94 cbd060a0e18640fcadf32916d28ab021
+msgid ""
+"**Description**: Get detailed Gene2Phenotype (G2P) record for a specific "
+"gene-disease association by its stable ID. Returns comprehensive clinical"
+" genetics information including locus details (gene symbol, genomic "
+"coordinates, cross-references), genotype/inheritance pattern, variant "
+"consequences (with Sequence Ontology terms), molecular mechanism with "
+"evidence, disease details with ontology terms, confidence level, and "
+"supporting publications. Use G2P\\_search first to find stable IDs."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:98 836170168d2749749173a2913296c39d
+msgid ""
+"``stable_id`` (string) (required) G2P stable identifier (e.g., "
+"'G2P01796', 'G2P00119', 'G2P00979'). Get IDs from G2P\\_search results."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:115 db3cecd6478f4c21873c606a560df9bf
+msgid "**G2P_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:117 f5f914ff4dbf4161961a4131ad8e5bee
+msgid ""
+"Search the Gene2Phenotype (G2P) database for gene-disease associations "
+"curated by clinical geneti..."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst d42e26d676d943dabf2f991aa5bf9a3e
+msgid "G2P_search tool specification"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:123 bfebaede2d2e453ca20df4b0ecf72084
+msgid "**Name**: ``G2P_search``"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:125 af09c17d9a584cd8a790cf4390327bd0
+msgid ""
+"**Description**: Search the Gene2Phenotype (G2P) database for gene-"
+"disease associations curated by clinical geneticists. G2P is maintained "
+"by EBI and provides expert-curated evidence for gene-disease "
+"relationships used in clinical diagnosis. Returns gene-disease pairs with"
+" genotype (monoallelic/biallelic), molecular mechanism (loss/gain of "
+"function), clinical panel assignment (DD, Cancer, Skeletal, etc.), and "
+"confidence level (definitive, strong, moderate, limited). Useful for "
+"clinical variant interpretation and genetic diagnosis."
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:129 0b95fc4ca6fd4788b930bbf20e52fec3
+msgid ""
+"``query`` (string) (required) Search query - gene symbol (e.g., 'BRCA1', "
+"'TP53') or disease name (e.g., 'epilepsy', 'cardiomyopathy', 'cancer')"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:132 a5aab9267b2b46f6bb694f0ca55400a0
+msgid "``page`` (integer, null) (optional) Page number for pagination (default 1)"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:149 0ff31bbcc32c46d2b03049138d2199b6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:151 262735d4136e4a26ba700bb69d42a229
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gene2phenotype_tools.rst:152 5af2ddea5e83476a8698da54060a59ff
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

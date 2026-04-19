@@ -1,0 +1,1021 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/make_your_data_agent_searchable.rst:3
+#: 84d301ac8b6b4e07ad5276edae8c9dce
+msgid "Make Your Data Agent-Searchable in ToolUniverse"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:5
+#: f67b00d2d9094931be519d42da645d1c
+msgid ""
+"**Goal:** Turn your text or JSON data into an **agent-searchable "
+"collection** once with ``tu-datastore``. After that, any **ToolUniverse "
+"agent** can query it as a tool — no extra setup or paths required. "
+"Optionally, share your collection and tool definition on **Hugging Face**"
+" so others can use it too."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:12
+#: caecd4dc82e24bf588b69b22cfc9949d
+msgid ""
+"**This guide uses cardiology as a concrete example, but works for ANY "
+"domain or data type.**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:14
+#: 2dbfe3a7c1d4405289bf74da01c2f6ad
+msgid ""
+"You can replace ``cardiology_tutorial``, ``cardiology_data``, and "
+"``cardiology_expert_search`` with your own names: ``legal_database``, "
+"``research_papers``, ``customer_support``, ``biology_knowledge``, etc. "
+"The workflow and commands are identical—only the names and descriptions "
+"change."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:19
+#: ffd20cca955d4b4abb6af0f88b92eb6b
+msgid "What you’ll do"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:21
+#: d6bd056490b54947b47348efb3a2707c
+msgid "Install ToolUniverse"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:22
+#: 58761a07f2e947259bc267ec074d6263
+msgid "Choose an embedding service (OpenAI, Azure, Hugging Face, or local)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:23
+#: 27aaf9f204f247edae24a1442d861a88
+msgid "Build your **collection** — your searchable library"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:24
+#: cf7b7ae0bc6a47aea1350a29569a87da
+msgid "Create an **agent tool JSON** that points to it"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:25
+#: 715a7be4a6bb4deca4116e74e5b83bf3
+msgid "Install your tool so ToolUniverse/Codex auto-detects it"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:26
+#: 511e2cb842dc47d392a6aa095d35b616
+msgid "(Optional) Share it via Hugging Face for others to use"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:28
+#: ../../guide/make_your_data_agent_searchable.rst:66
+#: ../../guide/make_your_data_agent_searchable.rst:107
+#: ../../guide/make_your_data_agent_searchable.rst:167
+#: ../../guide/make_your_data_agent_searchable.rst:236
+#: ../../guide/make_your_data_agent_searchable.rst:293
+#: ../../guide/make_your_data_agent_searchable.rst:427
+#: ../../guide/make_your_data_agent_searchable.rst:539
+#: ../../guide/make_your_data_agent_searchable.rst:551
+#: ../../guide/make_your_data_agent_searchable.rst:586
+#: 00f21b37368641dc8a18066507ee8556 402b1fee9535467e8dad2600eaebe01c
+#: 45a21abe63d94bce9f51f4cfede02390 60daaf2aa25d4ce8af70aff43c02a160
+#: 6c55ad199d544c99a08f9ab542b618b0 98475959a10547239c7b2277cc463d06
+#: a884bbce8b774f918daca49b51359ab0 d515567ee96a49cfad9d773025340f6c
+#: de2d75b704df4b99b0cb3ecdc2be840e f2548cbfc03e4cf4a24860daacfdfb60
+msgid "---"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:31
+#: 783252693fbf47ac9151150316616fd4
+msgid "1. Install"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:42
+#: f77e1d9d70474fc4b6d8d41e23cf3f1f
+msgid "If you’re developing locally, use:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:48
+#: 8945f0cc74684088a3d31be4ea83b07b
+msgid ""
+"If the ``tu-datastore`` command isn’t found (e.g., running from source), "
+"run the module directly:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:55
+#: 23c5aa6924104de29e604d242fe0b34b
+msgid "### Available ``tu-datastore`` commands"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:69
+#: c28c976b134842c1953ab86c7ff2d167
+msgid "2. Choose ONE embedding service"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:71
+#: 4d49a39766874207a1d5654d004d4214
+msgid ""
+"Create a file named **.env** and paste one block below, then run ``source"
+" .env``."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:73
+#: 6165e8fc36024d9c982982c0d52cceed
+msgid "**Azure OpenAI**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:84
+#: 3ef41a3cb0094a988513159d44a2022b
+msgid "**OpenAI**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:92
+#: 3ced15147f3847aebdf992eaab2d4f8d
+msgid "**Hugging Face**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:100
+#: 49dfbaf3a5304995b02b77c2363b2b50
+msgid "**Local/offline**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:110
+#: f3d873bc507e4822851a864514b9a9e1
+msgid "3. Build your agent-searchable collection from your raw data"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:112
+#: da99fb70dbb749e2a928495cbba696d6
+msgid ""
+"All you need is either a **folder of text files** or a **JSON list of "
+"documents**."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:114
+#: 04a0913e2c0342d593a28eb6bb85a886
+msgid "**Option 1: QuickBuild (recommended)** — point at a folder of text files."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:120
+#: cb573e3dbd414a6d9164f87f0daefb91
+msgid ""
+"What goes in `./cardiology_data`: * **Supported:** ``.txt`` and ``.md`` "
+"(your raw data files)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:123
+#: f5f7f8f211e24feba64e09831f9fa06b
+msgid ""
+"Each file in `./cardiology_data` automatically gets converted into a "
+"document with the following information: * ``doc_key`` = relative file "
+"path (e.g., ``biology/mitochondria.md``) * ``text`` = file contents * "
+"Basic metadata (title, path, source) which is auto-filled"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:128
+#: b2dad126bbaf4b169115fc19c70d22d3
+msgid "**Example:** .. code-block:: text"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:131
+#: bc31e3a2d6c54e6d946075b8ffaf5d9a
+msgid "cardiology_data/"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:132
+#: 15afef40dddd4cd0967790ddb48e7471
+msgid ""
+"ekg_measurements.txt guidelines/ arrhythmia_classification.md "
+"cardiac_physiology.md case_studies/ acute_mi_case.md "
+"heart_failure_case.md"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:140
+#: d2740f795e7a44d0b27bfb5fdf005929
+msgid ""
+"**Result of running QuickBuild ( * Collection name: "
+"``cardiology_tutorial`` )**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:142
+#: ae25fe2a58364ff997df7583db8b24c3
+msgid "**One collection:** `cardiology_tutorial`"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:143
+#: f593005264c743b6bd0f88b6d8fbc4c4
+msgid "**One SQLite DB:** `<user_cache_dir>/embeddings/cardiology_tutorial.db`"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:144
+#: 7472d6e2741842f28a4dc171f963dfba
+msgid ""
+"**One FAISS index:** "
+"`<user_cache_dir>/embeddings/cardiology_tutorial.faiss`"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:147
+#: 104e026ec1814086b6ae7755247890d3
+msgid ""
+"We automatically detect your embedding model and dimension from ``.env`` "
+"or CLI flags. Safe to re-run — duplicates are skipped."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:151
+#: 91e69f4bd9414263925a3ef966e21768
+msgid "**Important: Updating Source Files**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:153
+#: cbf0093a94294056a88e7ad9d4d4e4be
+msgid ""
+"If you modify your source files (e.g., edit or add new content to "
+"``./cardiology_data/``), you must **fully rebuild the collection** by "
+"deleting the old database files first:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:164
+#: 4412a322b86c4630bdc7eec36e2d5843
+msgid ""
+"**Why?** Using ``--overwrite`` alone only rebuilds the FAISS vector "
+"index, but does NOT update the SQLite document table. Your old document "
+"texts will still be indexed."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:169
+#: cecb6e4fef8d486683cfa1e9edfdc7fc
+msgid "**Option 2: Build from structured JSON**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:171
+#: 871b3689f1ff4c73b51d6692d8992d28
+msgid "Use this when you want explicit IDs and metadata."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:177
+#: 7a5f6a14964f48cca352977865250661
+msgid "**Example JSON (can add several documents within one JSON):**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:194
+#: b2bee1b6204547bd88e21ff6ac530ce9
+msgid ""
+"Produces the same ``cardiology_tutorial.db`` and "
+"``cardiology_tutorial.faiss`` artifacts as QuickBuild. Note: * "
+"**Required:** ``doc_key`` (unique per collection), ``text`` * "
+"**Optional:** ``metadata`` (any JSON object), ``text_hash`` (string)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:200
+#: 98e57bfa1b4d43d38d17650212633316
+msgid "4. Create the agent tool for your collection"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:202
+#: dcd97a43c800499aac66d3df9d4899a7
+msgid ""
+"Now the last step is to tell ToolUniverse how agents should search your "
+"dataset by creating a small **tool JSON**."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:204
+#: 204abc3b8bf0446f98fa34b777de9d1d
+msgid "Example: Save as ``cardiology_expert_search.json``:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:228
+#: c103c7991c5d4d5b8d07f497e67d38eb
+msgid "> **Note:** Tool files must be a JSON **array** (even if only one tool)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:230
+#: 3a0bde37f0f446149a12efdcb1e707a0
+msgid ""
+"If you want your tool to load automatically in all ToolUniverse or Codex "
+"sessions (explained below):"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:239
+#: c183f92643244e56a3f1a8f71db3ffd6
+msgid "5. Install your tool for automatic discovery (recommended)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:241
+#: 825b50a60a734164826be4d6cb89c377
+msgid "ToolUniverse automatically loads any tool placed in:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:243
+#: ../../guide/make_your_data_agent_searchable.rst:247
+#: ../../guide/make_your_data_agent_searchable.rst:257
+#: ../../guide/make_your_data_agent_searchable.rst:261
+#: ../../guide/make_your_data_agent_searchable.rst:272
+#: ../../guide/make_your_data_agent_searchable.rst:276
+#: 04b7c42dbf504f7b92e70f75a6998bc7 2250eba96cbd47c1a9f1abce31dbb29d
+#: 2e67bded1a824451ac828fd76a67285e 6be4a9fe60784252be47190b9956958e
+#: 9f7c1709a4814d75a4e73ac5228cd3e0 a5b298e04db34e6c987d7d94ec1db7dd
+msgid "```"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:245
+#: 15d16252b0a4489397b558a4b82bcf10
+msgid "~/.tooluniverse/data/user_tools/"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:249
+#: c400b34359464807ae6cad2646799c11
+msgid "Install your tool with:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:255
+#: 63fb7bd7b1ba40e880235ec5cb3682dd
+msgid "This copies your tool into the auto-load directory:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:259
+#: e2736d76640b4d3aacf87b06794f9e37
+msgid "~/.tooluniverse/data/user_tools/cardiology_expert_search.json"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:263
+#: 945e265bb5614e1a9b4186d46abcae13
+msgid "Optional arguments:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:270
+#: 7ed1779de1614144a8288b75d07dc117
+msgid ""
+"Once installed, **any ToolUniverse or Codex session** will immediately "
+"expose your tool:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:274
+#: 6b891043153e4f3c96bc6b4761004c64
+msgid "tu.tools.cardiology_expert_search(...)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:278
+#: c88b82f7b1764dad955c299a1535b38a
+msgid ""
+"**You are done! ToolUniverse agents now have access to your data "
+"collection and associated tool to use in their work as an AI Scientist!**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:281
+#: ../../guide/make_your_data_agent_searchable.rst:339
+#: 18569e9a90774b45a99c4dd36ed55910 d7d9119a41c04e649ec4d6b230231518
+msgid "How it works"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:283
+#: 2210dbbaaf3f459ca8bb17780a1d75f5
+msgid ""
+"ToolUniverse has a built-in **search tool** "
+"(`EmbeddingCollectionSearchTool`) that queries the agent-searchable "
+"dataset you’ve built from your raw data. `"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:284
+#: 1c200476d8204ab68184bc6e006f69ad
+msgid ""
+"Your JSON simply tells ToolUniverse **which collection** to open and "
+"**which search options it supports**:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:285
+#: a100098f5bba4a90ade50f86dd9f37e9
+msgid "the user’s search text (``query``),"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:286
+#: 08e89bfb8b4a4306a61690df28959e97
+msgid "search type (``method``: keyword/embedding/hybrid),"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:287
+#: 9b63014310534561921aa23abb315244
+msgid "number of results (``top_k``),"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:288
+#: c975ed3127954df88eab985efb2e89fb
+msgid "You can optionally control the hybrid mix with alpha (``alpha``)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:290
+#: a5afa7eac1f349f492591b17488a989a
+msgid ""
+"ToolUniverse automatically resolves paths in "
+"``<user_cache_dir>/embeddings/``. * Agents can now call "
+"``cardiology_expert_search`` immediately after loading your JSON — no "
+"local setup needed."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:296
+#: 3dee8a0fb75d4cd2a41b61d175925c52
+msgid "6. Share or back up via Hugging Face (optional)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:298
+#: ab07db15ac4f4a9887ea003c0e5eefab
+msgid ""
+"After making your agent-searchable dataset you can share it publicly. You"
+" can also download other's public agent-searchable datasets and their "
+"tools so that you can use the community's data and tools in your "
+"research!"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:300
+#: b4dadff6d8e34e13932a892dd05edce6
+msgid ""
+"This is the **final step for making your collection \"public-ready.\"** "
+"Use it when you want to: * publish your dataset so anyone can search or "
+"integrate it, * share your work across teammates or servers, or"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:305
+#: 731cb4649d024e44bd85a4d66cfdf64d
+msgid ""
+"**PREREQUISITE for upload/download:** Add your HuggingFace token to "
+"``.env``:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:311
+#: 596e3a975a9943da8844e32fb4fee4e2
+msgid "Get your token from: https://huggingface.co/settings/tokens"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:313
+#: 31715c5bb373400583ec525b3f4e6353
+msgid "**Upload (defaults to your username/collection if --repo is omitted):**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:326
+#: 74aa79d579944d4291877ac335205196
+msgid ""
+"**Download (works for public repos; private requires permission or a "
+"valid HF token):**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:336
+#: b55602ac35f643bdba3a3c837f8dc765
+msgid ""
+"All files download into your local cache at: "
+"``<user_cache_dir>/embeddings/<collection>/``."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:341
+#: 028a951412a04b378c94b054ce8744f9
+msgid ""
+"Using the above commands, ToolUniverse syncs your local datastore, the "
+"`.db` and `.faiss` files (e.g. "
+"`<user_cache_dir>/embeddings/cardiology_tutorial.db` and "
+"`<user_cache_dir>/embeddings/cardiology_tutorial.faiss`) and associated "
+"JSON tools you create to search the associated `.db` and `.faiss` (e.g. "
+"`cardiology_expert_search.json`) directly with your **Hugging Face "
+"account**. This way others can download and use the exact same searchable"
+" dataset you built with ToolUniverse agents — complete with your "
+"embeddings and metadata."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:344
+#: a809f0055f0446908fc4c5ef28b2c69e
+msgid "7. Understanding the three search methods"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:346
+#: 4a7eac78fd7143ca8b741b2b3ba10c27
+msgid ""
+"When agents query your collection, they use **hybrid search by default** "
+"— a blend of keyword precision and semantic understanding. You can ask "
+"the agent to search by keyword, embedding, or hybrid! Here's how all "
+"three methods work on the same query:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:349
+#: f503cd6d248c466aaefb93061bb9faf0
+msgid ""
+"**Example query:** \"What ECG findings distinguish atrial fibrillation "
+"from other arrhythmias?\""
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:351
+#: 350d95314b0c4481ac6cb5a004a65274
+msgid "**1. Keyword Search** — Exact term matching"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:357
+#: e6d5851905744c838fc80ededa658df1
+msgid ""
+"Returns documents containing those exact words. Fast and precise, but "
+"misses context and fails on natural language questions."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:359
+#: 9bed13b0fe5247a6b05d30a96d3f7bc2
+msgid "**2. Embedding Search** — Semantic understanding"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:365
+#: 8d29d4364313401dbb1383fe195c3e31
+msgid ""
+"Converts the query to a vector and finds documents with similar meaning. "
+"Returns 5 ranked results (e.g., arrhythmia_classification.md at 0.609, "
+"ekg_measurements.txt at 0.506). Understands concepts but may include "
+"tangentially related documents."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:367
+#: be39f09597ae446e8dd496801bf0a8d9
+msgid "**3. Hybrid Search** — Best of both (default for agents)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:373
+#: 7a7aea05022e45558e1c48ec0122df0d
+msgid ""
+"Blends keyword and embedding scores. Documents must be relevant on BOTH "
+"dimensions. Stricter ranking, better precision. This is why agents "
+"default to hybrid—it balances recall with accuracy."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:375
+#: 1168b766f5e64b169f917e7414ff8fb5
+msgid "**Comparison:**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:377
+#: 07560e03864644ed84d36e6c19c7041c
+msgid "Search Method Comparison"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:380
+#: a56eaecdce514bf1aaffb0a8cae2a4fd
+msgid "Method"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:381
+#: d3c9b29175654ff88960be8c805c4e85
+msgid "Strength"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:382
+#: d40a0f7504904d01b3d1f30c5e3d7c0a
+msgid "Use Case"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:383
+#: d28daa879a6a42539f7ca2b1f71a5ae4
+msgid "**Keyword**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:384
+#: 76eb22fe1e55478d89eb16e7ca2d0be1
+msgid "Fast, exact"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:385
+#: a0057841a52241deb9cdcfded59da3ec
+msgid "Technical queries with known terms"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:386
+#: 2819ee972fe24d4aa08ebedc5949f6de
+msgid "**Embedding**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:387
+#: 0ff8af8709db48ef8aaf763369333c0b
+msgid "Understands meaning"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:388
+#: cf8a306ec1114e43b8994206927a78a2
+msgid "Natural language, conceptual queries"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:389
+#: 3cca648a00be471a9137a2292b589a07
+msgid "**Hybrid**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:390
+#: d34c0473d88d425d95bf18f1468fadbe
+msgid "Both (agents use this)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:391
+#: 7fefad2055284c2da8b8e4fedd2610d2
+msgid "Recommended for agents; combines precision + recall"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:395
+#: 838012669735413aafa4c781234bd59e
+msgid "Optional"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:399
+#: 916d788e07f7410c977428b94d212d1d
+msgid "Use your dataset manually (for quick exploration without an agent)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:400
+#: 2e62ba182a964c288a78e04b60ffb66b
+msgid ""
+"If you’re prototyping in a notebook or wiring custom logic, you can "
+"directly search your searchable dataset."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:402
+#: ad153562585646439f244501ba00450c
+msgid "**CLI search**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:413
+#: b6a6885f6a694c5885c043949a5bda5a
+msgid "**Example result**:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:430
+#: 441dddb965d54748b3ec984245b755d9
+msgid "Programmatic use of customized tools (rather than agent use)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:432
+#: 259d84e6ef24460a951fbabd40337b5f
+msgid "**A) Create and run your tool directly in Python (no agent)**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:442
+#: 26e548ce13d44d88b74b59011a68789c
+msgid ""
+"**B) Register a tool and include it in all ToolUniverse tools for this "
+"Python session. Then search your tool directly within ToolUniverse "
+"(temporary for this python session)**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:471
+#: e2a87daf51cf48db8624780191fc8dad
+msgid ""
+"**C) Load your custom JSON tool inside ToolUniverse to use your "
+"searchable dataset (same as agents do, but manually in Python)**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:473
+#: d31b5110d8704cdfbae2063aacd9c1d4
+msgid ""
+"This lets you interact with your tool exactly the way an agent would but "
+"directly from your Python session, for testing or local exploration."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:486
+#: 7aa03f6465ca4a1ba2614750ea95ea5a
+msgid ""
+"Results contain: ``doc_key``, ``text``, ``metadata``, ``score``, and a "
+"short snippet."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:491
+#: 9b2f16060af2447ba811b1aadf1ff1fe
+msgid "Mini FAQ"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:492
+#: bf38ed0cc5bb4590aef7d7db6c1b8cb7
+msgid ""
+"**Do I need EMBED_PROVIDER/EMBED_MODEL?** You only need "
+"EMBED_PROVIDER/EMBED_MODEL for building collections or for "
+"embedding/hybrid search. ``keyword`` search and ``sync-hf`` do **not** "
+"require an embedding provider/model."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:494
+#: 260c723de8d9446f87ff2dcf1734ceab
+msgid ""
+"**What’s “hybrid” search?** A smart mix of exact words + meaning. Start "
+"here."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:496
+#: b7557e9501df44099ae7c0143b3d3994
+msgid ""
+"**Do I need to set an embedding dimension?** No — it’s detected "
+"automatically."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:498
+#: baf73e0847d3457cb159ab3bd1f96678
+msgid "**Changed models?** Rebuild; dimensions are auto-handled."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:500
+#: 37fb2f9974e14466a1956329fc60e03f
+msgid ""
+"**Re-running build?** Safe. Duplicates (same ``doc_key``) are ignored; "
+"new text is added."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:502
+#: 17a0d29ef9b44e7e97604b32d805f23b
+msgid ""
+"**“No results”?** Try ``--method keyword`` or confirm the "
+"``--collection`` name."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:504
+#: ab85b05705794c15943f6b9d40ff5fad
+msgid ""
+"**Where are my searchable datasets stored locally?** "
+"``<user_cache_dir>/embeddings/``. Examples:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:505
+#: 214b041c3c214e22bd488963faa871f7
+msgid "macOS → ``~/Library/Caches/ToolUniverse``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:506
+#: 7ddb9185f64e4bcfbcccbf054d3938e0
+msgid "Linux → ``~/.cache/tooluniverse``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:507
+#: 93f88cae7317467f8553d39d17aa28d5
+msgid "Windows → ``%LOCALAPPDATA%\\\\ToolUniverse``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:509
+#: 0ab73537725a42e997b76fbe5c4d2886
+msgid "**Where do my tools live?**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:510
+#: 3bb0de7dd4c64866b4d4d7db49ce12c7
+msgid "``~/.tooluniverse/data/user_tools/`` (auto-loaded)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:512
+#: cd3b1192a5a14b1fa7ef1c4395959a46
+msgid ""
+"**Where does my data upload?** ``tu-datastore sync-hf upload`` targets "
+"your **own** HF account by default (based on your token)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:514
+#: f00a26b7eeaa4496a3650789af64ded3
+msgid "**What is the`EmbeddingCollectionSearchTool`?**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:515
+#: ad789b0abb1342b4a4b4302379b4e145
+msgid ""
+"-`EmbeddingCollectionSearchTool` is a **real ToolUniverse tool** "
+"(registered in code). Check "
+"``src/tooluniverse/database_setup/generic_embedding_search_tool.py`` for "
+"details. - We don’t ship a pre-bound JSON for it because the collection "
+"name is yours. - Use the example JSON under ``docs/tools/``, set "
+"``\"fields.collection\"`` to your collection (e.g., "
+"``\"cardiology_tutorial\"``), and load it - If you prefer not to create a"
+" JSON, you can also instantiate the tool directly from Python and pass "
+"the collection name via ``fields``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:520
+#: f264ce9f4c4141539e31dc3382f639df
+msgid ""
+"**Can I upload my tool with the datastore?** Yes, pass one or more files "
+"via ``--tool-json`` during ``sync-hf upload``; they’re stored at the "
+"dataset root."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:522
+#: dba20d0ade1349bc9ef42d1611fc91af
+msgid ""
+"**How do I pull tool JSONs too?** Use ``--include-tools`` with ``sync-hf "
+"download`` to download any ``*.json`` in the dataset."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:524
+#: 9af00dcdb44e44e4a39f6afeea4cad68
+msgid ""
+"**Is upload private by default?** Yes auto upload **private** datasets "
+"unless you opt out (CLI: ``--no-private``; tool: set ``\"private\": "
+"false``)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:526
+#: c21ed5cbd96248e585055a400383950e
+msgid "**Do I have to pass --db to search/build?**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:527
+#: a7a01d5bafeb42fd8d97c3236187d140
+msgid "No — both commands write and read from your cache automatically."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:528
+#: e17b4455eef94fa1bc2cfb3e4409d0eb
+msgid ""
+"Use `--db` only if you want a **custom output path** (for example, a "
+"shared directory)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:529
+#: 612ecc4df8dc4d8fbe85eb74002d9165
+msgid ""
+"When using the **JSON tool** or agents, no paths are ever needed — "
+"everything resolves automatically from the collection name."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:531
+#: 9e0d37ae6bf246deb89cd5d3049e3439
+msgid ""
+"**When building my custom datastore what if I want to use different "
+"provider(s) and/or model(s) for my embeddings?** You can use a different "
+"provider/model when building your searchable datastore like we do in the "
+"example below — just make sure that if you want to keep the initial "
+"provider/model based datastore, you give this new build's collection a "
+"new name or else it will override the initial build."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:537
+#: 8646e0c4d39b4729949fb4ade1d3a50e
+msgid ""
+"**Can I have JSON files in a folder I use with 'quickbuild'?** "
+"`quickbuild` does **not** read JSON files in a folder; use `build --docs-"
+"json` for JSON ingestion."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:542
+#: d1f37d23a80a43c4914f3c8598ed1d38
+msgid "Glossary"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:544
+#: 49b1d49bb2b94562af5454f5062f3082
+msgid ""
+"**Collection** — your named library of texts (e.g., "
+"``cardiology_tutorial``)."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:545
+#: 03a14aaf7bd7444cbab28564608e6039
+msgid "**doc_key** — unique ID per document"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:546
+#: 44b9c8ee801447a68d81981955f2652b
+msgid "**text** — the searchable content."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:547
+#: b16dc83f3be544a7a9c2e41927954615
+msgid "**metadata** — optional tags or annotations."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:548
+#: 8f76c2a990484f10aff9fe58bc769c8a
+msgid ""
+"**FAISS** — vector index used for \"search by meaning\". You don't need "
+"to configure its dimensions—**detected automatically**."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:549
+#: e26208ef30ff47d5b338121e72771ccc
+msgid "**tu-datastore** — CLI for building, searching, and syncing collections."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:554
+#: 5b09495ece2d4dad8d927c54fbd3efd7
+msgid "Deeper Reference"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:556
+#: 7845028098884e7db9e2db1c34946a1f
+msgid "CLI orchestration – ``src/tooluniverse/database_setup/cli.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:557
+#: f8ad0481e5ad4081801f4acac4f66a0e
+msgid ""
+"Content store / keyword search – "
+"``src/tooluniverse/database_setup/sqlite_store.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:558
+#: 1445f6e657214c5e914190521503995f
+msgid "Vector index (FAISS) – ``src/tooluniverse/database_setup/vector_store.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:559
+#: 3bb25b4b8c344532934cc5691bd82436
+msgid "Embedding providers – ``src/tooluniverse/database_setup/embedder.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:560
+#: 02a88c47dbd4495f88dffc5d5017915d
+msgid "Hybrid retrieval – ``src/tooluniverse/database_setup/search.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:561
+#: fc9f71a99f8f4dad9736c21219732d07
+msgid "Build/search pipeline – ``src/tooluniverse/database_setup/pipeline.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:562
+#: 828527d2cb2041b5a943813430b8fe95
+msgid ""
+"HF upload/download helpers – "
+"``src/tooluniverse/database_setup/hf/sync_hf.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:563
+#: a1feb62079e34dd0b83652bdc18a38ef
+msgid ""
+"Programmatic build/sync tools – "
+"``src/tooluniverse/database_setup/embedding_database.py`` / "
+"``embedding_sync.py`` (Check these files for support on using `build`, "
+"`sync-hf` as first-class ToolUniverse tools, so you can call them "
+"programmatically in CI, notebooks, or an agent if you prefer.)"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:564
+#: 8443d91e274a4a8dba14f11969c7f069
+msgid ""
+"Agent search tool – "
+"``src/tooluniverse/database_setup/generic_embedding_search_tool.py``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:565
+#: 3d6d83952124448f87bde3aed6424c7f
+msgid ""
+"Example tool JSON – "
+"``docs/examples/make_your_agent_searchable_example/make_your_agent_searchable_example_JSON.json``"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:567
+#: 0cfb79d8a98c4a59be60e0de524482ea
+msgid "**Developer note: database_setup tests**"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:569
+#: 1a9628afb57c47779f16a581fe4afb2e
+msgid ""
+"ToolUniverse includes 8 tests under `tests/test_database_setup/`: * **2 "
+"core tests** (SQLite + FAISS) always run automatically and require *no* "
+"API keys. * The **other 6 tests** exercise real embedding pipelines "
+"(OpenAI, Azure, HF, or local). These are **skipped by default** unless "
+"you export:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:573
+#: 3fd4cca69b1f4d5e8519bbbea7ffd54f
+msgid ""
+"```bash export EMBED_PROVIDER=azure|openai|huggingface|local export "
+"EMBED_MODEL=your-model-or-deployment ```"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:578
+#: e2a8d6c005984ab7a563a37d8c69fff8
+msgid "You can run all embedding-enabled tests with:"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:580
+#: 45fb24e04b5b490182db9d15f4f2bb8e
+msgid "```bash pytest -m api ```"
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:584
+#: fb543d9e816c42a6a15259492eafd929
+msgid ""
+"These optional tests pass for all supported providers once credentials "
+"are set."
+msgstr ""
+
+#: ../../guide/make_your_data_agent_searchable.rst:588
+#: 6038594efeab4dc39e47026a4b0d820a
+msgid ""
+"With these steps, your data becomes **searchable, agent-ready, and "
+"shareable** — powering everything from local testing to public, "
+"reproducible ToolUniverse tools."
+msgstr ""
+

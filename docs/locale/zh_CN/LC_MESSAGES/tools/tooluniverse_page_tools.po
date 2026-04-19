@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/tooluniverse_page_tools.rst:10 40a30de8586847d098aecb7c9c68f824
+msgid "Tooluniverse Page Tools"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:12 56f5ed03e8ac407597f51b19cbc4823f
+msgid ""
+"**Configuration File**: ``tooluniverse_page_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:16 efc8bdfebe9246b79517a61604c706ac
+msgid ""
+"This page contains all tools defined in the "
+"``tooluniverse_page_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:19 9267502d80d84208b0e43b71b96ebda0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:22 5aeb470edbcd4989899fd63f66433a65
+msgid "**get_tool_page_url** (Type: ToolUniversePageTool)"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:24 92391c08e7c84e41a137a24a6ceee8a6
+msgid ""
+"Get the public ToolUniverse web page URL for a tool by its exact tool "
+"name. Returns the URL of th..."
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst 7e45ee477362477e8061703ffb3d6e1a
+msgid "get_tool_page_url tool specification"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:28 4df4c82ff80b4cfa904b586ce59eba16
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:30 c7634256c6b1489a8e723c2128cd6ce3
+msgid "**Name**: ``get_tool_page_url``"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:31 cb138b481fb6420ebb8845021be3fca9
+msgid "**Type**: ``ToolUniversePageTool``"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:32 941d0e559300442d952e06db82cd60b3
+msgid ""
+"**Description**: Get the public ToolUniverse web page URL for a tool by "
+"its exact tool name. Returns the URL of the tool detail page on "
+"aiscientist.tools. Use Tool\\_RAG or Tool\\_Finder first if you are "
+"unsure of the exact tool name."
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:34 f113af17cbaa47e6814319d9f03bcdf5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:36 e156371113b14b1ea3a7340a40cac6e4
+msgid ""
+"``tool_name`` (string) (required) Exact ToolUniverse tool name (e.g. "
+"'ADA\\_list\\_standards\\_sections', 'PubMed\\_search\\_articles'). Case-"
+"sensitive."
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:39 3b2677c73f7e496b8a37a5af1d39d055
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:53 a9786de19c044e46aba7e701b4322083
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:55 1d9117a8fa5f4d5d81c1c9da336160dc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/tooluniverse_page_tools.rst:56 1c480c3052434189b2b80d4e827801bf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

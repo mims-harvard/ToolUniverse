@@ -1,0 +1,303 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ena_browser_tools.rst:10 3c56f5ec2f734b449698263fa2de9d5b
+msgid "Ena Browser Tools"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:12 06efa5fca4f54215bf9e7de9e7fb56e9
+msgid ""
+"**Configuration File**: ``ena_browser_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:16 0f041728c5344a73bf749db03cb06032
+msgid ""
+"This page contains all tools defined in the ``ena_browser_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:19 ea98fc35c60148e3b4b92a1a6633098a
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:22 fc4e2ea7433248f48f7de2c4398bfa87
+msgid "**ena_get_entry** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:24 d63999b5debb44d6a44152d03455807f
+msgid ""
+"Get entry information from ENA by accession number. Supports EMBL/GenBank"
+" accessions only (e.g., ..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst 4ac45e30ae88403bbfa9f065bf9d623f
+msgid "ena_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:28 ../../tools/ena_browser_tools.rst:62
+#: ../../tools/ena_browser_tools.rst:93 ../../tools/ena_browser_tools.rst:124
+#: ../../tools/ena_browser_tools.rst:155 ../../tools/ena_browser_tools.rst:189
+#: 2826ab5f7213466ebf53f42cfed84362 5a0b6888d8014ffa902e87da1103a4f3
+#: 5b39fe230235415481f78aa283984f57 6f0f51deeb42416695e91ac91a5051f5
+#: a67202a9171840c4ba32da64fe4c140b dd7c173960ea44a09e1b7396a8d649f5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:30 34f18a47b192444985c72e69eb5a9b0c
+msgid "**Name**: ``ena_get_entry``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:31 ../../tools/ena_browser_tools.rst:65
+#: ../../tools/ena_browser_tools.rst:96 ../../tools/ena_browser_tools.rst:127
+#: ../../tools/ena_browser_tools.rst:158 ../../tools/ena_browser_tools.rst:192
+#: 1edfbe767500437cbfb3be0f99ca990a 541b7f873bdd43f1b999fa4a7a8b8186
+#: 577bad6e45f54de1844f0279b6c67f8c 92d53e1f8c50479382d99b88d44ebba3
+#: a128d5361b0344f790e49a21e45daad8 e9fe28ed3c104a5490ba4626bb691c24
+msgid "**Type**: ``ENABrowserRESTTool``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:32 63aabe46d4194b4690c336a5f1636a35
+msgid ""
+"**Description**: Get entry information from ENA by accession number. "
+"Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). "
+"Does NOT support RefSeq accessions (NC\\_\\*, NM\\_\\*, NP\\_\\* "
+"prefixes). Currently extracts metadata from FASTA header. For "
+"comprehensive metadata including project, sample, taxon, publications, "
+"and sequence length, use ena\\_get\\_entry\\_summary instead. Returns "
+"sequence header information with basic metadata."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:34 ../../tools/ena_browser_tools.rst:68
+#: ../../tools/ena_browser_tools.rst:99 ../../tools/ena_browser_tools.rst:130
+#: ../../tools/ena_browser_tools.rst:161 ../../tools/ena_browser_tools.rst:195
+#: 194daab8804345b6aee31ff05cda169b 36eb6e7226234d6287c4f7ceeb5627d8
+#: 42c427c1dab9418ebee55e194417efc4 965336cfda1a49ad80b9e9b3ace7f0e3
+#: d046a8246b2f4aac9fe784a6aca03c44 ebb81cdcb266464294498b4b7db502cd
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:36 ../../tools/ena_browser_tools.rst:70
+#: 61355064afd443ecb194a51ba90754d6 7f3a8a52f33441669e45b12dc7643554
+msgid ""
+"``accession`` (string) (required) EMBL/GenBank accession number. NOT "
+"RefSeq (NC\\_\\*, NM\\_\\*, NP\\_\\*). Examples: 'U00096', 'AJ312385'"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:39 8dfa6101613d4bb1828dc08089e17709
+msgid ""
+"``expanded`` (boolean) (optional) Return expanded metadata (default: "
+"false)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:42 ../../tools/ena_browser_tools.rst:73
+#: ../../tools/ena_browser_tools.rst:104 ../../tools/ena_browser_tools.rst:135
+#: ../../tools/ena_browser_tools.rst:169 ../../tools/ena_browser_tools.rst:200
+#: 07389c2870074bf7a506c3fef0f1f1c9 086a807824f84a299d32e3a0d41eeef7
+#: 10b487fc79944753a6430ec35cc2ade3 261f64a952ad48cea875a588f731ce0d
+#: 2f42b1b7a3574dfd91c21426dfc03889 dd30c7cbf5d8430eadcfbbaf0dedd64c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:56 b98816fa4b2842b78cdea1642db95051
+msgid "**ena_get_entry_history** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:58 48c14ea1048349fba790816cb6d3eda3
+msgid ""
+"Get version history for an ENA entry by accession number. Supports "
+"EMBL/GenBank accessions only (..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst a2b54958e3074099b619364a93db02b3
+msgid "ena_get_entry_history tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:64 3fa16060a47445e7baac127f92972dec
+msgid "**Name**: ``ena_get_entry_history``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:66 8009e1685f3c45b5b8308a5ee4a16de0
+msgid ""
+"**Description**: Get version history for an ENA entry by accession "
+"number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, "
+"M15390). Does NOT support RefSeq accessions (NC\\_\\*, NM\\_\\*, NP\\_\\*"
+" prefixes). Returns all versions of the entry with version numbers, "
+"dates, and status information. Each version includes sequence version "
+"number, first public date, last updated date, and current status."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:87 8a3ff2692c304d2486b87f203f84fb8f
+msgid "**ena_get_entry_summary** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:89 84475da96cb349958348400b09c343c6
+msgid ""
+"Get comprehensive summary information for an ENA entry by accession "
+"number. Supports EMBL/GenBank..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst 3bc26795cde345b6ae985396334a2f78
+msgid "ena_get_entry_summary tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:95 691c1e799b3143ad89e2c31a5d866475
+msgid "**Name**: ``ena_get_entry_summary``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:97 f1220ea569874dc0bd1e075234ad84cb
+msgid ""
+"**Description**: Get comprehensive summary information for an ENA entry "
+"by accession number. Supports EMBL/GenBank accessions only (e.g., U00096,"
+" AJ312385, M15390). Does NOT support RefSeq accessions (NC\\_\\*, "
+"NM\\_\\*, NP\\_\\* prefixes). Returns detailed metadata including "
+"description, version, project ID, sample ID, molecule type, taxon ID, "
+"data type, publication references, sequence length, and status "
+"information. This provides more complete metadata than ena\\_get\\_entry."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:101 ../../tools/ena_browser_tools.rst:132
+#: b80ecec7353e451c9ea41429249f8155 fab95fcbfa6b4b7da710fece292b5128
+msgid ""
+"``accession`` (string) (required) EMBL/GenBank accession number. NOT "
+"RefSeq (NC\\_\\*, NM\\_\\*, NP\\_\\*). Examples: 'U00096', 'AJ312385', "
+"'M15390'"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:118 97480135ae7446c3a73bb5b1d1d2e572
+msgid "**ena_get_sequence_embl** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:120 6d5ff1e112144201a4708789a78eada9
+msgid ""
+"Get nucleotide sequence in EMBL format from ENA by accession number. "
+"Supports EMBL/GenBank access..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst 440dc99394a74a34930f21b91e9dbd12
+msgid "ena_get_sequence_embl tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:126 0dd12a22d3a94ff1bc3897658fc62997
+msgid "**Name**: ``ena_get_sequence_embl``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:128 ae7999645d404d05babba95c9eee0d95
+msgid ""
+"**Description**: Get nucleotide sequence in EMBL format from ENA by "
+"accession number. Supports EMBL/GenBank accessions only (e.g., U00096, "
+"AJ312385, M15390). Does NOT support RefSeq accessions (NC\\_\\*, "
+"NM\\_\\*, NP\\_\\* prefixes). Returns EMBL-formatted sequence record."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:149 d376965fef994d2db038798c9866e1da
+msgid "**ena_get_sequence_fasta** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:151 e90456e86a84438b916c414dae6bb9bc
+msgid ""
+"Get nucleotide sequence in FASTA format from ENA by accession number. "
+"Supports EMBL/GenBank acces..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst f311e617c1f14514bf63e30710e0ff81
+msgid "ena_get_sequence_fasta tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:157 374f46c51f004ac9972402c4e97b36b1
+msgid "**Name**: ``ena_get_sequence_fasta``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:159 476230add2c047b294ff95f6adb6a57c
+msgid ""
+"**Description**: Get nucleotide sequence in FASTA format from ENA by "
+"accession number. Supports EMBL/GenBank accessions only (e.g., U00096, "
+"AJ312385, M15390). Does NOT support RefSeq accessions (NC\\_\\*, "
+"NM\\_\\*, NP\\_\\* prefixes). Returns sequence with header information."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:163 622529f6d148491583baa6ce07b18f5b
+msgid ""
+"``accession`` (string) (required) EMBL/GenBank accession number. "
+"Supported formats: U#####, M#####, AJ######, AL######, CP######, etc. NOT"
+" RefSeq (NC\\_\\*, NM\\_\\*, NP\\_\\*). Examples: 'U00096', 'AJ312385', "
+"'M15390'"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:166 6c486c1aea244efe8a1f33e5b34c8e9b
+msgid ""
+"``download`` (boolean) (optional) Force download instead of inline "
+"display (default: false)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:183 875f909a9bda4d608b75e5896a3346de
+msgid "**ena_get_sequence_xml** (Type: ENABrowserRESTTool)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:185 2dbf13b0a8f940c6a26a47dc5a385f5e
+msgid ""
+"Get metadata in XML format from ENA for Study, Sample, Run, Experiment, "
+"Analysis, or Taxon record..."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst c75ba86cc6104e0fab8f168ed0dd849c
+msgid "ena_get_sequence_xml tool specification"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:191 2c33dbe4d10440c0a842f3aee48d29e3
+msgid "**Name**: ``ena_get_sequence_xml``"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:193 ede18cec56b1401ea516504283137227
+msgid ""
+"**Description**: Get metadata in XML format from ENA for Study, Sample, "
+"Run, Experiment, Analysis, or Taxon records. XML format is NOT available "
+"for sequence records - use ena\\_get\\_sequence\\_fasta or "
+"ena\\_get\\_sequence\\_embl for sequence accessions. Supported accession "
+"types: Study (ERP\\*, SRP\\*, PRJ\\*), Sample (ERS\\*, SRS\\*, SAM\\*), "
+"Run (ERR\\*, SRR\\*), Experiment (ERX\\*, SRX\\*), Analysis (ERZ\\*, "
+"SRZ\\*), Taxon IDs. Returns XML-formatted metadata record with submitter-"
+"provided information, cross-references, and FTP locations."
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:197 983bfe7eecff4ce585f2702f032b58f4
+msgid ""
+"``accession`` (string) (required) ENA metadata record accession. "
+"Supported types: Study (ERP\\*, SRP\\*, PRJ\\*), Sample (ERS\\*, SRS\\*, "
+"SAM\\*), Run (ERR\\*, SRR\\*), Experiment (ERX\\*, SRX\\*), Analysis "
+"(ERZ\\*, SRZ\\*), Taxon (numeric ID). NOT for sequence accessions "
+"(U#####, M#####, etc.). Examples: 'SAMEA2620084' (sample), 'ERX2484999' "
+"(experiment), '562' (taxon)"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:214 efd6510cd82743859cb4bcec993d59a0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:216 63bd63f233e74281bc14c7c7b14be411
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ena_browser_tools.rst:217 cc48402fe2de430199436b2d9b5f5ea0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

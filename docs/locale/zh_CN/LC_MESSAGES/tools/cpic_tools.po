@@ -1,0 +1,492 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cpic_tools.rst:10 52b44cde97f8495d8d25925452f77cfc
+msgid "Cpic Tools"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:12 4f237f3b45b84aa1b6221f8bb19a54a5
+msgid ""
+"**Configuration File**: ``cpic_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 9"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:16 5d0b28cdbc22437c83d848e6814a2d71
+msgid ""
+"This page contains all tools defined in the ``cpic_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:19 b470a56d2ed24b07a8be30cd094cc4f3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:22 6d43400ea8f04babbf4212f0c21e05c3
+msgid "**CPIC_get_alleles** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:24 c22f8359794441c7b0895085c67ff103
+msgid ""
+"Get pharmacogenomics alleles and their functional status for a gene from "
+"CPIC. Returns allele nam..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 5aaf26bb279d4602a77c1e01249fd46f
+msgid "CPIC_get_alleles tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:28 ../../tools/cpic_tools.rst:62
+#: ../../tools/cpic_tools.rst:93 ../../tools/cpic_tools.rst:129
+#: ../../tools/cpic_tools.rst:160 ../../tools/cpic_tools.rst:202
+#: ../../tools/cpic_tools.rst:231 ../../tools/cpic_tools.rst:270
+#: ../../tools/cpic_tools.rst:299 0ba408b126d549b7a60012fc5576dfca
+#: 22c5cd750c614833929629c7d64932a0 39183d27c1b64b2ba031a28b13646d34
+#: 3cc6f08fb34344f48b4129831406f038 572b624fd37f4e76a169427b0b775081
+#: 5b9c935958fb43208f3c5bb333fa9fb6 6bc0b60f32b646c6a29517d7bf998185
+#: 6fc1f027ae2f4d0dad6df9cdfda9f92b ebc270fcf5d84a9a9254a6986e34c48d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:30 38f54099a1254b1488034651564cb02e
+msgid "**Name**: ``CPIC_get_alleles``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:31 ../../tools/cpic_tools.rst:65
+#: ../../tools/cpic_tools.rst:132 ../../tools/cpic_tools.rst:205
+#: ../../tools/cpic_tools.rst:273 02b35b9a4c4547d4833e8ab2a4c8acb0
+#: 3019f7bb251a4bc8b5bcaab4f334577e 6e151924b25e45d08467f6e36eb22a32
+#: 7dcca9909918463da4562b968c291a29 db3c2c6c62c048239384847e137707a2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:32 0f81f09d112f4b94bdb1b8283ec4771f
+msgid ""
+"**Description**: Get pharmacogenomics alleles and their functional status"
+" for a gene from CPIC. Returns allele names, activity values, and "
+"functional status. Note: use 'clinicalfunctionalstatus' field for the "
+"active clinical classification (e.g., 'No function', 'Normal function'); "
+"the 'functionalstatus' field may be null for some genes. Critical for "
+"translating genotype to phenotype (e.g., CYP2D6 \\*4 = no function, "
+"CYP2D6 \\*1 = normal function)."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:34 ../../tools/cpic_tools.rst:68
+#: ../../tools/cpic_tools.rst:99 ../../tools/cpic_tools.rst:135
+#: ../../tools/cpic_tools.rst:166 ../../tools/cpic_tools.rst:208
+#: ../../tools/cpic_tools.rst:237 ../../tools/cpic_tools.rst:276
+#: ../../tools/cpic_tools.rst:305 11aeca8f519c44a8833406edeb3325fa
+#: 2078d4713bee4947ae758f23223799e3 2e2f63afe86b486a8c0bcc1f6d8b02a2
+#: 7666529459e04979a191fc3d816006b2 b5e42236b4bd4f8192343f723feb3d5a
+#: d7054b304b8d453f9ffc9b59692edbf0 f54373e3febc4743b52e478a36de87b4
+#: f97bc9ab80ec47d19c388d0e7a3d73a1 ff4e544094b7440cb7bcacd957134421
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:36 8a40a9f6d50649499023f9d76936ddef
+msgid ""
+"``genesymbol`` (string) (required) Gene symbol (e.g., 'CYP2D6', "
+"'CYP2C19', 'TPMT', 'DPYD')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:39 8306b01485824fb5b4d47741cf3ab843
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of alleles to return "
+"(default 50)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:42 ../../tools/cpic_tools.rst:73
+#: ../../tools/cpic_tools.rst:110 ../../tools/cpic_tools.rst:140
+#: ../../tools/cpic_tools.rst:183 ../../tools/cpic_tools.rst:212
+#: ../../tools/cpic_tools.rst:251 ../../tools/cpic_tools.rst:280
+#: ../../tools/cpic_tools.rst:322 1ee378824f124e3087aa124f0a3cc54e
+#: 240257db650a4cb280eafadd1fb2d74b 28bfcf9f514440e887e3278ddc95f529
+#: 4bf23e5ba8754987a52b170eb0aeb053 703b92364a75484db5b8fe5cf358628e
+#: aee4eb386dd54d549d704257dcc2b09d c0b26a7e66234f92b0cf60270a9c8ef0
+#: d5ff089ee18245aeb5c71b70494ee560 dbabb4f419584ade97fe5d3d3656cd57
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:56 23009e52191e438b9271789a287f414f
+msgid "**CPIC_get_drug_info** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:58 3333254814b2462f8bf2bfde28f4d10d
+msgid ""
+"Get pharmacogenomics information for a drug from the CPIC database. "
+"Returns drug identifiers incl..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 6decf32441a74719848d9cc673b97521
+msgid "CPIC_get_drug_info tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:64 8e98fbe8cdfb4d31a61c3c26946b8ef1
+msgid "**Name**: ``CPIC_get_drug_info``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:66 9557f5af8f1442be93c2f519b822fb2b
+msgid ""
+"**Description**: Get pharmacogenomics information for a drug from the "
+"CPIC database. Returns drug identifiers including PharmGKB ID, RxNorm, "
+"DrugBank, and ATC codes. Use to find pharmacogenomics guidelines for a "
+"specific drug. Example drugs: warfarin, codeine, clopidogrel, "
+"simvastatin, tamoxifen, fluorouracil, mercaptopurine."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:70 fec7de1f9d1143f794d4e5658058f4d6
+msgid ""
+"``name`` (string) (required) Drug name in lowercase (e.g., 'warfarin', "
+"'codeine', 'clopidogrel', 'simvastatin')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:87 b2c9f3212b104612a96ef712a3106c66
+msgid "**CPIC_get_gene_drug_pairs** (Type: CPICSearchPairsTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:89 ab9c2d32600f48248a321d1a1bc98b57
+msgid ""
+"Get all gene-drug pairs for a pharmacogene from CPIC. Shows which drugs "
+"are affected by variants ..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst fd1bd5c1ffee4e63bad62cfb26beb1ac
+msgid "CPIC_get_gene_drug_pairs tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:95 88de72d464ee49d4b1a2d1bd3cb399e3
+msgid "**Name**: ``CPIC_get_gene_drug_pairs``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:96 ../../tools/cpic_tools.rst:302
+#: 1018f634d84c4049b1c80f3437dc89f3 a4f919cb2faf43faa4a2d9aa3e2a713e
+msgid "**Type**: ``CPICSearchPairsTool``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:97 51734e5cf4a84187a9c9eddb801d10c8
+msgid ""
+"**Description**: Get all gene-drug pairs for a pharmacogene from CPIC. "
+"Shows which drugs are affected by variants in a specific gene, with CPIC "
+"evidence level and PharmGKB clinical annotation level. Evidence levels: A"
+" (strongest) to D (weakest). Useful for understanding the clinical "
+"significance of a pharmacogene. Provide gene as 'genesymbol', "
+"'gene\\_symbol', or 'gene'."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:101 ad55d4445a5a4df8b3492548c1ac3f77
+msgid ""
+"``genesymbol`` (string, null) (optional) Gene symbol (e.g., 'CYP2D6', "
+"'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:104 737bc08559104284a7da5c0217432a36
+msgid ""
+"``gene_symbol`` (string, null) (optional) Alias for genesymbol (e.g., "
+"'CYP2D6')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:107 8584dbc9d894433b958dec379496fbbc
+msgid "``gene`` (string, null) (optional) Alias for genesymbol (e.g., 'CYP2D6')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:123 d67919d49f674584b73eda559a29c03e
+msgid "**CPIC_get_gene_info** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:125 6f797288a0ce4ffe9439707e95a604b5
+msgid ""
+"Get pharmacogenomics information for a gene from the Clinical "
+"Pharmacogenomics Implementation Con..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 09c30bec9cd44917a398c1101332810c
+msgid "CPIC_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:131 8bfe1468e21b4d208c05c9643fa74cfa
+msgid "**Name**: ``CPIC_get_gene_info``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:133 08502a406d2140149031c759be249fab
+msgid ""
+"**Description**: Get pharmacogenomics information for a gene from the "
+"Clinical Pharmacogenomics Implementation Consortium (CPIC) database. "
+"Returns gene coordinates, sequence IDs, and cross-references to PharmGKB,"
+" HGNC, NCBI, and Ensembl. Use this to find which genes are "
+"pharmacogenomically relevant. Example genes: CYP2D6, CYP2C19, CYP2C9, "
+"SLCO1B1, TPMT, DPYD, UGT1A1, VKORC1, G6PD."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:137 37f8b89093654a988710c583fd875203
+msgid ""
+"``symbol`` (string) (required) Gene symbol (e.g., 'CYP2D6', 'CYP2C19', "
+"'SLCO1B1', 'TPMT', 'DPYD')"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:154 df3a68a9a48f4fd2a62d1ebcd4e8ac7a
+msgid "**CPIC_get_recommendations** (Type: CPICGetRecommendationsTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:156 75c1a1509ce64666ab60064fb071836f
+msgid ""
+"Get drug dosing recommendations from a CPIC pharmacogenomic guideline. "
+"Returns clinically actiona..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 46cab000f4ea44c9a5e11c6b9ce29e10
+msgid "CPIC_get_recommendations tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:162 c1e5606d5a524708b8a2b5dc0cafb6a3
+msgid "**Name**: ``CPIC_get_recommendations``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:163 40892bf385f348e5b513931053f97d8e
+msgid "**Type**: ``CPICGetRecommendationsTool``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:164 dfb310e7cfce40caa3159d691cd3f3f3
+msgid ""
+"**Description**: Get drug dosing recommendations from a CPIC "
+"pharmacogenomic guideline. Returns clinically actionable recommendations "
+"linking genotype/phenotype to prescribing actions (classification "
+"strength, recommendation text, allele status). Accepts drug name (e.g. "
+"'codeine', 'abacavir') for auto-resolution to guideline\\_id, or provide "
+"guideline\\_id directly. Key guideline IDs: 100421 (HLA-B/abacavir), "
+"100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19"
+"/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 "
+"(CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing"
+" calculator and returns 0 rows from this endpoint."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:168 378580210fdc45b5a65db2da14a0fae3
+msgid ""
+"``guideline_id`` (integer) (optional) CPIC guideline numeric ID. "
+"Alternative to drug/drug\\_name. Use CPIC\\_list\\_guidelines to browse "
+"IDs."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:171 65a3abec41d14a19b2a55f9d0c82f94c
+msgid ""
+"``drug`` (string) (optional) Drug name to auto-resolve guideline\\_id "
+"(e.g., 'codeine', 'abacavir', 'tamoxifen')."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:174 ../../tools/cpic_tools.rst:248
+#: 0278a4ba11c54b9e84277a89792ef7b5 ba487e783a4b481b9133b2cc4fc1126e
+msgid "``drug_name`` (string) (optional) Alias for drug."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:177 216a25bd092747f08478fb7cad238f50
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of recommendations to"
+" return (default 50)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:180 1b710146fb3d4919b9ad6303fc9dc490
+msgid ""
+"``offset`` (integer, null) (optional) Number of recommendations to skip "
+"for pagination (default 0)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:196 6df6dbaa240c418bb393538288abc44d
+msgid "**CPIC_list_drugs** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:198 fc9669ecf8324bf4928e2461238df019
+msgid ""
+"List all drugs in the CPIC database that have pharmacogenomic "
+"annotations. Returns drug names and..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 16ec45ea634741fcba622770198906d9
+msgid "CPIC_list_drugs tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:204 a0f1f977e45f4fe0a082957c8a60498e
+msgid "**Name**: ``CPIC_list_drugs``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:206 07cb506b06cd463a979e5bc8725be18e
+msgid ""
+"**Description**: List all drugs in the CPIC database that have "
+"pharmacogenomic annotations. Returns drug names and their associated CPIC"
+" guideline IDs. Drugs without a guideline ID have annotations but no full"
+" CPIC dosing guideline yet. Use the guidelineid with "
+"CPIC\\_get\\_recommendations to retrieve dosing recommendations. Covers "
+"100+ drugs including commonly used medications like warfarin, codeine, "
+"clopidogrel, simvastatin, tamoxifen, fluorouracil, and abacavir."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:210 ../../tools/cpic_tools.rst:278
+#: 1f8ebc3d94774f4886742670a3e64770 e92b259813ac4552a0a7c409a6e14f65
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:225 fdea0f1e7bab4f989ec76ecbfa4d3343
+msgid "**CPIC_list_guidelines** (Type: CPICListGuidelinesTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:227 e30354903764404781bd5c513f068a59
+msgid ""
+"List all CPIC pharmacogenomic guidelines. Returns ~29 evidence-based "
+"guidelines (count may vary a..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 7000aeeb5c2e44e393caa0bc842d84ab
+msgid "CPIC_list_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:233 45db4c672c444f5d94719c074b0c6138
+msgid "**Name**: ``CPIC_list_guidelines``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:234 d6c88040099e40cfa6fd7ce396aa1463
+msgid "**Type**: ``CPICListGuidelinesTool``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:235 b04dc7dca71b4db886f20845f50c54ea
+msgid ""
+"**Description**: List all CPIC pharmacogenomic guidelines. Returns ~29 "
+"evidence-based guidelines (count may vary as guidelines are "
+"added/updated) for using pharmacogenomic test results to optimize drug "
+"therapy. Each guideline covers one or more gene-drug pairs with specific "
+"dosing recommendations based on genotype/phenotype. Includes guideline "
+"ID, name, URL, associated genes, and PharmGKB IDs. Use the returned "
+"guideline ID with CPIC\\_get\\_recommendations to retrieve specific "
+"dosing recommendations."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:239 7c001fcb396e4ba69dae61bb55784626
+msgid ""
+"``gene`` (string) (optional) Filter by gene symbol (e.g., CYP2D6, TPMT). "
+"Returns only guidelines involving this gene."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:242 16a75aa56a13490fa01ea1d9d5e3ad99
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene. Filter by gene symbol"
+" (e.g., CYP2D6, TPMT)."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:245 b30e27548e234110b7bcf037b2ebc0ae
+msgid ""
+"``drug`` (string) (optional) Filter by drug name (e.g., 'codeine', "
+"'warfarin', 'clopidogrel'). Case-insensitive substring match against drug"
+" names in the guideline."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:264 1db398e750b943bf9b40975c48c669e6
+msgid "**CPIC_list_pgx_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:266 4e04b56c89b54c84a401453deedfb001
+msgid ""
+"List all pharmacogenomics genes curated by the Clinical Pharmacogenomics "
+"Implementation Consortiu..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst 982a07acb5cd436eb8d09ac51dfbb2e9
+msgid "CPIC_list_pgx_genes tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:272 e6a5927873c540bbad58dcda28fe1112
+msgid "**Name**: ``CPIC_list_pgx_genes``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:274 c567c7d1747d43dcb2a85cf3e4205aaa
+msgid ""
+"**Description**: List all pharmacogenomics genes curated by the Clinical "
+"Pharmacogenomics Implementation Consortium (CPIC). Returns 130+ genes "
+"with known drug interactions including CYP enzymes, transporters, and "
+"other pharmacogenes. Includes gene coordinates, sequence IDs, and "
+"database cross-references."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:293 1fd3ec10e8a54a49819897ee7830d468
+msgid "**CPIC_search_gene_drug_pairs** (Type: CPICSearchPairsTool)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:295 067d376e983f49a89c2987362d1f9574
+msgid ""
+"Search CPIC gene-drug pairs by gene symbol and/or CPIC evidence level. "
+"Gene symbol should be the ..."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst c9d327e534a44f5bb97da1547698e676
+msgid "CPIC_search_gene_drug_pairs tool specification"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:301 2ff92b67cbd34889bc21a9eeaafb515f
+msgid "**Name**: ``CPIC_search_gene_drug_pairs``"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:303 8408a865bf484ae4a2267f7d5e38f765
+msgid ""
+"**Description**: Search CPIC gene-drug pairs by gene symbol and/or CPIC "
+"evidence level. Gene symbol should be the standard HGNC symbol (e.g., "
+"\"CYP2D6\", \"DPYD\", \"TPMT\"). CPIC level indicates evidence strength: "
+"A=highest evidence, B=moderate, C=limited, D=for information only. "
+"Returns gene-drug pairs with guideline IDs for further lookup."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:307 9c4e2ff438d04d1e94e4a0b0b9b85e2c
+msgid ""
+"``genesymbol`` (string, null) (optional) Gene symbol to filter by (e.g., "
+"'CYP2D6', 'DPYD', 'TPMT'). Omit to search all genes."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:310 e01e11fd3dfa4524be419a1f0008df5a
+msgid ""
+"``cpiclevel`` (string, null) (optional) CPIC evidence level to filter by "
+"(e.g., 'A', 'B', 'B/C', 'C', 'D'). Omit to include all levels."
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:313 faecc8072c8b4b9c901b868b6ffa3c44
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default 50)"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:316 6d4088f39cb643a98d61dc4f3bcd05c3
+msgid ""
+"``gene_symbol`` (string, null) (optional) Gene symbol alias (e.g., "
+"'CYP2D6', 'VKORC1') — alternative to genesymbol"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:319 d83d1db35a65499080d55ac44fc5333c
+msgid ""
+"``gene`` (string, null) (optional) Gene symbol alias (e.g., 'CYP2D6') — "
+"alternative to genesymbol"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:335 c454161cc1ca411592303e89af5c4036
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:337 3bc7764216214a49bc317861e56e5b19
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cpic_tools.rst:338 dc8f1b7cfee24742b94ea2755cdab22c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

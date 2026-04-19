@@ -1,0 +1,412 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/metabolights_tools.rst:10 e039399560044a198d49d55bcee14134
+msgid "Metabolights Tools"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:12 60c3bdf9bca4427d8e2e52b5ae91de39
+msgid ""
+"**Configuration File**: ``metabolights_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 9"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:16 added49862d14ed08968ab2defff5c8a
+msgid ""
+"This page contains all tools defined in the ``metabolights_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:19 000e4eb9d18e4305b3c98692dc88637b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:22 b98151488d8944479538246adc43df87
+msgid "**metabolights_get_study** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:24 ad54a7e33d914f11b1416202020e21c8
+msgid ""
+"Get detailed information about a specific MetaboLights study by study ID."
+" Returns complete study ..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 0c61d1bef9e94537b10f1a571f35772e
+msgid "metabolights_get_study tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:28 ../../tools/metabolights_tools.rst:59
+#: ../../tools/metabolights_tools.rst:90 ../../tools/metabolights_tools.rst:130
+#: ../../tools/metabolights_tools.rst:161
+#: ../../tools/metabolights_tools.rst:192
+#: ../../tools/metabolights_tools.rst:223
+#: ../../tools/metabolights_tools.rst:254
+#: ../../tools/metabolights_tools.rst:287 0e8e96bae5de494eadcafb78959f5bf9
+#: 22604f9551274ec8a2c153c091fd34cc 24aa1a987d444943a90b816786fae34d
+#: 2ded9422ad0045d5acfe864001c59454 809534277ff94fc5868f30af5a131712
+#: 84010b5361354f578f597e8591a7bcfd b9e94a3827854c1289608968d93dd8c5
+#: c76090f7f570420eab013f0b09c37c65 f43842843d574feab259a5fdb33320e8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:30 a2df73862da24f09aba2a8be9006f2bb
+msgid "**Name**: ``metabolights_get_study``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:31 ../../tools/metabolights_tools.rst:62
+#: ../../tools/metabolights_tools.rst:93 ../../tools/metabolights_tools.rst:133
+#: ../../tools/metabolights_tools.rst:164
+#: ../../tools/metabolights_tools.rst:195
+#: ../../tools/metabolights_tools.rst:226
+#: ../../tools/metabolights_tools.rst:257
+#: ../../tools/metabolights_tools.rst:290 00c5dbe884774128afa32765c1fbcc02
+#: 12ad625ec41248b982842e2ed95d3da9 23573fc2545d4b0bbb5f1f34cf9cc9c5
+#: 263764427de544daacfbc2afc6e053a8 6dd5080a78ae4a11847986c00d02fc84
+#: 6e901835257d4773ad797d8476951bc5 8c3bb568ccae4a7290fafaa07f1bcb9c
+#: 9a51a2600d9b4e39a5ce71170f44ac34 e1a267b92c454e6c9049b31f6b851d11
+msgid "**Type**: ``MetaboLightsRESTTool``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:32 e7f0765bd41e4d7cbb9b52d9437d11c3
+msgid ""
+"**Description**: Get detailed information about a specific MetaboLights "
+"study by study ID. Returns complete study metadata including title, "
+"description, authors, and publication information."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:34 ../../tools/metabolights_tools.rst:65
+#: ../../tools/metabolights_tools.rst:96 ../../tools/metabolights_tools.rst:136
+#: ../../tools/metabolights_tools.rst:167
+#: ../../tools/metabolights_tools.rst:198
+#: ../../tools/metabolights_tools.rst:229
+#: ../../tools/metabolights_tools.rst:260
+#: ../../tools/metabolights_tools.rst:293 0d7ad49e90ad45ea851d1dc6a19c84ba
+#: 3017c789e78742dabc58528eefbd8a2f 45772a7961714829a8bc70e91d4296d6
+#: 4d2c4a85384f4bc5b2b85eca2798db54 a421d0e62b3b46748f270b3439c46e76
+#: bb02fb33ac2a4194bd3d11d215fb8cec c88c0671551a43acac6045cb06579e9a
+#: d892c6ecf1d749de9c5b625aa6e8a8d5 e5f355abfea241df86ae81462c144211
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:36 ../../tools/metabolights_tools.rst:98
+#: f12a8b6696da4cff9e449b4bb7a2295b ffa6e92837d749ffa83242de40525a77
+msgid "``study_id`` (string) (required) MetaboLights study ID (e.g., 'MTBLS1')"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:39 ../../tools/metabolights_tools.rst:70
+#: ../../tools/metabolights_tools.rst:110
+#: ../../tools/metabolights_tools.rst:141
+#: ../../tools/metabolights_tools.rst:172
+#: ../../tools/metabolights_tools.rst:203
+#: ../../tools/metabolights_tools.rst:234
+#: ../../tools/metabolights_tools.rst:268
+#: ../../tools/metabolights_tools.rst:304 0eff1e259dda4f92a3ebf7e4248cc91a
+#: 403b764b54944038822a886c3688b2ca 46e52e3086984694bb631d3f54e7c29d
+#: 616b3c66df074e09a8e7c67102745985 6ba4470fc9fa4c59ae24e57a647a0fa9
+#: 9ea2ba3d262846ac8cc2c0e0f3e65461 c339033c879a4a18845f3177bec18d7a
+#: cc9d53a058b34a2a870470d178651730 da2fee081d164d0296e1979bcca8f8c8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:53 3e06294c5908490ba5bcc3bce82af19e
+msgid "**metabolights_get_study_assays** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:55 429b5c2dcf874343b9791f601d533837
+msgid ""
+"Get all assays associated with a MetaboLights study. Returns assay "
+"metadata including assay types..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst a50603b934834393bafcb45327c562bb
+msgid "metabolights_get_study_assays tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:61 41f77112a4de4aff8b9d99121be6c2e9
+msgid "**Name**: ``metabolights_get_study_assays``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:63 9dda0fadc12d48fbb6a0c28f00f02275
+msgid ""
+"**Description**: Get all assays associated with a MetaboLights study. "
+"Returns assay metadata including assay types, protocols, and measurement "
+"details."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:67 ../../tools/metabolights_tools.rst:169
+#: ../../tools/metabolights_tools.rst:231 876e1506811940198dec6d6d756dca1c
+#: b215876913884d4da903b0981d5415cb c00b5bbdf4d94b628f8b6ebf17bc6a8d
+msgid "``study_id`` (string) (required) MetaboLights study ID"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:84 67f2f73ccde647b38e72eea5b8a9f674
+msgid "**metabolights_get_study_data_files** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:86 201aad61aa50498db8eaad24ac374596
+msgid ""
+"Search for data files in a MetaboLights study. Returns a list of files "
+"matching the search criter..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 65e986637efb46e6a3c55c3bc1812115
+msgid "metabolights_get_study_data_files tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:92 9ca5c9fd239d4a51ace7a6fab3d16c19
+msgid "**Name**: ``metabolights_get_study_data_files``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:94 d3f5577cee4f4640b4733dc3572c81f8
+msgid ""
+"**Description**: Search for data files in a MetaboLights study. Returns a"
+" list of files matching the search criteria. Use search\\_pattern to "
+"filter by file type (e.g., '\\*.mzML', '\\*.raw', '\\*.d'). At least one "
+"of file\\_match or folder\\_match must be true."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:101 de4238656f4c4175944bc742fb1b4c7a
+msgid ""
+"``search_pattern`` (string) (optional) Search pattern for files (e.g., "
+"'\\*.mzML', '\\*.zip', '\\*.d'). Default is 'FILES/\\*' to match all "
+"files"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:104 180b51955cf3419e8264f383a9dbdd62
+msgid ""
+"``file_match`` (boolean) (optional) Include file matches in results. At "
+"least one of file\\_match or folder\\_match must be true"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:107 6f3751201bf345d8a22e930d41b4f8b7
+msgid ""
+"``folder_match`` (boolean) (optional) Include folder matches in results. "
+"At least one of file\\_match or folder\\_match must be true"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:124 818fc69db6a34c53a24594171064365c
+msgid "**metabolights_get_study_factors** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:126 b4abcf87c15646e4bf4f8948b427d6f0
+msgid ""
+"Get experimental factors (variables) for a MetaboLights study. Returns "
+"factor definitions such as..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 86b8b1e5cf1e487c84a3ba71e6a16dab
+msgid "metabolights_get_study_factors tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:132 5be27ad645ae4848933c797d540abe0b
+msgid "**Name**: ``metabolights_get_study_factors``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:134 ef13e0377a724996835bf727b84c329c
+msgid ""
+"**Description**: Get experimental factors (variables) for a MetaboLights "
+"study. Returns factor definitions such as treatment groups, time points, "
+"disease states, or other experimental variables. Each factor includes "
+"name, type, and controlled vocabulary annotations. Use this to understand"
+" what variables were studied and how samples were grouped."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:138
+#: ../../tools/metabolights_tools.rst:200 cc12dd775cc6409e8b3263957e0f63d9
+#: d9886a6bb3e547e0abb9f2a8f2ddb9ac
+msgid ""
+"``study_id`` (string) (required) MetaboLights study ID (e.g., 'MTBLS1'). "
+"Use metabolights\\_list\\_studies or metabolights\\_search\\_studies to "
+"discover study IDs."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:155 d2f4390a4e744401b6d26335190ef123
+msgid "**metabolights_get_study_files** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:157 ebe4267700fd4c3bb453fd4b7c3f2329
+msgid ""
+"Get list of files associated with a MetaboLights study. Returns file "
+"metadata including file name..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 9464c04c780a47c181f0e9579c56cbe2
+msgid "metabolights_get_study_files tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:163 60ef1c50503046ccac4566635c49bc20
+msgid "**Name**: ``metabolights_get_study_files``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:165 fa0ba842c67944e5ad695e961342673c
+#, python-brace-format
+msgid ""
+"**Description**: Get list of files associated with a MetaboLights study. "
+"Returns file metadata including file names, types, and download links. "
+"Note: The files endpoint frequently returns 500 errors (known "
+"MetaboLights API issue). This tool automatically falls back to extracting"
+" file information from the study endpoint, including FTP/HTTP URLs. If "
+"both methods fail, access files via MetaboLights website: "
+"https://www.ebi.ac.uk/metabolights/studies/{study\\_id}."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:186 876d053e42914ea8bc57a3968eff42e9
+msgid "**metabolights_get_study_protocols** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:188 85e46ca149bb4e73934ec764945bc4b7
+msgid ""
+"Get experimental protocols used in a MetaboLights study. Returns detailed"
+" protocol information in..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst f6268bd753bb460593f4944ceb153007
+msgid "metabolights_get_study_protocols tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:194 dcadbea8fa8546a2bfec81238bc1750c
+msgid "**Name**: ``metabolights_get_study_protocols``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:196 5b0427e9b3c14ab1bee8e8fd38ca31dc
+msgid ""
+"**Description**: Get experimental protocols used in a MetaboLights study."
+" Returns detailed protocol information including sample collection, "
+"extraction, chromatography, and data acquisition methods. Each protocol "
+"includes name, type, description, and controlled vocabulary annotations. "
+"Use this to understand the experimental methodology used in the study."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:217 97d247b32976490ebcbf42fbc70289c7
+msgid "**metabolights_get_study_samples** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:219 2294871582cf423ab654f5834fb4f701
+msgid ""
+"Get all samples associated with a MetaboLights study. Returns sample "
+"metadata including sample na..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 038f92b653dc42ba8de81e91db20d9d5
+msgid "metabolights_get_study_samples tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:225 62998ac6e9fa44a38e116dfc758ec1d5
+msgid "**Name**: ``metabolights_get_study_samples``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:227 fb1f90dd3b7f42568e24a06ec1959f2f
+msgid ""
+"**Description**: Get all samples associated with a MetaboLights study. "
+"Returns sample metadata including sample names, characteristics, and "
+"factor values. Note: The samples endpoint may return 400 errors for some "
+"studies. This tool automatically falls back to extracting sample "
+"information from the study endpoint (ISA investigation structure). If "
+"both methods fail, access samples via MetaboLights website."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:248 9d6db8450cd94c319b97dcb8f035fbda
+msgid "**metabolights_list_studies** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:250 175510110461417aa98ecee009596ac8
+msgid ""
+"List all MetaboLights studies with pagination. Returns a list of study "
+"IDs (e.g., 'MTBLS1', 'MTBL..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 4450af1c915d49f89a74c99c18fe7b8d
+msgid "metabolights_list_studies tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:256 9d9f0cee7b1f4f249087350ef9eb4e3f
+msgid "**Name**: ``metabolights_list_studies``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:258 407f8eef2fb1414bbdb2a738fbe51fbd
+msgid ""
+"**Description**: List all MetaboLights studies with pagination. Returns a"
+" list of study IDs (e.g., 'MTBLS1', 'MTBLS2'). Use "
+"metabolights\\_get\\_study to get detailed information for a specific "
+"study ID."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:262 254b210734384421b7a99134ed300584
+msgid "``size`` (integer) (optional) Number of studies per page (default: 20)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:265
+#: ../../tools/metabolights_tools.rst:301 452d7baccf894c63b9cd1eb85846855a
+#: 5db21b84e4e54f60958b6e7aff53012c
+msgid "``page`` (integer) (optional) Page number (default: 0)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:281 681ed686ce63433fa9562b5f58f70053
+msgid "**metabolights_search_studies** (Type: MetaboLightsRESTTool)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:283 8e8f83d3f3ee4a6a8388928f6731cb91
+msgid ""
+"List MetaboLights study IDs. NOTE: The MetaboLights API does not support "
+"keyword filtering — the ..."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst 3e3915e7728e48e6ac09896f5bd2c2d2
+msgid "metabolights_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:289 26238e5a21f64dc09c866bb03e0d715b
+msgid "**Name**: ``metabolights_search_studies``"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:291 f286e8b6a70e44a784f3821fee7f1b3c
+msgid ""
+"**Description**: List MetaboLights study IDs. NOTE: The MetaboLights API "
+"does not support keyword filtering — the query parameter is accepted but "
+"has no effect; all public study IDs are returned regardless of query. To "
+"find studies on a specific topic, use metabolights\\_get\\_study on "
+"individual IDs. Returns all public MetaboLights study accessions "
+"(MTBLS###)."
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:295 d05fac2a219b48a2bb54009e3f332a10
+msgid ""
+"``query`` (string) (required) Search query string (e.g., organism name, "
+"disease, metabolite name)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:298 0127a4bda90544ee9c1276160825468f
+msgid "``size`` (integer) (optional) Number of results per page (default: 20)"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:318 b9da660b08d54481b0ac3a0262e3f37c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:320 eeff285909b14e2aafb2d729c029f1d2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/metabolights_tools.rst:321 6774b3b4a1204485b1f4528513069a71
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

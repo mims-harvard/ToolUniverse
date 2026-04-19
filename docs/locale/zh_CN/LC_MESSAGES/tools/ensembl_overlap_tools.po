@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_overlap_tools.rst:10 7b4e1bfb89b541fdbc40f27c0d33e629
+msgid "Ensembl Overlap Tools"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:12 8d0db0e1cc734b55a3b382777a32f0ea
+msgid ""
+"**Configuration File**: ``ensembl_overlap_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:16 8d71a56c61a04bff98ba7ae81296a8dc
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_overlap_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:19 d698747273ab4c44928ad1c47c450425
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:22 d7d9fb01ddf74a9e8a5f3f207e0dc6e9
+msgid "**Ensembl_get_gene_overlapping_features** (Type: EnsemblOverlapTool)"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:24 c19bd711fd60425fa2e5c874c8078ac3
+msgid ""
+"Get features overlapping an Ensembl gene by gene ID. Returns all genomic "
+"features co-located with..."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst fc9055c68174429d9b2ede10a422303f
+msgid "Ensembl_get_gene_overlapping_features tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:28
+#: ../../tools/ensembl_overlap_tools.rst:62 237715fbd4c64faaaced3733f74d4588
+#: a29b9d0212ea4a36aafe61316539cb86
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:30 1cd3c00d9f0448e192a36f16c7bf89c1
+msgid "**Name**: ``Ensembl_get_gene_overlapping_features``"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:31
+#: ../../tools/ensembl_overlap_tools.rst:65 2b9724593d4c4154b88baa0315a36076
+#: f4e19ca9101b4d88b146df527ec568f7
+msgid "**Type**: ``EnsemblOverlapTool``"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:32 16623d239c7c44d580a3ce4b8969262e
+msgid ""
+"**Description**: Get features overlapping an Ensembl gene by gene ID. "
+"Returns all genomic features co-located with the gene, including "
+"neighboring genes, overlapping transcripts, regulatory elements, and "
+"antisense transcripts. Useful for finding overlapping genes, identifying "
+"all transcript isoforms in a locus, or discovering regulatory features at"
+" a gene. Example: 'ENSG00000141510' (TP53) returns 2 overlapping genes "
+"(TP53 and WRAP53), 42 transcripts across 4 biotypes (protein\\_coding, "
+"nonsense\\_mediated\\_decay, retained\\_intron, "
+"protein\\_coding\\_CDS\\_not\\_defined), and 9 regulatory features."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:34
+#: ../../tools/ensembl_overlap_tools.rst:68 95720c94a1004a199c2bb6648bc8a977
+#: 9f4610c2014c4d828e4b02dcd923c28a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:36 785ca5014f994774b1257677e60be194
+msgid ""
+"``gene_id`` (string) (required) Ensembl gene ID. Examples: "
+"'ENSG00000141510' (TP53), 'ENSG00000012048' (BRCA1), 'ENSG00000157764' "
+"(BRAF)."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:39 8c87db9a699b49c2b3b1ac0997c588bc
+msgid ""
+"``feature_types`` (string) (optional) Comma-separated feature types. "
+"Options: 'gene', 'transcript', 'regulatory', 'constrained', 'variation', "
+"'repeat'. Default: 'gene'."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:42
+#: ../../tools/ensembl_overlap_tools.rst:79 a32ef61fb9a5426792e831ec346ca2bb
+#: a5f54f22658c4491b910743c165d7a34
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:56 a833f68f3dd946e8b4dfe1e139a95aba
+msgid "**Ensembl_get_region_features** (Type: EnsemblOverlapTool)"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:58 3e14fabe5b2f438aba0963435e872ad8
+msgid ""
+"Get all genomic features overlapping a specified chromosomal region. "
+"Returns genes, transcripts, ..."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst c6f8cae9e941454faea398c15e01d30d
+msgid "Ensembl_get_region_features tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:64 b0df7ea3710541ff9f1c887fd47968bc
+msgid "**Name**: ``Ensembl_get_region_features``"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:66 4651f58c6d3249e2a8cf5c343fb8dbe8
+msgid ""
+"**Description**: Get all genomic features overlapping a specified "
+"chromosomal region. Returns genes, transcripts, regulatory elements, "
+"constrained elements, and other features within the coordinates. "
+"Essential for understanding the functional landscape of a genomic region,"
+" finding genes near a variant, or identifying regulatory elements in a "
+"locus. Supports multiple feature types in one query. Example: region "
+"'7:140424943-140524564' (BRAF locus) returns 5 genes, 20 regulatory "
+"elements, and 82 constrained elements; region '17:7661779-7687546' (TP53 "
+"locus) returns genes, enhancers, CTCF binding sites, and promoters."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:70 726fc64a4fef4902a8fd25fe639c0381
+msgid ""
+"``species`` (string) (optional) Species name. Default: 'human'. Examples:"
+" 'human', 'mouse', 'rat', 'zebrafish'."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:73 fea292f614944e9382b749984749615d
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chr:start-end'. "
+"Examples: '17:7661779-7687546' (TP53), '7:140424943-140524564' (BRAF), "
+"'13:32315086-32400266' (BRCA2). Max region size ~5Mb."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:76 af086481474447d2afb9e23051daa00d
+msgid ""
+"``feature_types`` (string) (optional) Comma-separated feature types to "
+"retrieve. Options: 'gene', 'transcript', 'regulatory', 'constrained', "
+"'variation', 'repeat', 'motif'. Default: 'gene'. Example: "
+"'gene,regulatory,constrained'."
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:93 3bf5fe20452b4d6b95d8a25e8eb9a3eb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:95 52e950525723464396d23c0a918939ec
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_overlap_tools.rst:96 c64e0297bd984186a5b9662a173e2fbe
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

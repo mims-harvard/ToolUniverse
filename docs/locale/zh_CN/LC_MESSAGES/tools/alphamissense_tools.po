@@ -1,0 +1,181 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/alphamissense_tools.rst:10 e8541311a2cd495f8daaf7de666a34b7
+msgid "Alphamissense Tools"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:12 50bb65901ab9403db5fdbd79ceaaa202
+msgid ""
+"**Configuration File**: ``alphamissense_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:16 d36686289e9b46eca9fbf7793a5e8243
+msgid ""
+"This page contains all tools defined in the ``alphamissense_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:19 a0b587de7f0d458398e8d4cb1bfab52e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:22 6e21035bcea44fe49954162caee8bc66
+msgid "**AlphaMissense_get_protein_scores** (Type: AlphaMissenseTool)"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:24 f068f50b82e742b3b6d9a7dc7f21a479
+msgid ""
+"Get all AlphaMissense pathogenicity scores for a protein by UniProt ID. "
+"Returns comprehensive res..."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst 96f9083e866b49a1933f66029a94ce4e
+msgid "AlphaMissense_get_protein_scores tool specification"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:28
+#: ../../tools/alphamissense_tools.rst:59
+#: ../../tools/alphamissense_tools.rst:94 22cf36d6ede049b59ddc0836bfa864ab
+#: 3b43e2887fa147a3855162c708093486 bc0e41dbd40147699093c30fb6450899
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:30 60f03f32977f4ae1b518b77e125298ac
+msgid "**Name**: ``AlphaMissense_get_protein_scores``"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:31
+#: ../../tools/alphamissense_tools.rst:62
+#: ../../tools/alphamissense_tools.rst:97 954aa3064e8e4a1bbfcf71b1121eb265
+#: bb750507daee4481908832cea8bafa8b e517d83ef8da40e28464699559f12526
+msgid "**Type**: ``AlphaMissenseTool``"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:32 35b760ff067542c28505b1e2effafda4
+msgid ""
+"**Description**: Get all AlphaMissense pathogenicity scores for a protein"
+" by UniProt ID. Returns comprehensive residue-level data for all possible"
+" missense variants across the entire protein. Useful for identifying "
+"pathogenic hotspots and overall protein vulnerability assessment."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:34
+#: ../../tools/alphamissense_tools.rst:65
+#: ../../tools/alphamissense_tools.rst:100 01d0c1b6f769414883e777793102e21a
+#: 53384235391c47d992df2e92867f3030 eee419801a734dc5bac9c45b5c519412
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:36
+#: ../../tools/alphamissense_tools.rst:67
+#: ../../tools/alphamissense_tools.rst:102 1d2664e5b02d42378cf320d1d76ad9da
+#: 62142accbfaa45c6ac3bb51ecebedb5b ae61850bc78d47759ccd541086df438e
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession ID (e.g., 'P00533' "
+"for EGFR)"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:39
+#: ../../tools/alphamissense_tools.rst:73
+#: ../../tools/alphamissense_tools.rst:108 77550ca36ba0457ca3b19b18792d16ae
+#: de966c636349499ab5cab05ea898b711 eea9fa8763864a35a5bace5ef12e6932
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:53 f9c7355ecdb847b2a34ab8a170944af7
+msgid "**AlphaMissense_get_residue_scores** (Type: AlphaMissenseTool)"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:55 e481c0f8ce9c4fd08603f22cc62b65d8
+msgid ""
+"Get AlphaMissense scores for all 20 possible amino acid substitutions at "
+"a specific protein posit..."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst 0346c0f2b7df4bf896f98ecfe40b5051
+msgid "AlphaMissense_get_residue_scores tool specification"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:61 a3bbd0c287eb4270b98ec5934d97027e
+msgid "**Name**: ``AlphaMissense_get_residue_scores``"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:63 87e24f8fdbf84e51a781f14ad2920d75
+msgid ""
+"**Description**: Get AlphaMissense scores for all 20 possible amino acid "
+"substitutions at a specific protein position. Useful for saturation "
+"mutagenesis analysis and identifying pathogenic hotspots."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:70 9c7ce1130b46400e840584cb69800fa6
+msgid ""
+"``position`` (integer) (required) Amino acid position in the protein "
+"(1-indexed)"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:88 d4a0cbb42a7f44f98651706530c3d6c6
+msgid "**AlphaMissense_get_variant_score** (Type: AlphaMissenseTool)"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:90 c4da04eda4314fb2a723d66237bb251e
+msgid ""
+"Get AlphaMissense pathogenicity score for a specific missense variant. "
+"Input: UniProt ID and vari..."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst c6b0265c2b2a4c84903bd90283b160e5
+msgid "AlphaMissense_get_variant_score tool specification"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:96 68696f986837488486c45f68c0566209
+msgid "**Name**: ``AlphaMissense_get_variant_score``"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:98 d62d686aa8b44d78b14d5d4c9968c6bb
+msgid ""
+"**Description**: Get AlphaMissense pathogenicity score for a specific "
+"missense variant. Input: UniProt ID and variant (e.g., 'p.R123H'). "
+"Returns score and classification (pathogenic/ambiguous/benign). State-of-"
+"the-art for VUS interpretation."
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:105 df2a05adecc8458c91ab953bd7ea798b
+msgid ""
+"``variant`` (string) (required) Variant in protein notation: p.X123Y or "
+"X123Y where X is reference amino acid, 123 is position, Y is variant "
+"(e.g., 'p.R123H', 'V600E')"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:123 d3feac34db0540488cfab1195fd558dd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:125 54b39d2bc14e49fe9a685127bebbfdb8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/alphamissense_tools.rst:126 7a1be1946bf343f28233c66b9482f87c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

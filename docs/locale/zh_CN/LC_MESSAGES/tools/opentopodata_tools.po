@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/opentopodata_tools.rst:10 b4a9846a135c4d6cae614074eeae5005
+msgid "Opentopodata Tools"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:12 70cae4b87aef4395bc10743640d79359
+msgid ""
+"**Configuration File**: ``opentopodata_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:16 02469f2148f24760ba359a15592f9982
+msgid ""
+"This page contains all tools defined in the ``opentopodata_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:19 e6d68203da75480aa7b8de2a89f43823
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:22 2714b59f361542f4ad3d74ead89cbf29
+msgid "**OpenTopoData_get_elevation** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:24 d192f60ca78a47898aeabd44e7f2ed25
+msgid ""
+"Get terrain elevation data for any location on Earth using the "
+"OpenTopoData API. Returns elevatio..."
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst 4113a5d101bf46a1bd10b430e8734222
+msgid "OpenTopoData_get_elevation tool specification"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:28 c4528c28a5d14c87b8a4a6dbd37202b4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:30 e2cb23776e3548ceb599727bc66ab289
+msgid "**Name**: ``OpenTopoData_get_elevation``"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:31 074bfc68b27945c7a0bbe27e15d2bd03
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:32 2abdf091ee614e7fafa027b10c170352
+msgid ""
+"**Description**: Get terrain elevation data for any location on Earth "
+"using the OpenTopoData API. Returns elevation in meters above sea level "
+"from multiple digital elevation model (DEM) datasets including SRTM 30m, "
+"ASTER, NED 10m (US only), EU-DEM, and others. Supports batch queries for "
+"multiple locations. No authentication required. Useful for geographic "
+"analysis, hiking planning, and terrain modeling."
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:34 7d92fc8e8d074bb0afc21436861782ab
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:36 aff2b6bdcdbd4afab49d6894f00ab4c4
+msgid ""
+"``locations`` (string) (required) One or more lat,lng coordinate pairs "
+"separated by \\| (pipe). Examples: '36.455556,-116.866667' (Death "
+"Valley), '48.8566,2.3522\\|51.5074,-0.1278' (Paris and London), "
+"'27.9881,86.9250' (Everest)"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:39 566a1945c508496aa9ec155df5180e8a
+msgid ""
+"``dataset`` (string, null) (optional) Elevation dataset to use. Values: "
+"'srtm30m' (global 30m), 'srtm90m' (global 90m), 'aster' (global 30m), "
+"'ned10m' (US 10m), 'eudem' (Europe 25m), 'mapzen' (global). Default: "
+"srtm30m"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:42 381e557df79f4ba194bc5701c174e17c
+msgid ""
+"``interpolation`` (string, null) (optional) Interpolation method. Values:"
+" 'nearest', 'bilinear', 'cubic'. Default: bilinear"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:45 469afabf2830497f998a251c2b8abd2b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:59 46817cec7c95463abb89fbc052e49ba4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:61 d2ecc5704d4044cf8644635e065263cc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/opentopodata_tools.rst:62 08e02a1b9fb642dc907c4310e082bf1a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

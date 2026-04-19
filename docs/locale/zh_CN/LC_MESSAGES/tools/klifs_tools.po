@@ -1,0 +1,258 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/klifs_tools.rst:10 cc4e1e69dcd7404b9fb4a78f3f2f3e2f
+msgid "Klifs Tools"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:12 824a487dfb0346468b8c4fcb7ebd4163
+msgid ""
+"**Configuration File**: ``klifs_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 5"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:16 ee5eb223e5e14e1cbaec7fb2312d4b66
+msgid ""
+"This page contains all tools defined in the ``klifs_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:19 99c5bbe13a2e407ca6c16860a9843dc4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:22 0bf81b09f27a4d0895752628c785ff7f
+msgid "**KLIFS_get_kinase** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:24 1d7e58c41b294a6ebe64215fcda8888a
+msgid ""
+"Get detailed information about a specific kinase from KLIFS by its kinase"
+" ID. Returns kinase name..."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst 5b071ebfadb743ccafba37570db711be
+msgid "KLIFS_get_kinase tool specification"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:28 ../../tools/klifs_tools.rst:59
+#: ../../tools/klifs_tools.rst:90 ../../tools/klifs_tools.rst:121
+#: ../../tools/klifs_tools.rst:152 11addf05363e44908033d8d2b1969cd0
+#: 2ce933670e434f708c3058dab09e9e8c 6d6bc9445f3441a1a7bab9260e2b1c4f
+#: a1548cfef71d4a4c9fc6958c02e397ea d23719bcbbe44fd298a5382a6eef676b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:30 15f8fc7201fe492ea37f167cc37c8544
+msgid "**Name**: ``KLIFS_get_kinase``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:31 ../../tools/klifs_tools.rst:62
+#: ../../tools/klifs_tools.rst:93 ../../tools/klifs_tools.rst:124
+#: ../../tools/klifs_tools.rst:155 0d74b7ed98ce4bb9b19fa75800ac5b56
+#: 176f933c793641968749670fed6955b1 6335262a85804007bce970256f48f840
+#: 80bc342730214544b4cad768389b7948 f600e20ed64c48e38d6dcec70ba94221
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:32 9bbcfa4945464020986a6668325d34e3
+msgid ""
+"**Description**: Get detailed information about a specific kinase from "
+"KLIFS by its kinase ID. Returns kinase name, HGNC symbol, family/group "
+"classification, species, UniProt ID, IUPHAR receptor ID, and the "
+"80-residue KLIFS kinase pocket sequence (standardized binding site "
+"residues used for structure comparison). Use KLIFS\\_list\\_kinases to "
+"find kinase IDs."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:34 ../../tools/klifs_tools.rst:65
+#: ../../tools/klifs_tools.rst:96 ../../tools/klifs_tools.rst:127
+#: ../../tools/klifs_tools.rst:158 bc77ae12225440ab9e0e2793a4c27eb4
+#: d085181173ce48f3b591659ca253b183 e32bbcd0d4ce4c12956230dacaf49e05
+#: eaf9be6c1a6b4299bba28390b6f6844c ff1b02aebcc74aa99c9692e544a65897
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:36 f6bd9a3a33af4d9eae4a53331efb7e86
+msgid ""
+"``kinase_ID`` (integer) (required) KLIFS kinase ID (e.g., 1 for AKT1, 443"
+" for AATK). Obtain from KLIFS\\_list\\_kinases."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:39 ../../tools/klifs_tools.rst:70
+#: ../../tools/klifs_tools.rst:101 ../../tools/klifs_tools.rst:132
+#: ../../tools/klifs_tools.rst:166 025ae72fee564cf5b55189cabb8b06bd
+#: 0bc7d1abbee2405d9411a318786524cd 3ce5b6889d1544bfba8446e29f7a645a
+#: 4f354b4fde444603ab3a5f16fc4b5d06 bf345900c0fd41da9f4e5cfac199803a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:53 2eb43a4dff8e4734ba9ba9490efe693a
+msgid "**KLIFS_get_ligands** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:55 909e0f6bf9be413ba2410f06351fbaa1
+msgid ""
+"Get all ligands (co-crystallized inhibitors) bound to a specific kinase "
+"across all its crystal st..."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst 430212859f9c4277bc7c7414b9da1b72
+msgid "KLIFS_get_ligands tool specification"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:61 15d53f440ffa4834a04593fffac69db5
+msgid "**Name**: ``KLIFS_get_ligands``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:63 9e8d987e05cc40b1b4824faf2a4b7c57
+msgid ""
+"**Description**: Get all ligands (co-crystallized inhibitors) bound to a "
+"specific kinase across all its crystal structures in KLIFS. Returns "
+"ligand PDB 3-letter codes, names, SMILES structures, and InChIKeys. "
+"Useful for identifying known inhibitors and their chemical scaffolds for "
+"a given kinase target. Use KLIFS\\_list\\_kinases to find kinase IDs."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:67 ../../tools/klifs_tools.rst:98
+#: 53e1377aced24da18dd1de06a81cb541 d16f450d4aae47ef83bcfcd4a55fb169
+msgid ""
+"``kinase_ID`` (integer) (required) KLIFS kinase ID (e.g., 1 for AKT1). "
+"Obtain from KLIFS\\_list\\_kinases."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:84 2ee0cd227310473ca70f9c2af3b184b5
+msgid "**KLIFS_get_structures** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:86 038a3fc484044bf0ba8a47a9c7dac979
+msgid ""
+"Get crystal structures for a specific kinase from KLIFS. Returns all "
+"annotated crystal structures..."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst 1d36e14a67fd43a5835ed0dd173c4ca0
+msgid "KLIFS_get_structures tool specification"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:92 c2dc71eb48eb41468c4f53879cb1abf4
+msgid "**Name**: ``KLIFS_get_structures``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:94 70c43cc3af564b5eb1400cbfbd2577fb
+msgid ""
+"**Description**: Get crystal structures for a specific kinase from KLIFS."
+" Returns all annotated crystal structures with PDB IDs, ligands, DFG-"
+"in/out conformation, alpha-C helix orientation, binding site quality "
+"scores, and binding pocket fingerprints. Essential for drug discovery - "
+"identifies active vs. inactive conformations, Type I/II/III inhibitor "
+"binding sites, and DFG-in/out states. Use KLIFS\\_list\\_kinases to find "
+"kinase IDs."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:115 d57702a2db9b44fbbbe68ab568d51909
+msgid "**KLIFS_get_structures_by_pdb** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:117 9a7e90b928f84cb6a1cf9d41a1c9ff66
+msgid ""
+"Get KLIFS kinase structure data for one or more PDB entries by their PDB "
+"codes. Returns all kinas..."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst 32aa40196edb4377aae82e801c139448
+msgid "KLIFS_get_structures_by_pdb tool specification"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:123 89b943c894c7488687b8f4c6b363703f
+msgid "**Name**: ``KLIFS_get_structures_by_pdb``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:125 04c7a238772b413d8c99e1c47adbe30f
+msgid ""
+"**Description**: Get KLIFS kinase structure data for one or more PDB "
+"entries by their PDB codes. Returns all kinase chains annotated in the "
+"specified PDB structures with DFG/alpha-C helix conformations, ligands, "
+"and pocket sequences. Useful when you have a PDB ID and want kinase-"
+"specific structural annotation."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:129 2025316773c247ceab738e0aeed13c51
+msgid ""
+"``pdb_codes`` (string) (required) Comma-separated list of PDB codes to "
+"look up (e.g., '4ekk,3mvh,1iep'). Each must be a valid 4-character PDB "
+"ID."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:146 79b975c174d445359ca1643c67349768
+msgid "**KLIFS_list_kinases** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:148 5a1daccbc8e846668eca3e536e39d57f
+msgid ""
+"List kinases in the Kinase-Ligand Interaction Fingerprints and Structures"
+" (KLIFS) database. KLIFS..."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst 29bbd3dca5894918bb65de0d38b03c3e
+msgid "KLIFS_list_kinases tool specification"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:154 db2d8235531d4bd9bb6330166358e024
+msgid "**Name**: ``KLIFS_list_kinases``"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:156 3827f92434e643e8b662f75e8ce45f9c
+msgid ""
+"**Description**: List kinases in the Kinase-Ligand Interaction "
+"Fingerprints and Structures (KLIFS) database. KLIFS contains 1,100+ "
+"kinases from 7,000+ crystal structures with curated binding pocket "
+"information. Returns kinase IDs, names, HGNC symbols, kinase family/group"
+" classification, species, and UniProt IDs. Filter by kinase group (TK, "
+"TKL, STE, CK1, AGC, CAMK, CMGC) or species (Human, Mouse, Rat)."
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:160 2c4f0266547b4e54be12ce5e972aeac8
+msgid ""
+"``kinase_group`` (string, null) (optional) Filter by kinase group: 'TK' "
+"(tyrosine kinase), 'TKL' (TK-like), 'STE', 'CK1', 'AGC', 'CAMK', 'CMGC', "
+"'RGC', 'Other'"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:163 34537c88e17845e6a38ad3ed3b366899
+msgid ""
+"``species`` (string, null) (optional) Filter by species: 'Human', "
+"'Mouse', 'Rat'"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:179 d1586f6e24b548a1a1fc728cdda5a6b7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:181 4c029809492242c799ed91a30782eaae
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/klifs_tools.rst:182 b8401e76bded4138938d3d8292c1b41b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

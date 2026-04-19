@@ -7,407 +7,400 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/scientific_workflows.rst:2 8b43d2e792eb46849b4499a1f5d49179
+#: ../../guide/scientific_workflows.rst:2 dd99398dcecf4a639a81e829e2106b62
 msgid "Scientific Workflows"
 msgstr "科学工作流"
 
-#: ../../guide/scientific_workflows.rst:4 5d6c0acae4a34589ab05ff93d424503e
+#: ../../guide/scientific_workflows.rst:4 b32ea7d16d8d47c0a062cd1660b3b137
 msgid ""
-"**Build comprehensive research workflows using ToolUniverse's compose tools "
-"and individual tools for real-world scientific scenarios.**"
-msgstr "**使用ToolUniverse的组合工具和单独工具，为实际科学场景构建全面的研究工作流程。**"
-
-#: ../../guide/scientific_workflows.rst:6 ad2bc69358ac42b68212a4bb2dfe2515
-msgid ""
-"This Tutorial demonstrates how to create sophisticated scientific workflows "
-"that combine multiple tools to solve complex research problems. Learn to "
-"build reproducible, efficient analysis pipelines using ToolUniverse's "
-"composition capabilities."
+"The best way to run scientific workflows with ToolUniverse is through AI "
+"agent skills — pre-built, interactive research workflows that combine "
+"1000+ tools."
 msgstr ""
-"本教程演示如何创建复杂的科学工作流，将多种工具结合起来解决复杂的研究问题。学习使用ToolUniverse的组合功能构建可重复、高效的分析流程。"
 
-#: ../../guide/scientific_workflows.rst:9 fd9927e1a3794442b415558a819d8f51
-msgid "🎯 What You'll Learn"
-msgstr "🎯 您将学习的内容"
-
-#: ../../guide/scientific_workflows.rst:11 29b4da67a93e4d148840f1d6776759be
-msgid "Design multi-tool research workflows using compose tools"
-msgstr "设计多工具研究工作流程，使用组合工具"
-
-#: ../../guide/scientific_workflows.rst:12 f2af3a9ba3f8450f9790edd8416f9f3b
-msgid "Combine data from different scientific databases and APIs"
-msgstr "将来自不同科学数据库和API的数据进行整合"
-
-#: ../../guide/scientific_workflows.rst:13 0dae8f8533c04056a2e5676930fec92b
-msgid "Build reproducible analysis pipelines with error handling"
-msgstr "构建具有错误处理功能的可重复分析流水线"
-
-#: ../../guide/scientific_workflows.rst:14 bc2c50a0f7fa487eaf64992d223a2963
-msgid "Create agentic workflows with AI-guided decision making"
-msgstr "使用人工智能引导的决策创建自主工作流程"
-
-#: ../../guide/scientific_workflows.rst:15 cc993dc3210644d5bb4bee42d410ce90
-msgid "Optimize workflows for efficiency and accuracy"
-msgstr "优化工作流程以提升效率和准确性"
-
-#: ../../guide/scientific_workflows.rst:18 e96806214d12400cb2fcd3fb0cef4280
-msgid "📋 Prerequisites"
-msgstr "📋 前置条件"
-
-#: ../../guide/scientific_workflows.rst:20 a03f56a6144c4b6490b8716c1f742e5b
-msgid "Familiarity with ToolUniverse tools (:doc:`../guide/tools`)"
-msgstr "熟悉 ToolUniverse 工具（:doc:`../guide/tools`）"
-
-#: ../../guide/scientific_workflows.rst:21 ee782fb8df0847d09a8672fe595d1b12
-msgid "Understanding of scientific databases and concepts"
-msgstr "对科学数据库和概念的理解"
-
-#: ../../guide/scientific_workflows.rst:22 88d49e08623841df984c648fae7df55d
-msgid "Basic Python programming for workflow automation"
-msgstr "基础Python编程用于工作流程自动化"
-
-#: ../../guide/scientific_workflows.rst:23 2f8a684ce2c743b9b0922b08d1517139
-msgid "Knowledge of tool composition (:doc:`../guide/tool_composition`)"
-msgstr "工具组成知识 (:doc:`../guide/tool_composition`)"
-
-#: ../../guide/scientific_workflows.rst:26 587e37964c194affa12d0c4e29787770
-msgid "Workflow Architecture Overview"
-msgstr "工作流程架构概述"
-
-#: ../../guide/scientific_workflows.rst:28 e971305ed0c347b282ab4aa28881df9c
+#: ../../guide/scientific_workflows.rst:6 fefe109196f4484b9c365f9a9175550a
 msgid ""
-"ToolUniverse supports two approaches for building scientific workflows:"
-msgstr "ToolUniverse 支持两种构建科学工作流的方法："
-
-#: ../../guide/scientific_workflows.rst:30 81011452460a4d0faf1e921ca0bac6fd
-msgid ""
-"**Compose Tools**: Pre-built, reusable workflows that combine multiple tools"
-msgstr "**Compose Tools**：预构建的可重用工作流，结合了多种工具"
-
-#: ../../guide/scientific_workflows.rst:31 25e1eadd729b48ecbd9367cfac444003
-msgid ""
-"**Custom Workflows**: Ad-hoc combinations of individual tools for specific "
-"needs"
-msgstr "**自定义工作流**：根据特定需求临时组合的独立工具"
-
-#: ../../guide/scientific_workflows.rst:33 45238e99965c43e5b3e8f747acd6663d
-msgid ""
-"**Compose Tool Benefits**: - **Reusability**: Share workflows across "
-"research projects - **Reliability**: Built-in error handling and fallback "
-"mechanisms - **Efficiency**: Optimized tool loading and execution - "
-"**Maintainability**: Centralized workflow logic"
+"Use the skills catalog to find workflows for drug discovery, target "
+"analysis, disease research, genomics, literature review, and more:"
 msgstr ""
-"**Compose 工具的优势**：  \n"
-"- **可重用性**：在多个研究项目之间共享工作流  \n"
-"- **可靠性**：内置错误处理和回退机制  \n"
-"- **高效性**：优化的工具加载与执行性能  \n"
-"- **可维护性**：集中化的工作流逻辑"
 
-#: ../../guide/scientific_workflows.rst:40 09d6ec0ffddc4971aa7610925392f238
-msgid "🧬 Drug Discovery & Development Workflows"
-msgstr "🧬 药物发现与开发工作流程"
-
-#: ../../guide/scientific_workflows.rst:43 90ebbc6429594e078567b1b0ea9c6047
-msgid "Target Identification Pipeline"
-msgstr "靶点识别流程"
-
-#: ../../guide/scientific_workflows.rst:45 81cf249f97c34201ab6058fd14acc2ac
-msgid ""
-"**Scenario**: Identify and validate potential therapeutic targets for a "
-"disease using a compose tool."
-msgstr "**场景**：使用组合工具识别并验证疾病的潜在治疗靶点。"
-
-#: ../../guide/scientific_workflows.rst:47 9b1525df3b0448b69b219190f6d444ad
-msgid "**Using Compose Tool Approach**:"
-msgstr "**使用 Compose 工具方法**："
-
-#: ../../guide/scientific_workflows.rst:107 6f96af3f521e487fb6b285e3a7b1e232
-msgid "**Custom Workflow Approach** (for specific needs):"
-msgstr "**定制工作流程方法**（针对特定需求）："
-
-#: ../../guide/scientific_workflows.rst:159 498b74ef5ad94a11b1794812ed4af63f
-msgid "Drug Repositioning Analysis"
-msgstr "药物再定位分析"
-
-#: ../../guide/scientific_workflows.rst:161 7077efb1a1434d0d871c93c08e5594c7
-msgid ""
-"**Scenario**: Find existing drugs that could be repurposed for a new "
-"indication using heterogeneous data sources."
-msgstr "**场景**：利用异构数据源寻找可用于新适应症的现有药物。"
-
-#: ../../guide/scientific_workflows.rst:239 45c37f45a59a4172a807e535431eef73
-msgid "Comprehensive Drug Discovery Pipeline"
-msgstr "全面的药物发现流程"
-
-#: ../../guide/scientific_workflows.rst:241 9b5c6450c9764ed49220c5f989ccbc0f
-msgid ""
-"**Complete end-to-end drug discovery workflow from disease to optimized "
-"candidates**"
-msgstr "**从疾病到优化候选药物的完整端到端药物发现工作流程**"
-
-#: ../../guide/scientific_workflows.rst:243 402dffd6219247c898d0c21069244c3c
-msgid ""
-"This advanced workflow demonstrates how to create a compose tool that "
-"orchestrates multiple phases of drug discovery:"
-msgstr "此高级工作流程演示了如何创建一个组合工具，以协调药物发现的多个阶段："
-
-#: ../../guide/scientific_workflows.rst:399
-#: ../../guide/scientific_workflows.rst:969 5e60332a0ece4bd9bfa94805e38409af
-#: d0828f215d154d869f4f25b1049f2dad
-msgid "**Using the Compose Tool**:"
-msgstr "**使用撰写工具**："
-
-#: ../../guide/scientific_workflows.rst:421 f61d6c706f35412b8179d2c1bc14080c
-msgid "🛡️ Drug Safety & Pharmacovigilance Workflows"
-msgstr "🛡️ 药物安全与药物警戒工作流程"
-
-#: ../../guide/scientific_workflows.rst:424 eb1a05fcc4064d84b2d7f69b0f83de34
-msgid "Comprehensive Safety Assessment"
-msgstr "综合安全评估"
-
-#: ../../guide/scientific_workflows.rst:426 8e6e96e00ed3490d9d7af77199c23f86
-msgid ""
-"**Scenario**: Conduct thorough safety evaluation of a marketed drug using "
-"multiple data sources."
-msgstr "**场景**：使用多种数据来源对已上市药物进行全面的安全性评估。"
-
-#: ../../guide/scientific_workflows.rst:529 6c02591c527f432684509b444a6cb889
-msgid "📚 Literature Research & Meta-Analysis Workflows"
-msgstr "📚 文献研究与元分析工作流程"
-
-#: ../../guide/scientific_workflows.rst:532 d279ea8a5c4746ca81e3eb9680a11373
-msgid "Systematic Literature Review"
-msgstr "系统文献综述"
-
-#: ../../guide/scientific_workflows.rst:534 fa1518fbc75c4361ab1eeb1652bba4a1
-msgid ""
-"**Scenario**: Conduct systematic review of literature on a specific research"
-" topic using compose tools."
-msgstr "**场景**：使用Compose工具对特定研究主题的文献进行系统性综述。"
-
-#: ../../guide/scientific_workflows.rst:641 e135522e9e1549b6b41a37a6af580b7b
-msgid "🧬 Genomics Research Workflows"
-msgstr "🧬 基因组学研究工作流程"
-
-#: ../../guide/scientific_workflows.rst:644 bea7343273b047b687792d1434705c31
-msgid "Variant Analysis Pipeline"
-msgstr "变异分析流程"
-
-#: ../../guide/scientific_workflows.rst:646 d5e0c4a8da0d4a24909ab30f44532a57
-msgid ""
-"**Scenario**: Analyze genetic variants and their functional impact using "
-"multiple genomic databases."
-msgstr "**场景**：使用多个基因组数据库分析遗传变异及其功能影响。"
-
-#: ../../guide/scientific_workflows.rst:718 bbe7f66483564c99ac4c98db080dddcb
-msgid "Biomarker Discovery Workflow"
-msgstr "生物标志物发现工作流程"
-
-#: ../../guide/scientific_workflows.rst:720 9438da691bf4495dac561c62bb60292c
-msgid ""
-"**Scenario**: Discover and validate biomarkers for a specific disease "
-"condition using compose tools."
-msgstr "**场景**：使用Compose工具发现并验证特定疾病状态的生物标志物。"
-
-#: ../../guide/scientific_workflows.rst:994 a67a76eca4ae44cfb58e52b3c6604872
-msgid "🧪 Clinical Research Workflows"
+#: ../../guide/scientific_workflows.rst:8 5f17f54e7ff44c409d9cd0f2e30d29f5
+#, fuzzy
+msgid "View All Research Skills"
 msgstr "🧪 临床研究工作流程"
 
-#: ../../guide/scientific_workflows.rst:997 27b53b6a579c4fcd88af081a803dff39
-msgid "Clinical Trial Analysis Pipeline"
-msgstr "临床试验分析流程"
-
-#: ../../guide/scientific_workflows.rst:999 e50c690b5629444fb76d80dc23179e01
-msgid ""
-"**Scenario**: Comprehensive analysis of clinical trials for a specific "
-"condition."
-msgstr "**场景**：针对特定病症的临床试验进行全面分析"
-
-#: ../../guide/scientific_workflows.rst:1083 9e0dcc1a961f42f98708dfb3598bacba
-msgid "🤖 Agentic Workflows with AI Integration"
-msgstr "🤖 基于人工智能集成的智能体工作流"
-
-#: ../../guide/scientific_workflows.rst:1086 b3dae8fab07341559a3dba26d089b19e
-msgid "Intelligent Research Assistant"
-msgstr "智能研究助手"
-
-#: ../../guide/scientific_workflows.rst:1088 450df6620ca34a3da39a8a7bc98d4d42
-msgid ""
-"**Scenario**: Create an AI-guided workflow that adapts based on intermediate"
-" results."
-msgstr "**场景**：创建一个基于中间结果动态调整的AI引导工作流程。"
-
-#: ../../guide/scientific_workflows.rst:1160 59b42f0208174ab3a607f692372aedfe
-msgid "Current Working Compose Tools"
-msgstr "当前使用的Compose工具"
-
-#: ../../guide/scientific_workflows.rst:1162 a119c608e2c74b5eacbb006e37f00df4
-msgid ""
-"ToolUniverse provides several production-ready compose tools that implement "
-"the workflows described in this Tutorial:"
-msgstr "ToolUniverse 提供了多款可用于生产环境的编排工具，这些工具实现了本教程中描述的工作流程："
-
-#: ../../guide/scientific_workflows.rst:1164 3ddf7c7d700044c4bc4ca5dee9134382
-msgid "**✅ Verified Working Compose Tools**:"
-msgstr "**✅ 已验证可用的Compose工具**"
-
-#: ../../guide/scientific_workflows.rst:1166 f6e3bfb06a50451fb53cf3b1a357ecce
-msgid "**LiteratureSearchTool**"
-msgstr "**文献检索工具**"
-
-#: ../../guide/scientific_workflows.rst:1168 2f74382cad75439e9ce2bb75f0e287b2
-msgid "**Purpose**: Comprehensive literature research and synthesis"
-msgstr "**目的**：全面的文献调研与综合分析"
-
-#: ../../guide/scientific_workflows.rst:1169 5c0cccd3851b49bc9e7cb115695b1eed
-msgid ""
-"**Workflow**: Broadcasting pattern across EuropePMC, OpenAlex, PubTator"
-msgstr "**工作流程**：在 EuropePMC、OpenAlex、PubTator 中的广播模式"
-
-#: ../../guide/scientific_workflows.rst:1170 9940b5de7e864b158e2a1436b495af8e
-msgid ""
-"**AI Integration**: MedicalLiteratureReviewer for intelligent summarization"
-msgstr "**AI集成**：MedicalLiteratureReviewer 用于智能摘要生成"
-
-#: ../../guide/scientific_workflows.rst:1172 02ab932101de4dd59cfbf9e9846e2a88
-msgid "**ComprehensiveDrugDiscoveryPipeline**"
-msgstr "**综合药物发现流程**"
-
-#: ../../guide/scientific_workflows.rst:1174 2d5b6621f88c45a5822bd53810510662
-msgid "**Purpose**: End-to-end drug discovery from disease to candidates"
-msgstr "**目的**：从疾病到候选药物的端到端药物发现过程"
-
-#: ../../guide/scientific_workflows.rst:1175 e1d149d9329248ddac85ecbab4376f16
-msgid "**Workflow**: Sequential chaining with tool integration"
-msgstr "**工作流程**：带有工具集成的顺序链式操作"
-
-#: ../../guide/scientific_workflows.rst:1176 d0cebd314cc643059508172dbbd24077
-msgid ""
-"**Phases**: Target identification → Lead discovery → Safety assessment → "
-"Literature validation"
-msgstr "**阶段**：靶点识别 → 先导化合物发现 → 安全性评估 → 文献验证"
-
-#: ../../guide/scientific_workflows.rst:1177 d58ece6964c54246a4c808372795ee73
-msgid ""
-"**Tool Chaining**: OpenTargets → PubChem → ADMETAI → LiteratureSearchTool"
-msgstr "**工具链**：OpenTargets → PubChem → ADMETAI → LiteratureSearchTool"
-
-#: ../../guide/scientific_workflows.rst:1179 ce4aea39542a48faa413ca97e11f04eb
-msgid "**BiomarkerDiscoveryWorkflow**"
-msgstr "**生物标志物发现工作流程**"
-
-#: ../../guide/scientific_workflows.rst:1181 d544c759bc8042308c7eb66b352d6ca7
-msgid "**Purpose**: Biomarker discovery and validation for diseases"
-msgstr "**目的**：疾病生物标志物的发现与验证"
-
-#: ../../guide/scientific_workflows.rst:1182 fae62ad6650b45aa87be8b08a52e0f26
-msgid "**Workflow**: Multi-strategy approach with comprehensive fallbacks"
-msgstr "**工作流程**：多策略方法，配备全面的备用方案"
-
-#: ../../guide/scientific_workflows.rst:1183 a4ea213f15ed4f3e9717adbafa56f2b1
-msgid ""
-"**Steps**: Literature search → Gene discovery → Pathway analysis → Clinical "
-"validation"
-msgstr "**步骤**：文献检索 → 基因发现 → 通路分析 → 临床验证"
-
-#: ../../guide/scientific_workflows.rst:1184 40656504ca774b14b765e389bd62eee7
-msgid ""
-"**Multi-tool Analysis**: HPA biological processes, protein interactions, "
-"cancer prognostics"
-msgstr "**多工具分析**：HPA 生物过程、蛋白质相互作用、癌症预后分析"
-
-#: ../../guide/scientific_workflows.rst:1187 edd4e254ab2643cba0f395e80ec1baa1
-msgid "**DrugSafetyAnalyzer**"
-msgstr "**药物安全分析器**"
-
-#: ../../guide/scientific_workflows.rst:1189 cc11b5dadf0d4e0797bcdcb1272a249c
-msgid "**Purpose**: Comprehensive drug safety assessment"
-msgstr "**目的**：全面的药物安全性评估"
-
-#: ../../guide/scientific_workflows.rst:1190 90e6568958a2413a818b5873fe0526f3
-msgid "**Workflow**: Safety-focused data integration"
-msgstr "**工作流程**：以安全为核心的数据集成"
-
-#: ../../guide/scientific_workflows.rst:1191 f4e635834bcd4720b3e650e0ee4d0967
-msgid "**Components**: PubChem compound data, EuropePMC literature search"
-msgstr "**组件**：PubChem 化合物数据，EuropePMC 文献检索"
-
-#: ../../guide/scientific_workflows.rst:1192 91f119d347314df5b6dc4429f92749ef
-msgid "**Status**: ✅ Fully functional with real safety data processing"
-msgstr "**状态**：✅ 完全功能正常，具备真实安全数据处理能力"
-
-#: ../../guide/scientific_workflows.rst:1194 c9e6f64691ae403b8e2ec41441dfead5
-msgid "**ToolDescriptionOptimizer**"
-msgstr "**工具描述优化器**"
-
-#: ../../guide/scientific_workflows.rst:1196 518f6a71d8024d7d8adbbcf5ed1de39d
-msgid "**Purpose**: AI-powered tool description optimization"
-msgstr "**目的**：基于人工智能的工具描述优化"
-
-#: ../../guide/scientific_workflows.rst:1197 2fd970daac654a57aac6765a5c6968f1
-msgid "**Workflow**: Agentic optimization loops with quality evaluation"
-msgstr "**工作流程**：带有质量评估的自主优化循环"
-
-#: ../../guide/scientific_workflows.rst:1198 590c5dc211c3467aba549fd52a82589b
-msgid ""
-"**Features**: Test case generation, iterative improvement, quality scoring"
-msgstr "**功能**：测试用例生成、迭代改进、质量评分"
-
-#: ../../guide/scientific_workflows.rst:1200 acff90d603b4411f85a7c115c6301b37
-msgid "**ToolDiscover**"
-msgstr "**工具发现**"
-
-#: ../../guide/scientific_workflows.rst:1202 280880f98f5045e387bcfab159831ee1
-msgid ""
-"**Purpose**: AI-powered tool creation from natural language descriptions"
-msgstr "**目的**：基于自然语言描述的人工智能驱动工具创建"
-
-#: ../../guide/scientific_workflows.rst:1203 43a2013479e248e58459c9fea88f03b4
-msgid ""
-"**Workflow**: Advanced agentic workflows with iterative code improvement"
-msgstr "**工作流程**：具有迭代代码改进功能的高级自主工作流程"
-
-#: ../../guide/scientific_workflows.rst:1204 8ce946b9bd294563b254481b932f4eaf
-msgid ""
-"**Features**: Tool specification generation, code implementation, quality "
-"analysis"
-msgstr "**功能**：工具规格生成、代码实现、质量分析"
-
-#: ../../guide/scientific_workflows.rst:1209 d419fdaff5fa4ec69cf8ded0de0f11e8
-msgid ""
-"**Workflow Strategy**: Start with compose tools for common patterns, then "
-"build custom workflows for specific research needs. Always implement error "
-"handling and consider performance optimization for large-scale analyses."
-msgstr "**工作流策略**：首先使用组合工具处理常见模式，然后针对特定研究需求构建自定义工作流。始终实施错误处理，并考虑大规模分析的性能优化。"
-
-#: ../../guide/scientific_workflows.rst:1212 b284cf45f079424f897ad6626b7122c1
-msgid ""
-"**Compose vs Custom**: Use compose tools for reusable patterns and custom "
-"workflows for specific research questions. Compose tools provide better "
-"reliability and maintainability, while custom workflows offer maximum "
-"flexibility."
+#: ../../guide/scientific_workflows.rst:16 a7cdeb7d351448b7b85d78aceb11459a
+msgid "Quick Start"
 msgstr ""
-"**Compose 与 Custom**：使用 Compose 工具构建可复用的模式，使用 Custom 工作流针对特定的研究问题。Compose "
-"工具提供更高的可靠性和可维护性，而 Custom 工作流则提供最大的灵活性。"
 
-#: ../../guide/scientific_workflows.rst:1215 41a108d924954790937995377f9bdf34
-msgid ""
-"**Heterogeneous Integration**: ToolUniverse excels at combining tools from "
-"different scientific databases and APIs. Leverage this capability to build "
-"comprehensive research pipelines that would be impossible with individual "
-"tools alone."
+#: ../../guide/scientific_workflows.rst:18 18be4ccc83f342e8b9225a973ac0a8a9
+msgid "Open your AI agent and ask it to run a skill directly. Examples:"
 msgstr ""
-"**异构集成**：ToolUniverse 擅长整合来自不同科学数据库和 API 的工具。利用此能力构建全面的研究流程，这在单一工具下是无法实现的。"
+
+#: ../../guide/scientific_workflows.rst:36 089e3269d2c847e2b651a901f54f73ca
+msgid ""
+"Each request automatically selects the right tools and databases for the "
+"task."
+msgstr ""
+
+#: ../../guide/scientific_workflows.rst:39 56dd10aa05be45b7bd1a843082d90e7f
+msgid "Python API"
+msgstr ""
+
+#: ../../guide/scientific_workflows.rst:41 029e58f40ffe4ec6a91b1add079bc947
+msgid ""
+"To build workflows programmatically, see the :doc:`../guide/python_guide`"
+" and :doc:`tool_composition` pages."
+msgstr ""
+
+#~ msgid ""
+#~ "**Build comprehensive research workflows using"
+#~ " ToolUniverse's compose tools and "
+#~ "individual tools for real-world "
+#~ "scientific scenarios.**"
+#~ msgstr "**使用ToolUniverse的组合工具和单独工具，为实际科学场景构建全面的研究工作流程。**"
+
+#~ msgid ""
+#~ "This Tutorial demonstrates how to create"
+#~ " sophisticated scientific workflows that "
+#~ "combine multiple tools to solve complex"
+#~ " research problems. Learn to build "
+#~ "reproducible, efficient analysis pipelines "
+#~ "using ToolUniverse's composition capabilities."
+#~ msgstr "本教程演示如何创建复杂的科学工作流，将多种工具结合起来解决复杂的研究问题。学习使用ToolUniverse的组合功能构建可重复、高效的分析流程。"
+
+#~ msgid "🎯 What You'll Learn"
+#~ msgstr "🎯 您将学习的内容"
+
+#~ msgid "Design multi-tool research workflows using compose tools"
+#~ msgstr "设计多工具研究工作流程，使用组合工具"
+
+#~ msgid "Combine data from different scientific databases and APIs"
+#~ msgstr "将来自不同科学数据库和API的数据进行整合"
+
+#~ msgid "Build reproducible analysis pipelines with error handling"
+#~ msgstr "构建具有错误处理功能的可重复分析流水线"
+
+#~ msgid "Create agentic workflows with AI-guided decision making"
+#~ msgstr "使用人工智能引导的决策创建自主工作流程"
+
+#~ msgid "Optimize workflows for efficiency and accuracy"
+#~ msgstr "优化工作流程以提升效率和准确性"
+
+#~ msgid "📋 Prerequisites"
+#~ msgstr "📋 前置条件"
+
+#~ msgid "Familiarity with ToolUniverse tools (:doc:`../guide/tools`)"
+#~ msgstr "熟悉 ToolUniverse 工具（:doc:`../guide/tools`）"
+
+#~ msgid "Understanding of scientific databases and concepts"
+#~ msgstr "对科学数据库和概念的理解"
+
+#~ msgid "Basic Python programming for workflow automation"
+#~ msgstr "基础Python编程用于工作流程自动化"
+
+#~ msgid "Knowledge of tool composition (:doc:`../guide/tool_composition`)"
+#~ msgstr "工具组成知识 (:doc:`../guide/tool_composition`)"
+
+#~ msgid "Workflow Architecture Overview"
+#~ msgstr "工作流程架构概述"
+
+#~ msgid "ToolUniverse supports two approaches for building scientific workflows:"
+#~ msgstr "ToolUniverse 支持两种构建科学工作流的方法："
+
+#~ msgid ""
+#~ "**Compose Tools**: Pre-built, reusable "
+#~ "workflows that combine multiple tools"
+#~ msgstr "**Compose Tools**：预构建的可重用工作流，结合了多种工具"
+
+#~ msgid ""
+#~ "**Custom Workflows**: Ad-hoc combinations "
+#~ "of individual tools for specific needs"
+#~ msgstr "**自定义工作流**：根据特定需求临时组合的独立工具"
+
+#~ msgid ""
+#~ "**Compose Tool Benefits**: - **Reusability**:"
+#~ " Share workflows across research projects"
+#~ " - **Reliability**: Built-in error "
+#~ "handling and fallback mechanisms - "
+#~ "**Efficiency**: Optimized tool loading and "
+#~ "execution - **Maintainability**: Centralized "
+#~ "workflow logic"
+#~ msgstr ""
+#~ "**Compose 工具的优势**：  \n"
+#~ "- **可重用性**：在多个研究项目之间共享工作流  \n"
+#~ "- **可靠性**：内置错误处理和回退机制  \n"
+#~ "- **高效性**：优化的工具加载与执行性能  \n"
+#~ "- **可维护性**：集中化的工作流逻辑"
+
+#~ msgid "🧬 Drug Discovery & Development Workflows"
+#~ msgstr "🧬 药物发现与开发工作流程"
+
+#~ msgid "Target Identification Pipeline"
+#~ msgstr "靶点识别流程"
+
+#~ msgid ""
+#~ "**Scenario**: Identify and validate potential"
+#~ " therapeutic targets for a disease "
+#~ "using a compose tool."
+#~ msgstr "**场景**：使用组合工具识别并验证疾病的潜在治疗靶点。"
+
+#~ msgid "**Using Compose Tool Approach**:"
+#~ msgstr "**使用 Compose 工具方法**："
+
+#~ msgid "**Custom Workflow Approach** (for specific needs):"
+#~ msgstr "**定制工作流程方法**（针对特定需求）："
+
+#~ msgid "Drug Repositioning Analysis"
+#~ msgstr "药物再定位分析"
+
+#~ msgid ""
+#~ "**Scenario**: Find existing drugs that "
+#~ "could be repurposed for a new "
+#~ "indication using heterogeneous data sources."
+#~ msgstr "**场景**：利用异构数据源寻找可用于新适应症的现有药物。"
+
+#~ msgid "Comprehensive Drug Discovery Pipeline"
+#~ msgstr "全面的药物发现流程"
+
+#~ msgid ""
+#~ "**Complete end-to-end drug discovery "
+#~ "workflow from disease to optimized "
+#~ "candidates**"
+#~ msgstr "**从疾病到优化候选药物的完整端到端药物发现工作流程**"
+
+#~ msgid ""
+#~ "This advanced workflow demonstrates how "
+#~ "to create a compose tool that "
+#~ "orchestrates multiple phases of drug "
+#~ "discovery:"
+#~ msgstr "此高级工作流程演示了如何创建一个组合工具，以协调药物发现的多个阶段："
+
+#~ msgid "**Using the Compose Tool**:"
+#~ msgstr "**使用撰写工具**："
+
+#~ msgid "🛡️ Drug Safety & Pharmacovigilance Workflows"
+#~ msgstr "🛡️ 药物安全与药物警戒工作流程"
+
+#~ msgid "Comprehensive Safety Assessment"
+#~ msgstr "综合安全评估"
+
+#~ msgid ""
+#~ "**Scenario**: Conduct thorough safety "
+#~ "evaluation of a marketed drug using "
+#~ "multiple data sources."
+#~ msgstr "**场景**：使用多种数据来源对已上市药物进行全面的安全性评估。"
+
+#~ msgid "📚 Literature Research & Meta-Analysis Workflows"
+#~ msgstr "📚 文献研究与元分析工作流程"
+
+#~ msgid "Systematic Literature Review"
+#~ msgstr "系统文献综述"
+
+#~ msgid ""
+#~ "**Scenario**: Conduct systematic review of "
+#~ "literature on a specific research topic"
+#~ " using compose tools."
+#~ msgstr "**场景**：使用Compose工具对特定研究主题的文献进行系统性综述。"
+
+#~ msgid "🧬 Genomics Research Workflows"
+#~ msgstr "🧬 基因组学研究工作流程"
+
+#~ msgid "Variant Analysis Pipeline"
+#~ msgstr "变异分析流程"
+
+#~ msgid ""
+#~ "**Scenario**: Analyze genetic variants and "
+#~ "their functional impact using multiple "
+#~ "genomic databases."
+#~ msgstr "**场景**：使用多个基因组数据库分析遗传变异及其功能影响。"
+
+#~ msgid "Biomarker Discovery Workflow"
+#~ msgstr "生物标志物发现工作流程"
+
+#~ msgid ""
+#~ "**Scenario**: Discover and validate biomarkers"
+#~ " for a specific disease condition "
+#~ "using compose tools."
+#~ msgstr "**场景**：使用Compose工具发现并验证特定疾病状态的生物标志物。"
+
+#~ msgid "Clinical Trial Analysis Pipeline"
+#~ msgstr "临床试验分析流程"
+
+#~ msgid ""
+#~ "**Scenario**: Comprehensive analysis of "
+#~ "clinical trials for a specific "
+#~ "condition."
+#~ msgstr "**场景**：针对特定病症的临床试验进行全面分析"
+
+#~ msgid "🤖 Agentic Workflows with AI Integration"
+#~ msgstr "🤖 基于人工智能集成的智能体工作流"
+
+#~ msgid "Intelligent Research Assistant"
+#~ msgstr "智能研究助手"
+
+#~ msgid ""
+#~ "**Scenario**: Create an AI-guided "
+#~ "workflow that adapts based on "
+#~ "intermediate results."
+#~ msgstr "**场景**：创建一个基于中间结果动态调整的AI引导工作流程。"
+
+#~ msgid "Current Working Compose Tools"
+#~ msgstr "当前使用的Compose工具"
+
+#~ msgid ""
+#~ "ToolUniverse provides several production-ready"
+#~ " compose tools that implement the "
+#~ "workflows described in this Tutorial:"
+#~ msgstr "ToolUniverse 提供了多款可用于生产环境的编排工具，这些工具实现了本教程中描述的工作流程："
+
+#~ msgid "**✅ Verified Working Compose Tools**:"
+#~ msgstr "**✅ 已验证可用的Compose工具**"
+
+#~ msgid "**LiteratureSearchTool**"
+#~ msgstr "**文献检索工具**"
+
+#~ msgid "**Purpose**: Comprehensive literature research and synthesis"
+#~ msgstr "**目的**：全面的文献调研与综合分析"
+
+#~ msgid "**Workflow**: Broadcasting pattern across EuropePMC, OpenAlex, PubTator"
+#~ msgstr "**工作流程**：在 EuropePMC、OpenAlex、PubTator 中的广播模式"
+
+#~ msgid ""
+#~ "**AI Integration**: MedicalLiteratureReviewer for"
+#~ " intelligent summarization"
+#~ msgstr "**AI集成**：MedicalLiteratureReviewer 用于智能摘要生成"
+
+#~ msgid "**ComprehensiveDrugDiscoveryPipeline**"
+#~ msgstr "**综合药物发现流程**"
+
+#~ msgid "**Purpose**: End-to-end drug discovery from disease to candidates"
+#~ msgstr "**目的**：从疾病到候选药物的端到端药物发现过程"
+
+#~ msgid "**Workflow**: Sequential chaining with tool integration"
+#~ msgstr "**工作流程**：带有工具集成的顺序链式操作"
+
+#~ msgid ""
+#~ "**Phases**: Target identification → Lead "
+#~ "discovery → Safety assessment → "
+#~ "Literature validation"
+#~ msgstr "**阶段**：靶点识别 → 先导化合物发现 → 安全性评估 → 文献验证"
+
+#~ msgid ""
+#~ "**Tool Chaining**: OpenTargets → PubChem "
+#~ "→ ADMETAI → LiteratureSearchTool"
+#~ msgstr "**工具链**：OpenTargets → PubChem → ADMETAI → LiteratureSearchTool"
+
+#~ msgid "**BiomarkerDiscoveryWorkflow**"
+#~ msgstr "**生物标志物发现工作流程**"
+
+#~ msgid "**Purpose**: Biomarker discovery and validation for diseases"
+#~ msgstr "**目的**：疾病生物标志物的发现与验证"
+
+#~ msgid "**Workflow**: Multi-strategy approach with comprehensive fallbacks"
+#~ msgstr "**工作流程**：多策略方法，配备全面的备用方案"
+
+#~ msgid ""
+#~ "**Steps**: Literature search → Gene "
+#~ "discovery → Pathway analysis → Clinical"
+#~ " validation"
+#~ msgstr "**步骤**：文献检索 → 基因发现 → 通路分析 → 临床验证"
+
+#~ msgid ""
+#~ "**Multi-tool Analysis**: HPA biological "
+#~ "processes, protein interactions, cancer "
+#~ "prognostics"
+#~ msgstr "**多工具分析**：HPA 生物过程、蛋白质相互作用、癌症预后分析"
+
+#~ msgid "**DrugSafetyAnalyzer**"
+#~ msgstr "**药物安全分析器**"
+
+#~ msgid "**Purpose**: Comprehensive drug safety assessment"
+#~ msgstr "**目的**：全面的药物安全性评估"
+
+#~ msgid "**Workflow**: Safety-focused data integration"
+#~ msgstr "**工作流程**：以安全为核心的数据集成"
+
+#~ msgid "**Components**: PubChem compound data, EuropePMC literature search"
+#~ msgstr "**组件**：PubChem 化合物数据，EuropePMC 文献检索"
+
+#~ msgid "**Status**: ✅ Fully functional with real safety data processing"
+#~ msgstr "**状态**：✅ 完全功能正常，具备真实安全数据处理能力"
+
+#~ msgid "**ToolDescriptionOptimizer**"
+#~ msgstr "**工具描述优化器**"
+
+#~ msgid "**Purpose**: AI-powered tool description optimization"
+#~ msgstr "**目的**：基于人工智能的工具描述优化"
+
+#~ msgid "**Workflow**: Agentic optimization loops with quality evaluation"
+#~ msgstr "**工作流程**：带有质量评估的自主优化循环"
+
+#~ msgid ""
+#~ "**Features**: Test case generation, iterative"
+#~ " improvement, quality scoring"
+#~ msgstr "**功能**：测试用例生成、迭代改进、质量评分"
+
+#~ msgid "**ToolDiscover**"
+#~ msgstr "**工具发现**"
+
+#~ msgid ""
+#~ "**Purpose**: AI-powered tool creation "
+#~ "from natural language descriptions"
+#~ msgstr "**目的**：基于自然语言描述的人工智能驱动工具创建"
+
+#~ msgid ""
+#~ "**Workflow**: Advanced agentic workflows with"
+#~ " iterative code improvement"
+#~ msgstr "**工作流程**：具有迭代代码改进功能的高级自主工作流程"
+
+#~ msgid ""
+#~ "**Features**: Tool specification generation, "
+#~ "code implementation, quality analysis"
+#~ msgstr "**功能**：工具规格生成、代码实现、质量分析"
+
+#~ msgid ""
+#~ "**Workflow Strategy**: Start with compose "
+#~ "tools for common patterns, then build"
+#~ " custom workflows for specific research "
+#~ "needs. Always implement error handling "
+#~ "and consider performance optimization for "
+#~ "large-scale analyses."
+#~ msgstr "**工作流策略**：首先使用组合工具处理常见模式，然后针对特定研究需求构建自定义工作流。始终实施错误处理，并考虑大规模分析的性能优化。"
+
+#~ msgid ""
+#~ "**Compose vs Custom**: Use compose tools"
+#~ " for reusable patterns and custom "
+#~ "workflows for specific research questions. "
+#~ "Compose tools provide better reliability "
+#~ "and maintainability, while custom workflows"
+#~ " offer maximum flexibility."
+#~ msgstr ""
+#~ "**Compose 与 Custom**：使用 Compose 工具构建可复用的模式，使用"
+#~ " Custom 工作流针对特定的研究问题。Compose 工具提供更高的可靠性和可维护性，而 "
+#~ "Custom 工作流则提供最大的灵活性。"
+
+#~ msgid ""
+#~ "**Heterogeneous Integration**: ToolUniverse excels"
+#~ " at combining tools from different "
+#~ "scientific databases and APIs. Leverage "
+#~ "this capability to build comprehensive "
+#~ "research pipelines that would be "
+#~ "impossible with individual tools alone."
+#~ msgstr ""
+#~ "**异构集成**：ToolUniverse 擅长整合来自不同科学数据库和 API "
+#~ "的工具。利用此能力构建全面的研究流程，这在单一工具下是无法实现的。"
+

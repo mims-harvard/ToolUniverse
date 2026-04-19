@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/marine_regions_tools.rst:10 d25afac609b54ebabbf6949e03da375d
+msgid "Marine Regions Tools"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:12 a0037b530c4f4c28af6c621456dd5519
+msgid ""
+"**Configuration File**: ``marine_regions_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:16 57821b5b169349a9a23391f697f6d849
+msgid ""
+"This page contains all tools defined in the ``marine_regions_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:19 4c5eeeda6c444445bf614f97b2edb349
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:22 aaaec2924b544a1fb1147c2c05bcc590
+msgid "**MarineRegions_get_record** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:24 3319bee6dd0742a08cad1b0d54deedc4
+msgid ""
+"Get detailed information about a specific marine geographic feature by "
+"its MRGID (Marine Regions ..."
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst 9b995d156d28452289612cd77ec66d92
+msgid "MarineRegions_get_record tool specification"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:28
+#: ../../tools/marine_regions_tools.rst:59 26f7986392a541dbbf2b0c6d18daa254
+#: e3a787161cdf48edb83d151004e3b05a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:30 ddf35044474c478ab367fac25c998cfd
+msgid "**Name**: ``MarineRegions_get_record``"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:31
+#: ../../tools/marine_regions_tools.rst:62 009d54afe8274cdd85a8cdb808f4dfd6
+#: 06f3690fd878412883afafca9a642d72
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:32 f84e4cf1b5484df6be71efcfbc9f5728
+msgid ""
+"**Description**: Get detailed information about a specific marine "
+"geographic feature by its MRGID (Marine Regions Gazetteer ID) from VLIZ. "
+"Returns full metadata including bounding box, coordinates, place type, "
+"status, and source. No authentication required. Common MRGIDs: 2350 "
+"(North Sea), 1901 (Pacific Ocean), 1902 (Atlantic Ocean), 4319 "
+"(Mediterranean Sea), 8466 (Indian Ocean), 1903 (Arctic Ocean), 1904 "
+"(Southern Ocean)."
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:34
+#: ../../tools/marine_regions_tools.rst:65 9a3d5fc0c99d4deca70ad36bc80c563c
+#: ea590a51aeae47d684d1ed301a1c9761
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:36 74401be5c0fb4d97acfe01093d62a6d9
+msgid ""
+"``mrgid`` (integer) (required) Marine Regions Gazetteer ID. Examples: "
+"2350 (North Sea), 1901 (Pacific Ocean), 1902 (Atlantic Ocean), 4319 "
+"(Mediterranean Sea), 8466 (Indian Ocean)"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:39
+#: ../../tools/marine_regions_tools.rst:79 34fcf88a97904a85bdeb8f5f93d6620e
+#: 4527cc96a88641fe8e3ce86d03ecaa34
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:53 3c89b10fa5384131a16a448a695610e2
+msgid "**MarineRegions_search_by_name** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:55 390bec1b9d1b4d43b127d1719476ef64
+msgid ""
+"Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic "
+"features by name. Returns MRG..."
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst 49a985dd0a1545188add74aad36ab262
+msgid "MarineRegions_search_by_name tool specification"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:61 dd412fe5e3184c6f84f1cbad78594bf4
+msgid "**Name**: ``MarineRegions_search_by_name``"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:63 03ef2957918144099e84bef70a43b649
+msgid ""
+"**Description**: Search the Marine Regions Gazetteer (VLIZ) for ocean/sea"
+" geographic features by name. Returns MRGID (Marine Regions Gazetteer "
+"ID), coordinates, place type, and source information. No authentication "
+"required. Covers IHO sea areas, exclusive economic zones, large marine "
+"ecosystems, ICES ecoregions, and 40,000+ other marine geographic features"
+" worldwide. Useful for standardizing geographic references in marine "
+"biology, oceanography, and environmental research."
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:67 03f7609b112f46a98ce5b6e89dfa4de0
+msgid ""
+"``name`` (string) (required) Name of the marine geographic feature. "
+"Examples: 'North Sea', 'Pacific Ocean', 'Mediterranean Sea', 'Caribbean "
+"Sea', 'Arctic Ocean', 'Coral Sea', 'Gulf of Mexico'"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:70 3858810746714c5dbd3cce58973b9392
+msgid ""
+"``like`` (boolean, null) (optional) If true, perform a partial/fuzzy name"
+" match (LIKE search). Default: true"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:73 4efefc0f33f54c5cafbff6074bf38a09
+msgid ""
+"``fuzzy`` (boolean, null) (optional) If true, perform fuzzy matching for "
+"approximate name searches. Default: false"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:76 cac78f199f154687b9e32ec4eb7ab40e
+msgid ""
+"``offset`` (integer, null) (optional) Pagination offset. Default: 0 "
+"(first page)"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:93 944e8f32df3249eeaff0d7556171e74a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:95 2e52c77564de4ae9853e01e2559071e8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/marine_regions_tools.rst:96 d5deaec1ad3c42cbb1db58f1e6e9391b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/umls_tools.rst:10 23ce4afe337d4a129b556861d5fe7833
+msgid "Umls Tools"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:12 345ddb9f19b54c15b5d8de978d7aa51a
+msgid ""
+"**Configuration File**: ``umls_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:16 c51c0247bb63454881243fa839655ff2
+msgid ""
+"This page contains all tools defined in the ``umls_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:19 937306761b134cc6be432ab2f32682fa
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:22 402e32bf20f64acdb1ded9e6c70f22ff
+msgid "**icd_search_codes** (Type: UMLSRESTTool)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:24 40d5df71b4614aaa9fac39524f43d38e
+msgid ""
+"Search for ICD-10 or ICD-11 codes using UMLS. Returns matching codes with"
+" descriptions. Requires ..."
+msgstr ""
+
+#: ../../tools/umls_tools.rst b64ea89839df43bf8a8bd3419cd25e85
+msgid "icd_search_codes tool specification"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:28 ../../tools/umls_tools.rst:68
+#: ../../tools/umls_tools.rst:105 ../../tools/umls_tools.rst:142
+#: ../../tools/umls_tools.rst:179 2f0e3fb2e2aa40f5813aa171eac1be9f
+#: 5acf377e428f44b6930e1d2d20846e53 c11efb92a3354c109dbc89eea31a033d
+#: c327be84d1094c5ab3e84cbc3716ab00 de5f7266bac04c39b26f0e562dd633c4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:30 a90a02d75e834285b856cca9f7b00f16
+msgid "**Name**: ``icd_search_codes``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:31 ../../tools/umls_tools.rst:71
+#: ../../tools/umls_tools.rst:108 ../../tools/umls_tools.rst:145
+#: ../../tools/umls_tools.rst:182 0b690575c6c04e86800272739896aa53
+#: 1a4c0c20d9184397b2bd94cbd139a2da 751ec9b1dc4f46b6a61104ac601e3f0e
+#: 7978ccd20f9c4e64ac629cef1ca09c6c 81802498b8cb4c32ba98e07168337057
+msgid "**Type**: ``UMLSRESTTool``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:32 cfb6a15bdfb3484381de3c7a4642e397
+msgid ""
+"**Description**: Search for ICD-10 or ICD-11 codes using UMLS. Returns "
+"matching codes with descriptions. Requires free UMLS API key (register at"
+" https://uts.nlm.nih.gov/uts/). Set UMLS\\_API\\_KEY environment "
+"variable."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:34 ../../tools/umls_tools.rst:74
+#: ../../tools/umls_tools.rst:111 ../../tools/umls_tools.rst:148
+#: ../../tools/umls_tools.rst:185 298b1f44beac4ee5a9ffbf24ea155c3d
+#: 2a470e537cd2400cad12033dccb1b1f5 c1889972ff8646e0b5e700aa52c8d870
+#: c2a16eb6c66a4905925fdcdf8691a839 cb7242526d0d40b884b7cf4b3887bfcc
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:36 ca7d7c6b885d4c8aae8bcebdd1f2e5b7
+msgid ""
+"``query`` (string) (required) Search query (disease name, condition, or "
+"ICD code)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:39 140737b7222d4ef19d0c870645a524de
+msgid ""
+"``version`` (string) (optional) ICD version to search (ICD10CM for US "
+"clinical modification, ICD10 for international, ICD11 for ICD-11)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:42 ../../tools/umls_tools.rst:79
+#: ../../tools/umls_tools.rst:116 ../../tools/umls_tools.rst:153
+#: ../../tools/umls_tools.rst:193 19536420b6804eb58d6182a08cfb7709
+#: 22b9297264ce4ebbb1b4172848511775 486e7140a1714353a738b9ca680c971a
+#: 4f3037400b3d4d8498b8a9d0841a1ed4 4f52f8253fb74962b2424ff6b57f9585
+msgid ""
+"``pageNumber`` (integer) (optional) Page number for pagination (default: "
+"1)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:45 ../../tools/umls_tools.rst:82
+#: ../../tools/umls_tools.rst:119 ../../tools/umls_tools.rst:196
+#: 09e376f6b81740488e5d3e266a8439b8 27e58b19238148c6816ec7c3bb885927
+#: 5534ab02c5f94ab3938fe5f3852d418d 98468a59c7b140ae8c35aaa0b6d77cf3
+msgid ""
+"``pageSize`` (integer) (optional) Number of results per page (default: "
+"25, max: 25)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:48 ../../tools/umls_tools.rst:85
+#: ../../tools/umls_tools.rst:122 ../../tools/umls_tools.rst:159
+#: ../../tools/umls_tools.rst:199 488564e12db04294894253db374c2f26
+#: 48c0c5eaa51040408530802790a26828 89f2630634d9405fabe3cf75f4eefbbc
+#: c051360b3a204de7a40ae2d80cf76512 d060176f358a423aacecfa2796d077a3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:62 a1b975f68e354d718657ec21e2cdf9a4
+msgid "**loinc_search_codes** (Type: UMLSRESTTool)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:64 fc58fce6cc7b45dbae5bf21e4eda1993
+msgid ""
+"Search for LOINC (Logical Observation Identifiers Names and Codes) codes "
+"using UMLS. Returns matc..."
+msgstr ""
+
+#: ../../tools/umls_tools.rst 3c100ab8383c4f7aa13e3cce57082c6f
+msgid "loinc_search_codes tool specification"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:70 53e0a57ae9974eeba3616369ee273cbc
+msgid "**Name**: ``loinc_search_codes``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:72 867bca01325443509516fb46cfb9795b
+msgid ""
+"**Description**: Search for LOINC (Logical Observation Identifiers Names "
+"and Codes) codes using UMLS. Returns matching codes with descriptions. "
+"Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). "
+"Set UMLS\\_API\\_KEY environment variable."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:76 b3b95753754b459696889dbc83394652
+msgid ""
+"``query`` (string) (required) Search query (test name, component, or "
+"LOINC code)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:99 76a680472e1f47d4b83a5292a2ba0531
+msgid "**snomed_search_concepts** (Type: UMLSRESTTool)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:101 a4d765526c6c4f93b791a6ff8d6b292d
+msgid ""
+"Search for SNOMED CT concepts using UMLS. Returns matching concepts with "
+"descriptions. Requires f..."
+msgstr ""
+
+#: ../../tools/umls_tools.rst 13fe7b01c38f4350bd132ea4bc987eb3
+msgid "snomed_search_concepts tool specification"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:107 324bc1c077ff477a8b52f9b4575017df
+msgid "**Name**: ``snomed_search_concepts``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:109 5805c95453284d4d8519f30bb121d501
+msgid ""
+"**Description**: Search for SNOMED CT concepts using UMLS. Returns "
+"matching concepts with descriptions. Requires free UMLS API key (register"
+" at https://uts.nlm.nih.gov/uts/). Set UMLS\\_API\\_KEY environment "
+"variable."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:113 887c518217ec4621886b1101424c3d96
+msgid ""
+"``query`` (string) (required) Search query (concept name or SNOMED CT "
+"code)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:136 3fc163e20e124b7f887556c63ee13e40
+msgid "**umls_get_concept_details** (Type: UMLSRESTTool)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:138 f467ca15ae08488f96e1d41fe3ebfe08
+msgid ""
+"Get detailed information about a UMLS concept by its CUI (Concept Unique "
+"Identifier). Returns con..."
+msgstr ""
+
+#: ../../tools/umls_tools.rst ac31b339856845ec9cf5b9e89f476a63
+msgid "umls_get_concept_details tool specification"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:144 a17338908fc744a48cacc5c98e918e65
+msgid "**Name**: ``umls_get_concept_details``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:146 c787b972917e49a7a3d853114c087a34
+msgid ""
+"**Description**: Get detailed information about a UMLS concept by its CUI"
+" (Concept Unique Identifier). Returns concept details, atoms, "
+"definitions, relations, and mappings to other terminologies. Requires "
+"free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set "
+"UMLS\\_API\\_KEY environment variable."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:150 7d291aa93762449ca8c6feda3ca0c9fc
+msgid ""
+"``cui`` (string) (required) UMLS Concept Unique Identifier (CUI, e.g., "
+"'C0004096')"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:156 b0a7b2e023e04925a12cf471654339ad
+msgid "``pageSize`` (integer) (optional) Number of results per page (default: 25)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:173 f997844aae1544119a81d45045ab9383
+msgid "**umls_search_concepts** (Type: UMLSRESTTool)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:175 37241a53b2504ef7a9f318522846ed0b
+msgid ""
+"Search for concepts in UMLS (Unified Medical Language System) using "
+"concept names or terms. UMLS ..."
+msgstr ""
+
+#: ../../tools/umls_tools.rst 96e8425e456d43bb9f5bd1dcf55f1283
+msgid "umls_search_concepts tool specification"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:181 41d4490806b64649b9a263b7fcff7ec8
+msgid "**Name**: ``umls_search_concepts``"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:183 effd9688cf4e4540a70415f0d3f9605e
+msgid ""
+"**Description**: Search for concepts in UMLS (Unified Medical Language "
+"System) using concept names or terms. UMLS provides access to multiple "
+"medical terminologies including SNOMED CT, ICD-10, ICD-11, LOINC, RxNorm,"
+" and more. Requires free UMLS API key (register at "
+"https://uts.nlm.nih.gov/uts/). Set UMLS\\_API\\_KEY environment variable."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:187 88208ef25a8b4253bf476420b8cf9a1f
+msgid "``query`` (string) (required) Search query (concept name or term)"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:190 edb6ffee73cc4b34a1f81ee9e1da3bae
+msgid ""
+"``sabs`` (string) (optional) Source abbreviation(s) to filter by (e.g., "
+"'SNOMEDCT\\_US', 'ICD10CM', 'LOINC', 'RXNORM'). Comma-separated for "
+"multiple sources. Optional, searches all sources if not specified."
+msgstr ""
+
+#: ../../tools/umls_tools.rst:213 86f4485b0d7a4a02bbf7add93b14c0c5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:215 d3f258161de7477c9f8c8d1cbe92fc0d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/umls_tools.rst:216 ab66338535d944c294d3cf577a8f39b7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

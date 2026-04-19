@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/open_meteo_airquality_tools.rst:10
+#: cd63353c1b0a419897a84fb7fda656b6
+msgid "Open Meteo Airquality Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:12
+#: 29fa52e1320c4b5aa90610d8e001808d
+msgid ""
+"**Configuration File**: ``open_meteo_airquality_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:16
+#: 9ad9ee5c44664fc0877becdccd41dc6e
+msgid ""
+"This page contains all tools defined in the "
+"``open_meteo_airquality_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:19
+#: f33bd082d90a44cbaa425d24b90d2592
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:22
+#: 586e4463ab21481e8f7f8b9389ee398c
+msgid "**OpenMeteo_get_air_quality** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:24
+#: d2993d7cf2634869a56629f8c9c921b9
+msgid ""
+"Get current and forecast air quality data for any location using the "
+"Open-Meteo Air Quality API. ..."
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst 6f777a2caa644203b4d83f3dfd64945d
+msgid "OpenMeteo_get_air_quality tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:28
+#: fe53e91305734527868a3da1dd55966d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:30
+#: 46af0b6649a6483cb3cc41fdad992356
+msgid "**Name**: ``OpenMeteo_get_air_quality``"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:31
+#: 3b331d50e2a441dca0ce9e33ed0fe7b2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:32
+#: 45a982f748a04f13ac5cf3cd2968d103
+msgid ""
+"**Description**: Get current and forecast air quality data for any "
+"location using the Open-Meteo Air Quality API. Returns hourly "
+"concentrations of PM2.5, PM10, ozone, NO2, SO2, carbon monoxide, and "
+"European Air Quality Index (AQI). Data from the Copernicus Atmosphere "
+"Monitoring Service. No authentication required."
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:34
+#: 026a6ae5914c4b67835f61739e474553
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:36
+#: bd983d78277b4e70b179e4d6d63375a9
+msgid ""
+"``latitude`` (number) (required) Location latitude (-90 to 90). Examples:"
+" 52.52 (Berlin), 40.71 (NYC), 48.85 (Paris), 35.68 (Tokyo)"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:39
+#: bc20993920f54fd4bdb856a70e41a1e5
+msgid ""
+"``longitude`` (number) (required) Location longitude (-180 to 180). "
+"Examples: 13.41 (Berlin), -74.01 (NYC), 2.35 (Paris), 139.69 (Tokyo)"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:42
+#: db5ffa0a609c4d968dc7e09f94bd1f12
+msgid ""
+"``hourly`` (string, null) (optional) Comma-separated air quality "
+"variables. Values: 'pm10', 'pm2\\_5', 'carbon\\_monoxide', "
+"'nitrogen\\_dioxide', 'sulphur\\_dioxide', 'ozone', "
+"'aerosol\\_optical\\_depth', 'european\\_aqi', 'us\\_aqi'. Default: "
+"pm10,pm2\\_5,european\\_aqi"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:45
+#: dee8c9bee3c24bb79e23d769363d7e49
+msgid ""
+"``forecast_days`` (integer, null) (optional) Number of forecast days "
+"(1-7). Default: 5"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:48
+#: 0e9a7c441dd04833aa480026f9b2a7fa
+msgid ""
+"``past_days`` (integer, null) (optional) Include past days in response "
+"(0-92). Examples: 1, 7"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:51
+#: b0d14bcdb6d74c6cbb9fec8dd36667d5
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:66
+#: ee247455e3f24b25aa5af64576bb27bb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:68
+#: d72a8daba7f14d5bbf0bff98557a50a2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/open_meteo_airquality_tools.rst:69
+#: b8a9972bd9d4434bb52ec9905a9d07f8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

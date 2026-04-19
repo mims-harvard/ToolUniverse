@@ -1,0 +1,693 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/civic_tools.rst:10 25335dea1e1644eeb61e3e9fd1c5c405
+msgid "Civic Tools"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:12 cdc8563dfec74a2caceaa97af9861944
+msgid ""
+"**Configuration File**: ``civic_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 12"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:16 c1171380edc748c4a808273961b9e6d4
+msgid ""
+"This page contains all tools defined in the ``civic_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:19 bee2303778e74eacbe5bbd30e8c7f130
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:22 26e2deece88a4094b23105ac0493c9d1
+msgid "**civic_get_assertion** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:24 4fec9e5ba1e141abb88b7726d2658816
+msgid ""
+"Get detailed information about a specific assertion in CIViC database by "
+"assertion ID. Assertions..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 49ff9217c42643478e72c43277fe0d6b
+msgid "civic_get_assertion tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:28 ../../tools/civic_tools.rst:59
+#: ../../tools/civic_tools.rst:90 ../../tools/civic_tools.rst:124
+#: ../../tools/civic_tools.rst:155 ../../tools/civic_tools.rst:197
+#: ../../tools/civic_tools.rst:242 ../../tools/civic_tools.rst:278
+#: ../../tools/civic_tools.rst:329 ../../tools/civic_tools.rst:368
+#: ../../tools/civic_tools.rst:404 ../../tools/civic_tools.rst:440
+#: 0006b99fd2da440a82bc2ecc10fbd430 0e2bc0618cd9465ba860c470032c2b94
+#: 1ba14e0db7ce420992feac7f63b647e5 224de3b9d5fa42a6a589d85505d5f9ad
+#: 3b05677af7ad4115a908d4c9bf54d897 44c0cdfa3c304cfb826e091a01d76941
+#: 670e8e162b8b490597cfc2373f40da4f 8614c1e13bfa4ece859a6db61f51a92c
+#: 9e06089286c44012a5a7eb32d0b749c9 a9952e8b84ff464abb7d78b8af7f0762
+#: cbe009754bff48c59a2df4e4cd06b03d d181ac96e2124ca5aa618c8968be7e53
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:30 ea86dbc0157a4067b9775de4d08e2698
+msgid "**Name**: ``civic_get_assertion``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:31 ../../tools/civic_tools.rst:62
+#: ../../tools/civic_tools.rst:93 ../../tools/civic_tools.rst:127
+#: ../../tools/civic_tools.rst:158 ../../tools/civic_tools.rst:200
+#: ../../tools/civic_tools.rst:245 ../../tools/civic_tools.rst:281
+#: ../../tools/civic_tools.rst:332 ../../tools/civic_tools.rst:371
+#: ../../tools/civic_tools.rst:407 ../../tools/civic_tools.rst:443
+#: 02dab50f5bcf4c42bd8974c147cc1404 05a21ef232df483080524d473d06f247
+#: 1514bd4d6d4d4633a5d0c3d5884f2513 235cc498cd9f4b0398e43455cdc2bf46
+#: 32c7c0755ca44ca4bdc8e297201f5fd6 360dc2574f1640a988cb5318f6b565d4
+#: 3ce03bda8c61476cb0175e800ad55f45 576469538b054db7815d646b2bb9d9a4
+#: 5e4ddb8455c840539abd6ef147b5d094 939c761cbaf04d848f286f0093a86030
+#: 9f3948b333ef4e6eabd24cad64b8240c abf84deb84824d1d9e763c2906cb02bb
+msgid "**Type**: ``CIViCTool``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:32 2a3b0900c73b44f6bbfac10d4fbf029f
+msgid ""
+"**Description**: Get detailed information about a specific assertion in "
+"CIViC database by assertion ID. Assertions are higher-level clinical "
+"interpretations that integrate multiple evidence items into formal "
+"statements about clinical actionability. Returns assertion description, "
+"evidence summary, and associated molecular profile or variant "
+"information."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:34 ../../tools/civic_tools.rst:65
+#: ../../tools/civic_tools.rst:96 ../../tools/civic_tools.rst:130
+#: ../../tools/civic_tools.rst:161 ../../tools/civic_tools.rst:203
+#: ../../tools/civic_tools.rst:248 ../../tools/civic_tools.rst:284
+#: ../../tools/civic_tools.rst:335 ../../tools/civic_tools.rst:374
+#: ../../tools/civic_tools.rst:410 ../../tools/civic_tools.rst:446
+#: 032cf0ca31ba41fa9252479ee1e71274 18fbd5ab04354d31845d65fb6ea8dc57
+#: 4f6c346d1cde43889d3e7caa669b87ab 5d88cd629c14448ca53063fee16b7525
+#: 70e332caf978479da4960943b23b5fa5 8f53aa740ee3487994d60e05050d259e
+#: 99f05732e9c14987967cdd5c509d2fbe abc722bcaa7b46a1a1db173ff83ca8c2
+#: c5d16adc12784e1ca9d34ade9058ff52 cc3fa627559346dbbf17386caa3f7603
+#: eabd0ccb54d440088421fd372d3cb5b2 faf60cb616fd4e35a8f10317a799cf2a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:36 8b4c4c8c3fa9488c9e56f5ef2f0dc5ae
+msgid "``assertion_id`` (integer) (required) CIViC assertion ID (e.g., 101)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:39 ../../tools/civic_tools.rst:70
+#: ../../tools/civic_tools.rst:104 ../../tools/civic_tools.rst:135
+#: ../../tools/civic_tools.rst:178 ../../tools/civic_tools.rst:223
+#: ../../tools/civic_tools.rst:259 ../../tools/civic_tools.rst:310
+#: ../../tools/civic_tools.rst:349 ../../tools/civic_tools.rst:385
+#: ../../tools/civic_tools.rst:421 ../../tools/civic_tools.rst:463
+#: 0fc01abd0ae84712bccea3d1546f62ff 2d6f7ee3fc8c43b283db2db79a1f977c
+#: 39180c1057284cbf9a744d193d208cc9 39c82bec47c049008ea124e695f80e4e
+#: 5295cfe4fddc422b85f1f549ca3a0b57 582acbf2b26f4ac0a3c4f4ae92f3f614
+#: 6ae93312e781498a9e11d0a956142707 6c00aef0284949429f1e5041f7aed4d8
+#: 78c489023b5348d8983b51f6d8776f15 983eb9752211490c97931b355d074f5c
+#: 9f627c5dcaab4f2c9cf434f62cab4965 fba527007fcb4e5891a6e8c9891bfb4f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:53 102dabf9f1f84dd394d0c1491d9ed14d
+msgid "**civic_get_evidence_item** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:55 8cff5fcd0d384abeaee55f3641ece72d
+msgid ""
+"Get detailed information about a specific evidence item in CIViC database"
+" by evidence ID. Evidenc..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 48631820f93a45e1bac7ae03c0d74f54
+msgid "civic_get_evidence_item tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:61 a4d0ef967fa94f9da9955a1fcc36ce5d
+msgid "**Name**: ``civic_get_evidence_item``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:63 a54f40e4f403496f9437548d87a36020
+msgid ""
+"**Description**: Get detailed information about a specific evidence item "
+"in CIViC database by evidence ID. Evidence items link molecular profiles "
+"or variants to clinical outcomes, therapies, or disease states with "
+"curated literature support. Returns evidence description, level (A-E), "
+"type (PREDICTIVE, DIAGNOSTIC, PROGNOSTIC), significance, direction, "
+"status, disease, therapies, molecular profile, and citation."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:67 e1564859d02d4882ad1471f39dd23406
+msgid "``evidence_id`` (integer) (required) CIViC evidence item ID (e.g., 116)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:84 664b9b68020c4cfba1bca5c1bbeb7ab0
+msgid "**civic_get_molecular_profile** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:86 5f3aa51ef5e749e9aca5d5da09ba3e08
+msgid ""
+"Get detailed information about a specific molecular profile in CIViC "
+"database by molecular profil..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst e328ba7396fe414c9da8d8f9c1a74ab4
+msgid "civic_get_molecular_profile tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:92 5e3257a269144d309e7a500b120ec6fd
+msgid "**Name**: ``civic_get_molecular_profile``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:94 5132825c7b9240d880ef32082c5a52b6
+msgid ""
+"**Description**: Get detailed information about a specific molecular "
+"profile in CIViC database by molecular profile ID. Molecular profiles "
+"represent combinations of variants or features (e.g., 'BRAF V600E') that "
+"serve as biomarkers for clinical interpretation. Returns profile name, "
+"description, clinical significance score, and associated evidence items "
+"with diseases, therapies, and evidence levels."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:98 e8ae1113972c42ef91aad08116fcb341
+msgid ""
+"``molecular_profile_id`` (integer) (required) CIViC molecular profile ID "
+"(e.g., 12 for BRAF V600E)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:101 4568a5fc0e1e465eb0b9b3a762ccf38f
+msgid ""
+"``evidence_limit`` (integer) (optional) Maximum number of evidence items "
+"to return (default: 10)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:118 7ebdd9c7435247c5a9685eb5ec39741f
+msgid "**civic_get_variant** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:120 0a9015a2cf5c4159a76b97f4625adff3
+msgid ""
+"Get detailed information about a specific variant in CIViC database by "
+"variant ID. Variants repre..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst b3a2b36533de42d98be27fe31c8a791d
+msgid "civic_get_variant tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:126 8f71b05a455840059702028c22020093
+msgid "**Name**: ``civic_get_variant``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:128 b9ce9d4990bc412187134cdef9c35645
+msgid ""
+"**Description**: Get detailed information about a specific variant in "
+"CIViC database by variant ID. Variants represent specific genetic "
+"alterations (SNVs, indels, structural variants, etc.) with clinical "
+"significance in cancer. Returns variant name, coordinates, gene "
+"association, and related information."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:132 cdd6de5235074f4f8cb5773c94a5802e
+msgid "``variant_id`` (integer) (required) CIViC variant ID (e.g., 4170)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:149 8cd557df434c4f3388011b7e4d438842
+msgid "**civic_get_variants_by_gene** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:151 848b58edba6142a38b2773221d1573a4
+msgid ""
+"Get all variants associated with a specific gene in CIViC database. "
+"Returns variant information i..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 6e9b72c27b1c4ff5835f5d6481037b62
+msgid "civic_get_variants_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:157 018f69534dc6488f8d18d443d88c3362
+msgid "**Name**: ``civic_get_variants_by_gene``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:159 664405a643d6440eacd90b9d3a5b6735
+msgid ""
+"**Description**: Get all variants associated with a specific gene in "
+"CIViC database. Returns variant information including names, coordinates,"
+" and associated evidence. Use gene\\_name or gene\\_symbol (e.g., 'EGFR',"
+" 'BRAF') for convenience, or gene\\_id if already known. Uses cursor-"
+"based pagination to return up to 500 variants per call."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:163 189175ca7d11478583de4fd792426b0b
+msgid ""
+"``gene_id`` (integer) (optional) CIViC gene ID (e.g., 19 for EGFR, 12 for"
+" BRAF). Find gene IDs using civic\\_search\\_genes."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:166 6092ec608c1a4f53bddb92a4c116d542
+msgid ""
+"``gene_name`` (string) (optional) Gene symbol (e.g., 'EGFR', 'BRAF', "
+"'TP53'). Will be looked up automatically. Aliases: gene, gene\\_symbol, "
+"query."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:169 482b1267617541a9abf75a1337953703
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene\\_name. Standard gene "
+"symbol (e.g., 'KRAS', 'BRCA1', 'EGFR')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:172 bb2e5bdbe24244069224b4b6ad869470
+msgid ""
+"``gene`` (string) (optional) Alias for gene\\_name. Gene symbol (e.g., "
+"'EGFR', 'KRAS')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:175 219cc743efeb47e09683f4e13092a9c0
+msgid ""
+"``limit`` (integer) (optional) Maximum number of variants to return "
+"(default: 500, uses cursor pagination to bypass CIViC's 100/page server "
+"cap)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:191 fc122556af6d4d8bab9f8c2ab0143a1a
+msgid "**civic_search_assertions** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:193 8f9dd6b465244ff289745e3cc9ddfb5c
+msgid ""
+"Search for assertions in CIViC database. Assertions are higher-level "
+"clinical interpretations tha..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 81e6f431a19947c2b55d7e3ad2104f41
+msgid "civic_search_assertions tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:199 a8f105b523cb4a3196194b6c49ec768a
+msgid "**Name**: ``civic_search_assertions``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:201 68265f41e8754298a54f214b35d86a7a
+msgid ""
+"**Description**: Search for assertions in CIViC database. Assertions are "
+"higher-level clinical interpretations that integrate multiple evidence "
+"items into formal statements about clinical actionability. Returns a list"
+" of assertions with descriptions and associated molecular profiles or "
+"variants. Filter by therapy (e.g., 'ponatinib'), disease (e.g., "
+"'leukemia'), or variant name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:205 e95e56b5c45f46c0ab2de8ea9550eb5d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of assertions to return "
+"(default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:208 00b7c4f6f30d445bba6df70132138d9f
+msgid ""
+"``therapy`` (string) (optional) Filter by therapy/drug name (e.g., "
+"'imatinib', 'ponatinib'). Alias: therapy\\_name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:211 ../../tools/civic_tools.rst:295
+#: 0ddcb236c75e47eea76cc9d897e1ccb9 7b2016192bed4edbad324010cedf372b
+msgid ""
+"``therapy_name`` (string) (optional) Alias for therapy. Filter by "
+"therapy/drug name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:214 f2a03a2f09f04314916b861df6beaa8a
+msgid ""
+"``disease`` (string) (optional) Filter by disease name (e.g., 'leukemia',"
+" 'melanoma'). Alias: disease\\_name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:217 ../../tools/civic_tools.rst:301
+#: 18c9473229084d50ae21877b78d8e617 919e538bebf14c5983a4f5a1a00fc147
+msgid ""
+"``disease_name`` (string) (optional) Alias for disease. Filter by disease"
+" name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:220 9440031bf0fa4fd3896b8815b5cf751a
+msgid ""
+"``variant_name`` (string) (optional) Filter by variant name (e.g., "
+"'V600E', 'T315I')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:236 21d58443be9c4ed39f39d8aa35622a1c
+msgid "**civic_search_diseases** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:238 3802e99fa298469481d3c35c79d00206
+msgid ""
+"Search for diseases in CIViC database. Returns a list of cancer diseases "
+"and conditions (with IDs..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 8ab39b2c2fe54e1fb9e242eacf7eb304
+msgid "civic_search_diseases tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:244 cd1b4dd9ec7c4e6b908085d54c640752
+msgid "**Name**: ``civic_search_diseases``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:246 748d77943f3f442f9da4ca555bc3cfa9
+msgid ""
+"**Description**: Search for diseases in CIViC database. Returns a list of"
+" cancer diseases and conditions (with IDs and names) that are associated "
+"with variants and evidence in CIViC. Use 'query' or 'name' to filter by "
+"disease name (e.g., 'leukemia', 'melanoma')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:250 7559a7a46dd74cb1a782c1bdab65efb6
+msgid ""
+"``limit`` (integer) (optional) Maximum number of diseases to return "
+"(default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:253 b0b36644c03342279433953cf8c74a75
+msgid ""
+"``name`` (string) (optional) Filter by disease name (e.g., 'leukemia', "
+"'melanoma', 'lung cancer'). Alias: query."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:256 d1e36a465858480a894899553000a896
+msgid "``query`` (string) (optional) Alias for name. Filter by disease name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:272 bc4e75ca20d84d518ca0e70d3f98544d
+msgid "**civic_search_evidence_items** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:274 740f9b55d7ca43b393c1b306bad8bb8d
+msgid ""
+"Search for evidence items in CIViC database. Evidence items are curated "
+"statements linking varian..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 7dd0a924eba6409193c3f14481b5bee4
+msgid "civic_search_evidence_items tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:280 ef67bffa87814577826847f70ecd811a
+msgid "**Name**: ``civic_search_evidence_items``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:282 d808e74ff9f1439f80788186710c5ed2
+msgid ""
+"**Description**: Search for evidence items in CIViC database. Evidence "
+"items are curated statements linking variants or molecular profiles to "
+"clinical outcomes, therapies, or disease states. Returns evidence with "
+"disease, therapies, significance, direction, and citation. Filter by "
+"therapy name (e.g., 'imatinib'), disease name (e.g., 'leukemia'), or "
+"molecular profile name (e.g., 'BRAF V600E')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:286 a9f3e223ca7c47fbbe9f8e057c4f9e4f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of evidence items to return"
+" (default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:289 1328bae3a0194a1db12ce73765f90bb4
+msgid ""
+"``status`` (string, null) (optional) Filter by curation status. Default: "
+"ACCEPTED (peer-reviewed). Options: ACCEPTED, SUBMITTED, REJECTED, ALL "
+"(returns all statuses combined)."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:292 4bc4322880ce4b8faa38b320d84516e0
+msgid ""
+"``therapy`` (string) (optional) Filter by therapy/drug name (e.g., "
+"'imatinib', 'pembrolizumab'). Alias: therapy\\_name. Note: matches any "
+"evidence item where the therapy appears, including combination regimens —"
+" results may include multi-drug combinations."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:298 5bdf6a832d6448619b3dd53a868b299a
+msgid ""
+"``disease`` (string) (optional) Filter by disease name (e.g., 'leukemia',"
+" 'melanoma', 'lung cancer'). Alias: disease\\_name. Note: CIViC uses "
+"specific disease names (e.g., 'Lung Non-small Cell Carcinoma', not "
+"'NSCLC'); try partial names or multiple searches if results are empty."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:304 6ab2f4ec5e3e4d379933ece9a2af4368
+msgid ""
+"``molecular_profile`` (string) (optional) Filter by molecular profile "
+"name (e.g., 'BRAF V600E', 'EGFR T790M', 'KRAS G12C'). Uses substring "
+"matching — 'FLT3 ITD' will also match 'FLT3 ITD AND FLT3 D835Y'. For gene"
+" fusions, CIViC uses double-colon notation: 'GENE::PARTNER Fusion' (e.g.,"
+" 'FGFR2::BICC1 Fusion', 'ALK::EML4 Fusion'). Use "
+"civic\\_search\\_molecular\\_profiles to discover exact profile names."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:307 d31194bfda454a78a1c22187bb05f07f
+msgid ""
+"``evidence_type`` (string, null) (optional) Filter by evidence type. "
+"Values: PREDICTIVE (drug response), DIAGNOSTIC (disease diagnosis), "
+"PROGNOSTIC (patient outcomes), PREDISPOSING (disease risk), ONCOGENIC "
+"(variant pathogenicity), FUNCTIONAL (molecular function)."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:323 ef938d7d10c8421b866523ad341dcc65
+msgid "**civic_search_genes** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:325 ccae6745b5204e03b3ccdc8e9a45b3f8
+msgid ""
+"Search for genes in CIViC (Clinical Interpretation of Variants in Cancer)"
+" database. CIViC is a co..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 150120b1ebcb448a93e61e22cb2e6968
+msgid "civic_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:331 4dadc1f388d94ac9a3603a1373acb3e2
+msgid "**Name**: ``civic_search_genes``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:333 2ba3223a6a08480289305d45011455e8
+msgid ""
+"**Description**: Search for genes in CIViC (Clinical Interpretation of "
+"Variants in Cancer) database. CIViC is a community knowledgebase for "
+"expert-curated interpretations of variants in cancer. Returns genes with "
+"their IDs, names, and descriptions. Use this to find genes of interest "
+"before querying variants or evidence."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:337 7134e0267d09485dba544445b0539e1f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of genes to return "
+"(default: 10, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:340 2397fd63e8e14adf9124b8b834f927cd
+msgid ""
+"``name`` (string) (optional) Gene symbol to search for (e.g., \"EGFR\", "
+"\"BRAF\", \"BRCA1\"). Alias: use 'query' or 'gene\\_name' instead."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:343 e92e81540dad4c94a5a711db0e432b67
+msgid ""
+"``query`` (string) (optional) Gene symbol to search for (e.g., \"FLT3\", "
+"\"KRAS\", \"TP53\"). Alias for 'name'."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:346 ca0b8ef96cd0498094fa5c854befc727
+msgid ""
+"``gene_name`` (string) (optional) Gene symbol to search for. Alias for "
+"'name'."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:362 9cc3846c15254203b1f6217baf9599da
+msgid "**civic_search_molecular_profiles** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:364 a1f8354860604007a88c3b91042103f5
+msgid ""
+"Search for molecular profiles in CIViC database. Molecular profiles "
+"represent combinations of var..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 96158dc5b28c4324a82db0f414fd41c0
+msgid "civic_search_molecular_profiles tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:370 0d3a15ac7d9743b9a0241537dc6a7587
+msgid "**Name**: ``civic_search_molecular_profiles``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:372 54a78005521a44c1b9aed9176cc4c962
+msgid ""
+"**Description**: Search for molecular profiles in CIViC database. "
+"Molecular profiles represent combinations of variants or features (e.g., "
+"'BRAF V600E', 'EGFR T790M') that serve as biomarkers for clinical "
+"interpretation. Returns a list of molecular profiles with IDs and names. "
+"Use the 'query' parameter to filter by profile name (alias: 'name')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:376 90779687c78b4afbb844381d143214b4
+msgid ""
+"``limit`` (integer) (optional) Maximum number of molecular profiles to "
+"return (default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:379 2106a266294a4779964bc1105c14b888
+msgid ""
+"``query`` (string) (optional) Filter by molecular profile name (e.g., "
+"'BRAF V600E', 'EGFR T790M', 'FLT3 ITD'). Returns profiles whose name "
+"contains this string. Alias: 'name'."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:382 e4c267cf141b4fad923bb01f452a4747
+msgid ""
+"``name`` (string) (optional) Alias for query. Filter by molecular profile"
+" name (e.g., 'PD-L1', 'KRAS G12C')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:398 d993dbce9d994746891f292e1981c6bb
+msgid "**civic_search_therapies** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:400 5e04f219b4db4725a08a8c409194f45a
+msgid ""
+"Search for therapies (drugs/treatments) in CIViC database. Returns a list"
+" of cancer therapies and..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 7f1ed3e6b09644749158da9045986b21
+msgid "civic_search_therapies tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:406 d39e332e0b57431391aae3d23246db63
+msgid "**Name**: ``civic_search_therapies``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:408 db5f06f4c0f5427a84b6de753bae87e0
+msgid ""
+"**Description**: Search for therapies (drugs/treatments) in CIViC "
+"database. Returns a list of cancer therapies and drugs (with IDs and "
+"names) that are associated with variants and evidence in CIViC. Use "
+"'query' or 'name' to filter by therapy name (e.g., 'imatinib', "
+"'pembrolizumab')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:412 26be8de4668e43f793c6cb149e2b137e
+msgid ""
+"``limit`` (integer) (optional) Maximum number of therapies to return "
+"(default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:415 26e29f3459644eaf85f2568f9dc623fb
+msgid ""
+"``name`` (string) (optional) Filter by therapy/drug name (e.g., "
+"'imatinib', 'ponatinib', 'pembrolizumab'). Alias: query."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:418 81ee8ae18f454e24866a51e96d3b584e
+msgid "``query`` (string) (optional) Alias for name. Filter by therapy/drug name."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:434 bf93fc40ca7d4938a7981fbc42f028c5
+msgid "**civic_search_variants** (Type: CIViCTool)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:436 428b5fe21a684ae3825e75b039a4c6c6
+msgid ""
+"Search for variants in CIViC database. Returns a list of variants with "
+"their IDs and names. Use '..."
+msgstr ""
+
+#: ../../tools/civic_tools.rst 2fb4a437761e4d5e97067371973fc30a
+msgid "civic_search_variants tool specification"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:442 e2653ff20aa9403ba210ccd1b2eff397
+msgid "**Name**: ``civic_search_variants``"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:444 10c099b2a4b7426d909b1ca06d232155
+msgid ""
+"**Description**: Search for variants in CIViC database. Returns a list of"
+" variants with their IDs and names. Use 'query' to search by variant name"
+" (e.g., 'V600E'), or 'gene'/'gene\\_name' to get all variants for a "
+"specific gene (e.g., 'EGFR'). To find a specific variant in a gene, "
+"combine gene\\_name + variant\\_name (e.g., gene\\_name='EGFR', "
+"variant\\_name='L858R'). Note: CIViC stores variants without gene prefix "
+"— do not combine gene and variant in a single string."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:448 fe8fed30681a4abe83a9bdb1dc8bc59d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of variants to return "
+"(default: 20, recommended max: 100)"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:451 42ed2fe8b284497e8755703123cbd6e4
+msgid ""
+"``query`` (string) (optional) Variant name to search for (e.g., "
+"\"T790M\", \"V600E\", \"exon 19 deletion\"). Returns name-matching "
+"variants."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:454 0270ccc33b0c44f18afbdf4e8b5f2dd2
+msgid ""
+"``gene`` (string) (optional) Gene symbol to filter variants by (e.g., "
+"'EGFR', 'BRAF', 'KRAS'). Returns all variants for that gene."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:457 a7dc340f74b64454b31fb04856afa737
+msgid ""
+"``gene_name`` (string) (optional) Alias for gene. Gene symbol (e.g., "
+"'TP53', 'BRCA1')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:460 2efc0bf228ba49a2b7b9fedfb14c3e71
+msgid ""
+"``variant_name`` (string) (optional) Specific variant name to filter "
+"within a gene (e.g., 'L858R', 'V600E', 'T790M'). Use together with "
+"gene\\_name — CIViC stores variants without the gene prefix (use 'L858R' "
+"not 'EGFR L858R')."
+msgstr ""
+
+#: ../../tools/civic_tools.rst:476 4b0ef8135f05401785cea1a0198b1404
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:478 c0a127c58ec4489c86e790045796d21d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/civic_tools.rst:479 cf4086e256e04b1b9198d6b755cbee3a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

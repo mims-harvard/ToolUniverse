@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/health_disparities_tools.rst:10 ac9b9c622ff546358be35816b1fd5ed2
+msgid "Health Disparities Tools"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:12 72760ad131ea49c6bee5e886001d3107
+msgid ""
+"**Configuration File**: ``health_disparities_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:16 e2d6799477564cbb8f719f05499dba64
+msgid ""
+"This page contains all tools defined in the "
+"``health_disparities_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:19 5a748e4baf3c459d863f8453d26ed88c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:22 151498c32e2c40c2bc3f142ed9a331de
+msgid ""
+"**health_disparities_get_county_rankings_info** (Type: "
+"HealthDisparitiesTool)"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:24 4f855a41b6d4498eb9dcb1bad88977ee
+msgid ""
+"Get information about County Health Rankings data. County Health Rankings"
+" provides county-level h..."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst a41d82a482144353b00192a495aa4cf8
+msgid "health_disparities_get_county_rankings_info tool specification"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:28
+#: ../../tools/health_disparities_tools.rst:61 42f7c52c34df43a295a2f005f3b32250
+#: ec58c7cf1671487b8432337f88b139dd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:30 887cf12a6211418a84288bd2cc4130fb
+msgid "**Name**: ``health_disparities_get_county_rankings_info``"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:31
+#: ../../tools/health_disparities_tools.rst:64 34d859d854f648c7bd9fe7fe7f43aa1e
+#: fe8e1dc1292a4421b7a967b680ffb671
+msgid "**Type**: ``HealthDisparitiesTool``"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:32 5e7b3e85c6b34a4db5fa51f84ac5fd57
+msgid ""
+"**Description**: Get information about County Health Rankings data. "
+"County Health Rankings provides county-level health data. This tool "
+"provides information about available datasets and access methods. Note: "
+"Data may be available as downloadable files or through their website."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:34
+#: ../../tools/health_disparities_tools.rst:67 db892c9465014b36a1354f51db93ff34
+#: eed508acb8b84d83b22d992ca8d4614e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:36 5ab616392a7041b99280dcb8f266cd09
+msgid ""
+"``year`` (integer) (optional) Optional year for County Health Rankings "
+"data"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:39 0b8888e592fe40158657911265d3d13d
+msgid ""
+"``state`` (string) (optional) Optional state abbreviation (e.g., 'CA', "
+"'NY') to filter by state"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:42
+#: ../../tools/health_disparities_tools.rst:75 4cc55329a6814558baa32fe735964e47
+#: 706f64a0dca149e294eb3c06d1cfa82c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:55 7917170022bb4ed6b09d720754cb09fc
+msgid "**health_disparities_get_svi_info** (Type: HealthDisparitiesTool)"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:57 cd64d6edc40b47b9952fb2ecabcd47cd
+msgid ""
+"Get information about CDC Social Vulnerability Index (SVI) data. SVI data"
+" is typically available ..."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst d6e1fb8c283641a3ace83b5a0d700fc9
+msgid "health_disparities_get_svi_info tool specification"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:63 84cd4290f1cc429487de0cf945a74c1a
+msgid "**Name**: ``health_disparities_get_svi_info``"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:65 7481e441e31941d994724d17109503f5
+msgid ""
+"**Description**: Get information about CDC Social Vulnerability Index "
+"(SVI) data. SVI data is typically available as downloadable CSV files "
+"from the CDC ATSDR website. This tool provides information about "
+"available SVI datasets and download links. Note: Actual data retrieval "
+"may require downloading CSV files."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:69 a129682b0dc34ae4b0efe2a4f55b6a54
+msgid ""
+"``year`` (integer) (optional) Optional year to filter SVI data (e.g., "
+"2020, 2018, 2016). SVI is released every 2 years."
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:72 8c0f9040f7434fcea1cf6fe227f66318
+msgid ""
+"``geography`` (string) (optional) Geographic level: 'county' for county-"
+"level, 'tract' for census tract, 'state' for state-level"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:88 f3b034642f464530aa6baeb67562c1b4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:90 06d502c4068f44108403de63a8ef5171
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/health_disparities_tools.rst:91 75335f925fed4aff94da9d9a320605e7
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

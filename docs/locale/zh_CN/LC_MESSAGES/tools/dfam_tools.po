@@ -1,0 +1,224 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dfam_tools.rst:10 2b746a2fd2064ccf8b457956016c704b
+msgid "Dfam Tools"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:12 b856b5c08e7a48e7a62be8b645146bc9
+msgid ""
+"**Configuration File**: ``dfam_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:16 78412a8f1bbd46e1b6bb72b25f9b09bf
+msgid ""
+"This page contains all tools defined in the ``dfam_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:19 7d6438553cc041f68ec0d9977ad2d13e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:22 678d29b51d674910bd18a395342a8f0b
+msgid "**Dfam_get_annotations** (Type: DfamTool)"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:24 0bfdc174d0bf46d4aa74c4ba8bac1a3e
+msgid ""
+"Get transposable element (TE) annotations for a genomic region from Dfam."
+" Returns all TE/repeat e..."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst e629789f505d4dd48a970e70f5a65752
+msgid "Dfam_get_annotations tool specification"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:28 ../../tools/dfam_tools.rst:73
+#: ../../tools/dfam_tools.rst:104 458ebdf77c4e4302a8e5fbd305cd9dd1
+#: a675d59e354e497bba17d17c5533ed26 b8101f85e9cd4fbdb4185213fcf843e2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:30 681181f2161141e6ae5693f40ab9de47
+msgid "**Name**: ``Dfam_get_annotations``"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:31 ../../tools/dfam_tools.rst:76
+#: ../../tools/dfam_tools.rst:107 2443ab54556440c8b28a56f1467eae73
+#: 2d75250230ff48bba45957d5a4258747 628be263a76c49abb280c9684c2e3710
+msgid "**Type**: ``DfamTool``"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:32 22c82ba3009143bbb4ad2e7bc2e58e43
+msgid ""
+"**Description**: Get transposable element (TE) annotations for a genomic "
+"region from Dfam. Returns all TE/repeat element hits in the specified "
+"chromosomal region including family name, type (SINE, LINE, DNA, LTR, "
+"Satellite), strand, bit score, E-value, and alignment coordinates. Useful"
+" for analyzing repeat content of a genomic locus, identifying TEs near "
+"genes, or studying TE distribution. Example: chr1:10000-50000 in hg38 "
+"returns hits including TAR1 satellites, L1MC4a LINEs, MER5B DNA "
+"transposons, MIR1 SINEs."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:34 ../../tools/dfam_tools.rst:79
+#: ../../tools/dfam_tools.rst:110 00aa3a44e9fe4644bf6fc839465712de
+#: 3c8a74c8e9cc4cb4a10acc8a02c747ce c6f2af8228774cd8a3544a90f8489c76
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:36 a4ef2709dddc4775ab1023ea0544008f
+msgid ""
+"``assembly`` (string) (optional) Genome assembly name (default 'hg38'). "
+"Options: 'hg38', 'hg19', 'mm10', 'mm39', 'dm6', etc."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:39 bf0fe159cd924e5f8533516230390a29
+msgid ""
+"``chrom`` (string) (required) Chromosome name (e.g., 'chr1', 'chr17', "
+"'chrX')."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:42 88f3d2fcc3364cf6a658e9352dfd3794
+msgid "``start`` (integer) (required) Start position (0-based)."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:45 c5c03d61d0b04c678ddf2be0f64ee702
+msgid "``end`` (integer) (required) End position."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:48 d8936e2e0b3744159da1c3656205e36d
+msgid ""
+"``nrph`` (boolean) (optional) Non-redundant profile hits only (default "
+"true). Set false for all hits."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:51 ../../tools/dfam_tools.rst:84
+#: ../../tools/dfam_tools.rst:124 0f9eb1aee13e4dcfb3e2b279e72d85ab
+#: 2f9cdf02401e438ca2f8f4b1fed03318 c98717f05f984144b2c7178476a9345b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:67 65405d502e6c4d7aa0ed38b56ac0860c
+msgid "**Dfam_get_family** (Type: DfamTool)"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:69 1b88bad6f1724962969cf19ee3ab0fdf
+msgid ""
+"Get detailed information for a specific Dfam transposable element family "
+"by accession. Returns co..."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst 8a0e15596ef840f3a616394415eb1083
+msgid "Dfam_get_family tool specification"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:75 ed06cad2f12e43c0ad002e6f05ef831a
+msgid "**Name**: ``Dfam_get_family``"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:77 d298e644a42c4e058523b1eff298a57f
+msgid ""
+"**Description**: Get detailed information for a specific Dfam "
+"transposable element family by accession. Returns consensus sequence, "
+"taxonomic classification, repeat type/subtype, clade distribution, "
+"author, citations, and curation state. Useful for studying TE biology, "
+"understanding repeat element structure, or getting consensus sequences "
+"for bioinformatics analysis. Example: DF000000003 returns AluSc (309bp "
+"SINE/Alu, consensus sequence, found in primates, published Jurka 1988)."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:81 53617cd3fc73463cac76b5246b0ab3e2
+msgid ""
+"``accession`` (string) (required) Dfam family accession (e.g., "
+"'DF000000003' for AluSc, 'DF000000053' for AluYa5)."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:98 1546b632f44c41eebb88d97444b8d828
+msgid "**Dfam_search_families** (Type: DfamTool)"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:100 dc1510294a754ea79ab3072ac55ccad3
+msgid ""
+"Search Dfam for transposable element (TE) / repeat element families by "
+"name prefix, taxonomic cla..."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst 29e62f7abdd948ccb0155bf776be42db
+msgid "Dfam_search_families tool specification"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:106 b7b3e5ffa1f94ba9b67239f31e899d91
+msgid "**Name**: ``Dfam_search_families``"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:108 464cf3f579ae4ed6b25e6946022ebadf
+msgid ""
+"**Description**: Search Dfam for transposable element (TE) / repeat "
+"element families by name prefix, taxonomic clade, or repeat type. Dfam is"
+" the authoritative database of repetitive DNA, including SINEs (Alu), "
+"LINEs (L1), DNA transposons, LTR retrotransposons, and satellites. "
+"Returns family accession, name, length, classification, and repeat type. "
+"Useful for identifying repeat families in a genome or studying transposon"
+" evolution. Example: searching name\\_prefix='AluS' returns Alu SINE "
+"subfamilies (AluSc, AluSx, etc.) found in primates; clade=9606 with "
+"repeat\\_type='SINE' returns human-specific SINEs."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:112 9baba9d64a2f4c76831e54a4d7cbb7b4
+msgid ""
+"``name_prefix`` (string) (optional) TE family name prefix to search "
+"(e.g., 'AluS', 'L1M', 'SVA', 'MER'). Case-sensitive."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:115 d6d54d6a11c84b3fab2b6a99c09b2512
+msgid ""
+"``clade`` (string) (optional) Taxonomic clade filter as NCBI taxon ID "
+"(e.g., '9606' for human, '40674' for Mammalia, '7227' for Drosophila)."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:118 828e3b7f970749d9ad2bff212702cca1
+msgid ""
+"``repeat_type`` (string) (optional) Repeat type filter. Options: 'SINE', "
+"'LINE', 'LTR', 'DNA', 'Satellite', 'RC', 'Other'."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:121 a75871d5155b455183e3950f4e63c62f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (default 20, max"
+" 50)."
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:137 9baea8f881604c3f9ffef37b78eef46e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:139 11e1a1067f3a4755ab4aead0b4b2f2e4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dfam_tools.rst:140 27a6748ca7c14d9b8f76ca02bb783840
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

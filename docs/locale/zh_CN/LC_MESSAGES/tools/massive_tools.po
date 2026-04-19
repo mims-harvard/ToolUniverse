@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/massive_tools.rst:10 7ed4dd3135264fd5a104f1ab46c8d7cd
+msgid "Massive Tools"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:12 821e657049c34e3cba9dd6447b3e8775
+msgid ""
+"**Configuration File**: ``massive_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:16 0dd40dd56e764e7eb146a6225cdff35f
+msgid ""
+"This page contains all tools defined in the ``massive_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/massive_tools.rst:19 652bd0e2157140afb7d6d2a8e834a3f4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:22 e140cafa742f4139ad72f66bb6f1a3db
+msgid "**MassIVE_get_dataset** (Type: MassIVETool)"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:24 584d9f03e7274a6682027cb87a4f1781
+msgid ""
+"Get detailed information about a specific MassIVE proteomics dataset by "
+"its accession number (MSV..."
+msgstr ""
+
+#: ../../tools/massive_tools.rst 01e8990317b144da9d8eb6b2d49a4048
+msgid "MassIVE_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:28 ../../tools/massive_tools.rst:59
+#: 088964ac3c2c42fbb040c2921b78c934 28e222d75cdd405abb78365880489013
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:30 e55c86f3e2274256a563514cc92e6451
+msgid "**Name**: ``MassIVE_get_dataset``"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:31 ../../tools/massive_tools.rst:62
+#: b572a1f13a834bbbad0ed27408b1b399 c7870e2f806047978200776fa11b2bca
+msgid "**Type**: ``MassIVETool``"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:32 2c3508b835f74f28bd989eeee77336aa
+msgid ""
+"**Description**: Get detailed information about a specific MassIVE "
+"proteomics dataset by its accession number (MSV or PXD format). Returns "
+"title, summary, species, instruments, keywords, contacts, publications, "
+"and post-translational modifications."
+msgstr ""
+
+#: ../../tools/massive_tools.rst:34 ../../tools/massive_tools.rst:65
+#: 0d75f1ce874144fbb59a5af47b944a0b 87c4c8448ba143fb8575e025251d629d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:36 4badd6cf4c8244938e2367467d92b2e5
+msgid ""
+"``accession`` (string) (required) MassIVE dataset accession (e.g., "
+"'MSV000079514') or ProteomeXchange accession (e.g., 'PXD003971')"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:39 ../../tools/massive_tools.rst:73
+#: 23907e9f2e7e4df990fa123812372115 eb1f4c0869514a238a547f6c37e72e86
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:53 cfefc4fcfba142e1af617c23525a1ed4
+msgid "**MassIVE_search_datasets** (Type: MassIVETool)"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:55 d28b2dd4e2504ed189d32d9d7e5f6087
+msgid ""
+"Search the MassIVE proteomics repository for mass spectrometry datasets. "
+"MassIVE hosts thousands ..."
+msgstr ""
+
+#: ../../tools/massive_tools.rst 70c1db8176dc449fb05376a584d2f711
+msgid "MassIVE_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:61 2b7196ff89574007bd8dbff8d35004ab
+msgid "**Name**: ``MassIVE_search_datasets``"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:63 4981e8f544eb4eb3b3204a6d6fed0727
+msgid ""
+"**Description**: Search the MassIVE proteomics repository for mass "
+"spectrometry datasets. MassIVE hosts thousands of proteomics datasets "
+"accessible via the ProXI standard API. Returns dataset accessions, "
+"titles, species, instruments, and keywords. Optionally filter by NCBI "
+"taxonomy ID for species."
+msgstr ""
+
+#: ../../tools/massive_tools.rst:67 50b3c59e0bec419a9a805f7d9fde2c32
+msgid "``page_size`` (integer) (optional) Number of results to return (max 100)"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:70 59d68fc736c2458b82ae155d7e487632
+msgid ""
+"``species`` (string, null) (optional) NCBI taxonomy ID to filter by "
+"species (e.g., '9606' for human, '10090' for mouse)"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:86 bae9741077a34647bc00ba7998015999
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:88 ed3d2cc18c2d4fd695d2afdb1e730d8c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/massive_tools.rst:89 18f2e450b3e74016b016d7964531053e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

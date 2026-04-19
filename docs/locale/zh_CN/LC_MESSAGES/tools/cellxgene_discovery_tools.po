@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cellxgene_discovery_tools.rst:10
+#: 8811b72fccb74ac6b39776a1044b4425
+msgid "Cellxgene Discovery Tools"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:12
+#: 991b29a1654f45b99e0c6f00dc0f23e5
+msgid ""
+"**Configuration File**: ``cellxgene_discovery_tools.json`` **Tool Type**:"
+" Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:16
+#: c4dd33063867430dbe27774457816d79
+msgid ""
+"This page contains all tools defined in the "
+"``cellxgene_discovery_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:19
+#: da6bdd19b0864604bf703f973c0b3855
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:22
+#: 03f7d8b8fe294ea5a1cec5bb570be6e3
+msgid "**CxGDisc_get_collection** (Type: CellxGeneDiscoveryTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:24
+#: 93c3fcdfabd1457c93fe3b53574fc3a9
+msgid ""
+"Get detailed information about a specific CellxGene Discovery collection,"
+" including all datasets ..."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst 87c0bc1b98014e8f9fa3e9d41114fbc2
+msgid "CxGDisc_get_collection tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:28
+#: ../../tools/cellxgene_discovery_tools.rst:59
+#: ../../tools/cellxgene_discovery_tools.rst:89
+#: 6782dff2e4c2408a87167f419025ebbd 6c87539414b2483fb657522cc6c22468
+#: 99ac2c2a5d1d42fd94d87ae630078729
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:30
+#: 8f7d95242a70452493fec28ad6e9220b
+msgid "**Name**: ``CxGDisc_get_collection``"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:31
+#: ../../tools/cellxgene_discovery_tools.rst:62
+#: ../../tools/cellxgene_discovery_tools.rst:92
+#: 1f751a8798634594ae100b6b2f845183 8d3bd167456e4a0fa4a0d6389709b795
+#: fb6d0634e2c7405298cedc19f9219003
+msgid "**Type**: ``CellxGeneDiscoveryTool``"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:32
+#: cbd7c3f10745430c92cc835a02c5d680
+msgid ""
+"**Description**: Get detailed information about a specific CellxGene "
+"Discovery collection, including all datasets with tissue, disease, "
+"organism, cell type, and assay details. Example: collection "
+"'48259aa8-f168-4bf5-b797-af8e88da6637' is the Human Breast Cell Atlas "
+"with 5 datasets (stroma, epithelial, integrated) totaling 2.8M cells. "
+"Each dataset includes cell count, tissue labels, disease status, and "
+"available assay types."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:34
+#: ../../tools/cellxgene_discovery_tools.rst:65
+#: ../../tools/cellxgene_discovery_tools.rst:95
+#: 53fd20e0356144d0914f34e52aa10c37 f56312c6317e4345b00f06609dbe5d81
+#: fca5354d1cbf4660942a1996bed59642
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:36
+#: bd502600c5a848d0b58a6ca73467039f
+msgid ""
+"``collection_id`` (string) (required) Collection UUID from CellxGene "
+"Discovery (e.g., '48259aa8-f168-4bf5-b797-af8e88da6637' for Human Breast "
+"Cell Atlas)."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:39
+#: ../../tools/cellxgene_discovery_tools.rst:70
+#: ../../tools/cellxgene_discovery_tools.rst:112
+#: 4a61eb1553294b19a8ea9245f687d9bb 84c84fee2d5741c798beb3b4ff9c8ad8
+#: a1a7167fe1824f2ab427e8df77038088
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:53
+#: 295058c139774c5fbbccf893a6a70fef
+msgid "**CxGDisc_list_collections** (Type: CellxGeneDiscoveryTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:55
+#: d1d3b0ee2deb459a9506948c46b0e9dc
+msgid ""
+"List curated single-cell RNA-seq collections from CZI CellxGene "
+"Discovery. Each collection is a p..."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst 7bc4b73644024fafa0dd1ea31c4855fb
+msgid "CxGDisc_list_collections tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:61
+#: 2c00e5b3791f41829a99b4648b68f9b6
+msgid "**Name**: ``CxGDisc_list_collections``"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:63
+#: 8319d2f7f1914f19af97bf37c8157772
+msgid ""
+"**Description**: List curated single-cell RNA-seq collections from CZI "
+"CellxGene Discovery. Each collection is a published dataset group with "
+"DOI, typically corresponding to a paper. The platform hosts 350+ public "
+"collections spanning diverse tissues, diseases, and organisms with cell-"
+"type annotations. Returns collection name, DOI, dataset count, total cell"
+" count, and curator info."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:67
+#: 4fbbea59b1b544859622668babc2bc78
+msgid ""
+"``limit`` (integer) (optional) Maximum number of collections to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:83
+#: c63529a2add944c4a660b00028941357
+msgid "**CxGDisc_search_datasets** (Type: CellxGeneDiscoveryTool)"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:85
+#: c26d17923dd344d5a20c6341f31b4710
+msgid ""
+"Search CellxGene Discovery single-cell RNA-seq datasets by tissue, "
+"disease, organism, or cell typ..."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst 8b84fac46b454c1e801f296099a4f7b0
+msgid "CxGDisc_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:91
+#: 6630144376d746569dec035835d3ef39
+msgid "**Name**: ``CxGDisc_search_datasets``"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:93
+#: 498f6a4e5aae40a6b286654e39b62a29
+msgid ""
+"**Description**: Search CellxGene Discovery single-cell RNA-seq datasets "
+"by tissue, disease, organism, or cell type. The platform hosts 2,000+ "
+"datasets with detailed cell-type annotations. Supports flexible text-"
+"based filtering: 'lung' returns 134 lung datasets, 'brain' returns 144, "
+"'T cell' returns 667, 'cancer' returns 193. Results sorted by cell count "
+"(largest first)."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:97
+#: 27617a2fbd41415ea99fa406d93d5a68
+msgid ""
+"``tissue`` (string) (optional) Filter by tissue name (e.g., 'lung', "
+"'brain', 'heart', 'kidney', 'liver'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:100
+#: 21583331aa7f4fac9b934cdde4c83a5d
+msgid ""
+"``disease`` (string) (optional) Filter by disease (e.g., 'cancer', "
+"'COVID', 'Alzheimer', 'normal'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:103
+#: 157a8464690d4bfbb4ac5013eb37ada6
+msgid ""
+"``organism`` (string) (optional) Filter by organism (e.g., 'Homo "
+"sapiens', 'Mus musculus'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:106
+#: 0276d9c436584b198ecef637122e502b
+msgid ""
+"``cell_type`` (string) (optional) Filter by cell type (e.g., 'T cell', "
+"'neuron', 'macrophage', 'epithelial'). Case-insensitive partial match."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:109
+#: 1907444060384b6ab10cb59bf589043d
+msgid ""
+"``limit`` (integer) (optional) Maximum datasets to return (1-100). "
+"Default: 20."
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:125
+#: 64837e600e4040549584e106b02b70eb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:127
+#: ba59e00519eb415c8a2a7773e21beff2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cellxgene_discovery_tools.rst:128
+#: d099e0d4cd594d8483f9cb9c025cd7f2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

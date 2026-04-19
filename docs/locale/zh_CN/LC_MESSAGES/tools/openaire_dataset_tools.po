@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openaire_dataset_tools.rst:10 fac101ead93c40ddb94d1430a46ee62c
+msgid "Openaire Dataset Tools"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:12 be93d8ce1ac14f2697a9d4d362de738d
+msgid ""
+"**Configuration File**: ``openaire_dataset_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:16 321ed59f4f374bebb8713ecb0175e3c5
+msgid ""
+"This page contains all tools defined in the "
+"``openaire_dataset_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:19 fcb24f45e70d420c984be6a1dd8bcc3b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:22 c7a2fc7846fa4360b03cb1438fbe4a40
+msgid "**OpenAIRE_search_datasets** (Type: OpenAIREDatasetTool)"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:24 e91419e52df34cafba12bbc16adbbbba
+msgid ""
+"Search OpenAIRE for research datasets from the European open science "
+"ecosystem. Covers datasets f..."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst ec1bfe6b7c56461aa0d3c461e7ea5687
+msgid "OpenAIRE_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:28 caa85c2873314f338cf4ec4e120c98ba
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:30 21806d7e637b4f2c9761e21f4a2bfcdc
+msgid "**Name**: ``OpenAIRE_search_datasets``"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:31 326b4e9b1ea24dbd8e8ee6762a233201
+msgid "**Type**: ``OpenAIREDatasetTool``"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:32 bdb5d33b02564f7d9bc1d413f3d91056
+msgid ""
+"**Description**: Search OpenAIRE for research datasets from the European "
+"open science ecosystem. Covers datasets from EU-funded projects (Horizon "
+"2020, Horizon Europe), national repositories (Zenodo, DANS, Dryad, "
+"Figshare), and thousands of data archives across Europe. Complements "
+"DataGov\\_search\\_datasets (US federal data) with European and "
+"international research datasets. Supports filtering by funder (EC, NIH, "
+"NSF, ARC, etc.) and country (ISO 2-letter code)."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:34 e55f75b4decc45b19d597008f914dfa3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:36 a283cd931cea4a258b6184522fbc114a
+msgid ""
+"``keywords`` (string) (required) Search keywords for dataset discovery. "
+"Searches across titles, descriptions, and subjects."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:39 21d314891c874db78c84b703ea0f06de
+msgid ""
+"``funder`` (string, null) (optional) Optional funder short name to filter"
+" datasets. Examples: 'EC' (European Commission), 'NIH', 'NSF', 'ARC' "
+"(Australian Research Council), 'WT' (Wellcome Trust), 'FCT' (Portugal), "
+"'SNSF' (Swiss NSF)."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:42 9c030f44650941e5aa1eacdfebe4a356
+msgid ""
+"``country`` (string, null) (optional) Optional ISO 3166-1 alpha-2 country"
+" code to filter by. Examples: 'DE' (Germany), 'FR' (France), 'IT' "
+"(Italy), 'NL' (Netherlands), 'GB' (UK), 'ES' (Spain)."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:45 1f5774009b944481bbd4d84464493bfc
+msgid ""
+"``size`` (integer) (optional) Number of results to return. Default 10, "
+"maximum 100."
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:48 9732de1d41a14fc2a366c126d077cc2a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:62 ae240cb7914d479087060fecc410c9d5
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:64 3374967e79c94c2b99d8908df27ddab6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openaire_dataset_tools.rst:65 e2b18b6255714875b19a173b5a26ab9d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

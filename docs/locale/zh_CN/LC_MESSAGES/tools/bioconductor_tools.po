@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bioconductor_tools.rst:10 8bad425d50b345d3bff568d7cf1faa76
+msgid "Bioconductor Tools"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:12 c3d4457502c6465795302aaf71d5cd8f
+msgid ""
+"**Configuration File**: ``bioconductor_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:16 09e3436bcd09448b8b73c9d863709e1a
+msgid ""
+"This page contains all tools defined in the ``bioconductor_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:19 e9ebfef398734c68b94dc12fc5594eaa
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:22 cd346e41308c46d59d3484e99c50ce8f
+msgid "**Bioconductor_get_package** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:24 698c577cd85a4a76821cb4a54a4119e9
+msgid ""
+"Get detailed metadata for a specific Bioconductor R package by name. "
+"Returns comprehensive inform..."
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst e4e3820ae5094c5aa268936fad207107
+msgid "Bioconductor_get_package tool specification"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:28 ../../tools/bioconductor_tools.rst:59
+#: 33d0bcbf6147480da666920413207458 767d35d35be14781ac65447b2014e478
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:30 16b9b30015124740bd22bb66ce5ec629
+msgid "**Name**: ``Bioconductor_get_package``"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:31 ../../tools/bioconductor_tools.rst:62
+#: 978b4c6f020d4ef283af34af55b4fb26 a998f6ffab554b2abc222bd42de31550
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:32 7727cab53389434db758b0288b3da25e
+msgid ""
+"**Description**: Get detailed metadata for a specific Bioconductor R "
+"package by name. Returns comprehensive information including version, "
+"description, dependencies, biocViews categories, author/maintainer, "
+"license, download statistics, GitHub stars, reverse dependencies "
+"(packages that use it), and git repository URL. Useful for evaluating "
+"packages before installation or for understanding the Bioconductor "
+"ecosystem. Use Bioconductor\\_search\\_packages first to find package "
+"names."
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:34 ../../tools/bioconductor_tools.rst:65
+#: 099fea02bb4749899be705c8d314b84a b44b36aed258410ea23174a49997202e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:36 d72388c25d2d4df7a7a6c12483b81427
+msgid ""
+"``package_name`` (string) (required) Exact Bioconductor package name "
+"(case-sensitive). Examples: 'DESeq2', 'edgeR', 'limma', 'Seurat', "
+"'SingleCellExperiment', 'GenomicRanges', 'BiocGenerics', "
+"'clusterProfiler', 'Rsamtools'"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:39 ../../tools/bioconductor_tools.rst:73
+#: 282b3dd8222e499f8812ceed4a213013 864191bd797e46339d0b8f292307acb8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:53 ffda34ab2aac4749b0e8d72b10389b77
+msgid "**Bioconductor_search_packages** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:55 e04e6fecd067422a91a9ad59351f1e7a
+msgid ""
+"Search Bioconductor bioinformatics R packages by keyword, topic, or "
+"analysis type. Bioconductor p..."
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst a29bdd114079454a9dca69c23b41f5ab
+msgid "Bioconductor_search_packages tool specification"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:61 891ce3d4795648e4b4aa5a9f431076c5
+msgid "**Name**: ``Bioconductor_search_packages``"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:63 a8e44d58441b47b486544060ed26ced9
+msgid ""
+"**Description**: Search Bioconductor bioinformatics R packages by "
+"keyword, topic, or analysis type. Bioconductor provides 2200+ open-source"
+" R packages for bioinformatics and computational biology covering RNA-"
+"seq, single-cell, proteomics, epigenomics, metabolomics, flow cytometry, "
+"imaging, and more. Returns matching packages with title, description, "
+"usage count, and relevance score. Powered by R-universe search index. Use"
+" this to find packages for specific bioinformatics workflows, then use "
+"Bioconductor\\_get\\_package for full details."
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:67 73a97533b3294ef8a9e9541e7ec34b69
+msgid ""
+"``q`` (string) (required) Search query for Bioconductor packages. Can be "
+"a keyword, analysis type, or topic. Examples: 'differential expression', "
+"'single cell RNA', 'proteomics', 'ChIP-seq', 'methylation', 'variant "
+"calling', 'gene set enrichment', 'phylogenetics', 'metabolomics', 'flow "
+"cytometry'"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:70 1b4e8d78b9de4ebabe5891e4245bf4ff
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return "
+"(default: 10, max: 100)"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:87 3d3173dc276f474081eec97dd00b3403
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:89 6d10e9de0dcf45cd8ca25cb48d546e54
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bioconductor_tools.rst:90 99e262fcc74b42fe912c548d7b7406bd
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

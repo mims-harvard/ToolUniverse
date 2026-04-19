@@ -1,0 +1,366 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/monarch_v3_tools.rst:10 e09e1c1d2d494c1695acb6cb0838ef48
+msgid "Monarch V3 Tools"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:12 825f4b9862cd4e92b862bdcaaa9660e8
+msgid ""
+"**Configuration File**: ``monarch_v3_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:16 c64983507abb4362a1045a88d14e194f
+msgid ""
+"This page contains all tools defined in the ``monarch_v3_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:19 56bf1662625b478cad2b0fb01215f413
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:22 b765c302ac564ad7ad31394f354f46da
+msgid "**MonarchV3_get_associations** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:24 52a0e7763f2545c8a40b235c8bfa3350
+msgid ""
+"Query cross-species associations between biomedical entities in the "
+"Monarch Initiative knowledge ..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst 14d0bfe121534d28892bafc238bc48ef
+msgid "MonarchV3_get_associations tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:28 ../../tools/monarch_v3_tools.rst:66
+#: ../../tools/monarch_v3_tools.rst:97 ../../tools/monarch_v3_tools.rst:128
+#: ../../tools/monarch_v3_tools.rst:162 ../../tools/monarch_v3_tools.rst:199
+#: 040bedcb59594077ab46ead09cfc816d 8722458027d349c6aa2f81af35b9b3e3
+#: 88dfe4f6096c487b9039ffb97ea47f45 9d7d645cd2f344639819dadde0e96c73
+#: abff41dd835c4029ad5cee2088bc39a4 fad43a8d74114f03b4dc8697964dc781
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:30 a2687853550a4cb2aae6f6ba9880895c
+msgid "**Name**: ``MonarchV3_get_associations``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:31 ../../tools/monarch_v3_tools.rst:69
+#: ../../tools/monarch_v3_tools.rst:100 ../../tools/monarch_v3_tools.rst:131
+#: ../../tools/monarch_v3_tools.rst:165 ../../tools/monarch_v3_tools.rst:202
+#: 25a3f96ec2a6422ea4bd09045ad8f1c4 3c34c856bd3a4b1292352f6b9e22fde8
+#: 3c8b2e9a287b49dd9ea15e92f7bb3fd1 783be99ae0b541a184a2867776e8741d
+#: dd0b1a8f77164117ba64323e7827f090 f9b1b643419e437a8717038703750af7
+msgid "**Type**: ``MonarchV3Tool``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:32 b063ee4c5b7a43d6a906ddd651668fc4
+msgid ""
+"**Description**: Query cross-species associations between biomedical "
+"entities in the Monarch Initiative knowledge graph. Find gene-phenotype, "
+"disease-phenotype, gene-disease, or gene-pathway associations. Uses "
+"Biolink model categories to specify association type. Integrates data "
+"from OMIM, ClinVar, HPO, MGI, ZFIN, FlyBase, WormBase. Example: "
+"HGNC:11998 (TP53) with category GeneToPhenotypicFeatureAssociation "
+"returns phenotypes like hepatocellular carcinoma and reticular "
+"hyperpigmentation."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:34 ../../tools/monarch_v3_tools.rst:72
+#: ../../tools/monarch_v3_tools.rst:103 ../../tools/monarch_v3_tools.rst:134
+#: ../../tools/monarch_v3_tools.rst:168 ../../tools/monarch_v3_tools.rst:205
+#: 232ef46dd175445291b0c512ff2b5551 5511fa9263304cd2a92b4c131da040ea
+#: 7d8fb446089f4687946ac0b5b6b7cda1 8ffc616715ec4b61a8343c0f13c8a8f3
+#: bb24b94c3e694e2faa5b17f8dde1d930 c18d2294939e4ea6808a053fed98cb89
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:36 f940729392374cdfb562f7ff193d8bbb
+msgid ""
+"``subject`` (string) (required) Subject entity CURIE. Examples: "
+"'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' "
+"(seizure)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:39 81f4a13b25284221aee95843a6930cd7
+msgid ""
+"``category`` (string) (required) Biolink association category. Options: "
+"'biolink:GeneToPhenotypicFeatureAssociation' (gene->phenotypes), "
+"'biolink:DiseaseToPhenotypicFeatureAssociation' (disease->phenotypes), "
+"'biolink:CorrelatedGeneToDiseaseAssociation' (gene->diseases, "
+"correlated), 'biolink:CausalGeneToDiseaseAssociation' (gene->diseases, "
+"causal), 'biolink:GeneToPathwayAssociation' (gene->pathways), "
+"'biolink:VariantToDiseaseAssociation' (variant->diseases), "
+"'biolink:GeneToExpressionSiteAssociation' (gene->expression "
+"sites/tissues)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:42 232eec1fd69b473bb4a4d153dbd2613d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of associations to return "
+"(default: 20, max: 200)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:45 ../../tools/monarch_v3_tools.rst:77
+#: ../../tools/monarch_v3_tools.rst:108 ../../tools/monarch_v3_tools.rst:142
+#: ../../tools/monarch_v3_tools.rst:179 ../../tools/monarch_v3_tools.rst:219
+#: 0877b70a60194c3b8097676239558ba9 3756bbfe9892496287f91c3b58aef007
+#: 70c708eb02e24dbcadbf536d4911283a 85376c515a254619a1d98e94c0712930
+#: 8cba39b852614d7694245f8f27dad163 f3e2f282ee5341e6a073bac610ada692
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:60 8aa8dc55d4a84ec48f170d7d70a18742
+msgid "**MonarchV3_get_entity** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:62 38c1f8b9b26245b38b7d0f6ca544b493
+msgid ""
+"Look up detailed information about any biomedical entity in the Monarch "
+"Initiative knowledge grap..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst aa22284a1e6d46129507f248f6763c84
+msgid "MonarchV3_get_entity tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:68 7b3d7b394d344ff7a90a680863975437
+msgid "**Name**: ``MonarchV3_get_entity``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:70 844fb58259a64a998f679ba147c9b4b2
+msgid ""
+"**Description**: Look up detailed information about any biomedical entity"
+" in the Monarch Initiative knowledge graph by its CURIE identifier. "
+"Supports genes (HGNC), diseases (MONDO, OMIM), phenotypes (HP), variants,"
+" and more. Returns the entity name, category, description, synonyms, "
+"cross-references, and species. Example: HGNC:11998 returns TP53 gene with"
+" cross-refs to ENSEMBL, OMIM; MONDO:0005148 returns type 2 diabetes "
+"mellitus with detailed description."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:74 cf67802287df4519be841ceb8d841632
+msgid ""
+"``entity_id`` (string) (required) Entity CURIE identifier. Examples: "
+"'HGNC:11998' (TP53), 'HGNC:1100' (BRCA1), 'MONDO:0005148' (type 2 "
+"diabetes), 'HP:0001250' (seizure), 'OMIM:191170' (Li-Fraumeni syndrome)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:91 a21097ec7e5841f0ae3b586051b5ed77
+msgid "**MonarchV3_get_histopheno** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:93 9569dac689174ad3a55e65ae1e819b16
+msgid ""
+"Get the phenotype profile of a disease grouped by body system from the "
+"Monarch Initiative. Return..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst 24201cc160244379bb2aa53f9fc081db
+msgid "MonarchV3_get_histopheno tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:99 26db70f4fb9e4eac910e5165b1e3dd71
+msgid "**Name**: ``MonarchV3_get_histopheno``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:101 1895f083e459480da53dedbcb4cb338c
+msgid ""
+"**Description**: Get the phenotype profile of a disease grouped by body "
+"system from the Monarch Initiative. Returns counts of phenotypic features"
+" (HPO terms) organized by anatomical system (e.g., nervous\\_system, "
+"skeletal\\_system, eye, cardiovascular\\_system). Only systems with at "
+"least one phenotype are returned, sorted by count descending. Useful for "
+"understanding which organ systems are most affected by a disease. "
+"Example: MONDO:0007947 (Marfan syndrome) returns high counts for "
+"head\\_neck (58), musculature (58), skeletal\\_system (56), eye (31)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:105 99cb1f901e4341cabf0f68b6dc641344
+msgid ""
+"``entity_id`` (string) (required) Disease CURIE identifier. Examples: "
+"'MONDO:0007947' (Marfan syndrome), 'MONDO:0005148' (type 2 diabetes), "
+"'MONDO:0004975' (Alzheimer disease), 'MONDO:0005015' (diabetes mellitus)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:122 04149f61f95e47f2b8c369ed0f397a4a
+msgid "**MonarchV3_get_mappings** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:124 5f3cd70aeea744ff8c382cf0f8dbdee9
+msgid ""
+"Get cross-ontology mappings for a biomedical entity from the Monarch "
+"Initiative. Returns equivale..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst 1a485ef7426a4f3d9535a83d2c1f5c5d
+msgid "MonarchV3_get_mappings tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:130 faa12fb4f7b444e4ba8befd47b0c295e
+msgid "**Name**: ``MonarchV3_get_mappings``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:132 55b5c5cc4e0f40ef9dc6275c551ae33a
+msgid ""
+"**Description**: Get cross-ontology mappings for a biomedical entity from"
+" the Monarch Initiative. Returns equivalence mappings between ontology "
+"identifiers, such as MONDO to OMIM, ICD10, SNOMED CT, NCIT, MESH, DOID, "
+"and Orphanet. Useful for translating disease identifiers across coding "
+"systems (e.g., for clinical data integration, ICD-10 billing codes, or "
+"linking to OMIM entries). Example: MONDO:0005148 (type 2 diabetes) maps "
+"to ICD10CM:E11, DOID:9352, OMIM:125853, MESH:D003924."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:136 31558e16055e49eb8d1606bd434acf78
+msgid ""
+"``entity_id`` (string) (required) Entity CURIE identifier to find "
+"mappings for. Examples: 'MONDO:0005148' (type 2 diabetes), "
+"'MONDO:0007947' (Marfan syndrome), 'HP:0001250' (seizure)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:139 abc98e620f494b8fac7f863ba4e87156
+msgid ""
+"``limit`` (integer) (optional) Maximum number of mappings to return "
+"(default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:156 cd68cf8d7eb447c687e18fa34a98d6b3
+msgid "**MonarchV3_phenotype_similarity_search** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:158 7a903c06d51b47228fe9165c2ecac1b6
+msgid ""
+"Find diseases that best match a set of phenotypes (HPO terms) using "
+"semantic similarity from the ..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst 5d984e2201ee4951a6076ed202cedce0
+msgid "MonarchV3_phenotype_similarity_search tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:164 8b98d2b8c36642b88bdb8c235cdbae78
+msgid "**Name**: ``MonarchV3_phenotype_similarity_search``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:166 58f6031e1bce4dd4944d8043503473c6
+msgid ""
+"**Description**: Find diseases that best match a set of phenotypes (HPO "
+"terms) using semantic similarity from the Monarch Initiative. Given a "
+"patient phenotype profile as a list of HPO IDs, returns diseases ranked "
+"by phenotype overlap score. Uses information content-based similarity "
+"(AncestorInformationContent metric). Essential for rare disease "
+"differential diagnosis: input observed phenotypes, get ranked candidate "
+"diseases. Example: [HP:0001250 (seizure), HP:0001249 (intellectual "
+"disability), HP:0002353 (EEG abnormality)] returns diseases like "
+"intellectual disability AR 31, Dravet syndrome ranked by semantic "
+"similarity score."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:170 ddabbdf6739e42abbc3e2f8906adf03a
+msgid ""
+"``phenotypes`` (array) (required) List of HPO term CURIEs representing "
+"observed phenotypes. Examples: ['HP:0001250', 'HP:0001249', 'HP:0002353']"
+" for seizure + intellectual disability + EEG abnormality."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:173 011c1db8dd694866abe8aaf91a19d6dd
+msgid ""
+"``group`` (string) (optional) Entity group to search against. Default: "
+"'Human Diseases'. Options: 'Human Diseases', 'Mouse', 'Rat', 'Zebrafish',"
+" 'C. elegans', 'Drosophila'."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:176 0eb5e5b275084b2caf2a10d7c533afef
+msgid ""
+"``limit`` (integer) (optional) Maximum number of matching diseases to "
+"return (default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:193 e51f3b976b88495db6165e7b8b5e7370
+msgid "**MonarchV3_search** (Type: MonarchV3Tool)"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:195 b7f45f9e4a904a2db708595d08b8db54
+msgid ""
+"Search the Monarch Initiative knowledge graph for biomedical entities by "
+"name or keyword. Returns..."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst 8d9f5c8f8b9d48e08a7813c1c0c28604
+msgid "MonarchV3_search tool specification"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:201 3630ac1ba4a94b1082916c59ab909826
+msgid "**Name**: ``MonarchV3_search``"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:203 74fecbb2d2764e8c8acb475da112f15a
+msgid ""
+"**Description**: Search the Monarch Initiative knowledge graph for "
+"biomedical entities by name or keyword. Returns genes, diseases, "
+"phenotypes, and other entities matching the query, with their CURIE "
+"identifiers and categories. Useful for finding entity IDs to use with "
+"MonarchV3\\_get\\_entity and MonarchV3\\_get\\_associations. Example: "
+"searching 'BRCA1' returns HGNC:1100 (gene), 'Alzheimer' returns MONDO "
+"disease entries."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:207 446ccb9a6f4f43048ac41d932a081c25
+msgid ""
+"``query`` (string) (optional) Search query. Can be gene names, disease "
+"names, phenotype terms, etc. Examples: 'BRCA1', 'breast cancer', "
+"'seizure', 'insulin resistance'."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:210 9d73bf422e1a421085af36baa7422b19
+msgid ""
+"``limit`` (integer) (optional) Maximum results to return (default: 10, "
+"max: 50)."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:213 5497c7300305436e9cd3ca4e5c53a588
+msgid ""
+"``category`` (string) (optional) Filter by entity category. Options: "
+"'biolink:Gene', 'biolink:Disease', 'biolink:PhenotypicFeature', "
+"'biolink:NamedThing'. Default: all categories."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:216 48e8b4081a3a444ebd3db301dcfc72a1
+msgid "``q`` (string) (optional) Alias for query parameter."
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:232 3e00770e503e4a878cd7b3f9722d75ee
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:234 547bc0977aa945f086453b35f3204729
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/monarch_v3_tools.rst:235 105c5886706949aba95302b0f975b877
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

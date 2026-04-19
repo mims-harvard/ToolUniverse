@@ -1,0 +1,379 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_api_tools.rst:10 c02f6e386f3a46bbb04ccd49d7cff554
+msgid "Pdbe Api Tools"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:12 1ded34a1c6804e3c8f128023b3046357
+msgid ""
+"**Configuration File**: ``pdbe_api_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:16 ae82d305982b42799f17886309d49065
+msgid ""
+"This page contains all tools defined in the ``pdbe_api_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:19 4889de5475bc4d5e9a6a7f30d920c753
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:22 91fd8873d059474c85016092756f88cc
+msgid "**pdbe_get_entry_assemblies** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:24 686d8452662e459c9fcab42a7363948a
+msgid ""
+"Get biological assembly information for a PDB entry including assembly "
+"IDs, symmetry operations, ..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst 7f8e6be8f4044a0190198972ec8aa053
+msgid "pdbe_get_entry_assemblies tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:28 ../../tools/pdbe_api_tools.rst:59
+#: ../../tools/pdbe_api_tools.rst:90 ../../tools/pdbe_api_tools.rst:121
+#: ../../tools/pdbe_api_tools.rst:152 ../../tools/pdbe_api_tools.rst:183
+#: ../../tools/pdbe_api_tools.rst:214 ../../tools/pdbe_api_tools.rst:245
+#: ../../tools/pdbe_api_tools.rst:276 ../../tools/pdbe_api_tools.rst:307
+#: 0f6e8c2726554606a5e3aa2add1d00f8 235a06bea6fe42f1bea33033a3e46819
+#: 2ff608cf298e4267a312753a12624258 5847494c7edf4009b9a792a76a0c075f
+#: 89fe8cf170d9423c836eac9d2230d032 a14fb96896b84f9aaf73ba9bef674cce
+#: b15356e7cd714438b140489c92d0f4e5 c806d1786ee94822b36be8773850e865
+#: d4cf15bc3e4b411199c3aab4210afa0d f1965f6afd304bb78320abc3f33fe58d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:30 bdca7007e4a844128a57af245bb9a2bc
+msgid "**Name**: ``pdbe_get_entry_assemblies``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:31 ../../tools/pdbe_api_tools.rst:62
+#: ../../tools/pdbe_api_tools.rst:93 ../../tools/pdbe_api_tools.rst:124
+#: ../../tools/pdbe_api_tools.rst:155 ../../tools/pdbe_api_tools.rst:186
+#: ../../tools/pdbe_api_tools.rst:217 ../../tools/pdbe_api_tools.rst:248
+#: ../../tools/pdbe_api_tools.rst:279 ../../tools/pdbe_api_tools.rst:310
+#: 17caee1df42d46e28cd4e3ac25f31976 210f499111384019a7c7d271c279654e
+#: 4eab06933afb404e841f00393b053f88 59fe9c16f58e4e108850d47dd2f29e49
+#: 91f1c5d24a67415e8d5b1c08d23d6b4e 9d80183d12c4405fbf38b3b0b0dfc9f5
+#: d906b17080cd4da6a9fbf12441690669 f4a95d3bfd84475f863d0602100e2ced
+#: f61eca746078487dbadaf1416ae2253a fcca39e1bd8f4f349497d5e13c53d06a
+msgid "**Type**: ``PDBeAPIRESTTool``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:32 93aee9f8c085448186774495c214ca44
+msgid ""
+"**Description**: Get biological assembly information for a PDB entry "
+"including assembly IDs, symmetry operations, and assembly composition. "
+"Note: The assemblies endpoint may return 404 for some entries. This tool "
+"automatically falls back to extracting assembly information from the "
+"summary endpoint. If both methods fail, use pdbe\\_get\\_entry\\_summary "
+"for comprehensive structure information."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:34 ../../tools/pdbe_api_tools.rst:65
+#: ../../tools/pdbe_api_tools.rst:96 ../../tools/pdbe_api_tools.rst:127
+#: ../../tools/pdbe_api_tools.rst:158 ../../tools/pdbe_api_tools.rst:189
+#: ../../tools/pdbe_api_tools.rst:220 ../../tools/pdbe_api_tools.rst:251
+#: ../../tools/pdbe_api_tools.rst:282 ../../tools/pdbe_api_tools.rst:313
+#: 0b140b47b99847ceaeaa65c5541e8446 20e5846cab13472f89a3ab81533d3c63
+#: 2c42ebc40846419aae9625b32c84f9cd 40cbe408cff84522902cf0cca6fe7497
+#: 47e53ee5e5264637b94097d84e202646 5b645848ae0b418f985ad2c2eb5d2493
+#: 7c274a64dcb049abbb9dae6cc0738f0b aef930b0f7c54e0e9c1dec8fba9c0181
+#: be001a5df03f409f863f89e9c5bedd2d d6e74ded47e5471a89886851603da365
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:36 ../../tools/pdbe_api_tools.rst:67
+#: ../../tools/pdbe_api_tools.rst:98 ../../tools/pdbe_api_tools.rst:129
+#: ../../tools/pdbe_api_tools.rst:160 ../../tools/pdbe_api_tools.rst:191
+#: ../../tools/pdbe_api_tools.rst:222 ../../tools/pdbe_api_tools.rst:253
+#: ../../tools/pdbe_api_tools.rst:284 ../../tools/pdbe_api_tools.rst:315
+#: 0faa6d5566014f689902da2063290345 2cb3b49b19894d3b92c3145dbd69def9
+#: 2eb71e6ad68443fc88d1dc66d2e53a7b 45e0ec2bb369406785a5c7f90d5c7bee
+#: 4aa3ea46be6a4158933e571504eb1653 683ce08890334741be1182b4dcfe737c
+#: 68c09bbe6e2d43b286b1de70f67413ef 9d480cfebef844f5abfd397c1be205f2
+#: bd06a7913a774c0e82459d2e1e773515 d112bc5d49ec40cfb3567a4d83c46365
+msgid ""
+"``pdb_id`` (string) (required) PDB entry ID (e.g., '1A2B', '1CRN'). Will "
+"be converted to lowercase automatically."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:39 ../../tools/pdbe_api_tools.rst:70
+#: ../../tools/pdbe_api_tools.rst:101 ../../tools/pdbe_api_tools.rst:132
+#: ../../tools/pdbe_api_tools.rst:163 ../../tools/pdbe_api_tools.rst:194
+#: ../../tools/pdbe_api_tools.rst:225 ../../tools/pdbe_api_tools.rst:256
+#: ../../tools/pdbe_api_tools.rst:287 ../../tools/pdbe_api_tools.rst:318
+#: 2cbfc53297a5444c8e8f99da4bf933cd 2cc992c801d0497681e0bfcde308ba7b
+#: 3ca36ac091ef4a0b9989efb1bd2854e4 4e8e673cbcfb4570b71d3e10fda7e509
+#: 5337d0d488374a188c4dac3faafbabdb 55ba34b472464955a27379dd62d41b74
+#: 6233f1442bc54e7d9900edb3f8eaa74e df5852add38047e0b3a9bc3677b20ef8
+#: f01a5c6100b24da3bf35b5dfd11c46fa f9838bfa0d43442a85d503067867994b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:53 f4d8487919df4568930b338d8771c514
+msgid "**pdbe_get_entry_experiment** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:55 e5fce3d7911f4e2485070b5acc32ac19
+msgid ""
+"Get experimental details for a PDB entry including experimental method, "
+"resolution, R-factors, co..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst 80962da14854486581f7939595ab42a2
+msgid "pdbe_get_entry_experiment tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:61 a6b187fdc20744fda11704bf3d00cd8a
+msgid "**Name**: ``pdbe_get_entry_experiment``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:63 580ccc17006b4e0f80638e4e7346a75d
+msgid ""
+"**Description**: Get experimental details for a PDB entry including "
+"experimental method, resolution, R-factors, completeness, refinement "
+"software, space group, and unit cell parameters. This provides detailed "
+"experimental metadata for structure determination."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:84 ae5881c01a4648ddae2eeb1649041a93
+msgid "**pdbe_get_entry_molecules** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:86 20487944e191436c80450c7d86588a84
+msgid ""
+"Get molecule information for a PDB entry including molecule type, entity "
+"ID, length, chains, muta..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst d06c9dff7a8a4935866e4d0c76e96f11
+msgid "pdbe_get_entry_molecules tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:92 667d5f11a63042e5a59819eca4ab3665
+msgid "**Name**: ``pdbe_get_entry_molecules``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:94 4e4d9c06ae294ebbbba47dfa47e0939c
+msgid ""
+"**Description**: Get molecule information for a PDB entry including "
+"molecule type, entity ID, length, chains, mutations, molecular weight, "
+"and gene names. Use this to understand the composition and properties of "
+"molecules in the structure."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:115 74885d289159483e8bbf87c6ce3b83cd
+msgid "**pdbe_get_entry_observed_residues_ratio** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:117 f123f245ecd84ab3a3f4152451b32745
+msgid ""
+"Get observed residues ratio for chains in a PDB entry, indicating what "
+"fraction of residues are o..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst 47964d74642541f9a336024cd100e993
+msgid "pdbe_get_entry_observed_residues_ratio tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:123 34aa80925c7a42758e02a52ca63c7ccd
+msgid "**Name**: ``pdbe_get_entry_observed_residues_ratio``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:125 0705b51fcd784fad9294acc72932a39c
+msgid ""
+"**Description**: Get observed residues ratio for chains in a PDB entry, "
+"indicating what fraction of residues are observed in the structure. This "
+"helps assess structure completeness and quality. Returns information per "
+"chain including struct\\_asym\\_id, chain\\_id, number of residues, "
+"observed ratio, and partial ratio."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:146 3b578d6dcf304324b8280dd2654d8156
+msgid "**pdbe_get_entry_publications** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:148 0b502a3cb647472db2e2d53020598e03
+msgid ""
+"Get publication information associated with a PDB entry including "
+"authors, journal, DOI, and cita..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst b0b176d22ee141e2a0aac296ac28e524
+msgid "pdbe_get_entry_publications tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:154 37f598f33d924acfa5e3d593884f6e42
+msgid "**Name**: ``pdbe_get_entry_publications``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:156 158604f8db584876aa37985819704726
+msgid ""
+"**Description**: Get publication information associated with a PDB entry "
+"including authors, journal, DOI, and citation details."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:177 8acd3d88ca784192857ab3ef8a5b5f40
+msgid "**pdbe_get_entry_quality** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:179 98f2511232f54852b58b6e227020c6cd
+msgid ""
+"Get quality metrics and validation information for a PDB entry including "
+"resolution, R-free, Rama..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst ce852bca5d01497bbfd161ddb6e22b15
+msgid "pdbe_get_entry_quality tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:185 d8519e9a674f486ab8f10ca9bd13df72
+msgid "**Name**: ``pdbe_get_entry_quality``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:187 d357b75cc3bd454aa7e11717de0b6f6b
+msgid ""
+"**Description**: Get quality metrics and validation information for a PDB"
+" entry including resolution, R-free, Ramachandran statistics, and "
+"validation scores. Note: Quality endpoint may not be available for all "
+"PDB entries. If this returns 404, try pdbe\\_get\\_entry\\_summary which "
+"includes basic quality information."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:208 396b840bdbca4040a54553305172e4ed
+msgid "**pdbe_get_entry_related_publications** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:210 2127a1030c184034b578cfcbbd0201e9
+msgid ""
+"Get publications related to a PDB entry that appear without citation, "
+"including PubMed IDs, title..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst fca90f420fa8497783091424f13a095c
+msgid "pdbe_get_entry_related_publications tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:216 470d3309f3994b039a3be261c93b468a
+msgid "**Name**: ``pdbe_get_entry_related_publications``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:218 94951ba677dd4aecb417e5bc1f234aeb
+msgid ""
+"**Description**: Get publications related to a PDB entry that appear "
+"without citation, including PubMed IDs, titles, journals, authors, and "
+"citation counts. This complements pdbe\\_get\\_entry\\_publications by "
+"showing additional related publications."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:239 869d08a808874f8ba31d87c54db20f1c
+msgid "**pdbe_get_entry_secondary_structure** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:241 d572388e2b0d4ecebd9398333c255b3c
+msgid ""
+"Get secondary structure information for a PDB entry including helix, "
+"sheet, and turn assignments."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst 92bc205df5654c69ac12bad34d802155
+msgid "pdbe_get_entry_secondary_structure tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:247 99b44ec0d85e4bdb8dd4b839cf9da9f0
+msgid "**Name**: ``pdbe_get_entry_secondary_structure``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:249 693f1b62357a4fe981c86f14c03e6483
+msgid ""
+"**Description**: Get secondary structure information for a PDB entry "
+"including helix, sheet, and turn assignments."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:270 601f0415ffe842cea64c9553d40f5894
+msgid "**pdbe_get_entry_status** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:272 60799ddc49534495bfad88daade45970
+msgid ""
+"Get status information for a PDB entry including release date, status "
+"code, authors, experimental..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst ec29cf77c5194868939d737c961d61f1
+msgid "pdbe_get_entry_status tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:278 24920816351d49ea8b8da7ada0ef3e03
+msgid "**Name**: ``pdbe_get_entry_status``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:280 68700a061d494436ba79d2552974acee
+msgid ""
+"**Description**: Get status information for a PDB entry including release"
+" date, status code, authors, experimental method, and whether the entry "
+"has been superseded or obsoleted. Use this to check the current status "
+"and availability of a PDB entry."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:301 5f38797f1b244f919ae8616cbfee1dae
+msgid "**pdbe_get_entry_summary** (Type: PDBeAPIRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:303 ab81d034584f4276ad10f15c0f90673b
+msgid ""
+"Get summary information for a PDB entry including title, authors, release"
+" date, and basic structu..."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst a78e5f5c541b4356b47792d45b3b2bec
+msgid "pdbe_get_entry_summary tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:309 6de856658455496ea95fef35260e0d5e
+msgid "**Name**: ``pdbe_get_entry_summary``"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:311 fb2bf1a2425c49fe900fa0512f56c186
+msgid ""
+"**Description**: Get summary information for a PDB entry including title,"
+" authors, release date, and basic structure metadata."
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:332 3b50e0467f6248edaef644794c7546e3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:334 6693f79af17243ea8dcf62066efbf827
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_api_tools.rst:335 c2d2134a2b2b470695f644edab007eaf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

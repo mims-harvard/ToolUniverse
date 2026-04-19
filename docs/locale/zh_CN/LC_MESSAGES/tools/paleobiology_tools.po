@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/paleobiology_tools.rst:10 a644e28fc60c44a698ea17a0b27824cb
+msgid "Paleobiology Tools"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:12 a3dbcd6a430c427abdbfe9d1a76641de
+msgid ""
+"**Configuration File**: ``paleobiology_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:16 e99d41f11f6f4ddd9fda6f1b9f81a2de
+msgid ""
+"This page contains all tools defined in the ``paleobiology_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:19 b2ca672a23da45c9951d7603e20641bb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:22 d7f0884bfb924a9dabd7e0714c22264c
+msgid "**Paleobiology_get_fossils** (Type: PaleobiologyRESTTool)"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:24 ed06e9db3d614dd09af871c237ec1a22
+msgid "Get fossil records from Paleobiology Database"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst bf3709b50f2d4cd3873a69dfd1ae10e7
+msgid "Paleobiology_get_fossils tool specification"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:28 f9281eea08974c3f9c52f3ecd1c3d448
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:30 0e6ab7df7f8941c7b0f6866dc0488c1f
+msgid "**Name**: ``Paleobiology_get_fossils``"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:31 b2df38ae88224e6796fc6496f50f2d6d
+msgid "**Type**: ``PaleobiologyRESTTool``"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:32 daf4c74805fc45c9a945a048ea86653e
+msgid "**Description**: Get fossil records from Paleobiology Database"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:34 d244b57905b54c78b336becb32d52b8b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:36 fd019295b549480ca253139ec4bb8ac0
+msgid "``taxon`` (string) (required) Taxon name"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:39 6568dc57f9fb4a0986796154cac09cb4
+msgid "``limit`` (integer) (optional) Number of results"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:42 3237c0fbda164a32951f414b65581ef2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:56 f4d532ce3ece473795dc062fd0455093
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:58 5d2b822b11a1485382760c85a73cdfd8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/paleobiology_tools.rst:59 430e91c9610b4d1fb74ce76adcbcee71
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

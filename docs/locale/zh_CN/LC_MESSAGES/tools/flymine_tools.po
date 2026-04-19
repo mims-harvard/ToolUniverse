@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/flymine_tools.rst:10 bd25eecbbe6944e382572131f1c7cbaf
+msgid "Flymine Tools"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:12 3bf1c9ffe4704553aec725b80dd79661
+msgid ""
+"**Configuration File**: ``flymine_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:16 91dd2dbab85446faa93340a840a6c170
+msgid ""
+"This page contains all tools defined in the ``flymine_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:19 89c525f84bf94cf6bc162bead9a9bb13
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:22 a156e064d0454690b10391b97d9594f4
+msgid "**FlyMine_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:24 7eb0d0438e594e0e87a686a4a7ac4529
+msgid ""
+"Search FlyMine, the InterMine data warehouse for Drosophila melanogaster "
+"(fruit fly) genomics dat..."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst bfbccffa63f5468d88039db2218cec0e
+msgid "FlyMine_search tool specification"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:28 ../../tools/flymine_tools.rst:68
+#: 1167a69f5fdf488ca4e1d91d122c923b 6104f39ab57d4103b09933f8f7608748
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:30 0332f36fb279400392f7596d70a7cabb
+msgid "**Name**: ``FlyMine_search``"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:31 ../../tools/flymine_tools.rst:71
+#: aece18e976724bc1965a6cb8ece02a18 b983a8f6120141a88437bb6b11658ce5
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:32 780460ab0a0d482a9def6f61c5b74962
+msgid ""
+"**Description**: Search FlyMine, the InterMine data warehouse for "
+"Drosophila melanogaster (fruit fly) genomics data from FlyBase. Searches "
+"across genes, proteins, publications, protein domains, gene ontology "
+"terms, and more. FlyMine integrates data from FlyBase, UniProt, Reactome,"
+" KEGG, TreeFam, and other model organism databases. Returns matching "
+"records with category facets and relevance scores. Use facet\\_Category "
+"parameter to filter by entity type (e.g., 'Gene', 'Protein', "
+"'Publication', 'ProteinDomain', 'CDNAClone', 'GOTerm', "
+"'InteractionExperiment')."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:34 ../../tools/flymine_tools.rst:74
+#: 1eeaf960c02a4e2095b3260069c478e7 6f4f311e5f9a47698db8f86eb9ed3d71
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:36 4a76db9b509a4f899304107e9b0f4aa8
+msgid ""
+"``q`` (string) (required) Search query: gene symbol (e.g., 'dpp', "
+"'Notch', 'hedgehog'), protein name, domain name, or free text."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:39 378d606db6ce4817931fff208b0f553d
+msgid ""
+"``size`` (integer) (optional) Number of results to return (default: 10, "
+"max: 100)."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:42 e231d9e4462f471cbe231c0c81f0638b
+msgid "``format`` (string) (optional) Response format. Must be 'json'."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:45 d92a6e15f8924cdb8c5c40d02bc1d2c2
+msgid ""
+"``facet_Category`` (string) (optional) Filter by entity category. "
+"Options: 'Gene', 'Protein', 'Publication', 'ProteinDomain', 'CDNAClone', "
+"'GOTerm', 'InteractionExperiment', 'RNAiScreen', 'UniProtFeature'."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:48 ../../tools/flymine_tools.rst:82
+#: 539fd7bbccd04644a2d5910bb13495d1 bfdc88c84a454653a7f9f9c329e3da02
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:62 ad17162e4aa941dab6f68be4ca53c2b8
+msgid "**FlyMine_search_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:64 fb552ec51c7045e6ade2ac4a9fda07d8
+msgid ""
+"Search FlyMine specifically for Drosophila genes. This is a convenience "
+"wrapper that filters resu..."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst 8d165b792fd543cc88bb778559a875b9
+msgid "FlyMine_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:70 6f15d3d458374e5c808f83075e05ad65
+msgid "**Name**: ``FlyMine_search_genes``"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:72 6abd865e9ef54347b4cd7c8c1e538e5b
+msgid ""
+"**Description**: Search FlyMine specifically for Drosophila genes. This "
+"is a convenience wrapper that filters results to the Gene category only. "
+"Returns gene symbols, FlyBase gene IDs (FBgn numbers), secondary "
+"identifiers (CG numbers), and organism information. FlyMine covers 12+ "
+"Drosophila species plus other model organisms. For broader searches "
+"across all entity types, use FlyMine\\_search instead."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:76 6ec78d4edd4248c39b24a841d4439d10
+msgid ""
+"``q`` (string) (required) Gene search query: gene symbol (e.g., 'dpp', "
+"'Notch', 'wg', 'hh'), FlyBase ID (e.g., 'FBgn0000490'), or keyword."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:79 d24f172f4de54366aa23a94e4393b9f9
+msgid "``size`` (integer) (optional) Number of results to return (default: 10)."
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:96 99251c37d4f54285951dfe081a93d74d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:98 aa3b77b6bbfd447fad2fa9862a9d037f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/flymine_tools.rst:99 f2e205da78244dc58ecadf10add8078c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

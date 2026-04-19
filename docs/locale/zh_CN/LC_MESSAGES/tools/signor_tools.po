@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/signor_tools.rst:10 c92bbc482434426c949a28bb729a8388
+msgid "Signor Tools"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:12 1e084a3955874f4ca3e9b4e71cae2f5a
+msgid ""
+"**Configuration File**: ``signor_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:16 f3d4528edc2c488b8b06f79986f48998
+msgid ""
+"This page contains all tools defined in the ``signor_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:19 a5692562204f4b00986201f5639d79eb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:22 6aa529af61d74c17b599d799ade16f28
+msgid "**SIGNOR_get_interactions** (Type: SIGNORTool)"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:24 d952d2bacf7048519f2c09be001815ae
+msgid ""
+"Get causal signaling interactions for a protein or entity from the SIGNOR"
+" database. Returns upstr..."
+msgstr ""
+
+#: ../../tools/signor_tools.rst 88cec4077f2e4067aeaced3507015a8b
+msgid "SIGNOR_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:28 ../../tools/signor_tools.rst:67
+#: ../../tools/signor_tools.rst:101 65da3286bcca407eaee50bcda9c8c06e
+#: 8f669a0cf35644eab46a78ea7002ebc8 e6e8a09cc48c433dab5536a244ff2552
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:30 70ebf6f2fc3640ea99a49b244fd5737c
+msgid "**Name**: ``SIGNOR_get_interactions``"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:31 ../../tools/signor_tools.rst:70
+#: ../../tools/signor_tools.rst:104 44be6981290d4733a443b927f9a8197a
+#: 4ad38e80b5b8406aaad601c13c2112c9 aeb3f10a92ed48c5a58256d555039a23
+msgid "**Type**: ``SIGNORTool``"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:32 294d60fbca0840a6a4ddf3849cebe3a8
+msgid ""
+"**Description**: Get causal signaling interactions for a protein or "
+"entity from the SIGNOR database. Returns upstream regulators and "
+"downstream targets with the type of effect (up/down-regulation), "
+"mechanism (phosphorylation, ubiquitination, transcriptional regulation, "
+"etc.), affected residue, and supporting literature. Use UniProt IDs "
+"(e.g., P04637 for TP53) or SIGNOR entity IDs."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:34 ../../tools/signor_tools.rst:73
+#: ../../tools/signor_tools.rst:107 17ad7ef34e804bbdb66507e004cd022d
+#: 4414df79cd5f43d288d0cefbf473494e adcb2c7920bf4ec3860de7c9ebc521a1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:36 28958c5524eb4a1fac111daa370e339f
+msgid ""
+"``entity_id`` (string) (optional) Entity identifier - typically a UniProt"
+" accession (e.g., 'P04637' for TP53, 'Q00987' for MDM2, 'P38398' for "
+"BRCA1). Can also be a SIGNOR complex/pathway ID."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:39 7ce9e63f20cc464480db0e3972e66cba
+msgid ""
+"``organism`` (integer) (optional) NCBI taxonomy ID. 9606 for human, 10090"
+" for mouse."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:42 ../../tools/signor_tools.rst:78
+#: b34bd596bc8b40c8a186afe269eabaaa b5a6f5928c6942a99ef3acb569dd20f5
+msgid "``limit`` (integer) (optional) Maximum number of interactions to return."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:45 b4f9d5eb4665478a80a815b0b7fd5b53
+msgid ""
+"``protein`` (string) (optional) Gene symbol or protein name (alias for "
+"entity\\_id; prefer UniProt accession like P04637 for TP53)"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:48 ../../tools/signor_tools.rst:81
+#: ../../tools/signor_tools.rst:112 5489923120884d8094e00a33f0ef2a1b
+#: 683bca1174d34345ba616be3b88bc2fd 821b4e588f5d40e399eedb900f225d33
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:61 6e299773745a437f86d351a762265225
+msgid "**SIGNOR_get_pathway** (Type: SIGNORTool)"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:63 10142959b46c4c76a6ab9a9b92874e54
+msgid ""
+"Get all signaling interactions in a specific SIGNOR curated pathway. "
+"Returns the network of causa..."
+msgstr ""
+
+#: ../../tools/signor_tools.rst 1f1a3ad572be4dbc983bf7d01e4c9332
+msgid "SIGNOR_get_pathway tool specification"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:69 59795998e10141568912a37aef896161
+msgid "**Name**: ``SIGNOR_get_pathway``"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:71 c3596a36ddd54a45bb437ca90fd3dd4d
+msgid ""
+"**Description**: Get all signaling interactions in a specific SIGNOR "
+"curated pathway. Returns the network of causal relationships with "
+"effects, mechanisms, and literature references. Use pathway IDs from "
+"SIGNOR\\_list\\_pathways (e.g., 'SIGNOR-AD' for Alzheimer, 'SIGNOR-C' for"
+" cancer-related)."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:75 a3c81e7f5a91480dac34c02462caa7ce
+msgid ""
+"``pathway_id`` (string) (required) SIGNOR pathway identifier (e.g., "
+"'SIGNOR-AD' for Alzheimer, 'SIGNOR-AML' for Acute Myeloid Leukemia, "
+"'SIGNOR-AMPK' for AMPK signaling). Get IDs from SIGNOR\\_list\\_pathways."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:95 0feb8f52674a4f4fba4e8350067e8655
+msgid "**SIGNOR_list_pathways** (Type: SIGNORTool)"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:97 d262096c448f4da5bf82ce26da58a29a
+msgid ""
+"List curated signaling pathways in the SIGNOR database. Optionally filter"
+" by keyword to find path..."
+msgstr ""
+
+#: ../../tools/signor_tools.rst b3500899b4e74abf858543a85b4a114e
+msgid "SIGNOR_list_pathways tool specification"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:103 53e5bcb4b09244bc84d567f304417455
+msgid "**Name**: ``SIGNOR_list_pathways``"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:105 224ad6586d6f4f69936ba2230303bc16
+msgid ""
+"**Description**: List curated signaling pathways in the SIGNOR database. "
+"Optionally filter by keyword to find pathways related to diseases "
+"(Alzheimer, AML), biological processes (apoptosis, autophagy), or "
+"signaling (MAPK, PI3K). Returns pathway IDs that can be used with "
+"SIGNOR\\_get\\_pathway."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:109 2361082a58484dfcbe6c27e5f7c64c6a
+msgid ""
+"``query`` (string) (optional) Optional keyword to filter pathways by name"
+" or description (e.g., 'cancer', 'apoptosis', 'AML'). Leave empty to list"
+" all pathways."
+msgstr ""
+
+#: ../../tools/signor_tools.rst:125 f5f209855c7b4477a4e8ccdcf82ec6d7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:127 f3c03e20ad5549d790a4d945c7ae8f73
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/signor_tools.rst:128 80bb7880ce984223bb0978a864518d02
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

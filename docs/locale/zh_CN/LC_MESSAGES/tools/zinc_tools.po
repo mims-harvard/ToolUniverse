@@ -1,0 +1,333 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/zinc_tools.rst:10 de740dd0762b498f8e210dbcaec9c464
+msgid "Zinc Tools"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:12 1d615168dccb46188def1d7d2b990401
+msgid ""
+"**Configuration File**: ``zinc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:16 8b67fb05f27542b9a1d70fb78de02001
+msgid ""
+"This page contains all tools defined in the ``zinc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:19 1f47559e5f1b4f1b9c766c4650fec894
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:22 9c2154fbfff74f76bdd8db2d10438e34
+msgid "**ZINC_get_compound** (Type: ZincTool)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:24 a56b97b419fb4d95acd4c70d24801915
+msgid ""
+"Get detailed information for a ZINC compound by its ID, including SMILES "
+"structure, molecular pro..."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst 54f6f9153018484183cc217041d953ef
+msgid "ZINC_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:28 ../../tools/zinc_tools.rst:63
+#: ../../tools/zinc_tools.rst:101 ../../tools/zinc_tools.rst:159
+#: ../../tools/zinc_tools.rst:197 73029e217ee24363bdc8ead076ce25b0
+#: aa5e9e2121d6477ca9cb34249a846e29 ac4c64ab4fb747c7a46d4a7821a31bc2
+#: bba16758bbe04a7f93119b87f6a8fc42 fd169361ae4b41fdada4955146b3087b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:30 49d5efc6ac5a47238c66f44a902bd8e3
+msgid "**Name**: ``ZINC_get_compound``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:31 ../../tools/zinc_tools.rst:66
+#: ../../tools/zinc_tools.rst:104 ../../tools/zinc_tools.rst:162
+#: ../../tools/zinc_tools.rst:200 1f70f9b4113d423b91500cd6f9595202
+#: 5aa349ac329a4392ba2ea888af72cb4d 6043a0e51089441ebc6f388de6fd575e
+#: ceee26a018664aedb9de487a13db7f16 db52e824f51746eda02f00ca5613adf0
+msgid "**Type**: ``ZincTool``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:32 cf40dc2b63144e9db62cefbe9c4a057a
+msgid ""
+"**Description**: Get detailed information for a ZINC compound by its ID, "
+"including SMILES structure, molecular properties (MW, LogP, HBD, HBA, "
+"rotatable bonds), and vendor/catalog availability. Returns the list of "
+"vendors with purchasability tiers and the best available tier. Use after "
+"ZINC\\_search\\_compounds to get full details."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:34 ../../tools/zinc_tools.rst:69
+#: ../../tools/zinc_tools.rst:107 ../../tools/zinc_tools.rst:165
+#: ../../tools/zinc_tools.rst:203 1e31bc62fd2d44cea0d28e4581bf7c02
+#: 25b3c95827844d3cb2b22019b4aaf7c2 36d4753c225d4f14a8a5db08052e98ce
+#: 8e3c090c2f4d4a01bf56d55b1674776f 98d1b6381a2e487484506a43bde48564
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:36 ../../tools/zinc_tools.rst:71
+#: ../../tools/zinc_tools.rst:109 ../../tools/zinc_tools.rst:167
+#: ../../tools/zinc_tools.rst:205 256942d5ca6441e7abd6c214aa637a5f
+#: 3e2a2a0f1aeb48b0b7f1ef83371bad69 5afc916457e04fa3b3d7c23b61e44210
+#: a5aec30ec04e48c18f9c05bae4a8860a b52c33d8e5624ac1835d1edb1b4ed8db
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:39 1f3bdaaa2ae4481bb82b568e31c7564e
+msgid ""
+"``zinc_id`` (string) (required) ZINC compound identifier, e.g., "
+"ZINC000000000053 (aspirin), ZINC000000001084 (caffeine), ZINC000000113398"
+" (ibuprofen)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:42 ../../tools/zinc_tools.rst:80
+#: ../../tools/zinc_tools.rst:139 ../../tools/zinc_tools.rst:176
+#: ../../tools/zinc_tools.rst:217 09cc4affe2664c4a870b15656c069733
+#: 2f42fd1f81f444818677d1aebbb7384a 90f17d628afa46349f13a26d0d9c8e28
+#: af7400fecb624b25ac7321f548ac3635 ea5c466d5f5c4280b2a700921243bbd2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:57 7b6a9c85085c4fd2b4607ba07233bf5c
+msgid "**ZINC_get_purchasable** (Type: ZincTool)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:59 cef89ab80a1c4bdc8e0599a0f215fa0f
+msgid ""
+"Browse ZINC compounds by purchasability tier. Returns compounds available"
+" at a specific availabil..."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst 1bfa4d54b7e444d187e54748beaf28ac
+msgid "ZINC_get_purchasable tool specification"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:65 c7232a03facf42358206d9e3a79d9302
+msgid "**Name**: ``ZINC_get_purchasable``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:67 5f8e345c9dd548f08d5114f711efa795
+msgid ""
+"**Description**: Browse ZINC compounds by purchasability tier. Returns "
+"compounds available at a specific availability level with SMILES and "
+"molecular properties. Tiers: in-stock (ready to ship), for-sale (from "
+"vendor), on-demand (custom synthesis), agent (via broker), world (all "
+"purchasable), fda (FDA-approved). Use to find readily available compounds"
+" for screening."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:74 5c96430c0c1b46d18c1984ac905f31b9
+msgid ""
+"``tier`` (string) (required) Purchasability tier. in-stock = ready to "
+"ship, for-sale = from vendor, on-demand = custom synthesis, agent = via "
+"broker, world = all purchasable, fda = FDA-approved drugs"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:77 ../../tools/zinc_tools.rst:173
+#: 13c96bcea3644dd7910f055d069d1d85 72cc295313dd43adaf5c13046c2c9f3b
+msgid ""
+"``count`` (integer) (optional) Maximum number of results (default: 10, "
+"max: 100)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:95 128dc96fadf34d7f8ad205628dc0b2ab
+msgid "**ZINC_search_by_properties** (Type: ZincTool)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:97 46dbc7a5532e4f54abeef6bde5ff91c9
+msgid ""
+"Filter ZINC compounds by molecular properties (Lipinski Rule of Five, "
+"Veber rules). Specify range..."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst 7a8b4826324d4ee1bc0ba5719e528a19
+msgid "ZINC_search_by_properties tool specification"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:103 6c8dda9d5cd046b586691ebca64e4f77
+msgid "**Name**: ``ZINC_search_by_properties``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:105 a542edd9921e427195c365576c7dbd62
+msgid ""
+"**Description**: Filter ZINC compounds by molecular properties (Lipinski "
+"Rule of Five, Veber rules). Specify ranges for molecular weight, LogP, "
+"hydrogen bond donors/acceptors, and rotatable bonds. Optionally restrict "
+"to a purchasability tier. Useful for finding drug-like compounds: "
+"Lipinski (MW<500, LogP<5, HBD<5, HBA<10), fragment-like (MW<250, LogP<3),"
+" or lead-like (MW 250-350, LogP 1-3)."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:112 6f389262d666429a8a38a449c4ca0e96
+msgid ""
+"``mwt_min`` (number, null) (optional) Minimum molecular weight in Da "
+"(e.g., 150 for fragments, 250 for leads)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:115 7085407348fa4e1ab08b06ac635b38e6
+msgid ""
+"``mwt_max`` (number, null) (optional) Maximum molecular weight in Da "
+"(e.g., 500 for Lipinski, 250 for fragments)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:118 167f5377a52b40d4a0c151fd2715a730
+msgid ""
+"``logp_min`` (number, null) (optional) Minimum LogP (e.g., -1 for "
+"hydrophilic compounds)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:121 cdffc967d2c04c0d9ba01453f1a1b1d1
+msgid ""
+"``logp_max`` (number, null) (optional) Maximum LogP (e.g., 5 for Lipinski"
+" rule, 3 for lead-like)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:124 4ae9801954f34985b071929303096388
+msgid ""
+"``hbd_max`` (integer, null) (optional) Maximum hydrogen bond donors "
+"(e.g., 5 for Lipinski)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:127 5faf4a0c52d0421796e8157ff1c49083
+msgid ""
+"``hba_max`` (integer, null) (optional) Maximum hydrogen bond acceptors "
+"(e.g., 10 for Lipinski)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:130 2932902391ba49aca77e8fefd14311ab
+msgid ""
+"``rb_max`` (integer, null) (optional) Maximum rotatable bonds (e.g., 10 "
+"for Veber rule)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:133 341dff7cba644905bb923843873f4ebd
+msgid ""
+"``purchasability`` (string, null) (optional) Restrict to a purchasability"
+" tier"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:136 c5700c9fb1d54f1fb8d8338d4e617d1c
+msgid ""
+"``count`` (integer) (optional) Maximum number of results (default: 20, "
+"max: 100)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:153 41052997f32b4a048590dff2793c1165
+msgid "**ZINC_search_by_smiles** (Type: ZincTool)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:155 0a67a6fd298645c08072968f838c8d08
+msgid ""
+"Search the ZINC database by SMILES structure string. Finds exact or "
+"similar compounds matching th..."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst ede127a1e6404968a833836cd328f554
+msgid "ZINC_search_by_smiles tool specification"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:161 35d705bdab124c7fa3713d9eb53b9507
+msgid "**Name**: ``ZINC_search_by_smiles``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:163 dd868574db2846e0b78493c68dd30f89
+msgid ""
+"**Description**: Search the ZINC database by SMILES structure string. "
+"Finds exact or similar compounds matching the given SMILES. Useful for "
+"finding purchasable analogs of a lead compound or checking if a specific "
+"structure is commercially available. Returns ZINC IDs, SMILES, and "
+"molecular properties."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:170 d63224c30b274b20857193901892de8e
+msgid ""
+"``smiles`` (string) (required) SMILES string to search for. Examples: "
+"CC(=O)Oc1ccccc1C(=O)O (aspirin), Cn1c(=O)c2c(ncn2C)n(C)c1=O (caffeine), "
+"c1ccccc1 (benzene)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:191 e268ed80f6c248eca5cdbfcb563aff54
+msgid "**ZINC_search_compounds** (Type: ZincTool)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:193 562c7c7357cf4fe68510864440f2dc91
+msgid ""
+"Search the ZINC database for commercially available compounds by name or "
+"keyword. Returns ZINC ID..."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst 7dafd3ea02044a18b2fabb6e7aeaa370
+msgid "ZINC_search_compounds tool specification"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:199 c6edf34a579f4fbe951315271552b8c3
+msgid "**Name**: ``ZINC_search_compounds``"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:201 596e79565a354697bc8a1353d739269b
+msgid ""
+"**Description**: Search the ZINC database for commercially available "
+"compounds by name or keyword. Returns ZINC IDs, SMILES structures, and "
+"molecular properties (MW, LogP, HBD, HBA, rotatable bonds). ZINC contains"
+" 750M+ purchasable compounds for virtual screening and drug discovery. "
+"Optionally filter by purchasability tier (in-stock, for-sale, on-demand, "
+"agent). Use this as the first step in a virtual screening workflow."
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:208 71d105b4654e46778b53ecc74f547003
+msgid ""
+"``query`` (string) (required) Search query: drug name (aspirin, "
+"ibuprofen, metformin), keyword, or partial name"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:211 ee3ab3a956364f57b3b736df6376d1ae
+msgid ""
+"``count`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 100)"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:214 7798f010656b4db59eb981b1c0d6d0db
+msgid ""
+"``purchasability`` (string, null) (optional) Filter by purchasability "
+"tier. in-stock = ready to ship, for-sale = from vendor, on-demand = "
+"custom synthesis, agent = via broker"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:232 6035755f0e9541c095159f4dfad079e3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:234 9e36d68f7d404cc5a85f31481d9818ec
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/zinc_tools.rst:235 6b87b638ebb94287a09a670ce7b18186
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -76,6 +76,7 @@ Create server directory: ``src/tooluniverse/remote/my_service/``
    └── docker-compose.yml     # Optional: Docker setup
 
 **Example server.py:**
+
 .. code-block:: python
 
    from fastapi import FastAPI
@@ -113,6 +114,7 @@ Create server directory: ``src/tooluniverse/remote/my_service/``
        uvicorn.run(app, host="0.0.0.0", port=8000)
 
 **requirements.txt:**
+
 .. code-block:: text
 
    fastapi>=0.100.0
@@ -188,23 +190,23 @@ Step 5: Deploy Server
    
    ## Quick Start
    
-   ```bash
-   # Install dependencies
-   pip install -r requirements.txt
-   
-   # Run server
-   python server.py
-   ```
+   .. code-block:: bash
+
+      # Install dependencies
+      pip install -r requirements.txt
+
+      # Run server
+      python server.py
    
    ## Docker Deployment
    
-   ```bash
-   # Build image
-   docker build -t my-service .
-   
-   # Run container
-   docker run -p 8000:8000 my-service
-   ```
+   .. code-block:: bash
+
+      # Build image
+      docker build -t my-service .
+
+      # Run container
+      docker run -p 8000:8000 my-service
    
    ## Environment Variables
    
@@ -445,14 +447,30 @@ Step 10: Submit Pull Request
 Key Differences from Local Tools
 ---------------------------------
 
-| Aspect | Local Tools | Remote Tools |
-|--------|-------------|--------------|
-| **__init__.py** | Must modify 4 locations | No modification needed |
-| **File Location** | ``src/tooluniverse/xxx_tool.py`` | ``src/tooluniverse/remote/xxx/`` |
-| **Config Location** | ``data/xxx_tools.json`` | ``data/remote_tools/xxx_tools.json`` |
-| **Server Deployment** | Not needed | Must provide public access |
-| **Testing** | Unit tests | Integration tests (mock server) |
-| **Dependencies** | Python only | Server + dependencies |
+.. list-table::
+   :header-rows: 1
+
+   * - Aspect
+     - Local Tools
+     - Remote Tools
+   * - ``__init__.py``
+     - Must modify 4 locations
+     - No modification needed
+   * - File Location
+     - ``src/tooluniverse/xxx_tool.py``
+     - ``src/tooluniverse/remote/xxx/``
+   * - Config Location
+     - ``data/xxx_tools.json``
+     - ``data/remote_tools/xxx_tools.json``
+   * - Server Deployment
+     - Not needed
+     - Must provide public access
+   * - Testing
+     - Unit tests
+     - Integration tests (mock server)
+   * - Dependencies
+     - Python only
+     - Server + dependencies
 
 Common Mistakes
 ----------------

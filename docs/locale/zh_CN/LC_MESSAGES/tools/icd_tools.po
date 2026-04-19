@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/icd_tools.rst:10 4e3fe71b5a3a4cfdaf25f0ca716eba06
+msgid "Icd Tools"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:12 5ab074036a63471184ea747f26a78c6f
+msgid ""
+"**Configuration File**: ``icd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:16 dfcc0322c312452eb1edd144c1928bf2
+msgid ""
+"This page contains all tools defined in the ``icd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:19 6503a2b8c04240a2af26e45e976822e5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:22 1328bd691b2149f0888179a6b3c79103
+msgid "**ICD10_get_code_info** (Type: ICD10Tool)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:24 741624a1587d47e6861008b2d4ddcbc8
+msgid ""
+"Get detailed information about a specific ICD-10-CM code including full "
+"description, chapter, and..."
+msgstr ""
+
+#: ../../tools/icd_tools.rst df4ba6060fca4668ba79b85608ca876b
+msgid "ICD10_get_code_info tool specification"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:28 ../../tools/icd_tools.rst:59
+#: ../../tools/icd_tools.rst:93 ../../tools/icd_tools.rst:130
+#: ../../tools/icd_tools.rst:167 413a2e6640f74863b19b13a0f460578a
+#: 6ade83e0f3764561be91fe7feb16121f b01e2945b3624e0bb06b9b1cfc5f11ca
+#: c16bfab71e10486c8083b20b3c87ea4a c44060b942be49b08f23ef5b9184626e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:30 0b077a7b2a7749b398ef1eecbc01ccff
+msgid "**Name**: ``ICD10_get_code_info``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:31 ../../tools/icd_tools.rst:62
+#: 1b2d99b082184f43ab3a136d99f7a4f9 a26bf2753bc54581b100617a7b487b1c
+msgid "**Type**: ``ICD10Tool``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:32 5c55390466904ae5876b3f1a620767fb
+msgid ""
+"**Description**: Get detailed information about a specific ICD-10-CM code"
+" including full description, chapter, and category. ICD-10-CM codes are "
+"alphanumeric (e.g., E11.9 for Type 2 diabetes mellitus without "
+"complications). This tool provides the official code details from the "
+"2026 ICD-10-CM release. No API key required (uses NLM Clinical Tables)."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:34 ../../tools/icd_tools.rst:65
+#: ../../tools/icd_tools.rst:99 ../../tools/icd_tools.rst:136
+#: ../../tools/icd_tools.rst:173 055b2305d255434ab1fcbd20988dbeb0
+#: 0fd9aca54a274280b3af9aa727f4d0ae 345190b5986c4819b06cfe12874a2996
+#: 668be23eebbd4f4ea87a0d149f4c50e5 8e04b8a01d9a4161832409cbea3f35f1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:36 47b029a01fd64c7b93cfc09c14677e78
+msgid ""
+"``code`` (string) (required) ICD-10-CM code (e.g., 'E11.9', 'I10', "
+"'J44.0')"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:39 ../../tools/icd_tools.rst:73
+#: ../../tools/icd_tools.rst:110 ../../tools/icd_tools.rst:147
+#: ../../tools/icd_tools.rst:190 0d927da7fad446599d521663c2d6f428
+#: 129921b6fcf04be1979b228e8ffeea0e 4421b381fb65439bac196706e6ec0d35
+#: 879f98f613474530a2d39253cdc23541 b05655ffa82744539ef92490a7e00ae1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:53 576c24ceadb04ad993c69198f46b6cb7
+msgid "**ICD10_search_codes** (Type: ICD10Tool)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:55 2a8da1895451490e9d52135aff22edd9
+msgid ""
+"Search ICD-10-CM (Clinical Modification) codes by disease name or code. "
+"ICD-10-CM is the US clini..."
+msgstr ""
+
+#: ../../tools/icd_tools.rst bc55261fbb9645dabb88030c875d1ded
+msgid "ICD10_search_codes tool specification"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:61 c9ad8d6e1b7e46f3a09029721f106446
+msgid "**Name**: ``ICD10_search_codes``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:63 7c18e4031b5d4e7c87163ff625b79674
+msgid ""
+"**Description**: Search ICD-10-CM (Clinical Modification) codes by "
+"disease name or code. ICD-10-CM is the US clinical modification of "
+"ICD-10, the current standard for diagnosis coding in US healthcare "
+"(effective through 2025). Returns matching codes with full descriptions. "
+"Uses NLM Clinical Tables API (no API key required). This provides 2026 "
+"ICD-10-CM codes for backward compatibility while ICD-11 adoption is "
+"ongoing."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:67 b6516f1148d54a3eb546d825d2e66ef2
+msgid ""
+"``query`` (string) (required) Search query (disease name or partial "
+"ICD-10 code, e.g., 'diabetes', 'E11', 'myocardial infarction')"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:70 b5dae0e77cfa41b995d1ffb94459cfff
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:87 ab017423048e46df8a33ea80e1009af0
+msgid "**ICD11_browse_hierarchy** (Type: ICDTool)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:89 b84b9c4b5b574f63921dced785561b02
+msgid ""
+"Navigate the ICD-11 disease classification hierarchy by retrieving child "
+"entities of a parent cat..."
+msgstr ""
+
+#: ../../tools/icd_tools.rst f02c49f0705547fb9f9c4f14ce91a826
+msgid "ICD11_browse_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:95 e3b7c786b6a54555831502bf016cc53e
+msgid "**Name**: ``ICD11_browse_hierarchy``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:96 ../../tools/icd_tools.rst:133
+#: ../../tools/icd_tools.rst:170 03d1a05dc69c4901be3001d34d5baa6b
+#: 5101a3165ee54daf941bd2e72887e9e0 d76363c5219c417a9d2eea2cc3621feb
+msgid "**Type**: ``ICDTool``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:97 e1f8e609d3854e30898f4140f13415e8
+msgid ""
+"**Description**: Navigate the ICD-11 disease classification hierarchy by "
+"retrieving child entities of a parent category. ICD-11 organizes diseases"
+" in a hierarchical tree structure (chapters → categories → "
+"subcategories). This tool returns all child entities under a specified "
+"parent, showing the disease classification taxonomy. Useful for exploring"
+" disease categories and understanding relationships. Requires "
+"ICD\\_CLIENT\\_ID and ICD\\_CLIENT\\_SECRET."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:101 0a438696e9014bcca8cb95eb124b4a69
+msgid ""
+"``entity_id`` (string) (required) Parent entity ID to browse (use empty "
+"string or root ID for top-level chapters)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:104 a4f9d60c101548308ad34505884dded0
+msgid "``linearization`` (string) (optional) ICD-11 linearization to browse"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:107 5eeb756b2f15407496b2f1cb7f6af767
+msgid "``language`` (string) (optional) Language for results"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:124 a809bb551b534adf9e8759b911d3e428
+msgid "**ICD11_get_entity** (Type: ICDTool)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:126 ed31768a958c45978c11469ec32e716d
+msgid ""
+"Get detailed information about an ICD-11 disease entity by its unique "
+"identifier or code. Returns..."
+msgstr ""
+
+#: ../../tools/icd_tools.rst b337c8dbe9ad4e1cb3959956ed8166fc
+msgid "ICD11_get_entity tool specification"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:132 d33461f0304a4452b6bf6c23db6c5dac
+msgid "**Name**: ``ICD11_get_entity``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:134 97c8b86e6cd840d8af5064a74d65abf9
+msgid ""
+"**Description**: Get detailed information about an ICD-11 disease entity "
+"by its unique identifier or code. Returns comprehensive details including"
+" full title, definition, inclusions, exclusions, parent/child "
+"relationships, diagnostic criteria, and clinical descriptions. Essential "
+"for understanding specific disease classifications. Requires "
+"ICD\\_CLIENT\\_ID and ICD\\_CLIENT\\_SECRET."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:138 01fba521f6cb46c3bd39a78a952feb8f
+msgid ""
+"``entity_id`` (string) (required) ICD-11 entity ID (e.g., '1435254666' "
+"for diabetes mellitus) or full URI"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:141 32b1cd387ece4b6f8c7bf7d6f33c8e7b
+msgid ""
+"``linearization`` (string) (optional) ICD-11 linearization (default: "
+"'mms')"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:144 b8866a86233b4f9887e02c4a0f512471
+msgid "``language`` (string) (optional) Language for results (ISO 639-1 code)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:161 a656c7ea081947d3ae0c8047a837ed30
+msgid "**ICD11_search_diseases** (Type: ICDTool)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:163 9ef1ce8977cf45509a5d79917cdde2eb
+msgid ""
+"Search ICD-11 for diseases by name, symptoms, or clinical terms. ICD-11 "
+"is the WHO's 11th revisio..."
+msgstr ""
+
+#: ../../tools/icd_tools.rst 88d941d702ed4b8dbe8af4039df2f947
+msgid "ICD11_search_diseases tool specification"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:169 60a162036932417f8acc68e06cfd12e8
+msgid "**Name**: ``ICD11_search_diseases``"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:171 8a592e82090a41e2919710e8cbd08ac6
+msgid ""
+"**Description**: Search ICD-11 for diseases by name, symptoms, or "
+"clinical terms. ICD-11 is the WHO's 11th revision of the International "
+"Classification of Diseases, the global standard for diagnostic health "
+"information. Returns matching disease entities with codes, titles, and "
+"descriptions. Supports flexible search across 50+ languages. Requires "
+"ICD\\_CLIENT\\_ID and ICD\\_CLIENT\\_SECRET (register free at "
+"https://icd.who.int/icdapi)."
+msgstr ""
+
+#: ../../tools/icd_tools.rst:175 027f91a1720b437093ac0b0925178585
+msgid ""
+"``query`` (string) (required) Search query (disease name, symptom, or "
+"clinical term, e.g., 'diabetes mellitus', 'hypertension', 'myocardial "
+"infarction')"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:178 25d1c479d33742f5ab31abcec6a58bb0
+msgid ""
+"``linearization`` (string) (optional) ICD-11 linearization to search "
+"(default: 'mms' for mortality/morbidity statistics)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:181 894c65181bff41dda0981f92d951bb16
+msgid ""
+"``flatResults`` (boolean) (optional) Return flat list of results (true) "
+"or hierarchical structure (false)"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:184 fad7cb7b641a4f64995fd88262902a63
+msgid ""
+"``useFlexisearch`` (boolean) (optional) Use flexible search algorithm for"
+" better matching"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:187 cdeee4d2cf0b41b0acd2ff3a0683de3e
+msgid ""
+"``language`` (string) (optional) Language for results (ISO 639-1 code, "
+"e.g., 'en', 'es', 'fr', 'zh')"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:204 d37ecc66d19942f5b9029da67c8e9195
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:206 347a004d2d6843b8a18b9ea62b3d028f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/icd_tools.rst:207 db0e0973f7a54ff39889b789b1252515
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

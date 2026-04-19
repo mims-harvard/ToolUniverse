@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/interpro_entry_tools.rst:10 e79c6a9afb72410496c8b8eeffa45c98
+msgid "Interpro Entry Tools"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:12 d5f21a7e203c4cfd84c16730f56fac9a
+msgid ""
+"**Configuration File**: ``interpro_entry_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:16 ed4d77187ddc4cfba55ae8f28401f98b
+msgid ""
+"This page contains all tools defined in the ``interpro_entry_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:19 b99d04f404594a16bd83cda4ad4ef3df
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:22 8a2cd46091944b5da61037f76b1426c3
+msgid "**InterPro_get_entries_for_protein** (Type: InterProEntryTool)"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:24 9398ff4673e94d8cb57e230858ae0e3c
+msgid ""
+"Get all InterPro domain and family entries annotated on a specific "
+"protein. Performs a reverse lo..."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst a471896056da4ebaa6ea97f8fa8a0f3d
+msgid "InterPro_get_entries_for_protein tool specification"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:28
+#: ../../tools/interpro_entry_tools.rst:59 3502b36a3bd149959bb0e41a9b3fdefc
+#: 569d2a5347ca4b6aa16faef4e26e69ef
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:30 cadf535b3dbf47a1a261042314e27c97
+msgid "**Name**: ``InterPro_get_entries_for_protein``"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:31
+#: ../../tools/interpro_entry_tools.rst:62 ae3f168ebb7649f49771e58675b86b18
+#: df3823d421d349f0b515f7f5f3b5a656
+msgid "**Type**: ``InterProEntryTool``"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:32 2d6d551f449d4c9a84fe8768b65dc5d2
+msgid ""
+"**Description**: Get all InterPro domain and family entries annotated on "
+"a specific protein. Performs a reverse lookup from a UniProt protein "
+"accession to all InterPro entries (domains, families, homologous "
+"superfamilies, conserved sites) that have been detected on that protein. "
+"Example: P04637 (TP53) has 9 InterPro entries including IPR002117 (p53 "
+"family), IPR011615 (p53 DNA-binding domain), IPR010991 (p53 "
+"tetramerisation domain), IPR013872 (p53 transactivation domain)."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:34
+#: ../../tools/interpro_entry_tools.rst:65 59147c361f904c9dbf660de64d0aa4db
+#: c2fbcaf8e82947b2a3d47fccf71aba6c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:36 954cf9c49c894c8cb5e8776ea233adb5
+msgid ""
+"``accession`` (string) (required) UniProt protein accession. Examples: "
+"'P04637' (TP53, 9 entries), 'P00533' (EGFR), 'P01308' (Insulin), 'P38398'"
+" (BRCA1)."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:39
+#: ../../tools/interpro_entry_tools.rst:76 23e1f2bfa32248f0bb2a6f5593776063
+#: 39ff06d122c8418dadebdc1adc0c5edf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:53 352a68b87a304499b4df3450fa6aea3f
+msgid "**InterPro_search_entries** (Type: InterProEntryTool)"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:55 d25ea723c2f942df83d4fb8422d3cc5d
+msgid ""
+"Search InterPro entries (domains, families, sites) by keyword. Returns "
+"matching InterPro entries ..."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst df8fbcf7d30749468827edc6ec7d3276
+msgid "InterPro_search_entries tool specification"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:61 21bf9cbfc29044ec82292104acb5dffc
+msgid "**Name**: ``InterPro_search_entries``"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:63 2a85e60bfa184a4e9885fd2ece199044
+msgid ""
+"**Description**: Search InterPro entries (domains, families, sites) by "
+"keyword. Returns matching InterPro entries with accession, name, type, "
+"and statistics (protein count, structure count, taxa count). Useful for "
+"discovering protein domains and families by name or function. Example: "
+"searching 'zinc finger' returns 466 entries including IPR000058 "
+"(AN1-type), IPR000306 (FYVE zinc finger), IPR000315 (B-box-type). "
+"Searching 'kinase' returns domain and family entries for protein kinases."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:67 a5e7ac3a134c43f5b60f4033dfa4d4b7
+msgid ""
+"``query`` (string) (required) Search keyword. Examples: 'zinc finger' "
+"(466 entries), 'kinase', 'immunoglobulin', 'helicase', 'protease', 'p53'."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:70 e052932b4a36473880e90a88beab2d3d
+msgid ""
+"``entry_type`` (string) (optional) Filter by entry type. Options: "
+"'domain', 'family', 'homologous\\_superfamily', 'repeat', "
+"'conserved\\_site', 'active\\_site', 'binding\\_site', 'ptm'."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:73 de73558b2a504ec48089233200eee8dc
+msgid ""
+"``page_size`` (integer) (optional) Number of results to return (1-50, "
+"default 20)."
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:90 db9395acb6a149deb4ebed2db3ac8158
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:92 5a6dde032ae44dc0a10601a290a51494
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/interpro_entry_tools.rst:93 955c3aa2408d4ae5a551662fbf505ff2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

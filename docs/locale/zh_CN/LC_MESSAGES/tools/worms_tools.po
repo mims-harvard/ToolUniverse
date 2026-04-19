@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/worms_tools.rst:10 cd16258a4e7649b9b0547a9b1e86b9b5
+msgid "Worms Tools"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:12 ec62c64a6ba44ec6b6a7f9a351c03186
+msgid ""
+"**Configuration File**: ``worms_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 1"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:16 9f30ed6a7f414b03962dad34b488ad97
+msgid ""
+"This page contains all tools defined in the ``worms_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/worms_tools.rst:19 25e386feb17c4ca59e5a2b4706b1cbe9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:22 e982c601ba854301b315a5700f4f46c8
+msgid "**WoRMS_search_species** (Type: WoRMSRESTTool)"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:24 68306d8067db479a8e76a7889b347ceb
+msgid "Search marine species in World Register of Marine Species"
+msgstr ""
+
+#: ../../tools/worms_tools.rst 83d2d1897c874845b41f53d86d334859
+msgid "WoRMS_search_species tool specification"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:28 33f6e7b206d9469c8528c1ad2090e363
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:30 524c65a50a8643928a7b46f120c8cc44
+msgid "**Name**: ``WoRMS_search_species``"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:31 24f7affe0f0c4edeb5d3ec7f2dae44b0
+msgid "**Type**: ``WoRMSRESTTool``"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:32 58fbb156e23b401ba4e976c3c11aa8a7
+msgid "**Description**: Search marine species in World Register of Marine Species"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:34 11615cd2b30e46fe8bf0df091e1ec609
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:36 7d8079c0da7448cbbb6f0b03d9df5573
+msgid "``query`` (string) (required) Species name or search term"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:39 58fd783e9afc44c59577f6358362e907
+msgid "``limit`` (integer) (optional) Number of results"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:42 f63b83f6aa2245ef845245e97e6de9b4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:56 f979b39c34bd45b1b7ec1056cfced32d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:58 f899127525614e8d85806a8f3a2037dc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/worms_tools.rst:59 e4983dde5d324e25b5b39e35646a33e2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

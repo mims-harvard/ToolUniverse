@@ -1,0 +1,489 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gdc_tools.rst:10 4472e0e8ef9344f4a91c6cc0b3c90631
+msgid "Gdc Tools"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:12 3cc6331fb8064582a8f9e01f5f20d5f0
+msgid ""
+"**Configuration File**: ``gdc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 9"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:16 71bf30750d834585a6a67236d00e02eb
+msgid ""
+"This page contains all tools defined in the ``gdc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:19 6ad98275bd8f49b799ece468c843b4df
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:22 1974ad336bef42f3b988e01eccc7b6b1
+msgid "**GDC_get_clinical_data** (Type: GDCClinicalDataTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:24 d0c463b9ca8a48169038fb55597f4520
+msgid ""
+"Get detailed clinical data for cancer cases from NCI GDC/TCGA. Returns "
+"demographics (gender, race..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst 7f3829cf868e4b94bc7e5aa0cdf43d61
+msgid "GDC_get_clinical_data tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:28 ../../tools/gdc_tools.rst:76
+#: ../../tools/gdc_tools.rst:113 ../../tools/gdc_tools.rst:150
+#: ../../tools/gdc_tools.rst:184 ../../tools/gdc_tools.rst:221
+#: ../../tools/gdc_tools.rst:255 ../../tools/gdc_tools.rst:291
+#: ../../tools/gdc_tools.rst:324 4dc997c6fe254ada86de66d57d1efa78
+#: 51700627b54b4ae1aa782bad4ddc0b14 5814c89db6594b739d0367dce8ffffe0
+#: 5d0496c960044e56b63fc3ea40899d98 7855b2982f4446bf8a57d413312077d7
+#: 858014f3ddec4229b99e93d977dc4f7d b1be9d9a2af94622ba6dc84370a09d45
+#: d74c66902616463da56c70671aec7c4d f354abdfc354431897b764dfd7413908
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:30 87537075e0794d26b3732e1144abb811
+msgid "**Name**: ``GDC_get_clinical_data``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:31 b674ec29f35840cc88c1e3a803f3c83c
+msgid "**Type**: ``GDCClinicalDataTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:32 aa56005028e643638e2b52f895563888
+msgid ""
+"**Description**: Get detailed clinical data for cancer cases from NCI "
+"GDC/TCGA. Returns demographics (gender, race, vital\\_status, "
+"age\\_at\\_index), diagnoses (primary\\_diagnosis, tumor\\_stage, "
+"age\\_at\\_diagnosis, days\\_to\\_last\\_follow\\_up), and treatments "
+"(therapeutic\\_agents, treatment\\_type). Filter by project, "
+"primary\\_site, disease\\_type, or vital\\_status."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:34 ../../tools/gdc_tools.rst:82
+#: ../../tools/gdc_tools.rst:119 ../../tools/gdc_tools.rst:156
+#: ../../tools/gdc_tools.rst:190 ../../tools/gdc_tools.rst:227
+#: ../../tools/gdc_tools.rst:261 ../../tools/gdc_tools.rst:297
+#: ../../tools/gdc_tools.rst:330 0e8f15816e5142d3bf5459d1ec5c1eff
+#: 4a44893304e14a4a91f2d08246a0b95b 7243e55121404b30b4867c1798e3d107
+#: 7ff50e7d82584744becf458db6b505cb c13bdfcecce14402b05b190fa95674a8
+#: df4392627cdf4127bf0594f41243a41d f014383a0f74459baf0ca2cd9748bc80
+#: f3c5c1a3173f413fa8c1306523e2c490 fb15e9aafd554074b84c3da6a36d63d6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:36 0325d4cb7e984e07a52b1e04844a23da
+msgid ""
+"``project_id`` (string) (optional) GDC project identifier (e.g., 'TCGA-"
+"BRCA', 'TCGA-LUAD', 'TARGET-AML')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:39 09c8cae17dde4de6a7bcdebe3cd3166c
+msgid ""
+"``primary_site`` (string) (optional) Primary anatomical site (e.g., "
+"'Breast', 'Lung', 'Brain')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:42 085c25dc9a56426e9ab7f8bbc9dcf385
+msgid ""
+"``disease_type`` (string) (optional) Disease type filter (e.g., 'Ductal "
+"and Lobular Neoplasms')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:45 837367a48fca46c19e677b32f450f368
+msgid ""
+"``vital_status`` (string) (optional) Vital status filter: 'Alive' or "
+"'Dead'"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:48 576bb4a250cc4b19b983c3c603f9e7d0
+msgid "``gender`` (string) (optional) Gender filter: 'female' or 'male'"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:51 d136fa0187984ccc925146388758bcca
+msgid "``size`` (integer) (optional) Number of cases to return (1-100)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:54 75072c90001d430fbf3eb8892d97e40b
+msgid "``offset`` (integer) (optional) Pagination offset (0-based)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:57 ../../tools/gdc_tools.rst:93
+#: ../../tools/gdc_tools.rst:130 ../../tools/gdc_tools.rst:164
+#: ../../tools/gdc_tools.rst:201 ../../tools/gdc_tools.rst:235
+#: ../../tools/gdc_tools.rst:272 ../../tools/gdc_tools.rst:305
+#: ../../tools/gdc_tools.rst:341 0b3b5d8510634ca3895d36cae5c5a28a
+#: 0ddffe737e8b4cc4b03564c0253ab3cd 2d05c31ba7f54a0ab6a363886191226a
+#: 45f0c2f66076493ebffef20a48bac7d2 62eb018bd4a14c44aac7a8f8d68df322
+#: 7c63a7c6ec24451ba6cda5e683efd157 8b2f34115b984c989c93e6f3eafe64a6
+#: cced9cb4f6364a768a60ceddb967ec4b da713bfa996249d8a26cf8fe68ea4ba6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:70 39e62a8f6c9f4bf099c3d25847cad412
+msgid "**GDC_get_cnv_data** (Type: GDCCNVTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:72 a21af3b16505448384ff48b9f1351127
+msgid ""
+"Query copy number variation (CNV) files from GDC/TCGA projects. Returns "
+"CNV segment and gene-leve..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst a5204f4bbbc749aaa169949287e96887
+msgid "GDC_get_cnv_data tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:78 0f83bc5391814661a606cff5ed250845
+msgid "**Name**: ``GDC_get_cnv_data``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:79 6d61069416ee4c55957fd81a63d79603
+msgid "**Type**: ``GDCCNVTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:80 53e4d90814d64a699977953be55f83bd
+msgid ""
+"**Description**: Query copy number variation (CNV) files from GDC/TCGA "
+"projects. Returns CNV segment and gene-level copy number files. Use for "
+"amplification/deletion analysis."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:84 eb0e6320ecce4009923c619920c2d71f
+msgid "``project_id`` (string) (required) GDC project (e.g., 'TCGA-BRCA')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:87 5e85cfcf27a94a3a8174658544597a8d
+msgid ""
+"``gene_symbol`` (string) (optional) Optional: Gene symbol to focus "
+"analysis"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:90 ../../tools/gdc_tools.rst:127
+#: 5e039e162b474a889cb021fc3a2058dc 6d4bde6809504ef3ac9426f85054133b
+msgid "``size`` (integer) (optional) Number of results"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:107 a1042551af2b40fcaddde19c8ecd70a8
+msgid "**GDC_get_gene_expression** (Type: GDCGeneExpressionTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:109 40061b40dbe04549b440074428e1b717
+msgid ""
+"Query RNA-Seq gene expression files from GDC/TCGA projects. Returns file "
+"metadata for expression ..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst a84482f9cbf04ee4bf44997d9b127cba
+msgid "GDC_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:115 726bb5eef82644d9aa84b0ef553c2be4
+msgid "**Name**: ``GDC_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:116 f20f2a2d2eeb4d50a37af9fea2a4f8e0
+msgid "**Type**: ``GDCGeneExpressionTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:117 576206d7aabc448e88e13c0d440d53e1
+msgid ""
+"**Description**: Query RNA-Seq gene expression files from GDC/TCGA "
+"projects. Returns file metadata for expression quantification data. Use "
+"to find expression data for downstream analysis."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:121 ee7e1844aa4b48a7a45e0640ae59e548
+msgid ""
+"``project_id`` (string) (required) GDC project (e.g., 'TCGA-BRCA', 'TCGA-"
+"LUAD', 'TCGA-GBM')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:124 cc6655eb0c094675b454e4b92a8639fd
+msgid ""
+"``gene_id`` (string) (optional) Optional: Ensembl gene ID (e.g., "
+"'ENSG00000141510' for TP53)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:144 06085e56faf94d65b70c00eb156b0e83
+msgid "**GDC_get_mutation_frequency** (Type: GDCMutationFrequencyTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:146 aeed3c4e1cc94bf1be8704b5f81b4619
+msgid ""
+"Get pan-cancer mutation frequency statistics for a gene across all "
+"TCGA/GDC cancer projects. Retu..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst 8a7449b123994d069d7ea9c6a199440b
+msgid "GDC_get_mutation_frequency tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:152 827ab105ffd1443cafe8fa49f62d5f0b
+msgid "**Name**: ``GDC_get_mutation_frequency``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:153 300bc81839d749608670106abc1ae764
+msgid "**Type**: ``GDCMutationFrequencyTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:154 d1af02ca107a46ad8dbb08edf5bb7102
+msgid ""
+"**Description**: Get pan-cancer mutation frequency statistics for a gene "
+"across all TCGA/GDC cancer projects. Returns total SSM occurrence count "
+"(no per-project breakdown — use GDC\\_get\\_ssm\\_by\\_gene with "
+"project\\_id for cancer-specific data). Answers 'How often is this gene "
+"mutated across all cancers?'"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:158 27f34ac247894f5db647bce62a734cfd
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'TP53', 'KRAS', "
+"'EGFR')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:161 a663b0cf5e054b099d27d2da08c61906
+msgid ""
+"``gene`` (string) (optional) Gene symbol alias — alternative to "
+"gene\\_symbol"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:178 8b60036ed57844d9aab33d30c5326052
+msgid "**GDC_get_ssm_by_gene** (Type: GDCSSMTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:180 5fc2d9b468214ae98407304731becbe9
+msgid ""
+"Get somatic mutations (SSMs) for a gene across TCGA/GDC projects. Returns"
+" mutation type, genomic ..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst 383dfb517f6d442fb45d265478f77ad3
+msgid "GDC_get_ssm_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:186 ab01bbc000f94e6fa2b5d66ca0e268b9
+msgid "**Name**: ``GDC_get_ssm_by_gene``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:187 9287415e6d36402ba0d395f0c36cd84f
+msgid "**Type**: ``GDCSSMTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:188 6a3341bed33746cbb5f01162f0a5c0b8
+msgid ""
+"**Description**: Get somatic mutations (SSMs) for a gene across TCGA/GDC "
+"projects. Returns mutation type, genomic coordinates, and amino acid "
+"changes. Essential for pan-cancer mutation analysis."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:192 7eb15b672af24f5fb994eb3355acda79
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'TP53', 'EGFR', "
+"'BRAF', 'KRAS')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:195 cb2e19eb65564d1f8946b8d32ef63090
+msgid ""
+"``project_id`` (string) (optional) Optional: Filter by project (e.g., "
+"'TCGA-BRCA', 'TCGA-LUAD')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:198 ../../tools/gdc_tools.rst:302
+#: 308fe682a1af4b09b1e4f2aa317ee429 8393c1cd8bef4331baecfafe42c5acc1
+msgid "``size`` (integer) (optional) Number of results (1–100)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:215 aa159584e57042f185a1e2b8c4265547
+msgid "**GDC_get_survival** (Type: GDCSurvivalTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:217 160dc584fa4e4b569b256c54eca08420
+msgid ""
+"Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. Returns "
+"time-to-event data with cens..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst c9eec0c86c794a9c85e8410863ed14ee
+msgid "GDC_get_survival tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:223 5b65c34740c9420fbbd88d8e181b2fe0
+msgid "**Name**: ``GDC_get_survival``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:224 a90a4819ebd64e9aa2654bc2bfd5b07b
+msgid "**Type**: ``GDCSurvivalTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:225 c8db14385b70441c95d649d867bca5af
+msgid ""
+"**Description**: Get Kaplan-Meier survival data for a GDC/TCGA cancer "
+"cohort. Returns time-to-event data with censoring status and survival "
+"estimates for each patient. Filter by project and optionally by gene "
+"mutation status. Use for overall survival analysis of TCGA cancer types."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:229 e52d139e942645f98292fcfa4ba14d14
+msgid ""
+"``project_id`` (string) (required) GDC project identifier (e.g., 'TCGA-"
+"BRCA', 'TCGA-LUAD', 'TCGA-GBM')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:232 37c397e01b26402680b531d54b19609b
+msgid ""
+"``gene_symbol`` (string) (optional) Optional: gene symbol to filter cases"
+" with mutations in this gene (e.g., 'TP53', 'KRAS')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:249 e3bbb2f50a7c43a29be10356e05d2c81
+msgid "**GDC_list_files** (Type: GDCFilesTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:251 2a5876b8e2594aac8e6d83b0ab7a8ad0
+msgid ""
+"List GDC files filtered by data\\_type and other fields. Use to identify "
+"downloadable artifacts (e..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst ebae9b316e584669b2c5829f2411071e
+msgid "GDC_list_files tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:257 0e4fe2d52fc3426da75b7cea7a8d0aba
+msgid "**Name**: ``GDC_list_files``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:258 8d7213bfbadb48b88d1724c944db7433
+msgid "**Type**: ``GDCFilesTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:259 458241b279944753b3669b1229490ced
+msgid ""
+"**Description**: List GDC files filtered by data\\_type and other fields."
+" Use to identify downloadable artifacts (e.g., expression quantification)"
+" for analysis pipelines."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:263 915ee73e6cb8475382f458ba0d7ed708
+msgid ""
+"``data_type`` (string) (optional) Data type filter (e.g., 'Gene "
+"Expression Quantification')."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:266 ../../tools/gdc_tools.rst:335
+#: 1a47582f38d24a3c988c5ff87d133e2e a02ded2c41584c1faec81464070b31c2
+msgid "``size`` (integer) (optional) Number of results (1–100)."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:269 ../../tools/gdc_tools.rst:338
+#: 1b49167850e0463e85b05a286a934f1f ea6a188d635a4ada9e6b618757f71037
+msgid "``offset`` (integer) (optional) Offset for pagination (0-based)."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:285 d7efe1de3d7347308b08e81ec9e5b19d
+msgid "**GDC_list_projects** (Type: GDCProjectsTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:287 ff1c41c45b094b22b38143ccedf1c30a
+msgid ""
+"List GDC projects (TCGA, TARGET, etc.) with case/file counts. Use to "
+"discover available cancer co..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst c41648623ccf4876a26bd9ecd7e1ae27
+msgid "GDC_list_projects tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:293 16c465c1d30848ab9851168484f83058
+msgid "**Name**: ``GDC_list_projects``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:294 0c92914f905f4a51bb0f8c1547b944e3
+msgid "**Type**: ``GDCProjectsTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:295 c9c8d63560e2439d8355287d42f27ff2
+msgid ""
+"**Description**: List GDC projects (TCGA, TARGET, etc.) with case/file "
+"counts. Use to discover available cancer cohorts and their data volume. "
+"Filter by program (TCGA, TARGET, CGCI, etc.)."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:299 5d81bb586c394a32a6b1d6f73b2b2f11
+msgid ""
+"``program`` (string) (optional) Filter by program name (e.g., 'TCGA', "
+"'TARGET')"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:318 2434fb4ad1b54304972ba86aa7db4b2c
+msgid "**GDC_search_cases** (Type: GDCCasesTool)"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:320 5aedb2ae4ee64bd1854a8dc93b5999f8
+msgid ""
+"Search cancer cohort cases in NCI GDC by project and filters. Use to "
+"retrieve case-level metadata..."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst 6abe1daeecd64c53a28709d1818cc411
+msgid "GDC_search_cases tool specification"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:326 0358ab4b6c10484d87d0f6d5881cd79e
+msgid "**Name**: ``GDC_search_cases``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:327 f227dc3c7dc44740aba3ba5e68f2f22d
+msgid "**Type**: ``GDCCasesTool``"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:328 85dbe3d7517044f7a87a0f78fbfd7c87
+msgid ""
+"**Description**: Search cancer cohort cases in NCI GDC by project and "
+"filters. Use to retrieve case-level metadata for cohort construction and "
+"downstream file queries."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:332 d8a536ac2e44451f93b89a59304ad1d5
+msgid ""
+"``project_id`` (string) (optional) GDC project identifier (e.g., 'TCGA-"
+"BRCA')."
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:354 491c6c79629a4242864835d9456ba7db
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:356 1374487b736744b3bdd1d5c20fe9f2e2
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gdc_tools.rst:357 d5f1baf7bfbc47afa8a5074113639362
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

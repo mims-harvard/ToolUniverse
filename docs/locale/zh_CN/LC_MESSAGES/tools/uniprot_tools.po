@@ -7,347 +7,719 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/uniprot_tools.rst:2 bd2f5f76bf8b4ca990c0771927b1468e
+#: ../../tools/uniprot_tools.rst:10 7213dbf45d2145a59ec2e6e5c02429d0
 msgid "Uniprot Tools"
 msgstr "Uniprot 工具"
 
-#: ../../tools/uniprot_tools.rst:4 597946470405461abfa4d46188a22f2b
+#: ../../tools/uniprot_tools.rst:12 048331ffca954396ac1321c8ee5b914d
+#, fuzzy
 msgid ""
-"**Configuration File**: ``uniprot_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 10"
+"**Configuration File**: ``uniprot_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 17"
 msgstr ""
 "**配置文件**：``uniprot_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：10"
 
-#: ../../tools/uniprot_tools.rst:8 1488af196f2141c6b210d7304b3bd9d9
+#: ../../tools/uniprot_tools.rst:16 c96552bc37c649fc92652c57f566090c
 msgid ""
 "This page contains all tools defined in the ``uniprot_tools.json`` "
 "configuration file."
 msgstr "此页面包含 ``uniprot_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/uniprot_tools.rst:11 bde82dc749df4e1fab536fc07bfca293
+#: ../../tools/uniprot_tools.rst:19 a1856a141aaf4390b56337e113d4eaf9
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/uniprot_tools.rst:14 ed7581ed9bda4399ae92a0f2c242eb06
+#: ../../tools/uniprot_tools.rst:22 ecb8b2f3f2894b87a28b7a5c256610f4
 msgid "**UniProt_get_alternative_names_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_alternative_names_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:16 b112dfa4609346cb9fb6de58ce87f6d2
+#: ../../tools/uniprot_tools.rst:24 023185e8a0d843a59ec39c281ead075f
 msgid "Extract all alternative names (alternativeNames) from UniProtKB entry."
 msgstr "从 UniProtKB 条目中提取所有替代名称（alternativeNames）。"
 
-#: ../../tools/uniprot_tools.rst 8ade3ab981e84a3b97c6d6e45842aa7f
+#: ../../tools/uniprot_tools.rst 265c6054daac43d4a4ab516d7caf2ab1
 msgid "UniProt_get_alternative_names_by_accession tool specification"
 msgstr "UniProt_get_alternative_names_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:20 ../../tools/uniprot_tools.rst:51
-#: ../../tools/uniprot_tools.rst:82 ../../tools/uniprot_tools.rst:113
-#: ../../tools/uniprot_tools.rst:144 ../../tools/uniprot_tools.rst:175
-#: ../../tools/uniprot_tools.rst:206 ../../tools/uniprot_tools.rst:237
-#: ../../tools/uniprot_tools.rst:268 ../../tools/uniprot_tools.rst:299
-#: 19259d67566947ee997ed46d265dd134 1d621d24d9e04b6abe378ea88708a883
-#: 6ad436faf2dc4593be9dfd7ffd7b9469 a0107f9e39e641acb3fd2870c6cc3114
-#: b46bcaba489148f4b025bf49386c2ded b73a882f0dd94d0b8dde1879906b4530
-#: b9fe5351df9e435199d6807896f2f231 baf06d169dd64c6a9d1d1331b4612d81
-#: cb0df061fe444cd4b250b32aba9c2b1f eaff2d00f048448ba91a903e51c1e261
+#: ../../tools/uniprot_tools.rst:28 ../../tools/uniprot_tools.rst:59
+#: ../../tools/uniprot_tools.rst:90 ../../tools/uniprot_tools.rst:121
+#: ../../tools/uniprot_tools.rst:152 ../../tools/uniprot_tools.rst:183
+#: ../../tools/uniprot_tools.rst:214 ../../tools/uniprot_tools.rst:245
+#: ../../tools/uniprot_tools.rst:276 ../../tools/uniprot_tools.rst:307
+#: ../../tools/uniprot_tools.rst:338 ../../tools/uniprot_tools.rst:369
+#: ../../tools/uniprot_tools.rst:400 ../../tools/uniprot_tools.rst:431
+#: ../../tools/uniprot_tools.rst:472 ../../tools/uniprot_tools.rst:518
+#: ../../tools/uniprot_tools.rst:552 0bc4eb8d88c64823b36dd8be412ff73d
+#: 11fa3cf6a5c947a5bc7065b062db78ab 159a7feadcd4485694451e234510e5fa
+#: 1af404f9cab74ea4be24027198bbb803 1d24d94745dd46a3a438b2781a078f9d
+#: 2bc787f61a8343d89a4a5ec1ced02986 3f0b5b4a92b84c25a56a3b3726e42b0a
+#: 40366375359e4a3f82d98ff1a620ab8b 41538e2fecd544fc9bdc17e17b1e7ad8
+#: 537248e2a9574974b80feff2d7fd45d3 8a19eee537fb44238bcb6ddfb309646a
+#: 9c8d927d8ebb4468a636d40085608cc4 abe7ea44720e4f5889252f1aac5de2a5
+#: b8999f98afdd493393004c0f6071fae6 bd4b39ab2a754bbe8284569d77178616
+#: ea0d54345d8140c19b62b6ac713220d1 fdd1224d16be4bcba71d2c3fa318668f
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/uniprot_tools.rst:22 f5d13fd820c8460689cb3a4e32d7c85c
+#: ../../tools/uniprot_tools.rst:30 8a55b0f32ee04f4eb949bf8a36cccc57
 msgid "**Name**: ``UniProt_get_alternative_names_by_accession``"
 msgstr "**名称**：``UniProt_get_alternative_names_by_accession``"
-
-#: ../../tools/uniprot_tools.rst:23 ../../tools/uniprot_tools.rst:54
-#: ../../tools/uniprot_tools.rst:85 ../../tools/uniprot_tools.rst:116
-#: ../../tools/uniprot_tools.rst:147 ../../tools/uniprot_tools.rst:178
-#: ../../tools/uniprot_tools.rst:209 ../../tools/uniprot_tools.rst:240
-#: ../../tools/uniprot_tools.rst:271 ../../tools/uniprot_tools.rst:302
-#: 0c37da878aaf452fa43f94e92174b8b2 11a973fa24ae44758a35625ccb04afc5
-#: 50f3d70a04744627a603784bd75c1408 57a7f59e82914ac1b8f9e6cd004f7191
-#: 7a2b24fb09c147db9dbef19b328e0240 c08401933a764172bafa84b376788bc9
-#: cd213b6430484bb593e3eba997a81433 d9e082aa42ba4205aa4b6357b6aa9b6e
-#: e5da4f212323497c881f01091a384eba e62750a0f22044f98a4bfe0e71ed7de5
-msgid "**Type**: ``UniProtRESTTool``"
-msgstr "**类型**：``UniProtRESTTool``"
-
-#: ../../tools/uniprot_tools.rst:24 fc0649cd0a6540a4a846061099879cf6
-msgid ""
-"**Description**: Extract all alternative names (alternativeNames) from "
-"UniProtKB entry."
-msgstr "**描述**：从UniProtKB条目中提取所有替代名称（alternativeNames）。"
-
-#: ../../tools/uniprot_tools.rst:26 ../../tools/uniprot_tools.rst:57
-#: ../../tools/uniprot_tools.rst:88 ../../tools/uniprot_tools.rst:119
-#: ../../tools/uniprot_tools.rst:150 ../../tools/uniprot_tools.rst:181
-#: ../../tools/uniprot_tools.rst:212 ../../tools/uniprot_tools.rst:243
-#: ../../tools/uniprot_tools.rst:274 ../../tools/uniprot_tools.rst:305
-#: 00378af05ccd40519e434d46e559125f 2c87c52b4d564b44ae74e8a0b47bc8b9
-#: 3f40de08b57f42f8a1c7213686de566e 6ec32ad18bbc40c1af57b70a6697076a
-#: ae8a8ee592e54b3f9668a7b4e08d3f46 bc80d654f7e7419baa78390d7fd87a2d
-#: e17dc306cf884590ac18880b2d21f941 e336acec0281485ba3a9cb2a3c38c19c
-#: e80a466cc5794e469caaaad94a6d91bb ef4fee143d5e4efc831e2918dd1624a7
-msgid "**Parameters:**"
-msgstr "**参数：**"
-
-#: ../../tools/uniprot_tools.rst:28 ../../tools/uniprot_tools.rst:59
-#: ../../tools/uniprot_tools.rst:121 ../../tools/uniprot_tools.rst:152
-#: ../../tools/uniprot_tools.rst:183 ../../tools/uniprot_tools.rst:214
-#: ../../tools/uniprot_tools.rst:245 ../../tools/uniprot_tools.rst:276
-#: ../../tools/uniprot_tools.rst:307 0003e051c57240318a8f512efa8b72ab
-#: 0df1a315c5c3423eb23ac1a74921f23d 1e5ab4b7f6f04c8b8ad15e272d63ed5d
-#: 50ba93389dc64a3aa392f088ecb1abf6 541da0e2c41c4afcb62b391fe2dbe09b
-#: c1131acecff7452f8fabebd9af8ffb8b c2f6755198704d7794fea2e3ccff8239
-#: c46f66e67be841a19fe5b03e534c3d8c d567d508e3944544aa89210841bae4b3
-msgid "``accession`` (string) (required) UniProtKB accession, e.g., P05067."
-msgstr "``accession``（字符串）（必填）UniProtKB 登录号，例如 P05067。"
 
 #: ../../tools/uniprot_tools.rst:31 ../../tools/uniprot_tools.rst:62
 #: ../../tools/uniprot_tools.rst:93 ../../tools/uniprot_tools.rst:124
 #: ../../tools/uniprot_tools.rst:155 ../../tools/uniprot_tools.rst:186
 #: ../../tools/uniprot_tools.rst:217 ../../tools/uniprot_tools.rst:248
 #: ../../tools/uniprot_tools.rst:279 ../../tools/uniprot_tools.rst:310
-#: 1fd5125ee88d458d99b7c3d60ef15a3d 473b21ccc12e413fa9ce5e5399564ee4
-#: 74e18d2650594c499214b64a5fceb9b6 9590b411c35a475fbc4ed07d721e8840
-#: 9f862bd4d4544f06b26c07da87b278ba a0bfb5a114794a8a8fec5e329d769cc2
-#: a73253eb50464adf854de40177db1711 d3159d70d61b4077858a34f1cd9a7ed5
-#: d5b37e6ff16540868d1ef88b3b30f0be e8516606b43c45669959edb1a268833a
+#: ../../tools/uniprot_tools.rst:341 ../../tools/uniprot_tools.rst:372
+#: ../../tools/uniprot_tools.rst:403 ../../tools/uniprot_tools.rst:434
+#: ../../tools/uniprot_tools.rst:475 ../../tools/uniprot_tools.rst:521
+#: ../../tools/uniprot_tools.rst:555 0d85fb4277754d74b93d40b997e57582
+#: 2599798efc534a2cb368942b56da7206 274b6a99c9424d3cafd381691240df19
+#: 3336333036234d35880ca1e081320af2 425fd8fc6cb84e9d908d9d329ccb32cd
+#: 5d1a8a4ef52c4fc09b9ad57bbe9ccc90 78c0baa1cc2e4095912a70cb5e70f5f0
+#: 8a6c1f78685b4cfca190ad6143be3e4e 8f293390e6fe49679549384f10673114
+#: 95f094ff4066446fac16fc4af5afb6c1 9e33626eb21846aa9ce4e381e9130815
+#: bfae9d1d96b24ea4bdb79912e85af7a9 ea10840ffc2541fd946363a9e35c1d42
+#: ebab6f2991634475971b3fa7ff96c02f ef3d2f8d3eb74ec881725e51bb789001
+#: f13bb576e5a741429e1410ab310d7541 f711e52d3b1f44269d5114e8d655bc9d
+msgid "**Type**: ``UniProtRESTTool``"
+msgstr "**类型**：``UniProtRESTTool``"
+
+#: ../../tools/uniprot_tools.rst:32 7071bc56722046e7999e0be4d955ce6b
+msgid ""
+"**Description**: Extract all alternative names (alternativeNames) from "
+"UniProtKB entry."
+msgstr "**描述**：从UniProtKB条目中提取所有替代名称（alternativeNames）。"
+
+#: ../../tools/uniprot_tools.rst:34 ../../tools/uniprot_tools.rst:65
+#: ../../tools/uniprot_tools.rst:96 ../../tools/uniprot_tools.rst:127
+#: ../../tools/uniprot_tools.rst:158 ../../tools/uniprot_tools.rst:189
+#: ../../tools/uniprot_tools.rst:220 ../../tools/uniprot_tools.rst:251
+#: ../../tools/uniprot_tools.rst:282 ../../tools/uniprot_tools.rst:313
+#: ../../tools/uniprot_tools.rst:344 ../../tools/uniprot_tools.rst:375
+#: ../../tools/uniprot_tools.rst:406 ../../tools/uniprot_tools.rst:437
+#: ../../tools/uniprot_tools.rst:478 ../../tools/uniprot_tools.rst:524
+#: ../../tools/uniprot_tools.rst:558 1851ee4e622e4380bb89d53ace5b1ecc
+#: 2e26f9df1a084775b2af70026bda9401 384707dbafc54aa4858eec84a2cc2e42
+#: 3b3423c351c6411880978113ec375e08 427ba430b4e643158c6669a44ae789c8
+#: 43d42faa753b4db1a0ed118bcaf65759 4540cadad59b4b0cb567648b54fca920
+#: 4c00ce619ba84990888f6111e354c8a5 7aace3f3c2bd46c885cee47a613244f7
+#: 93a217997230441bb56f97cd1744dce2 9f89fef2444a4e68a8a63b87b2768891
+#: a7b46ee849f84776b274af8f49d100ab a9bca39652e94db39709ff192b6d71b6
+#: b5ab79bf58e942caba929a3bd6a2252e b6e081149a944c5196b2ec9f62c5c7b6
+#: e394e1e22253407fa04d37590e970fca eccee6f62ad3473eabe7ef88b2fede1e
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/uniprot_tools.rst:36 ../../tools/uniprot_tools.rst:67
+#: ../../tools/uniprot_tools.rst:129 ../../tools/uniprot_tools.rst:160
+#: ../../tools/uniprot_tools.rst:191 ../../tools/uniprot_tools.rst:253
+#: ../../tools/uniprot_tools.rst:284 ../../tools/uniprot_tools.rst:315
+#: ../../tools/uniprot_tools.rst:346 1267f2aeffaa4d2bba998a2ac2387bd2
+#: 2753bfb036674f3fb45a7780294ea812 2afc2fe0d7ab4dfdacaddb22e3270e9e
+#: 31fe20bd7cd74853885a77ece9fba624 6bdf55e5f7034c8381c64ca448790c4b
+#: 71dbd0d4a5db450982dc471c4bc63774 b649e4b437fb4ad38f7f971b18869adc
+#: d0f53d29444d4401b3e29f3dce90cd44 dfd986a9266f4ab099eef7220be43a4d
+msgid "``accession`` (string) (required) UniProtKB accession, e.g., P05067."
+msgstr "``accession``（字符串）（必填）UniProtKB 登录号，例如 P05067。"
+
+#: ../../tools/uniprot_tools.rst:39 ../../tools/uniprot_tools.rst:70
+#: ../../tools/uniprot_tools.rst:101 ../../tools/uniprot_tools.rst:132
+#: ../../tools/uniprot_tools.rst:163 ../../tools/uniprot_tools.rst:194
+#: ../../tools/uniprot_tools.rst:225 ../../tools/uniprot_tools.rst:256
+#: ../../tools/uniprot_tools.rst:287 ../../tools/uniprot_tools.rst:318
+#: ../../tools/uniprot_tools.rst:349 ../../tools/uniprot_tools.rst:380
+#: ../../tools/uniprot_tools.rst:411 ../../tools/uniprot_tools.rst:451
+#: ../../tools/uniprot_tools.rst:498 ../../tools/uniprot_tools.rst:532
+#: ../../tools/uniprot_tools.rst:569 0dcb71e230b94e0aa2a777a5e010c4fc
+#: 12e968f8918a4e5092d136b3d72b85ef 2096c3f42fd147f3ac0c43b491eaf35f
+#: 3293570a4f7a4e6397e47e058d7ea338 36c9e4050aad4f88b3594b0466254816
+#: 42b44d026bba4eff9e51c24afd1611ce 44a13c3cb9ad40239ff09e9609c7ef43
+#: 4b105d6238bd4b56a36239f5656a9800 5788cf6a64c24d0abe552cfbdee16f50
+#: 5dc59eb11b614944b2963802fd0bf702 723f8c0bbb51414895ed13625fe34dc5
+#: 8e3d4385144341d7a11ec5ba50a090ca 9e4ce9582c55461093f90e1aec5e3ea2
+#: aa09d8881d354da7ad8104ae8d3e2171 b23fc7eb89894066b647398d3e46e71f
+#: bb088bce0b3e4545bd795b94c91a9003 e34a3da7ddfc45c0bcf5015e05cff48d
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/uniprot_tools.rst:45 b1245e316bec4559934110ca229c285d
+#: ../../tools/uniprot_tools.rst:53 6334fc4c92854c40ae681d4ddac9895c
 msgid "**UniProt_get_disease_variants_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_disease_variants_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:47 1c6f4a0c4f80464f8e88310cbe130d12
+#: ../../tools/uniprot_tools.rst:55 cc4fa6ca642f40039bc0c41e10c687d9
 msgid ""
-"Extract all variants (feature type = VARIANT) and their related annotations "
-"from UniProtKB entry."
+"Extract all variants (feature type = VARIANT) and their related "
+"annotations from UniProtKB entry."
 msgstr "从UniProtKB条目中提取所有变体（特性类型 = VARIANT）及其相关注释。"
 
-#: ../../tools/uniprot_tools.rst 3a2f2b71f7734c0ba486f5724f96f775
+#: ../../tools/uniprot_tools.rst b7bbf8215363450f94b89216408b0001
 msgid "UniProt_get_disease_variants_by_accession tool specification"
 msgstr "UniProt_get_disease_variants_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:53 7d3d79fe4a854c8b900d06899c31bb00
+#: ../../tools/uniprot_tools.rst:61 cf803af832794ad1aa311b3e158c9486
 msgid "**Name**: ``UniProt_get_disease_variants_by_accession``"
 msgstr "**名称**: ``UniProt_get_disease_variants_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:55 a6c9258bd8564fbf892270837f9bd62a
+#: ../../tools/uniprot_tools.rst:63 a4fe76d58f804fa38021aee33e43c66c
 msgid ""
 "**Description**: Extract all variants (feature type = VARIANT) and their "
 "related annotations from UniProtKB entry."
 msgstr "**描述**：从 UniProtKB 条目中提取所有变体（特征类型 = VARIANT）及其相关注释。"
 
-#: ../../tools/uniprot_tools.rst:76 3aeba0f358034a608ad2bd8f888a0273
+#: ../../tools/uniprot_tools.rst:84 a5f57a20f8c747838fda8e543f390905
 msgid "**UniProt_get_entry_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_entry_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:78 65cc99be9504488ca947a7e1f22719a2
-msgid "Get the complete JSON entry for a specified UniProtKB accession."
+#: ../../tools/uniprot_tools.rst:86 8499679d9a9246a9af5afce0702a4868
+#, fuzzy
+msgid ""
+"Get the complete JSON entry for a specified UniProtKB accession. WARNING:"
+" This tool returns the c..."
 msgstr "获取指定UniProtKB登录号的完整JSON条目。"
 
-#: ../../tools/uniprot_tools.rst ee5c02b7dbe84257940243d5f592ab1d
+#: ../../tools/uniprot_tools.rst 51d479944e094305b10a534c3e276d67
 msgid "UniProt_get_entry_by_accession tool specification"
 msgstr "UniProt_get_entry_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:84 6afd3a48feb24b91bc30e167ab50b090
+#: ../../tools/uniprot_tools.rst:92 ddb3a287797547309dac59b26fe540a8
 msgid "**Name**: ``UniProt_get_entry_by_accession``"
 msgstr "**名称**: ``UniProt_get_entry_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:86 d031127645ac4580b62d7ce270e81ff4
+#: ../../tools/uniprot_tools.rst:94 6c1b19a2f21c4373872e7d335b10890c
 msgid ""
 "**Description**: Get the complete JSON entry for a specified UniProtKB "
-"accession."
-msgstr "**描述**：获取指定UniProtKB登录号的完整JSON条目。"
+"accession. WARNING: This tool returns the complete UniProtKB entry, which"
+" can be extremely large (40,000+ lines for some entries) and may cause "
+"LLM context limits to be exceeded or crashes. For most use cases, "
+"consider using more specific extraction tools instead: "
+"UniProt\\_get\\_function\\_by\\_accession, "
+"UniProt\\_get\\_sequence\\_by\\_accession, "
+"UniProt\\_get\\_recommended\\_name\\_by\\_accession, "
+"UniProt\\_get\\_organism\\_by\\_accession, "
+"UniProt\\_get\\_subcellular\\_location\\_by\\_accession, "
+"UniProt\\_get\\_disease\\_variants\\_by\\_accession, or "
+"UniProt\\_get\\_ptm\\_processing\\_by\\_accession."
+msgstr ""
 
-#: ../../tools/uniprot_tools.rst:90 237b902d7ae44a5dba293bd4d6c5dc5a
-msgid ""
-"``accession`` (string) (required) UniProtKB entry accession, e.g., P05067."
+#: ../../tools/uniprot_tools.rst:98 fcb14a5198ea4e84b41099cefab71a29
+msgid "``accession`` (string) (required) UniProtKB entry accession, e.g., P05067."
 msgstr "``accession``（字符串）（必填）UniProtKB条目登录号，例如：P05067。"
 
-#: ../../tools/uniprot_tools.rst:107 c1cc99eff554445b98fc54191cce8776
+#: ../../tools/uniprot_tools.rst:115 4da7bc1d7aa542768d36fea61de92b52
 msgid "**UniProt_get_function_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_function_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:109 5304b8f58e114c03a90f421e8a9d6538
+#: ../../tools/uniprot_tools.rst:117 75532e5fce324a77b70de17dae464281
 msgid ""
 "Extract functional annotations from UniProtKB entry (Comment type = "
 "FUNCTION)."
 msgstr "从 UniProtKB 条目中提取功能注释（注释类型 = FUNCTION）。"
 
-#: ../../tools/uniprot_tools.rst 687ff57a3a8b4caaba5de64588affa0e
+#: ../../tools/uniprot_tools.rst fc34bf95df334d46a6746790879efc59
 msgid "UniProt_get_function_by_accession tool specification"
 msgstr "UniProt_get_function_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:115 5368e04818ec4bfe84f0dbff43c27d21
+#: ../../tools/uniprot_tools.rst:123 de51bb431afa43848a6ae99c4bbe2f57
 msgid "**Name**: ``UniProt_get_function_by_accession``"
 msgstr "**名称**: ``UniProt_get_function_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:117 7fde46e69db04524aa35972990a0520f
+#: ../../tools/uniprot_tools.rst:125 67faf58874914a18b7c4afa096e7917b
 msgid ""
 "**Description**: Extract functional annotations from UniProtKB entry "
 "(Comment type = FUNCTION)."
 msgstr "**描述**：从UniProtKB条目中提取功能注释（注释类型 = 功能）。"
 
-#: ../../tools/uniprot_tools.rst:138 4f471fe2251540e08a721b98eebdfe09
+#: ../../tools/uniprot_tools.rst:146 d22643651f67446e99fd260f20dad212
 msgid "**UniProt_get_isoform_ids_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_isoform_ids_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:140 df4b20852b114230afe398638a678c89
+#: ../../tools/uniprot_tools.rst:148 fed143df4e5d4b0b895860b737a29270
 msgid "Extract all splice isoform IDs from UniProtKB entry (isoformNames)."
 msgstr "从 UniProtKB 条目中提取所有剪接异构体 ID（isoformNames）。"
 
-#: ../../tools/uniprot_tools.rst b6b081681280495284c940b0d2679b6f
+#: ../../tools/uniprot_tools.rst 7d4c1f45d2884545a220bdc583d530eb
 msgid "UniProt_get_isoform_ids_by_accession tool specification"
 msgstr "UniProt_get_isoform_ids_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:146 d6afd4252c57494c83a4ac9e413b7502
+#: ../../tools/uniprot_tools.rst:154 2f257174a68346e79022198381e31579
 msgid "**Name**: ``UniProt_get_isoform_ids_by_accession``"
 msgstr "**名称**：``UniProt_get_isoform_ids_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:148 8f2ddf48b05a4742bcc24c25d62d9e53
+#: ../../tools/uniprot_tools.rst:156 983061f2318f4376ac029beeda902a44
 msgid ""
 "**Description**: Extract all splice isoform IDs from UniProtKB entry "
 "(isoformNames)."
 msgstr "**描述**：从 UniProtKB 条目中提取所有剪接异构体 ID（isoformNames）。"
 
-#: ../../tools/uniprot_tools.rst:169 b2f8af15f9b24dc99c3742390828ca37
+#: ../../tools/uniprot_tools.rst:177 3fb6bccb3c824c738c548bee82504dd9
 msgid "**UniProt_get_organism_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_organism_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:171 31f4cf4f32054ff7814624158cd57ccc
+#: ../../tools/uniprot_tools.rst:179 678a437283064eb89eb42465ccd12c7b
 msgid "Extract the organism scientific name from UniProtKB entry."
 msgstr "从 UniProtKB 条目中提取生物体的学名。"
 
-#: ../../tools/uniprot_tools.rst 4ec59b39cf8c4efaa4d48ee5e4626e11
+#: ../../tools/uniprot_tools.rst 62342b99c0a14037ba15cd54398c7c91
 msgid "UniProt_get_organism_by_accession tool specification"
 msgstr "UniProt_get_organism_by_accession 工具规格说明"
 
-#: ../../tools/uniprot_tools.rst:177 0348f6a461ff4cc48d0df2e6b104fc15
+#: ../../tools/uniprot_tools.rst:185 fd679bae816a4b5880ba8fab295d94f7
 msgid "**Name**: ``UniProt_get_organism_by_accession``"
 msgstr "**名称**：``UniProt_get_organism_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:179 d0666ffc8c8c4a6e88a0419fe660b6f9
+#: ../../tools/uniprot_tools.rst:187 ad8cd66fe69042faa4c85a4ad10126a1
 msgid ""
-"**Description**: Extract the organism scientific name from UniProtKB entry."
+"**Description**: Extract the organism scientific name from UniProtKB "
+"entry."
 msgstr "**描述**：从 UniProtKB 条目中提取生物体学名。"
 
-#: ../../tools/uniprot_tools.rst:200 5ec45aa220ac41059ee6afedda9095a3
+#: ../../tools/uniprot_tools.rst:208 929338e7fdef48cead2a654480e9ca7f
+#, fuzzy
+msgid "**UniProt_get_proteome** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_entry_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:210 0debf186a7ed4da8a5f9ea2a78ce4188
+msgid ""
+"Get proteome information by proteome ID. Returns comprehensive proteome "
+"data including taxonomy, ..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst 35a0e7ca8ba5433081042309ded2d6ca
+#, fuzzy
+msgid "UniProt_get_proteome tool specification"
+msgstr "UniProt_get_entry_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:216 d14521e382d243368308caa1d060cd80
+#, fuzzy
+msgid "**Name**: ``UniProt_get_proteome``"
+msgstr "**名称**: ``UniProt_get_entry_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:218 7bb819169bd340ed82d040bbd0b622fc
+msgid ""
+"**Description**: Get proteome information by proteome ID. Returns "
+"comprehensive proteome data including taxonomy, components, gene/protein "
+"counts, and annotation scores. Proteome IDs are typically in format "
+"UP000005640 (human), UP000000589 (mouse), etc. Use UniProt search with "
+"proteome filters to find proteome IDs for specific organisms."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:222 d46c3410650743aea5d40c675f6dac98
+msgid ""
+"``proteome_id`` (string) (required) UniProt proteome ID (e.g., "
+"'UP000005640' for human, 'UP000000589' for mouse). Find proteome IDs "
+"using UniProt search with proteome filters or by querying organism-"
+"specific proteomes."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:239 fa362e3a04834b59aea8b109f3ad939d
 msgid "**UniProt_get_ptm_processing_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_ptm_processing_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:202 c6970ece4d6b48a0aa1bd7bbe374e533
+#: ../../tools/uniprot_tools.rst:241 4f2efe41fadd47958e987229db9abfad
 msgid ""
-"Extract all PTM and processing sites from UniProtKB entry (feature type = "
-"MODIFIED RESIDUE or SIG..."
+"Extract all PTM and processing sites from UniProtKB entry (feature type ="
+" MODIFIED RESIDUE or SIG..."
 msgstr "从 UniProtKB 条目中提取所有 PTM 和加工位点（特征类型 = MODIFIED RESIDUE 或 SIG...）"
 
-#: ../../tools/uniprot_tools.rst a1c24c7ab8994355972819d05c97b63e
+#: ../../tools/uniprot_tools.rst 707ebd66bb4c43f6840a3a6c6e001e48
 msgid "UniProt_get_ptm_processing_by_accession tool specification"
 msgstr "UniProt_get_ptm_processing_by_accession 工具规格说明"
 
-#: ../../tools/uniprot_tools.rst:208 e91cbce8988749ce8b4b7ff73210b7a4
+#: ../../tools/uniprot_tools.rst:247 cf728bc613cc4add9387ee17a6d9595f
 msgid "**Name**: ``UniProt_get_ptm_processing_by_accession``"
 msgstr "**名称**：``UniProt_get_ptm_processing_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:210 af8f81cce9f143fe8f0727ca95292e19
+#: ../../tools/uniprot_tools.rst:249 76ad3b05a7b84522967202d498c93064
 msgid ""
-"**Description**: Extract all PTM and processing sites from UniProtKB entry "
-"(feature type = MODIFIED RESIDUE or SIGNAL, etc.)."
-msgstr ""
-"**描述**：从 UniProtKB 条目中提取所有 PTM 及加工位点（特征类型 = MODIFIED RESIDUE 或 SIGNAL 等）。"
+"**Description**: Extract all PTM and processing sites from UniProtKB "
+"entry (feature type = MODIFIED RESIDUE or SIGNAL, etc.)."
+msgstr "**描述**：从 UniProtKB 条目中提取所有 PTM 及加工位点（特征类型 = MODIFIED RESIDUE 或 SIGNAL 等）。"
 
-#: ../../tools/uniprot_tools.rst:231 44ffad1aa60d4729a12fc0b428b41b87
+#: ../../tools/uniprot_tools.rst:270 507f7518f94d40aabcd113cdf8f673a6
 msgid "**UniProt_get_recommended_name_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_recommended_name_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:233 5000781165b44b93a4eb4c8237f3d510
+#: ../../tools/uniprot_tools.rst:272 a2b803aea29d4acea7a676b8fef94acc
 msgid ""
-"Extract the recommended protein name (recommendedName) from UniProtKB entry."
+"Extract the recommended protein name (recommendedName) from UniProtKB "
+"entry."
 msgstr "从 UniProtKB 条目中提取推荐蛋白名称（recommendedName）。"
 
-#: ../../tools/uniprot_tools.rst a3a38c32dfaf441fadbd07e0f7eec42d
+#: ../../tools/uniprot_tools.rst 4b777e01a5594530b8798cfc6cd37d23
 msgid "UniProt_get_recommended_name_by_accession tool specification"
 msgstr "UniProt_get_recommended_name_by_accession 工具规格说明"
 
-#: ../../tools/uniprot_tools.rst:239 a797ee237a774b1e82c2ff61e4230022
+#: ../../tools/uniprot_tools.rst:278 a626f3e31d1e4d4b8a4c9f611bc71653
 msgid "**Name**: ``UniProt_get_recommended_name_by_accession``"
 msgstr "**名称**：``UniProt_get_recommended_name_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:241 497462cc960746b0b2f5d8109f4df1ca
+#: ../../tools/uniprot_tools.rst:280 21b2dfab4c574d9480c92bac8d2a6318
 msgid ""
-"**Description**: Extract the recommended protein name (recommendedName) from"
-" UniProtKB entry."
+"**Description**: Extract the recommended protein name (recommendedName) "
+"from UniProtKB entry."
 msgstr "**描述**：从UniProtKB条目中提取推荐蛋白名称（recommendedName）。"
 
-#: ../../tools/uniprot_tools.rst:262 1c31f2669ab349529ea2e2ae25f41b73
+#: ../../tools/uniprot_tools.rst:301 c9b38f1e22784a4bb579c9b8710db35b
 msgid "**UniProt_get_sequence_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_sequence_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:264 562cd8e030f04d609d6a674313a4c27a
+#: ../../tools/uniprot_tools.rst:303 f45ece0d8ac0498fa4acfc1f8859d13e
 msgid "Extract the canonical sequence from UniProtKB entry."
 msgstr "从 UniProtKB 条目中提取规范序列。"
 
-#: ../../tools/uniprot_tools.rst 4f9e37caf8f04353a7b8730e19f4c724
+#: ../../tools/uniprot_tools.rst b2f383fa4d0b41f9a61362d2d6f9bf81
 msgid "UniProt_get_sequence_by_accession tool specification"
 msgstr "UniProt_get_sequence_by_accession 工具规范"
 
-#: ../../tools/uniprot_tools.rst:270 210fbfbc463540149df49f1aaf6d2657
+#: ../../tools/uniprot_tools.rst:309 ca3637bb30bb4c6fa87cad7d8c80ea16
 msgid "**Name**: ``UniProt_get_sequence_by_accession``"
 msgstr "**名称**：``UniProt_get_sequence_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:272 eaba560e77e44ba2811866dce41e72b4
+#: ../../tools/uniprot_tools.rst:311 92c8a86941e64355a09fa13b3c0328f0
 msgid "**Description**: Extract the canonical sequence from UniProtKB entry."
 msgstr "**描述**：从 UniProtKB 条目中提取规范序列。"
 
-#: ../../tools/uniprot_tools.rst:293 78c6f666ed424456ade709eb6653ee09
-msgid ""
-"**UniProt_get_subcellular_location_by_accession** (Type: UniProtRESTTool)"
+#: ../../tools/uniprot_tools.rst:332 bec46c77470b4fb2a284780520b259b4
+msgid "**UniProt_get_subcellular_location_by_accession** (Type: UniProtRESTTool)"
 msgstr "**UniProt_get_subcellular_location_by_accession**（类型：UniProtRESTTool）"
 
-#: ../../tools/uniprot_tools.rst:295 015340dfc36a4cf8b3689f3a943f48c3
+#: ../../tools/uniprot_tools.rst:334 f8e9416bd7204f7c9f4b8e018d91b4bd
 msgid ""
-"Extract subcellular localization annotations from UniProtKB entry (Comment "
-"type = SUBCELLULAR LOC..."
+"Extract subcellular localization annotations from UniProtKB entry "
+"(Comment type = SUBCELLULAR LOC..."
 msgstr "从 UniProtKB 条目中提取亚细胞定位注释（注释类型 = SUBCELLULAR LOC...）"
 
-#: ../../tools/uniprot_tools.rst fed1e97e938e4620872627a3a050c2d2
+#: ../../tools/uniprot_tools.rst cb34a0bd9a274a6cbcdf0b987713ee45
 msgid "UniProt_get_subcellular_location_by_accession tool specification"
 msgstr "UniProt_get_subcellular_location_by_accession 工具规格说明"
 
-#: ../../tools/uniprot_tools.rst:301 ca4f7607e0094ced9ec12b47c0405517
+#: ../../tools/uniprot_tools.rst:340 963eb5e8d49147739438bb637bc1c6ed
 msgid "**Name**: ``UniProt_get_subcellular_location_by_accession``"
 msgstr "**名称**：``UniProt_get_subcellular_location_by_accession``"
 
-#: ../../tools/uniprot_tools.rst:303 eb6fe31d46784f428a93fe7b62a84b8d
+#: ../../tools/uniprot_tools.rst:342 c5cc2a2b5a914efe84e36ba823f0780b
 msgid ""
-"**Description**: Extract subcellular localization annotations from UniProtKB"
-" entry (Comment type = SUBCELLULAR LOCATION)."
+"**Description**: Extract subcellular localization annotations from "
+"UniProtKB entry (Comment type = SUBCELLULAR LOCATION)."
 msgstr "**描述**：从 UniProtKB 条目中提取亚细胞定位注释（注释类型 = 亚细胞定位）。"
 
-#: ../../tools/uniprot_tools.rst:324 4b383cfbc63a41f3b09a26183ecc50f6
+#: ../../tools/uniprot_tools.rst:363 025d2be71efa474e94f0d9ce5a993240
+#, fuzzy
+msgid "**UniProt_get_uniparc_entry** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_entry_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:365 a4abeb86584341a2ac246d4b1f440a9f
+msgid ""
+"Get UniParc entry by UniParc ID (UPI). UniParc is a non-redundant archive"
+" of all publicly availab..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst b029de4eb6a849ba943e885e42965a58
+#, fuzzy
+msgid "UniProt_get_uniparc_entry tool specification"
+msgstr "UniProt_get_entry_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:371 69864306988e4d1e95c4edace0d63037
+#, fuzzy
+msgid "**Name**: ``UniProt_get_uniparc_entry``"
+msgstr "**名称**: ``UniProt_get_entry_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:373 10bc55ff2b7d42d1bb5bfb92a8530151
+msgid ""
+"**Description**: Get UniParc entry by UniParc ID (UPI). UniParc is a non-"
+"redundant archive of all publicly available protein sequences. Returns "
+"sequence, cross-references, and sequence features. UniParc IDs are in "
+"format UPI000002ED67. Use UniProt\\_get\\_entry\\_by\\_accession to find "
+"the UniParc ID for a UniProt entry (in extraAttributes.uniParcId)."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:377 22abd63f77214c38be6a4e9336f0f83e
+msgid ""
+"``upi`` (string) (required) UniParc ID (UPI) in format UPI000002ED67. "
+"Find UPI from UniProt entry (extraAttributes.uniParcId) or use "
+"UniProt\\_search\\_uniparc."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:394 10d35f31a1014b8fb28ae43401f64e8b
+#, fuzzy
+msgid "**UniProt_get_uniref_cluster** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_function_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:396 8f9dda47496a4b97b73065b066470c85
+msgid ""
+"Get UniRef cluster information by cluster ID. UniRef clusters group "
+"proteins that share 100% (Uni..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst eb4b9d1b961e4355aff074ac6764a3c7
+#, fuzzy
+msgid "UniProt_get_uniref_cluster tool specification"
+msgstr "UniProt_get_function_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:402 be7f926086f94632b3902d8141bac002
+#, fuzzy
+msgid "**Name**: ``UniProt_get_uniref_cluster``"
+msgstr "**名称**: ``UniProt_get_function_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:404 e188449b971e4491900beef0a90403d6
+msgid ""
+"**Description**: Get UniRef cluster information by cluster ID. UniRef "
+"clusters group proteins that share 100% (UniRef100), 90% (UniRef90), or "
+"50% (UniRef50) sequence identity. Returns cluster metadata, "
+"representative member, member count, and member list. Cluster IDs are in "
+"format UniRef100\\_P04637, UniRef90\\_P04637, or UniRef50\\_P04637."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:408 d577d308d31f4130be60848af894d77b
+msgid ""
+"``cluster_id`` (string) (required) UniRef cluster ID (e.g., "
+"'UniRef50\\_P04637', 'UniRef90\\_P04637', 'UniRef100\\_P04637'). Use "
+"UniProt\\_get\\_uniref\\_search to find cluster IDs."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:425 9630cddbf524493586bc68164c6a6488
+#, fuzzy
+msgid "**UniProt_id_mapping** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_isoform_ids_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:427 6e0ffb2b936c49639a9553811f1d6ca3
+msgid ""
+"Map IDs between different databases (e.g., Ensembl to UniProt, Gene Name "
+"to UniProt). Supports ba..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst dd959871d3f94c4c8acafc1f70b66f6e
+#, fuzzy
+msgid "UniProt_id_mapping tool specification"
+msgstr "UniProt_get_isoform_ids_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:433 98f9fbe9c9c446ecbb83070f58ba633d
+#, fuzzy
+msgid "**Name**: ``UniProt_id_mapping``"
+msgstr "**名称**：``UniProt_get_isoform_ids_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:435 d3da5e234b2d4db1bd7cc679a572fc9e
+msgid ""
+"**Description**: Map IDs between different databases (e.g., Ensembl to "
+"UniProt, Gene Name to UniProt). Supports batch mapping and async task "
+"processing. Use this to convert between different database identifiers."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:439 8ad747c173984788990372e62f9e6086
+msgid ""
+"``ids`` (unknown) (required) ID(s) to map. Can be single string or array "
+"of strings, e.g., 'ENSG00000141510' or ['MEIOB', 'TP53']"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:442 fb5c3aa65d044934a6b5cd92ef1aedb4
+msgid ""
+"``from_db`` (string) (required) Source database. Examples: 'Ensembl', "
+"'Gene\\_Name', 'RefSeq\\_Protein', 'PDB', 'EMBL'"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:445 3812368a40674f8eb6b0e0fb8a35e9d9
+msgid "``to_db`` (string) (optional) Target database (default: 'UniProtKB')"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:448 ccfed8c69f4b47e6bac7313603e7c207
+msgid ""
+"``max_wait_time`` (integer) (optional) Maximum time to wait for async "
+"task completion in seconds (default: 30)"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:466 bd6344d869734dfd96d53bf80d86ebcc
+#, fuzzy
+msgid "**UniProt_search** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_entry_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:468 6907b619d59248e38eef67096d53443c
+msgid ""
+"Search UniProtKB database with flexible query syntax. Returns protein "
+"entries with accession numb..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst bb684dcbc688487199a2ff24d7ffccec
+#, fuzzy
+msgid "UniProt_search tool specification"
+msgstr "UniProt_get_entry_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:474 23e06fd52752488baefd7960c0722a77
+#, fuzzy
+msgid "**Name**: ``UniProt_search``"
+msgstr "**名称**: ``UniProt_get_entry_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:476 25b49acbedcf4a00a73c984c717632ec
+msgid ""
+"**Description**: Search UniProtKB database with flexible query syntax. "
+"Returns protein entries with accession numbers and metadata. Query syntax"
+" supports: field searches (gene:TP53, organism\\_id:9606, reviewed:true),"
+" ranges (length:[100 TO 500], mass:[20000 TO 50000]), wildcards "
+"(gene:MEIOB\\*), boolean operators (AND/OR/NOT), and parentheses for "
+"grouping. Examples: 'gene:TP53 AND organism\\_id:9606', 'length:[400 TO "
+"500] AND reviewed:true', 'tissue:brain NOT organism\\_id:10090'."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:480 2ed0e5b3ea984ccd87ebf6bed3035c10
+msgid ""
+"``query`` (string) (required) Search query using UniProt syntax. Simple: "
+"'MEIOB', 'insulin'. Field searches: 'gene:TP53', "
+"'protein\\_name:insulin', 'organism\\_id:9606', 'reviewed:true'. Ranges: "
+"'length:[100 TO 500]', 'mass:[20000 TO 50000]'. Wildcards: "
+"'gene:MEIOB\\*'. Boolean: 'gene:TP53 AND organism\\_id:9606', "
+"'tissue:brain OR tissue:liver', 'reviewed:true NOT fragment:true'. Use "
+"parentheses for grouping: '(organism\\_id:9606 OR organism\\_id:10090) "
+"AND gene:TP53'. Note: 'organism:' auto-converts to 'organism\\_id:'."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:483 bc8d5e8181774a0989b9ff653632582c
+msgid ""
+"``organism`` (string) (optional) Optional organism filter. Use common "
+"names ('human', 'mouse', 'rat', 'yeast') or taxonomy ID ('9606'). "
+"Automatically combined with query using AND. Will not duplicate if "
+"organism is already in query."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:486 210a634baa0f4ae680406e6287c265fa
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 25, max: 500). Accepts string or integer."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:489 2df135eda4bc45d8856d01a4cdf022c7
+msgid ""
+"``min_length`` (integer) (optional) Minimum sequence length. Auto-"
+"converts to 'length:[min TO \\*]' range query."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:492 0cdce51a19a04cc4acc9eb30e84f11db
+msgid ""
+"``max_length`` (integer) (optional) Maximum sequence length. Auto-"
+"converts to 'length:[\\* TO max]' range query."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:495 b93d5c9524de4988af5a12c19ac34d18
+msgid ""
+"``fields`` (array) (optional) List of field names to return (e.g., "
+"['accession','gene\\_primary','length','organism\\_name']). When "
+"specified, returns raw API response with requested fields. Common fields:"
+" accession, id, gene\\_names, gene\\_primary, protein\\_name, "
+"organism\\_name, organism\\_id, length, mass, sequence, reviewed, "
+"cc\\_function. See UniProt API docs for full list. Default (no fields): "
+"returns formatted response with accession, id, protein\\_name, "
+"gene\\_names, organism, length."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:512 981c3b24ec074a5a950d76edded23e7a
+#, fuzzy
+msgid "**UniProt_search_uniparc** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_entry_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:514 001163923fc94ac19555a0d72f559773
+msgid ""
+"Search UniParc entries. Returns UniParc entries matching the query. Use "
+"this to find UniParc entr..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst 164fd23acaca47e289d01b9f50360e2b
+#, fuzzy
+msgid "UniProt_search_uniparc tool specification"
+msgstr "UniProt_get_entry_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:520 e5d1e86dd6ca4bac8bfa6c89edb17e99
+#, fuzzy
+msgid "**Name**: ``UniProt_search_uniparc``"
+msgstr "**名称**: ``UniProt_get_entry_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:522 2ff684fcdcfd4889bb7b25fb6e2ecc9b
+msgid ""
+"**Description**: Search UniParc entries. Returns UniParc entries matching"
+" the query. Use this to find UniParc entries for specific proteins or "
+"sequences. Query syntax supports protein accessions, gene names, organism"
+" filters, etc."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:526 ../../tools/uniprot_tools.rst:560
+#: 70269225f5c943498e2541ed1f8cd755 a6812c7229424ab88226d2f51bf94274
+msgid ""
+"``query`` (string) (required) Search query. Examples: 'P04637' (protein "
+"accession), 'name:TP53', 'organism\\_id:9606' (human). Supports UniProt "
+"query syntax."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:529 ../../tools/uniprot_tools.rst:566
+#: 00d4f3a67e1f4898aa4c08c60b0e712a 756f20bf4d6948aa8ccd8cd5d8579c34
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 25, max: 500)"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:546 1dd4ce5ae469400da1452752061be2cd
+#, fuzzy
+msgid "**UniProt_search_uniref** (Type: UniProtRESTTool)"
+msgstr "**UniProt_get_function_by_accession**（类型：UniProtRESTTool）"
+
+#: ../../tools/uniprot_tools.rst:548 8b1d1096b49c4441a59b7fc29d7ab765
+msgid ""
+"Search UniRef clusters. Returns clusters matching the query. Use this to "
+"find UniRef clusters for..."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst 11ea2fe07dc7436d9ca57ca6a29344d3
+#, fuzzy
+msgid "UniProt_search_uniref tool specification"
+msgstr "UniProt_get_function_by_accession 工具规范"
+
+#: ../../tools/uniprot_tools.rst:554 8be14d228b274ef8934fc67db58f5dce
+#, fuzzy
+msgid "**Name**: ``UniProt_search_uniref``"
+msgstr "**名称**: ``UniProt_get_function_by_accession``"
+
+#: ../../tools/uniprot_tools.rst:556 70e481c5cb854bbeaa364f9c5741cc8e
+msgid ""
+"**Description**: Search UniRef clusters. Returns clusters matching the "
+"query. Use this to find UniRef clusters for specific proteins or "
+"organisms. Query syntax supports protein accessions, gene names, organism"
+" filters, etc."
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:563 87964e3ab34345319e1cfeb0072f29e6
+#, python-format
+msgid ""
+"``cluster_type`` (string) (optional) UniRef cluster type: UniRef100 (100%"
+" identity), UniRef90 (90% identity), UniRef50 (50% identity)"
+msgstr ""
+
+#: ../../tools/uniprot_tools.rst:583 e51fc24325c048c1a240a4debcfa41bc
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/uniprot_tools.rst:326 08a627da0bd4489fa0a7a0ba2783c7f5
+#: ../../tools/uniprot_tools.rst:585 59e17a78cc0c46e7bd4fa1378d978356
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/uniprot_tools.rst:327 9c4a4d367df544148bcdf251f81e8cb6
+#: ../../tools/uniprot_tools.rst:586 383e532d3a804c59bd53a053089b023b
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "**Description**: Get the complete JSON "
+#~ "entry for a specified UniProtKB "
+#~ "accession."
+#~ msgstr "**描述**：获取指定UniProtKB登录号的完整JSON条目。"
+

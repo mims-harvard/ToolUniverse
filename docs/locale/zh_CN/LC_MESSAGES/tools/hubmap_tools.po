@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hubmap_tools.rst:10 7f38aa22d64e45ce92ceb8a2a2f287f9
+msgid "Hubmap Tools"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:12 c3d2b28bb09943c49e75b1ce3d7e6f73
+msgid ""
+"**Configuration File**: ``hubmap_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:16 28621ea764464d14a76d7039647aadb8
+msgid ""
+"This page contains all tools defined in the ``hubmap_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:19 883104ec08b94412b65b15be312f454f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:22 00b98b421f074ecb91bccfc76b11648d
+msgid "**HuBMAP_get_dataset** (Type: HuBMAPTool)"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:24 145432ff778442d18b5d8c0fc61f2077
+msgid ""
+"Get detailed metadata for a specific HuBMAP dataset by its HuBMAP ID. "
+"Returns comprehensive infor..."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst 83fa8562c0164faf97c09713a51dcd07
+msgid "HuBMAP_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:28 ../../tools/hubmap_tools.rst:59
+#: ../../tools/hubmap_tools.rst:88 6adb2892b18e4998ac65b1331268221b
+#: be3c8aa30b8345aba1a1d351e91a8ff9 e29094c843504781aaf0bf4b7e2fed3d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:30 66f8ddb5c2c8472097f61bcdaa2cccf4
+msgid "**Name**: ``HuBMAP_get_dataset``"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:31 ../../tools/hubmap_tools.rst:62
+#: ../../tools/hubmap_tools.rst:91 05a283c68ab743bd828f9ba8a3466b5a
+#: 208ea74d2fc249d7a7b45eeb286fd14b dea6db3820be416c8aa16fba1ac30c11
+msgid "**Type**: ``HuBMAPTool``"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:32 0d503b4a66d54d9a8089500161a424b1
+msgid ""
+"**Description**: Get detailed metadata for a specific HuBMAP dataset by "
+"its HuBMAP ID. Returns comprehensive information including title, "
+"description, data type, organ, group, contacts, contributors, DOI, and "
+"data access level. Use HuBMAP\\_search\\_datasets first to find HuBMAP "
+"IDs."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:34 ../../tools/hubmap_tools.rst:65
+#: ../../tools/hubmap_tools.rst:94 144710e305f54a79a26b5b85c24c5b35
+#: 1d9b8e4979c64f8e99cd5b0b441b7a66 57eb6c42ac6445319cc11e05ce05cb84
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:36 9474a45045854a00aa0a1f50042b7ec0
+msgid ""
+"``hubmap_id`` (string) (required) HuBMAP dataset identifier (e.g., "
+"'HBM626.FHJD.938')"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:39 ../../tools/hubmap_tools.rst:69
+#: ../../tools/hubmap_tools.rst:111 0ccefe37cde5488eb955b57db89885a3
+#: 34750a0f4848433f94caaffba33be00b 84cccd93acd84645a29a3c6738c3f095
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:53 0fc16b084f5e4e4e9549e0ca80a05625
+msgid "**HuBMAP_list_organs** (Type: HuBMAPTool)"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:55 188860481dbb486297b5f747455d98b5
+msgid ""
+"List all organs available in the HuBMAP (Human BioMolecular Atlas "
+"Program) atlas. Returns organ n..."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst 010650762150491da92029bbabbd6258
+msgid "HuBMAP_list_organs tool specification"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:61 1b94d0a08cc1466fb889a5f103621002
+msgid "**Name**: ``HuBMAP_list_organs``"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:63 86a175977a9f4caa9487ee9010fe0430
+msgid ""
+"**Description**: List all organs available in the HuBMAP (Human "
+"BioMolecular Atlas Program) atlas. Returns organ names, codes (for use in"
+" HuBMAP\\_search\\_datasets), UBERON ontology IDs, and CUI codes. HuBMAP "
+"maps 43 organs including kidney, heart, liver, lung, brain, spleen, "
+"intestine, skin, and more."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:67 5f9fb7fb2d3f416e9deac47d11448539
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:82 7a8c3197545b4fa0908d4fdabd7a5073
+msgid "**HuBMAP_search_datasets** (Type: HuBMAPTool)"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:84 1f5e13156dca4c478d281eca03c967f4
+msgid ""
+"Search HuBMAP (Human BioMolecular Atlas Program) published datasets by "
+"organ, assay type, or free..."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst 636318b112804fef99c751295c896803
+msgid "HuBMAP_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:90 59bf886e341f471b8cb5c082b77eb721
+msgid "**Name**: ``HuBMAP_search_datasets``"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:92 5b75f054d0c3438bb00aa46f7b1c8cee
+msgid ""
+"**Description**: Search HuBMAP (Human BioMolecular Atlas Program) "
+"published datasets by organ, assay type, or free text. HuBMAP provides "
+"spatial biology and single-cell atlas datasets across 43 human organs "
+"with data types including scRNA-Seq, CODEX, MALDI, LC-MS, snATAC-Seq, and"
+" more. Organ codes: LK=Left Kidney, RK=Right Kidney, LI=Large Intestine, "
+"SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, TH=Thymus, "
+"LY=Lymph Node, BL=Bladder, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone "
+"Marrow, MU=Muscle."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:96 70c05bdc89594055b9b2789eac900776
+msgid ""
+"``organ`` (string) (optional) Organ code to filter by (e.g., 'LK' for "
+"left kidney, 'HT' for heart, 'LV' for liver, 'LU' for lung, 'BR' for "
+"brain, 'SP' for spleen). Use HuBMAP\\_list\\_organs to see all codes."
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:99 4829050c2d38445383be1cfcbe31e220
+msgid ""
+"``dataset_type`` (string) (optional) Filter by assay/data type (e.g., "
+"'RNAseq', 'CODEX', 'MALDI', 'snATACseq', 'LC-MS', 'scRNAseq-"
+"10xGenomics-v3')"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:102 8d1798fd439145feb418b8ca14af2022
+msgid ""
+"``query`` (string) (optional) Free text search across title, description,"
+" and anatomy fields"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:105 21160f870bd3459c9a46af8b31cf963d
+msgid "``status`` (string) (optional) Dataset status filter. Default: 'Published'"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:108 67981061970f47debf12e2d0cbefc746
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (1-50, default "
+"10)"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:124 63407b95d64f4687bfaa3fd64098eb77
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:126 14e1472d9a1f445c94d460f6acdcecfb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hubmap_tools.rst:127 6314107cef1148acba34fe80d7df5104
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

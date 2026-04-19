@@ -1,0 +1,214 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/wikipedia_tools.rst:10 0de90c41ee264a76a0cd0d6ced3b0d27
+msgid "Wikipedia Tools"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:12 044a692b58864a48a995eaa68bb2e66e
+msgid ""
+"**Configuration File**: ``wikipedia_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:16 e409d850708b4a9d8f8e4842cb5093de
+msgid ""
+"This page contains all tools defined in the ``wikipedia_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:19 8ec083c1aa6e42eb9d7d72ffc18770fc
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:22 6530dc14f9044867baacf94526017486
+msgid "**Wikipedia_get_content** (Type: WikipediaContentTool)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:24 cc581cc37327475f87293a92927826ba
+msgid ""
+"Extract content from a Wikipedia article. Can extract introduction, "
+"summary, or full article cont..."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst 09bd86c6fa7b4b2b83da2900461ab9d2
+msgid "Wikipedia_get_content tool specification"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:28 ../../tools/wikipedia_tools.rst:68
+#: ../../tools/wikipedia_tools.rst:105 637c64176ab244b2b33b54a25892da1a
+#: 74ac2d6b4e4249c7ab523ac93ca109a6 ceb402b0418448069fd42ce3255c4986
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:30 d19622de0b2b446fa26bf5b910fc1016
+msgid "**Name**: ``Wikipedia_get_content``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:31 464c7954648449fe9f076969d63bbf86
+msgid "**Type**: ``WikipediaContentTool``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:32 1a9ce600fa784e569fa786012e53e353
+msgid ""
+"**Description**: Extract content from a Wikipedia article. Can extract "
+"introduction, summary, or full article content. No API key required."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:34 ../../tools/wikipedia_tools.rst:74
+#: ../../tools/wikipedia_tools.rst:111 3fae0bab961f45e88513e7fac3c83838
+#: 7150ad2bf9ca49d78a92fd549bf04865 8b36f04bc3f74cef9cbfef177bdbc4d0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:36 ../../tools/wikipedia_tools.rst:76
+#: 063553080e474044985ac0b1164a7195 0bdb7896e73f4481820c82a9e807c124
+msgid ""
+"``title`` (string) (required) Wikipedia article title (exact title as it "
+"appears on Wikipedia)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:39 1794b4e367054e3c830a036c5d7caa01
+msgid ""
+"``language`` (string) (optional) Wikipedia language code (e.g., 'en' for "
+"English, 'zh' for Chinese). Default: 'en'"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:42 198a6c4b65424d1facd949d29fd4be7d
+msgid ""
+"``extract_type`` (string) (optional) Type of content to extract: 'intro' "
+"(first paragraph only), 'summary' (first few paragraphs, default), or "
+"'full' (entire article)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:45 1444a992e40b487e9ba54079a07cfc7f
+msgid ""
+"``max_chars`` (integer) (optional) Maximum characters to return for "
+"intro/summary (ignored for 'full'). Default: 2000"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:48 ../../tools/wikipedia_tools.rst:85
+#: ../../tools/wikipedia_tools.rst:122 010d4fecde604eecaf0eccdca54afe37
+#: 1a8666d29fe14adf95f92a8f70b08561 49c57cfd62134e3583bf51b8a406c21e
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:62 208a74b471b44927b8e3803e2e90f577
+msgid "**Wikipedia_get_summary** (Type: WikipediaSummaryTool)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:64 308bc5261f3547b693c25269e6e587d8
+msgid ""
+"Get a brief summary/introduction from a Wikipedia article. This is a "
+"convenience tool that extrac..."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst 60e0b7e2a340469297218358c690aa63
+msgid "Wikipedia_get_summary tool specification"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:70 ff997ae0c1e3413c80d0fafb323b460e
+msgid "**Name**: ``Wikipedia_get_summary``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:71 eeb8f9a8408b4bd296df8962a65aa2be
+msgid "**Type**: ``WikipediaSummaryTool``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:72 f491d0cf3beb4622a0b5993f12d9f734
+msgid ""
+"**Description**: Get a brief summary/introduction from a Wikipedia "
+"article. This is a convenience tool that extracts just the first "
+"paragraph(s) of an article. No API key required."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:79 26ee17001905401b855b44d0d0145e44
+msgid ""
+"``language`` (string) (optional) Wikipedia language code (e.g., 'en' for "
+"English). Default: 'en'"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:82 fdf7322970d348e8bb6d1c655dfe5571
+msgid ""
+"``max_chars`` (integer) (optional) Maximum characters to return. Default:"
+" 500"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:99 a5fb757db7c543068756da4ad1331a81
+msgid "**Wikipedia_search** (Type: WikipediaSearchTool)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:101 3327b8dd535943c7887570b92fb4423d
+msgid ""
+"Search Wikipedia articles using MediaWiki API. Returns a list of matching"
+" articles with titles, s..."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst 28cbae22cb8043b9b19eea4f470ffaeb
+msgid "Wikipedia_search tool specification"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:107 9bd25631aa684f4d927ddf52ab0bbd3a
+msgid "**Name**: ``Wikipedia_search``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:108 7d10acfe63364a3f99bc3d65e54d32c2
+msgid "**Type**: ``WikipediaSearchTool``"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:109 e9b5f04be814486fa1fde712c23166b7
+msgid ""
+"**Description**: Search Wikipedia articles using MediaWiki API. Returns a"
+" list of matching articles with titles, snippets, and metadata. No API "
+"key required."
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:113 be834f9a788a4fc99e417fb3c9914f78
+msgid ""
+"``query`` (string) (required) Search query string to find Wikipedia "
+"articles"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:116 ed213ffa1e0b4ebdb3a765f196ae34f3
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 50)"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:119 acfae471e834499bac69a2b4310307e5
+msgid ""
+"``language`` (string) (optional) Wikipedia language code (e.g., 'en' for "
+"English, 'zh' for Chinese, 'fr' for French). Default: 'en'"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:136 2c4bbebc581a4eae9560453f2dc2eb27
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:138 7dabaf75a7b94fde92fedbc37b68697f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/wikipedia_tools.rst:139 e7457e2cc70943c4b9c598f323419a31
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

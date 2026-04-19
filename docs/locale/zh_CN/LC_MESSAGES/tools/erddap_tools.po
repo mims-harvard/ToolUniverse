@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/erddap_tools.rst:10 69a20e93ee9e470facb972a5b7ca62a4
+msgid "Erddap Tools"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:12 32198c378f124d4993e3ccce7faec8cd
+msgid ""
+"**Configuration File**: ``erddap_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:16 4c22e1fa8a1e4677bf87c32691c106ce
+msgid ""
+"This page contains all tools defined in the ``erddap_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:19 6cd3dd24fce7452bbcd90eedb19f8176
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:22 0b85b64439084e349189e9d1eaf7b973
+msgid "**ERDDAP_get_dataset_info** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:24 1b33b90ee21c44bdab82cc26d9082a1d
+msgid ""
+"Get metadata and variable information for a specific ERDDAP dataset by "
+"its Dataset ID from NOAA C..."
+msgstr ""
+
+#: ../../tools/erddap_tools.rst 4e33d73ab04b4bca9d7d55010fc68e6c
+msgid "ERDDAP_get_dataset_info tool specification"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:28 ../../tools/erddap_tools.rst:59
+#: 6bb25a52bc8949d5bc8eb4afdbc0d414 c0955016bf8b40d08cb10af6896ae6a4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:30 464eccd4462a4edb83d6fcceaeea750c
+msgid "**Name**: ``ERDDAP_get_dataset_info``"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:31 ../../tools/erddap_tools.rst:62
+#: 4b5b9b802cf640e6b26eedabd4b15a5d 9d77fb5e3cb64317bff66e6529b3dd92
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:32 29f1575b79b44a99a4f9ae3f67892f9c
+msgid ""
+"**Description**: Get metadata and variable information for a specific "
+"ERDDAP dataset by its Dataset ID from NOAA CoastWatch. Returns variable "
+"names, dimensions, units, and global attributes. No authentication "
+"required. Dataset IDs can be found using ERDDAP\\_search\\_datasets. "
+"Example dataset IDs: 'erdATssta8day' (AVHRR SST 8-day composite), "
+"'goes\\_west' (GOES-18 SST hourly), 'erdMHchla8day' (MODIS chlorophyll "
+"8-day)."
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:34 ../../tools/erddap_tools.rst:65
+#: 0edd1ae5173b45ba8b4ddc2f642e0839 dad9a31d20884f36a1bc5ab3e928a934
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:36 e612353ecb014d51ac07b0420b1eea86
+msgid ""
+"``datasetID`` (string) (required) ERDDAP dataset identifier. Examples: "
+"'erdATssta8day' (AVHRR SST 8-day), 'goes\\_west' (GOES-18 SST), "
+"'erdMHchla8day' (MODIS chlorophyll), 'cwwcNDBCMet' (NDBC buoy "
+"meteorological data)"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:39 ../../tools/erddap_tools.rst:76
+#: 22820f85e86c41c6a40ecde14a736342 8c31f4d72ef742da80b4cbf396ec03b8
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:53 bf5928272aec4e3e98de130e68197ce7
+msgid "**ERDDAP_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:55 aaaadf3dbe5844aaab4d00150176ed14
+msgid ""
+"Search for oceanographic and atmospheric datasets in NOAA CoastWatch "
+"ERDDAP (Environmental Resear..."
+msgstr ""
+
+#: ../../tools/erddap_tools.rst ae9ad4e8df074925a7e61c71d89bb18e
+msgid "ERDDAP_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:61 3b379865238a4e2fbe19648433387e90
+msgid "**Name**: ``ERDDAP_search_datasets``"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:63 5833573b1174474e8d3bcea8151dcbc5
+msgid ""
+"**Description**: Search for oceanographic and atmospheric datasets in "
+"NOAA CoastWatch ERDDAP (Environmental Research Division's Data Access "
+"Program). Returns dataset IDs, titles, and summaries. No authentication "
+"required. ERDDAP aggregates satellite, buoy, and model data including sea"
+" surface temperature, chlorophyll-a, wave height, wind speed, currents, "
+"and salinity. Use returned Dataset IDs to access actual data. Useful for "
+"oceanography, climate science, fisheries research, and environmental "
+"monitoring."
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:67 28ab9804731d4beaac51dc9719eeb003
+msgid ""
+"``searchFor`` (string) (required) Search keyword(s) for dataset "
+"discovery. Examples: 'sea surface temperature', 'chlorophyll', 'wave "
+"height', 'salinity', 'currents', 'wind', 'MODIS', 'SST', 'bathymetry'"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:70 de02f1b9771b42d68e23c08d00b4bc98
+msgid ""
+"``itemsPerPage`` (integer, null) (optional) Number of results to return "
+"(1-100). Default: 10"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:73 ce1db8dd4de64848949be644a2d50308
+msgid "``page`` (integer, null) (optional) Page number for pagination. Default: 1"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:90 de295ac47a6d475d84d4dc4d332ecd27
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:92 645bf7345d214195a47c8571a4001823
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/erddap_tools.rst:93 85200239f45547969cb45061ac6e0527
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

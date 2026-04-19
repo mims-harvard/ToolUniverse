@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebird_taxonomy_tools.rst:10 300eabbb61c6404b91a367f3992446cb
+msgid "Ebird Taxonomy Tools"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:12 14b3e8b3c0fe47c0930d934c4167a824
+msgid ""
+"**Configuration File**: ``ebird_taxonomy_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:16 5758327f2c824d7197eb9bdadf5a0c80
+msgid ""
+"This page contains all tools defined in the ``ebird_taxonomy_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:19 5065b0bf82e5437f81098f69a5c71655
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:22 8fe589fc2576478889e2e19a0dd67b97
+msgid "**eBird_get_taxon_groups** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:24 097fb92b4402450c91d5602ec03cb7b1
+msgid ""
+"Get the list of bird taxonomic groups from eBird (Cornell Lab of "
+"Ornithology). Returns all bird g..."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst 262860d866284470901aebc2b6c991b9
+msgid "eBird_get_taxon_groups tool specification"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:28
+#: ../../tools/ebird_taxonomy_tools.rst:62 883802979abb409fa00b3a6ad6f31cec
+#: a9b0e189d7814c58bd97986c7aa79afd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:30 ba029d4f81984d6ca2849f1da75a55f6
+msgid "**Name**: ``eBird_get_taxon_groups``"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:31
+#: ../../tools/ebird_taxonomy_tools.rst:65 1c581a922a0b46d5906840ddf0b14a87
+#: 6dd67bd1b16e480b997d75c687af694c
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:32 377343cd9b1b4c7a97328dfdea8fb8b6
+msgid ""
+"**Description**: Get the list of bird taxonomic groups from eBird "
+"(Cornell Lab of Ornithology). Returns all bird groups (e.g., Waterfowl, "
+"Raptors, Owls, Hummingbirds, Woodpeckers, Sparrows) with their taxonomic "
+"order bounds. Two grouping systems are available: 'merlin' (simplified "
+"groups used in the Merlin Bird ID app, ~30 groups) and 'ebird' (full "
+"eBird taxonomy groups, ~217 groups). Each group has a name, display "
+"order, and taxon order bounds that map to species in the full taxonomy. "
+"Useful for categorizing species into familiar bird groups. Can be "
+"localized to different languages. No API key required."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:34
+#: ../../tools/ebird_taxonomy_tools.rst:68 4b737302dbe34bbd855e6ef1a8241df7
+#: ff93f36d114c4516a556b7051b6cec85
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:36 2f62de17f6164bd4949ab54d06c1459b
+msgid ""
+"``speciesGrouping`` (string) (required) Grouping system to use. 'merlin' "
+"returns ~30 simplified groups used in the Merlin Bird ID app (Waterfowl, "
+"Hawks/Eagles, Owls, Hummingbirds, etc.). 'ebird' returns ~217 detailed "
+"taxonomic groups (Ostriches, Kiwis, Ducks/Geese/Swans, etc.)."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:39 ae4311719e064cfbaf5037390a58ad9a
+msgid ""
+"``groupNameLocale`` (string, null) (optional) Language code for group "
+"names (e.g., 'en' for English, 'es' for Spanish, 'fr' for French, 'de' "
+"for German). Defaults to 'en'."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:42
+#: ../../tools/ebird_taxonomy_tools.rst:79 6b51f3a3233c48378494cecf8669e903
+#: 73ec6c53433a432a837f1ec74f0badff
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:56 14bafc1621d841e5a4b309b72e3a277e
+msgid "**eBird_get_taxonomy** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:58 71c94d8231e449b286926bad4434a80a
+msgid ""
+"Get bird taxonomy data from eBird (Cornell Lab of Ornithology). Returns "
+"taxonomic information inc..."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst 15da11b879254f518173c1641af6c625
+msgid "eBird_get_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:64 22dd88e2d3334209af71601800379bb8
+msgid "**Name**: ``eBird_get_taxonomy``"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:66 efd159d3a9a9460cae6dfafa0076cc63
+msgid ""
+"**Description**: Get bird taxonomy data from eBird (Cornell Lab of "
+"Ornithology). Returns taxonomic information including scientific name, "
+"common name, species code, taxonomic order, family, and banding codes. "
+"Can retrieve taxonomy for a specific species by code, filter by taxon "
+"type, or set locale for common names in different languages. Without "
+"parameters, returns the complete eBird taxonomy (~17,000 taxa). Use "
+"species codes like 'amerob' (American Robin), 'baleag' (Bald Eagle), "
+"'mallar3' (Mallard). No API key required."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:70 80a7528d8f0c4c45800b464a66cacc77
+msgid ""
+"``species`` (string, null) (optional) eBird species code to filter to a "
+"single species (e.g., 'amerob' for American Robin, 'baleag' for Bald "
+"Eagle, 'mallar3' for Mallard, 'pilwoo' for Pileated Woodpecker). Find "
+"codes via eBird website or search."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:73 f4bda73e4b944008acbbb1cf7708eecc
+msgid ""
+"``taxonType`` (string, null) (optional) Taxonomic category filter. "
+"Values: 'species' (full species only), 'issf' (identifiable sub-specific "
+"forms), 'spuh' (genus-level), 'slash' (species pairs), 'intergrade', "
+"'domestic', 'hybrid', 'form'"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:76 de2b01743ca540bb9897e816c2452cce
+msgid ""
+"``locale`` (string, null) (optional) Language code for common names "
+"(e.g., 'en' for English, 'es' for Spanish, 'fr' for French, 'de' for "
+"German, 'zh' for Chinese). Defaults to 'en'."
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:92 58f470bb8071495b83ab29122f56f05f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:94 df8938f657b7455d9aa3eb50daea4a7f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebird_taxonomy_tools.rst:95 a5957cdc1f584f1885f9c60361f69134
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

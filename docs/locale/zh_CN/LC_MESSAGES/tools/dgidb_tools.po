@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dgidb_tools.rst:10 ddf506f310fc4acb930bb882285887a2
+msgid "Dgidb Tools"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:12 19114eaaab024e5eaabbfa1d9dfba5bc
+msgid ""
+"**Configuration File**: ``dgidb_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 4"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:16 8c52abce4d774b278eeb90560fea624b
+msgid ""
+"This page contains all tools defined in the ``dgidb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:19 fad82419cc864f19b5ac024b764e1b7b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:22 81c4ba5d850d41d7960779e9fe0346f0
+msgid "**DGIdb_get_drug_gene_interactions** (Type: DGIdbTool)"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:24 1aa8278a2fb34b7b93ec51ca70b0c4ec
+msgid ""
+"Get drug-gene interactions for a list of genes from DGIdb. Returns drugs "
+"targeting each gene, int..."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst 8f2f8aca7acf4accb11ceff837a9a29e
+msgid "DGIdb_get_drug_gene_interactions tool specification"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:28 ../../tools/dgidb_tools.rst:70
+#: ../../tools/dgidb_tools.rst:101 ../../tools/dgidb_tools.rst:137
+#: 3a076b76808a4d12ba52ad0980dcb8db 6a60348cc5e94ed1904013973e44d24c
+#: 89df39e115964cb8afb3e6956aa81423 fa22fab7c3074f2da092a2ed195e166c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:30 b785d60a18464b51b30548545c34be5a
+msgid "**Name**: ``DGIdb_get_drug_gene_interactions``"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:31 ../../tools/dgidb_tools.rst:73
+#: ../../tools/dgidb_tools.rst:104 ../../tools/dgidb_tools.rst:140
+#: 15a0c09ca6c04a989f8662c5fde43f04 3ec67d95f3c940bf89f936ee14d8dd06
+#: b1472f5bbe6c4a56aa0b3fdafb317eea c2e9719fdecc476986725c5972c990ff
+msgid "**Type**: ``DGIdbTool``"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:32 fa6db745d8ec43fb809f0c8e4f5131ae
+msgid ""
+"**Description**: Get drug-gene interactions for a list of genes from "
+"DGIdb. Returns drugs targeting each gene, interaction types, and evidence"
+" sources."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:34 ../../tools/dgidb_tools.rst:76
+#: ../../tools/dgidb_tools.rst:107 ../../tools/dgidb_tools.rst:143
+#: 5ffa5e8909f24f549e50e87d29bbec28 7375dd2faf9a43b79d8e2ec4a9d68cce
+#: d43493145a2f4e679c04006cf845716d f04f16899b934204ae84dd1c7a0a6c15
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:36 8328d0a18b6b4b3eb0717f968ed200e2
+msgid ""
+"``genes`` (array) (optional) List of gene symbols (e.g., ['EGFR', "
+"'BRAF']). Also accepts a single gene as string. Aliases: gene\\_name, "
+"gene."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:39 ../../tools/dgidb_tools.rst:112
+#: ../../tools/dgidb_tools.rst:148 55d8ac8884ac4472a6cfefa9025b4271
+#: 69b9e0faa025415e84783a16082a2c39 9f3190e995ea4e6d87ac510ec5af986b
+msgid ""
+"``gene_name`` (string) (optional) Alias for genes. Single gene symbol "
+"(e.g., 'EGFR')."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:42 ../../tools/dgidb_tools.rst:115
+#: ../../tools/dgidb_tools.rst:151 9e98ffba710d409da4d6253a0cc6ea9e
+#: f4b86f1f1cfe439d8372606eeb0d7a57 f555d1f5dea1493e96be68ca32925f89
+msgid ""
+"``gene`` (string) (optional) Alias for genes. Single gene symbol (e.g., "
+"'EGFR')."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:45 984102f54ed54318a89e3fb8cf45ba4d
+msgid ""
+"``interaction_sources`` (array) (optional) Optional filter by data "
+"sources (e.g., ['DrugBank', 'ChEMBL'])."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:48 b12545d719b94d5c8a4de07fa6c71dd6
+msgid ""
+"``interaction_types`` (array) (optional) Optional filter by interaction "
+"types (e.g., ['inhibitor', 'antagonist'])."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:51 ../../tools/dgidb_tools.rst:81
+#: ../../tools/dgidb_tools.rst:118 ../../tools/dgidb_tools.rst:154
+#: 4f5fb8bf21484266866d18b3d2b4c71d 606e7e9604294b8390706c7666c35c7b
+#: 6480e0be442d435897940df96635fd12 9bea976be8064144876e9c5c9f276e80
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:64 41805596eae94d748e910d03b7088c7a
+msgid "**DGIdb_get_drug_info** (Type: DGIdbTool)"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:66 8a29dd2d366d43748c0dbca80759ff3f
+msgid ""
+"Get basic drug metadata from DGIdb by drug name. Returns drug name, "
+"concept ID, and approval stat..."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst d839f9c8310e43ca93ecc1ed3d30f623
+msgid "DGIdb_get_drug_info tool specification"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:72 ac4f4e692bde46b980359c67df798e87
+msgid "**Name**: ``DGIdb_get_drug_info``"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:74 7574c72379194eff9003afa263d7f194
+msgid ""
+"**Description**: Get basic drug metadata from DGIdb by drug name. Returns"
+" drug name, concept ID, and approval status. To get drug-gene "
+"interactions, use DGIdb\\_get\\_drug\\_gene\\_interactions instead."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:78 5eafeb742fff461dac301065e8957989
+msgid ""
+"``drugs`` (unknown) (required) Drug name(s) to look up. Accepts a single "
+"name or a list."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:95 00d45c2db0564f9bb7f7f83a6cd355aa
+msgid "**DGIdb_get_gene_druggability** (Type: DGIdbTool)"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:97 aa0f955df7954e80a0fc0327b8c28383
+msgid ""
+"Get druggability information for genes. Returns gene categories "
+"indicating if a gene is druggable..."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst 32cb7e86337c44caa6c4fe6aab17bf62
+msgid "DGIdb_get_gene_druggability tool specification"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:103 77d671b4009b473691269a5192ee1190
+msgid "**Name**: ``DGIdb_get_gene_druggability``"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:105 2a4d00e287964e509594da27b469f381
+msgid ""
+"**Description**: Get druggability information for genes. Returns gene "
+"categories indicating if a gene is druggable (kinase, GPCR, ion channel, "
+"etc.)."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:109 538d185051f14f758ad8f822ba2c0402
+msgid ""
+"``genes`` (array) (optional) List of gene symbols to check druggability. "
+"Aliases: gene\\_name, gene."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:131 eb1cf682b6d249eaa763836cc35b4ac6
+msgid "**DGIdb_get_gene_info** (Type: DGIdbTool)"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:133 7ddeeaaf02554ebaae1c6eb684e2a627
+msgid ""
+"Get detailed gene information from DGIdb including aliases, categories, "
+"and interaction counts."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst ab85a2e580be4d9cb26839ab40b0777b
+msgid "DGIdb_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:139 c51ce50991c3460ba6258c1e697eaa47
+msgid "**Name**: ``DGIdb_get_gene_info``"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:141 cb1e689a83c749b797212d2a2f0c0a8d
+msgid ""
+"**Description**: Get detailed gene information from DGIdb including "
+"aliases, categories, and interaction counts."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:145 acb52239bbec4b34ad104df2ccc61235
+msgid ""
+"``genes`` (array) (optional) List of gene symbols. Aliases: gene\\_name, "
+"gene."
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:167 14e4733469e14a5483b72c062f34156e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:169 6b939fc929b1424fa3360d703da54067
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dgidb_tools.rst:170 35796ff93e464af780ce220ce50fb2a0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

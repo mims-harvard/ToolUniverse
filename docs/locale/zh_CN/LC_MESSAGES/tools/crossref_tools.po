@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,105 +18,352 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/crossref_tools.rst:2 aee970c53a754408934bd00c41a387ee
+#: ../../tools/crossref_tools.rst:10 0b9afa7c2bf64d5fb716d241bae1095a
 msgid "Crossref Tools"
 msgstr "Crossref 工具"
 
-#: ../../tools/crossref_tools.rst:4 bffa880f5f8542319d139405411248d8
+#: ../../tools/crossref_tools.rst:12 b65311722b074da2b8c30fed95f0073b
+#, fuzzy
 msgid ""
 "**Configuration File**: ``crossref_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 1"
+"**Tools Count**: 6"
 msgstr ""
 "**配置文件**：``crossref_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/crossref_tools.rst:8 9a7013c981e24fc5974495db16c443d5
+#: ../../tools/crossref_tools.rst:16 f68b7f65bf3b477c81d203b5c6388d43
 msgid ""
 "This page contains all tools defined in the ``crossref_tools.json`` "
 "configuration file."
 msgstr "本页面包含 ``crossref_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/crossref_tools.rst:11 f9f7915d76e846c7bee9fa6880daf0e9
+#: ../../tools/crossref_tools.rst:19 959f142035e84c89963a1832e0b1e478
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/crossref_tools.rst:14 f02b7d2881f04a538e6a2716359b5e88
-msgid "**Crossref_search_works** (Type: CrossrefTool)"
+#: ../../tools/crossref_tools.rst:22 45d6915807f0403fbac86f12718addb4
+#, fuzzy
+msgid "**Crossref_get_funder** (Type: CrossrefRESTTool)"
 msgstr "**Crossref_search_works**（类型：CrossrefTool）"
 
-#: ../../tools/crossref_tools.rst:16 9002332b107645a2a71feaec4f7ee84c
+#: ../../tools/crossref_tools.rst:24 edf2dd96080d4812b2b1fc59785a03be
 msgid ""
-"Search Crossref Works API for articles by keyword. Returns articles with "
-"title, abstract, journal..."
-msgstr "通过关键词搜索 Crossref Works API 中的文章。返回包含标题、摘要、期刊等信息的文章。"
+"Get detailed metadata for a specific research funder by its Crossref "
+"funder ID. Returns comprehen..."
+msgstr ""
 
-#: ../../tools/crossref_tools.rst e96ec6a8b0ac4410ae41901ed3d3769c
-msgid "Crossref_search_works tool specification"
+#: ../../tools/crossref_tools.rst 00a853c7d44a44deac4c9d6f636c6c2a
+#, fuzzy
+msgid "Crossref_get_funder tool specification"
 msgstr "Crossref_search_works 工具规格说明"
 
-#: ../../tools/crossref_tools.rst:20 9e84a28bb28147d785cb5f16bca2c214
+#: ../../tools/crossref_tools.rst:28 ../../tools/crossref_tools.rst:59
+#: ../../tools/crossref_tools.rst:90 ../../tools/crossref_tools.rst:121
+#: ../../tools/crossref_tools.rst:154 ../../tools/crossref_tools.rst:183
+#: 1dd32778e6454ad89c7a567b9c75baab 2f5af07ab5224cfc98cbae2e74b0ddeb
+#: 6cb0bbe77a42476a8405dacee0dfb9dc 872c49e146ee44809cf49b27bfee702c
+#: a7b80455fe7a408a850cb9005913a6e2 e6bcd78ba5e8467eaceaf168d70ddd9f
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/crossref_tools.rst:22 9a0facb388604393ad6642b370d356fb
-msgid "**Name**: ``Crossref_search_works``"
+#: ../../tools/crossref_tools.rst:30 27b94e24bf7d427188470ea3aac0be26
+#, fuzzy
+msgid "**Name**: ``Crossref_get_funder``"
 msgstr "**名称**：``Crossref_search_works``"
 
-#: ../../tools/crossref_tools.rst:23 c872c0c937fe4f428871bdefaa12c0b7
-msgid "**Type**: ``CrossrefTool``"
+#: ../../tools/crossref_tools.rst:31 ../../tools/crossref_tools.rst:62
+#: ../../tools/crossref_tools.rst:93 ../../tools/crossref_tools.rst:124
+#: ../../tools/crossref_tools.rst:157 ../../tools/crossref_tools.rst:186
+#: 331fe6900e35437aa97e923e6716029b 6530cf7943c14a73b498fe9c74bd669c
+#: 6df5000449f44428b38900faeff5a78b 7d425bf5705b4c8b86180840200f7948
+#: 93ae9a6c0efd42d193c0cf1a3fae7ad3 dc3b14a0ff2f4391a25da23f64e2262f
+#, fuzzy
+msgid "**Type**: ``CrossrefRESTTool``"
 msgstr "**类型**：``CrossrefTool``"
 
-#: ../../tools/crossref_tools.rst:24 44d2acfda33143c2821a27bceafe0761
+#: ../../tools/crossref_tools.rst:32 09ef3d486379470080f87b05f9df8919
 msgid ""
-"**Description**: Search Crossref Works API for articles by keyword. "
-"Returns articles with title, abstract, journal, year, DOI, and URL. "
-"Supports filtering by publication type and date range."
+"**Description**: Get detailed metadata for a specific research funder by "
+"its Crossref funder ID. Returns comprehensive funder information "
+"including official name, alternative names, location, hierarchy (parent "
+"organizations), DOI count, and URI. Use this to understand funder "
+"details, verify funder identifiers, or explore funding relationships. "
+"Find funder IDs using Crossref\\_list\\_funders (format: numeric ID like "
+"'100000001' for NSF, '100000002' for NIH)."
 msgstr ""
-"**描述**：通过关键词搜索 Crossref Works API 获取文章。返回包含标题、摘要、期刊、年份、DOI 及 URL "
-"的文章信息。支持按出版类型和日期范围进行筛选。"
 
-#: ../../tools/crossref_tools.rst:26 063207dc4b894ccd81a884afd11df10a
+#: ../../tools/crossref_tools.rst:34 ../../tools/crossref_tools.rst:65
+#: ../../tools/crossref_tools.rst:96 ../../tools/crossref_tools.rst:127
+#: ../../tools/crossref_tools.rst:160 ../../tools/crossref_tools.rst:189
+#: 138ed43480154e058e073b4c8e760dd9 21eb6d38825c41ccab7dd5ba98208952
+#: 3b45d8c7651c4b9cbbfa09043b4963d2 da536c5a3b9a433ba93000f86054573e
+#: eccbb3c37df040199a1a7433089c0bfa f16e41007a9d4d7a9f3339c9d490cdbb
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/crossref_tools.rst:28 8926e7aff1b84b89a84ca7448ac8296d
+#: ../../tools/crossref_tools.rst:36 a1b61675ad7a4437bd2becf4968362f6
+msgid ""
+"``funder_id`` (string) (required) Crossref funder identifier (e.g., "
+"'100000001' for NSF, '100000002' for NIH, '501100000780' for European "
+"Commission). Find IDs using Crossref\\_list\\_funders."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:39 ../../tools/crossref_tools.rst:70
+#: ../../tools/crossref_tools.rst:101 ../../tools/crossref_tools.rst:135
+#: ../../tools/crossref_tools.rst:164 ../../tools/crossref_tools.rst:200
+#: 1061a0bca27245cc84c843da5f64567a 18f468cb0dc44240b62c0a9a2db7fd92
+#: 73c82d2d72a74bb89aa423cc85fb6b56 bfe584a199254322b81539800cce4e3a
+#: d63b5e7905204186a77f22931ad8b3b2 fa3cdaaf87974e29996c4fc16c6ef4c0
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/crossref_tools.rst:53 99d86afee28e412e944f0a66f4b210cd
+#, fuzzy
+msgid "**Crossref_get_journal** (Type: CrossrefRESTTool)"
+msgstr "**Crossref_search_works**（类型：CrossrefTool）"
+
+#: ../../tools/crossref_tools.rst:55 5e668b69eeeb4e39909c07040223dc1c
+msgid ""
+"Get metadata for a specific journal by its ISSN (International Standard "
+"Serial Number). Returns j..."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst 98a0eb3863894ec0aac99dd4c0cf8c40
+#, fuzzy
+msgid "Crossref_get_journal tool specification"
+msgstr "Crossref_search_works 工具规格说明"
+
+#: ../../tools/crossref_tools.rst:61 de9f05a85fae4360a0b7015994b6c7a4
+#, fuzzy
+msgid "**Name**: ``Crossref_get_journal``"
+msgstr "**类型**：``CrossrefTool``"
+
+#: ../../tools/crossref_tools.rst:63 424bc2f1b8814e27bed3b1f43472f290
+msgid ""
+"**Description**: Get metadata for a specific journal by its ISSN "
+"(International Standard Serial Number). Returns journal details including"
+" title, publisher, ISSN variants (print/electronic), coverage dates, and "
+"publication frequency. Use this to verify journal information, assess "
+"journal credibility for submissions, check publisher details, or validate"
+" ISSNs. Find ISSNs from publication metadata or journal databases "
+"(format: ####-####)."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:67 12aa6135769546bc99974bde7bd6050e
+msgid ""
+"``issn`` (string) (required) Journal ISSN in format ####-#### (e.g., "
+"'1476-4687' for Nature, '1932-6203' for PLOS ONE). Both print and "
+"electronic ISSNs are accepted."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:84 88d118e8c6d843a9845b57a0919d5c56
+#, fuzzy
+msgid "**Crossref_get_work** (Type: CrossrefRESTTool)"
+msgstr "**Crossref_search_works**（类型：CrossrefTool）"
+
+#: ../../tools/crossref_tools.rst:86 56607294dbe147daa56d851b418a3bc7
+msgid ""
+"Get complete metadata for a specific scholarly work by its DOI (Digital "
+"Object Identifier). Retur..."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst 9341207530fd47d09daea5c17129d734
+#, fuzzy
+msgid "Crossref_get_work tool specification"
+msgstr "Crossref_search_works 工具规格说明"
+
+#: ../../tools/crossref_tools.rst:92 8e642e9ea9774557b8da4841b5ad9d2e
+#, fuzzy
+msgid "**Name**: ``Crossref_get_work``"
+msgstr "**名称**：``Crossref_search_works``"
+
+#: ../../tools/crossref_tools.rst:94 e854fe92f0434760a2de5bd17c7a808c
+msgid ""
+"**Description**: Get complete metadata for a specific scholarly work by "
+"its DOI (Digital Object Identifier). Returns comprehensive bibliographic "
+"information including title, abstract, full author list with affiliations"
+" and ORCIDs, journal details, publication dates, volume/issue/pages, "
+"references, citations, license, funding information, and related "
+"identifiers. Essential for verifying citations, extracting complete "
+"metadata, or building reference managers. DOIs can be found using "
+"Crossref\\_search\\_works (format: 10.####/...)."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:98 08bdcfe870664b40bc523fe0c9dc3ae2
+msgid ""
+"``doi`` (string) (required) Digital Object Identifier in format "
+"'10.####/...' (e.g., '10.1038/nature12373', "
+"'10.1371/journal.pone.0123456'). Find DOIs using "
+"Crossref\\_search\\_works or from publication citations."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:115 e97cbbfb41e6402c943cc1136f2a1e4c
+#, fuzzy
+msgid "**Crossref_list_funders** (Type: CrossrefRESTTool)"
+msgstr "**Crossref_search_works**（类型：CrossrefTool）"
+
+#: ../../tools/crossref_tools.rst:117 7a2b3338d4f24271be6695096dd74fdb
+msgid ""
+"Search and list research funding organizations in the Crossref database. "
+"Returns funder details i..."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst 7a9c8c66df414ad388cd5aea4db31c3f
+#, fuzzy
+msgid "Crossref_list_funders tool specification"
+msgstr "Crossref_search_works 工具规格说明"
+
+#: ../../tools/crossref_tools.rst:123 98297b849f0d442db039b9a5d77144a9
+#, fuzzy
+msgid "**Name**: ``Crossref_list_funders``"
+msgstr "**名称**：``Crossref_search_works``"
+
+#: ../../tools/crossref_tools.rst:125 af559a28f48c44a4b480691c5313eb20
+msgid ""
+"**Description**: Search and list research funding organizations in the "
+"Crossref database. Returns funder details including funder ID, name, "
+"location, DOI count, and alternative names. Use this to discover funder "
+"identifiers for filtering publications by funding source, or to explore "
+"research funding patterns. Essential for grant analysis, funding "
+"compliance, or finding publications funded by specific organizations "
+"(e.g., NIH, NSF, ERC)."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:129 78f4691f7a684eb2bd513135c68a926d
+msgid ""
+"``query`` (string) (optional) Search query for funder names (e.g., "
+"'National Science Foundation', 'NIH', 'European Research Council', "
+"'Wellcome Trust')."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:132 a33c02c1c66c4d7a9cd1630c218df8d6
+msgid ""
+"``limit`` (integer) (optional) Maximum number of funders to return "
+"(default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:148 80886692f2e342749ebd160650109911
+#, fuzzy
+msgid "**Crossref_list_types** (Type: CrossrefRESTTool)"
+msgstr "**Crossref_search_works**（类型：CrossrefTool）"
+
+#: ../../tools/crossref_tools.rst:150 33343bae37ad41ceb51f5fc8f0e1a574
+msgid ""
+"List all publication types available in Crossref (e.g., journal-article, "
+"book-chapter, conference..."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst 0f7eb59cc51a4065bef5a03a02a77950
+#, fuzzy
+msgid "Crossref_list_types tool specification"
+msgstr "Crossref_search_works 工具规格说明"
+
+#: ../../tools/crossref_tools.rst:156 b47bea557d2445b3a7522d1c7c513c64
+#, fuzzy
+msgid "**Name**: ``Crossref_list_types``"
+msgstr "**名称**：``Crossref_search_works``"
+
+#: ../../tools/crossref_tools.rst:158 ec1332ffa8db446a9e24561a8a09a3fb
+msgid ""
+"**Description**: List all publication types available in Crossref (e.g., "
+"journal-article, book-chapter, conference-paper, dataset, preprint). "
+"Returns type identifiers and labels. Use this to discover valid "
+"publication type filters for Crossref\\_search\\_works, understand the "
+"classification of research outputs, or analyze publication type "
+"distributions. Essential for constructing precise search queries or "
+"filtering results by publication category."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:162 65e11ef8da0a4530ad8708c94fca85e8
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:177 b49ef32155954ea0a7f2291c8fbad55b
+#, fuzzy
+msgid "**Crossref_search_works** (Type: CrossrefRESTTool)"
+msgstr "**Crossref_search_works**（类型：CrossrefTool）"
+
+#: ../../tools/crossref_tools.rst:179 89f7c11784da401ba53a21912c313a7d
+msgid ""
+"Search Crossref Works API for scholarly articles, publications, and "
+"research outputs by keyword. ..."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst 9e45286587944bbf81ca77e46ed0b86c
+msgid "Crossref_search_works tool specification"
+msgstr "Crossref_search_works 工具规格说明"
+
+#: ../../tools/crossref_tools.rst:185 81ee941f2ff643db8b49dbccef6a2e2c
+msgid "**Name**: ``Crossref_search_works``"
+msgstr "**名称**：``Crossref_search_works``"
+
+#: ../../tools/crossref_tools.rst:187 d6282f1136f4446a8a09af33e0762f9b
+msgid ""
+"**Description**: Search Crossref Works API for scholarly articles, "
+"publications, and research outputs by keyword. Returns metadata including"
+" title, abstract, journal, authors, publication year, DOI, URL, "
+"citations, and publisher. Supports filtering by publication type (journal"
+" article, conference paper, etc.) and date range. Use this to discover "
+"academic literature, verify citations, or build bibliographies. Find DOIs"
+" to use with Crossref\\_get\\_work for complete metadata."
+msgstr ""
+
+#: ../../tools/crossref_tools.rst:191 42f8336e109c4b43990c98063c419326
+#, fuzzy
 msgid ""
 "``query`` (string) (required) Search query for Crossref works. Use "
-"keywords separated by spaces to refine your search."
+"keywords separated by spaces to refine your search across titles, "
+"abstracts, authors, and other bibliographic fields."
 msgstr "``query``（字符串）（必填）用于搜索 Crossref 作品的查询条件。使用空格分隔的关键词以细化搜索。"
 
-#: ../../tools/crossref_tools.rst:31 a7b67460f259480cadb639fb261ce994
+#: ../../tools/crossref_tools.rst:194 5861a7fc78564642b4b9b3b754332932
 #, fuzzy
 msgid ""
-"``limit`` (integer) (required) Number of articles to return. This sets "
-"the maximum number of articles retrieved from Crossref."
+"``limit`` (integer) (optional) Number of articles to return. This sets "
+"the maximum number of articles retrieved from Crossref. Max 100 per "
+"request."
 msgstr "``limit``（整数）（可选）返回的文章数量。此参数设置从 Crossref 检索的文章最大数量。"
 
-#: ../../tools/crossref_tools.rst:34 5638c21dc9b14a2b94461fd1e0af52f1
+#: ../../tools/crossref_tools.rst:197 0efa6e68c99247b19141675bd11a3071
 #, fuzzy
 msgid ""
-"``filter`` (string) (required) Optional filter string for Crossref API. "
-"Examples: 'type:journal-article,from-pub-date:2020-01-01'"
+"``filter`` (string) (optional) Optional filter string for Crossref API. "
+"Examples: 'type:journal-article' (only journal articles), 'from-pub-"
+"date:2020-01-01' (published after date), 'has-abstract:true' (only with "
+"abstracts). Multiple filters comma-separated."
 msgstr ""
 "``filter``（字符串）（可选）Crossref API 的可选过滤字符串。例如：'type:journal-article,from-"
 "pub-date:2020-01-01'"
 
-#: ../../tools/crossref_tools.rst:37 457ef40f787c4b9a9f2be0dd514e9ef6
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
-
-#: ../../tools/crossref_tools.rst:53 6951f5939c8840098bbd2ac81fdbac64
+#: ../../tools/crossref_tools.rst:214 ef6ba0e59cd84004be8586ea11f866cb
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/crossref_tools.rst:55 b284839720774f02bf48dcef2ffccdfc
+#: ../../tools/crossref_tools.rst:216 01bf403e3fdb4efba4f5b9b80cb2f1cc
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/crossref_tools.rst:56 4ef5fac4b64f4cf69c29c57b10796981
+#: ../../tools/crossref_tools.rst:217 bf4bc384c42443efab581ee8560199de
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "Search Crossref Works API for articles"
+#~ " by keyword. Returns articles with "
+#~ "title, abstract, journal..."
+#~ msgstr "通过关键词搜索 Crossref Works API 中的文章。返回包含标题、摘要、期刊等信息的文章。"
+
+#~ msgid ""
+#~ "**Description**: Search Crossref Works API "
+#~ "for articles by keyword. Returns "
+#~ "articles with title, abstract, journal, "
+#~ "year, DOI, and URL. Supports filtering"
+#~ " by publication type and date range."
+#~ msgstr ""
+#~ "**描述**：通过关键词搜索 Crossref Works API "
+#~ "获取文章。返回包含标题、摘要、期刊、年份、DOI 及 URL "
+#~ "的文章信息。支持按出版类型和日期范围进行筛选。"
 

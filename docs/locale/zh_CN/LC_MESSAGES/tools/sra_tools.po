@@ -1,0 +1,167 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sra_tools.rst:10 4729c73d1655456eba47d41ba71c6273
+msgid "Sra Tools"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:12 4397ed20cfa0469985632d86387bf55d
+msgid ""
+"**Configuration File**: ``sra_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:16 2241a4fdd8f8491c93707667afc5c938
+msgid ""
+"This page contains all tools defined in the ``sra_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sra_tools.rst:19 97313ce0779245449577c50525e9d087
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:22 28bfc18a21d5434096061237e0ff8f4f
+msgid "**SRA_get_experiment** (Type: SRATool)"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:24 7767b3237c494e48a7cd6c2f1e0577f2
+msgid ""
+"Get detailed metadata for a specific SRA experiment by accession number. "
+"Returns experiment title..."
+msgstr ""
+
+#: ../../tools/sra_tools.rst 872353869a4149009451aee09fa5a923
+msgid "SRA_get_experiment tool specification"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:28 ../../tools/sra_tools.rst:59
+#: 4dfcac42c72243dabefe53492926e3fb e0c7882629de4e00adfe3465962f1b0f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:30 c8f926bb82f444018b1371fbebf347b6
+msgid "**Name**: ``SRA_get_experiment``"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:31 ../../tools/sra_tools.rst:62
+#: 3610ad1e4e3f47b6a3d84bd0bb82d303 dea4b95236744fdabb63a7ad0125930b
+msgid "**Type**: ``SRATool``"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:32 683cbf82bc50471da1ce808b43ec6b83
+msgid ""
+"**Description**: Get detailed metadata for a specific SRA experiment by "
+"accession number. Returns experiment title, organism, sequencing "
+"platform, library information, study details, and run statistics. Accepts"
+" SRA experiment accessions (SRX/ERX/DRX), study accessions (SRP/ERP/DRP),"
+" or sample accessions (SRS/ERS/DRS)."
+msgstr ""
+
+#: ../../tools/sra_tools.rst:34 ../../tools/sra_tools.rst:65
+#: 2601dcbcbafd4ba5bad7d68e56e51b9c 3d877824f9d74f52b2063ad40839cde0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:36 1547cf120ec5449db1877594d3f7590b
+msgid ""
+"``accession`` (string) (required) SRA accession number (e.g., "
+"'SRX26927637', 'SRP000001', 'SRS000001')"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:39 ../../tools/sra_tools.rst:82
+#: 018a652ed1884f14968a6ea0fb615bec 04c60e63f5c040eab2f79447959124ee
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:53 ad446221ed314871852bf86273ab653d
+msgid "**SRA_search_experiments** (Type: SRATool)"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:55 9af0872e086648508be8704989f9bdd1
+msgid ""
+"Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by"
+" keyword, organism, libr..."
+msgstr ""
+
+#: ../../tools/sra_tools.rst 3c100e29f0f74744b3d301949bcba29b
+msgid "SRA_search_experiments tool specification"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:61 75c3df9c63594b9081be06c0719fc660
+msgid "**Name**: ``SRA_search_experiments``"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:63 ece86c34796e428a92fcb64f9bcfd5be
+msgid ""
+"**Description**: Search the NCBI Sequence Read Archive (SRA) for "
+"sequencing experiments by keyword, organism, library strategy, or "
+"sequencing platform. SRA is the largest repository of raw sequencing "
+"data, containing data from Illumina, PacBio, Oxford Nanopore, and other "
+"platforms. Library strategies include: RNA-Seq, WGS (whole genome), WXS "
+"(whole exome), ChIP-Seq, ATAC-seq, Bisulfite-Seq, AMPLICON, scRNA-Seq, "
+"and more."
+msgstr ""
+
+#: ../../tools/sra_tools.rst:67 92799438abfa49cfa8c56a9af1968723
+msgid ""
+"``query`` (string) (optional) Search keywords (e.g., 'human gut "
+"metagenome', 'BRCA1 RNA-Seq', 'single cell lung cancer')"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:70 9a8327f6b5bb4cb88aeb6efddc354da3
+msgid ""
+"``organism`` (string) (optional) Organism name to filter by (e.g., 'Homo "
+"sapiens', 'Mus musculus', 'human gut metagenome')"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:73 a36860a33d8748cea7b6bde34960d76d
+msgid ""
+"``library_strategy`` (string) (optional) Sequencing strategy filter "
+"(e.g., 'RNA-Seq', 'WGS', 'WXS', 'ChIP-Seq', 'ATAC-seq', 'Bisulfite-Seq', "
+"'AMPLICON')"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:76 4e3295cf02eb40a6bc45517250537ca1
+msgid ""
+"``platform`` (string) (optional) Sequencing platform filter (e.g., "
+"'ILLUMINA', 'PACBIO\\_SMRT', 'OXFORD\\_NANOPORE', 'ION\\_TORRENT')"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:79 87734ec6ba10493ab71c19dd99b05565
+msgid ""
+"``limit`` (integer) (optional) Maximum results to return (1-50, default "
+"10)"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:95 518ada71b26c40e980c732a59e8e3c9e
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:97 0a793e8fc09b497fa6b950956825ac10
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sra_tools.rst:98 83ffbe976c7c4f60a4c512b04be095e2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

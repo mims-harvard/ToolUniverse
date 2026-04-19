@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cadd_tools.rst:10 d7faa5d35c714696b6271b5d065d0a72
+msgid "Cadd Tools"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:12 5e56076624524fd48ea533cc548b9773
+msgid ""
+"**Configuration File**: ``cadd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:16 1481c170877c429795c73e16507b1d61
+msgid ""
+"This page contains all tools defined in the ``cadd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:19 0f6dd214ee6a496da8f7222d2327164c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:22 de3733630b4b4b9fa871ef7c4bed7079
+msgid "**CADD_get_position_scores** (Type: CADDTool)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:24 661ae82adaa6438387d3bba97681369e
+msgid ""
+"Get CADD scores for all possible substitutions at a genomic position. "
+"Returns PHRED scores for A,..."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst 20574ba5a8be4deb9e531a07343137e2
+msgid "CADD_get_position_scores tool specification"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:28 ../../tools/cadd_tools.rst:66
+#: ../../tools/cadd_tools.rst:108 756eedd99803442f8811223390df72a3
+#: 7bd917709eb844dd9ea70f8ddb731190 8e2338d8ff504f0ca977d7aa5481af43
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:30 8582ddcc84c0473791cf3ef10704eed5
+msgid "**Name**: ``CADD_get_position_scores``"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:31 ../../tools/cadd_tools.rst:69
+#: ../../tools/cadd_tools.rst:111 195fc3573db54f6b84cd971a6fc42a80
+#: 51c76afc47d24458a82c79217b0d8bb9 81b244edb8c54dedbe1b873ff5a89a69
+msgid "**Type**: ``CADDTool``"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:32 9888fd1f4e6a4b789f9b9666af6750f8
+msgid ""
+"**Description**: Get CADD scores for all possible substitutions at a "
+"genomic position. Returns PHRED scores for A, C, G, T variants at the "
+"position. Useful for saturation mutagenesis analysis."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:34 ../../tools/cadd_tools.rst:72
+#: ../../tools/cadd_tools.rst:114 2e1a23cd88b842398d0ab580fdfb95ce
+#: 410176d8a7ee4e8c90dfaa1252115f37 f20a6eea25424e6293db598c91bda590
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:36 ../../tools/cadd_tools.rst:74
+#: 8c97b6e533ea4148a1331fba70fca3a9 e89bac6466c8400f8171d8d07bc7bc79
+msgid "``chrom`` (string) (required) Chromosome (1-22, X, Y, MT)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:39 ../../tools/cadd_tools.rst:119
+#: 46f8c39fd6614238b3436bdbcf6883cb e0bcc653308c4cae8708cb1108d62943
+msgid "``pos`` (integer) (required) Genomic position (1-based)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:42 ../../tools/cadd_tools.rst:83
+#: ../../tools/cadd_tools.rst:128 3cebcbda0f804f3cbc4af09de59e69e0
+#: 6f839323b43b4be19f5af354575f88bf 8a1368eefcdc43f0b81c2392c9704c42
+msgid "``version`` (string) (optional) CADD version and genome build"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:45 ../../tools/cadd_tools.rst:86
+#: ../../tools/cadd_tools.rst:134 0e55c585e6264c62b938e637f070aff5
+#: 143fd7eb6db54a57bd987b5f94584e06 35063bb12b944995a9e8f62e623205b0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:60 6a9a434731b04651875e357a1c7b0027
+msgid "**CADD_get_range_scores** (Type: CADDTool)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:62 900183511862485db0fd9e97619b8488
+msgid ""
+"Get CADD scores for all variants in a genomic range (max 100bp). Returns "
+"all pre-computed deleter..."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst 649e4cbf783d46fda790046387d1a9d5
+msgid "CADD_get_range_scores tool specification"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:68 3cbae1c955e641b3978a0b3ca32cc1f6
+msgid "**Name**: ``CADD_get_range_scores``"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:70 e30a98d87fc94a23af90034c0d078c1e
+msgid ""
+"**Description**: Get CADD scores for all variants in a genomic range (max"
+" 100bp). Returns all pre-computed deleteriousness scores in the region. "
+"Use for hotspot analysis or exon scanning."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:77 7dada2f4e606460b880f1cea729b7f01
+msgid "``start`` (integer) (required) Start position (1-based, inclusive)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:80 c17c60c9cd524aa0942e48a909ae416a
+msgid ""
+"``end`` (integer) (required) End position (1-based, inclusive). Max "
+"range: 100bp."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:102 28d6665b494245dda2a660eed74cbea2
+msgid "**CADD_get_variant_score** (Type: CADDTool)"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:104 5f10714a03054ccdb08781a59b589e4e
+#, python-format
+msgid ""
+"Get CADD deleteriousness score for a specific variant. PHRED scores: >=20"
+" top 1% deleterious (pat..."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst 5dd77a9eff2f4273a155b77eff6dbafe
+msgid "CADD_get_variant_score tool specification"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:110 c4aa884b386a449685a761b525207057
+msgid "**Name**: ``CADD_get_variant_score``"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:112 7478eef662ab4a70a30474a58a48eb54
+#, python-format
+msgid ""
+"**Description**: Get CADD deleteriousness score for a specific variant. "
+"PHRED scores: >=20 top 1% deleterious (pathogenic threshold ~15-20), >=30"
+" top 0.1%. Input: chromosome, position, ref, alt alleles. Supports GRCh37"
+" and GRCh38."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:116 5a9c2791da774bd98e396f5e8ff868b5
+msgid ""
+"``chrom`` (string) (required) Chromosome (1-22, X, Y, MT). Can include "
+"'chr' prefix."
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:122 4aba044b9fd74952beee2090b9f07ed3
+msgid "``ref`` (string) (required) Reference allele (e.g., 'A', 'G')"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:125 85ef12e8b8044fdf86fff8b8bd24ea51
+msgid "``alt`` (string) (required) Alternate allele (e.g., 'T', 'C')"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:131 0f133b31de414511bb56a124ab4d34b0
+msgid ""
+"``include_annotations`` (boolean) (optional) Include full annotation "
+"details in response"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:151 31a631f7ea034051847e7cd5994790ce
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:153 78268f3f8f094ce8b8698adc7b31d359
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cadd_tools.rst:154 1ac3f039668446099bf0a6e57100cf17
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

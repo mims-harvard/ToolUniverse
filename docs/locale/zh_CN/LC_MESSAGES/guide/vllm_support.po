@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/vllm_support.rst:2 43335572a6a640e0bce70a772b04bd96
+msgid "vLLM Support"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:4 1ce5f3f18cc346308131639387a4e15d
+msgid ""
+"ToolUniverse supports vLLM for self-hosted LLM inference. Use vLLM to run"
+" models on your own infrastructure for better privacy, cost control, and "
+"performance."
+msgstr ""
+
+#: ../../guide/vllm_support.rst:7 198209dadc53489c80949feb4b25bb50
+msgid "Quick Start"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:9 a4e7e4141a624b9fb034f46fa63e89f0
+msgid "**Start a vLLM server**:"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:16 1812f4355e3f4756a83efcd8de62c63b
+msgid "**Set environment variables**:"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:24 7b57da3bdba44a6aadf1ea87a61ed19b
+msgid "**Use with AgenticTool**:"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:49 9ba174db17e345d6ae2f63db711e7aeb
+msgid "Configuration"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:52 77a8071ff2424a9998cddef5b4edb64a
+msgid "Environment Variables"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:54 09120c161221440d8ebe52445506f5c4
+msgid ""
+"Required: - ``VLLM_SERVER_URL``: Your vLLM server URL (e.g., "
+"``http://localhost:8000``)"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:57 a7cb6278d8084715b0ac793bc7d54253
+msgid ""
+"Optional: - ``TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=\"VLLM\"``: Set vLLM as "
+"default - ``TOOLUNIVERSE_LLM_MODEL_DEFAULT=\"model-name\"``: Default "
+"model (must match vLLM server) - "
+"``TOOLUNIVERSE_LLM_CONFIG_MODE=\"env_override\"``: Make env vars override"
+" tool configs"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:63 9bd2c1a67115447ea1b679e9bb1594d3
+msgid "Tool Configuration"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:65 6cb9c0418fd142f28bfddbc94e2e23da
+msgid "You can also configure vLLM directly in tool configs:"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:80 ddcaa82e24c44f6181cf739a12702229
+msgid "**Note**: Still requires ``VLLM_SERVER_URL`` environment variable."
+msgstr ""
+
+#: ../../guide/vllm_support.rst:83 9deee3e392d4492387cd29572c87f80e
+msgid "Using with Profile Configurations"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:85 f2d2f18f812b4b37956ea68df52f216b
+msgid "In Profile YAML files:"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:95 9e6d9a4a00494e199ef75eb97819501e
+msgid "Then set: ``export VLLM_SERVER_URL=\"http://localhost:8000\"``"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:98 b649bf67fa2e47e499c2de0aaf7b6bc2
+msgid "Configuration Priority"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:100 4822ea731c9445719c41278d8e6e5e99
+msgid ""
+"With ``env_override`` mode: 1. Environment variables (highest) 2. Tool "
+"configuration 3. Profile configuration 4. Built-in defaults"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:107 e36f63f99f9245f0b28cfe1eb6ce499d
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:109 f9e241528ad4416c84a01cce364f41bd
+msgid "**\"VLLM_SERVER_URL environment variable not set\"**"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:110 a0ff858e6c6a4effa3fd6887ee67b8bf
+msgid ""
+"Set the environment variable: ``export "
+"VLLM_SERVER_URL=\"http://localhost:8000\"``"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:112 9204651190d24be398a1dd5051471607
+msgid "**\"Model not found\"**"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:113 cbf3fcf80b0d4ca1b693836531895df7
+msgid "Ensure ``model_id`` matches the model name loaded on your vLLM server"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:115 7ded0437e80448d3abe9dda2bf88348e
+msgid "**Connection failed**"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:116 0c9e5730712b468cb6b1b88d5c823bea
+msgid ""
+"Verify vLLM server is running: ``curl http://localhost:8000/health`` (if "
+"available)"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:118 618808a29167442ea73c6fde17f193e0
+msgid ""
+"**URL format**: Use base URL (e.g., ``http://localhost:8000``). "
+"ToolUniverse automatically appends ``/v1``."
+msgstr ""
+
+#: ../../guide/vllm_support.rst:121 363b132735d84e60a63087a51a8b78ca
+msgid "Test Your Setup"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:147 b535d3c715cb4e70ba89eb877e099e0b
+msgid "See Also"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:149 3e1413f949664106826007a62a57445b
+msgid ":doc:`openrouter_support` - Using OpenRouter as an LLM provider"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:150 917a36e0814b4079a6ae0b374e78c0e7
+msgid ":doc:`toolspace` - Profile configurations with LLM settings"
+msgstr ""
+
+#: ../../guide/vllm_support.rst:151 63b2c2a887db4c68bffab9dfc7f2f868
+msgid ":doc:`agentic_tools_tutorial` - Complete guide to creating agentic tools"
+msgstr ""
+

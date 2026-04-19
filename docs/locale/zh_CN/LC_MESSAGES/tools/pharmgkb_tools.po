@@ -1,0 +1,351 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pharmgkb_tools.rst:10 5c33cfeadd254e639598149ddb9a1475
+msgid "Pharmgkb Tools"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:12 7e6e0040af4c4e70afb8ae7b13602245
+msgid ""
+"**Configuration File**: ``pharmgkb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:16 8f0987ef133e445e968ed5a05cbfde07
+msgid ""
+"This page contains all tools defined in the ``pharmgkb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:19 ffa6486f0ee1446398cea23e6188c5a0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:22 5749b1c25fb04e33a45df1fa97a2fd7f
+msgid "**PharmGKB_get_clinical_annotations** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:24 0cc284f1bacb4c5fb31438bc6732443e
+msgid ""
+"Get clinical annotations showing gene-drug-phenotype relationships. "
+"Returns variant-level clinica..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst 734c48c93a984b4d8079728d45d1785b
+msgid "PharmGKB_get_clinical_annotations tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:28 ../../tools/pharmgkb_tools.rst:67
+#: ../../tools/pharmgkb_tools.rst:101 ../../tools/pharmgkb_tools.rst:132
+#: ../../tools/pharmgkb_tools.rst:163 ../../tools/pharmgkb_tools.rst:202
+#: ../../tools/pharmgkb_tools.rst:233 3ff51e80a31f4dbdb802bd429a48c707
+#: 4851d5b68542487c8027ac271ada2bfa 67c1560d8899431fb70e6ec5b6642654
+#: 9790327cad2c45a2b0fc303b5c718314 9813de51d87d40cdad48bb455cc536dc
+#: cfd557b9fb1d4ea8bed1b7e0981b842d e9d2becc05cb487aa749a1f28125c27a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:30 34861a6368ef407cb06b4cba0693d9f3
+msgid "**Name**: ``PharmGKB_get_clinical_annotations``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:31 ../../tools/pharmgkb_tools.rst:70
+#: ../../tools/pharmgkb_tools.rst:104 ../../tools/pharmgkb_tools.rst:135
+#: ../../tools/pharmgkb_tools.rst:166 ../../tools/pharmgkb_tools.rst:205
+#: ../../tools/pharmgkb_tools.rst:236 0fabe72fc31445d9a42366d670e73f6d
+#: 2ce0c9c147304cb3859dad1ddb75b901 5720187a26bd4401a9c412aa80dd51b4
+#: 686aea9ed1364c37a6d9d65b71b15127 697ff450d4904bb095e9464a56ea151e
+#: 73f13cae6b3e4cf28c5d023e64490449 f3a392baee2f4e0fbe95e58eed6e5ee5
+msgid "**Type**: ``PharmGKBTool``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:32 dbfd4255f8154930b896646f91fa8dc8
+msgid ""
+"**Description**: Get clinical annotations showing gene-drug-phenotype "
+"relationships. Returns variant-level clinical significance data. Always "
+"provide annotation\\_id — gene\\_id lookup is not supported by the API "
+"and returns an error with guidance."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:34 ../../tools/pharmgkb_tools.rst:73
+#: ../../tools/pharmgkb_tools.rst:107 ../../tools/pharmgkb_tools.rst:138
+#: ../../tools/pharmgkb_tools.rst:169 ../../tools/pharmgkb_tools.rst:208
+#: ../../tools/pharmgkb_tools.rst:239 10955d961fd0479f8a59a7e925094d84
+#: 32bf986b1fee49b48b82577560c996aa 52739517b2b34c3fbfb9fcc6f13a752d
+#: 59c6866f151a413e86778d6026f38a73 86043b6b94c14d1a9841aa053996307a
+#: bfe20010f5ef43c4be2e99a3822dcbb5 c902f57c306f41a18a7961840dfee37f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:36 6358439d3b0d44b3a85aca44f6e7ce9e
+msgid ""
+"``annotation_id`` (string) (optional) PharmGKB clinical annotation ID "
+"(e.g., '1447954390'). Required for reliable results."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:39 21f80270dcf84015b1d598b5065f5f21
+msgid ""
+"``gene_id`` (string) (optional) PharmGKB Gene Accession ID (e.g., "
+"\"PA128\"). NOTE: Gene-based lookup is not supported — will return an "
+"error with instructions to use annotation\\_id instead."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:42 fae9feb3b49045f1b6df7c41d8d0ce6a
+msgid ""
+"``gene`` (string) (optional) NOT SUPPORTED: PharmGKB API requires a "
+"specific annotation\\_id (e.g. \"1447954390\"), not a gene symbol. Browse"
+" https://www.pharmgkb.org/clinicalAnnotation to find annotation IDs. For "
+"gene-drug dosing use CPIC\\_list\\_guidelines instead."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:45 20218412ae064bf985db357eebb66bbf
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene — NOT SUPPORTED. See "
+"gene parameter."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:48 ../../tools/pharmgkb_tools.rst:81
+#: ../../tools/pharmgkb_tools.rst:112 ../../tools/pharmgkb_tools.rst:143
+#: ../../tools/pharmgkb_tools.rst:183 ../../tools/pharmgkb_tools.rst:213
+#: ../../tools/pharmgkb_tools.rst:244 0d4e4d91db6e4425ab1e9b2776d7e1d4
+#: 5d7df2d82be644bd9ba448a3e71a885a 7f0a3606c1eb49b9a2e585f37aa12e41
+#: 830ff1e047154e30bd03d4f2ae0c6240 b141a61bc95b45ffbbd1445bd510824a
+#: f57c3e68f6cd4fcf8f0a541e7c5e0a99 fccc3de591a5406790365c74265d2c86
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:61 9c6d2bec8a034b44a954e8b86d3f37c5
+msgid "**PharmGKB_get_dosing_guidelines** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:63 e20e1b111f744743ae5fca264ee71391
+msgid ""
+"Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by "
+"guideline\\_id. IMPORTANT: use ..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst 4190893df80d41dcb238d405ce5608e5
+msgid "PharmGKB_get_dosing_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:69 10b92ca832554ce58556ec5f9c1465a4
+msgid "**Name**: ``PharmGKB_get_dosing_guidelines``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:71 da00d4be50c24cb1a65e426eb759c32d
+msgid ""
+"**Description**: Get pharmacogenetic dosing guidelines (CPIC/DPWG) from "
+"PharmGKB by guideline\\_id. IMPORTANT: use the 'clinpgxid' field from "
+"CPIC\\_list\\_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' "
+"field — old-format pharmgkbid values (e.g., 'PA166104996') return HTTP "
+"404. The test example PA166251465 is for the warfarin guideline."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:75 458dd5a524414d078b466c974b5d4905
+msgid ""
+"``guideline_id`` (string) (required) PharmGKB ClinPGx guideline ID from "
+"CPIC\\_list\\_guidelines 'clinpgxid' field (e.g., 'PA166251465' for "
+"warfarin, 'PA166251454' for opioids/codeine, 'PA166251458' for "
+"tamoxifen). Use clinpgxid, NOT pharmgkbid."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:78 49ccb57999854ce9a600f148125cdf88
+msgid ""
+"``gene`` (string) (optional) Gene symbol (e.g., 'CYP2D6'). NOTE: "
+"Filtering by gene symbol is unreliable and may return a generic prompt "
+"instead of actual guidelines. Use guideline\\_id instead."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:95 096e1beb64c043d0943bed4fe8288955
+msgid "**PharmGKB_get_drug_details** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:97 3785dcb4daa84529a255807dc74e66b7
+msgid ""
+"Get detailed information for a drug using its PharmGKB Chemical ID. "
+"Returns structural info, cros..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst 2ede98cec2f649eca532e4274af10a2a
+msgid "PharmGKB_get_drug_details tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:103 6510ffea2aba4589b25a9a864c1b3701
+msgid "**Name**: ``PharmGKB_get_drug_details``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:105 7d6adfb061054ec2ad2fd9e7ac5a3824
+msgid ""
+"**Description**: Get detailed information for a drug using its PharmGKB "
+"Chemical ID. Returns structural info, cross-references, and related "
+"genes."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:109 b23453b5c5284752a5bc10c663b1f0d9
+msgid "``drug_id`` (string) (required) PharmGKB Chemical ID (e.g., 'PA452637')."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:126 684e2a9e9341443f8504fc909df3f431
+msgid "**PharmGKB_get_gene_details** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:128 5beb8155c3174bc7b7f142a48ef87cf6
+msgid ""
+"Get detailed information for a gene using its PharmGKB Accession ID. "
+"Returns chromosomal location..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst bc124768e343426eafbe053a09fd02e9
+msgid "PharmGKB_get_gene_details tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:134 6d45b98dbd314671b16d5bbd6db5805b
+msgid "**Name**: ``PharmGKB_get_gene_details``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:136 6fddecaae54d469d9d38446da049ca42
+msgid ""
+"**Description**: Get detailed information for a gene using its PharmGKB "
+"Accession ID. Returns chromosomal location, cross-references, and other "
+"metadata."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:140 bd99ae68254545d0af03af8dcbf86924
+msgid ""
+"``gene_id`` (string) (required) PharmGKB Gene Accession ID (e.g., "
+"'PA128')."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:157 f603a35551d84297b6a9b045e7da340e
+msgid "**PharmGKB_search_drugs** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:159 28a883df93324bceb07c026ca15f278a
+msgid ""
+"Search for drugs in PharmGKB by name or PharmGKB ID. Returns drug name, "
+"ID, and basic metadata."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst 504b6ccf510e4dc4ba8c726c564bbcad
+msgid "PharmGKB_search_drugs tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:165 d9bd34a348e64a14ba0362992138eac6
+msgid "**Name**: ``PharmGKB_search_drugs``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:167 4d41f0738b5e4df497125578470b6bcb
+msgid ""
+"**Description**: Search for drugs in PharmGKB by name or PharmGKB ID. "
+"Returns drug name, ID, and basic metadata."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:171 8a0faab21f4648f19613f26402746735
+msgid ""
+"``query`` (string) (optional) Drug name or PharmGKB Chemical ID (e.g., "
+"'warfarin', 'PA452637'). Aliases: drug\\_name, name, drug."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:174 f0dbb47fa546494984961467b797aa66
+msgid ""
+"``drug_name`` (string) (optional) Alias for query. Drug name to search "
+"(e.g., 'warfarin', 'metformin')."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:177 023c502e5ce84da7aadae48296a2da92
+msgid "``name`` (string) (optional) Alias for query. Drug name to search."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:180 7a4bff2ddc2a47088fe10290ade920cf
+msgid "``drug`` (string) (optional) Alias for query. Drug name to search."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:196 549750ee567d43b1af647a288a8f3a0b
+msgid "**PharmGKB_search_genes** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:198 074b1280cce848eaadea2b2a7ca0a322
+msgid ""
+"Search for genes in PharmGKB by name, symbol, or ID. Returns PharmGKB "
+"Gene ID and basic gene meta..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst 483d6be2588b4d5197d66a1e50396e74
+msgid "PharmGKB_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:204 4d44d9fe17434b3ca5394ddf81cd0bd0
+msgid "**Name**: ``PharmGKB_search_genes``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:206 3ab350d9774a49cd8ced0652a4b35de3
+msgid ""
+"**Description**: Search for genes in PharmGKB by name, symbol, or ID. "
+"Returns PharmGKB Gene ID and basic gene metadata."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:210 11a14c6c9c7a4dbca6b7db69a203379f
+msgid ""
+"``query`` (string) (required) Gene name, symbol, or PharmGKB Accession ID"
+" (e.g., 'CYP2D6', 'PA128')."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:227 ef7aa1fc313c444eb35ae63858d91469
+msgid "**PharmGKB_search_variants** (Type: PharmGKBTool)"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:229 451a58c96adb4188b82400f00dc29b1d
+msgid ""
+"Search for genetic variants in PharmGKB by rsID or name. Returns variant "
+"IDs and associated gene ..."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst a9f4e5bce33c4a349c95e0d2d45fb04c
+msgid "PharmGKB_search_variants tool specification"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:235 6135ccef75dc46b0823b7b20862167be
+msgid "**Name**: ``PharmGKB_search_variants``"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:237 a1924946d3ae45529a01684a52e0568e
+msgid ""
+"**Description**: Search for genetic variants in PharmGKB by rsID or name."
+" Returns variant IDs and associated gene info."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:241 691c9f75379447deab6bb1052902f462
+msgid "``query`` (string) (required) Variant name or rsID (e.g., 'rs1799853')."
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:258 563c240d00ab403fa8d5cdeb8fc0fa5d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:260 7e285e929f9b4476bb7527ffdea27463
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pharmgkb_tools.rst:261 1d7388a035a549a590ae35e15d9b5c54
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

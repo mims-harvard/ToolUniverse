@@ -1,0 +1,196 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ncbi_gene_tools.rst:10 65140a5af54244099eab927303ed7a22
+msgid "Ncbi Gene Tools"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:12 e69223e0ba734263b580724b9e42df4a
+msgid ""
+"**Configuration File**: ``ncbi_gene_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:16 d64b510cae2744cb84b9cf9678624b14
+msgid ""
+"This page contains all tools defined in the ``ncbi_gene_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:19 07f187ce292a44f5a8866487c333e9f8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:22 eef135b043984362929e701e43b8e5c6
+msgid "**NCBIGene_get_summary** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:24 a07278c50bcb4792850cecb9d92a71f9
+msgid ""
+"Get a detailed gene summary from NCBI Gene by Entrez Gene ID using the "
+"E-utilities ESummary API. ..."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst 6d0f73c704d442c59e960707fe54834c
+msgid "NCBIGene_get_summary tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:28 ../../tools/ncbi_gene_tools.rst:59
+#: ../../tools/ncbi_gene_tools.rst:93 164868cfe0d943fd9264b0df76629b92
+#: 5f50bc70143d48e993671a4164354d06 ce46952cb93b4082a23bc02c4c282f75
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:30 09aaac3c1b7d48e6a619d547bdf67f3e
+msgid "**Name**: ``NCBIGene_get_summary``"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:31 ../../tools/ncbi_gene_tools.rst:62
+#: ../../tools/ncbi_gene_tools.rst:96 0fa67f0ec62143d899e89b2fa0ecb634
+#: a812c59cf66846adb8540aa4884e4a2e b966fc7f34b24419836043cdcaf7bee9
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:32 54d0a0af87da46238bd1d6a6caed685c
+msgid ""
+"**Description**: Get a detailed gene summary from NCBI Gene by Entrez "
+"Gene ID using the E-utilities ESummary API. Returns gene name, symbol, "
+"description, function summary, chromosomal location, map position, "
+"aliases, genomic coordinates, exon count, and MIM (OMIM) IDs. The most "
+"authoritative source for human gene information. Use NCBIGene\\_search "
+"first to find Gene IDs. Example: Gene ID 7157 returns TP53 on chromosome "
+"17p13.1 with a detailed functional summary."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:34 ../../tools/ncbi_gene_tools.rst:65
+#: ../../tools/ncbi_gene_tools.rst:99 0d21c550369745cba19d9ff7db583ae9
+#: 64321228aa404abcadd345023090d5fa 8c5a1bd1a8a64f26b0a670bd392cf963
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:36 6dd0562cca264734b394595b02681665
+msgid ""
+"``id`` (string) (required) NCBI Gene ID (Entrez Gene ID). Can be a single"
+" ID or comma-separated list. Examples: '7157' (TP53), '672' (BRCA1), "
+"'1956' (EGFR), '3845' (KRAS). Get IDs from NCBIGene\\_search."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:39 ../../tools/ncbi_gene_tools.rst:73
+#: ../../tools/ncbi_gene_tools.rst:104 7c02dda3cb1441958e0ea509defbd3df
+#: 8163b57a466245e8ba334f3122e8506f c14ca9bcc3634642a836c306d5727910
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:53 1633bd4019f9464aa76d983692123810
+msgid "**NCBIGene_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:55 1fc96845ca744c43a5fe9a02ab4ebcbe
+msgid ""
+"Search the NCBI Gene database using the E-utilities API. Find gene IDs "
+"(Entrez Gene IDs) by gene ..."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst 893efeb5b9b240428975d27422aa0457
+msgid "NCBIGene_search tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:61 88dd335d0fc5444cbb0e070a247904f9
+msgid "**Name**: ``NCBIGene_search``"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:63 80e437ade1c743c2871875881674751d
+msgid ""
+"**Description**: Search the NCBI Gene database using the E-utilities API."
+" Find gene IDs (Entrez Gene IDs) by gene symbol, name, or keyword "
+"combined with an organism filter. Returns a list of matching Gene IDs "
+"that can be used with NCBIGene\\_get\\_summary. Essential for resolving "
+"gene names to standardized NCBI Gene IDs. Example: searching 'TP53' in "
+"Homo sapiens returns Gene ID 7157; 'BRCA1' returns 672."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:67 d7b31764d9164ccbb48f8552036e4f0f
+msgid ""
+"``term`` (string) (required) Search query. Use gene symbol with organism "
+"filter for best results. Format: 'GENE[Symbol] AND Organism[Organism]'. "
+"Examples: 'TP53[Symbol] AND Homo sapiens[Organism]', 'BRCA1[Symbol] AND "
+"Homo sapiens[Organism]', 'insulin AND Homo sapiens[Organism]', 'EGFR AND "
+"Mus musculus[Organism]'."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:70 01384d7efe1241f4b464411fb1f9fe79
+msgid ""
+"``retmax`` (integer) (optional) Maximum number of results to return "
+"(default 10, max 100)."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:87 f0e0dbf2e4fc4b74908de5dcb4974007
+msgid "**NCBIProtein_get_summary** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:89 89811251437341358892fbc9b5613f67
+msgid ""
+"Get protein record summary from the NCBI Protein database by GI number or"
+" accession using the E-u..."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst 37f97707b7e04694993edca032b9c611
+msgid "NCBIProtein_get_summary tool specification"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:95 0e7be63f7ff1408381622cc6c9e57564
+msgid "**Name**: ``NCBIProtein_get_summary``"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:97 e6666eacc0aa4b42b96811f9ecba4eca
+msgid ""
+"**Description**: Get protein record summary from the NCBI Protein "
+"database by GI number or accession using the E-utilities ESummary API. "
+"Returns protein title, organism, accession version, sequence length, "
+"molecular type, source database, and creation/update dates. NCBI Protein "
+"aggregates sequences from GenBank, RefSeq, Swiss-Prot, PDB, and other "
+"sources. Use for resolving NCBI protein GI numbers to names, accessions, "
+"and species. Example: GI 119395750 returns 'keratin, type II cytoskeletal"
+" 1 [Homo sapiens]' with accession NP\\_006112.3 and length 644 aa."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:101 109d56211f204bcf86f9a709cb191a20
+msgid ""
+"``id`` (string) (required) NCBI Protein ID (GI number or accession). Can "
+"be a single ID or comma-separated list. Examples: '119395750' (keratin 1,"
+" NP\\_006112), '4507879' (TP53, NP\\_000537), '4503747' (EGFR, "
+"NP\\_005219). GI numbers can be obtained from NCBI Gene genomic info or "
+"from BLAST results."
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:118 26a77779df6848398db2e254b374775d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:120 a4d802c6b9f147b192ad4c4dabcf1347
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ncbi_gene_tools.rst:121 d451acc3e34d4af285c668d2bdc88b84
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hgnc_tools.rst:10 0ec2d82eb79244c5a9ed7391eead00b2
+msgid "Hgnc Tools"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:12 3c6468d3f5544052a380c92163d272f4
+msgid ""
+"**Configuration File**: ``hgnc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:16 d96ee114a52e4ad7a17bd9e12a35f017
+msgid ""
+"This page contains all tools defined in the ``hgnc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:19 59875b671dc14b9798bcb56deea25b4d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:22 aab5f0386dd84e7aa050ce34cd97fa11
+msgid "**HGNC_fetch_gene_by_id** (Type: HGNCTool)"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:24 991b8f803e4646e89eb2b44ba85522b4
+msgid ""
+"Fetch gene information from HGNC by HGNC ID. Useful when you have a "
+"specific HGNC identifier and ..."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst a715d26b3309487d945c64c53e6d038c
+msgid "HGNC_fetch_gene_by_id tool specification"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:28 ../../tools/hgnc_tools.rst:59
+#: ../../tools/hgnc_tools.rst:90 ../../tools/hgnc_tools.rst:121
+#: 263d5b121cc04aca8a790b27b7c37a61 99d135b9041a4e7a9847b0b2fe70cfcd
+#: a18092e922ec43bab69766637cff78cd ed60f49c14d1409ab4aa60327f85e749
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:30 ef4450025f4d4fc986c818f0bd8b3627
+msgid "**Name**: ``HGNC_fetch_gene_by_id``"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:31 ../../tools/hgnc_tools.rst:62
+#: ../../tools/hgnc_tools.rst:93 ../../tools/hgnc_tools.rst:124
+#: 6b482e596b3046c8a5d80e7ae090dc63 b32a2f7e5a3f4d2ca6509c67c67169b6
+#: e672b485c1c747b0a4731d25ba014146 fdd123a40ff940eb8344acf605d17c1b
+msgid "**Type**: ``HGNCTool``"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:32 c8b35c51d0df4ca39faadea89fbdd1fe
+msgid ""
+"**Description**: Fetch gene information from HGNC by HGNC ID. Useful when"
+" you have a specific HGNC identifier and want the full gene record. "
+"Returns official symbol, name, location, and cross-references to other "
+"databases. Example: 'HGNC:11998' returns TP53."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:34 ../../tools/hgnc_tools.rst:65
+#: ../../tools/hgnc_tools.rst:96 ../../tools/hgnc_tools.rst:127
+#: 1d20c1b48b3d47198904695f2a0caadf 84b1735577214ac59f234679f511c971
+#: 944cb90c6d89406e8458cc5755c2a9ae 9caf8d3fa7f841bc9ae01b36cf52b369
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:36 88947409bc7b402a90f04ea35c9fd652
+msgid ""
+"``hgnc_id`` (string) (required) HGNC identifier, with or without 'HGNC:' "
+"prefix. Examples: 'HGNC:11998' (TP53), 'HGNC:1100' (BRCA1), '1101' "
+"(BRCA2)."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:39 ../../tools/hgnc_tools.rst:70
+#: ../../tools/hgnc_tools.rst:101 ../../tools/hgnc_tools.rst:135
+#: 3db31b36e919458ca5742bd1467aeac6 4de09d86733143f4adaba008e8d3cfe3
+#: a43d54b04088461e80428dc30079eff9 abd201f894b4433284b3e2f994286f8d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:53 b29d9db2d58746c2bf1392084eb7b36d
+msgid "**HGNC_fetch_gene_by_symbol** (Type: HGNCTool)"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:55 ca80130998cf4d43a176022532c261e6
+msgid ""
+"Fetch detailed gene information from HGNC (HUGO Gene Nomenclature "
+"Committee) by official gene sym..."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst 2c3abe98ee0d406a8261b933e8a7d2a3
+msgid "HGNC_fetch_gene_by_symbol tool specification"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:61 63cf9d6365a045d096c991be8559bc34
+msgid "**Name**: ``HGNC_fetch_gene_by_symbol``"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:63 892453e6c3c44e3bbf5fa8a631be938c
+msgid ""
+"**Description**: Fetch detailed gene information from HGNC (HUGO Gene "
+"Nomenclature Committee) by official gene symbol. Returns comprehensive "
+"gene data including HGNC ID, full name, chromosomal location, cross-"
+"references to Ensembl, NCBI Entrez, UniProt, OMIM, and RefSeq. HGNC is "
+"the authoritative source for human gene nomenclature. Example: 'TP53' "
+"returns tumor protein p53 with all its identifiers."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:67 a45779ed80f14081ba6a4e8cce7d68da
+msgid ""
+"``symbol`` (string) (required) Official HGNC gene symbol. Examples: "
+"'TP53', 'BRCA1', 'EGFR', 'INS', 'ACE2'."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:84 b8f9abd4a0444de6afe805b1ae386fe8
+msgid "**HGNC_search_by_location** (Type: HGNCTool)"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:86 8b50c9dadf4a4c60bc83910a8af2afc3
+msgid ""
+"Search HGNC for genes at a specific chromosomal location. Returns all "
+"genes mapped to that cytoge..."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst df54155cc5f2436d823234f4afa34b78
+msgid "HGNC_search_by_location tool specification"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:92 f67ff03beeff49699374debbdc27c3e4
+msgid "**Name**: ``HGNC_search_by_location``"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:94 30b4e5e9c2d648788cdb64cc47d479ef
+msgid ""
+"**Description**: Search HGNC for genes at a specific chromosomal "
+"location. Returns all genes mapped to that cytogenetic band. Useful for "
+"identifying genes in a chromosomal region of interest. Example: '17p13.1'"
+" returns genes including TP53."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:98 61ca44eaa0ce4daeadc4abb450144be6
+msgid ""
+"``location`` (string) (required) Cytogenetic band location. Examples: "
+"'17p13.1' (TP53 region), '17q21.31' (BRCA1 region), '7p11.2' (EGFR "
+"region), '13q14.2' (RB1 region)."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:115 05c31c2733f6402799f67629ab6873d5
+msgid "**HGNC_search_genes** (Type: HGNCTool)"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:117 403292323fe14989a997310eafa24b7d
+msgid ""
+"Search for human genes in HGNC by symbol, name, or alias. Supports "
+"wildcards (e.g., 'BRCA\\*' find..."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst 6193221f9e2f4e97a6f0ef0359f68ce6
+msgid "HGNC_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:123 a012b2f034c44c9096ef6ae3db9bf584
+msgid "**Name**: ``HGNC_search_genes``"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:125 ada9751fb2874f3c81fdce24c18ab505
+msgid ""
+"**Description**: Search for human genes in HGNC by symbol, name, or "
+"alias. Supports wildcards (e.g., 'BRCA\\*' finds BRCA1, BRCA2). Searches "
+"across approved symbols and names. Returns a list of matching genes with "
+"basic info. Example: 'kinase' searches gene names containing kinase."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:129 72fcfd71a0cc4ca4a398a9b8ff1f94d9
+msgid ""
+"``query`` (string) (required) Search query - gene symbol, partial name, "
+"or keyword. Supports wildcards (\\*). Examples: 'BRCA\\*', 'tumor "
+"protein', 'insulin receptor'."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:132 35568ad1d09847dfb1e385909c0f35b8
+msgid ""
+"``search_field`` (string, null) (optional) Field to search in. Options: "
+"'symbol', 'name', 'alias\\_symbol', 'prev\\_symbol', 'entrez\\_id', "
+"'ensembl\\_gene\\_id', 'uniprot\\_ids', 'location'. Default searches "
+"across symbol and name."
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:149 ea81818158b74483926ba12afe683c20
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:151 d03c2067df734d6fbcda13ca396d567e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hgnc_tools.rst:152 5714b3170bed45e6abb12b0cea891f85
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,237 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/oma_tools.rst:10 6f500f6d2ce1472e87297436abb584bb
+msgid "Oma Tools"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:12 426d5f39a2464242884f402826d8fc60
+msgid ""
+"**Configuration File**: ``oma_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:16 229c49b812ee4ac583d8389722088374
+msgid ""
+"This page contains all tools defined in the ``oma_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:19 4c3c8f03a960491a851f2faeffcc85cf
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:22 fce9c10d0f804e6285fd6efd65a1b24d
+msgid "**OMA_get_group** (Type: OMATool)"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:24 f4b5969647e244729493ec4b93516f2e
+msgid ""
+"Get OMA Group details including member proteins. OMA Groups contain sets "
+"of strict 1:1 orthologs ..."
+msgstr ""
+
+#: ../../tools/oma_tools.rst ef4e21c31a3043b5884ec7a8cdb8fd96
+msgid "OMA_get_group tool specification"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:28 ../../tools/oma_tools.rst:59
+#: ../../tools/oma_tools.rst:90 ../../tools/oma_tools.rst:127
+#: 98911f6318804eab95200d911d5e0248 b15e0e69417c4a5dbe5df640b3ac6c6d
+#: cc374bae49454fb2a4cb3dea24967a41 d62a750166e246f9add3ca7b523e8232
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:30 7e86122419eb48089d99a4df009830c1
+msgid "**Name**: ``OMA_get_group``"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:31 ../../tools/oma_tools.rst:62
+#: ../../tools/oma_tools.rst:93 ../../tools/oma_tools.rst:130
+#: 22aa1dfe73ce49cc84300af61c1c1fbe 2e75dbce48a94ee9a2eebec441eff723
+#: 89d6ec198c8f4434902ba7f938e8ee5e 99dbb99dab44402994ddfb26350e27e1
+msgid "**Type**: ``OMATool``"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:32 c916a12dec45443ea8549d25b2234ca8
+msgid ""
+"**Description**: Get OMA Group details including member proteins. OMA "
+"Groups contain sets of strict 1:1 orthologs across all genomes, ensuring "
+"each species contributes at most one gene. This is the most stringent "
+"orthology definition in OMA. Example: group 1388790 returns the p53 OMA "
+"Group with fingerprint 'HKKGEPC', description 'cellular tumor antigen "
+"p53', and members from fish, mammals, and other vertebrates."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:34 ../../tools/oma_tools.rst:65
+#: ../../tools/oma_tools.rst:96 ../../tools/oma_tools.rst:133
+#: 10586052253945568ae1b32acfcbb226 2df318c2a5b6425d85e9461e7eacf756
+#: d298c827d0eb48f89fdcf1b619b030ff ffa59dd6d84547cfa0bf2de919e840d6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:36 86cf856822134d428d259bbc3392f2f0
+msgid ""
+"``group_id`` (string) (required) OMA Group number (numeric ID). Examples:"
+" '1388790' (p53 group), '839588' (EGFR group). Use OMA\\_get\\_protein to"
+" find the group ID for a specific protein."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:39 ../../tools/oma_tools.rst:70
+#: ../../tools/oma_tools.rst:107 ../../tools/oma_tools.rst:138
+#: 090f7ebbef6b40098b9e4716a0f3f308 2bec38b020cb4d6d81cd5d7ba3c12119
+#: 4b8be7fec7294883b0ad7e105b9122dd ae57ac1e11a54d5190722df48dbce39f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:53 1af7a459af794411a018d2b5be11da26
+msgid "**OMA_get_hog** (Type: OMATool)"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:55 e5d5650b89604705b4e6bcf0aa9b4a81
+msgid ""
+"Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs "
+"represent groups of genes tha..."
+msgstr ""
+
+#: ../../tools/oma_tools.rst 37c5fa299da64046bfbe1fac5606da7c
+msgid "OMA_get_hog tool specification"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:61 8cc8052fa23c49e2a6dcf1fbd4c4df83
+msgid "**Name**: ``OMA_get_hog``"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:63 51dab113ec64412e96eb0df91c857101
+msgid ""
+"**Description**: Get Hierarchical Orthologous Group (HOG) information "
+"from OMA. HOGs represent groups of genes that descended from a single "
+"ancestral gene within a given taxonomic range. HOGs capture the full "
+"evolutionary history of gene families including gene duplications. "
+"Example: HOG:E0739094 returns the p53 HOG at the Euteleostomi level with "
+"description 'cellular tumor antigen p53', completeness score 0.65, and "
+"child HOGs for fish, mammals, etc."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:67 8b5c5e1b4e954cfb8d36d83929f7ba56
+msgid ""
+"``hog_id`` (string) (required) Hierarchical Orthologous Group ID. "
+"Examples: 'HOG:E0739094' (p53 family), 'HOG:E0817124' (insulin family). "
+"Use OMA\\_get\\_protein to find the HOG ID for a specific protein."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:84 b59dafb629504c938b3cfd1763c2012a
+msgid "**OMA_get_orthologs** (Type: OMATool)"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:86 2da96458d28b4e54b28602aa9c134055
+msgid ""
+"Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) "
+"Browser. Returns orthologo..."
+msgstr ""
+
+#: ../../tools/oma_tools.rst 2ef1a68e4415436b88cc8658ca04f766
+msgid "OMA_get_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:92 2c6f770e404b4b398e155c7b3178966b
+msgid "**Name**: ``OMA_get_orthologs``"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:94 38e8db965af34b4bb0921922412a969b
+msgid ""
+"**Description**: Get pairwise orthologs for a protein from the OMA "
+"(Orthologous MAtrix) Browser. Returns orthologous proteins across species"
+" with relationship type (1:1, 1:many, many:1, many:many), evolutionary "
+"distance, and alignment score. OMA orthologs are inferred using a "
+"rigorous algorithm that provides high-confidence predictions. Example: "
+"P04637 (human p53) returns orthologs in 200+ species including Mus "
+"musculus, Danio rerio, and Drosophila melanogaster."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:98 7bbd737b1e5e4c718e37c745ed3f562a
+msgid ""
+"``protein_id`` (string) (required) UniProt accession (e.g., 'P04637' for "
+"human p53) or OMA ID."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:101 322159572c49401ebdcfb3612c11244b
+msgid ""
+"``rel_type`` (string, null) (optional) Filter by orthology relationship "
+"type. Options: '1:1' (one-to-one), '1:n' (one-to-many), 'n:1' (many-to-"
+"one), 'n:m' (many-to-many). Leave empty for all types."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:104 0792da5e181d491b9f1beed395bee3c7
+msgid ""
+"``per_page`` (integer, null) (optional) Number of orthologs to return "
+"(default: 20, max: 100)."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:121 ca3e48371a364da3a6dbc680df007a7c
+msgid "**OMA_get_protein** (Type: OMATool)"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:123 23edb8ee6d3e47d2a8c98b23649cc01f
+msgid ""
+"Get protein information from the OMA (Orthologous MAtrix) Browser by "
+"UniProt accession or OMA ID...."
+msgstr ""
+
+#: ../../tools/oma_tools.rst 3c35c0e067bd4cc88b7ce9da65660d26
+msgid "OMA_get_protein tool specification"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:129 9dacadc67f274cd7abee5bc5b21415b2
+msgid "**Name**: ``OMA_get_protein``"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:131 6bc0d20316b34286a0e27978c3ff565c
+msgid ""
+"**Description**: Get protein information from the OMA (Orthologous "
+"MAtrix) Browser by UniProt accession or OMA ID. OMA is a comprehensive "
+"orthology database covering 2,600+ complete genomes. Returns protein "
+"details including species, genomic location, OMA group membership, and "
+"Hierarchical Orthologous Group (HOG) assignment. Example: P04637 returns "
+"human TP53 with OMA ID HUMAN31534, HOG:E0739094.3a.3b.3b, and genomic "
+"locus on chromosome 17."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:135 e6803af2cf4840f8a606568691017acd
+msgid ""
+"``protein_id`` (string) (required) UniProt accession (e.g., 'P04637' for "
+"human p53) or OMA ID (e.g., 'HUMAN31534'). UniProt accessions are "
+"recommended for cross-database compatibility."
+msgstr ""
+
+#: ../../tools/oma_tools.rst:152 a081cd9ae2c040ab9e3242c11a960ff8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:154 5a5f8801bc87468db48da54e976e2dee
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/oma_tools.rst:155 5630089452844437913aa95e82362bf5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

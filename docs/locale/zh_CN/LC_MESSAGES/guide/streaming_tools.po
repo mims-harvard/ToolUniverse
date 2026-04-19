@@ -7,70 +7,69 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/streaming_tools.rst:2 10341cc26a30424fac1d9021244cbfba
+#: ../../guide/streaming_tools.rst:2 f8600571303e44d49fbd2b0f275b62ef
 msgid "Streaming Tools Tutorial"
 msgstr "流媒体工具教程"
 
-#: ../../guide/streaming_tools.rst:6 2e84748172764cb1bd5af6e3b763badd
+#: ../../guide/streaming_tools.rst:6 57aa18329ccb42b1aa44185047892443
 msgid "Table of Contents"
 msgstr "目录"
 
-#: ../../guide/streaming_tools.rst:9 c7190e1244cc4f189502e8853ba2dfe0
+#: ../../guide/streaming_tools.rst:9 b2f67b54682b456c82745e02862df19a
 msgid "What Is Streaming Mode?"
 msgstr "什么是流式模式？"
 
-#: ../../guide/streaming_tools.rst:11 b8ae27f8e9994bf48732cfb34372339f
+#: ../../guide/streaming_tools.rst:11 925d7a2135644e2aa88fc5d38fcafda2
 msgid ""
-"*Streaming* lets a tool send partial results back to the caller while the "
-"task is still running. Instead of waiting for the entire response, the "
-"caller receives chunks (text fragments, structured updates, etc.) in real "
-"time. This is useful when:"
-msgstr ""
-"*流式处理*允许工具在任务仍在运行时将部分结果返回给调用方。调用方无需等待完整的响应，而是可以实时接收数据块（文本片段、结构化更新等）。这种功能在以下情况下非常有用："
+"*Streaming* lets a tool send partial results back to the caller while the"
+" task is still running. Instead of waiting for the entire response, the "
+"caller receives chunks (text fragments, structured updates, etc.) in real"
+" time. This is useful when:"
+msgstr "*流式处理*允许工具在任务仍在运行时将部分结果返回给调用方。调用方无需等待完整的响应，而是可以实时接收数据块（文本片段、结构化更新等）。这种功能在以下情况下非常有用："
 
-#: ../../guide/streaming_tools.rst:16 b3cb55facd3244f89b6b78243d784786
+#: ../../guide/streaming_tools.rst:16 0ccf8666e7b94e02b7106dea5f71b622
 msgid "Responses are long or detailed and you want early insight"
 msgstr "响应内容较长或较为详细时，您希望能够提前获得洞察。"
 
-#: ../../guide/streaming_tools.rst:17 113636da86bf43849db6784a66228d4a
+#: ../../guide/streaming_tools.rst:17 bd51ada3879a4428ac03433b39028649
 msgid ""
 "The user interface (CLI, notebook, MCP client) benefits from progressive "
 "updates"
 msgstr "用户界面（CLI、笔记本、MCP客户端）受益于渐进式更新"
 
-#: ../../guide/streaming_tools.rst:19 c3ab4338185e4c58adc51fb6be737c93
+#: ../../guide/streaming_tools.rst:19 f7ff55fd5cb24ac7a844b107353ec63e
 msgid ""
-"You plan to pipe each chunk into another system (logging, partial rendering,"
-" incremental processing)"
+"You plan to pipe each chunk into another system (logging, partial "
+"rendering, incremental processing)"
 msgstr "您计划将每个数据块传输到另一个系统（日志记录、部分渲染、增量处理）。"
 
-#: ../../guide/streaming_tools.rst:22 5c8f4f255fa84a1d846a7939cae8df8e
+#: ../../guide/streaming_tools.rst:22 40e0ed6369f44a5680ef68e67473e4ad
 msgid ""
 "All tools built on :class:`AgenticTool` already support streaming. Other "
 "tool types can opt in by following the instructions in :ref:`building-"
 "custom-streaming-tools`."
 msgstr ""
-"所有基于 :class:`AgenticTool` 构建的工具已支持流式处理。其他类型的工具可以通过遵循 :ref:`building-custom-"
-"streaming-tools` 中的说明选择加入流式处理功能。"
+"所有基于 :class:`AgenticTool` 构建的工具已支持流式处理。其他类型的工具可以通过遵循 :ref:`building-"
+"custom-streaming-tools` 中的说明选择加入流式处理功能。"
 
-#: ../../guide/streaming_tools.rst:27 9fa9ce7d099e4dc6b844c59624f0a1a0
+#: ../../guide/streaming_tools.rst:27 d1e8012ecfd44f2480b079f3c3a2bfe6
 msgid "Streaming Built-in Agentic Tools"
 msgstr "流式内置智能工具"
 
-#: ../../guide/streaming_tools.rst:29 0856cf8a548346b8901222ffce389d4b
+#: ../../guide/streaming_tools.rst:29 b1733988946d4b98a3009223e19f840b
 msgid ""
 "The ToolUniverse distribution ships with many Agentic tools, such as "
 "``ScientificTextSummarizer`` (defined in ``agentic_tools.json``). The "
@@ -80,119 +79,124 @@ msgstr ""
 "ToolUniverse 的发行版附带了许多 Agentic 工具，例如 ``ScientificTextSummarizer``（定义在 "
 "``agentic_tools.json`` 中）。以下代码片段展示了如何使用 ``ToolUniverse.run`` 配合流式回调运行该工具："
 
-#: ../../guide/streaming_tools.rst:68 9c0baa6288fe47ce9e5589c9cc997e98
+#: ../../guide/streaming_tools.rst:68 d159d72a5bca4ff6af5413a56f26a34d
 msgid "Key points:"
 msgstr ""
 "关键点：\n"
 "\n"
 "上下文：文档"
 
-#: ../../guide/streaming_tools.rst:70 ce9b566d8e4345ba8c18e12b9e04fb10
+#: ../../guide/streaming_tools.rst:70 0fb1efc6adfa4133812fc81f1ac2abc5
 msgid ""
-"Passing ``stream_callback`` tells ToolUniverse that the caller can accept "
-"streamed chunks."
+"Passing ``stream_callback`` tells ToolUniverse that the caller can accept"
+" streamed chunks."
 msgstr "通过传递 ``stream_callback``，通知 ToolUniverse 调用方可以接受流式数据块。"
 
-#: ../../guide/streaming_tools.rst:72 e1997891a874440d9086e90260703ab4
+#: ../../guide/streaming_tools.rst:72 4be5b3718a874e2f8d84c9434e4e16ff
 msgid ""
-"``ToolUniverse.run`` accepts the same JSON structure used by MCP calls. When"
-" a callback is present the framework automatically sets "
-"``AgenticTool.STREAM_FLAG_KEY`` in the argument dict so AgenticTool knows "
-"streaming was requested."
+"``ToolUniverse.run`` accepts the same JSON structure used by MCP calls. "
+"When a callback is present the framework automatically sets "
+"``AgenticTool.STREAM_FLAG_KEY`` in the argument dict so AgenticTool knows"
+" streaming was requested."
 msgstr ""
 "``ToolUniverse.run`` 接受与 MCP 调用中使用的相同 JSON 结构。当存在回调函数时，框架会自动在参数字典中设置 "
 "``AgenticTool.STREAM_FLAG_KEY``，以便 AgenticTool 知道已请求流式处理。"
 
-#: ../../guide/streaming_tools.rst:76 e71d3ebc87d34748bc55866f298eb522
+#: ../../guide/streaming_tools.rst:76 3f55e5e646a046f39294c59180a9283b
 msgid ""
-"If the callback is omitted the tool still works—it simply returns one final "
-"string."
+"If the callback is omitted the tool still works—it simply returns one "
+"final string."
 msgstr "如果省略回调函数，该工具仍然可以正常运行——它只会返回一个最终的字符串。"
 
-#: ../../guide/streaming_tools.rst:79 f602b33edcc8481d8c9309915dc7aefa
+#: ../../guide/streaming_tools.rst:79 6ee0461ea1064821bb92baf0198a5d0f
 msgid ""
-"The streaming demonstration script ``examples/agentic_streaming_example.py``"
-" wraps the same logic with a longer prompt so chunks are visually obvious."
+"The streaming demonstration script "
+"``examples/agentic_streaming_example.py`` wraps the same logic with a "
+"longer prompt so chunks are visually obvious."
 msgstr ""
 "流式演示脚本 ``examples/agentic_streaming_example.py`` "
 "使用更长的提示包装了相同的逻辑，使数据块在视觉上更加明显。"
 
-#: ../../guide/streaming_tools.rst:83 81d11cb2c0dd4c28b987a22fffe1618d
-msgid "Streaming via MCP / JSON Parameters"
-msgstr "通过 MCP / JSON 参数进行流式传输"
-
-#: ../../guide/streaming_tools.rst:85 e8f018df761e42b992ab6a69bec3e311
-msgid ""
-"When the client cannot pass a Python callback (for example, MCP or pure HTTP"
-" JSON), stream mode can be toggled in the arguments using the flag defined "
-"by the tool's ``STREAM_FLAG_KEY`` (``_tooluniverse_stream`` for AgenticTool-"
-"based tools):"
-msgstr ""
-"当客户端无法传递 Python 回调（例如 MCP 或纯 HTTP JSON）时，可以通过使用工具定义的标志 "
-"``STREAM_FLAG_KEY``（对于基于 AgenticTool 的工具为 "
-"``_tooluniverse_stream``）在参数中切换到流模式。"
-
-#: ../../guide/streaming_tools.rst:105 500673100e9346c0b4df080d0c931355
-msgid ""
-"The SMCP server forwards each streamed chunk as a ``ctx.info`` log message. "
-"The final aggregated result is still returned via the normal MCP response."
-msgstr "SMCP 服务器将每个流式数据块作为 ``ctx.info`` 日志消息转发。最终的聚合结果仍然通过正常的 MCP 响应返回。"
-
-#: ../../guide/streaming_tools.rst:111 f9b431b461f6432aa9aec0abff0360a5
+#: ../../guide/streaming_tools.rst:85 e54c9c9f4980437c9a1fd01523d9bf29
 msgid "Building Your Own Streaming Tool"
 msgstr "构建您自己的流媒体工具"
 
-#: ../../guide/streaming_tools.rst:113 6aba35dc6b714da8a105bdc8ee5af3a3
+#: ../../guide/streaming_tools.rst:87 5c8296a9595c465cb9cbf1519dca311b
 msgid "Any custom tool can opt into streaming with three small changes:"
 msgstr "任何自定义工具只需进行三个小改动即可启用流式处理："
 
-#: ../../guide/streaming_tools.rst:115 1d7c65c2627f4afdbeb1642ccd6f6077
+#: ../../guide/streaming_tools.rst:89 0934267f165145e39f0c60640d93aab8
 msgid ""
-"**Declare a flag key** on the class so ToolUniverse knows which argument to "
-"populate when a callback is provided."
+"**Declare a flag key** on the class so ToolUniverse knows which argument "
+"to populate when a callback is provided."
 msgstr "**在类上声明一个标志键**，以便 ToolUniverse 在提供回调时知道要填充哪个参数。"
 
-#: ../../guide/streaming_tools.rst:123 e437741a6f7247a895719d84ac3b1aad
+#: ../../guide/streaming_tools.rst:97 500a2eea533c442f801e5cb131cb64a4
 msgid ""
 "**Accept ``stream_callback`` in ``run`` and forward chunks.** Remove the "
 "flag from the argument dict before downstream validation."
 msgstr "**在 ``run`` 中接受 ``stream_callback`` 并转发数据块。** 在下游验证之前，从参数字典中移除该标志。"
 
-#: ../../guide/streaming_tools.rst:148 71246a91f042471a8108441010beecf1
+#: ../../guide/streaming_tools.rst:122 fc7c6598727f4901b92dbcdaad3abea5
 msgid ""
 "If the tool cannot deliver chunks for some reason, fall back to your non-"
 "streaming path (as AgenticTool does)."
 msgstr "如果该工具由于某种原因无法传递数据块，请回退到非流式处理路径（如 AgenticTool 所做的）。"
 
-#: ../../guide/streaming_tools.rst:151 f2016d3e5f884279a8f36aa0a1919c84
+#: ../../guide/streaming_tools.rst:125 5c3f51ea218f484785f4f1c8750ee07a
 msgid ""
-"**Optional** – document the flag in the tool's schema if external callers "
-"should be able to toggle streaming without relying on ``stream_callback``."
+"**Optional** – document the flag in the tool's schema if external callers"
+" should be able to toggle streaming without relying on "
+"``stream_callback``."
 msgstr "**可选** – 如果需要允许外部调用者在不依赖``stream_callback``的情况下切换流式处理，请在工具的模式中记录该标志。"
 
-#: ../../guide/streaming_tools.rst:155 817f4ab96bdd4bc9b55ac05b4b37926c
+#: ../../guide/streaming_tools.rst:129 692eddd54f034c6c8e5868a9ae6533c4
 msgid "Testing"
 msgstr "测试"
 
-#: ../../guide/streaming_tools.rst:157 67404cc8bba34379b04db051fe0369f1
-msgid ""
-"Use the existing test suites as references when adding streaming support:"
+#: ../../guide/streaming_tools.rst:131 62726d23874b43b3820c7d86aee1e054
+msgid "Use the existing test suites as references when adding streaming support:"
 msgstr "在添加流式传输支持时，请参考现有的测试套件："
 
-#: ../../guide/streaming_tools.rst:159 b50b794184df448cae9e7d9751a6058d
+#: ../../guide/streaming_tools.rst:133 91f14120ef4440c7b6161ea24f54e9d9
 msgid ""
-"``tests/test_streaming_support.py`` – Unit tests covering callback injection"
-" and automatic flag handling."
+"``tests/test_streaming_support.py`` – Unit tests covering callback "
+"injection and automatic flag handling."
 msgstr "``tests/test_streaming_support.py`` – 单元测试，涵盖回调注入和自动标志处理。"
 
-#: ../../guide/streaming_tools.rst:161 9bc0e876159145a2bd68f32bf9defe73
+#: ../../guide/streaming_tools.rst:135 810a04cc12b24dbeb749dd925b6f055d
 msgid ""
-"``tests/test_agentic_streaming_integration.py`` – Integration tests covering"
-" AgenticTool streaming and SMCP log propagation."
+"``tests/test_agentic_streaming_integration.py`` – Integration tests "
+"covering AgenticTool streaming and SMCP log propagation."
 msgstr ""
-"``tests/test_agentic_streaming_integration.py`` – 集成测试涵盖 AgenticTool 流式处理和 "
-"SMCP 日志传播。"
+"``tests/test_agentic_streaming_integration.py`` – 集成测试涵盖 AgenticTool "
+"流式处理和 SMCP 日志传播。"
 
-#: ../../guide/streaming_tools.rst:164 abc30b788f2a4a0e8da951a209959b9c
+#: ../../guide/streaming_tools.rst:138 1a4553f55882469c91df6d3453935d1a
 msgid "Run them with:"
 msgstr "使用以下命令运行："
+
+#~ msgid "Streaming via MCP / JSON Parameters"
+#~ msgstr "通过 MCP / JSON 参数进行流式传输"
+
+#~ msgid ""
+#~ "When the client cannot pass a "
+#~ "Python callback (for example, MCP or "
+#~ "pure HTTP JSON), stream mode can "
+#~ "be toggled in the arguments using "
+#~ "the flag defined by the tool's "
+#~ "``STREAM_FLAG_KEY`` (``_tooluniverse_stream`` for "
+#~ "AgenticTool-based tools):"
+#~ msgstr ""
+#~ "当客户端无法传递 Python 回调（例如 MCP 或纯 HTTP "
+#~ "JSON）时，可以通过使用工具定义的标志 ``STREAM_FLAG_KEY``（对于基于 AgenticTool"
+#~ " 的工具为 ``_tooluniverse_stream``）在参数中切换到流模式。"
+
+#~ msgid ""
+#~ "The SMCP server forwards each streamed"
+#~ " chunk as a ``ctx.info`` log message."
+#~ " The final aggregated result is still"
+#~ " returned via the normal MCP "
+#~ "response."
+#~ msgstr "SMCP 服务器将每个流式数据块作为 ``ctx.info`` 日志消息转发。最终的聚合结果仍然通过正常的 MCP 响应返回。"
+

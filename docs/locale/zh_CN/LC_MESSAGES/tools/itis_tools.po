@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/itis_tools.rst:10 31883204e1694bc5b022728747c31fdc
+msgid "Itis Tools"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:12 a31befd5f4e347d3a7b5d7587d7416af
+msgid ""
+"**Configuration File**: ``itis_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:16 c23618de23704999a4c4096c1e6adb20
+msgid ""
+"This page contains all tools defined in the ``itis_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:19 3783f17290504822827ed3613299c375
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:22 ce47d39064cc4bf1b2359bf9d5f0690b
+msgid "**ITIS_get_full_record** (Type: ITISTool)"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:24 7a65766fa9084a55892eaeaf328bab16
+msgid ""
+"Get the complete taxonomic record from ITIS for a given TSN (Taxonomic "
+"Serial Number). Returns sc..."
+msgstr ""
+
+#: ../../tools/itis_tools.rst 057ea9783b9a43fe8b0f21b45312ab97
+msgid "ITIS_get_full_record tool specification"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:28 ../../tools/itis_tools.rst:59
+#: ../../tools/itis_tools.rst:90 ../../tools/itis_tools.rst:121
+#: 045add7590f24d3f9cdb149ce95f7992 1d757a16999544a792aac706ea61e725
+#: 3765f678748d40f8a94d89a2c67af1f4 fcfe9dd41b0546c2addad1114ae52c72
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:30 8e673d419d1543c194576d12e40ea512
+msgid "**Name**: ``ITIS_get_full_record``"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:31 ../../tools/itis_tools.rst:62
+#: ../../tools/itis_tools.rst:93 ../../tools/itis_tools.rst:124
+#: 3886599773b5451daf9ccdf4599142f9 3afb016ce84545069dcbc63fb1dfdf4a
+#: c3b33fd14e7d4fc9baf036204705bd83 cf86defc9e3d4e589050f7d2cb42e0a5
+msgid "**Type**: ``ITISTool``"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:32 fa39cac167e2404598afb69d9088d44a
+msgid ""
+"**Description**: Get the complete taxonomic record from ITIS for a given "
+"TSN (Taxonomic Serial Number). Returns scientific name, authority, "
+"taxonomic rank, usage status (valid/invalid), common names in multiple "
+"languages, and parent TSN. Provides comprehensive metadata needed for "
+"proper species identification and citation. Example: TSN 180092 returns "
+"Homo sapiens Linnaeus, 1758 with common names Human/Humans/man."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:34 ../../tools/itis_tools.rst:65
+#: ../../tools/itis_tools.rst:96 ../../tools/itis_tools.rst:127
+#: aa6354243e634cf590b11e9658981a4b bf39b3ea0cb34ef889b04d0fd9b9c839
+#: e01ce621f236405ea5ecfc9a0beca8a4 e6d34525bf634d4a9e875f037e5ccb61
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:36 85b3cae33a4f489a95f041462706c918
+msgid ""
+"``tsn`` (string) (required) ITIS Taxonomic Serial Number. Examples: "
+"'180092' (Homo sapiens), '573082' (Pan troglodytes), '174371' (Drosophila"
+" melanogaster), '180130' (Canis lupus familiaris)."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:39 ../../tools/itis_tools.rst:70
+#: ../../tools/itis_tools.rst:101 ../../tools/itis_tools.rst:132
+#: 688425630ac84deab50573c7ac37de5d 94409d793f3f47399af243293a6d046a
+#: c7874d8fc0c843bea48878d36f31c8b2 cf29d1db1d6a45e69fea47ba892367fe
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:53 e0e83eb582a042bc9f79574fc34bc3c5
+msgid "**ITIS_get_hierarchy** (Type: ITISTool)"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:55 348739bdb75b4df29698b3b1ff7143af
+msgid ""
+"Get the full taxonomic hierarchy for an organism by its ITIS TSN "
+"(Taxonomic Serial Number). Retur..."
+msgstr ""
+
+#: ../../tools/itis_tools.rst c5513ebcdfe54c4793a5b0631b039900
+msgid "ITIS_get_hierarchy tool specification"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:61 1e6319daad9e447dbebc9f269d90d7c1
+msgid "**Name**: ``ITIS_get_hierarchy``"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:63 14d24fb276e649c6b725b576729c7c3c
+msgid ""
+"**Description**: Get the full taxonomic hierarchy for an organism by its "
+"ITIS TSN (Taxonomic Serial Number). Returns the complete classification "
+"from Kingdom down to the queried taxon level, including intermediate "
+"ranks like Phylum, Class, Order, Family, Genus. Useful for understanding "
+"evolutionary relationships and classification. Example: TSN 180092 (Homo "
+"sapiens) returns: Animalia > Chordata > Mammalia > Primates > Hominidae >"
+" Homo > Homo sapiens."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:67 6382d56fcfa346688d21899b0ee0d8e6
+msgid ""
+"``tsn`` (string) (required) ITIS Taxonomic Serial Number. Examples: "
+"'180092' (Homo sapiens), '180091' (Homo), '573082' (Pan troglodytes), "
+"'174371' (Drosophila melanogaster)."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:84 29c2bc11eac742d5b2e8bc9acbe09be7
+msgid "**ITIS_search_by_common_name** (Type: ITISTool)"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:86 d6848d4ec19e44b3943b1b4c9ecf0a4b
+msgid ""
+"Search the ITIS (Integrated Taxonomic Information System) database by "
+"common/vernacular name. Ret..."
+msgstr ""
+
+#: ../../tools/itis_tools.rst 7f793468f3c64350842c8839eb9dd7aa
+msgid "ITIS_search_by_common_name tool specification"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:92 da2fe1feae4e4407b7caf4972a0acefd
+msgid "**Name**: ``ITIS_search_by_common_name``"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:94 9a3c64168b9a47dba9f7fea10e4f0c01
+msgid ""
+"**Description**: Search the ITIS (Integrated Taxonomic Information "
+"System) database by common/vernacular name. Returns matching taxa with "
+"their TSN and the language of the common name. Useful for finding the "
+"scientific classification of organisms known by their everyday names. "
+"Example: 'bald eagle' returns Haliaeetus leucocephalus (TSN 175420)."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:98 57124fe2b68d4cd3915343d1b4a0ff3d
+msgid ""
+"``common_name`` (string) (required) Common or vernacular name to search "
+"for. Examples: 'bald eagle', 'chimpanzee', 'blue whale', 'corn', 'honey "
+"bee'."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:115 3d68f53880c84e88847fb077025566f2
+msgid "**ITIS_search_by_scientific_name** (Type: ITISTool)"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:117 62af901ee60343799d85647eac2ef363
+msgid ""
+"Search the ITIS (Integrated Taxonomic Information System) database by "
+"scientific name. ITIS is th..."
+msgstr ""
+
+#: ../../tools/itis_tools.rst 7f42312be3c943e5861fe9ab58c8f37b
+msgid "ITIS_search_by_scientific_name tool specification"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:123 c9bfa5fa253f41ab80abaa73263b61d9
+msgid "**Name**: ``ITIS_search_by_scientific_name``"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:125 7ac1cdbd37a4438dba8436edd3ef20f1
+msgid ""
+"**Description**: Search the ITIS (Integrated Taxonomic Information "
+"System) database by scientific name. ITIS is the authoritative US "
+"taxonomic database covering plants, animals, fungi, and microbes "
+"worldwide. Returns matching taxa with their TSN (Taxonomic Serial "
+"Number), kingdom, and authority. Example: 'Homo sapiens' returns the "
+"human TSN (180092) with Linnaeus, 1758 as authority."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:129 8b4841c3512d44998e9e1313f822cf34
+msgid ""
+"``scientific_name`` (string) (required) Scientific name to search for "
+"(genus, species, or binomial). Examples: 'Homo sapiens', 'Canis lupus', "
+"'Drosophila melanogaster', 'Escherichia coli', 'Quercus'."
+msgstr ""
+
+#: ../../tools/itis_tools.rst:146 057c3db423c042979918876366e4d3a2
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:148 a58bfd35234a426789158072cc39564f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/itis_tools.rst:149 ae6697c2709c4a17b9162854f0cc489d
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clinical_trials_tools.rst:2 5294830d0a964b06bf32bfb233b4a4cb
+msgid "Clinical Trials Tools"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:4 e9b250b4a3ff4f93b3c798be3a4b3f64
+msgid ""
+"**Configuration File**: ``clinical_trials_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:8 536f91e8237642d99acb5e2dbfe80d58
+msgid ""
+"This page contains all tools defined in the "
+"``clinical_trials_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:11 72209de71acf423c9e67122cbbf9d42b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:14 be2fc35ba17f40fa9db1d0707c9e5395
+msgid "**clinical_trials_get_details** (Type: ClinicalTrialsGovTool)"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:16 a6796308b0a94702ba8269d2f8c3cfdd
+msgid ""
+"Retrieves comprehensive details about a specific clinical trial using its"
+" NCT ID."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst 2d7583b50129480caecbf61352342307
+msgid "clinical_trials_get_details tool specification"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:20
+#: ../../tools/clinical_trials_tools.rst:55 0a856e747b7d4400994246bae15f4c43
+#: 9a9bb20214f546199853357f8e8d2976
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:22 f9ffa179efc1476db96a9ae743627a75
+msgid "**Name**: ``clinical_trials_get_details``"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:23
+#: ../../tools/clinical_trials_tools.rst:58 13b93305eaee42ffaafc3ceca03b9e8c
+#: 8df1485c146b4c458c8528b05fe36d90
+msgid "**Type**: ``ClinicalTrialsGovTool``"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:24 395d96343fbe433d984187660def945e
+msgid ""
+"**Description**: Retrieves comprehensive details about a specific "
+"clinical trial using its NCT ID."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:26
+#: ../../tools/clinical_trials_tools.rst:61 621f4d00c6b5478aabf001dd90f47fd5
+#: 8b127119dff34f2d8f345c2efb8795df
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:28 5bdd2058eb46482e8558c1b34fc3e686
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'get_study_details'."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:31 d6ed444375004d13b6697b57ce764511
+msgid ""
+"``nct_id`` (string) (required) The unique NCT identifier of the study to "
+"retrieve (e.g., 'NCT05033756'). This ID is required."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:34
+#: ../../tools/clinical_trials_tools.rst:75 364054ea799d421b9c708a1ab7450b52
+#: f8aa9d514a624bd0b27c9d1c872b2f38
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:49 e4d65ed43ac94eaead6ddc3299056af4
+msgid "**clinical_trials_search** (Type: ClinicalTrialsGovTool)"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:51 5cf0e4f928d846f7bdbf68ccbcce2950
+msgid ""
+"Searches for clinical trials on ClinicalTrials.gov using conditions "
+"and/or interventions as filte..."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst c4eb82c06ec644ef93b80d325ab88f7f
+msgid "clinical_trials_search tool specification"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:57 169209934537429083db46b9b1e48b81
+msgid "**Name**: ``clinical_trials_search``"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:59 8ea6de124bfd49ffa798a43be3e5e36f
+msgid ""
+"**Description**: Searches for clinical trials on ClinicalTrials.gov using"
+" conditions and/or interventions as filters. Retrieve a list of trials "
+"matching the criteria."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:63 35c5607315814f34bad6c61947991bf5
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'search_studies'."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:66 87ae67e3d5db4eb4bdb46cfcb1846a34
+msgid ""
+"``condition`` (string) (optional) The disease or condition to search for "
+"(e.g., 'breast cancer', 'diabetes'). Use this to find trials related to "
+"specific health issues."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:69 0ba67608fd7c47609ba12a91be3b2da1
+msgid ""
+"``intervention`` (string) (optional) The drug, treatment, or intervention"
+" to search for (e.g., 'pembrolizumab', 'cognitive behavioral therapy'). "
+"Use this to find trials testing specific treatments."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:72 a3ed7cbbaa8448df9a65a3e8ea1264ab
+msgid ""
+"``limit`` (integer) (optional) The maximum number of study summaries to "
+"return. The default is 10. Adjust this limit to control the number of "
+"results."
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:89 a4ddb1d16cc646aa91002c6d3f439b9c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:91 f4b35deb05fa4efe883707d666eed38f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clinical_trials_tools.rst:92 2d2178a0909f44f6af16fc04ffa2689c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

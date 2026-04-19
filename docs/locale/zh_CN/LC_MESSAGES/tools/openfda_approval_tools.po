@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openfda_approval_tools.rst:10 0800e3c3b2ca465c8ad4c0e563efc7af
+msgid "Openfda Approval Tools"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:12 bf1358b6c4e74c89823176ce151c9aa7
+msgid ""
+"**Configuration File**: ``openfda_approval_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:16 67c017cbd9914608a8f4b9e46d41f2f0
+msgid ""
+"This page contains all tools defined in the "
+"``openfda_approval_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:19 eb0e4c15dd224ae9a8be965c9b6a4132
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:22 adf5e3f61f654dca8a20820f83a2abe7
+msgid "**OpenFDA_get_approval_history** (Type: OpenFDAApprovalTool)"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:24 ff1b7350de1a4cfe92998e4824b92a71
+msgid ""
+"Get the complete FDA submission and approval history for a specific drug."
+" Returns chronological l..."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst efa32f93d2294528a5ea3b954b2753bc
+msgid "OpenFDA_get_approval_history tool specification"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:28
+#: ../../tools/openfda_approval_tools.rst:65
+#: ../../tools/openfda_approval_tools.rst:102 3219cd36d8df4c4bbbeb5b44560a313e
+#: 36feef6bcf674a5cb1197e77b8b7a0d1 943d56b7a5f948a1a63f4f0be52b23ad
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:30 584979501ea84eabb0c8dd1cbd78de18
+msgid "**Name**: ``OpenFDA_get_approval_history``"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:31
+#: ../../tools/openfda_approval_tools.rst:68
+#: ../../tools/openfda_approval_tools.rst:105 2f5bb862246347daaa993a9526701d1b
+#: a7d737839c954dc6b84744c8a2652a50 d38e3a94e1c74c88ade932e834bac203
+msgid "**Type**: ``OpenFDAApprovalTool``"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:32 511cbca4bc6a423191a80ffc02696980
+msgid ""
+"**Description**: Get the complete FDA submission and approval history for"
+" a specific drug. Returns chronological list of all submissions "
+"(original, supplements, labeling changes) with dates, review priority "
+"(STANDARD/PRIORITY), submission types (ORIG/SUPPL), and linked FDA review"
+" documents. Useful for tracking a drug's regulatory history from initial "
+"approval through all subsequent changes."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:34
+#: ../../tools/openfda_approval_tools.rst:71
+#: ../../tools/openfda_approval_tools.rst:108 1316b6c062774b188841912ea4228a2a
+#: 821f9582577d43ec9c13d5bc54a8635f c78714bd3aa4458bb55e414613f4f63d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:36
+#: ../../tools/openfda_approval_tools.rst:73
+#: ../../tools/openfda_approval_tools.rst:110 62ed58dd6f93457db74ed6fff2900abb
+#: 7ec52e69cd5540509482a542979dd08b e98c5194fbfa4e63849a1ea5edc8ffc4
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:39 bb4d51f27036473ab5abdb138f98874f
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name (brand or generic, "
+"e.g., 'warfarin', 'Eliquis', 'pembrolizumab')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:42 4c16d8f4b7fc4d92a49a2b1c65c1f15c
+msgid ""
+"``application_number`` (string, null) (optional) FDA application number "
+"(e.g., 'NDA021457'). More specific than drug\\_name."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:45
+#: ../../tools/openfda_approval_tools.rst:82
+#: ../../tools/openfda_approval_tools.rst:125 039ccc67ad104c13aa8262bce9895345
+#: f5ba3e5907a941f3b2cff05708f429e8 f8685dcbd65449adb65e8a72642fffd9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:59 c72eb64141e64e4e91176e4f5b22b39e
+msgid "**OpenFDA_get_approved_products** (Type: OpenFDAApprovalTool)"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:61 04b501481a6d4b21bb6affd7b5716064
+msgid ""
+"Get FDA-approved product details for a drug including all marketed "
+"formulations, active ingredien..."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst 9ba2cbf9c5364f2e911b6dc881f62eb3
+msgid "OpenFDA_get_approved_products tool specification"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:67 3dc70ddba15b4529bc21114d0311e8f2
+msgid "**Name**: ``OpenFDA_get_approved_products``"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:69 a1e99a015ce24157a6247ce24b4ba609
+msgid ""
+"**Description**: Get FDA-approved product details for a drug including "
+"all marketed formulations, active ingredients with strengths, dosage "
+"forms, administration routes, therapeutic equivalence (TE) codes, and "
+"marketing status. Returns the full list of products under an FDA "
+"application. Useful for comparing available formulations, checking "
+"generic equivalence, or identifying all strengths of a drug."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:76 f5b092bbe9b3466c9a5285282524aac9
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name (brand or generic, "
+"e.g., 'atorvastatin', 'Lipitor')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:79 8f9b42abd07c4090be1f61c81b060939
+msgid ""
+"``application_number`` (string, null) (optional) FDA application number "
+"(e.g., 'NDA020702')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:96 e721887ced9646fab9b63699eca3d4ae
+msgid "**OpenFDA_search_drug_approvals** (Type: OpenFDAApprovalTool)"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:98 8fd35d92efbc4e4f86c20236d314f7b9
+msgid ""
+"Search the FDA Drugs@FDA database for drug approval records by drug name,"
+" sponsor/manufacturer, o..."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst 859a291ceb524b83b7d9b700fd23292d
+msgid "OpenFDA_search_drug_approvals tool specification"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:104 3448cad855fd4c9cb59e3d170b33b9c5
+msgid "**Name**: ``OpenFDA_search_drug_approvals``"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:106 034f3351227145d5a314a04d20bdb341
+msgid ""
+"**Description**: Search the FDA Drugs@FDA database for drug approval "
+"records by drug name, sponsor/manufacturer, or application number. "
+"Returns FDA application details including NDA/ANDA/BLA numbers, sponsor "
+"names, approved dosage forms and strengths, active ingredients, original "
+"approval dates, and submission counts. Use this to find FDA-approved "
+"drugs, check approval status, or look up generic vs brand drug "
+"registrations."
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:113 8fb26174b3e44863bc3541548d25dfa1
+msgid ""
+"``drug_name`` (string, null) (optional) Drug name to search (brand or "
+"generic, e.g., 'aspirin', 'metformin', 'Lipitor', 'atorvastatin')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:116 7ff2b4d5934c44109b6231d7a58eb2d6
+msgid ""
+"``sponsor`` (string, null) (optional) Sponsor/manufacturer name (e.g., "
+"'PFIZER', 'MERCK', 'NOVARTIS')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:119 987dcd7d0f384d2397a9f251d495cbdf
+msgid ""
+"``application_number`` (string, null) (optional) FDA application number "
+"(e.g., 'NDA021457', 'ANDA078372', 'BLA125554')"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:122 c643b25e3fd0407299816459a067c2dd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (default: 5, "
+"max: 20)"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:139 c3344b2c03cb4e9995d6454ee8009c25
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:141 aef4e8b9835d4d1c9d8746f6f602a1d4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openfda_approval_tools.rst:142 5fe45f753d0843c885af6850512d3137
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

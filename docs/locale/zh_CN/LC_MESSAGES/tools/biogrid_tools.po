@@ -1,0 +1,370 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biogrid_tools.rst:10 a11cd5cf3c9948ea8729630732be2925
+msgid "Biogrid Tools"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:12 981ec37c32ce4bf693f97d07ff8a31f7
+msgid ""
+"**Configuration File**: ``biogrid_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:16 85641cbfb1144016a9e6d6fd57accba5
+msgid ""
+"This page contains all tools defined in the ``biogrid_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:19 f117b2dae08c44fe9aaf099430491631
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:22 ea58c6414be44b49b3075e38a7d7471b
+msgid "**BioGRID_get_chemical_interactions** (Type: BioGRIDRESTTool)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:24 f95911439f7840d2af2a11761a8ee2ba
+msgid ""
+"Query experimentally validated interactions for specific genes/proteins "
+"from BioGRID, filtered fo..."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst 5f6174e722134416b8b252a685c5aa17
+msgid "BioGRID_get_chemical_interactions tool specification"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:28 ../../tools/biogrid_tools.rst:73
+#: ../../tools/biogrid_tools.rst:121 ../../tools/biogrid_tools.rst:170
+#: 43c7393aaf1e461aaa414f2440f74244 70db454e577d4c11bedd0166d10b7923
+#: 7f7f7113306b471b8ed53354b335419a f9314fc0c405478fb696e3f031f91d74
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:30 fb70204c3f574b9b90cd277bbf50849b
+msgid "**Name**: ``BioGRID_get_chemical_interactions``"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:31 ../../tools/biogrid_tools.rst:76
+#: ../../tools/biogrid_tools.rst:124 ../../tools/biogrid_tools.rst:173
+#: 189e67503f0c4e95a14a41bad93341a7 2e738842a12145e1bad8055c280ede77
+#: e27752a1046941a7aa7bd8fdec69ae5f f38ad8489e514683ae752fff5d146bfa
+msgid "**Type**: ``BioGRIDRESTTool``"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:32 1a04fc58c10f4b50874d936151874270
+msgid ""
+"**Description**: Query experimentally validated interactions for specific"
+" genes/proteins from BioGRID, filtered for potential chemical relevance. "
+"\\*\\*Important limitation\\*\\*: The BioGRID REST API does not support "
+"chemical-only queries — you MUST provide gene\\_names. The chemicalList "
+"parameter is unreliable. For drug-protein interaction queries, prefer "
+"ChEMBL\\_search\\_mechanisms or DGIdb\\_search\\_interactions instead. "
+"\\*\\*Prerequisites\\*\\*: Requires BIOGRID\\_API\\_KEY environment "
+"variable (free academic API key at https://webservice.thebiogrid.org/)."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:34 ../../tools/biogrid_tools.rst:79
+#: ../../tools/biogrid_tools.rst:127 ../../tools/biogrid_tools.rst:176
+#: 3f4e33bf7506467c8758a65df34c3a4f 52a948a9155e4c6ab317a03d0f94294e
+#: 9b32f96426be46038e3d0530739f5e7e e4d81efcdbe54c23a89254dfe7caba81
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:36 2902999be597438ba9b342d9e227536f
+msgid ""
+"``gene_names`` (array) (optional) List of gene names to query for "
+"chemical interactions (e.g., ['TP53', 'EGFR', 'AKT1']). Leave empty to "
+"search by chemical only."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:39 34824fa988be49c9929e2119fdbffe42
+msgid ""
+"``chemical_names`` (array) (optional) List of chemical compound names "
+"(e.g., ['Aspirin', 'Metformin', 'Imatinib']). Leave empty to search by "
+"gene only."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:42 ../../tools/biogrid_tools.rst:132
+#: 9b56bd89da854b8887bc2ceb60e8d7d7 a42c4cd2f4af4c03b3629d34e94b5a7f
+msgid ""
+"``organism`` (string) (optional) NCBI taxonomy ID (e.g., '9606' for "
+"human, '10090' for mouse). Default: 9606"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:45 296c7e4897fb42b3940db76a99e05020
+msgid ""
+"``interaction_action`` (string) (optional) Filter by interaction action "
+"type (e.g., 'inhibitor', 'activator', 'antagonist', 'agonist'). Leave "
+"empty for all actions."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:48 a8561fb9caa94c96af466400a3991bdd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of chemical interactions to"
+" return (default: 100, max: 10000)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:51 049ea67a41524a95a7cc642514dba15a
+msgid ""
+"``include_evidence`` (boolean) (optional) Include detailed evidence and "
+"publication information (default: true)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:54 ../../tools/biogrid_tools.rst:102
+#: ../../tools/biogrid_tools.rst:150 ../../tools/biogrid_tools.rst:193
+#: 30e842eaa29147f0bf2e57ccd72dcd91 bda6980f4d024074b2ef32a8df72d309
+#: dc080bd358fb42beaa7937f0ae794373 f7f5f2ca3a0948caa96ca9f7e405c832
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:67 eebbd9f4c87543b9ba200a8301980457
+msgid "**BioGRID_get_interactions** (Type: BioGRIDRESTTool)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:69 d3d6cc4346c94e749b1444ed40ca5ed5
+msgid ""
+"Query experimentally validated protein and genetic interactions from "
+"BioGRID (Biological General ..."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst 6d4a7757d0e74686a1d7e32ad36c26a2
+msgid "BioGRID_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:75 1c2bd0adde4947ea922dd2b64f2bc41d
+msgid "**Name**: ``BioGRID_get_interactions``"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:77 57fe7512d4084e4ab4b33260728ed48e
+msgid ""
+"**Description**: Query experimentally validated protein and genetic "
+"interactions from BioGRID (Biological General Repository for Interaction "
+"Datasets). Returns curated interactions from published studies with "
+"evidence methods, PubMed citations, and throughput information. "
+"\\*\\*Prerequisites\\*\\*: Requires BIOGRID\\_API\\_KEY environment "
+"variable (free academic API key at https://webservice.thebiogrid.org/). "
+"BioGRID contains 2.3M+ interactions from 80+ organisms, all "
+"experimentally validated (no predictions). Use for: finding "
+"experimentally proven interactions, getting literature evidence for "
+"interactions, validating predicted interactions, finding interaction "
+"methods used, accessing high-confidence curated data."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:81 c67283ec828d4d13a217aacde5532623
+msgid ""
+"``gene_names`` (array) (optional) List of gene names or protein "
+"identifiers (e.g., ['TP53', 'BRCA1', 'MYC']). Accepts official gene "
+"symbols."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:84 77828789af2048318135a93867938a11
+msgid ""
+"``gene_name`` (string) (optional) Alias for gene\\_names: single gene "
+"symbol (e.g., 'TP53'). Converted to gene\\_names list automatically."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:87 7b1994fae7d34451a02ec63274cec37d
+msgid ""
+"``organism`` (string) (optional) Organism name (e.g., 'Homo sapiens', "
+"'Mus musculus') or NCBI taxonomy ID (e.g., '9606' for human, '10090' for "
+"mouse). Default: 9606 (human)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:90 cfec2c2d19cc4f60be2d6a99f07ec54b
+msgid ""
+"``interaction_type`` (string) (optional) Type of interaction: 'physical' "
+"(protein-protein), 'genetic' (epistasis, synthetic lethality), 'both' "
+"(all interactions)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:93 57f1a1c4b425447eb26a50aaa010b91c
+msgid ""
+"``evidence_types`` (array) (optional) Filter by evidence types (e.g., "
+"['Affinity Capture-MS', 'Two-hybrid'] for physical, ['Synthetic "
+"Lethality', 'Dosage Rescue'] for genetic). Leave empty for all evidence "
+"types."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:96 9cefbab14cf64894902c93c05ad3c630
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interactions to return "
+"(default: 100, max: 10000)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:99 6c4533d8750b431c823bbe42ff143094
+msgid ""
+"``throughput`` (string) (optional) Filter by throughput: 'low' (low-"
+"throughput studies), 'high' (high-throughput screens), or leave empty for"
+" all"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:115 d4facbe9e37a40aa863b1aa73c370e78
+msgid "**BioGRID_get_ptms** (Type: BioGRIDRESTTool)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:117 ab8c6dfe1f5743d68da16fcd6611e857
+msgid ""
+"Retrieve post-translational modifications (PTM = Protein modifications "
+"after translation) for pro..."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst 12ecfa0fe64c43c6bfaab0ef6073292a
+msgid "BioGRID_get_ptms tool specification"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:123 862c8903618d4dbb9add11ff8caf6021
+msgid "**Name**: ``BioGRID_get_ptms``"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:125 82ea5f9bde4540b09a4737e479cea8b5
+msgid ""
+"**Description**: Retrieve post-translational modifications (PTM = Protein"
+" modifications after translation) for proteins from BioGRID (Biological "
+"General Repository for Interaction Datasets). Returns phosphorylation, "
+"ubiquitination, acetylation, methylation, and other covalent protein "
+"modifications with site positions, modifying enzymes, and literature "
+"evidence. \\*\\*Prerequisites\\*\\*: Requires BIOGRID\\_API\\_KEY "
+"environment variable (free academic API key at "
+"https://webservice.thebiogrid.org/). BioGRID curates 1.1M+ PTM records "
+"from literature with experimental evidence. Use for: finding regulatory "
+"modifications of proteins, identifying kinases/enzymes that modify "
+"proteins, discovering regulation mechanisms, analyzing signaling "
+"cascades, drug target identification (kinases)."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:129 8da8a363bb4c4a3fabb2ccd946b4838c
+msgid ""
+"``gene_names`` (array) (required) List of gene names to query for PTMs "
+"(e.g., ['TP53', 'AKT1', 'EGFR', 'ERK1']). Accepts official gene symbols."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:135 52e6c9b42b1d4fa1b22c07197e170f3f
+msgid ""
+"``ptm_type`` (array) (optional) Filter by PTM types (e.g., "
+"['Phosphorylation', 'Ubiquitination', 'Acetylation', 'Methylation', "
+"'Sumoylation']). Leave empty for all PTM types."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:138 bd55691b7aa74f748a4c5a46c5d00615
+msgid ""
+"``residue`` (string) (optional) Filter by specific amino acid residue "
+"(e.g., 'S' for serine, 'T' for threonine, 'Y' for tyrosine). Leave empty "
+"for all residues."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:141 75f5a4c25dd94f56b914e12dd65c95f2
+msgid ""
+"``include_enzymes`` (boolean) (optional) Include information about "
+"enzymes responsible for the PTM (kinases, ligases, etc.). Default: true"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:144 1acf3921bd8e43d0b4d8a49ebb00c06f
+msgid ""
+"``include_evidence`` (boolean) (optional) Include experimental evidence "
+"and publication details. Default: true"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:147 4cb79f45be1e4e3cb0c6a35021524160
+msgid ""
+"``limit`` (integer) (optional) Maximum number of PTMs to return (default:"
+" 500, max: 10000)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:164 273249786bc54f36b286aa1c940eb02e
+msgid "**BioGRID_search_by_pubmed** (Type: BioGRIDRESTTool)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:166 2a07a9233b9b4d1a91ae3cd68a896f80
+msgid ""
+"Retrieve all protein interactions curated from specific published studies"
+" using PubMed ID. Return..."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst 90b16e7a30c546ebabbe3acbaff6f565
+msgid "BioGRID_search_by_pubmed tool specification"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:172 d281b6cd1bfa4c308449ff8551d90d05
+msgid "**Name**: ``BioGRID_search_by_pubmed``"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:174 f4ae73df0ef549b7a68a28badb4da81d
+msgid ""
+"**Description**: Retrieve all protein interactions curated from specific "
+"published studies using PubMed ID. Returns all interactions reported in "
+"that paper from BioGRID (Biological General Repository for Interaction "
+"Datasets) with experimental methods and evidence codes. "
+"\\*\\*Prerequisites\\*\\*: Requires BIOGRID\\_API\\_KEY environment "
+"variable (free academic API key at https://webservice.thebiogrid.org/). "
+"Each BioGRID interaction is linked to original publication - this tool "
+"retrieves all interactions from specific papers. Use for: extracting "
+"interactions from specific papers, reproducing published networks, "
+"validating your results against literature, analyzing curation quality, "
+"finding experimental methods used in study, verifying literature "
+"findings."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:178 a69911b8069342e79fadedcc94d10d58
+msgid ""
+"``pubmed_ids`` (array) (required) List of PubMed IDs to query (e.g., "
+"['12345678', '87654321']). Can be numeric or string format."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:181 2e7d14fec92d4b0cbd2b43bdcba2f043
+msgid ""
+"``organism`` (string) (optional) NCBI taxonomy ID to filter interactions "
+"by organism (e.g., '9606' for human, '559292' for S. cerevisiae). Leave "
+"empty for all organisms."
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:184 e032b124fc8c4d2cb0da5edd9abdb0f3
+msgid ""
+"``interaction_type`` (string) (optional) Type of interaction: 'physical',"
+" 'genetic', 'both'. Default: 'both'"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:187 76af10e2d4be44f480255708465c0603
+msgid ""
+"``include_evidence`` (boolean) (optional) Include detailed evidence "
+"information (experimental systems, methods). Default: true"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:190 1f9fd474da8e464584809636aa91980d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interactions to return "
+"per publication (default: 1000, max: 10000)"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:207 91b0271e4e7549e19c3443716b314306
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:209 4df2105e0a9040438e5361e5596f85a4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biogrid_tools.rst:210 99157b6eea3243c98ffa08ad9ccb9b37
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

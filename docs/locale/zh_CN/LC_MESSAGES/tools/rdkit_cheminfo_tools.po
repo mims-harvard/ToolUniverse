@@ -1,0 +1,167 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rdkit_cheminfo_tools.rst:10 c2d9476325f44a7984d765b02b0f06b9
+msgid "Rdkit Cheminfo Tools"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:12 8d4bd0ae89464253a42451fcc4f55c12
+msgid ""
+"**Configuration File**: ``rdkit_cheminfo_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:16 1e9f9e53439e4df9a802b85c1dd6dc17
+msgid ""
+"This page contains all tools defined in the ``rdkit_cheminfo_tools.json``"
+" configuration file."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:19 606ed8fdfa7c4a2faaebf17699d64551
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:22 32ca1cc71ac548bda0a6941532af405d
+msgid "**RDKit_matched_molecular_pair** (Type: RDKitCheminfoTool)"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:24 a5af1adadf2b4e339a09303e0a046af2
+msgid ""
+"Find the Matched Molecular Pair (MMP) transformation between two SMILES "
+"compounds using the Hussa..."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst 6372688e577b4261961364e34d5fe7c0
+msgid "RDKit_matched_molecular_pair tool specification"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:28
+#: ../../tools/rdkit_cheminfo_tools.rst:63 4fcba3f56132449f9ce25ab647f800d7
+#: 9c45996983164e459c4429311bd642c8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:30 1a7e03354b414622a3a047a42d746ac8
+msgid "**Name**: ``RDKit_matched_molecular_pair``"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:31
+#: ../../tools/rdkit_cheminfo_tools.rst:66 3620ae2fd16841329b681d3b0feecba0
+#: 3dbb079787d8488887ec0fc97fe5e7b6
+msgid "**Type**: ``RDKitCheminfoTool``"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:32 6e83ffb2c9b74944a1a9730bb610dea5
+msgid ""
+"**Description**: Find the Matched Molecular Pair (MMP) transformation "
+"between two SMILES compounds using the Hussain-Rea single-cut "
+"fragmentation algorithm (rdMMPA). Identifies the maximal common core "
+"scaffold and the side-chain substituents that differ between compound A "
+"and compound B. Returns: common core SMILES, side-chain A, side-chain B, "
+"transformation string (sidechain\\_A → sidechain\\_B), Tanimoto "
+"similarity (Morgan r=2), and property deltas (ΔMW, ΔcLogP, ΔHBD, ΔHBA, "
+"ΔTPSA). Essential for SAR analysis: understand what structural change "
+"caused a property improvement or potency shift."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:34
+#: ../../tools/rdkit_cheminfo_tools.rst:69 162a664a1b2f40c88d842d318d03e71c
+#: 6e78c1ea7f6a405a95bf9eac6e74e3e4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:36 c811100a3572440098f08b942606af9b
+msgid ""
+"``smiles_a`` (string) (required) SMILES of compound A (reference/starting"
+" compound). Example: 'CC(=O)Nc1ccc(O)cc1' (paracetamol)."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:39 692ff59592d1433cbbdc0ff4c55c2182
+msgid ""
+"``smiles_b`` (string) (required) SMILES of compound B (analog/modified "
+"compound). Example: 'CC(=O)Nc1ccc(F)cc1' (fluorine analog of "
+"paracetamol)."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:42
+#: ../../tools/rdkit_cheminfo_tools.rst:77 55353ab847c54f93a79e08d751fa587e
+#: c71128293bcd43719c7f9abd0c844911
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:57 52c0b76d4e464f1eb9afe464cc8a623e
+msgid "**RDKit_pharmacophore_features** (Type: RDKitCheminfoTool)"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:59 1837a662a8094307ac21cb35fe1d8719
+msgid ""
+"Extract pharmacophore feature centers from a SMILES string using RDKit "
+"SMARTS matching. Identifie..."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst 1088be6b99104f07b457bfa68efa8387
+msgid "RDKit_pharmacophore_features tool specification"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:65 f7d144556f4848ed97d924be4b9f5f08
+msgid "**Name**: ``RDKit_pharmacophore_features``"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:67 4020d72713c546ee810345aeb521bef2
+msgid ""
+"**Description**: Extract pharmacophore feature centers from a SMILES "
+"string using RDKit SMARTS matching. Identifies and counts 6 pharmacophore"
+" feature types: HBD (hydrogen bond donors), HBA (hydrogen bond "
+"acceptors), Aromatic (aromatic atoms), Hydrophobic (hydrophobic atoms), "
+"PosIonizable (positively ionizable groups like amines), NegIonizable "
+"(negatively ionizable groups like carboxylates). Optionally generates 3D "
+"feature center coordinates using MMFF conformer optimization. Use to "
+"characterize compound binding hypotheses, compare pharmacophore profiles "
+"between hits, or guide scaffold decoration in drug design."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:71 103870b41df34227bb793b68f8373bce
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule. Examples: "
+"'CC(=O)Oc1ccccc1C(=O)O' (aspirin), 'c1ccc(cc1)C(=N)N' (benzamidine, has "
+"PosIonizable + HBD)."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:74 4f6ebd2b271f4163b9059771f41a91c0
+msgid ""
+"``include_features`` (array, null) (optional) List of feature types to "
+"extract (default: all). Options: 'HBD', 'HBA', 'Aromatic', 'Hydrophobic',"
+" 'PosIonizable', 'NegIonizable'."
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:91 a7cec366d00943d196a7ce4dfe341f39
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:93 e3d7bd876944421996e09a40953772eb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rdkit_cheminfo_tools.rst:94 bbbd038cebe74a5799be058f626de8b4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

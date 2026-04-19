@@ -1,0 +1,186 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/interproscan_tools.rst:10 ff1eb456f78e46ffb3de2e521be63c92
+msgid "Interproscan Tools"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:12 ef79908ab8db44b3a46dc76157b42a3a
+msgid ""
+"**Configuration File**: ``interproscan_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:16 bc5864234c694ddeb0673ded32caf685
+msgid ""
+"This page contains all tools defined in the ``interproscan_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:19 2095f81378e041c1a7f25edd2cf88240
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:22 d0b5cb76ad774f19ac180eb8b39110ac
+msgid "**InterProScan_get_job_results** (Type: InterProScanTool)"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:24 26ca29ae582d4e0b8ffec779e42a7115
+msgid ""
+"Retrieve results from a completed InterProScan job. Returns domain "
+"predictions, GO annotations, a..."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst ef8c3dd6cd7c471fb8550f6a8f59fc4c
+msgid "InterProScan_get_job_results tool specification"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:28 ../../tools/interproscan_tools.rst:59
+#: ../../tools/interproscan_tools.rst:90 8e10302a05ff43eaa3e73319c89edfd0
+#: a87d2d5aa3e949be943a32f5c22c9b84 ae026fd630b343dc90016ec3c6510194
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:30 da06400180f843bf91b9e9a7acb89a37
+msgid "**Name**: ``InterProScan_get_job_results``"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:31 ../../tools/interproscan_tools.rst:62
+#: ../../tools/interproscan_tools.rst:93 1880a357fde745aba76c6c0470618c26
+#: 8a96e6a97de540de92027aaa4cfee441 cc726cd358e946eca629a478b2ec2e55
+msgid "**Type**: ``InterProScanTool``"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:32 43f3f9ee4fb4408b9c6d33f87734932f
+msgid ""
+"**Description**: Retrieve results from a completed InterProScan job. "
+"Returns domain predictions, GO annotations, and pathway mappings. Results"
+" available for 7 days after completion."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:34 ../../tools/interproscan_tools.rst:65
+#: ../../tools/interproscan_tools.rst:96 32a7f8660a3b42bd941a50aa8492bda3
+#: 94139ed85cd74e00bca5263c91fb2b18 f899c97afded48d48c70a758f9b2c8bf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:36 47139373a41b4c4e85287409ed8f98ef
+msgid "``job_id`` (string) (required) InterProScan job ID"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:39 ../../tools/interproscan_tools.rst:70
+#: ../../tools/interproscan_tools.rst:113 cf9608d971f64a8799a36f641def4bfe
+#: d1e5002bbbfc42a2a6f42fd1666281a4 d83f5f6b16d4487c8d637bef381f42f9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:53 c8f395863c634b97a194b078a8499ac2
+msgid "**InterProScan_get_job_status** (Type: InterProScanTool)"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:55 b374261163754cc39cb13b63e39bcf01
+msgid ""
+"Check status of an InterProScan analysis job. Use if scan\\_sequence "
+"returns before completion. St..."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst d432a972e6384ceba0888e73ef421bf2
+msgid "InterProScan_get_job_status tool specification"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:61 e4b70727f53b4c39bd72cb7e1fe98cfa
+msgid "**Name**: ``InterProScan_get_job_status``"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:63 05e458fe563a41a08d8b07be4b878d0b
+msgid ""
+"**Description**: Check status of an InterProScan analysis job. Use if "
+"scan\\_sequence returns before completion. Status: RUNNING, FINISHED, "
+"FAILURE, ERROR, NOT\\_FOUND."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:67 c973afe5d382470c9be4725af418b16d
+msgid ""
+"``job_id`` (string) (required) InterProScan job ID returned from "
+"scan\\_sequence"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:84 143df9551c1e4aebb3bd3aa2eca90c71
+msgid "**InterProScan_scan_sequence** (Type: InterProScanTool)"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:86 16ef156df1e849b7ab7e6f9672d45457
+msgid ""
+"Run InterProScan analysis on a protein sequence to predict domains, "
+"families, and functional site..."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst e76060ef5ad0454996760a92de908ae5
+msgid "InterProScan_scan_sequence tool specification"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:92 15a227e5a332464b89eb89bea0498660
+msgid "**Name**: ``InterProScan_scan_sequence``"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:94 bed1cb71d151483694b41e962d534836
+msgid ""
+"**Description**: Run InterProScan analysis on a protein sequence to "
+"predict domains, families, and functional sites. Unlike InterPro lookup "
+"(pre-computed), this runs actual sequence analysis. Returns domains, GO "
+"terms, and pathway annotations."
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:98 f02bfed9e67e4cdd9bd882f288698b5e
+msgid ""
+"``sequence`` (string) (required) Protein sequence in single-letter amino "
+"acid code (e.g., 'MVLSPADKTNVKAAWGKVGAHAG...')"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:101 1cfbbac9b3ec44de9f5682dfa4e0f0f7
+msgid "``email`` (string) (optional) Email for job notifications (optional)"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:104 d2dc9977bc764eba92c32caef0bfe0ff
+msgid "``title`` (string) (optional) Job title for tracking (optional)"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:107 6012f87d3b994bcc936106db76cb43f2
+msgid "``go_terms`` (boolean) (optional) Include GO term predictions"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:110 e9d9582c8baa4e64a7b005ff1f8cfd96
+msgid "``pathways`` (boolean) (optional) Include pathway annotations"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:127 2465b8be9b5448b89c53c54f953f1161
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:129 cb7541775301431f8ef8cc0a15877b20
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/interproscan_tools.rst:130 c3f2ef74fd544f6f903daef0f3e537ed
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

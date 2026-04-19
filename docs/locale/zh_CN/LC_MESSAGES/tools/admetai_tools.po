@@ -7,342 +7,347 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/admetai_tools.rst:2 2af4f2ed742a42a0a5658ae4b6790d59
+#: ../../tools/admetai_tools.rst:10 e047e3733f2045d0813e58631217a2a3
 msgid "Admetai Tools"
 msgstr "Admetai 工具"
 
-#: ../../tools/admetai_tools.rst:4 55f4d83e0c3d4a4e9977212b22f3d7ad
+#: ../../tools/admetai_tools.rst:12 86fbeeb83d3347baa6d7bdbe1486eccc
 msgid ""
-"**Configuration File**: ``admetai_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 9"
+"**Configuration File**: ``admetai_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 9"
 msgstr "**配置文件**：``admetai_tools.json`` **工具类型**：本地 **工具数量**：9"
 
-#: ../../tools/admetai_tools.rst:8 b26a576a64c34b709a09d24ec849be03
+#: ../../tools/admetai_tools.rst:16 0db68f981bef48c9bea9b33ddb17ab87
 msgid ""
 "This page contains all tools defined in the ``admetai_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``admetai_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/admetai_tools.rst:11 cdf6a220a2154a69b9f76e7c3c0791fd
+#: ../../tools/admetai_tools.rst:19 8f9a880c06a049aabbc332750905bc97
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/admetai_tools.rst:14 8e3831433ca642959aad0ead3aa8cd89
+#: ../../tools/admetai_tools.rst:22 b25116ca04e84133906e4073cc532f2f
 msgid "**ADMETAI_predict_BBB_penetrance** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_BBB_penetrance**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:16 88c00c001b7e4e19ac0b4fc1b743a30f
+#: ../../tools/admetai_tools.rst:24 e7246be7f9c649e7bdd832ae72be3ae1
 msgid ""
-"Predicts blood-brain barrier (BBB) penetrance for a given list of molecules "
-"in SMILES format."
+"Predicts blood-brain barrier (BBB) penetrance for a given list of "
+"molecules in SMILES format."
 msgstr "预测给定SMILES格式分子列表的血脑屏障（BBB）渗透性。"
 
-#: ../../tools/admetai_tools.rst 8265afe145ad4b558cbb33567f5414e8
+#: ../../tools/admetai_tools.rst 2b724c797dd6477e9fedb9c928cc5788
 msgid "ADMETAI_predict_BBB_penetrance tool specification"
 msgstr "ADMETAI_predict_BBB_penetrance 工具规范"
-
-#: ../../tools/admetai_tools.rst:20 ../../tools/admetai_tools.rst:51
-#: ../../tools/admetai_tools.rst:82 ../../tools/admetai_tools.rst:113
-#: ../../tools/admetai_tools.rst:144 ../../tools/admetai_tools.rst:175
-#: ../../tools/admetai_tools.rst:206 ../../tools/admetai_tools.rst:237
-#: ../../tools/admetai_tools.rst:268 1d1ed7ddc472458993c7c916f458ed2e
-#: 2797173e5133467d9ed9d1a4410e57d7 48488daffed546e4b1d932e33d83b0e5
-#: 494c675d86884583a7682cfcddf79ac4 8fef8f9f83a94b009df11250271393c6
-#: ae64790911e4471f8188155d1785553b e82864ca3b6a4c2bb375bd561c61c3a2
-#: ea50bab6bffe420d99437b0158e99f2c f0650c580a664941b16b362b790bacaf
-msgid "**Tool Information:**"
-msgstr "**工具信息：**"
-
-#: ../../tools/admetai_tools.rst:22 33a7d765a21247b9973e5826b7aa0070
-msgid "**Name**: ``ADMETAI_predict_BBB_penetrance``"
-msgstr "**名称**: ``ADMETAI_predict_BBB_penetrance``"
-
-#: ../../tools/admetai_tools.rst:23 ../../tools/admetai_tools.rst:54
-#: ../../tools/admetai_tools.rst:85 ../../tools/admetai_tools.rst:116
-#: ../../tools/admetai_tools.rst:147 ../../tools/admetai_tools.rst:178
-#: ../../tools/admetai_tools.rst:209 ../../tools/admetai_tools.rst:240
-#: ../../tools/admetai_tools.rst:271 5975cbf4e2e248cca31182d6c6bdf4a9
-#: 6dc743a2816b4212b54ee8ffc242a986 88b0d90b3a0842abb8b4a8329e49cf23
-#: 8b0b42a3fd864d558387c93f5d7a99b5 a9202e5793df4824a4a1099fc65c59e4
-#: c1f142bfe67347d0adc4726b4200602e e859e153180742a88845dd44ad1b8683
-#: e968d2ae6928404491c2a13b8887ba6d ea32acd5a8724929afc795a11ea9eadd
-msgid "**Type**: ``ADMETAITool``"
-msgstr "**类型**: ``ADMETAITool``"
-
-#: ../../tools/admetai_tools.rst:24 26a57e0ef34f462c90d184794f479d93
-msgid ""
-"**Description**: Predicts blood-brain barrier (BBB) penetrance for a given "
-"list of molecules in SMILES format."
-msgstr "**描述**：预测给定分子列表（以SMILES格式）的血脑屏障（BBB）穿透性。"
-
-#: ../../tools/admetai_tools.rst:26 ../../tools/admetai_tools.rst:57
-#: ../../tools/admetai_tools.rst:88 ../../tools/admetai_tools.rst:119
-#: ../../tools/admetai_tools.rst:150 ../../tools/admetai_tools.rst:181
-#: ../../tools/admetai_tools.rst:212 ../../tools/admetai_tools.rst:243
-#: ../../tools/admetai_tools.rst:274 2cbc573b7ff444968d9a7dee7c678412
-#: 4dc17781fb8c494cb1188f298a1b2b09 61628afd730d4f2aba2a6fe0163b42bb
-#: 7cb023e788e549cfb5872f5143de0eec 8e2f4fe680f347d29b225f7ac53d704f
-#: c5040c3d4b9e4bca8cc71525fe0fec56 cc4ee591a3e74a1ba6834f4dc09a84f0
-#: e613d33519ea4232b2890901ceeda6cb f07c4079b35a46198ab5608483e79860
-msgid "**Parameters:**"
-msgstr "**参数：**"
 
 #: ../../tools/admetai_tools.rst:28 ../../tools/admetai_tools.rst:59
 #: ../../tools/admetai_tools.rst:90 ../../tools/admetai_tools.rst:121
 #: ../../tools/admetai_tools.rst:152 ../../tools/admetai_tools.rst:183
 #: ../../tools/admetai_tools.rst:214 ../../tools/admetai_tools.rst:245
-#: ../../tools/admetai_tools.rst:276 0041fedb1b4c4de58d761a5ac19fcdc1
-#: 48777a6a606c4d0e92063caa39875a2d 516578b9ad774585a6f7e38001d36341
-#: 6c06f7558efe47fc9fe1460d420aaff6 78159579219c466dbcbf3edf9ea05777
-#: a2729833eb784b1386b7290bfec1874c af35d98e914448df87f4d99f7771ceb7
-#: bef01139f1364441958eb821695a4f1d de534b5ad12d438fa2784f61ec4bcadc
-msgid "``smiles`` (array) (required) The list of SMILES strings."
-msgstr "``smiles``（数组）（必需）SMILES 字符串列表。"
+#: ../../tools/admetai_tools.rst:276 1e7670122ebc462885cd82204e1dbc23
+#: 230753568d624c4595c0ccf3ab2ea164 2d345f52d0114e20aff1ca9156162195
+#: b81e871eb0b14e519c62808462c32aeb c5d3304390fb43d99552452d62eddc93
+#: cc62e908a7f04f6195610ef180e91ad1 e8013ba266114517bb6dade08d01ecab
+#: f16a36cff2084aa18127c1ae1ab7482a f6c657e6ad2c494c80882b7fd5ea4f1f
+msgid "**Tool Information:**"
+msgstr "**工具信息：**"
+
+#: ../../tools/admetai_tools.rst:30 c65f59fe4e1f4ba4842b65c20c01e66e
+msgid "**Name**: ``ADMETAI_predict_BBB_penetrance``"
+msgstr "**名称**: ``ADMETAI_predict_BBB_penetrance``"
 
 #: ../../tools/admetai_tools.rst:31 ../../tools/admetai_tools.rst:62
 #: ../../tools/admetai_tools.rst:93 ../../tools/admetai_tools.rst:124
 #: ../../tools/admetai_tools.rst:155 ../../tools/admetai_tools.rst:186
 #: ../../tools/admetai_tools.rst:217 ../../tools/admetai_tools.rst:248
-#: ../../tools/admetai_tools.rst:279 0d869e8ee27d48dea599c2627c415c36
-#: 2e15d83664854c3d8abe3f6bcb4aef8a 5326b4ba0b8f462f9fec8c0efaca6efe
-#: 5e0e66bdfc604a28b9e6bcea266178d6 77e3ee470576425394e0b173386219b1
-#: 9379754f5d1c4334af0372048a440434 a2afe0e88a104116abd0d617c1a051fe
-#: dc83055b9764462cbd2fa5396486c4ab e5fec47834d643fd8baa475d799c8a1b
+#: ../../tools/admetai_tools.rst:279 4f862f380903422ca594ee0c44b378cd
+#: 505ba60e120846edb4246979ec6b1113 61aa4728a8b34a90b03d2eca380fac41
+#: 870d02d2f19e4923b9fff1a25f59013a bb6cecbf58404136aa46746a2f8da5ba
+#: c106498852ba446b99bef8ca6d88c530 d9f613774b1d4f13a5beaa9d939e4632
+#: e6d840a2a48645fcb4298ce64d67f254 f5ddd8f9cc5e4805a22f0c12bb19efdc
+msgid "**Type**: ``ADMETAITool``"
+msgstr "**类型**: ``ADMETAITool``"
+
+#: ../../tools/admetai_tools.rst:32 96eb86d3c59e41f5892bea8a0041ed72
+msgid ""
+"**Description**: Predicts blood-brain barrier (BBB) penetrance for a "
+"given list of molecules in SMILES format."
+msgstr "**描述**：预测给定分子列表（以SMILES格式）的血脑屏障（BBB）穿透性。"
+
+#: ../../tools/admetai_tools.rst:34 ../../tools/admetai_tools.rst:65
+#: ../../tools/admetai_tools.rst:96 ../../tools/admetai_tools.rst:127
+#: ../../tools/admetai_tools.rst:158 ../../tools/admetai_tools.rst:189
+#: ../../tools/admetai_tools.rst:220 ../../tools/admetai_tools.rst:251
+#: ../../tools/admetai_tools.rst:282 169a956c10ee42dfaada76c66b46a81a
+#: 18e64b64c8f144e5b7a36985119a3e1c 3ed79ee3df684338978892dd431f4904
+#: 786c23587d6042229b72a5159f87e997 a2fe2567429d4903af827b41bee9f4da
+#: b0e1a079c2bd455aa917a20546ba955b b804452a8c264cbbad448482ce169c6c
+#: bca09177fa3b4a98a9274c8c9514cdae df850a795f274dd1be4dd3139b5203dd
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/admetai_tools.rst:36 ../../tools/admetai_tools.rst:67
+#: ../../tools/admetai_tools.rst:98 ../../tools/admetai_tools.rst:129
+#: ../../tools/admetai_tools.rst:160 ../../tools/admetai_tools.rst:191
+#: ../../tools/admetai_tools.rst:222 ../../tools/admetai_tools.rst:253
+#: ../../tools/admetai_tools.rst:284 0e287dd9fd0b4d1ca003b4ad7cdaad5d
+#: 2f57cbdceba2421c8f60a5695356f1f3 3def59c92a494c7eaf56c4f21e4affc3
+#: 47c70eb5a1b84b17adc948392a4b02a0 494e3b470ce34748837f6f7fe98410b6
+#: 6d68911507a142eeba238607c1aaee5e 72c5d66e347d459b97ef50b729410f30
+#: b482ae9f82834c87a58775ce95eee42e c7c9eaa4de1f49fe80b1c7ec4f23d68f
+msgid ""
+"``smiles`` (unknown) (required) SMILES string(s) for the molecule(s). "
+"Accepts a single string or list of strings."
+msgstr ""
+
+#: ../../tools/admetai_tools.rst:39 ../../tools/admetai_tools.rst:70
+#: ../../tools/admetai_tools.rst:101 ../../tools/admetai_tools.rst:132
+#: ../../tools/admetai_tools.rst:163 ../../tools/admetai_tools.rst:194
+#: ../../tools/admetai_tools.rst:225 ../../tools/admetai_tools.rst:256
+#: ../../tools/admetai_tools.rst:287 33c55c302c4e43d1898541ea37d7e65b
+#: 58e543d33da94caa966fbc377aed4d6a 76823f4979a3485c9b1fb349a7a702a7
+#: 8699803a985b48c3a7cc6ab625a3b707 add3f4310cd34844a9afeb581bdc5aa3
+#: bbd1e6e396a448c592e71f5962744b3f d74e581ef4fa4981b226502fb39e8d34
+#: f591362a4a4e4174a0d212e04ec66cae ff656a6e18e345ae9d25b45fa4871e82
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/admetai_tools.rst:45 c75f9423b5b043b281b0f6bfba17276c
+#: ../../tools/admetai_tools.rst:53 91264a71be8d477e9a5e983a91ff2ecf
 msgid "**ADMETAI_predict_CYP_interactions** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_CYP_interactions**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:47 4daa8819b4594a5984307e056a014e1d
+#: ../../tools/admetai_tools.rst:55 952fcc6058964f4685f1f8adc8be1735
 msgid ""
 "Predicts CYP enzyme interactions for a given list of molecules in SMILES "
 "format."
 msgstr "预测给定以SMILES格式表示的分子列表与CYP酶的相互作用。"
 
-#: ../../tools/admetai_tools.rst 3c7158e1a8e04b9e92a2af06ae246084
+#: ../../tools/admetai_tools.rst 9da789efc6da495295ad849456846872
 msgid "ADMETAI_predict_CYP_interactions tool specification"
 msgstr "ADMETAI_predict_CYP_interactions 工具规范"
 
-#: ../../tools/admetai_tools.rst:53 b7bd3c35966a4efdb95dc2c91699d5df
+#: ../../tools/admetai_tools.rst:61 edb1bf3a717c4ae29cb0ac0a599da19a
 msgid "**Name**: ``ADMETAI_predict_CYP_interactions``"
 msgstr "**名称**: ``ADMETAI_predict_CYP_interactions``"
 
-#: ../../tools/admetai_tools.rst:55 4c474da9f3b047afa3b3ed74108dc145
+#: ../../tools/admetai_tools.rst:63 aedf1bf875f94211acce669b55807718
 msgid ""
 "**Description**: Predicts CYP enzyme interactions for a given list of "
 "molecules in SMILES format."
 msgstr "**描述**：预测给定以SMILES格式表示的分子列表的CYP酶相互作用。"
 
-#: ../../tools/admetai_tools.rst:76 5315c433be9543f09e5ee724b830b56b
+#: ../../tools/admetai_tools.rst:84 9c60b584c20b48ffab14cc218e897785
 msgid "**ADMETAI_predict_bioavailability** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_bioavailability**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:78 68b0915f835944aba1c5fcaaec97b2e7
+#: ../../tools/admetai_tools.rst:86 43f0642e1cc748a8afd22cf691f86a40
+#, fuzzy
 msgid ""
-"Predicts bioavailability endpoints (Bioavailability_Ma, HIA_Hou, "
-"PAMPA_NCATS, Caco2_Wang, Pgp_Bro..."
-msgstr ""
-"预测生物利用度终点（Bioavailability_Ma、HIA_Hou、PAMPA_NCATS、Caco2_Wang、Pgp_Bro...）"
+"Predicts bioavailability endpoints (Bioavailability\\_Ma, HIA\\_Hou, "
+"PAMPA\\_NCATS, Caco2\\_Wang, Pgp..."
+msgstr "预测生物利用度终点（Bioavailability_Ma、HIA_Hou、PAMPA_NCATS、Caco2_Wang、Pgp_Bro...）"
 
-#: ../../tools/admetai_tools.rst b0f6aed403d44beda12d9f30175551dc
+#: ../../tools/admetai_tools.rst 9c00fad39a1c4625a01c3dfb4d07d57c
 msgid "ADMETAI_predict_bioavailability tool specification"
 msgstr "ADMETAI_predict_bioavailability 工具规范"
 
-#: ../../tools/admetai_tools.rst:84 7352f8d361324a8eb3c448d778c12a69
+#: ../../tools/admetai_tools.rst:92 95aa845e8e7f4e29aaad45bc23d2997a
 msgid "**Name**: ``ADMETAI_predict_bioavailability``"
 msgstr "**名称**: ``ADMETAI_predict_bioavailability``"
 
-#: ../../tools/admetai_tools.rst:86 6985bffd90c843f98a2bdc372e79f09a
+#: ../../tools/admetai_tools.rst:94 592cc5d454ab44e7a62e473ca106f34e
+#, fuzzy
 msgid ""
-"**Description**: Predicts bioavailability endpoints (Bioavailability_Ma, "
-"HIA_Hou, PAMPA_NCATS, Caco2_Wang, Pgp_Broccatelli) for a given list of "
-"molecules in SMILES format."
-msgstr ""
-"**描述**：预测给定以SMILES格式表示的分子列表的生物利用度端点（Bioavailability_Ma、HIA_Hou、PAMPA_NCATS、Caco2_Wang、Pgp_Broccatelli）。"
+"**Description**: Predicts bioavailability endpoints "
+"(Bioavailability\\_Ma, HIA\\_Hou, PAMPA\\_NCATS, Caco2\\_Wang, "
+"Pgp\\_Broccatelli) for a given list of molecules in SMILES format."
+msgstr "**描述**：预测给定以SMILES格式表示的分子列表的生物利用度端点（Bioavailability_Ma、HIA_Hou、PAMPA_NCATS、Caco2_Wang、Pgp_Broccatelli）。"
 
-#: ../../tools/admetai_tools.rst:107 117500b59c0f4f71bce1d1868a19079b
+#: ../../tools/admetai_tools.rst:115 f27f9c64a2e5437e8fbd11f707b02790
 msgid "**ADMETAI_predict_clearance_distribution** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_clearance_distribution**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:109 f34af7770a264e6483fbf7a7c88afc39
+#: ../../tools/admetai_tools.rst:117 46fb08e22db2476596d709485bee1065
+#, fuzzy
 msgid ""
-"Predicts clearance and distribution endpoints (Clearance_Hepatocyte_AZ, "
-"Clearance_Microsome_AZ, H..."
+"Predicts clearance and distribution endpoints "
+"(Clearance\\_Hepatocyte\\_AZ, Clearance\\_Microsome\\_A..."
 msgstr "预测清除率和分布终点（Clearance_Hepatocyte_AZ，Clearance_Microsome_AZ，H..."
 
-#: ../../tools/admetai_tools.rst 2fdb5e630aa849cb8ec84a9c3290a1f3
+#: ../../tools/admetai_tools.rst 8ec6f3a7adff422d8c5e9f21c0284166
 msgid "ADMETAI_predict_clearance_distribution tool specification"
 msgstr "ADMETAI_predict_clearance_distribution 工具规范"
 
-#: ../../tools/admetai_tools.rst:115 3032e59ab35a4292a3dbb940cba6f439
+#: ../../tools/admetai_tools.rst:123 05bc6b6ff3e047849d176d5db1563f37
 msgid "**Name**: ``ADMETAI_predict_clearance_distribution``"
 msgstr "**名称**: ``ADMETAI_predict_clearance_distribution``"
 
-#: ../../tools/admetai_tools.rst:117 4d606d87e164461aaa292f1b89921b43
+#: ../../tools/admetai_tools.rst:125 57df96db075742f1b3a0f23d6beeb3ca
+#, fuzzy
 msgid ""
 "**Description**: Predicts clearance and distribution endpoints "
-"(Clearance_Hepatocyte_AZ, Clearance_Microsome_AZ, Half_Life_Obach, "
-"VDss_Lombardo, PPBR_AZ) for a given list of molecules in SMILES format."
-msgstr ""
-"**描述**：预测给定SMILES格式分子列表的清除率和分布终点（Clearance_Hepatocyte_AZ、Clearance_Microsome_AZ、Half_Life_Obach、VDss_Lombardo、PPBR_AZ）。"
+"(Clearance\\_Hepatocyte\\_AZ, Clearance\\_Microsome\\_AZ, "
+"Half\\_Life\\_Obach, VDss\\_Lombardo, PPBR\\_AZ) for a given list of "
+"molecules in SMILES format."
+msgstr "**描述**：预测给定SMILES格式分子列表的清除率和分布终点（Clearance_Hepatocyte_AZ、Clearance_Microsome_AZ、Half_Life_Obach、VDss_Lombardo、PPBR_AZ）。"
 
-#: ../../tools/admetai_tools.rst:138 f8004e48e20747508fe69bbb6e619d4c
+#: ../../tools/admetai_tools.rst:146 5b6dbbd86a9e43f28f50b3c4bf75f74b
 msgid "**ADMETAI_predict_nuclear_receptor_activity** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_nuclear_receptor_activity**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:140 af026f4ec5594128aac30076ab7a1ad8
+#: ../../tools/admetai_tools.rst:148 a7fabb0ef51e4f149c8e83d17ad4d1e4
 msgid ""
-"Predicts nuclear receptor activity endpoints (NR-AR-LBD, NR-AR, NR-AhR, NR-"
-"Aromatase, NR-ER-LBD, ..."
+"Predicts nuclear receptor activity endpoints (NR-AR-LBD, NR-AR, NR-AhR, "
+"NR-Aromatase, NR-ER-LBD, ..."
 msgstr "预测核受体活性终点（NR-AR-LBD、NR-AR、NR-AhR、NR-Aromatase、NR-ER-LBD，..."
 
-#: ../../tools/admetai_tools.rst 911d2d85d1b743dfb28b9c6e71ac2d47
+#: ../../tools/admetai_tools.rst 7bdf0af9e5264ce5a84c38378340292c
 msgid "ADMETAI_predict_nuclear_receptor_activity tool specification"
 msgstr "ADMETAI_predict_nuclear_receptor_activity 工具规范"
 
-#: ../../tools/admetai_tools.rst:146 26f6912a7fdf43ccbd454ed8be5a6e7c
+#: ../../tools/admetai_tools.rst:154 ae5de3da05a747e2b67b353a6779c68f
 msgid "**Name**: ``ADMETAI_predict_nuclear_receptor_activity``"
 msgstr "**名称**: ``ADMETAI_predict_nuclear_receptor_activity``"
 
-#: ../../tools/admetai_tools.rst:148 c0f6661ab8ca4f93a799b4e194386ad6
+#: ../../tools/admetai_tools.rst:156 7506419f471c4ced99121162f54b309d
 msgid ""
-"**Description**: Predicts nuclear receptor activity endpoints (NR-AR-LBD, "
-"NR-AR, NR-AhR, NR-Aromatase, NR-ER-LBD, NR-ER, NR-PPAR-gamma) for a given "
-"list of molecules in SMILES format."
+"**Description**: Predicts nuclear receptor activity endpoints (NR-AR-LBD,"
+" NR-AR, NR-AhR, NR-Aromatase, NR-ER-LBD, NR-ER, NR-PPAR-gamma) for a "
+"given list of molecules in SMILES format."
 msgstr ""
-"**描述**：预测给定分子（以SMILES格式表示）的核受体活性终点（NR-AR-LBD、NR-AR、NR-AhR、NR-Aromatase、NR-"
-"ER-LBD、NR-ER、NR-PPAR-gamma）。"
+"**描述**：预测给定分子（以SMILES格式表示）的核受体活性终点（NR-AR-LBD、NR-AR、NR-AhR、NR-Aromatase"
+"、NR-ER-LBD、NR-ER、NR-PPAR-gamma）。"
 
-#: ../../tools/admetai_tools.rst:169 0ee8dc75956a4b5a8659c924bfbbe514
+#: ../../tools/admetai_tools.rst:177 e8314b93aa6442ef97e50ded5d784226
 msgid "**ADMETAI_predict_physicochemical_properties** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_physicochemical_properties**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:171 24053150a654421b911269b4a757017f
+#: ../../tools/admetai_tools.rst:179 f8290fb3088649d8939e28c5e2938b4f
 msgid ""
-"Predicts physicochemical properties (molecular weight, logP, hydrogen bond "
-"acceptors/donors, Lipi..."
+"Predicts physicochemical properties (molecular weight, logP, hydrogen "
+"bond acceptors/donors, Lipi..."
 msgstr "预测理化性质（分子量、logP、氢键受体/供体、Lipi..."
 
-#: ../../tools/admetai_tools.rst 8ec48800618d497a8ff29282d88f1980
+#: ../../tools/admetai_tools.rst e4eb0863b05a4f94862617af6890594d
 msgid "ADMETAI_predict_physicochemical_properties tool specification"
 msgstr "ADMETAI_predict_physicochemical_properties 工具规范"
 
-#: ../../tools/admetai_tools.rst:177 3c818c6b90bb4f23907d19944f8c65b5
+#: ../../tools/admetai_tools.rst:185 3f339ba3003e484e9243818bef910ceb
 msgid "**Name**: ``ADMETAI_predict_physicochemical_properties``"
 msgstr "**名称**: ``ADMETAI_predict_physicochemical_properties``"
 
-#: ../../tools/admetai_tools.rst:179 68f5c1bb19e54c0aa8baea95bf48a677
+#: ../../tools/admetai_tools.rst:187 37b22fbd78d64f22930d8bbb9bcf290e
 msgid ""
 "**Description**: Predicts physicochemical properties (molecular weight, "
-"logP, hydrogen bond acceptors/donors, Lipinski, QED, stereo centers, TPSA) "
-"for a given list of molecules in SMILES format."
-msgstr ""
-"**描述**：预测给定以SMILES格式表示的分子列表的物理化学性质（分子量、logP、氢键受体/供体、Lipinski规则、QED、立体中心、TPSA）。"
+"logP, hydrogen bond acceptors/donors, Lipinski, QED, stereo centers, "
+"TPSA) for a given list of molecules in SMILES format."
+msgstr "**描述**：预测给定以SMILES格式表示的分子列表的物理化学性质（分子量、logP、氢键受体/供体、Lipinski规则、QED、立体中心、TPSA）。"
 
-#: ../../tools/admetai_tools.rst:200 3d83c2e6a573456baba4a604a61f9921
-msgid ""
-"**ADMETAI_predict_solubility_lipophilicity_hydration** (Type: ADMETAITool)"
-msgstr ""
-"**ADMETAI_predict_solubility_lipophilicity_hydration**（类型：ADMETAITool）"
+#: ../../tools/admetai_tools.rst:208 161c70211bd64356abfa567603faaa43
+msgid "**ADMETAI_predict_solubility_lipophilicity_hydration** (Type: ADMETAITool)"
+msgstr "**ADMETAI_predict_solubility_lipophilicity_hydration**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:202 2bba8326d915427cbe446e201610958e
+#: ../../tools/admetai_tools.rst:210 cbb59a50a58e4387b4671727accd5829
+#, fuzzy
 msgid ""
 "Predicts solubility, lipophilicity, and hydration endpoints "
-"(Solubility_AqSolDB, Lipophilicity_As..."
+"(Solubility\\_AqSolDB, Lipophilicity\\_..."
 msgstr "预测溶解度、脂溶性及水合终点（Solubility_AqSolDB、Lipophilicity_As...）"
 
-#: ../../tools/admetai_tools.rst 19cc0c5ed1e04f39a5b02fa7acdf4341
+#: ../../tools/admetai_tools.rst b572ab99441b4f4689033ef61d110453
 msgid "ADMETAI_predict_solubility_lipophilicity_hydration tool specification"
 msgstr "ADMETAI_预测溶解度、脂溶性与水合工具规格说明"
 
-#: ../../tools/admetai_tools.rst:208 d5c3f3f6fb2d40bfb7845a62eaf79f51
+#: ../../tools/admetai_tools.rst:216 97f4fa538c5345148100fdf9ec9ac6a8
 msgid "**Name**: ``ADMETAI_predict_solubility_lipophilicity_hydration``"
 msgstr "**名称**：``ADMETAI_predict_solubility_lipophilicity_hydration``"
 
-#: ../../tools/admetai_tools.rst:210 774582b52b254a5785fd6436d5557e6d
+#: ../../tools/admetai_tools.rst:218 4be907d9bc6440b28e6eb0c40fe16f6c
+#, fuzzy
 msgid ""
-"**Description**: Predicts solubility, lipophilicity, and hydration endpoints"
-" (Solubility_AqSolDB, Lipophilicity_AstraZeneca, "
-"HydrationFreeEnergy_FreeSolv) for a given list of molecules in SMILES "
+"**Description**: Predicts solubility, lipophilicity, and hydration "
+"endpoints (Solubility\\_AqSolDB, Lipophilicity\\_AstraZeneca, "
+"HydrationFreeEnergy\\_FreeSolv) for a given list of molecules in SMILES "
 "format."
-msgstr ""
-"**描述**：预测给定分子列表（SMILES格式）的溶解度、脂溶性及水合终点（Solubility_AqSolDB、Lipophilicity_AstraZeneca、HydrationFreeEnergy_FreeSolv）。"
+msgstr "**描述**：预测给定分子列表（SMILES格式）的溶解度、脂溶性及水合终点（Solubility_AqSolDB、Lipophilicity_AstraZeneca、HydrationFreeEnergy_FreeSolv）。"
 
-#: ../../tools/admetai_tools.rst:231 50b5f1f626cd4d24a4e440957ff331b1
+#: ../../tools/admetai_tools.rst:239 814fa58e21db40ea92ae38f6ed8d4147
 msgid "**ADMETAI_predict_stress_response** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_stress_response**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:233 c247fc303f0b4bcfb06772a2b22fa6d5
+#: ../../tools/admetai_tools.rst:241 4d0add10eed7431a8eb1b43e29304905
 msgid ""
 "Predicts stress response endpoints (SR-ARE, SR-ATAD5, SR-HSE, SR-MMP, "
 "SR-p53) for a given list of..."
 msgstr "预测给定列表的应激反应终点（SR-ARE、SR-ATAD5、SR-HSE、SR-MMP、SR-p53）"
 
-#: ../../tools/admetai_tools.rst 15ecbc61b98943bfb77d67086b06b116
+#: ../../tools/admetai_tools.rst d13dc75481e84a13b97e79dd6acfe003
 msgid "ADMETAI_predict_stress_response tool specification"
 msgstr "ADMETAI_predict_stress_response 工具规格说明"
 
-#: ../../tools/admetai_tools.rst:239 ac1910beb99b4b34bd4bcba465f77af1
+#: ../../tools/admetai_tools.rst:247 e95a27dca2ce4e269bb44681a093a03c
 msgid "**Name**: ``ADMETAI_predict_stress_response``"
 msgstr "**名称**：``ADMETAI_predict_stress_response``"
 
-#: ../../tools/admetai_tools.rst:241 a8a3fe4251904c9f8bd719b5c9f684c7
+#: ../../tools/admetai_tools.rst:249 24e0d8ea468841e0a85dbc85760ef4a1
 msgid ""
-"**Description**: Predicts stress response endpoints (SR-ARE, SR-ATAD5, SR-"
-"HSE, SR-MMP, SR-p53) for a given list of molecules in SMILES format."
-msgstr ""
-"**描述**：预测给定分子列表（SMILES格式）的应激反应终点（SR-ARE、SR-ATAD5、SR-HSE、SR-MMP、SR-p53）。"
+"**Description**: Predicts stress response endpoints (SR-ARE, SR-ATAD5, "
+"SR-HSE, SR-MMP, SR-p53) for a given list of molecules in SMILES format."
+msgstr "**描述**：预测给定分子列表（SMILES格式）的应激反应终点（SR-ARE、SR-ATAD5、SR-HSE、SR-MMP、SR-p53）。"
 
-#: ../../tools/admetai_tools.rst:262 b7c7c1289980495a84556cac1cc93b98
+#: ../../tools/admetai_tools.rst:270 d603ff0497e043f98f502cf4a34f57bd
 msgid "**ADMETAI_predict_toxicity** (Type: ADMETAITool)"
 msgstr "**ADMETAI_predict_toxicity**（类型：ADMETAITool）"
 
-#: ../../tools/admetai_tools.rst:264 576c9626502f40d69eca216d7b368355
+#: ../../tools/admetai_tools.rst:272 370b51a133b94f5d9253f395b24d87ee
+#, fuzzy
 msgid ""
-"Predicts toxicity endpoints (AMES, Carcinogens_Lagunin, ClinTox, DILI, "
-"LD50_Zhu, Skin_Reaction, h..."
-msgstr ""
-"预测毒性终点（AMES、Carcinogens_Lagunin、ClinTox、DILI、LD50_Zhu、Skin_Reaction、h..."
+"Predicts toxicity endpoints (AMES, Carcinogens\\_Lagunin, ClinTox, DILI, "
+"LD50\\_Zhu, Skin\\_Reaction..."
+msgstr "预测毒性终点（AMES、Carcinogens_Lagunin、ClinTox、DILI、LD50_Zhu、Skin_Reaction、h..."
 
-#: ../../tools/admetai_tools.rst 190d5dde69af4873a9be542b2b1c2ec9
+#: ../../tools/admetai_tools.rst ab25ec3fded3430f85c4e1412ca15b26
 msgid "ADMETAI_predict_toxicity tool specification"
 msgstr "ADMETAI_predict_toxicity 工具规格说明"
 
-#: ../../tools/admetai_tools.rst:270 fd4ad18f340a4497a1cde4350a24dd1c
+#: ../../tools/admetai_tools.rst:278 372fb489b2154fdc9f3f8041e4729ef9
 msgid "**Name**: ``ADMETAI_predict_toxicity``"
 msgstr "**名称**：``ADMETAI_predict_toxicity``"
 
-#: ../../tools/admetai_tools.rst:272 f51a80c58fc84f70afaacb3fccd3f4ff
+#: ../../tools/admetai_tools.rst:280 b6bec0904da14b8abf4fd00cd83b8885
+#, fuzzy
 msgid ""
-"**Description**: Predicts toxicity endpoints (AMES, Carcinogens_Lagunin, "
-"ClinTox, DILI, LD50_Zhu, Skin_Reaction, hERG) for a given list of molecules "
-"in SMILES format."
-msgstr ""
-"**描述**：预测给定分子列表（SMILES格式）的毒性终点（AMES、Carcinogens_Lagunin、ClinTox、DILI、LD50_Zhu、Skin_Reaction、hERG）。"
+"**Description**: Predicts toxicity endpoints (AMES, "
+"Carcinogens\\_Lagunin, ClinTox, DILI, LD50\\_Zhu, Skin\\_Reaction, hERG) "
+"for a given list of molecules in SMILES format."
+msgstr "**描述**：预测给定分子列表（SMILES格式）的毒性终点（AMES、Carcinogens_Lagunin、ClinTox、DILI、LD50_Zhu、Skin_Reaction、hERG）。"
 
-#: ../../tools/admetai_tools.rst:293 5bcd3813c8bf4312bdfae91f1059dc54
+#: ../../tools/admetai_tools.rst:301 08f1c9a195da4791954788d83904fa08
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/admetai_tools.rst:295 2616db6151334d218675f28d16c7c2a6
+#: ../../tools/admetai_tools.rst:303 4c071adef4b541899b4a8303dde093b1
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/admetai_tools.rst:296 c8cd95866a3249e2a02c71ee185f8cae
+#: ../../tools/admetai_tools.rst:304 791a25ca96ca406f982faf4d1c6101c1
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid "``smiles`` (array) (required) The list of SMILES strings."
+#~ msgstr "``smiles``（数组）（必需）SMILES 字符串列表。"
+

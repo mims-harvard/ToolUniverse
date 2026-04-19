@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/neurovault_tools.rst:10 1ad0baa9365f424b98344a57ea480535
+msgid "Neurovault Tools"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:12 85501f51c6374f03904b6ddbd0268e5d
+msgid ""
+"**Configuration File**: ``neurovault_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:16 29f1c51e3465429e89dea09c58afa404
+msgid ""
+"This page contains all tools defined in the ``neurovault_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:19 16e6449a669b457e9a94b82364cf3809
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:22 2dd69964c93b40bea57b83c9782f3a40
+msgid "**NeuroVault_get_collection** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:24 0791c414a7e442b9aa7bb266d86034d4
+msgid ""
+"Get detailed metadata for a specific NeuroVault neuroimaging collection "
+"by its ID. Returns study ..."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst 7899179c9a3c41079fda72677e3eb15c
+msgid "NeuroVault_get_collection tool specification"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:28 ../../tools/neurovault_tools.rst:59
+#: ../../tools/neurovault_tools.rst:90 ../../tools/neurovault_tools.rst:127
+#: 28c5841872c54dc69677f4af9b23b140 2f4d01751912447fb175a5fd5900eb56
+#: d6a3e0583ef44fe1bc2361d6b27d34d1 e7fe01427ad542d5818ae9fc116ec32c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:30 8c67f724ce974c5e98b093c5daafee8a
+msgid "**Name**: ``NeuroVault_get_collection``"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:31 ../../tools/neurovault_tools.rst:62
+#: ../../tools/neurovault_tools.rst:93 ../../tools/neurovault_tools.rst:130
+#: 02e05726359e401485a16a33c2c3a395 2894fcca710b406faa6c2c1ce69d094e
+#: 3eab45405e5444d087079717d68a7d8a 4cbc76ea869741669db07b868024fb12
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:32 80fbe6483e674acca46cfcea51af18ad
+msgid ""
+"**Description**: Get detailed metadata for a specific NeuroVault "
+"neuroimaging collection by its ID. Returns study details including title,"
+" DOI, authors, journal, imaging parameters (scanner, pulse sequence, "
+"field strength), study design information (number of subjects, "
+"experimental conditions), and number of statistical map images. Use "
+"collection IDs from NeuroVault\\_list\\_collections or NeuroVault "
+"website. Example: collection 457 is the Human Connectome Project overview"
+" with 48 brain images."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:34 ../../tools/neurovault_tools.rst:65
+#: ../../tools/neurovault_tools.rst:96 ../../tools/neurovault_tools.rst:133
+#: 43938a18745041ee8bc13e222a9c2097 4c367240c7764c02bfe69b65f4b13867
+#: 56abfbbf6c69472fb762e280e7a47bd2 e76983f08d1d47098e9c66c44e394824
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:36 c2205ae636b84357b3a668ab94856c19
+msgid ""
+"``collection_id`` (integer) (required) NeuroVault collection ID number. "
+"Examples: 457 (Human Connectome Project), 1952 (BrainPedia with 6573 "
+"images)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:39 ../../tools/neurovault_tools.rst:70
+#: ../../tools/neurovault_tools.rst:107 ../../tools/neurovault_tools.rst:144
+#: 3d253ef63dec4ea98c78c39fdd82529a 65fc469cf79b465db0bd880e9f54124d
+#: 71ac639c8a3e4b4e9b03cc2e38d8cc0a f85ff3d3efdb4b34af623074a8fc7262
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:53 257c2ce0c1dd41afb456ad3c198f7088
+msgid "**NeuroVault_get_image** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:55 b2572eac974a42bdab5c49e6f2ddf163
+msgid ""
+"Get detailed metadata for a specific brain statistical map image in "
+"NeuroVault by image ID. Retur..."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst 690c84bafc9c4a24a4227b5ca112e656
+msgid "NeuroVault_get_image tool specification"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:61 0fe4decd15b34f96849749a37d24b758
+msgid "**Name**: ``NeuroVault_get_image``"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:63 701344dddb5e48758ffbc93b9748798a
+msgid ""
+"**Description**: Get detailed metadata for a specific brain statistical "
+"map image in NeuroVault by image ID. Returns comprehensive information "
+"including map type (T/Z/F map), cognitive paradigm and contrast "
+"annotations from Cognitive Atlas, analysis level, modality, and file "
+"download URL (NIfTI format). Use image IDs from "
+"NeuroVault\\_list\\_collection\\_images. Example: image 3128 is a Z map "
+"of 'emotion processing fMRI task paradigm' showing FACES minus SHAPES "
+"contrast from the Human Connectome Project."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:67 7969c7f943344bda95a6e7b06d0835a6
+msgid ""
+"``image_id`` (integer) (required) NeuroVault image ID. Examples: 3128 "
+"(HCP emotion task Z map), 946 (pain T map)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:84 b4d5b9dc6e454061b455152d101d462e
+msgid "**NeuroVault_list_collection_images** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:86 cb0f4f57dee4454a921c07ccfc73969f
+msgid ""
+"List all statistical map images in a specific NeuroVault collection. "
+"Returns image metadata inclu..."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst d2d0660e8bd644ebaf70bde576f48525
+msgid "NeuroVault_list_collection_images tool specification"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:92 f593b258c28d448ab12db96102990e9b
+msgid "**Name**: ``NeuroVault_list_collection_images``"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:94 777efb7ac10946bfa2b9c6a889585183
+msgid ""
+"**Description**: List all statistical map images in a specific NeuroVault"
+" collection. Returns image metadata including name, map type (T map, Z "
+"map, F map, etc.), cognitive paradigm/contrast annotations, and file "
+"download URLs. Use this to explore what brain maps are available in a "
+"study collection before downloading. Example: collection 457 (Human "
+"Connectome Project) has 48 images covering emotion, gambling, language, "
+"motor, relational, social, and working memory tasks."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:98 0f13a7b53b4f4f718f9263eafd9006ad
+msgid ""
+"``collection_id`` (integer) (required) NeuroVault collection ID. Example:"
+" 457 (Human Connectome Project)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:101 269d5128d7dd442a9f56fab723063f1f
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of images to return "
+"(default 10, max 100)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:104 43c5d8451991462ba73c18b1a37184cd
+msgid ""
+"``offset`` (integer, null) (optional) Number of images to skip for "
+"pagination (default 0)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:121 86b50df3d3874f8c9a24b8c83cfaeb35
+msgid "**NeuroVault_list_collections** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:123 2bec840386cd405494529d2cae158bac
+msgid ""
+"List and browse neuroimaging statistical map collections from NeuroVault."
+" Returns collections of ..."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst ad4257591c6f4a0287ff875d1635b50c
+msgid "NeuroVault_list_collections tool specification"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:129 f52246fba7f148708475dcf2bd937fed
+msgid "**Name**: ``NeuroVault_list_collections``"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:131 54ffb74b7b7a4f60a8a29c88a8d53e49
+msgid ""
+"**Description**: List and browse neuroimaging statistical map collections"
+" from NeuroVault. Returns collections of brain images (fMRI, PET, EEG) "
+"contributed by researchers worldwide. Each collection contains metadata "
+"about the study, DOI, authors, and imaging parameters. NeuroVault hosts "
+"over 16,000 collections with 650,000+ brain images. Use limit and offset "
+"for pagination. Use this to discover available neuroimaging datasets for "
+"meta-analysis or to find specific studies."
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:135 412f10b3dff046bf94085698dd4b4536
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of collections to "
+"return per page (default 10, max 100). Example: 10"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:138 953dc3fdcfff4d3297f8ac7ff0b2daa8
+msgid ""
+"``offset`` (integer, null) (optional) Number of collections to skip for "
+"pagination (default 0). Example: 20 to get page 3 with limit=10"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:141 14ec3bd70a4c42e0b4c1bb92f1fddf71
+msgid ""
+"``format`` (string, null) (optional) Response format. Must be 'json'. "
+"Default: 'json'"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:157 b273996a381f4718b23de62116996b99
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:159 73d88b216ccb4b5c9931ea16973f9030
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/neurovault_tools.rst:160 3014e7505d054d9fac11e5e55d35c779
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

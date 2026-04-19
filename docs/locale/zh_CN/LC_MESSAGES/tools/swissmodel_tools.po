@@ -1,0 +1,145 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/swissmodel_tools.rst:10 5f613f776d734f219f694f3ae5807c6e
+msgid "Swissmodel Tools"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:12 fb20bdec8b74497da5b1c0a926d43036
+msgid ""
+"**Configuration File**: ``swissmodel_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:16 b9ed7f2a0ff04335aa86689cbef3cfb9
+msgid ""
+"This page contains all tools defined in the ``swissmodel_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:19 27ba6378a94b4050b6738609a5bcea81
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:22 0493fe7a4da14d54b3faf3d91280b731
+msgid "**SwissModel_get_models** (Type: SwissModelTool)"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:24 0c4901dcfa0b421395fb44cf37c7006f
+msgid ""
+"Get all available protein homology models from SWISS-MODEL Repository for"
+" a UniProt accession. Re..."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst a6ff35307c0d40a8879d322991799486
+msgid "SwissModel_get_models tool specification"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:28 ../../tools/swissmodel_tools.rst:59
+#: 3976ba32b3c14bb3b52af5a8b7fee29c f4b9296cd1b04f4cb5f15a52cf263212
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:30 cf872c7212f7427f9c7dd783b044e98a
+msgid "**Name**: ``SwissModel_get_models``"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:31 ../../tools/swissmodel_tools.rst:62
+#: 1f07104b08c44cb1898c15324ad8528a 7b89d02aa5984496982d70dde0e57dad
+msgid "**Type**: ``SwissModelTool``"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:32 d2c0e298104e444c82341b6109219307
+msgid ""
+"**Description**: Get all available protein homology models from SWISS-"
+"MODEL Repository for a UniProt accession. Returns pre-computed 3D "
+"structure models with template information, sequence coverage, QMEAN "
+"quality scores, creation dates, and complex partner information. SWISS-"
+"MODEL is one of the most widely used protein structure prediction "
+"servers. Example: P04637 (human p53) returns 4 homology models; P00533 "
+"(EGFR) returns 380 models including many complex structures."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:34 ../../tools/swissmodel_tools.rst:65
+#: 6727cab6cb2a443b85f5b329d1e75d3c e683bc7c8b414cd38a7599839a44bb1c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:36 ff6907ea60394bfd9ca7976b06d65ec5
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession identifier. "
+"Examples: 'P04637' (human p53), 'P00533' (human EGFR), 'Q9Y6I3' (human "
+"EPN1)."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:39 ../../tools/swissmodel_tools.rst:70
+#: 29f816ef652f418780b818aada71e5c2 82e2f374467345efa10fad7fb1a0546c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:53 effe9f16a8af4cc5b9e7786e1da02e86
+msgid "**SwissModel_get_summary** (Type: SwissModelTool)"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:55 423a5d2b027443bdb2f31da195bc7558
+msgid ""
+"Get a summary of the best available homology model from SWISS-MODEL "
+"Repository for a UniProt acce..."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst 5093ba065eca48609af72626e83cd18e
+msgid "SwissModel_get_summary tool specification"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:61 f30ca5a241f24c6ea101338a438e488c
+msgid "**Name**: ``SwissModel_get_summary``"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:63 69d93275e794418fafc3037062aadf84
+#, python-format
+msgid ""
+"**Description**: Get a summary of the best available homology model from "
+"SWISS-MODEL Repository for a UniProt accession. Returns the model with "
+"highest sequence coverage, total model count, methods distribution, and "
+"quality metrics. Useful for quickly checking if a homology model exists "
+"for a protein of interest. Example: P04637 (human p53) has 4 models, best"
+" covers residues 12-351 (86.5% coverage)."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:67 a3156aaabcec4abcae97d5abad9f8ae3
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession identifier. "
+"Examples: 'P04637' (human p53), 'P00533' (human EGFR)."
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:84 bd62d086d9db4e5fb909e44989418554
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:86 5abc302dba5b49e08b75eb3555cab92f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/swissmodel_tools.rst:87 d23f5fbefcc94609ae85647de3aab940
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/clingen_ar_tools.rst:10 c156b77a55a14ea5badd1c110d312fbb
+msgid "Clingen Ar Tools"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:12 cf755a3563b44c09a6273140ecc431c0
+msgid ""
+"**Configuration File**: ``clingen_ar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:16 9eebf2cd75a547348d88db98dab23a5b
+msgid ""
+"This page contains all tools defined in the ``clingen_ar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:19 69e8bacad831442f9061e2f6aed4c91c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:22 6b0618ef4ff64dffa7a58b97fa5528e3
+msgid "**ClinGenAR_get_external_records** (Type: ClinGenARTool)"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:24 2c2ece079a7a4764b1e78f9ff2577b4e
+msgid ""
+"Get detailed cross-references and external database records for a ClinGen"
+" canonical allele. Takes..."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst 54d07baa72d64633be8faa351ffacb0d
+msgid "ClinGenAR_get_external_records tool specification"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:28 ../../tools/clingen_ar_tools.rst:59
+#: 7640c1c648d34fbca0c724a933e0146f 837a8ae2cddd4158821e103b6ddabbde
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:30 adfc13d6fe9d4a57844d127c74bdfd6c
+msgid "**Name**: ``ClinGenAR_get_external_records``"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:31 ../../tools/clingen_ar_tools.rst:62
+#: 424ee73434de44c5b8ea578c5a64ddb4 a0111ef491694f65b87e4222d9dd1614
+msgid "**Type**: ``ClinGenARTool``"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:32 1b4c05e80cab4d4b8a8621b9de7ebb26
+msgid ""
+"**Description**: Get detailed cross-references and external database "
+"records for a ClinGen canonical allele. Takes a ClinGen allele ID (CA ID)"
+" and returns links to ClinVar, dbSNP, COSMIC, gnomAD, ExAC, and other "
+"databases. Useful for finding all known database entries for a given "
+"variant. Example: CA000387 (TP53 R248Q) returns ClinVar variation IDs, "
+"COSMIC IDs, dbSNP rsIDs, and gnomAD allele frequencies."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:34 ../../tools/clingen_ar_tools.rst:65
+#: 465bac9ee0e940138831e2c9ce488970 fd53e969ab444c3d844206a5688ea416
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:36 1e58a658835c4008a9c76fc282abcd71
+msgid ""
+"``allele_id`` (string) (required) ClinGen canonical allele ID. Examples: "
+"'CA000387' (TP53 R248Q), 'CA006116' (BRCA1 variant). Use "
+"ClinGenAR\\_lookup\\_allele first to get the CA ID."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:39 ../../tools/clingen_ar_tools.rst:70
+#: 58906448a934453ba04236e7c19b89b9 9b3247ad0d884a338504b74b9dd6c274
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:53 6bdd108600de4d8691dbc8baee1564f7
+msgid "**ClinGenAR_lookup_allele** (Type: ClinGenARTool)"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:55 6d976aae4e3f47d58db574c922ff148e
+msgid ""
+"Look up a genetic variant in the ClinGen Allele Registry by HGVS "
+"notation. Returns the canonical ..."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst 138b6a9a7367458a9224ec2c1f3c26a9
+msgid "ClinGenAR_lookup_allele tool specification"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:61 cf1f0b48d1374a09893af9a10d6bcb3b
+msgid "**Name**: ``ClinGenAR_lookup_allele``"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:63 ad01fd55642f483dbfdf4cb73f92bb95
+msgid ""
+"**Description**: Look up a genetic variant in the ClinGen Allele Registry"
+" by HGVS notation. Returns the canonical allele identifier (CA ID), "
+"community standard title, and cross-references to ClinVar, dbSNP, COSMIC,"
+" gnomAD, and other databases. The Allele Registry normalizes variant "
+"representations across different coordinate systems and nomenclatures. "
+"Example: 'NM\\_000546.6:c.743G>A' returns CA000387 (TP53 p.Arg248Gln) "
+"with links to ClinVar, COSMIC, and gnomAD."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:67 71d4311c899046bdb822f2daeb4fcd22
+msgid ""
+"``hgvs`` (string) (required) HGVS expression for the variant. Supports "
+"coding (c.), genomic (g.), and protein (p.) notations. Examples: "
+"'NM\\_000546.6:c.743G>A' (TP53 R248Q), 'NC\\_000017.11:g.7674220C>T', "
+"'NM\\_000059.4:c.5946delT' (BRCA2)."
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:84 05f0d78f790742ca976bcd50de169912
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:86 5a6da344baae48a3aa8f167811a332ed
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/clingen_ar_tools.rst:87 b30fc96bdc364eb597d23c7d4b7fe79f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,297 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/optimizer_tools.rst:10 20bcad006dc84e24847b8ceb19f62a2a
+msgid "Optimizer Tools"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:12 5f25088df643478cbf8f6af6acd7df12
+msgid ""
+"**Configuration File**: ``optimizer_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:16 ba9b5c60c6c74541b29f1df3cc38ca4e
+msgid ""
+"This page contains all tools defined in the ``optimizer_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:19 7aa23e1a202f46509b88562e7d26c976
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:22 9c2033aab4284565ae327c1019806505
+msgid "**ArgumentDescriptionOptimizer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:24 598ff8ad1a804c31924d58c0c31bc156
+msgid ""
+"Optimizes the descriptions of tool arguments/parameters based on test "
+"case results and actual usa..."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst f6e4356faaa7403d99667f56942309bb
+msgid "ArgumentDescriptionOptimizer tool specification"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:28 ../../tools/optimizer_tools.rst:63
+#: ../../tools/optimizer_tools.rst:98 ../../tools/optimizer_tools.rst:137
+#: ../../tools/optimizer_tools.rst:168 07f328eb68fa44e5b6dffb6977e2bc41
+#: 2528f58ebdc14e64aeae7624e2c414b8 7933c6954d054932bc3c1c5d8562f13c
+#: f277d625d3384732b2f35673f632d065 f9d9da338cc645578882de6184e47f4a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:30 657b04e734e043e6b8688e8d0bb67048
+msgid "**Name**: ``ArgumentDescriptionOptimizer``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:31 ../../tools/optimizer_tools.rst:66
+#: ../../tools/optimizer_tools.rst:101 ../../tools/optimizer_tools.rst:140
+#: 40432168153c4d9c8933363e46f469be 63d25b6bec3c47ad9ef287636977182a
+#: b507d23670614e149da893ccb1d6870f ede7d6e2909143e1a8d1755d72311af7
+msgid "**Type**: ``AgenticTool``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:32 cf4ed5f14a864205981ec508db3c9aae
+msgid ""
+"**Description**: Optimizes the descriptions of tool arguments/parameters "
+"based on test case results and actual usage patterns. Provides improved "
+"descriptions that are more accurate and user-friendly."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:34 ../../tools/optimizer_tools.rst:69
+#: ../../tools/optimizer_tools.rst:104 ../../tools/optimizer_tools.rst:143
+#: ../../tools/optimizer_tools.rst:174 18e198e3e2af49d3a99e55d0683dec6b
+#: 37daee31101248f6a96dfc793ec85c9d a07921b238a644b3a7b6342b9a61c0f1
+#: b4c5df892fb34d75ad1134a7e54b36c5 f07637d3291e444f865a3087b5c5a8dc
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:36 2fa43ed45c8e41729800d392abc022b2
+msgid ""
+"``parameter_schema`` (string) (required) JSON string of the original "
+"parameter schema with properties and descriptions."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:39 40cdc53f4ffe47bcb0718195845e2cbd
+msgid ""
+"``test_results`` (string) (required) A JSON string containing test case "
+"input/output pairs showing parameter usage."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:42 ../../tools/optimizer_tools.rst:77
+#: ../../tools/optimizer_tools.rst:115 ../../tools/optimizer_tools.rst:148
+#: ../../tools/optimizer_tools.rst:191 39fa9eb5b74d48c591c74558131a436b
+#: 76ff97deb2804607ac0b698a7eabcbf3 8298bde02dbd4225a48cc8bebf69eaa5
+#: ada1be6e71b348c0ad902e0fa1f80b9f b85c628353ea447b9c9ea373f32f3249
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:57 3f97fb4d7856439f81c93b8e9a17c678
+msgid "**DescriptionAnalyzer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:59 3b17876bb57442bfb1d55b5749521a6c
+msgid ""
+"Analyzes a tool's original description and the results of multiple test "
+"cases, then suggests an i..."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst 0808a5c8e2754571adaa4ed012724d57
+msgid "DescriptionAnalyzer tool specification"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:65 9ec358b09015470abe04111d32af18a7
+msgid "**Name**: ``DescriptionAnalyzer``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:67 b668769fbf0a40358165355f26557f20
+msgid ""
+"**Description**: Analyzes a tool's original description and the results "
+"of multiple test cases, then suggests an improved description that is "
+"more accurate, comprehensive, and user-friendly. Optionally provides a "
+"rationale for the changes."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:71 cb9f6c0fa028462e8b508bd21a2e4ff0
+msgid ""
+"``original_description`` (string) (required) The original description of "
+"the tool."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:74 fd35bd61676e464c9f67924df754a09a
+msgid ""
+"``test_results`` (string) (required) A JSON string containing a list of "
+"test case input/output pairs."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:92 d79e3ce30c85480eaa66f808c331445d
+msgid "**DescriptionQualityEvaluator** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:94 69a5bf3bd7e74944b328b4296b95e0e6
+msgid ""
+"Evaluates the quality of tool descriptions and parameter descriptions, "
+"providing a score and spec..."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst 6abfc735a3e64fbc8da2bd2b80f2427e
+msgid "DescriptionQualityEvaluator tool specification"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:100 d7710c58ae39486e99660e2e122d7764
+msgid "**Name**: ``DescriptionQualityEvaluator``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:102 8dc0ff4407244514857d633888dcb4bb
+msgid ""
+"**Description**: Evaluates the quality of tool descriptions and parameter"
+" descriptions, providing a score and specific feedback for improvements."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:106 5a869cbb62d344858530f43b2c5f832c
+msgid "``tool_description`` (string) (required) The tool description to evaluate."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:109 b32b9b947b284095b2f4906f43427b86
+msgid ""
+"``parameter_descriptions`` (string) (required) JSON string of parameter "
+"names and their descriptions."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:112 f18127929b7b4120a0fe4c563d115bce
+msgid ""
+"``test_results`` (string) (required) JSON string containing test case "
+"results."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:131 0c1e498b76604841a55c39c9cec65cc9
+msgid "**TestCaseGenerator** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:133 94c1b5774fbd4cc08bdb5a5b0587ce84
+msgid ""
+"Generates diverse and representative ToolUniverse tool call dictionaries "
+"for a given tool based o..."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst 80a83aabc8244cb48dbaa85041da9fca
+msgid "TestCaseGenerator tool specification"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:139 20618cc765654eae9edaeb1927673578
+msgid "**Name**: ``TestCaseGenerator``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:141 4220bb007bca4d6c91e72c0fa78670b4
+msgid ""
+"**Description**: Generates diverse and representative ToolUniverse tool "
+"call dictionaries for a given tool based on its parameter schema. Each "
+"tool call should be a JSON object with 'name' (the tool's name) and "
+"'arguments' (a dict of input arguments), covering different parameter "
+"combinations, edge cases, and typical usage. Can generate targeted test "
+"cases based on previous optimization feedback."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:145 de1f81d57a814dc9ab20acfeeee0e72a
+msgid ""
+"``tool_config`` (object) (required) The full configuration of the tool to"
+" generate test cases for. May include '\\_optimization\\_feedback' and "
+"'\\_iteration' fields for feedback-driven test generation."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:162 7eca1bcfc8a246618dfdc3bc5c56ad16
+msgid "**ToolDescriptionOptimizer** (Type: ComposeTool)"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:164 5f1565f761634b7e9b8fac0386e14d33
+msgid ""
+"Optimizes a tool's description and parameter descriptions by generating "
+"test cases, executing the..."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst c45c1ce7660c4aab99da2668d3395003
+msgid "ToolDescriptionOptimizer tool specification"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:170 ab907f938303415b838be8f2f6e54fe1
+msgid "**Name**: ``ToolDescriptionOptimizer``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:171 9e6772dedb1e4a6b8d5038a16f0b8b18
+msgid "**Type**: ``ComposeTool``"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:172 1c49c72088844065809aa6d4e031523d
+msgid ""
+"**Description**: Optimizes a tool's description and parameter "
+"descriptions by generating test cases, executing them, analyzing the "
+"results, and suggesting improved descriptions for both the tool and its "
+"arguments. Optionally saves a comprehensive optimization report to a file"
+" without overwriting the original."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:176 6e66013b13834b618ac42c9f29f56818
+msgid ""
+"``tool_config`` (object) (required) The full configuration of the tool to"
+" optimize."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:179 c62277b9974a45149884c55317e604d8
+msgid ""
+"``save_to_file`` (boolean) (required) If true, save the optimized "
+"description to a file (do not overwrite the original)."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:182 6aad26f2cbce4067947ecf97faa0522d
+msgid ""
+"``output_file`` (string) (required) Optional file path to save the "
+"optimized description. If not provided, use "
+"'<tool\\_name>\\_optimized\\_description.txt'."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:185 1aff242d7eea4340be108586758483d5
+msgid ""
+"``max_iterations`` (integer) (required) Maximum number of optimization "
+"rounds to perform."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:188 1637389dabb54dbd88961c4740233c91
+msgid ""
+"``satisfaction_threshold`` (number) (required) Quality score threshold "
+"(1-10) to consider optimization satisfactory."
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:209 2c4daf9473c74d50a888269babe996d4
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:211 8d10dbbc360447c8a757cd2e7d48d016
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/optimizer_tools.rst:212 f1f11d4198d644289721635602af14f1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

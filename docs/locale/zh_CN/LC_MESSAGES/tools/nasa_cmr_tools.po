@@ -1,0 +1,190 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nasa_cmr_tools.rst:10 c539adcd367144c099d88098b67d18b6
+msgid "Nasa Cmr Tools"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:12 ea393fe2f3cf4fafa819896003635e26
+msgid ""
+"**Configuration File**: ``nasa_cmr_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:16 1b22ae5960b74cd58dab99e88f41f8c9
+msgid ""
+"This page contains all tools defined in the ``nasa_cmr_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:19 6cab2fbaefc146a0b446d6dd1d206d1f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:22 f31f290fce214dbf9c639630f1970e51
+msgid "**NASACMR_search_collections** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:24 6fa8d51bd6bb40f0b3c9ad1355e276a6
+msgid ""
+"Search NASA's Common Metadata Repository (CMR) for Earth observation "
+"datasets and satellite colle..."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst e2c7d1fe16e947b08c0478bd6611f2c7
+msgid "NASACMR_search_collections tool specification"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:28 ../../tools/nasa_cmr_tools.rst:68
+#: 5eda12829b5c4a12bf58cb2ea5aad8cb b135246f82cb4a4a9b94141e7d716db5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:30 658acf22bce44efcb1aa7975bfde0988
+msgid "**Name**: ``NASACMR_search_collections``"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:31 ../../tools/nasa_cmr_tools.rst:71
+#: 285281c45e814c0eb1baffc123c6c4d6 b7434a3fd2b7446b8d47a9422d9a2a67
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:32 ad3b946aa28b49fba25cbacad576b003
+msgid ""
+"**Description**: Search NASA's Common Metadata Repository (CMR) for Earth"
+" observation datasets and satellite collections. CMR is NASA's "
+"centralized metadata repository hosting 40,000+ collections from NASA's "
+"Earth Observing System (EOS) missions. Search for climate, atmospheric, "
+"ocean, land surface, cryosphere, and space weather datasets from "
+"satellites like MODIS, Landsat, GOES, Sentinel, GRACE, ICESat, and more. "
+"Returns dataset titles, summaries, temporal coverage, data centers, "
+"processing levels, and access links."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:34 ../../tools/nasa_cmr_tools.rst:74
+#: 46383f5e6b6540f4a19fffc3940d1c7b a023896caa694cc69606d2ab193517a6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:36 399b644f7bd845d6aeca1332b2aef385
+msgid ""
+"``keyword`` (string) (required) Free-text keyword search. Examples: 'sea "
+"surface temperature', 'land cover', 'atmospheric CO2', 'Arctic sea ice', "
+"'precipitation', 'vegetation index NDVI'"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:39 45c930c350e14157bc0089e8529f915f
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results to return "
+"(default 10, max 2000)"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:42 9acc7522df364272b7a1a609eb1c55c1
+msgid ""
+"``data_center`` (string, null) (optional) Filter by data center short "
+"name. Examples: 'NSIDC', 'PODAAC', 'GES\\_DISC', 'LAADS', 'LP DAAC'"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:45 c5f2581dcaf0405eb2ad0355baca6f70
+msgid ""
+"``platform`` (string, null) (optional) Filter by satellite/instrument "
+"platform. Examples: 'Terra', 'Aqua', 'Landsat-8', 'GOES-16', 'ICESat-2'"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:48 ../../tools/nasa_cmr_tools.rst:91
+#: bc42b8798e304790b43291936cb1d876 cbd15ba0ea1349449ec9daa1b195110d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:62 01b5ee109fdb427cb5b6ebad7191a6db
+msgid "**NASACMR_search_granules** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:64 a211b04be2a14710b091952e36cad901
+msgid ""
+"Search NASA CMR for individual granules (data files/scenes) within Earth "
+"observation collections...."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst b1af20a60da1462cbd6201a3f457e424
+msgid "NASACMR_search_granules tool specification"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:70 8ccab59e7bef4575b1283e5f8bd1ac1f
+msgid "**Name**: ``NASACMR_search_granules``"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:72 afd8b623cd014af5ad73e1639efb070f
+msgid ""
+"**Description**: Search NASA CMR for individual granules (data "
+"files/scenes) within Earth observation collections. Granules are the "
+"individual data files (e.g., a single day's MODIS image, one Landsat "
+"scene). Search by collection concept ID, bounding box, time range, or "
+"keyword. Returns file metadata including download links, spatial "
+"coverage, and temporal information. Useful for finding specific satellite"
+" data files to download."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:76 0766b7c7878b46df8690fdf13e86a4f1
+msgid ""
+"``concept_id`` (string, null) (optional) Parent collection concept ID "
+"(e.g., 'C2036882064-POCLOUD'). Get from NASACMR\\_search\\_collections."
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:79 e9c25ff20eec4e27ac450ea2648dcd5e
+msgid ""
+"``short_name`` (string, null) (optional) Collection short name (e.g., "
+"'MYD11A1', 'MODIS\\_A-JPL-L2P-v2019.0')"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:82 c985fc2baf2e4126b7d5db03f8a05992
+msgid ""
+"``temporal`` (string, null) (optional) Temporal range in format 'YYYY-MM-"
+"DD,YYYY-MM-DD'. Examples: '2020-01-01,2020-01-31', "
+"'2023-06-01,2023-06-30'"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:85 b88f6d2f8aa142b79cc21c4868c08571
+msgid ""
+"``bounding_box`` (string, null) (optional) Spatial bounding box: "
+"'west,south,east,north' in decimal degrees. Example: '-10,35,10,55' for "
+"Western Europe"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:88 185bb702a92a477eb71e4de228d728dc
+msgid ""
+"``page_size`` (integer, null) (optional) Number of results (default 10, "
+"max 2000)"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:104 5648a3b928334f048e4128cf1a4b30bf
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:106 ee3da3071d684cd9b4b8e5015e662a71
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nasa_cmr_tools.rst:107 9adcbd9e570d47f5b7a7a88840040d99
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

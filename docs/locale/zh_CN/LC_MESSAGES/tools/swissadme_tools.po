@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/swissadme_tools.rst:10 77352277b35849879344bc8ffa41fa8a
+msgid "Swissadme Tools"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:12 97b03946eb9d4627869e055627c87195
+msgid ""
+"**Configuration File**: ``swissadme_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:16 5fe0260262cb41ee83967701d51480da
+msgid ""
+"This page contains all tools defined in the ``swissadme_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:19 8fb9ba2a69034437bcc6b7e108c3e8b6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:22 299469e05efb4be19a0afe21e01a8443
+msgid "**SwissADME_calculate_adme** (Type: SwissADMETool)"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:24 4d69ceb2871e456dbde096aeb633a6e8
+msgid ""
+"Compute ADMET properties, drug-likeness, and medicinal chemistry "
+"friendliness of a small molecule..."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst d65e8617e05c45a296780abf4714754d
+msgid "SwissADME_calculate_adme tool specification"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:28 ../../tools/swissadme_tools.rst:66
+#: 23bd6750c7c645bd95a0e6cb5315e93d 56d269ccc7f4470f80399194d1eb105c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:30 8adac4a69f2d4ae09801bf8a983b06b5
+msgid "**Name**: ``SwissADME_calculate_adme``"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:31 ../../tools/swissadme_tools.rst:69
+#: 7fad7de6525d485c899343e570366c4f bcd45ec91ad9455082e297acfd501e3c
+msgid "**Type**: ``SwissADMETool``"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:32 4c1bf079d536451bb658aa926c9eb68c
+msgid ""
+"**Description**: Compute ADMET properties, drug-likeness, and medicinal "
+"chemistry friendliness of a small molecule from its SMILES string using "
+"SwissADME. Returns 49 properties across 6 categories: physicochemical "
+"properties (MW, TPSA, rotatable bonds, H-bond donors/acceptors), "
+"lipophilicity (iLOGP, XLOGP3, WLOGP, MLOGP, consensus LogP), water "
+"solubility (ESOL, Ali, Silicos-IT with log S, mg/ml, mol/l, and class), "
+"pharmacokinetics (GI absorption, BBB permeation, Pgp substrate, "
+"CYP1A2/2C19/2C9/2D6/3A4 inhibition, skin permeation), drug-likeness "
+"(Lipinski, Ghose, Veber, Egan, Muegge rule violations, bioavailability "
+"score), and medicinal chemistry (PAINS alerts, Brenk alerts, "
+"leadlikeness, synthetic accessibility). Computation takes 5-15 seconds."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:34 ../../tools/swissadme_tools.rst:72
+#: 5f8e9889d21c45159ede14c7256d5239 d2072d4999ef4d608088b79898341544
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:36 ../../tools/swissadme_tools.rst:74
+#: 008c490b212d4aad92ef005fb34c6112 bf9a6a50f40a486cad1e8e2d0839a98e
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:39 8b15ba83e8614b7ca63aa0f1e584c34d
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule to analyze. "
+"Must be a valid small molecule SMILES. Examples: CC(=O)Oc1ccccc1C(=O)O "
+"(aspirin), CC(C)Cc1ccc(cc1)C(C)C(=O)O (ibuprofen), "
+"c1ccc2[nH]c(-c3ccncc3)cc2c1 (omeprazole core)"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:42 88705cf327bc4d469a5e7976479a656c
+msgid ""
+"``molecule_name`` (string, null) (optional) Optional name for the "
+"molecule. If not provided, SwissADME assigns 'Molecule 1'."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:45 ../../tools/swissadme_tools.rst:83
+#: 0ad9b723625445ffb99d1a2235842ec1 ce809f24ebea44b88602d1338be19e10
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:60 0227055849fe495f92316b14a86f41cd
+msgid "**SwissADME_check_druglikeness** (Type: SwissADMETool)"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:62 e791673e2c044c95bdc6ab327e566b3c
+msgid ""
+"Quick drug-likeness assessment of a small molecule using SwissADME. "
+"Evaluates the molecule agains..."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst 599f5878f2f44f3fb7cd988689e06d45
+msgid "SwissADME_check_druglikeness tool specification"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:68 eec2ca5f63de44b499a3d5425fe49c54
+msgid "**Name**: ``SwissADME_check_druglikeness``"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:70 9982b0080d9c46e796e4183a5ab95ffa
+msgid ""
+"**Description**: Quick drug-likeness assessment of a small molecule using"
+" SwissADME. Evaluates the molecule against five standard drug-likeness "
+"filters: Lipinski Rule of Five (MW, LogP, HBD, HBA), Ghose filter (MW, "
+"LogP, MR, atoms), Veber rule (rotatable bonds, TPSA), Egan rule (LogP, "
+"TPSA), and Muegge filter (MW, LogP, TPSA, rings, HBA, HBD, rotatable "
+"bonds, carbons). Returns per-rule violation counts, whether each rule "
+"passes (0 violations), and an overall assessment. Optionally filter to "
+"specific rules. Also returns PAINS/Brenk alerts, bioavailability score, "
+"and synthetic accessibility. Useful for filtering compound libraries "
+"before purchasing or synthesis."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:77 d43f523abd6349068480483f537d8850
+msgid ""
+"``smiles`` (string) (required) SMILES string of the molecule to check. "
+"Must be a valid small molecule SMILES."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:80 69fa4ebd64bf4739aebce7d0bc694580
+msgid ""
+"``rules`` (array, null) (optional) Optional list of specific drug-"
+"likeness rules to check. If null, all 5 rules are evaluated. Valid "
+"values: lipinski, ghose, veber, egan, muegge."
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:98 0aebcc98568946c3b0880b8d58a82a03
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:100 a3351cd4b5474249b6ddbe6803d7a571
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/swissadme_tools.rst:101 7cdc952c47f3477c948f9c0a32bfb231
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

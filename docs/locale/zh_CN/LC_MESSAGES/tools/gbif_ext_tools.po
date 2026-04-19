@@ -1,0 +1,153 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gbif_ext_tools.rst:10 589420bb3ea24bffbd88a27d4f73861a
+msgid "Gbif Ext Tools"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:12 c5aead6475c44fcc840426e59c419a1c
+msgid ""
+"**Configuration File**: ``gbif_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:16 ad9a6c4afdde466f88f437154eadeed5
+msgid ""
+"This page contains all tools defined in the ``gbif_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:19 56d863eda4274ac6a8998fd638333ef7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:22 5c9dea69de7f4252aa49d4bf8e93fdde
+msgid "**GBIF_get_species** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:24 7f5a7bd1ed9f4fa0a5472bc24a2caa7e
+msgid ""
+"Get detailed species information from the Global Biodiversity Information"
+" Facility (GBIF) by its ..."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst 926ea6b9535142618978f072b6d9ed7a
+msgid "GBIF_get_species tool specification"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:28 ../../tools/gbif_ext_tools.rst:59
+#: 035f6fd9a2294a139fe7b4a6472a9b88 a1877d52aab3407c8a06431c0780ac19
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:30 963ccc06d34449c99e8b18bb270ed8bc
+msgid "**Name**: ``GBIF_get_species``"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:31 ../../tools/gbif_ext_tools.rst:62
+#: 2faa489aebae490f8c71850573d63303 910d95964b884334b317f289aa5df08d
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:32 03c6044a5b97449db60ebaef0bbc625d
+msgid ""
+"**Description**: Get detailed species information from the Global "
+"Biodiversity Information Facility (GBIF) by its taxon key. Returns the "
+"full taxonomic record including scientific name, authorship, rank, full "
+"classification (kingdom through species), taxonomic status, basionym, "
+"vernacular name, and number of descendant taxa. Use "
+"GBIF\\_search\\_species first to find taxon keys. Example: key 2435099 "
+"returns Puma concolor (puma) with full classification from Animalia to "
+"Puma concolor."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:34 ../../tools/gbif_ext_tools.rst:65
+#: 687c570fa0af438489027413e67123d5 b26d334cfc944cbe81e731a334fc1daa
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:36 68ac567d902d4429956e26cc9938d3cc
+msgid ""
+"``speciesKey`` (integer) (required) GBIF species/taxon key. Examples: "
+"2435099 (Puma concolor / puma), 2878688 (Quercus robur / English oak), "
+"5219404 (Canis lupus / wolf), 2480528 (Homo sapiens), 2495662 (Aquila "
+"chrysaetos / golden eagle). Use GBIF\\_search\\_species to find keys."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:39 ../../tools/gbif_ext_tools.rst:73
+#: 92a3422734fc4968af77189c1c5d9d05 beebd3b778b4461b81051cdc3d34e328
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:53 cb605f69d59044aa8a06420f563d30df
+msgid "**GBIF_suggest_species** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:55 f8c6b73ca9374515a3aaae46e0653740
+msgid ""
+"Autocomplete species names using the GBIF species suggestion endpoint. "
+"Returns quick matches as y..."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst d2bbc86b92304de9b0b6c009eff990b6
+msgid "GBIF_suggest_species tool specification"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:61 e5d17216e23d48efbc2ef36344a9d57e
+msgid "**Name**: ``GBIF_suggest_species``"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:63 a35c165d08c148ce885654401b201a5c
+msgid ""
+"**Description**: Autocomplete species names using the GBIF species "
+"suggestion endpoint. Returns quick matches as you type, with basic "
+"taxonomic info (key, name, rank, classification). Faster and lighter than"
+" full search -- designed for type-ahead interfaces and quick name "
+"resolution. Returns up to 20 suggestions. Example: 'Quer' matches Quercus"
+" (oaks), Quercus robur (English oak), etc."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:67 60ffb07fa62a4d9c851b2a091b7d7884
+msgid ""
+"``q`` (string) (required) Partial or full species/taxon name to "
+"autocomplete. Examples: 'Homo sap', 'Quercus', 'Pan trog', 'Escherichia',"
+" 'Drosoph'."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:70 07a5bbaef05b41869f655ab4947004e9
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of suggestions to "
+"return (1-20, default 10)."
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:87 aaed860d607b44fd99814553b7927036
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:89 d14c5e7e783342c6ba068655698ad9a7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gbif_ext_tools.rst:90 b61d9de44aa94add8b012d6a3c1214d1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

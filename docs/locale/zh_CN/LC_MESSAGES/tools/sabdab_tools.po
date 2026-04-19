@@ -1,0 +1,190 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sabdab_tools.rst:10 931557cad79543e59481eac043cd1c83
+msgid "Sabdab Tools"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:12 2349011d98b042c5bd011d16436dd248
+msgid ""
+"**Configuration File**: ``sabdab_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:16 13ec4b51629f4e4795fbdc3de92d862f
+msgid ""
+"This page contains all tools defined in the ``sabdab_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:19 3c0a74f8a16b4faa86e6e4a08de31855
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:22 19bb315701b34b00918e9b6fd1a1b0ac
+msgid "**SAbDab_get_structure** (Type: SAbDabTool)"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:24 10796e4d1cf4410c9a40d8d99dd5169d
+msgid ""
+"Get antibody structure details from SAbDab by PDB ID. Returns CDR "
+"annotations, chain information,..."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst 8b39da3505334d64b881bc9218c7c1c4
+msgid "SAbDab_get_structure tool specification"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:28 ../../tools/sabdab_tools.rst:64
+#: ../../tools/sabdab_tools.rst:94 c5dc42b7de894b95847d4960e6eed612
+#: d1a20c481cac429ba478d5be0e65f2e6 e8b717ad3cf240b9ba346b7c3e1a1ec1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:30 347577d1a96d4a748af9d8d3f7411787
+msgid "**Name**: ``SAbDab_get_structure``"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:31 ../../tools/sabdab_tools.rst:67
+#: ../../tools/sabdab_tools.rst:97 878031c3a124408a8b6facadd38ddb6c
+#: be85bdd6812f4b32809fa143c6213cea c4b21368d21c49e78a12b36c5096fee7
+msgid "**Type**: ``SAbDabTool``"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:32 ceb08a2d729f49d8be6d9ca99392def1
+msgid ""
+"**Description**: Get antibody structure details from SAbDab by PDB ID. "
+"Returns CDR annotations, chain information, and antigen binding data. "
+"Useful for structural analysis of antibody-antigen complexes."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:34 ../../tools/sabdab_tools.rst:70
+#: ../../tools/sabdab_tools.rst:100 13ae195162cc42a8a0c0217120408d1c
+#: 7d85b67045a6433eb431c16a102ff790 c5fb67e9a36a42f18b26cee4ef1ea33c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:36 ../../tools/sabdab_tools.rst:72
+#: ../../tools/sabdab_tools.rst:102 1918a50aad13485d84b1a38fd93c4e79
+#: 974623459c204e3e8c3b9561e4bf4882 d45c9638d91a42b5a6d2a0591a1636f8
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:39 765b74b288d04034a38b7c404829f985
+msgid ""
+"``pdb_id`` (string) (optional) 4-character PDB ID (e.g., 1IGT, 6W41). "
+"Alias: pdb\\_code."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:42 4a662f229c1f4652b57b72fb39a477dd
+msgid ""
+"``pdb_code`` (string) (optional) Alias for pdb\\_id. 4-character PDB ID "
+"(e.g., 1IGT, 6W41)."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:45 ../../tools/sabdab_tools.rst:75
+#: ../../tools/sabdab_tools.rst:114 2832e7e7161c4f6e91129aeab8dc75af
+#: e0597aa67d464b189dd2d37905839580 fa448fb7a83f472ea94052801ab0445f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:58 d192826cebb8448881746f9dcbf19efc
+msgid "**SAbDab_get_summary** (Type: SAbDabTool)"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:60 295c04e1178548c4b638657c9a272aa1
+msgid ""
+"Get SAbDab database summary and statistics. Returns information about "
+"database content, features,..."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst 1629ac9ba1214d95a04191cf274e9222
+msgid "SAbDab_get_summary tool specification"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:66 359b6517a7044da5b616a05218c7929e
+msgid "**Name**: ``SAbDab_get_summary``"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:68 a7d0a02ba81a405c96e6d6608ed46af2
+msgid ""
+"**Description**: Get SAbDab database summary and statistics. Returns "
+"information about database content, features, and access URLs. Good "
+"starting point for exploring antibody structural data."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:88 c14fd70e37bc4020b82cb541ab8992f1
+msgid "**SAbDab_search_structures** (Type: SAbDabTool)"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:90 0a2ac24176064ebcbb99e423a535d4b4
+msgid ""
+"Search SAbDab structural antibody database. Returns a direct browse URL "
+"to matching antibody stru..."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst 4759cce3654146f48ad8f50a1fd69f87
+msgid "SAbDab_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:96 e7efcf00fbcf43a1b9542485a1f20ea9
+msgid "**Name**: ``SAbDab_search_structures``"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:98 80a2f7f19dcf4630ab27a56f683d015b
+msgid ""
+"**Description**: Search SAbDab structural antibody database. Returns a "
+"direct browse URL to matching antibody structures — SAbDab's search "
+"endpoint does not expose a JSON API, so use SAbDab\\_get\\_structure with"
+" a known PDB ID for structured data. Tip: retrieve the full SAbDab "
+"summary TSV from https://opig.stats.ox.ac.uk/webapps/sabdab-"
+"sabpred/sabdab/summary/?all=true for bulk filtering."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:105 5a7b19cec75d47009c551d2e3e64f042
+msgid ""
+"``query`` (string) (optional) Search query - antigen name, species, or "
+"keywords (e.g., 'HER2', 'anti-CD20')"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:108 bb53d0683904419d85dac5ceee9255c5
+msgid ""
+"``antigen`` (string) (optional) Alias for query. Antigen name to search "
+"(e.g., 'EGFR', 'HER2')."
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:111 65f413890f70475485a1729e5f00038c
+msgid "``limit`` (integer) (optional) Maximum results (default: 50)"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:127 a2d949d269414941aac26a9542318d0b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:129 00bea7c567e34813952de291f530abba
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sabdab_tools.rst:130 15966de44fc446859d6e162f687be94a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

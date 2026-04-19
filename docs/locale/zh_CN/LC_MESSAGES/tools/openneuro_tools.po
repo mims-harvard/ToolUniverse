@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openneuro_tools.rst:10 98a4737582864357af4055d5102f7ce2
+msgid "Openneuro Tools"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:12 641ed073180e440ca9ac70e9c68c1cac
+msgid ""
+"**Configuration File**: ``openneuro_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:16 331d65ba687b40a997e94d4c9a73416f
+msgid ""
+"This page contains all tools defined in the ``openneuro_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:19 4b2cf6fb97c74db8a7f2247c938da28c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:22 90029f554c354083858d6fae1f720bda
+msgid "**OpenNeuro_get_dataset** (Type: OpenNeuroTool)"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:24 e9f876306b1e4f77858682e008e171f7
+msgid ""
+"Get detailed information about a specific neuroimaging dataset on "
+"OpenNeuro by its dataset ID (e...."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst f5340159d8b94d62b95dba0d1e0a6d2c
+msgid "OpenNeuro_get_dataset tool specification"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:28 ../../tools/openneuro_tools.rst:59
+#: ../../tools/openneuro_tools.rst:90 ../../tools/openneuro_tools.rst:123
+#: 04f55e349cc244ebb8ac588b5cb42ff8 3b4a17e1ccd74cd6b390f652bebffa79
+#: 40c174b1bd1a4a4d9679cbca611d5caa 802f80048d4f4c0ab1de62d146d16eb5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:30 3523652872ec402d987db2a7841bf016
+msgid "**Name**: ``OpenNeuro_get_dataset``"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:31 ../../tools/openneuro_tools.rst:62
+#: ../../tools/openneuro_tools.rst:93 ../../tools/openneuro_tools.rst:126
+#: 4c7dadbfd1bf4881b7aa6ebfcb0a1abc 5139baada47f4fdfaee8f115d472b207
+#: c70c3405825c45f794890d387272e1eb cf21ad62112848e299835ece392baa8e
+msgid "**Type**: ``OpenNeuroTool``"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:32 9cc6a3fb20bd4e6eb6f743c34e3decf9
+msgid ""
+"**Description**: Get detailed information about a specific neuroimaging "
+"dataset on OpenNeuro by its dataset ID (e.g., 'ds000114', 'ds000224'). "
+"Returns full metadata including modalities, tasks, subject list, BIDS "
+"version, authors, DOI, README, and download statistics."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:34 ../../tools/openneuro_tools.rst:65
+#: ../../tools/openneuro_tools.rst:96 ../../tools/openneuro_tools.rst:129
+#: 8ef10b0e198649c397a52ad772fe832d aef58491ee9d41b08e312a5542ffbba9
+#: bb4e782084184b89852db4e33ecfe523 daeb5d499ae64850898982143bd1898d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:36 ebbcc72125fe4681af796d8dc00b7316
+msgid ""
+"``datasetId`` (string) (required) OpenNeuro dataset ID (e.g., 'ds000114',"
+" 'ds000224', 'ds003097')"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:39 ../../tools/openneuro_tools.rst:70
+#: ../../tools/openneuro_tools.rst:104 ../../tools/openneuro_tools.rst:137
+#: 06e0d31530e94ea88d12b7977e1c4b45 0c5ddfbf2f4b453fa63c688a8dfd9208
+#: 48b44f29fc4140078cdcb7cadfff4396 e8b2eb2de7174740808ec9a67b4690b3
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:53 a71fc4f265d24c4287bfffc81fe8104b
+msgid "**OpenNeuro_get_dataset_snapshots** (Type: OpenNeuroTool)"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:55 0358d0a15d9f4b24a8a29f6025eedc69
+msgid ""
+"Get all version snapshots of a specific dataset on OpenNeuro. Returns "
+"snapshot tags, creation dat..."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst 52da0876594a44bd86c38510738ac0bf
+msgid "OpenNeuro_get_dataset_snapshots tool specification"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:61 108b40337b70433bacb86b0d487dff01
+msgid "**Name**: ``OpenNeuro_get_dataset_snapshots``"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:63 6cc9c89299b943b585ca5ed19f41175e
+msgid ""
+"**Description**: Get all version snapshots of a specific dataset on "
+"OpenNeuro. Returns snapshot tags, creation dates, and summary information"
+" for all published versions of the dataset."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:67 5cfc175137fb498f89e0aa4488c065c9
+msgid "``datasetId`` (string) (required) OpenNeuro dataset ID (e.g., 'ds000114')"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:84 c11e71dd50f6404ba788a4101a8fc174
+msgid "**OpenNeuro_list_datasets** (Type: OpenNeuroTool)"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:86 6db7007d4a474548b5d8cb86e03dcb90
+msgid ""
+"List publicly available neuroimaging datasets on OpenNeuro. OpenNeuro "
+"hosts 1000+ BIDS-formatted ..."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst 4835027d8e99459f90d1f6b4e668d52b
+msgid "OpenNeuro_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:92 3d28607c286f49018f2825e634ea4f79
+msgid "**Name**: ``OpenNeuro_list_datasets``"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:94 61532b7721734349abad2d51ed551ad8
+msgid ""
+"**Description**: List publicly available neuroimaging datasets on "
+"OpenNeuro. OpenNeuro hosts 1000+ BIDS-formatted brain imaging datasets "
+"(fMRI, MRI, EEG, MEG, PET). Returns dataset metadata including "
+"modalities, subject counts, file counts, download statistics. Supports "
+"cursor-based pagination. Use after parameter for next page."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:98 ../../tools/openneuro_tools.rst:134
+#: a5c58f065eb14380badf8fa736c6cbf5 b9729079df4042c186aec352dbc729b7
+msgid ""
+"``first`` (integer, null) (optional) Number of datasets to return "
+"(default 10, max 25)"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:101 30b8e8873fb1426e9269a3c9480cd40d
+msgid ""
+"``after`` (string, null) (optional) Cursor for pagination - use endCursor"
+" from previous response"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:117 20b68870f38d4473af19ef31b13e8515
+msgid "**OpenNeuro_search_by_modality** (Type: OpenNeuroTool)"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:119 4991b1ea11b24deb921fb68b33a3b868
+msgid ""
+"Search OpenNeuro neuroimaging datasets filtered by imaging modality. "
+"Supported modalities include..."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst a80dfb9684234f099fab584170fef104
+msgid "OpenNeuro_search_by_modality tool specification"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:125 0ed5322932c0473abbe8b3221f1e98ad
+msgid "**Name**: ``OpenNeuro_search_by_modality``"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:127 14b51740d02246b1b57ac7eaaa68066c
+msgid ""
+"**Description**: Search OpenNeuro neuroimaging datasets filtered by "
+"imaging modality. Supported modalities include: 'MRI' (structural and "
+"functional MRI), 'EEG' (electroencephalography), 'iEEG' (intracranial "
+"EEG), 'MEG' (magnetoencephalography), 'PET' (positron emission "
+"tomography). Returns dataset IDs, names, creation dates, and total count "
+"of matching datasets. OpenNeuro hosts 1600+ BIDS-formatted brain imaging "
+"datasets."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:131 74cb00d9773a4987bf3d2c2e10bd5913
+msgid ""
+"``modality`` (string) (required) Imaging modality to filter by. Options: "
+"'MRI', 'EEG', 'iEEG', 'MEG', 'PET'."
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:151 5d1ab908a32f4408b51d18a012acde49
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:153 a9e9d8728fed4d75b1f442503433f3ed
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openneuro_tools.rst:154 91510330ccee4c0f80ae54b5a15e0650
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

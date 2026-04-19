@@ -1,0 +1,306 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/lncrna_tools.rst:10 852f2687a8fe40c7a4a6e2e24581c402
+msgid "Lncrna Tools"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:12 f1427e6fddaa4e70ac11443d40b15341
+msgid ""
+"**Configuration File**: ``lncrna_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:16 5e98a89b2ea549069505bf2df7aed8b9
+msgid ""
+"This page contains all tools defined in the ``lncrna_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:19 3892e66ee6c84f8a8f0d6d7c37986a2f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:22 94d68865b8e54ae3ba3c40c5739c3d82
+msgid "**LNCipedia_get_lncrna** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:24 37e8b8c37f224fa297627b6008961f15
+msgid ""
+"Get detailed lncRNA information from RNAcentral including full RNA "
+"sequence, species, gene associ..."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst f5de517674ef423994992e3aebf3c97f
+msgid "LNCipedia_get_lncrna tool specification"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:28 ../../tools/lncrna_tools.rst:62
+#: ../../tools/lncrna_tools.rst:96 ../../tools/lncrna_tools.rst:130
+#: ../../tools/lncrna_tools.rst:167 1b39a5ad93a9487bac417afa5a8dc0d8
+#: b9e1eb1111a3438c998fc81720197b39 baae0e6a14144dfdb91e019a1645283f
+#: c647d1e6e6774133b07206c3a6f271f5 fc0f0df881174981a0631497b1bf906b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:30 a49ce09b29174f7d895dbc405987f2d2
+msgid "**Name**: ``LNCipedia_get_lncrna``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:31 ../../tools/lncrna_tools.rst:65
+#: ../../tools/lncrna_tools.rst:99 722114e1627e41cf913e233c0c89c7c0
+#: d6e29aca07764861a467690f003045e6 f3e5d95b0c484caf87ef79bed0374fcb
+msgid "**Type**: ``miRNAGetTool``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:32 5aaa6485b723435d84288f4121115169
+msgid ""
+"**Description**: Get detailed lncRNA information from RNAcentral "
+"including full RNA sequence, species, gene associations, publication "
+"count, and source databases. Use a species-specific RNAcentral ID "
+"(format: URS\\_TAXID) or base URS ID with optional taxid. Key lncRNA IDs:"
+" URS0002A146E4\\_9606 (MALAT1, 7472 nt), URS00026A23F2\\_9606 (HOTAIR, "
+"2273 nt), URS000075DAEC\\_9606 (NEAT1, 3756 nt). Returns the full "
+"nucleotide sequence which can be used for downstream analysis (structure "
+"prediction, conservation, etc.)."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:34 ../../tools/lncrna_tools.rst:68
+#: ../../tools/lncrna_tools.rst:102 ../../tools/lncrna_tools.rst:136
+#: ../../tools/lncrna_tools.rst:173 be99f8c3a1bf4dc5b563ebaf0dc02c21
+#: d2ee1f528a2d4d69a45aae421846cb6d ddddf8f9db054b5981b40ff64a03129e
+#: e3d8eaae8b814ef4838fa0b76e8fffe4 e4b9c715ed664f3197fe2dfb2a4305ca
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:36 ca2660e6a55a4eb09aafd506b997ecc5
+msgid ""
+"``rnacentral_id`` (string) (required) RNAcentral URS identifier. Use "
+"species-specific format 'URS\\_TAXID' (e.g., 'URS0002A146E4\\_9606' for "
+"human MALAT1) or base URS ID with taxid parameter."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:39 90e92685b577417aa513939626122a2c
+msgid ""
+"``taxid`` (integer) (optional) NCBI Taxonomy ID for species-specific "
+"lookup (e.g., 9606 for human). Optional if rnacentral\\_id already "
+"includes taxid."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:42 ../../tools/lncrna_tools.rst:76
+#: ../../tools/lncrna_tools.rst:110 ../../tools/lncrna_tools.rst:147
+#: ../../tools/lncrna_tools.rst:187 100ca8692d524829b1e61fe5d1a26201
+#: 1c77981f13d94207a367810b6b881ca5 1e0bc69342564ff99171e2f57d20e0be
+#: d299c28fe5d64843981c0bf0289d3033 fd6be5673ba544198e22b964f6e1f1d1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:56 5ea831edcb9f4f19b8dcce0c33192d14
+msgid "**LNCipedia_get_lncrna_publications** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:58 c416f9a2e8a048149727e042bcd28339
+msgid ""
+"Retrieve publications associated with a long non-coding RNA from "
+"RNAcentral. Returns publication ..."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst b3023ffcb7f34701a8fcbba0c9b48d8f
+msgid "LNCipedia_get_lncrna_publications tool specification"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:64 d5d29553478a41e3bad4d40b30b165ec
+msgid "**Name**: ``LNCipedia_get_lncrna_publications``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:66 96a250183c984ab6b1bf07b4cfd270fc
+msgid ""
+"**Description**: Retrieve publications associated with a long non-coding "
+"RNA from RNAcentral. Returns publication titles, authors, PubMed IDs, "
+"DOIs, and journal information. Use after LNCipedia\\_search\\_lncrna to "
+"get the RNAcentral URS ID, then retrieve associated literature. MALAT1 "
+"and HOTAIR are among the most-studied lncRNAs with hundreds of "
+"publications."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:70 ../../tools/lncrna_tools.rst:104
+#: 41854cafe7a446d9a4730be395559568 b6065d7e6c1640f788657506c91c013a
+msgid ""
+"``rnacentral_id`` (string) (required) RNAcentral URS identifier (e.g., "
+"'URS0002A146E4' for MALAT1). Use base URS ID without taxid suffix."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:73 7e29d2e147ab439aa4b64da14ae97c72
+msgid ""
+"``page_size`` (integer) (optional) Number of publications to return "
+"(1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:90 daa19dba7b6447718f0bd0d5eebba9db
+msgid "**LNCipedia_get_lncrna_xrefs** (Type: miRNAGetTool)"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:92 e331a8cdb5e3416b81741cb9e177485b
+msgid ""
+"Get cross-references for a long non-coding RNA from RNAcentral. Returns "
+"database links from LNCip..."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst 725c77132fb647eeaa83daa9ccd82310
+msgid "LNCipedia_get_lncrna_xrefs tool specification"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:98 00abb883268b47edb31c8452ed66a62b
+msgid "**Name**: ``LNCipedia_get_lncrna_xrefs``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:100 6a89636223be4aae8b537b08437e83cf
+msgid ""
+"**Description**: Get cross-references for a long non-coding RNA from "
+"RNAcentral. Returns database links from LNCipedia, NONCODE, LncBook, "
+"HGNC, RefSeq, GeneCards, MalaCards, Ensembl, and other sources. Includes "
+"external accession IDs, expert database URLs, and species information. "
+"Essential for mapping lncRNA IDs across databases and finding functional "
+"annotation data."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:107 55b202fa1d7941f1a706d919a611962b
+msgid ""
+"``page_size`` (integer) (optional) Number of cross-references to return "
+"(1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:124 6125084c57744b1b8f66a8b562f31377
+msgid "**LNCipedia_search_lncrna** (Type: miRNASearchTool)"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:126 d7e27b09afce48b1870fe9f7959a6d5d
+msgid ""
+"Search for long non-coding RNAs (lncRNAs) by name, accession, or keyword "
+"using EBI Search over RN..."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst be11a77da9334836a24579229e2bb475
+msgid "LNCipedia_search_lncrna tool specification"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:132 60e15c4b72704a279a1b9d1e43746795
+msgid "**Name**: ``LNCipedia_search_lncrna``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:133 ../../tools/lncrna_tools.rst:170
+#: ca69ceabcf9c4748aee43056f77d08bd efbc2204222a4712ba3010b3b9e27d60
+msgid "**Type**: ``miRNASearchTool``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:134 da3d118922844f0db10fbce48ab8e6e3
+msgid ""
+"**Description**: Search for long non-coding RNAs (lncRNAs) by name, "
+"accession, or keyword using EBI Search over RNAcentral. RNAcentral "
+"aggregates lncRNA data from LNCipedia, NONCODE, LncBook, HGNC, RefSeq, "
+"GeneCards, and 50+ other databases. Supports filtering by species. "
+"Returns RNAcentral IDs, descriptions, sequence lengths, and source "
+"databases. Use to search for lncRNAs like MALAT1, HOTAIR, NEAT1, XIST, "
+"H19, or KCNQ1OT1. The human genome encodes 50,000+ lncRNA transcripts. "
+"Example: search 'MALAT1' returns URS0002A146E4\\_9606 (7472 nt, "
+"metastasis-associated lung adenocarcinoma transcript 1)."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:138 0207d55e365340b3856128f98b080877
+msgid ""
+"``query`` (string) (required) Search query: lncRNA name (e.g., 'MALAT1', "
+"'HOTAIR'), gene symbol, accession, or keyword. Supports AND/OR operators."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:141 c4d1169c8465424d9036bb14cf7a51a7
+msgid ""
+"``species`` (string) (optional) Species name filter (e.g., 'Homo "
+"sapiens', 'Mus musculus'). Leave empty for all species."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:144 ../../tools/lncrna_tools.rst:184
+#: 3157781441254773bf373964a7a48cd4 ba51d97f90334019aae8f97756dc78b1
+msgid ""
+"``size`` (integer) (optional) Number of results to return (1-100). "
+"Default: 10."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:161 c0fab1ac41b649c3bb0147c62fab99b0
+msgid "**LNCipedia_search_ncrna_by_type** (Type: miRNASearchTool)"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:163 c198499ac4db4bcba330609ca733d074
+msgid ""
+"Search for any type of non-coding RNA by RNA type classification. "
+"Supports all RNA types in RNAce..."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst 1c7ef502467a4905b79f9bfc00efe3d6
+msgid "LNCipedia_search_ncrna_by_type tool specification"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:169 3e4555f33f7e4dd5b79e8ba103d89a17
+msgid "**Name**: ``LNCipedia_search_ncrna_by_type``"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:171 712a24d7cc994b6591efdca171f3d699
+msgid ""
+"**Description**: Search for any type of non-coding RNA by RNA type "
+"classification. Supports all RNA types in RNAcentral: miRNA, lncRNA, "
+"rRNA, tRNA, snRNA, snoRNA, piRNA, pre\\_miRNA, SRP\\_RNA, "
+"RNase\\_P\\_RNA, antisense\\_RNA, and more. Useful for browsing or "
+"discovering ncRNAs of a specific type, optionally filtered by species or "
+"keyword. Example: search for all human snoRNAs, or find piRNAs related to"
+" a specific gene."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:175 dc656bb1ae62404f836dad785d9095c9
+msgid ""
+"``query`` (string) (required) Search query: gene name, keyword, or "
+"accession. Use '\\*' for all entries of the specified RNA type."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:178 83b6a3c18dfa4188897d76aa1163d720
+msgid ""
+"``rna_type`` (string) (optional) RNA type filter: miRNA, lncRNA, rRNA, "
+"tRNA, snRNA, snoRNA, piRNA, pre\\_miRNA, SRP\\_RNA, RNase\\_P\\_RNA, "
+"antisense\\_RNA, ribozyme, etc."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:181 e8a856a8e32c4b9b8cc59d69aa1d955c
+msgid ""
+"``species`` (string) (optional) Species name filter (e.g., 'Homo "
+"sapiens'). Leave empty for all species."
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:201 f82da370d156422fb68ac9e4f04f4ec7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:203 5c7c046ae654410e9d9e8b2bbd257959
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/lncrna_tools.rst:204 a4562af2eede4a0a910cc5c78c647fc2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

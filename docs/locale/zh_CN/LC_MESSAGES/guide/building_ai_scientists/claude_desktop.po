@@ -7,556 +7,453 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../guide/building_ai_scientists/claude_desktop.rst:2
-#: 6bba29b05c634404ac566ed754b5275b
+#: 132f32de2b1d4bc9ae9a4e4e5716d236
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: ../../guide/building_ai_scientists/claude_desktop.rst:4
-#: adeaa9ce66f54a9cb0647790aa73fc71
-msgid "**Building AI Scientists with Claude Desktop App and ToolUniverse**"
-msgstr "**使用Claude Desktop App和ToolUniverse构建AI科学家**"
+#: b90784c2519c4ee58781ef38eafb434b
+msgid "`Download Claude Desktop <https://claude.ai/download>`_"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/claude_desktop.rst:5
+#: 6ecbeeec7c3f4d6eaf00b3c19a2f3a1b
+msgid ""
+"`Official MCP setup guide <https://modelcontextprotocol.io/docs/develop"
+"/connect-local-servers>`_"
+msgstr ""
 
 #: ../../guide/building_ai_scientists/claude_desktop.rst:7
-#: 4038f1f0f0b542259f63ec968fdd74df
-msgid "Overview"
-msgstr "概述"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:9
-#: f7a6cb31212d483295f81627df0ad9ed
-msgid ""
-"Claude Desktop Integration enables seamless connection between Claude "
-"Desktop App and ToolUniverse's scientific tools ecosystem through the Model "
-"Context Protocol (MCP). This approach provides a user-friendly interface for"
-" scientific research while leveraging Claude's advanced reasoning "
-"capabilities and ToolUniverse's comprehensive scientific tools."
+#: 462d9070b2d4495baedc0593f1e0501b
+msgid "To set up ToolUniverse, open Claude Desktop and run:"
 msgstr ""
-"Claude 桌面集成通过模型上下文协议（MCP）实现 Claude 桌面应用与 ToolUniverse "
-"科学工具生态系统的无缝连接。该方案为科学研究提供了用户友好的界面，同时充分利用了 Claude 的先进推理能力和 ToolUniverse "
-"的全面科学工具。"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:29
-#: 0a2e0f5c2d4545ac8581dd5280a5af33
-msgid "**Benefits of Claude Desktop Integration**:"
-msgstr "**Claude 桌面集成的优势**："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:31
-#: d5b04f8f8a384f9b9ef2c0d6d27d0d6a
-msgid ""
-"**Intuitive Interface**: Natural conversation-based interaction with "
-"scientific tools"
-msgstr "**直观界面**：基于自然对话的科学工具交互方式"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:32
-#: a13df11900ea48af86650f3ed7dd5220
-msgid ""
-"**Advanced Reasoning**: Claude's sophisticated reasoning for complex "
-"scientific problems"
-msgstr "**高级推理**：Claude 对复杂科学问题的高级推理能力"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:33
-#: a033a31860f444dd8d0c8bcb12c1c46b
-msgid ""
-"**Comprehensive Tools**: Access to 1000+ scientific tools across multiple "
-"domains"
-msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:34
-#: 5de6993dc2b54aea8a5aca5eae422f74
-msgid ""
-"**Real-time Execution**: Direct tool execution within Claude conversations"
-msgstr "**实时执行**：在 Claude 对话中直接执行工具"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:35
-#: e334a1c4412140e6859b85493f920934
-msgid ""
-"**Context Awareness**: Claude maintains context across multiple tool "
-"interactions"
-msgstr "**上下文感知**：Claude 在多次工具交互中保持上下文一致性"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:38
-#: dc15f27b44b0485eabd5815e6c4315d7
-msgid "Example Integration"
-msgstr "示例集成"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:40
-#: 57bc32daf2f047669e2fcee13270746b
-msgid ""
-"For a practical example of using ToolUniverse-MCP with Claude Desktop, see "
-"the following demonstration:"
-msgstr "有关在 Claude Desktop 中使用 ToolUniverse-MCP 的实际示例，请参见以下演示："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:42
-#: da136f8a44bc47d08e6737e6aa0e7aea
-msgid "Claude Desktop Integration Example"
-msgstr "Claude 桌面集成示例"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:48
-#: 66e43765321646ef8686c5e4f1848971
-msgid ""
-"**Image Source**: This example shows Claude Desktop using ToolUniverse tools"
-" for scientific research. To view the full interactive example, visit the "
-"`Claude MCP Integration Example "
-"<https://claude.ai/share/ab797b7f-6e6b-46f6-b1d5-5a790b90f42d>`_."
-msgstr ""
-"**图片来源**：本示例展示了 Claude Desktop 使用 ToolUniverse 工具进行科学研究。欲查看完整的交互式示例，请访问 "
-"`Claude MCP 集成示例 "
-"<https://claude.ai/share/ab797b7f-6e6b-46f6-b1d5-5a790b90f42d>`_。"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:51
-#: ade5702edc424c26a1bcde9877339345
-msgid "Prerequisites"
-msgstr "先决条件"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:53
-#: 5740eac8585b4693b589a76b216e5d38
-msgid "Before setting up Claude Desktop integration, ensure you have:"
-msgstr "在设置 Claude Desktop 集成之前，请确保您已具备："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:55
-#: 06206debe94a437b8ca4666a64903bf5
-msgid "**Claude Desktop App**: Installed and running on your system"
-msgstr "**Claude 桌面应用程序**：已安装并正在您的系统上运行"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:56
-#: b7e59fb05bd54e6bbb39f7320fe61df5
-msgid "**UV Package Manager**: For running the MCP server"
-msgstr "**UV 包管理器**：用于运行 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:59
-#: 8746e7a609b442efa289a9a934cbb7f1
-msgid "Installation and Setup"
-msgstr "安装与设置"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:62
-#: 78ec1397647d4600a9a9ac80af4062a4
-msgid "Step 1: Install ToolUniverse"
-msgstr "步骤 1：安装 ToolUniverse"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:64
-#: e29cb5ed915c4f88a06d9d661f593575
-msgid "Install ToolUniverse using pip (uv is recommended):"
-msgstr "使用 pip 安装 ToolUniverse（推荐使用 uv）："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:70
-#: ac18d901a92d499787c1b16458f0907f
-msgid "Verify installation:"
-msgstr "验证安装："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:77
-#: b08653e4be2a44b3bf82372631f21c01
-msgid "Step 2: Locate Claude Desktop Configuration"
-msgstr "步骤 2：定位 Claude 桌面配置"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:79
-#: 9aa6b79b515f4fa4a29dd5b5e4d14c8f
-msgid "Open Claude Desktop App and navigate to the configuration:"
-msgstr "打开 Claude 桌面应用并导航至配置页面："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:81
-#: f77d068416b94720aa11766f8e5b5c87
-msgid "**Open Claude Desktop App**"
-msgstr "**Open Claude 桌面应用程序**"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:82
-#: cede13f61e2a459595bc3bf3140a2290
-msgid "**Go to Settings** → **Developer** → **Edit Config**"
-msgstr "**进入设置** → **开发者** → **编辑配置**"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:83
-#: a3c6c102f0cf4e8f8e3eb4597128e1d2
-msgid ""
-"**Note the configuration file location** (typically in your user directory)"
-msgstr "**注意配置文件位置**（通常位于您的用户目录中）"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:85
-#: 25f7031987364e3ba1f8af929431b234
-msgid "The configuration file will be opened in your default text editor."
-msgstr "配置文件将使用您的默认文本编辑器打开。"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:88
-#: c3f1834bcef4404ba98b26d8ee0de004
-msgid "Step 3: Configure ToolUniverse MCP Server"
-msgstr "步骤3：配置ToolUniverse MCP服务器"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:90
-#: 0a6538dabc1b4a5a939cf5e9efe5f7ad
-msgid ""
-"Add the ToolUniverse MCP server configuration to your Claude Desktop config:"
-msgstr "将 ToolUniverse MCP 服务器配置添加到您的 Claude Desktop 配置中："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:108
-#: 414d886a905445328bfa73d5a66606ac
-msgid "**Important Configuration Notes**:"
-msgstr "**重要配置说明**："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:110
-#: e9bc5264e92b4b9c85ae817700eb2d6d
-msgid "Replace `/path/to/your/uv/environment` with your actual uv environment"
-msgstr "将 `/path/to/your/uv/environment` 替换为您实际的 uv 环境路径"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:111
-#: 9c2dea0a48ca48c98efbd83500e0ecb9
-msgid "Use absolute paths for better reliability"
-msgstr "使用绝对路径以提高可靠性"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:113
-#: 6f9fbdddcfd84a118e0cfce30328e4a1
-msgid "**Example Configuration**:"
-msgstr "**示例配置**:"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:132
-#: 1513d445f8574665b1f52b8e49816976
-msgid "Step 4: Restart Claude Desktop"
-msgstr "步骤 4：重启 Claude 桌面"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:134
-#: b8a1b504bc97461ba12652894922548f
-msgid "After saving the configuration:"
-msgstr "保存配置后："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:136
-#: 27ac64a4f58147f2955e24a9b623936d
-msgid "**Completely quit Claude Desktop App**"
-msgstr "**完全退出Claude桌面应用程序**"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:137
-#: 5a90b06928134edb970de653216db9eb
-msgid "**Restart Claude Desktop App**"
-msgstr "**重新启动Claude桌面应用程序**"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:138
-#: 0625f8314c3b4576ae3bfe9beaa919e7
-msgid ""
-"**Verify the MCP server is loaded** (check the developer console if needed)"
-msgstr "**确认 MCP 服务器已加载**（如有需要，可检查开发者控制台）"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:141
-#: 8f6f926a143744e39fc91d1b523d1833
-msgid "Step 5: Verify Integration"
-msgstr "步骤5：验证集成"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:143
-#: 81d01ab21e334e9c9b6660326f5a3092
-msgid "Test the integration by asking Claude to:"
-msgstr "通过要求Claude执行以下操作来测试集成："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:145
-#: bae45d40d556485691424183ccbb88cb
-msgid ""
-"**List available tools**: - \"What scientific tools are available?\" - "
-"\"Show me the tools for drug discovery\""
-msgstr ""
-"**列出可用工具**：  \n"
-"- \"有哪些科学工具可用？\"  \n"
-"- \"显示用于药物研发的工具\""
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:149
-#: 2a4fbfe432d04fcfadce6f9ddc2d44b4
-msgid ""
-"**Execute a simple tool**: - \"Search for information about Alzheimer's "
-"disease\" - \"Find protein information for BRCA1\""
-msgstr ""
-"**执行一个简单工具**：  \n"
-"- “搜索关于阿尔茨海默病的信息”  \n"
-"- “查找BRCA1蛋白信息”"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:153
-#: c4e7fcad5b4643fd97dc82c4ecf55e3f
-msgid ""
-"**Perform complex research**: - \"Analyze the safety profile of aspirin\" - "
-"\"Find potential drug targets for diabetes\""
-msgstr ""
-"**执行复杂研究**：  \n"
-"- 「分析阿司匹林的安全性特征」  \n"
-"- 「寻找糖尿病的潜在药物靶点」"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:158
-#: 08bb05d79d03460d98b2041696a6ea14
-msgid "Scientific Research Capabilities"
-msgstr "科学研究能力"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:161
-#: ec174f0a62634270ac95e153bcbabc15
-msgid "Drug Discovery and Development"
-msgstr "药物发现与开发"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:163
-#: 868bfb39d9bc4af5bf5a873f9c863ef4
-msgid ""
-"Claude Desktop with ToolUniverse enables comprehensive drug discovery "
-"workflows:"
-msgstr "Claude Desktop 与 ToolUniverse 一同支持全面的药物发现工作流程："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:165
-#: eb1ffb8432314b8984db229cb628089d
-msgid ""
-"**Target Identification**: - Disease analysis and EFO ID lookup - Target "
-"discovery and validation - Literature-based target assessment"
-msgstr ""
-"**目标识别**：  \n"
-"- 疾病分析与EFO ID查询  \n"
-"- 靶点发现与验证  \n"
-"- 基于文献的靶点评估"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:170
-#: f4c42fd5a3d0411f823bc9e39e03d7a7
-msgid ""
-"**Drug Analysis**: - Drug information retrieval from multiple databases - "
-"Safety profile analysis - Drug interaction checking - Clinical trial data "
-"access"
-msgstr ""
-"**药物分析**：  \n"
-"- 从多个数据库中检索药物信息  \n"
-"- 安全性分析  \n"
-"- 药物相互作用检查  \n"
-"- 临床试验数据访问"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:176
-#: ../../guide/building_ai_scientists/claude_desktop.rst:209
-#: ../../guide/building_ai_scientists/claude_desktop.rst:242
-#: ../../guide/building_ai_scientists/claude_desktop.rst:275
-#: 2684e5882dbc43e1ba33bfdf345bb7af 6dc766ac552748099c132e4dad7f59bf
-#: aa9222ee020a4af2817acda2cd049d22 af7db315775c4594a61cb3df6a1e7a59
-msgid "**Example Workflow**:"
-msgstr ""
-"**示例工作流程**：\n"
-"\n"
-"上下文：文档"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:193
-#: 0844dc2be7554f53acb3cec13d6d9848
-msgid "Genomics and Molecular Biology"
-msgstr "基因组学与分子生物学"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:195
-#: 2acb90869da84234a757dd8ecaad2bc3
-msgid "Access comprehensive genomics tools for molecular research:"
-msgstr "访问全面的基因组学工具以支持分子研究："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:197
-#: e5b8221087fd450887a93c465123eb2c
-msgid ""
-"**Gene Analysis**: - Gene information from UniProt - Protein structure "
-"analysis - Expression pattern analysis - Pathway involvement"
-msgstr ""
-"**基因分析**：  \n"
-"- 来自 UniProt 的基因信息  \n"
-"- 蛋白质结构分析  \n"
-"- 表达模式分析  \n"
-"- 途径参与分析"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:203
-#: be37ff620e504f8199617eccd73100e6
-msgid ""
-"**Molecular Interactions**: - Protein-protein interactions - Drug-target "
-"interactions - Pathway analysis - Functional annotation"
-msgstr ""
-"**分子相互作用**：  \n"
-"- 蛋白质-蛋白质相互作用  \n"
-"- 药物-靶点相互作用  \n"
-"- 通路分析  \n"
-"- 功能注释"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:226
-#: 5fd176be15bf42e882166222a7f3660c
-msgid "Literature Research and Analysis"
-msgstr "文献调研与分析"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:228
-#: cbe5ef70034748719b05b2fb4884f90c
-msgid "Comprehensive literature search and analysis capabilities:"
-msgstr "全面的文献检索与分析能力："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:230
-#: 5f018a09b6e64056b7321b6f5940d287
-msgid ""
-"**Literature Search**: - PubMed searches - Semantic Scholar integration - "
-"Europe PMC access - Citation analysis"
-msgstr ""
-"**文献检索**：  \n"
-"- PubMed 检索  \n"
-"- Semantic Scholar 集成  \n"
-"- Europe PMC 访问  \n"
-"- 引文分析"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:236
-#: 726f2c08968d47d1b970822a4a378c4a
-msgid ""
-"**Content Analysis**: - Abstract summarization - Key finding extraction - "
-"Trend analysis - Gap identification"
-msgstr ""
-"**内容分析**：  \n"
-"- 摘要总结  \n"
-"- 关键发现提取  \n"
-"- 趋势分析  \n"
-"- 差距识别"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:259
-#: db15231d0c8c4f1890aa127021aebc9e
-msgid "Clinical Research and Trials"
-msgstr "临床研究与试验"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:261
-#: a669178f406146fdb87a20b2624f67e7
-msgid "Access clinical trial data and regulatory information:"
-msgstr "访问临床试验数据和监管信息："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:263
-#: f339bfb9cf5543cd807ec10032f1aa84
-msgid ""
-"**Clinical Trials**: - ClinicalTrials.gov searches - Trial status and "
-"results - Patient population analysis - Outcome assessment"
-msgstr ""
-"**临床试验**：  \n"
-"- ClinicalTrials.gov 查询  \n"
-"- 试验状态及结果  \n"
-"- 患者群体分析  \n"
-"- 结局评估"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:269
-#: 60ee200d88dc42e596f2a849d937bac4
-msgid ""
-"**Regulatory Information**: - FDA drug approvals - Safety warnings - "
-"Labeling information - Adverse event reports"
-msgstr ""
-"**法规信息**：  \n"
-"- FDA 药品批准  \n"
-"- 安全警示  \n"
-"- 标签信息  \n"
-"- 不良事件报告"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:292
-#: 5eb72bc60c0346b690b5a935c02993e0
-msgid "Drug Discovery Workflow"
-msgstr "药物发现工作流程"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:294
-#: 73cb22e457c84e48b94e9b482f4a422c
-msgid "Complete drug discovery workflow using Claude Desktop:"
-msgstr "使用 Claude Desktop 完成药物发现全流程："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:328
-#: 84603ca6ee524bc3bd3a9a29e5b0750d
-msgid "Genomics Research Workflow"
-msgstr "基因组学研究工作流程"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:330
-#: 2416859193bb4fa2b6b6c674928f14f4
-msgid "Comprehensive genomics analysis workflow:"
-msgstr "综合基因组学分析工作流程："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:364
-#: e68dd6c0cd1942589e6961022c7da839
-msgid "Settings and Configuration"
-msgstr "设置与配置"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:367
-#: 6deb5f1c29c440e8b6fec86828def83e
-msgid "Tool Selection Strategies"
-msgstr "工具选择策略"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:370
-#: 353123e39d3540cf8c8075eaf4c61615
-msgid ""
-"**Selective Tool Loading**: - Load only relevant tools for specific research"
-" domains - Reduce context window usage - Improve response times"
-msgstr ""
-"**选择性工具加载**：  \n"
-"- 仅加载特定研究领域相关的工具  \n"
-"- 减少上下文窗口的使用  \n"
-"- 提升响应速度"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:375
-#: 32fac55ba8b447e7b140fabd8d3cbd50
-msgid "**Example Tool Selection**:"
-msgstr "**示例工具选择**："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:395
-#: 74f34d5f33f8463f96dc5caf562e4535
-msgid "**Custom Tool Sets**"
-msgstr "**自定义工具集**"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:397
-#: 1fd8f76edc0c496f8dbd05733f48021f
-msgid "Create custom tool sets for specific research domains:"
-msgstr "为特定研究领域创建自定义工具集："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:429
-#: 2495aa6fd9ec45fbbe7c419f01eecb44
-msgid "Multiple MCP Servers"
-msgstr "多个 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:431
-#: 8b07c8c9bf7d477295eba4a6a740385e
-msgid "Run multiple ToolUniverse instances for different purposes:"
-msgstr "运行多个 ToolUniverse 实例以满足不同需求："
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:464
-#: 7f65abba42f647a3afa691b44856e632
-msgid "Troubleshooting"
-msgstr "故障排除"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:467
-#: eb860ff4960b4644b63562582d70f8bc
-msgid "Common Issues and Solutions"
-msgstr "常见问题及解决方案"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:469
-#: e8cb84b83ed2463398d1bc461e02163f
-msgid ""
-"**MCP Server Not Loading**: - Verify uv environment - Check UV package "
-"manager installation - Ensure proper JSON syntax in configuration - Check "
-"Claude Desktop logs for errors"
-msgstr ""
-"**MCP 服务器未加载**：  \n"
-"- 验证 uv 环境  \n"
-"- 检查 UV 包管理器安装情况  \n"
-"- 确保配置中的 JSON 语法正确  \n"
-"- 检查 Claude Desktop 日志中的错误信息"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:475
-#: bd225d54f1194d81a5be2b5432f4a7f8
-msgid ""
-"**Too Many Tools Loaded**: - Use selective tool loading - Reduce the number "
-"of enabled tools - Implement tool filtering"
-msgstr ""
-"**加载的工具过多**：  \n"
-"- 使用选择性加载工具  \n"
-"- 减少启用的工具数量  \n"
-"- 实施工具过滤"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:480
-#: 9987a0467d36401f8e95baa1fc703109
-msgid ""
-"**Performance Issues**: - Implement caching strategies - Use selective tool "
-"loading - Optimize query patterns"
-msgstr ""
-"**性能问题**：  \n"
-"- 实施缓存策略  \n"
-"- 使用选择性工具加载  \n"
-"- 优化查询模式"
-
-#: ../../guide/building_ai_scientists/claude_desktop.rst:485
-#: 902ebcd4b65b49b6a396d0f8622334cb
-msgid ""
-"**Connection Issues**: - Verify network connectivity - Check firewall "
-"settings - Ensure proper MCP server configuration"
-msgstr ""
-"**连接问题**：  \n"
-"- 验证网络连接  \n"
-"- 检查防火墙设置  \n"
-"- 确保 MCP 服务器配置正确"
+
+#~ msgid "**Building AI Scientists with Claude Desktop App and ToolUniverse**"
+#~ msgstr "**使用Claude Desktop App和ToolUniverse构建AI科学家**"
+
+#~ msgid "Overview"
+#~ msgstr "概述"
+
+#~ msgid ""
+#~ "Claude Desktop Integration enables seamless"
+#~ " connection between Claude Desktop App "
+#~ "and ToolUniverse's scientific tools ecosystem"
+#~ " through the Model Context Protocol "
+#~ "(MCP). This approach provides a user-"
+#~ "friendly interface for scientific research "
+#~ "while leveraging Claude's advanced reasoning"
+#~ " capabilities and ToolUniverse's comprehensive"
+#~ " scientific tools."
+#~ msgstr ""
+#~ "Claude 桌面集成通过模型上下文协议（MCP）实现 Claude 桌面应用与 "
+#~ "ToolUniverse 科学工具生态系统的无缝连接。该方案为科学研究提供了用户友好的界面，同时充分利用了 "
+#~ "Claude 的先进推理能力和 ToolUniverse 的全面科学工具。"
+
+#~ msgid "**Benefits of Claude Desktop Integration**:"
+#~ msgstr "**Claude 桌面集成的优势**："
+
+#~ msgid ""
+#~ "**Intuitive Interface**: Natural conversation-"
+#~ "based interaction with scientific tools"
+#~ msgstr "**直观界面**：基于自然对话的科学工具交互方式"
+
+#~ msgid ""
+#~ "**Advanced Reasoning**: Claude's sophisticated "
+#~ "reasoning for complex scientific problems"
+#~ msgstr "**高级推理**：Claude 对复杂科学问题的高级推理能力"
+
+#~ msgid ""
+#~ "**Comprehensive Tools**: Access to 1000+ "
+#~ "scientific tools across multiple domains"
+#~ msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
+
+#~ msgid ""
+#~ "**Real-time Execution**: Direct tool "
+#~ "execution within Claude conversations"
+#~ msgstr "**实时执行**：在 Claude 对话中直接执行工具"
+
+#~ msgid ""
+#~ "**Context Awareness**: Claude maintains "
+#~ "context across multiple tool interactions"
+#~ msgstr "**上下文感知**：Claude 在多次工具交互中保持上下文一致性"
+
+#~ msgid "Example Integration"
+#~ msgstr "示例集成"
+
+#~ msgid ""
+#~ "For a practical example of using "
+#~ "ToolUniverse-MCP with Claude Desktop, see"
+#~ " the following demonstration:"
+#~ msgstr "有关在 Claude Desktop 中使用 ToolUniverse-MCP 的实际示例，请参见以下演示："
+
+#~ msgid "Claude Desktop Integration Example"
+#~ msgstr "Claude 桌面集成示例"
+
+#~ msgid ""
+#~ "**Image Source**: This example shows "
+#~ "Claude Desktop using ToolUniverse tools "
+#~ "for scientific research. To view the "
+#~ "full interactive example, visit the "
+#~ "`Claude MCP Integration Example "
+#~ "<https://claude.ai/share/ab797b7f-6e6b-"
+#~ "46f6-b1d5-5a790b90f42d>`_."
+#~ msgstr ""
+#~ "**图片来源**：本示例展示了 Claude Desktop 使用 ToolUniverse"
+#~ " 工具进行科学研究。欲查看完整的交互式示例，请访问 `Claude MCP 集成示例 "
+#~ "<https://claude.ai/share/ab797b7f-6e6b-"
+#~ "46f6-b1d5-5a790b90f42d>`_。"
+
+#~ msgid "Prerequisites"
+#~ msgstr "先决条件"
+
+#~ msgid "Before setting up Claude Desktop integration, ensure you have:"
+#~ msgstr "在设置 Claude Desktop 集成之前，请确保您已具备："
+
+#~ msgid "**Claude Desktop App**: Installed and running on your system"
+#~ msgstr "**Claude 桌面应用程序**：已安装并正在您的系统上运行"
+
+#~ msgid "**UV Package Manager**: For running the MCP server"
+#~ msgstr "**UV 包管理器**：用于运行 MCP 服务器"
+
+#~ msgid "Installation and Setup"
+#~ msgstr "安装与设置"
+
+#~ msgid "Step 1: Install ToolUniverse"
+#~ msgstr "步骤 1：安装 ToolUniverse"
+
+#~ msgid "Install ToolUniverse using pip (uv is recommended):"
+#~ msgstr "使用 pip 安装 ToolUniverse（推荐使用 uv）："
+
+#~ msgid "Verify installation:"
+#~ msgstr "验证安装："
+
+#~ msgid "Step 2: Locate Claude Desktop Configuration"
+#~ msgstr "步骤 2：定位 Claude 桌面配置"
+
+#~ msgid "Open Claude Desktop App and navigate to the configuration:"
+#~ msgstr "打开 Claude 桌面应用并导航至配置页面："
+
+#~ msgid "**Open Claude Desktop App**"
+#~ msgstr "**Open Claude 桌面应用程序**"
+
+#~ msgid "**Go to Settings** → **Developer** → **Edit Config**"
+#~ msgstr "**进入设置** → **开发者** → **编辑配置**"
+
+#~ msgid ""
+#~ "**Note the configuration file location** "
+#~ "(typically in your user directory)"
+#~ msgstr "**注意配置文件位置**（通常位于您的用户目录中）"
+
+#~ msgid "The configuration file will be opened in your default text editor."
+#~ msgstr "配置文件将使用您的默认文本编辑器打开。"
+
+#~ msgid "Step 3: Configure ToolUniverse MCP Server"
+#~ msgstr "步骤3：配置ToolUniverse MCP服务器"
+
+#~ msgid ""
+#~ "Add the ToolUniverse MCP server "
+#~ "configuration to your Claude Desktop "
+#~ "config:"
+#~ msgstr "将 ToolUniverse MCP 服务器配置添加到您的 Claude Desktop 配置中："
+
+#~ msgid "**Important Configuration Notes**:"
+#~ msgstr "**重要配置说明**："
+
+#~ msgid "Replace `/path/to/your/uv/environment` with your actual uv environment"
+#~ msgstr "将 `/path/to/your/uv/environment` 替换为您实际的 uv 环境路径"
+
+#~ msgid "Use absolute paths for better reliability"
+#~ msgstr "使用绝对路径以提高可靠性"
+
+#~ msgid "**Example Configuration**:"
+#~ msgstr "**示例配置**:"
+
+#~ msgid "Step 4: Restart Claude Desktop"
+#~ msgstr "步骤 4：重启 Claude 桌面"
+
+#~ msgid "After saving the configuration:"
+#~ msgstr "保存配置后："
+
+#~ msgid "**Completely quit Claude Desktop App**"
+#~ msgstr "**完全退出Claude桌面应用程序**"
+
+#~ msgid "**Restart Claude Desktop App**"
+#~ msgstr "**重新启动Claude桌面应用程序**"
+
+#~ msgid ""
+#~ "**Verify the MCP server is loaded** "
+#~ "(check the developer console if needed)"
+#~ msgstr "**确认 MCP 服务器已加载**（如有需要，可检查开发者控制台）"
+
+#~ msgid "Step 5: Verify Integration"
+#~ msgstr "步骤5：验证集成"
+
+#~ msgid "Test the integration by asking Claude to:"
+#~ msgstr "通过要求Claude执行以下操作来测试集成："
+
+#~ msgid ""
+#~ "**List available tools**: - \"What "
+#~ "scientific tools are available?\" - "
+#~ "\"Show me the tools for drug "
+#~ "discovery\""
+#~ msgstr ""
+#~ "**列出可用工具**：  \n"
+#~ "- \"有哪些科学工具可用？\"  \n"
+#~ "- \"显示用于药物研发的工具\""
+
+#~ msgid ""
+#~ "**Execute a simple tool**: - \"Search"
+#~ " for information about Alzheimer's "
+#~ "disease\" - \"Find protein information "
+#~ "for BRCA1\""
+#~ msgstr ""
+#~ "**执行一个简单工具**：  \n"
+#~ "- “搜索关于阿尔茨海默病的信息”  \n"
+#~ "- “查找BRCA1蛋白信息”"
+
+#~ msgid ""
+#~ "**Perform complex research**: - \"Analyze "
+#~ "the safety profile of aspirin\" - "
+#~ "\"Find potential drug targets for "
+#~ "diabetes\""
+#~ msgstr ""
+#~ "**执行复杂研究**：  \n"
+#~ "- 「分析阿司匹林的安全性特征」  \n"
+#~ "- 「寻找糖尿病的潜在药物靶点」"
+
+#~ msgid "Scientific Research Capabilities"
+#~ msgstr "科学研究能力"
+
+#~ msgid "Drug Discovery and Development"
+#~ msgstr "药物发现与开发"
+
+#~ msgid ""
+#~ "Claude Desktop with ToolUniverse enables "
+#~ "comprehensive drug discovery workflows:"
+#~ msgstr "Claude Desktop 与 ToolUniverse 一同支持全面的药物发现工作流程："
+
+#~ msgid ""
+#~ "**Target Identification**: - Disease analysis"
+#~ " and EFO ID lookup - Target "
+#~ "discovery and validation - Literature-"
+#~ "based target assessment"
+#~ msgstr ""
+#~ "**目标识别**：  \n"
+#~ "- 疾病分析与EFO ID查询  \n"
+#~ "- 靶点发现与验证  \n"
+#~ "- 基于文献的靶点评估"
+
+#~ msgid ""
+#~ "**Drug Analysis**: - Drug information "
+#~ "retrieval from multiple databases - "
+#~ "Safety profile analysis - Drug "
+#~ "interaction checking - Clinical trial "
+#~ "data access"
+#~ msgstr ""
+#~ "**药物分析**：  \n"
+#~ "- 从多个数据库中检索药物信息  \n"
+#~ "- 安全性分析  \n"
+#~ "- 药物相互作用检查  \n"
+#~ "- 临床试验数据访问"
+
+#~ msgid "**Example Workflow**:"
+#~ msgstr ""
+#~ "**示例工作流程**：\n"
+#~ "\n"
+#~ "上下文：文档"
+
+#~ msgid "Genomics and Molecular Biology"
+#~ msgstr "基因组学与分子生物学"
+
+#~ msgid "Access comprehensive genomics tools for molecular research:"
+#~ msgstr "访问全面的基因组学工具以支持分子研究："
+
+#~ msgid ""
+#~ "**Gene Analysis**: - Gene information "
+#~ "from UniProt - Protein structure "
+#~ "analysis - Expression pattern analysis -"
+#~ " Pathway involvement"
+#~ msgstr ""
+#~ "**基因分析**：  \n"
+#~ "- 来自 UniProt 的基因信息  \n"
+#~ "- 蛋白质结构分析  \n"
+#~ "- 表达模式分析  \n"
+#~ "- 途径参与分析"
+
+#~ msgid ""
+#~ "**Molecular Interactions**: - Protein-protein"
+#~ " interactions - Drug-target interactions"
+#~ " - Pathway analysis - Functional "
+#~ "annotation"
+#~ msgstr ""
+#~ "**分子相互作用**：  \n"
+#~ "- 蛋白质-蛋白质相互作用  \n"
+#~ "- 药物-靶点相互作用  \n"
+#~ "- 通路分析  \n"
+#~ "- 功能注释"
+
+#~ msgid "Literature Research and Analysis"
+#~ msgstr "文献调研与分析"
+
+#~ msgid "Comprehensive literature search and analysis capabilities:"
+#~ msgstr "全面的文献检索与分析能力："
+
+#~ msgid ""
+#~ "**Literature Search**: - PubMed searches "
+#~ "- Semantic Scholar integration - Europe"
+#~ " PMC access - Citation analysis"
+#~ msgstr ""
+#~ "**文献检索**：  \n"
+#~ "- PubMed 检索  \n"
+#~ "- Semantic Scholar 集成  \n"
+#~ "- Europe PMC 访问  \n"
+#~ "- 引文分析"
+
+#~ msgid ""
+#~ "**Content Analysis**: - Abstract summarization"
+#~ " - Key finding extraction - Trend "
+#~ "analysis - Gap identification"
+#~ msgstr ""
+#~ "**内容分析**：  \n"
+#~ "- 摘要总结  \n"
+#~ "- 关键发现提取  \n"
+#~ "- 趋势分析  \n"
+#~ "- 差距识别"
+
+#~ msgid "Clinical Research and Trials"
+#~ msgstr "临床研究与试验"
+
+#~ msgid "Access clinical trial data and regulatory information:"
+#~ msgstr "访问临床试验数据和监管信息："
+
+#~ msgid ""
+#~ "**Clinical Trials**: - ClinicalTrials.gov "
+#~ "searches - Trial status and results "
+#~ "- Patient population analysis - Outcome"
+#~ " assessment"
+#~ msgstr ""
+#~ "**临床试验**：  \n"
+#~ "- ClinicalTrials.gov 查询  \n"
+#~ "- 试验状态及结果  \n"
+#~ "- 患者群体分析  \n"
+#~ "- 结局评估"
+
+#~ msgid ""
+#~ "**Regulatory Information**: - FDA drug "
+#~ "approvals - Safety warnings - Labeling"
+#~ " information - Adverse event reports"
+#~ msgstr ""
+#~ "**法规信息**：  \n"
+#~ "- FDA 药品批准  \n"
+#~ "- 安全警示  \n"
+#~ "- 标签信息  \n"
+#~ "- 不良事件报告"
+
+#~ msgid "Drug Discovery Workflow"
+#~ msgstr "药物发现工作流程"
+
+#~ msgid "Complete drug discovery workflow using Claude Desktop:"
+#~ msgstr "使用 Claude Desktop 完成药物发现全流程："
+
+#~ msgid "Genomics Research Workflow"
+#~ msgstr "基因组学研究工作流程"
+
+#~ msgid "Comprehensive genomics analysis workflow:"
+#~ msgstr "综合基因组学分析工作流程："
+
+#~ msgid "Settings and Configuration"
+#~ msgstr "设置与配置"
+
+#~ msgid "Tool Selection Strategies"
+#~ msgstr "工具选择策略"
+
+#~ msgid ""
+#~ "**Selective Tool Loading**: - Load only"
+#~ " relevant tools for specific research "
+#~ "domains - Reduce context window usage"
+#~ " - Improve response times"
+#~ msgstr ""
+#~ "**选择性工具加载**：  \n"
+#~ "- 仅加载特定研究领域相关的工具  \n"
+#~ "- 减少上下文窗口的使用  \n"
+#~ "- 提升响应速度"
+
+#~ msgid "**Example Tool Selection**:"
+#~ msgstr "**示例工具选择**："
+
+#~ msgid "**Custom Tool Sets**"
+#~ msgstr "**自定义工具集**"
+
+#~ msgid "Create custom tool sets for specific research domains:"
+#~ msgstr "为特定研究领域创建自定义工具集："
+
+#~ msgid "Multiple MCP Servers"
+#~ msgstr "多个 MCP 服务器"
+
+#~ msgid "Run multiple ToolUniverse instances for different purposes:"
+#~ msgstr "运行多个 ToolUniverse 实例以满足不同需求："
+
+#~ msgid "Troubleshooting"
+#~ msgstr "故障排除"
+
+#~ msgid "Common Issues and Solutions"
+#~ msgstr "常见问题及解决方案"
+
+#~ msgid ""
+#~ "**MCP Server Not Loading**: - Verify "
+#~ "uv environment - Check UV package "
+#~ "manager installation - Ensure proper "
+#~ "JSON syntax in configuration - Check "
+#~ "Claude Desktop logs for errors"
+#~ msgstr ""
+#~ "**MCP 服务器未加载**：  \n"
+#~ "- 验证 uv 环境  \n"
+#~ "- 检查 UV 包管理器安装情况  \n"
+#~ "- 确保配置中的 JSON 语法正确  \n"
+#~ "- 检查 Claude Desktop 日志中的错误信息"
+
+#~ msgid ""
+#~ "**Too Many Tools Loaded**: - Use "
+#~ "selective tool loading - Reduce the "
+#~ "number of enabled tools - Implement "
+#~ "tool filtering"
+#~ msgstr ""
+#~ "**加载的工具过多**：  \n"
+#~ "- 使用选择性加载工具  \n"
+#~ "- 减少启用的工具数量  \n"
+#~ "- 实施工具过滤"
+
+#~ msgid ""
+#~ "**Performance Issues**: - Implement caching"
+#~ " strategies - Use selective tool "
+#~ "loading - Optimize query patterns"
+#~ msgstr ""
+#~ "**性能问题**：  \n"
+#~ "- 实施缓存策略  \n"
+#~ "- 使用选择性工具加载  \n"
+#~ "- 优化查询模式"
+
+#~ msgid ""
+#~ "**Connection Issues**: - Verify network "
+#~ "connectivity - Check firewall settings -"
+#~ " Ensure proper MCP server configuration"
+#~ msgstr ""
+#~ "**连接问题**：  \n"
+#~ "- 验证网络连接  \n"
+#~ "- 检查防火墙设置  \n"
+#~ "- 确保 MCP 服务器配置正确"
+

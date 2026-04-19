@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/cosmic_tools.rst:10 47ce59893dbc4d719d45955bd8c6e86c
+msgid "Cosmic Tools"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:12 163ed4a65e4443a09a1db93f7833d4d1
+msgid ""
+"**Configuration File**: ``cosmic_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:16 f3516a8526dd4c12af5458bbb42e6a65
+msgid ""
+"This page contains all tools defined in the ``cosmic_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:19 823f3c7aac7b447bb71b55c1ea780464
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:22 8d03a67a3ea54864bb8bd46972e9229d
+msgid "**COSMIC_get_mutations_by_gene** (Type: COSMICTool)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:24 5ad3d06636404b578d86a9a65a1f3a98
+msgid ""
+"Get all somatic mutations for a specific gene from COSMIC database. "
+"Returns comprehensive mutatio..."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst 2d71dbf48d5a4a028f5d7a189a9bff4d
+msgid "COSMIC_get_mutations_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:28 ../../tools/cosmic_tools.rst:70
+#: 2ee3f6c7969e42bcb19a8093f66baf04 ad56004943a747da91cc1ae15711aadd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:30 11561c43a17947d989dc613987527f19
+msgid "**Name**: ``COSMIC_get_mutations_by_gene``"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:31 ../../tools/cosmic_tools.rst:73
+#: 18a9d0dbacfa42e6ab7c8d463b0bc4cb 20d75e55a439458fbc3a85a1e724c6c3
+msgid "**Type**: ``COSMICTool``"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:32 0b4fd31002b4486095e64027ad827f83
+msgid ""
+"**Description**: Get all somatic mutations for a specific gene from "
+"COSMIC database. Returns comprehensive mutation data for a gene symbol "
+"including CDS changes, amino acid changes, cancer types, and genomic "
+"positions. Useful for exploring the mutational landscape of cancer genes "
+"like BRAF, TP53, EGFR, KRAS, etc."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:34 ../../tools/cosmic_tools.rst:76
+#: 22cc675393b4485991aaa93a8b2da5db 35993966cdbc41cfa38c59749e703c04
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:36 36a9017b85a74c689aaa35e26300e286
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_by\\_gene)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:39 5bd33bdfe4fe45b79dcb17fbe8cb093b
+msgid ""
+"``gene`` (string) (optional) Gene symbol (e.g., BRAF, TP53, EGFR, KRAS, "
+"PIK3CA). Alias: gene\\_name also accepted."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:42 eeaa4dbc7d17423493f5b4ba51d86568
+msgid ""
+"``gene_name`` (string) (optional) Alias for gene parameter. Gene symbol "
+"(e.g., FLT3, BRAF, TP53)."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:45 1761e5803f2d4180acd51f5abd9b0be2
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of mutations to "
+"return (default: 100, max: 500)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:48 ../../tools/cosmic_tools.rst:90
+#: 4c3c1541023541d4945e7eab5df6fc86 fedf094610394fb496b0fea874cab16a
+msgid ""
+"``genome_build`` (integer) (optional) Genome build version: 37 "
+"(GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:51 ../../tools/cosmic_tools.rst:93
+#: 7baba03baef841c4a41be014690db643 82f2fe9b8c024acfbb4f36880b091f10
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:64 e9083c1d8ab440c98405dc4d51fbfc0c
+msgid "**COSMIC_search_mutations** (Type: COSMICTool)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:66 337737f3b84d4de8840bc739e98bdf6a
+msgid ""
+"Search COSMIC database for somatic mutations in cancer. COSMIC is the "
+"world's largest expert-cura..."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst 1ab1a83655dc4fba89e66d07b31556c4
+msgid "COSMIC_search_mutations tool specification"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:72 bfcfe3291cd748178eb471b9730d5cfe
+msgid "**Name**: ``COSMIC_search_mutations``"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:74 7c2f7e4fae0c4b0fb851b6b90039ccdc
+msgid ""
+"**Description**: Search COSMIC database for somatic mutations in cancer. "
+"COSMIC is the world's largest expert-curated database of somatic "
+"mutations in human cancer. Search by gene name, mutation ID, or mutation "
+"description. Returns mutation IDs, gene names, CDS changes, and amino "
+"acid changes. No authentication required."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:78 40323c907f5f4749a98a63ef9f1d5d08
+msgid "``operation`` (string) (optional) Operation type (fixed: search)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:81 773b478b65f242aeadf8f34959e02598
+msgid ""
+"``terms`` (string) (optional) Search query - gene name (e.g., BRAF), "
+"mutation (e.g., V600E), or mutation ID (e.g., COSM476). Aliases: query or"
+" gene also accepted."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:84 6247edacdbc64feaa7780a101a15b05f
+msgid ""
+"``query`` (string) (optional) Alias for terms. Search query - gene name, "
+"mutation, or COSMIC ID."
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:87 92fb81393a7547d28086bb4382841c54
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 500)"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:106 a75b9cff1f054de8832b7a61ea0226eb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:108 31cecf6370cc42888f24474012b6787b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/cosmic_tools.rst:109 1e90b8b9e2f846ce87f25dccd1f3d57a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

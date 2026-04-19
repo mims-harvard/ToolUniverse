@@ -1,0 +1,216 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gwas_sumstats_tools.rst:10 62d9553b74e642be91593bbd261c64d5
+msgid "Gwas Sumstats Tools"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:12 725c70c3bb994905a81e6833a9db1831
+msgid ""
+"**Configuration File**: ``gwas_sumstats_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:16 f20c06e2ff0f42e5ac24c60200a64c1d
+msgid ""
+"This page contains all tools defined in the ``gwas_sumstats_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:19 c6aee261319049ba824ba7019045aa1c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:22 63df7e7988c5400ea983b7334a393334
+msgid "**GWASSumStats_get_region_associations** (Type: GWASSumStatsTool)"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:24 bd4fd88d3bbe4753950d72dfcf076a17
+msgid ""
+"Query full GWAS summary statistics for variants in a chromosomal region. "
+"Returns variant-level as..."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst d2c116959d8640df9b082d5ca82e9f80
+msgid "GWASSumStats_get_region_associations tool specification"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:28
+#: ../../tools/gwas_sumstats_tools.rst:76
+#: ../../tools/gwas_sumstats_tools.rst:107 34e18952a77f49a39495644a9a6cb3c2
+#: b47b249dbf1a4cbdbce6d18219959611 cd3b1bd671ba493289baeaf122cd2842
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:30 cca2ad4ef0394211a303433e58c35505
+msgid "**Name**: ``GWASSumStats_get_region_associations``"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:31
+#: ../../tools/gwas_sumstats_tools.rst:79
+#: ../../tools/gwas_sumstats_tools.rst:110 d857f30244d641478baebb17425ed233
+#: db87646e469c4317b12732b985c1076b e41a921e6bb64d0e983b981454f75632
+msgid "**Type**: ``GWASSumStatsTool``"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:32 6d38622c18984e17aa1bf78242cc2c9f
+msgid ""
+"**Description**: Query full GWAS summary statistics for variants in a "
+"chromosomal region. Returns variant-level association data including "
+"p-values, effect sizes (beta/OR), allele frequencies, and study/trait "
+"information. Unlike gwas\\_search\\_associations (which returns curated "
+"top hits), this endpoint provides complete summary statistics from "
+"deposited studies. Filter by chromosome region, p-value threshold, and "
+"optionally by specific study."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:34
+#: ../../tools/gwas_sumstats_tools.rst:82
+#: ../../tools/gwas_sumstats_tools.rst:113 6e339ce693da47069b371cbe02cc38a4
+#: c6ef6a8d84334a69824b333e0c380df3 f26ba192284b484c93525aafcf73a3f1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:36 c287bc3c384e4224b1de9bc31bd02e1f
+msgid "``chromosome`` (integer) (required) Chromosome number (1-22, or 23 for X)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:39 4e19124b9abe4bcd9655f199057d7604
+msgid ""
+"``bp_lower`` (integer) (required) Start position of the region (GRCh38 "
+"coordinates)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:42 c738e144d8954ea899a1ed3b2b439fac
+msgid ""
+"``bp_upper`` (integer) (required) End position of the region (GRCh38 "
+"coordinates)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:45 c03c637199144ff7837b7ec0715c7d9e
+msgid ""
+"``p_upper`` (number, null) (optional) Maximum p-value threshold (default "
+"5e-8 for genome-wide significance). Use larger values like 0.001 to "
+"include suggestive hits."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:48 531c250b14c742b2a7fb25acb50fdfe4
+msgid ""
+"``study_accession`` (string, null) (optional) Filter by specific GWAS "
+"study accession (e.g., 'GCST002245'). Get study IDs from "
+"GWASSumStats\\_list\\_studies or GWASSumStats\\_get\\_trait\\_studies."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:51 d5298d21d1d84cc9aee8d7986efc1966
+msgid ""
+"``size`` (integer, null) (optional) Maximum number of variants to return "
+"(default 50, max 1000)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:54
+#: ../../tools/gwas_sumstats_tools.rst:87
+#: ../../tools/gwas_sumstats_tools.rst:118 4ca4a17fb0734c1487b7889481b160b2
+#: 6537439ce57b4c31a35dda2ee98053ad b51bc3d165fd499d89378755f520e774
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:70 2dc79abbf571499db9a91e0960d86ec3
+msgid "**GWASSumStats_get_trait_studies** (Type: GWASSumStatsTool)"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:72 d596321aae8c4c4f99486142a1f60f38
+msgid ""
+"Get GWAS studies with deposited summary statistics for a specific EFO "
+"trait. Returns study access..."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst dc230543c5b645778acbc261d8320219
+msgid "GWASSumStats_get_trait_studies tool specification"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:78 fae580be95544f88aeb88c61da75af6d
+msgid "**Name**: ``GWASSumStats_get_trait_studies``"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:80 41776ecbc7dc4d139353c4685b8048d7
+msgid ""
+"**Description**: Get GWAS studies with deposited summary statistics for a"
+" specific EFO trait. Returns study accession IDs for studies that have "
+"full variant-level summary statistics. Use EFO trait IDs like "
+"'EFO\\_0000249' (Alzheimer disease), 'EFO\\_0001645' (coronary heart "
+"disease), 'EFO\\_0000253' (asthma), 'EFO\\_0001359' (type 2 diabetes). "
+"Get EFO IDs from ols\\_search\\_efo\\_terms or gwas\\_search\\_studies."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:84 44063403957547bd84c322286bdbd1de
+msgid ""
+"``trait_id`` (string) (required) EFO trait ontology ID (e.g., "
+"'EFO\\_0000249' for Alzheimer disease, 'EFO\\_0001645' for coronary heart"
+" disease, 'EFO\\_0001359' for type 2 diabetes)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:101 0b0009b65ea844e686849b66442c5c72
+msgid "**GWASSumStats_list_studies** (Type: GWASSumStatsTool)"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:103 0adca52c1d0b4b33a8f09a64a6ea7749
+msgid ""
+"List GWAS studies that have deposited full summary statistics with the "
+"EBI GWAS Catalog. Unlike t..."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst d0aa08458a7b44249c534da6b7dc2256
+msgid "GWASSumStats_list_studies tool specification"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:109 aa7183c95e734db1b5cb7e0f25b1f3f9
+msgid "**Name**: ``GWASSumStats_list_studies``"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:111 c62cbe42b4a44feeabcdc8ee7eda4af1
+msgid ""
+"**Description**: List GWAS studies that have deposited full summary "
+"statistics with the EBI GWAS Catalog. Unlike the main GWAS Catalog (which"
+" stores curated top hits), studies listed here have complete variant-"
+"level summary statistics available for download and query. Returns study "
+"accession IDs that can be used as filters in "
+"GWASSumStats\\_get\\_region\\_associations."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:115 77db03a94b604729b08d23d181cb6f5b
+msgid ""
+"``size`` (integer, null) (optional) Number of studies to return (default "
+"20, max 100)."
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:131 8c0a5aca53c441a6919d7a9f41f69009
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:133 aa545174809f4604b9a0a18ad1c24bd8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gwas_sumstats_tools.rst:134 27eb9c7c686249619d6f5db581c1c2db
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

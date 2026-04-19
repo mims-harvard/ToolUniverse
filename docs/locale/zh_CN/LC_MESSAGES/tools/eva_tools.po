@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/eva_tools.rst:10 7c0261391b8f44f58015271a88fba4b4
+msgid "Eva Tools"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:12 8072233d93c94ea99d03d82b3ceddb05
+msgid ""
+"**Configuration File**: ``eva_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:16 0ae22707081f407bbe16f8b3af12912b
+msgid ""
+"This page contains all tools defined in the ``eva_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/eva_tools.rst:19 eb9ac52bcc674574b5bc514b15c219e7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:22 0bf421e2e4cc45cc995c2fd2d09af1b3
+msgid "**EVA_get_variants_by_gene** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:24 493cd48c9b79444a8f6c69a400ab387f
+msgid ""
+"Get genetic variants from the European Variation Archive (EVA) for a "
+"specific gene. EVA is hosted..."
+msgstr ""
+
+#: ../../tools/eva_tools.rst d70001a25f854de2818aec7893ba588f
+msgid "EVA_get_variants_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:28 ../../tools/eva_tools.rst:65
+#: ../../tools/eva_tools.rst:102 21b0105731f241f68b1e460357076161
+#: 552b0dcf14dd4c678f33190a318d8b41 5caf240a50c34ef7938f61f17d0bfd23
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:30 67a48309858a4a8a92e4cc16187aac38
+msgid "**Name**: ``EVA_get_variants_by_gene``"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:31 ../../tools/eva_tools.rst:68
+#: ../../tools/eva_tools.rst:105 441e27e4754f44c98f7fa8886f4ab4be
+#: a621d1b3e5d14dd6a9ce337572e6b4bc acc6000fa8664edaaf94f6d58d8f35e4
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:32 f2246944c130422d95047905683b5c90
+msgid ""
+"**Description**: Get genetic variants from the European Variation Archive"
+" (EVA) for a specific gene. EVA is hosted at EBI and aggregates variant "
+"data from multiple studies including ClinVar, dbSNP, and population "
+"sequencing projects. Returns variants with allele frequencies, study "
+"sources, and variant type. The gene name uses HGNC symbols (e.g., "
+"'BRCA1', 'TP53', 'EGFR'). Species defaults to human GRCh38."
+msgstr ""
+
+#: ../../tools/eva_tools.rst:34 ../../tools/eva_tools.rst:71
+#: ../../tools/eva_tools.rst:108 4b6920dcae3643f487214484f2a6747a
+#: 6d0c264442ff473e9023ae04afd332a3 f957094c9759498da1a414ebb818de16
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:36 9428b4e5bfc64788b13ff8ae424d7ce7
+msgid ""
+"``gene`` (string) (required) Gene symbol (HGNC format, e.g., 'BRCA1', "
+"'TP53', 'EGFR', 'BRCA2', 'APOE')"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:39 ../../tools/eva_tools.rst:110
+#: 014d5a7306c44e5a8fd492e82e3e3af5 58c17c05fe6c4dcc9ba1a84102520e70
+msgid ""
+"``species`` (string) (optional) Species and assembly (e.g., "
+"'hsapiens\\_grch38', 'hsapiens\\_grch37', 'mmusculus\\_grcm38')"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:42 60f576fa54f44acf975895d6b7a186dd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of variants to return "
+"(default 20, max ~1000)"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:45 ../../tools/eva_tools.rst:82
+#: ../../tools/eva_tools.rst:113 3d5afaae20604f1caa9fbd0f9cd95baf
+#: 559ace18015448c6a96d049abfcb331f ddaf5fa814964fec99fad502590b8f64
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:59 9c8cb3d52336401c9c63952ce8f110bc
+msgid "**EVA_get_variants_by_region** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:61 69c5503ca5d249cfab30c40082363213
+msgid ""
+"Get genetic variants from the European Variation Archive (EVA) within a "
+"specific genomic region. ..."
+msgstr ""
+
+#: ../../tools/eva_tools.rst db5359762daa4a33b94f29b363cb972c
+msgid "EVA_get_variants_by_region tool specification"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:67 d6cebb2592514385878117d736e1cc43
+msgid "**Name**: ``EVA_get_variants_by_region``"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:69 c61deea5f4464f58a19304ff5bf79739
+msgid ""
+"**Description**: Get genetic variants from the European Variation Archive"
+" (EVA) within a specific genomic region. Returns all known variants in "
+"the specified chromosomal coordinate range, including SNVs, indels, and "
+"structural variants with allele frequencies from multiple studies. Useful"
+" for scanning variant hotspots or checking variants in regulatory "
+"regions. The endpoint URL uses 'chromosome:start-end' format."
+msgstr ""
+
+#: ../../tools/eva_tools.rst:73 f47f3115fbff4a26a257ac902a42e92e
+msgid ""
+"``region`` (string) (required) Genomic region in 'chr:start-end' format "
+"(e.g., '17:41200000-41210000', '7:140753300-140753400', "
+"'19:44905700-44910000')"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:76 f98fb2cd7cb043718933ea6de463f211
+msgid ""
+"``species`` (string) (optional) Species and assembly (e.g., "
+"'hsapiens\\_grch38', 'hsapiens\\_grch37')"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:79 6f14a859f62e4c3b925c5dcb295753a5
+msgid "``limit`` (integer) (optional) Maximum number of variants to return"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:96 95b9b2391e4c4739a1c01046d3ba4cb5
+msgid "**EVA_list_studies** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:98 e0001d41543e4a18ad4c0fcbd7c279ca
+msgid ""
+"List all variant studies available in the European Variation Archive "
+"(EVA) for a given species. R..."
+msgstr ""
+
+#: ../../tools/eva_tools.rst 5de50bb9af9d4fbc99fead85e9de3909
+msgid "EVA_list_studies tool specification"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:104 8fff49db9ddf4071a80ce68c5a053a88
+msgid "**Name**: ``EVA_list_studies``"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:106 3c4f2407eb1f4ba19f340b7e75943dd0
+msgid ""
+"**Description**: List all variant studies available in the European "
+"Variation Archive (EVA) for a given species. Returns study accessions "
+"(e.g., PRJEB84021) that have submitted variant data. Useful for "
+"discovering available datasets before querying variants. Each study "
+"typically corresponds to a population sequencing project or variant "
+"calling pipeline."
+msgstr ""
+
+#: ../../tools/eva_tools.rst:126 af8447bc47a24c759680143d15e36856
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:128 6450e5d73e9d40eb80a9c1e2a5c0ee0f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/eva_tools.rst:129 3cb81d5a2d3c46ec97aa83cf5129a4ff
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

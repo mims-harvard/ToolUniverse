@@ -1,0 +1,315 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/epidemiology_tools.rst:10 94ca223601a8413bba8f15eaaa74a3a8
+msgid "Epidemiology Tools"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:12 bc7fc3f2027a4f3b9f8e9a339565ede2
+msgid ""
+"**Configuration File**: ``epidemiology_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:16 cb74e5f1e6e9465696407758f8117d6d
+msgid ""
+"This page contains all tools defined in the ``epidemiology_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:19 c781b0d88b9049e69aba1d67619db922
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:22 693fefa28fdc4cee86881ff16469d283
+msgid "**Epidemiology_bayesian** (Type: EpidemiologyTool)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:24 0467d15835324b6887cc07a4cacaa36c
+msgid ""
+"Compute post-test probability via Bayes' theorem given pre-test "
+"prevalence, test sensitivity, and..."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst 90866db09d65487c95cd33ba3f5b90a4
+msgid "Epidemiology_bayesian tool specification"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:28 ../../tools/epidemiology_tools.rst:74
+#: ../../tools/epidemiology_tools.rst:121
+#: ../../tools/epidemiology_tools.rst:160
+#: ../../tools/epidemiology_tools.rst:201 4e19182b77be490c8fe9731d0e0a0609
+#: 8009d907bd434888996c03519bc772db e184ace339384e6a8a96025d163b1140
+#: e5be7488d89f40a1a41f65ecc69c8482 e61d955cee95448cba0cbcfb88f69f8a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:30 f011359d4d654f80a61364611ab94b53
+msgid "**Name**: ``Epidemiology_bayesian``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:31 ../../tools/epidemiology_tools.rst:77
+#: ../../tools/epidemiology_tools.rst:124
+#: ../../tools/epidemiology_tools.rst:163
+#: ../../tools/epidemiology_tools.rst:204 20ea9896c206452595f2a37d7d20ab27
+#: 4c68091a915849f0bb4534caf852cbb6 7c8e989931fb44049fdbcc22c765e44f
+#: c26edee616cf40cfa33f8f0882e062bc e74e74ce2ff7454eb08421ad89bc7a11
+msgid "**Type**: ``EpidemiologyTool``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:32 c86ac880d1a447f294b5fea363be3031
+msgid ""
+"**Description**: Compute post-test probability via Bayes' theorem given "
+"pre-test prevalence, test sensitivity, and specificity. Converts "
+"prevalence to pre-test odds, applies likelihood ratio (LR+ for positive "
+"test, LR- for negative test), and converts post-test odds back to "
+"probability. Useful for interpreting test results in clinical settings."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:34 ../../tools/epidemiology_tools.rst:80
+#: ../../tools/epidemiology_tools.rst:127
+#: ../../tools/epidemiology_tools.rst:166
+#: ../../tools/epidemiology_tools.rst:207 3649d50dbe0e47a8b97d854161a94fa1
+#: 8178624c0f6c4327acbf30d58cbdcb09 efc0d797f45f437a9542962dfea5e11b
+#: f104683aa0114d138d0397d499a08bf1 f7c80355d639456bb0c9bef7fb1bbd35
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:36 ../../tools/epidemiology_tools.rst:82
+#: ../../tools/epidemiology_tools.rst:129
+#: ../../tools/epidemiology_tools.rst:168
+#: ../../tools/epidemiology_tools.rst:209 3efbab4feafb45819a24dd6317bd63a5
+#: 9d33994f989147fb9fbc02f5d8d0e9ff bb057b9cafe74e42a901387662b238ab
+#: d7372f0ea6e64622989716b5978d9a3f f3cce3546b71460caca62f4fc20266df
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:39 5a4008fd77b44f2d857be047b67881b4
+msgid ""
+"``prevalence`` (number) (required) Pre-test probability (disease "
+"prevalence) [0, 1]"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:42 aeffbadcdfc0493a92be8dd8daa58d10
+msgid ""
+"``sensitivity`` (number) (required) Test sensitivity P(test+ \\| "
+"disease+) [0, 1]"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:45 fa511a8eba6b4664b69447896aa40fc0
+msgid ""
+"``specificity`` (number) (required) Test specificity P(test- \\| "
+"disease-) [0, 1]"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:48 d11183c57d7d4b9cab4ba2e4731e612f
+msgid ""
+"``test_result`` (string) (optional) Whether to compute post-test "
+"probability for a positive or negative result (default: positive)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:51 ../../tools/epidemiology_tools.rst:97
+#: ../../tools/epidemiology_tools.rst:138
+#: ../../tools/epidemiology_tools.rst:180
+#: ../../tools/epidemiology_tools.rst:221 0beb8486e81c4fe59938dcef1decfe93
+#: 16e4acb3cb514f00a11d3115cd19f148 5a9d3d5150cc4484b4b8af2f45c099f0
+#: d1f0cae3f97b4882b0ad22356f51bc74 e0669bf9a7614b8d9fa563654c33d3df
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:68 7885e274fd8d41f78b86163ae81051b7
+msgid "**Epidemiology_diagnostic** (Type: EpidemiologyTool)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:70 701ee81c779445d3b56dae115bc7d58e
+msgid ""
+"Compute diagnostic test performance metrics from a 2x2 contingency table "
+"(TP, FP, TN, FN). Return..."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst 82865dfbe36e4525a949b11fce2e9a14
+msgid "Epidemiology_diagnostic tool specification"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:76 cc0b95bffa224ab4a52c33266ff81de6
+msgid "**Name**: ``Epidemiology_diagnostic``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:78 bc17187087d949c7870d73c356671697
+msgid ""
+"**Description**: Compute diagnostic test performance metrics from a 2x2 "
+"contingency table (TP, FP, TN, FN). Returns sensitivity, specificity, "
+"PPV, NPV, accuracy, positive/negative likelihood ratios. Useful for "
+"evaluating screening tests and clinical decision-making."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:85 7a645d760cfb48e5a91a5645d9b06d2b
+msgid "``tp`` (integer) (required) True positives (disease+, test+)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:88 fc429491e468402685cef36998370705
+msgid "``fp`` (integer) (required) False positives (disease-, test+)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:91 19b4a08152e94df09b756abb0402a194
+msgid "``tn`` (integer) (required) True negatives (disease-, test-)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:94 1a392bd6264a45fba8456b1e494d2c77
+msgid "``fn`` (integer) (required) False negatives (disease+, test-)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:115 03435188776b462cae3c00662f79ba02
+msgid "**Epidemiology_nnt** (Type: EpidemiologyTool)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:117 e17425678d9448a08b612626ff41d814
+msgid ""
+"Calculate Number Needed to Treat (NNT) or Number Needed to Harm (NNH), "
+"Absolute Risk Reduction (A..."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst 86803d6215424e03933f6cbbb734dc44
+msgid "Epidemiology_nnt tool specification"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:123 3196ab8b9bd347d48957dd809087db02
+msgid "**Name**: ``Epidemiology_nnt``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:125 49322f9c7e3b4b3c888db953899488a2
+msgid ""
+"**Description**: Calculate Number Needed to Treat (NNT) or Number Needed "
+"to Harm (NNH), Absolute Risk Reduction (ARR), Relative Risk (RR), "
+"Relative Risk Reduction (RRR), and Odds Ratio (OR) from control and "
+"treatment event rates. NNT = 1/ARR. If treatment increases risk, reports "
+"NNH instead."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:132 4bc97b579e734c34b6c396fac3411e0c
+msgid ""
+"``control_rate`` (number) (required) Event rate in the control group [0, "
+"1]"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:135 028d4b757d784d418167386376fcc95b
+msgid ""
+"``treatment_rate`` (number) (required) Event rate in the treatment group "
+"[0, 1]"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:154 85487658ca424949843a2780e08f561f
+msgid "**Epidemiology_r0_herd** (Type: EpidemiologyTool)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:156 43594c780a394a289f39c3e17a902d22
+msgid ""
+"Compute herd immunity threshold and effective reproduction number from R0"
+" and vaccine efficacy. R..."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst 1dc5f10890984ed1b17f39ddf3367c78
+msgid "Epidemiology_r0_herd tool specification"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:162 5c7e0a580b934611b035ae10eea7e015
+msgid "**Name**: ``Epidemiology_r0_herd``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:164 9a0a331ea62b48c5ac58e7aead0f8c24
+msgid ""
+"**Description**: Compute herd immunity threshold and effective "
+"reproduction number from R0 and vaccine efficacy. Returns the perfect-"
+"vaccine threshold (1-1/R0), the VE-adjusted minimum vaccination coverage "
+"(Vc = threshold/VE), and optionally Re at a given coverage fraction. "
+"Useful for vaccine program planning and outbreak assessment."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:171
+#: ../../tools/epidemiology_tools.rst:212 6048d1366b5745cd8b7976c89f968234
+#: d0ab4102e8f34a3095daa38cb5a2ab20
+msgid "``R0`` (number) (required) Basic reproduction number (must be > 1)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:174 06623cf98d3c4686876b88302fdd34e0
+msgid ""
+"``VE`` (number) (optional) Vaccine efficacy as fraction (0, 1], default "
+"1.0 (perfect vaccine)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:177 b4ba410d375e471581eb0cee8e805a94
+msgid ""
+"``coverage`` (number) (optional) Optional vaccination coverage fraction "
+"[0, 1] to evaluate Re at"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:195 9a07268353104a28aaddc5ed8cb663d9
+msgid "**Epidemiology_vaccine_coverage** (Type: EpidemiologyTool)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:197 9ab2df4d11cc48c0a7a51441c319e5d6
+msgid ""
+"Derive vaccine effectiveness from field surveillance data using the "
+"screening method (Farrington ..."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst 946f47433b9d41c99012ce574b9dbd31
+msgid "Epidemiology_vaccine_coverage tool specification"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:203 92d16136f296402dac7219ddf7818fdc
+msgid "**Name**: ``Epidemiology_vaccine_coverage``"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:205 028d8cf7ef7d48d39f6d826cc8b15439
+msgid ""
+"**Description**: Derive vaccine effectiveness from field surveillance "
+"data using the screening method (Farrington 1993), then compute the "
+"required vaccination coverage threshold. Requires R0, proportion of cases"
+" vaccinated (PCV), and proportion of population vaccinated (PPV). "
+"Formula: VE = 1 - [PCV\\*(1-PPV)]/[(1-PCV)\\*PPV], then Vc = (1-1/R0)/VE."
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:215 e45d2be881dc46a483d0cbad5f8e5b71
+msgid ""
+"``PCV`` (number) (required) Proportion of disease cases that were "
+"vaccinated (0, 1)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:218 077bac3d14114e868cc4328c34a0be27
+msgid ""
+"``PPV`` (number) (required) Proportion of total population that is "
+"vaccinated (0, 1)"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:238 cd65016b7690409dbd14c8f1fb618a86
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:240 99bb9107cac142bca8f4a7bdcd83a610
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/epidemiology_tools.rst:241 374fb741ad394d0fa31d5c8b28f7a8df
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mavedb_tools.rst:10 c601412eb37e403ebc39e6e581d6d2ae
+msgid "Mavedb Tools"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:12 9006554081fd4e0ebd9e62fa404495df
+msgid ""
+"**Configuration File**: ``mavedb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:16 a3b03c9a70154b788b5ad0d3f1c58bab
+msgid ""
+"This page contains all tools defined in the ``mavedb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:19 509f1b0e1cd84ed0b2d3bd4d4d64f0fe
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:22 682027ea0fca48df8ee580816dfcb470
+msgid "**MaveDB_get_score_set** (Type: MaveDBTool)"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:24 7242a3f1f5a14517a6473c0e45048e89
+msgid ""
+"Get detailed information about a specific MaveDB score set by its URN "
+"identifier. Returns the tar..."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst 925e841188d549b78eeb77884852d9f0
+msgid "MaveDB_get_score_set tool specification"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:28 ../../tools/mavedb_tools.rst:59
+#: ../../tools/mavedb_tools.rst:96 ../../tools/mavedb_tools.rst:127
+#: 46c8b26e8ec546e1ad7b90f0ef4e1487 6a23bcdb81a740a6beb8710312e805f9
+#: 85ab58db565447328011f16ced899686 fd05ab8473a04b468e63879cb3d2eb88
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:30 7b27520e3b61482a923720d48901654f
+msgid "**Name**: ``MaveDB_get_score_set``"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:31 ../../tools/mavedb_tools.rst:62
+#: ../../tools/mavedb_tools.rst:99 ../../tools/mavedb_tools.rst:130
+#: 0a1e9774280d4ef2911d8f5c9449421a 42ef3451b67d4c5f8a273c7212fa0b69
+#: 755b66dfdac442529cab30b496ef2273 8a320e79c9c64d5099fbdcd804544397
+msgid "**Type**: ``MaveDBTool``"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:32 ebf03e8bc7e04d77b096367a95e30189
+msgid ""
+"**Description**: Get detailed information about a specific MaveDB score "
+"set by its URN identifier. Returns the target gene, experimental methods,"
+" variant count, publications, and license. Score sets contain functional "
+"impact scores from deep mutational scanning or saturation genome editing "
+"experiments."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:34 ../../tools/mavedb_tools.rst:65
+#: ../../tools/mavedb_tools.rst:102 ../../tools/mavedb_tools.rst:133
+#: 0a281dc047ca42769c72a03a321575ba 4632c4ff282346caa18f9bb69427a7ef
+#: 6b427e3e1e004962add5e7c8ce5ed959 6dd286a9fd5d41b1a435ce384d2b7ff2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:36 04a9b23229da4ef08c4557bce9b3f1bd
+msgid ""
+"``urn`` (string) (required) MaveDB score set URN (e.g., "
+"'urn:mavedb:00000001-a-1'). Obtain URNs from "
+"MaveDB\\_search\\_score\\_sets."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:39 ../../tools/mavedb_tools.rst:76
+#: ../../tools/mavedb_tools.rst:107 ../../tools/mavedb_tools.rst:141
+#: 274cbb8d4c7c4550acdb6b1e27c125e6 50f88439a60e41c686af41fa70ee009a
+#: b6994363e1a849a1b28d2bc0bae71743 c52f378309234ccc8369169f383ad481
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:53 c74eabd1b17e4a2283e6e264c9282f3b
+msgid "**MaveDB_get_variant_scores** (Type: MaveDBTool)"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:55 506575a481ca4321a18faec82b872137
+msgid ""
+"Get functional variant effect scores from a MaveDB score set. Returns "
+"HGVS-annotated variants wit..."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst 09af4de1bd9746f98fa1f46c3eaa06b1
+msgid "MaveDB_get_variant_scores tool specification"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:61 4132da180a4b44b5a245f3b371c9d319
+msgid "**Name**: ``MaveDB_get_variant_scores``"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:63 97e560f234e841c7aafd344bcfc0ce89
+msgid ""
+"**Description**: Get functional variant effect scores from a MaveDB score"
+" set. Returns HGVS-annotated variants with their functional scores from "
+"deep mutational scanning or other MAVE assays. Scores indicate variant "
+"effect on protein function (interpretation depends on the specific assay "
+"- check score set metadata). Optionally filter by HGVS protein notation "
+"(e.g., 'Arg175' to find all R175 substitutions)."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:67 f9b21e8f1dba485292d3ed781ca8fe0d
+msgid ""
+"``urn`` (string) (required) MaveDB score set URN (e.g., "
+"'urn:mavedb:00001234-c-1'). Obtain from MaveDB\\_search\\_score\\_sets."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:70 a39bc189a8bc49f1b6cfeac82687e232
+msgid ""
+"``hgvs_pro`` (string) (optional) Optional filter: HGVS protein notation "
+"substring (e.g., 'Arg175', 'p.Arg175His'). Case-insensitive partial match"
+" on protein-level HGVS."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:73 3042005cda344fa3809b05371c20b5ac
+msgid ""
+"``limit`` (integer) (optional) Maximum variants to return (default 50, "
+"max 500)."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:90 5acdca3499114139952da7e62fdb2425
+msgid "**MaveDB_search_experiments** (Type: MaveDBTool)"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:92 d3afc320b4d342979767de44b63a1a0e
+msgid ""
+"Search MaveDB for experiments (groups of related score sets from the same"
+" study). Each experiment..."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst e0375532b8464f0587f9a0aac1fd2040
+msgid "MaveDB_search_experiments tool specification"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:98 2a9b705e64a4437ba84c4c0511a77501
+msgid "**Name**: ``MaveDB_search_experiments``"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:100 7cc90bfc89f14854837dd98319b612f2
+msgid ""
+"**Description**: Search MaveDB for experiments (groups of related score "
+"sets from the same study). Each experiment may contain multiple score "
+"sets from different replicates, conditions, or analysis methods. Returns "
+"experiment URNs, titles, associated score sets, and publications. Search "
+"by gene name, protein, or assay keywords."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:104 6c7916fa1e02455885fd26541fdf8d62
+msgid ""
+"``query`` (string) (required) Search query: gene symbol (e.g., 'TP53', "
+"'BRCA1'), protein name, or keywords describing the experiment."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:121 bbc3e92aa35f4502bcd77e01212a0eb1
+msgid "**MaveDB_search_score_sets** (Type: MaveDBTool)"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:123 d47b0b29da7b4321b8431ff188eaaf2f
+msgid ""
+"Search MaveDB for variant effect score sets from Multiplexed Assays of "
+"Variant Effect (MAVE) expe..."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst b7a730e106214fb69594bc0575672030
+msgid "MaveDB_search_score_sets tool specification"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:129 1c672d9caa0147139352554f91296b8f
+msgid "**Name**: ``MaveDB_search_score_sets``"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:131 3c7c9cc8d623437a80f1c89325808e29
+msgid ""
+"**Description**: Search MaveDB for variant effect score sets from "
+"Multiplexed Assays of Variant Effect (MAVE) experiments, including deep "
+"mutational scanning. Returns score set URNs, titles, variant counts, and "
+"publication dates. Use gene names or protein names as search terms."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:135 a0a756271b3b49549219f9fa3ad200fe
+msgid ""
+"``query`` (string) (required) Search text - gene name (e.g., 'BRCA1', "
+"'TP53'), protein name, or keyword. Searches titles and descriptions of "
+"score sets."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:138 06d13809f44b46d58c062a5a37cdf8ab
+msgid "``limit`` (integer) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:155 bbae61722af44184b71cf1516b278ff6
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:157 690ae6a2644e4292a5ca356010de7577
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mavedb_tools.rst:158 9a747b806a6d4d8390e24f1adfb81b82
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

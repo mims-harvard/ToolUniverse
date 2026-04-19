@@ -1,0 +1,236 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/interpro_domain_arch_tools.rst:10
+#: 6dc57b269ce64a63b1d6ca3a81ae7f25
+msgid "Interpro Domain Arch Tools"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:12
+#: 2a7f71148a1a467d8692dc4c7a2519b4
+msgid ""
+"**Configuration File**: ``interpro_domain_arch_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:16
+#: bfc2c05848e4439695fd3685f365cec0
+msgid ""
+"This page contains all tools defined in the "
+"``interpro_domain_arch_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:19
+#: c17aab4070f74705afc209ad915aea02
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:22
+#: f4c8e575f98a44388fe633b2d5e861f4
+msgid "**InterPro_get_clan_members** (Type: InterProDomainArchTool)"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:24
+#: 0b9b044495824ca2afa1a61235ae24a1
+msgid ""
+"Get all member families in a Pfam clan (superfamily) using the InterPro "
+"API. Pfam clans group rel..."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst 9cfe8d46fa974f2b835a70f534ca2be4
+msgid "InterPro_get_clan_members tool specification"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:28
+#: ../../tools/interpro_domain_arch_tools.rst:62
+#: ../../tools/interpro_domain_arch_tools.rst:93
+#: 896c25de39fa4a559daaf169d231ee87 a3dc54732f8a4c00a629774ed1d07c4f
+#: e9c0d862636749dcbe288d154554e17d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:30
+#: 9ced5eec6f874c708ea805614300400e
+msgid "**Name**: ``InterPro_get_clan_members``"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:31
+#: ../../tools/interpro_domain_arch_tools.rst:65
+#: ../../tools/interpro_domain_arch_tools.rst:96
+#: 14be152f1bc74e3eb2177291e0b5d345 a0386ac78ad94b6688bc1d23f56062b0
+#: ef45c7a46a714ca6b56c685031c29d33
+msgid "**Type**: ``InterProDomainArchTool``"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:32
+#: 85cf5330dd6d43e6a9ca837dc0534a2f
+msgid ""
+"**Description**: Get all member families in a Pfam clan (superfamily) "
+"using the InterPro API. Pfam clans group related families that share a "
+"common evolutionary origin. Returns member family accessions, names, "
+"types, and relationship scores. Example: CL0016 (PKinase) contains 30+ "
+"member families including PF00069 (Protein kinase), PF03770 (Inositol "
+"polyphosphate kinase), PF02958 (EcKL), and many others. Useful for "
+"understanding domain superfamily relationships and finding distantly "
+"related proteins."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:34
+#: ../../tools/interpro_domain_arch_tools.rst:68
+#: ../../tools/interpro_domain_arch_tools.rst:99
+#: 14dd14034c724f249af27271c0a03a8d 30109d44ee90435cbc9f9dd19ce3ab7b
+#: 62d48e3d43184190859caa36dbc0ecd0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:36
+#: c37c6e3d16fe41eebd1ab59989c56723
+msgid ""
+"``clan_accession`` (string) (required) Pfam clan accession. Examples: "
+"'CL0016' (PKinase superfamily, 30+ families), 'CL0023' (P53-like "
+"transcription factor), 'CL0004' (EGF superfamily), 'CL0159' (E2 "
+"superfamily)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:39
+#: 333fe48e18fe4a54b00f707a28237e40
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of member families to"
+" return (default 50, max 200)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:42
+#: ../../tools/interpro_domain_arch_tools.rst:73
+#: ../../tools/interpro_domain_arch_tools.rst:107
+#: 314c1ee3d1244a96b55eb9446198a4ce 619f6da882d14cb9a972a11be5b3f6b0
+#: b1ad9e809f8e40c895ca602f18f62547
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:56
+#: 38620411329140de8abc078abd0a62e0
+msgid ""
+"**InterPro_get_protein_domain_architecture** (Type: "
+"InterProDomainArchTool)"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:58
+#: 232eda08e5c44f6884ccf9865b1c71cc
+msgid ""
+"Get the complete Pfam domain architecture for a protein with exact "
+"residue positions using the In..."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst 02b2c1b58c18431f9313cde841b7ef91
+msgid "InterPro_get_protein_domain_architecture tool specification"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:64
+#: f214a473d13140ca865a6571c661ca0d
+msgid "**Name**: ``InterPro_get_protein_domain_architecture``"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:66
+#: e6957a292a5f41168fae7a2d237bfb8f
+msgid ""
+"**Description**: Get the complete Pfam domain architecture for a protein "
+"with exact residue positions using the InterPro API. Returns all Pfam "
+"domains mapped to the protein with start/end coordinates, E-values, and "
+"integrated InterPro entries. Much more detailed than simple domain lists "
+"- includes precise domain boundaries essential for understanding protein "
+"function. Example: P04637 (TP53, 393aa) has 4 Pfam domains: PF00870 (P53 "
+"DNA-binding, 100-288), PF07710 (tetramerisation, 319-357), PF08563 "
+"(transactivation, 6-30), PF18521 (transactivation domain 2, 35-59)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:70
+#: 04181f8221354b358c7e6b7d8544f76e
+msgid ""
+"``accession`` (string) (required) UniProt protein accession. Examples: "
+"'P04637' (TP53, 4 Pfam domains), 'P00533' (EGFR), 'P38398' (BRCA1), "
+"'P01308' (Insulin)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:87
+#: 11c1f043baf14dc4b0c029dc7d010a28
+msgid "**InterPro_get_structures_for_domain** (Type: InterProDomainArchTool)"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:89
+#: e10d8c6da08c401ab2f32eac53514d35
+msgid ""
+"Find all PDB structures containing a specific Pfam domain using the "
+"InterPro API. Returns experim..."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst def9d16cd61f494ea26c28a4b5029a65
+msgid "InterPro_get_structures_for_domain tool specification"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:95
+#: ce95a4d56c564e87abfce5680dc02772
+msgid "**Name**: ``InterPro_get_structures_for_domain``"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:97
+#: 45e59b5a08b140e7b80c594a6defa2ad
+msgid ""
+"**Description**: Find all PDB structures containing a specific Pfam "
+"domain using the InterPro API. Returns experimental structures (X-ray, "
+"cryo-EM, NMR) that contain the specified domain, with resolution and "
+"experiment type. Useful for finding structural templates for a domain of "
+"interest. Example: PF00870 (P53 DNA-binding domain) has 215 PDB "
+"structures; PF00069 (Protein kinase) has 5,238 structures. Results sorted"
+" by most recent."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:101
+#: 9a6e49e92a3d4c91b95b92716d4f98cd
+msgid ""
+"``pfam_accession`` (string) (required) Pfam domain accession. Examples: "
+"'PF00870' (P53 DNA-binding, 215 structures), 'PF00069' (Protein kinase, "
+"5238 structures), 'PF07710' (P53 tetramerisation), 'PF00046' "
+"(Homeodomain)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:104
+#: 120d8ff94168490dba9bac500fe00f4d
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of PDB structures to "
+"return (default 20, max 200)."
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:121
+#: 9138573120674dd7a40fdea0053ac876
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:123
+#: 51953c3d12364cfc88f7d203d5aa7113
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/interpro_domain_arch_tools.rst:124
+#: cb78b12604614e75b352d2d8a21c7abb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

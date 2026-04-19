@@ -1,0 +1,1169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../reference/environment_variables.rst:2 cb5180e327334b82b596359c8e97eb1d
+msgid "Environment Variables Reference"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:4 c1d9905bfbe4493494cd526b878fcc45
+msgid ""
+"ToolUniverse can be configured through environment variables for cache "
+"behavior, logging, LLM integration, performance tuning, and more."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:8 870c577a07ad454f9d15460c69a36494
+msgid "Table of Contents"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:11
+#: e5818f3f230f4c6480f016ba55b7e622
+msgid "Quick Reference"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:13
+#: e9ca972fe59049d48a932d7bc8057220
+msgid "**Most commonly used**:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:15
+#: 7ac926e27e9b4e71bf18b373561b3f95
+msgid ""
+"``TOOLUNIVERSE_CACHE_ENABLED`` - Enable/disable caching (default: "
+"``true``)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:16
+#: 25341cb75b554e00ba1c3ef0d442c227
+msgid "``TOOLUNIVERSE_LOG_LEVEL`` - Set logging level (default: ``INFO``)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:17
+#: 2be0f028ac274078b177a4ca938ca703
+msgid "``NCBI_API_KEY`` - Faster PubMed/NCBI access (3x rate limit increase)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:19
+#: d3f18000b97641e5b8fb9a1fae51f7ba
+msgid "For API keys configuration, see :doc:`../guide/api_keys`."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:22
+#: e137b17a4d2d478aa3381b50e6a07bb8
+msgid "Cache Configuration"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:24
+#: 079ed9eb9f7b4d478d02840306f659bf
+msgid ""
+"Control ToolUniverse's two-tier caching system (in-memory LRU + SQLite "
+"persistence)."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:30
+#: ../../reference/environment_variables.rst:84
+#: ../../reference/environment_variables.rst:116
+#: ../../reference/environment_variables.rst:155
+#: ../../reference/environment_variables.rst:204
+#: ../../reference/environment_variables.rst:231
+#: ../../reference/environment_variables.rst:263
+#: ../../reference/environment_variables.rst:494
+#: 34068f335c9144ea8e9277b065c66e7f 3d8cef2f0a154966a904648ad763fa5f
+#: 585a31a2c70f461b944d4536276d71d1 5b963d12dfdd4f92995ed587efaf0f20
+#: 8f2da5ba40af43cdbbd073ebd60ef2f0 ab6ba85e2ca2423686ec9fa77a642fe5
+#: c0dd0e38858e4fbaa6830e64e4b5ac2c ea44d497a6fb434e83f87b10a2559dd4
+msgid "Variable"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:31
+#: ../../reference/environment_variables.rst:85
+#: ../../reference/environment_variables.rst:117
+#: ../../reference/environment_variables.rst:156
+#: ../../reference/environment_variables.rst:205
+#: ../../reference/environment_variables.rst:232
+#: ../../reference/environment_variables.rst:495
+#: 13c8d256bace461789558b52fcab958e 22b959eb1bd34cb38ff8257b14adf945
+#: 34dd755001de43748986795b3b7f02f6 5d47871afae84744a23733def0653935
+#: 649e147d37a64f0e856e58e3a214ca27 810c8c1284f84cc7a10cbea6ddcffdbe
+#: e88407e20c8b406ebf30a0b061566097
+msgid "Default"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:32
+#: ../../reference/environment_variables.rst:86
+#: ../../reference/environment_variables.rst:118
+#: ../../reference/environment_variables.rst:157
+#: ../../reference/environment_variables.rst:206
+#: ../../reference/environment_variables.rst:233
+#: ../../reference/environment_variables.rst:264
+#: 2ea5898d7cee4d7590828bab19b24741 7398f3958dff4a658e5b4f6646a17dce
+#: 827ea5678ad34f58956af9d8c66bcd79 87e94159768048d39ff041fe3f25fbd9
+#: af709d4b65524c5f9f592b089e7d7e64 c3af18cd873d44769b998b4ed7d53e60
+#: d0179f7a983e47e6b28acfbd4e6d1eb9
+msgid "Description"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:33
+#: ../../reference/environment_variables.rst:497
+#: 3ac52a7b95e64426b9d9110ac19fdc47 f1d7227690df4fa9bae3f05381d2cb3d
+msgid "``TOOLUNIVERSE_CACHE_ENABLED``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:34
+#: ../../reference/environment_variables.rst:37
+#: ../../reference/environment_variables.rst:52
+#: ../../reference/environment_variables.rst:55
+#: ../../reference/environment_variables.rst:120
+#: ../../reference/environment_variables.rst:126
+#: 56eba352ec53411caf58807e3c8252ff 5b6107cc1e68461ab9f8b1ec98d0744b
+#: c460d53dd885406c9ccec793872921c1 cad6afec08ca4c38b02f65dd7c32b033
+#: f29c7769324446acafd32df4f1c58e68 fd29cf01daa64d979ca6223f8d1f80c9
+msgid "``true``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:35
+#: f32f1a5cab3c4d479d244a21399f9403
+msgid ""
+"Master switch for all caching. Set to ``false`` to disable both memory "
+"and persistent cache."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:36
+#: ../../reference/environment_variables.rst:500
+#: 17be168fecbf47d5b749c3a81f6aa27d d0fb697a52004f5faf3846d1f080014c
+msgid "``TOOLUNIVERSE_CACHE_PERSIST``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:38
+#: 9314460100c54be4bada74bf99d285ed
+msgid "Enable SQLite persistence. Cached results survive Python restarts."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:39
+#: ../../reference/environment_variables.rst:503
+#: 0a5678bca9084305869b5dbd8b9fbe93 887bd9b12876454bb4fd9774134e27ee
+msgid "``TOOLUNIVERSE_CACHE_PATH``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:40
+#: a1289565bc7b4bdb9760fae3725a45b8
+msgid "(see below)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:41
+#: ded73cd1e78747aa9ab53c6d73b15e9c
+msgid ""
+"Full path to SQLite cache file. If unset, uses "
+"``TOOLUNIVERSE_CACHE_DIR``/``tooluniverse_cache.sqlite``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:42
+#: ../../reference/environment_variables.rst:506
+#: 5d682ee17f5d4c4da18a62b85f0209cc 66c7f7eb938147778b24435fdc6f823b
+msgid "``TOOLUNIVERSE_CACHE_DIR``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:43
+#: 14209f98cdfc4f1c90ba29262dea4f65
+msgid "``~/.tooluniverse``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:44
+#: 78335869de114996a054795e48cbf448
+msgid "Directory for cache file when ``CACHE_PATH`` is not specified."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:45
+#: ../../reference/environment_variables.rst:509
+#: a0727e37f98d4c2086c62d77bc6a7769 bf9b8268a4e94b47b166d59796c5488a
+msgid "``TOOLUNIVERSE_CACHE_MEMORY_SIZE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:46
+#: 52eae8972c384f5e82b8d5df77a2cd61
+msgid "``256``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:47
+#: 20a78c207ebb46dcb3bf01ac20e6a429
+msgid ""
+"Maximum entries in in-memory LRU cache. Increase for batch workflows "
+"(e.g., ``5000000`` for millions of entries)."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:48
+#: ../../reference/environment_variables.rst:512
+#: 3f8480dca5c04bce9815ba9083a10c9d a3b24cbe630b4ffd9982d4fa60667393
+msgid "``TOOLUNIVERSE_CACHE_DEFAULT_TTL``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:49
+#: f04b0f0e32474205a9acf69ee5faff20
+msgid "``None``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:50
+#: ef6a39ee9dae47f2889778021d8ee041
+msgid "Time-to-live in seconds for cached entries. ``None`` means no expiration."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:51
+#: ../../reference/environment_variables.rst:515
+#: 8454b9a09ce2473c8f48eab74f1fda0a abad366b3c9f47bdaffc20940a1bb060
+msgid "``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:53
+#: 87987c96986e46359b15b888b572a5e6
+msgid ""
+"Deduplicate concurrent identical requests. Prevents redundant API calls "
+"when multiple threads request same data."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:54
+#: ../../reference/environment_variables.rst:518
+#: 0734e3f53cf244e6ae32e6c9b2f6ba8b b8dcd0644c0a4d13bc43b1bc6b4c26c8
+msgid "``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:56
+#: 33e29a33733f45e2a16c7f9d257efe81
+msgid ""
+"Write to SQLite on background thread for non-blocking I/O. Set to "
+"``false`` for immediate disk persistence."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:58
+#: ../../reference/environment_variables.rst:97
+#: ../../reference/environment_variables.rst:132
+#: ../../reference/environment_variables.rst:174
+#: ../../reference/environment_variables.rst:214
+#: ../../reference/environment_variables.rst:241
+#: ../../reference/environment_variables.rst:276
+#: 26280840203743a1bc00dc24459b562d 700e50f1a6104c8e9a96922444c4ab19
+#: 91c505d275d94b43967077d651910e3c 9ed47163a7fa4294a0a4f49d479f2421
+#: a110ebf28b8444f9bf8f3a886d7c8eb4 bb46feecbc8447498bf74db06812c07b
+#: bbec32b581e5464ab6d241f2aab4d60e
+msgid "**Examples**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:73
+#: 93a69364ee2b48b589c9feabf7831fea
+msgid "**See also**: :doc:`../guide/cache_system` for complete caching guide."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:76
+#: a4e5dce7c7e44e608c53e2da3ba16851
+msgid "Logging & Debugging"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:78
+#: 2f584debcb2840818dd117d40f681008
+msgid "Control log output verbosity and destinations."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:87
+#: ../../reference/environment_variables.rst:521
+#: 0e324cdecb6e460a98fb9e304a33b145 47d38a75af104ecc828724b8cd188d20
+msgid "``TOOLUNIVERSE_LOG_LEVEL``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:88
+#: 7270b6a130894ebc8c753eddd466c557
+msgid "``INFO``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:89
+#: 8b3d12b169be4b2e9a2e163ecd89cb91
+msgid "Logging level: ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:90
+#: ../../reference/environment_variables.rst:524
+#: a68848c1d9764b5899ad0ec3db426ef9 c91f4c7a6e8b447bb73956c15df351cc
+msgid "``TOOLUNIVERSE_STDIO_MODE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:91
+#: ../../reference/environment_variables.rst:94
+#: ../../reference/environment_variables.rst:235
+#: ../../reference/environment_variables.rst:238
+#: 0693a558a8574f18a088f0312211e417 0a2f992a6c434bdb94ef92f2da14319e
+#: 3dbae7d88b254dd498493e98ad9ad24c 49f17e0b197c44b98a07c2d671472f09
+msgid "``0``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:92
+#: df13569fbc2745c8a506d52df909596c
+msgid ""
+"Internal flag. Set to ``1`` for STDIO-based MCP servers (redirects logs "
+"to stderr)."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:93
+#: ../../reference/environment_variables.rst:527
+#: 54c45bd9d5814a8299fbcfa9b33739bc 5c49f6586c2945ddaa7ed5ae04fc97a2
+msgid "``TOOLUNIVERSE_VERBOSE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:95
+#: 345dbce19e51471683a5a4ca1e849169
+msgid ""
+"Enable verbose output for tool generation and debugging. Set to ``1`` for"
+" detailed logs."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:105
+#: 8af56ce27a2c4d92906e80ba23f6a7f2
+msgid "**See also**: :doc:`../guide/logging` for logging configuration."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:108
+#: c0cf2444fcfb4e12845fc9eef4f800b2
+msgid "Loading & Import Control"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:110
+#: 208e8cd9e88449ecbc6b24f02de7255f
+msgid ""
+"Optimize startup time and memory usage by controlling how tools are "
+"loaded."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:119
+#: ../../reference/environment_variables.rst:530
+#: ca1c298412e242ae96d7f9feb345cf23 fdd6c6e707c04273b7b06c623940a37b
+msgid "``TOOLUNIVERSE_LAZY_LOADING``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:121
+#: 5fd1bb3c2ee043f0946705a47eb38bfd
+msgid "Defer tool loading until first use. Improves startup speed."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:122
+#: ../../reference/environment_variables.rst:533
+#: 4d150a29756c477bb0b05b39e20d10c7 a310d3111f7748a2b88191c1f6686967
+msgid "``TOOLUNIVERSE_LIGHT_IMPORT``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:123
+#: ../../reference/environment_variables.rst:129
+#: 1d7afe77a7bd49eab693103bc4374ad0 794f7af3d0ad49039f6d16a8dfa00a72
+msgid "``false``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:124
+#: a389372532fb4ab38918ec8981b44525
+msgid ""
+"Minimal imports on package import. Reduces memory footprint for embedded "
+"use."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:125
+#: ../../reference/environment_variables.rst:536
+#: 611cc1c509864ce0ba28fb3475080593 d0be837ce14f4d68895a3851137c60fe
+msgid "``TOOLUNIVERSE_COERCE_TYPES``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:127
+#: 7c94b153a24a4faa80a448eaebbbbeda
+msgid ""
+"Auto-convert parameter types (e.g., string ``\"42\"`` → integer ``42``) "
+"when calling tools. Disable for strict type enforcement."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:128
+#: ../../reference/environment_variables.rst:539
+#: 6d033e64884d4fbf9b17d46aa890e59b d5dbe9264c9d4360a5d32e3691a2d8b4
+msgid "``TOOLUNIVERSE_STRICT_VALIDATION``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:130
+#: c85529a324b844339409bab818905985
+msgid ""
+"Raise errors on unknown or extra parameters instead of silently ignoring "
+"them."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:140
+#: 5c930612e85c4d11ad844d403be611c1
+msgid "**When to use**:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:142
+#: db2d4c2f366a48fdab155dc40c4b1606
+msgid ""
+"**Lazy loading (default)**: Best for most use cases. Fast startup, tools "
+"load on-demand."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:143
+#: 8ded1ce61ee64ea982cb966711955785
+msgid ""
+"**Eager loading**: Set ``LAZY_LOADING=false`` if you need all tools pre-"
+"loaded (e.g., warming cache)."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:144
+#: f64cdc2ca8f144a794f91f34cb9c0890
+msgid ""
+"**Light import**: Embedded systems or when ToolUniverse is imported but "
+"not immediately used."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:147
+#: 73e2208a4ad4489fa34ed435bc72c4d0
+msgid "LLM Configuration"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:149
+#: ae66496172924f9cb4ffde79ca567bb9
+msgid ""
+"Configure Large Language Model providers for agentic tools and LLM-"
+"powered features."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:158
+#: ../../reference/environment_variables.rst:542
+#: be83badce882488c8914eef61c5928a3 f639524cf9354b948c14beefbc54871c
+msgid "``TOOLUNIVERSE_LLM_DEFAULT_PROVIDER``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:159
+#: ../../reference/environment_variables.rst:171
+#: ../../reference/environment_variables.rst:543
+#: ../../reference/environment_variables.rst:555
+#: ../../reference/environment_variables.rst:570
+#: ../../reference/environment_variables.rst:573
+#: 2598c772a2474fbfb2efbf65d6b65265 3410a8743ce848a28f13cc1fb7d76678
+#: 71911ad2b44d4cdd98f0072fc5f5b3b0 78819d01b0854aae8a1af08045af8ee4
+#: 78cf0a6043f5495c980a3275da8d6e5a ffdbdf56078548b99004cd85528fe9f4
+msgid "(none)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:160
+#: 8ce476b9a2594d34b0fc570d4ca6b234
+msgid "Default LLM provider: ``openai``, ``azure``, ``gemini``, ``anthropic``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:161
+#: ../../reference/environment_variables.rst:545
+#: 1e7745bf115e43f481eb90dd2f5adbe8 22ea418263ea49cd9b9c5d7b803d9003
+msgid "``TOOLUNIVERSE_LLM_CONFIG_MODE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:162
+#: 7ad20b199ed54e2cb45c18096d0a3b44
+msgid "``default``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:163
+#: c20e90e1368444169524e4add0ed2462
+msgid "LLM configuration mode. Use ``default`` or custom profiles."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:164
+#: ../../reference/environment_variables.rst:548
+#: 1c3034a05b0c41ea9df47a3d3f79f56a 68d421c8e1874e279c8e4d6e0f27dcf9
+msgid "``TOOLUNIVERSE_LLM_TEMPERATURE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:165
+#: ../../reference/environment_variables.rst:549
+#: 204bd71865944f4eb93ca37d0d56cb1c d481b7912fea4db7ba668bcfbc6295df
+msgid "(varies)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:166
+#: dbd43463ff48473f8966b02fda71f40f
+msgid "Temperature for LLM sampling (0.0-1.0). Higher = more creative."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:167
+#: ../../reference/environment_variables.rst:551
+#: 795149d0f6f84a8382b5c7d8897e328c 9cd8570489b54bb3a57bb5aae8663e5e
+msgid "``TOOLUNIVERSE_LLM_MODEL_DEFAULT``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:168
+#: ../../reference/environment_variables.rst:552
+#: 57fb955ed6f849ee9ef159f86b656711 e1f028f6b3a148fa95d7d4b949448a3d
+msgid "(provider default)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:169
+#: 85fac91ae9274a95bf612d4626b8fdaa
+msgid "Default model ID when not task-specific."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:170
+#: ../../reference/environment_variables.rst:554
+#: 0274fb1d57b740c5934c964be7962637 98c6f480319c4f4392658f9a20335fc0
+#, python-brace-format
+msgid "``TOOLUNIVERSE_LLM_MODEL_{TASK}``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:172
+#: 38901f759bc6436e97fa0673140b45b6
+#, python-brace-format
+msgid ""
+"Task-specific model. ``{TASK}`` = uppercase task name (e.g., "
+"``SUMMARIZATION``, ``EXTRACTION``)."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:187
+#: ../../reference/environment_variables.rst:249
+#: 3c316b7b568940ec8b2d4d583657c90d f13dcfd31cfc455482b8c3632b01898f
+msgid "**Use cases**:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:189
+#: e574e3343c8e43b3aaa49323b473e425
+msgid ""
+"**Agentic Tools**: Tools that use LLMs internally (e.g., Tool_Finder_LLM,"
+" summarization tools)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:190
+#: 7bfd4ff4f6fd4aafb6f07877e115dcf1
+msgid "**Hooks**: LLM-powered output processing hooks"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:191
+#: 2af59b2cded84ac8a0368943a1952560
+msgid "**Custom Tools**: Your own tools that leverage LLM capabilities"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:193
+#: 314a66ca2ceb4ae2b70bebd0e040741a
+msgid "**See also**: Provider-specific API keys in :doc:`../guide/api_keys`."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:196
+#: 3dfaccc9467443a9b852abd2e03a6693
+msgid "Performance & System"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:198
+#: a7717ee3a9dc400ab5c9ba056909a951
+msgid "Tune system resources and performance characteristics."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:207
+#: ../../reference/environment_variables.rst:557
+#: 9321a4df956c4205be7a8fafa5a5a7be bf917583991848229f234b9ec7c94982
+msgid "``TOOLUNIVERSE_THREAD_POOL_SIZE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:208
+#: 94c5d2adddad447a8173a86e9533cac8
+msgid "``20``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:209
+#: ab81a873766f4e1eaae5b088c5c03b52
+msgid "Thread pool size for HTTP API server concurrent requests."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:210
+#: ../../reference/environment_variables.rst:560
+#: 65af22ed7fd740f1ae6795ad4ba39f76 d5688d2c67b04c3a982505f205d63f46
+msgid "``TOOLUNIVERSE_TMPDIR``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:211
+#: ../../reference/environment_variables.rst:561
+#: 5424eed9e4d5481dbbf2c8b426768a76 b7668023fa25416d9dfb42cc05d74445
+msgid "(system temp)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:212
+#: 673afc55d3544cd3be1035ef696b3f75
+msgid ""
+"Override temporary directory location. Useful for systems with custom "
+"temp partitions."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:223
+#: d575ca5b250d40b58007bda3a9584567
+msgid "Development & Tool Generation"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:225
+#: fc181e4914724c1fb5f4898dff648f2b
+msgid "Control tool code generation and development workflows."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:234
+#: ../../reference/environment_variables.rst:563
+#: 5198b818c0934bf0aefe50ded000e2dc c6348057d539454eae1c555bb6d4de25
+msgid "``TOOLUNIVERSE_SKIP_FORMAT``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:236
+#: 384feffc7b254473ae6ae303c402e052
+msgid ""
+"Skip code formatting during tool generation. Set to ``1`` to speed up "
+"generation."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:237
+#: ../../reference/environment_variables.rst:566
+#: 5f3b9264603947ccae4b701e1306931d e95b8d7f2a3c4b348d49b1a37134eb3a
+msgid "``TOOLUNIVERSE_FORCE_REGENERATE``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:239
+#: afe111d8acc948009d6a07e5d6d48d99
+msgid ""
+"Force regeneration of all tool files even if unchanged. Set to ``1`` for "
+"fresh builds."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:251
+#: 57b9315352844fd8b88fdbf802022f23
+msgid "**Development**: When iterating on tool generation scripts"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:252
+#: 9af345a74fba4499840e30030bf50aa4
+msgid "**CI/CD**: Ensure clean generation in automated builds"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:255
+#: e15fc88a3e3b473092ef77d5b64dca13
+msgid "Embedding Provider Configuration"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:257
+#: b2270bc50662431cb6621dd31f76ea2e
+msgid "For tu-datastore and semantic search features."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:265
+#: ../../reference/environment_variables.rst:569
+#: 6b59d2212655400bbeec8551edf53ea8 99b9281f10284d2dba9fc8e2586ebad4
+msgid "``EMBED_PROVIDER``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:266
+#: 8c652dd9b86a49368d53eb9a227d506e
+msgid "Embedding provider: ``openai``, ``azure``, ``huggingface``, ``local``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:267
+#: ../../reference/environment_variables.rst:572
+#: 066cbd88ef1044ad9e8961f81d15ee61 362a06c454a8423081d80b3707d102ea
+msgid "``EMBED_MODEL``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:268
+#: 4772f7a97f0243b7b9b0cf2cbe8ec231
+msgid "Embedding model name (e.g., ``text-embedding-3-small``)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:269
+#: 38146aa70ac1406dbe2ab5d6199fd47a
+msgid "``OPENAI_API_KEY``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:270
+#: 4ac7b7150a6f433da406b7b8259118e6
+msgid "OpenAI API key (if using OpenAI embeddings)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:271
+#: 1dea8c7bb50e4fd497a0ebf6ae0a990b
+msgid "``HF_TOKEN``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:272
+#: 230440fb10664078a176521fbb3fd4d2
+msgid "Hugging Face token (if using HF embeddings)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:273
+#: 6f72e12996be4de8ba2a70a2f4625357
+msgid "``AZURE_*``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:274
+#: 2b7176fcfefe45d3835361931f01f996
+msgid "Azure-specific configuration variables"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:288
+#: 414fab06cfad45a5a008d7422d171d59
+msgid "**See also**: ``tu-datastore`` command in :doc:`cli_tools`."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:291
+#: 624d0a3d35dc470090320f30a254420e
+msgid "API Keys"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:293
+#: 16b34c6c782d4ecc9efbc5db51666506
+msgid "API keys for external scientific databases and services."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:295
+#: d1cc50367107478ebc0b05dd687cbc75
+msgid "For complete API key documentation including:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:297
+#: 5055fcedc8944e5cb97b12c792c8ddb9
+msgid "Required vs optional keys"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:298
+#: a1c1414aab744df1baa78d55a5e34c64
+msgid "Rate limits and performance benefits"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:299
+#: 2d9c60287f494c069a2cda1eff09f8d5
+msgid "Configuration methods"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:300
+#: ../../reference/environment_variables.rst:445
+#: 7dfb09cd2a854362b2556695be96d135 a41545a6697d410caea1a916db28d96a
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:302
+#: a6e7bc1432f341c5a7e1b9b2b30fd4c3
+msgid "See: :doc:`../guide/api_keys`"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:304
+#: e1dd4056b44a4e88873079df2a74a819
+msgid "**Common API keys**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:318
+#: 9b9891088a87474ebb488ab4cdca46f2
+msgid "Configuration File Support"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:320
+#: 77fd933d16544b1a8e045bcba229d748
+msgid "You can set environment variables in a ``.env`` file at project root:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:322
+#: f4de68ccddec4c599a49c30bba1f922a
+msgid "**Example .env file**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:340
+#: 7bdae6b5cb6f4a5f9e5d3514a5dfaafc
+msgid "**To use**:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:342
+#: 692b43999cdb473a97c2c43932500dac
+msgid ""
+"**Automatic**: ToolUniverse automatically loads ``.env`` from current "
+"directory"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:343
+#: 588d62d7df6845998ded839f844e5396
+msgid "**Manual**: Use python-dotenv::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:349
+#: bb4b0eedc2fd424e9badc318ea4b9e71
+msgid "**See also**: Template at ``.env.template`` in project root."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:352
+#: c476b3b9bd9040f2918c2fa7c2465145
+msgid "Precedence Order"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:354
+#: c6c9eb2023194a86a4879a764f1d1ce0
+msgid ""
+"When the same configuration is specified in multiple places, ToolUniverse"
+" uses this precedence order (highest to lowest):"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:356
+#: f48e9841ff3d46f7899c7ebbb9d4f206
+msgid ""
+"**Environment variables** (highest priority) - Set in shell: ``export "
+"TOOLUNIVERSE_CACHE_ENABLED=false`` - Set in code: "
+"``os.environ[\"TOOLUNIVERSE_CACHE_ENABLED\"] = \"false\"``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:360
+#: dd3c543ac79941ec90f0d49aa64fb967
+msgid ""
+"**``.env`` file** in current directory - Loaded automatically by "
+"ToolUniverse"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:363
+#: 193b614a4bc74e0a9375a6b7df292376
+msgid "**Default values** (lowest priority) - Built-in defaults in code"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:366
+#: 659e127ebc844474a624324e57fa52d9
+msgid "**Example**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:377
+#: 2750fc77323b4e37b62bfca8b67dcf57
+msgid "Platform-Specific Notes"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:380
+#: dc1f108fd1994b2d8d4ce8f9588e7b3c
+msgid "Linux/macOS"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:382
+#: e03d6c0c032a40f592973ba63b0968be
+msgid "Use shell export::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:386
+#: c06964065ed54cda8eaf23b97c4e4bcc
+msgid "Permanent (add to ``~/.bashrc`` or ``~/.zshrc``)::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:391
+#: 79108c80ca504cdf98fb3c12cbbfa856
+msgid "Windows (PowerShell)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:397
+#: 33c4d6d2b80a4d40ac13fa246ca354f8
+msgid "Permanent::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:402
+#: 8201f4ce82804f39b9f8322a157c8885
+msgid "Windows (Command Prompt)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:409
+#: 3dc93dfb44404ac98d86f8eff8a893d3
+msgid "Docker"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:411
+#: 477794e50d144fd8abc1e94141553b08
+msgid "In Dockerfile::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:416
+#: 26d0b51bf3ba4029af9d2ecdf85cb510
+msgid "Or docker-compose.yml::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:425
+#: 1cda633b26da40b1a536fc5a1ad48a6f
+msgid "Verification"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:427
+#: ae0b44b6c8174393b0299bd85d98d177
+msgid "Check if environment variables are set correctly:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:429
+#: 1f1ee8599a1e4709a6e9c613c52dc110
+msgid "**Python**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:434
+#: a26a5cbd99c342e49ea15f5d570ba9ea
+msgid "**Shell**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:440
+#: 75bcff84058f4ddbb62cf1e0aeac9929
+msgid "**Using tooluniverse-doctor**::"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:448
+#: af4fffd46c804e3d9b3f84c61e2b9a7d
+msgid "Environment variable not taking effect"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:450
+#: c0db7c15980140caa8fb9f9bf3e10af5
+msgid "**Possible causes**:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:452
+#: 3a4f4516a0da44d5957334e582dd6b08
+msgid ""
+"Variable set after importing ToolUniverse - **Solution**: Set environment"
+" variables *before* ``from tooluniverse import ToolUniverse``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:455
+#: 2d4ed20d0511433db3858b9b8c8dae6d
+msgid ""
+"Typo in variable name - **Solution**: Variable names are case-sensitive. "
+"Use exactly as documented."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:458
+#: b14443003742424ead8212e5625889e4
+msgid ""
+"Value format incorrect - **Solution**: Boolean values should be "
+"``true``/``false`` (lowercase). Numbers should be unquoted."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:461
+#: f7290629dea447408a68daf36f988718
+msgid ""
+"Cached Python import - **Solution**: Restart Python interpreter to reload"
+" environment"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:465
+#: acbf290f6b204f6389c42e2ae810294a
+msgid "Values not persisting"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:467
+#: d65db2655b7a4fe1873988e5ac00381d
+msgid "**Problem**: Variables reset after terminal closes."
+msgstr ""
+
+#: ../../reference/environment_variables.rst:469
+#: 8ca52e9241674dd992f93a229f287b59
+msgid "**Solution**: Add to shell configuration file:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:471
+#: 6b79a2b17937409a88faacefdb74d7e2
+msgid "Bash: ``~/.bashrc`` or ``~/.bash_profile``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:472
+#: 506ddd458b1f40b093a9f24f2395b953
+msgid "Zsh: ``~/.zshrc``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:473
+#: fa0ea1b5538f4bc6b1778286c526d266
+msgid "Fish: ``~/.config/fish/config.fish``"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:476
+#: 78c0b6e41a83486297adda058b65c38c
+msgid "See Also"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:478
+#: dbf5b1d4b75449f6acee08e2bd17c2b1
+msgid ":doc:`cli_tools` - Command-line tools reference"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:479
+#: f4f94a3de70146a4970cc6b95b4e5cff
+msgid ":doc:`../guide/api_keys` - API keys configuration"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:480
+#: 543bc68504864060bf7457784ab1850f
+msgid ":doc:`../guide/cache_system` - Caching system guide"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:481
+#: 90689386822344b982b6be504b964ec2
+msgid ":doc:`../guide/logging` - Logging configuration"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:482
+#: c4b54a7747684ac6ab99911b0ebe9b74
+msgid ":doc:`../help/troubleshooting` - Troubleshooting guide"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:483
+#: aeccd2efa24542cd99c2201a3bb1e6ca
+msgid ":doc:`../guide/python_guide` - Installation and Python API guide"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:486
+#: 410889cb2e1449e2b01ba56aea0cc88b
+msgid "Complete Variable List"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:488
+#: 44d7f589fc3c42fba713d6eb350badda
+msgid "**Quick reference table** of all documented environment variables:"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:496
+#: 92d295bdafbb4ccc841ddf065e4dd530
+msgid "Category"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:498
+#: ../../reference/environment_variables.rst:501
+#: ../../reference/environment_variables.rst:516
+#: ../../reference/environment_variables.rst:519
+#: ../../reference/environment_variables.rst:531
+#: ../../reference/environment_variables.rst:537
+#: 0dda08c838f949cda9b5db3e10554739 39b0e2fbdaa040d995cf9ee0e6a026e8
+#: 4e0f0ba383cb4314a18b2a9043af37b7 6ac04265de6549f781371956d6aed622
+#: b019536293c94861bffba7fe4fd518b6 fdc9027020614e1fa503d4560decaef5
+msgid "true"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:499
+#: ../../reference/environment_variables.rst:502
+#: ../../reference/environment_variables.rst:505
+#: ../../reference/environment_variables.rst:508
+#: ../../reference/environment_variables.rst:511
+#: ../../reference/environment_variables.rst:514
+#: ../../reference/environment_variables.rst:517
+#: ../../reference/environment_variables.rst:520
+#: 1a49e249e4464709a09c279b0b6b63aa 9481efdd74d94aa6a02e0bbacda9e875
+#: a5995a59ea014ff995302cc606e54570 ac8ad7dd991f494e888f1233a6688ea7
+#: c93e1474f2a044c6b99092af84d7f580 e7b022ba4aaf4899be1fbc15fe3e257d
+#: f810e76c4810414497f870ff4d3055b4 fe2a604cc3cf49a28741898959cb7aec
+msgid "Cache"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:504
+#: 56c9915701524c35b45a57df7b030e28
+msgid "(dynamic)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:507
+#: 6da094526bc842a5993c82f1a98f1c82
+msgid "~/.tooluniverse"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:510
+#: a4d9d147b9a1482da13a57b110b46cbe
+msgid "256"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:513
+#: e4c8e620a0ce4aa8bb8084235af8578a
+msgid "None"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:522
+#: 826b58aef79043ebaeb5f10e1021195b
+msgid "INFO"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:523
+#: ../../reference/environment_variables.rst:526
+#: ../../reference/environment_variables.rst:529
+#: 32ccebd2490a4699866db610511bf98d 91e23bb654534f698b37dcb809d0eef5
+#: 9356ffcdce45409bafd808a315ea2de0
+msgid "Logging"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:525
+#: ../../reference/environment_variables.rst:528
+#: ../../reference/environment_variables.rst:564
+#: ../../reference/environment_variables.rst:567
+#: 1184328515ec441bb90ea41d71ffd4d6 3b3e154ddb9f4767850eb48256808a2f
+#: f36fe7b3cf154599bed6b4a38a06c657 f909da4dee4e4ab9997999b1beaf1239
+msgid "0"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:532
+#: ../../reference/environment_variables.rst:535
+#: ../../reference/environment_variables.rst:538
+#: ../../reference/environment_variables.rst:541
+#: 221e8d1694ba47c6b108934cb94de393 8ed9bf6320a44098b17767b8c47c2db1
+#: 93b7b7d7e27247a6a7abfdc9238dd4c6 ad5d384e2cce4476b7fc98f76116a671
+msgid "Loading"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:534
+#: ../../reference/environment_variables.rst:540
+#: 4f8cadfcb1744cc1b6edce93163866f1 bdd845a1f147455eab3c12ed979fbe91
+msgid "false"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:544
+#: ../../reference/environment_variables.rst:547
+#: ../../reference/environment_variables.rst:550
+#: ../../reference/environment_variables.rst:553
+#: ../../reference/environment_variables.rst:556
+#: 10f0ceefc4644d0a9ff78a29f8881d09 3f810aa1e84d438b895e25c68a2393a3
+#: 81b1c586ebd24edcb60b7a310121d545 f64781daf02b4dbdb94d11509ba28a35
+#: f8a20706915f4c55886a88383561e08c
+msgid "LLM"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:546
+#: 533ba74ba3db4615afaf61be51e78cbd
+msgid "default"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:558
+#: c7ef3d81fca94c10b9dd28445ca869de
+msgid "20"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:559
+#: ../../reference/environment_variables.rst:562
+#: 496641ea75f343fc9d3b476272bc3003 d8df7b646c3641fdb77f4af8c0a1c141
+msgid "Performance"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:565
+#: ../../reference/environment_variables.rst:568
+#: 8d1cafd5d0084248a249c96fdeddd816 c0918e7d6a49410d9389eacc83ddf8b1
+msgid "Development"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:571
+#: ../../reference/environment_variables.rst:574
+#: 06cf1c17c12f45a6bcfd93deffaf6b1e aa1236a345a34bf492b0740cf286d290
+msgid "Embeddings"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:575
+#: 2080c94369c14c1587fc15047e1da540
+msgid "API keys"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:576
+#: 06a838e7c4c147548df7cded7e03b03f
+msgid "(various)"
+msgstr ""
+
+#: ../../reference/environment_variables.rst:577
+#: e106b42d5b8441f787576e920f4975a6
+msgid "See :doc:`../guide/api_keys`"
+msgstr ""
+

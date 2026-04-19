@@ -1,0 +1,1105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/skills_showcase.rst:2 48713b3ef0e84101958ff42ca8cd7af8
+msgid "AI Agent Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:4 7a9eeb9da29340759d3503db3f8be7f2
+msgid "**66 specialized research workflows for ToolUniverse**"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:6 b4747722fdbd4eafadd6147e995e9991
+msgid ""
+"ToolUniverse provides AI agent skills that teach agents how to conduct "
+"sophisticated scientific research. These skills combine multiple tools "
+"into expert-level workflows."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:8 ebc8e2296d5946bcb3d0b3de8abfb2e1
+msgid "**Install all skills with one command:**"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:16 3c49b8ccab5e4407931f0ebac94a620b
+msgid "Setup & Configuration"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:21 f371efd84f594111aa838a2e4a9c91cb
+msgid "Setup ToolUniverse"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:27 7a19d4d33f414b80980d8ba39271549d
+msgid ""
+"Install and configure ToolUniverse with MCP integration for any AI coding"
+" client (Cursor, Claude Desktop, Windsurf, VS Code, Codex, Gemini CLI, "
+"Trae, Cline, Antigravity, OpenCode, etc.)."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:30 ec64617ed50641a5baab2e820b4f003a
+msgid ":bdg-info:`setup-tooluniverse`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:34 cbb99772cdb647d6adbfca724293be9f
+msgid "General Purpose"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:39 330a447026fc473c8c816c6257373955
+msgid "ToolUniverse Router"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:45 36d2d9a2a2a147b3b0c8fca5a0e4db3c
+msgid ""
+"Router skill for ToolUniverse tasks. First checks if specialized "
+"tooluniverse skills (54 skills covering disease/drug/target research, "
+"clinical decision support, genomics, transcriptomics, single-cell "
+"analysis, variant..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:48 731d0ae4139e4370b4c3ac0e02827b81
+msgid ":bdg-info:`tooluniverse`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:52 54867a8e70b3486f975391afcc43a892
+msgid "Research Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:57 b389b5f0d38247769aff4796157fb04d
+msgid "Adverse Event Detection"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:63 db3dab6c8c904ac7a1c4c6160f1b24b5
+msgid ""
+"Detect and analyze adverse drug event signals using FDA FAERS data, drug "
+"labels, disproportionality analysis (PRR, ROR, IC), and biomedical "
+"evidence."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:66 40f5a5b5dd084b798d9c257ef16b1721
+msgid ":bdg-info:`tooluniverse-adverse-event-detection`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:68 776ffc3240954193ba0ca85d8992b6fc
+msgid "Antibody Engineering"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:74 ebd95b655eca42dd98cc709599a96e7c
+msgid ""
+"Comprehensive antibody engineering and optimization for therapeutic "
+"development. Covers humanization, affinity maturation, developability "
+"assessment, and immunogenicity prediction."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:77 1866a06258104309802ffcc6433d9340
+msgid ":bdg-info:`tooluniverse-antibody-engineering`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:79 8bcefb7b9fd241feb42b6a14bf7faab2
+msgid "Binder Discovery"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:85 8ad1121dc9a9452bb5ad5f6fb4c4ca58
+msgid ""
+"Discover novel small molecule binders for protein targets using "
+"structure-based and ligand-based approaches. Creates actionable reports "
+"with candidate compounds, ADMET profiles, and synthesis feasibility."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:88 8a9ccef67ce940889a73fd6a48364701
+msgid ":bdg-info:`tooluniverse-binder-discovery`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:90 b6d3393b3b994c2da12cb3b77109f872
+msgid "Cancer Variant Interpretation"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:96 74ca1b37d2d14e12bcff5ab9d1879e08
+msgid ""
+"Provide comprehensive clinical interpretation of somatic mutations in "
+"cancer. Given a gene symbol + variant (e.g., EGFR L858R, BRAF V600E) and "
+"optional cancer type, performs multi-database analysis covering "
+"clinical..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:99 972b970133be41c4999eeab50d107e5d
+msgid ":bdg-info:`tooluniverse-cancer-variant-interpretation`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:101 98ccf6d52fa54ebcbace5c7241b3a43d
+msgid "Chemical Compound Retrieval"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:107 d3539a18171549428aaa9fb54fc8a350
+msgid ""
+"Retrieves chemical compound information from PubChem and ChEMBL with "
+"disambiguation, cross-referencing, and quality assessment."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:110 beed86974a6c4b55b7c93cc655dd7b70
+msgid ":bdg-info:`tooluniverse-chemical-compound-retrieval`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:112 d7570d84f24c4c0aa3531b08b45dabe1
+msgid "Chemical Safety"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:118 a12e942e9664407892c11272342d70b8
+msgid ""
+"Comprehensive chemical safety and toxicology assessment integrating "
+"ADMET-AI predictions, CTD toxicogenomics, FDA label safety data, DrugBank"
+" safety profiles, and STITCH chemical-protein interactions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:121 e6c073b6fed04adab296d2a7cebd3e89
+msgid ":bdg-info:`tooluniverse-chemical-safety`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:123 c6ff6f1c2ca64a52bdedd58fb5c6f8aa
+msgid "Clinical Guidelines"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:129 bbca7b6aa748438fa063ad1bb9566607
+msgid ""
+"Search and retrieve clinical practice guidelines across 12+ authoritative"
+" sources including NICE, WHO, ADA, AHA/ACC, NCCN, SIGN, CPIC, CMA, "
+"CTFPHC, GIN, MAGICapp, PubMed, EuropePMC, TRIP, and OpenAlex."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:132 6aeaab74c794422aa073e4123d6e6f28
+msgid ":bdg-info:`tooluniverse-clinical-guidelines`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:134 bb4d5fa1519644f09910c8382429eac5
+msgid "Clinical Trial Design"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:140 78e76cf4969347109a80e6c7d58cb016
+msgid ""
+"Strategic clinical trial design feasibility assessment using "
+"ToolUniverse. Evaluates patient population sizing, biomarker prevalence, "
+"endpoint selection, comparator analysis, safety monitoring, and "
+"regulatory pathways."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:143 bafea95731ec4425b86705e6c0800f2d
+msgid ":bdg-info:`tooluniverse-clinical-trial-design`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:145 bac3fcdc6628406ca1d6a01e8f46d001
+msgid "Clinical Trial Matching"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:151 f7caa811851e491c8889e96c7eaa8fad
+msgid ""
+"AI-driven patient-to-trial matching for precision medicine and oncology. "
+"Given a patient profile (disease, molecular alterations, stage, prior "
+"treatments), discovers and ranks clinical trials from "
+"ClinicalTrials.gov..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:154 3a23dc0b201c424cbfe03e4406e5d459
+msgid ":bdg-info:`tooluniverse-clinical-trial-matching`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:156 8be5562f683047d2811691b959766cde
+msgid "CRISPR Screen Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:162 c06d220d72f741309991855c7a8ba671
+msgid ""
+"Comprehensive CRISPR screen analysis for functional genomics. Analyze "
+"pooled or arrayed CRISPR screens (knockout, activation, interference) to "
+"identify essential genes, synthetic lethal interactions, and drug "
+"targets."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:165 2084007c74b7418c939ed80fdb643d38
+msgid ":bdg-info:`tooluniverse-crispr-screen-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:167 964733639a1448828fa54e69d927d978
+msgid "Disease Research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:173 bc960edf14264cfca8689e12bdd758f3
+msgid ""
+"Generate comprehensive disease research reports using 100+ ToolUniverse "
+"tools. Creates a detailed markdown report file and progressively updates "
+"it with findings from 10 research dimensions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:176 961f0d2b435947ccba2f36f56fb6ab2e
+msgid ":bdg-info:`tooluniverse-disease-research`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:178 7236386111f046488244577ae6f4e716
+msgid "Drug Drug Interaction"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:184 ab7275f511084beda1046ab6c35b9038
+msgid ""
+"Comprehensive drug-drug interaction (DDI) prediction and risk assessment."
+" Analyzes interaction mechanisms (CYP450, transporters, pharmacodynamic),"
+" severity classification, clinical evidence grading, and provides..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:187 db65a3d85595485781e4c9362c2254c9
+msgid ":bdg-info:`tooluniverse-drug-drug-interaction`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:189 9d388bc96f284062830c78a40eda8296
+msgid "Drug Repurposing"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:195 7a737f8a36444aa78614ebda18d2d9cc
+msgid ""
+"Identify drug repurposing candidates using ToolUniverse for target-based,"
+" compound-based, and disease-driven strategies."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:198 c4a923e52ea84cad98132baa497e0a87
+msgid ":bdg-info:`tooluniverse-drug-repurposing`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:200 ../../guide/skills_showcase.rst:777
+#: 435a4a82672e4a68b6d79964bcea1e6c a0904ed2bcf54c64b484d21a6a414a23
+msgid "Drug Research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:206 d841e6411890400fb3819ec943063c36
+msgid ""
+"Generates comprehensive drug research reports with compound "
+"disambiguation, evidence grading, and mandatory completeness sections."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:209 5f82c6d42f0f45fcbab128f4bd787d7c
+msgid ":bdg-info:`tooluniverse-drug-research`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:211 f93199d995b64ad09fce3e3092102d65
+msgid "Drug Target Validation"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:217 f3311c1e44a24a7ea24cc2f12834e1c8
+msgid ""
+"Comprehensive computational validation of drug targets for early-stage "
+"drug discovery. Evaluates targets across 10 dimensions (disambiguation, "
+"disease association, druggability, chemical matter, clinical "
+"precedent,..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:220 fb4caadf7d0543f98cd1ab086f27220c
+msgid ":bdg-info:`tooluniverse-drug-target-validation`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:222 aade8c951577491da7476019c1d35031
+msgid "Epigenomics"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:228 718e5c6fdeca45608738131ca09ba2b1
+msgid ""
+"Production-ready genomics and epigenomics data processing for BixBench "
+"questions. Handles methylation array analysis (CpG filtering, "
+"differential methylation, age-related CpG detection, chromosome-level "
+"density),..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:231 5d1e77817c894113bf871f097624ada2
+msgid ":bdg-info:`tooluniverse-epigenomics`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:233 6a75a612dcbe4627a41803819f80582b
+msgid "Expression Data Retrieval"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:239 cbc9c1e15c9e4ac2a3591f2b80d137d8
+msgid ""
+"Retrieves gene expression and omics datasets from ArrayExpress and "
+"BioStudies with gene disambiguation, experiment quality assessment, and "
+"structured reports."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:242 f254f242ad90498f967d266d3b38e7c1
+msgid ":bdg-info:`tooluniverse-expression-data-retrieval`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:244 ec0665172a7b4c0997d2f0e1952363e2
+msgid "Gene Enrichment"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:250 b2e638a8ebe0497b878efcd7bda62eee
+msgid ""
+"Perform comprehensive gene enrichment and pathway analysis using gseapy "
+"(ORA and GSEA), PANTHER, STRING, Reactome, and 40+ ToolUniverse tools."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:253 970cd2a76c5f458ca27accdd87100eec
+msgid ":bdg-info:`tooluniverse-gene-enrichment`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:255 c22514f46b404bbdbe64014cb8d585f6
+msgid "GWAS Drug Discovery"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:261 069498e813f844e3bf5e5bcfeba7bdd0
+msgid ""
+"Transform GWAS signals into actionable drug targets and repurposing "
+"opportunities. Performs locus-to-gene mapping, target druggability "
+"assessment, existing drug identification, safety profile evaluation, and "
+"clinical..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:264 e2d381426b6c4618afde54df9ab079f3
+msgid ":bdg-info:`tooluniverse-gwas-drug-discovery`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:266 0a07d60a4819491cb62c2e8791419fc3
+msgid "GWAS Fine-Mapping"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:272 0552ab463f3a4f6694bb6eb66cabeedf
+msgid ""
+"Identify and prioritize causal variants at GWAS loci using statistical "
+"fine-mapping and locus-to-gene predictions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:275 b166a5ed9b13419fb715ecb4b664ffe5
+msgid ":bdg-info:`tooluniverse-gwas-finemapping`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:277 91243d1f3b794191998df0dba76a77c7
+msgid "GWAS SNP Interpretation"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:283 18c2ec6d7d994f9588303845e1ef7ccc
+msgid ""
+"Interpret genetic variants (SNPs) from GWAS studies by aggregating "
+"evidence from multiple databases (GWAS Catalog, Open Targets Genetics, "
+"ClinVar)."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:286 f4e92dc7371e4a8ba559676ec625d62b
+msgid ":bdg-info:`tooluniverse-gwas-snp-interpretation`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:288 8104690e8dff4988863031ccc85359c2
+msgid "GWAS Study Explorer"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:294 6114306b3cea46dd9e2ca0e605d75491
+msgid ""
+"Compare GWAS studies, perform meta-analyses, and assess replication "
+"across cohorts. Integrates NHGRI-EBI GWAS Catalog and Open Targets "
+"Genetics to compare study designs, effect sizes, ancestry diversity, "
+"and..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:297 b97f6d1c76c245eda8998e429b9f3c01
+msgid ":bdg-info:`tooluniverse-gwas-study-explorer`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:299 85271eb8ea554fdb897ef7a5e7bf5e3d
+msgid "GWAS Trait-to-Gene"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:305 6dc01152cb4e4e6d90fe48d4c305128c
+msgid ""
+"Discover genes associated with diseases and traits using GWAS data from "
+"the GWAS Catalog (500,000+ associations) and Open Targets Genetics (L2G "
+"predictions)."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:308 852289ee04ea4fe980520f971e74e57e
+msgid ":bdg-info:`tooluniverse-gwas-trait-to-gene`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:310 9f7bf96659d34857ae17ae31782d360a
+msgid "Image Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:316 2a3129ad555a45d99d94d65ccadddf1a
+msgid ""
+"Production-ready microscopy image analysis and quantitative imaging data "
+"skill for colony morphometry, cell counting, fluorescence quantification,"
+" and statistical analysis of imaging-derived measurements."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:319 cf017c6a453e46bf8898a1c66cef4113
+msgid ":bdg-info:`tooluniverse-image-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:321 ddf2bc811d5d4d2f9bf62ea6adf0607a
+msgid "Immune Repertoire Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:327 dd1d693544094fca8c874536e6e7080e
+msgid ""
+"Comprehensive immune repertoire analysis for T-cell and B-cell receptor "
+"sequencing data. Analyze TCR/BCR repertoires to assess clonality, "
+"diversity, V(D)J gene usage, CDR3 characteristics, convergence, and "
+"predict..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:330 e2cf8d7ff9b641e1beecb49a4e721c2d
+msgid ":bdg-info:`tooluniverse-immune-repertoire-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:332 05303d8c71a1477c84901268bdcdf392
+msgid "Immunotherapy Response Prediction"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:338 2c03315dd4884536a8b35ed69a44f6a0
+msgid ""
+"Predict patient response to immune checkpoint inhibitors (ICIs) using "
+"multi-biomarker integration. Given a cancer type, somatic mutations, and "
+"optional biomarkers (TMB, PD-L1, MSI status), performs systematic "
+"analysis..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:341 6d2e8116baf24f32b8fdc197c6947550
+msgid ":bdg-info:`tooluniverse-immunotherapy-response-prediction`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:343 844f4d83506b4e479dd153ae7d51aa8d
+msgid "Infectious Disease"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:349 a63640f2e366465d95876280b20613d1
+msgid ""
+"Rapid pathogen characterization and drug repurposing analysis for "
+"infectious disease outbreaks. Identifies pathogen taxonomy, essential "
+"proteins, predicts structures, and screens existing drugs via docking."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:352 bd64a8ef4b5c44f191e9ec48dd0fdf6c
+msgid ":bdg-info:`tooluniverse-infectious-disease`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:354 cebaaa0ebd1e47d5ba315d7e9c1ddff8
+msgid "Literature Deep Research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:360 95a5019d26eb47cda200acd7c04d3110
+msgid ""
+"Conduct comprehensive literature research with target disambiguation, "
+"evidence grading, and structured theme extraction."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:363 08b4da572b6c46b8809f7a0dfa28dcb7
+msgid ":bdg-info:`tooluniverse-literature-deep-research`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:365 74e42c6ca86443fbb2231cdda9633651
+msgid "Metabolomics"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:371 b93217a17665453f9ba0e8f191b96398
+msgid ""
+"Comprehensive metabolomics research skill for identifying metabolites, "
+"analyzing studies, and searching metabolomics databases. Integrates HMDB "
+"(220k+ metabolites), MetaboLights, Metabolomics Workbench, and PubChem."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:374 470e880df0ec492cb50e9e02c6552f64
+msgid ":bdg-info:`tooluniverse-metabolomics`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:376 7a5de01c8f564088a56ea01445dffb13
+msgid "Metabolomics Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:382 bb7aacc4f1f1432ea08ffe0f7e8c9883
+msgid ""
+"Analyze metabolomics data including metabolite identification, "
+"quantification, pathway analysis, and metabolic flux. Processes LC-MS, "
+"GC-MS, NMR data from targeted and untargeted experiments."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:385 375108eedeb24b838256d783622471a6
+msgid ":bdg-info:`tooluniverse-metabolomics-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:387 c2f69c766d554b96a9e48c1b81af28da
+msgid "Multi-Omics Integration"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:393 58b90530487a4f69a34480cf04cb6a38
+msgid ""
+"Integrate and analyze multiple omics datasets (transcriptomics, "
+"proteomics, epigenomics, genomics, metabolomics) for systems biology and "
+"precision medicine."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:396 543753b7d75d4171aeaf0a5b32fef2d6
+msgid ":bdg-info:`tooluniverse-multi-omics-integration`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:398 7f1519b5b1a94ecc935aaabf0698384c
+msgid "Multi-Omic Disease Characterization"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:404 0eecb6dc8d86436bbe36a85ac65ebe3c
+msgid ""
+"Comprehensive multi-omics disease characterization integrating genomics, "
+"transcriptomics, proteomics, pathway, and therapeutic layers for systems-"
+"level understanding."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:407 70de840a55b649a2b15bb33192bbda97
+msgid ":bdg-info:`tooluniverse-multiomic-disease-characterization`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:409 1b3cb31dc5cf407c9a2dfa217a78f240
+msgid "Network Pharmacology"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:415 4b40805cce3e478382386dc386808fd5
+msgid ""
+"Construct and analyze compound-target-disease networks for drug "
+"repurposing, polypharmacology discovery, and systems pharmacology."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:418 0b518d3ee14745bbbff2c0eb1e2827cc
+msgid ":bdg-info:`tooluniverse-network-pharmacology`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:420 705a970d3c704b769ca62b209949728b
+msgid "Pharmacovigilance"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:426 a460b1550fb646a89ec56dbc0174ceae
+msgid ""
+"Analyze drug safety signals from FDA adverse event reports, label "
+"warnings, and pharmacogenomic data. Calculates disproportionality "
+"measures (PRR, ROR), identifies serious adverse events, assesses "
+"pharmacogenomic risk..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:429 69b19fe777e149f98e3879d8794bc053
+msgid ":bdg-info:`tooluniverse-pharmacovigilance`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:431 f0d8db61244744df9882f205f15cb7fa
+msgid "Phylogenetics"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:437 2a8f55aab84a4f5a8a930db5461bad39
+msgid ""
+"Production-ready phylogenetics and sequence analysis skill for alignment "
+"processing, tree analysis, and evolutionary metrics."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:440 484e92c2fc894f1c9f723b5b6d3f7f22
+msgid ":bdg-info:`tooluniverse-phylogenetics`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:442 93dc7f499707450da06a892c94584792
+msgid "Polygenic Risk Score"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:448 92c26c2eaf6b46b1914a4df72fc4d73f
+msgid ""
+"Build and interpret polygenic risk scores (PRS) for complex diseases "
+"using GWAS summary statistics. Calculates genetic risk profiles, "
+"interprets PRS percentiles, and assesses disease predisposition across "
+"conditions..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:451 aedae84d12844e068240568e7a08ba06
+msgid ":bdg-info:`tooluniverse-polygenic-risk-score`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:453 33d91e9f72c5469daa0b7f9c00052687
+msgid "Precision Medicine Stratification"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:459 b7401982bf464112b35d59a64f34decc
+msgid ""
+"Comprehensive patient stratification for precision medicine by "
+"integrating genomic, clinical, and therapeutic data."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:462 f441e268ba90444bb490e9d157a9dc1a
+msgid ":bdg-info:`tooluniverse-precision-medicine-stratification`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:464 bb8643bfbf204881869d542e2d62ac0f
+msgid "Precision Oncology"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:470 48946b68e127445bb9d294e5114881df
+msgid ""
+"Provide actionable treatment recommendations for cancer patients based on"
+" molecular profile. Interprets tumor mutations, identifies FDA-approved "
+"therapies, finds resistance mechanisms, matches clinical trials."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:473 05b070b689124c7a9c2b89026e22d16c
+msgid ":bdg-info:`tooluniverse-precision-oncology`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:475 b6898b9189c84b78a02d4c17c9c43c1c
+msgid "Protein Interactions"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:481 aa6d3fbf369c42b8be612c193cbd208a
+msgid ""
+"Analyze protein-protein interaction networks using STRING, BioGRID, and "
+"SASBDB databases. Maps protein identifiers, retrieves interaction "
+"networks with confidence scores, performs functional enrichment "
+"analysis..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:484 a115bf7273fb49a5af0086319ddcf75e
+msgid ":bdg-info:`tooluniverse-protein-interactions`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:486 3f69117f536c4c7eb29718b76cc6fb56
+msgid "Protein Structure Retrieval"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:492 fb0885294fce47cebdd20547b037d4ab
+msgid ""
+"Retrieves protein structure data from RCSB PDB, PDBe, and AlphaFold with "
+"protein disambiguation, quality assessment, and comprehensive structural "
+"profiles."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:495 e6549cb7b5cf4e93924bbec7afc47623
+msgid ":bdg-info:`tooluniverse-protein-structure-retrieval`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:497 66a0e8c0a4824c04a8167c5cdffcc465
+msgid "Protein Therapeutic Design"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:503 34fbc1fba7874feeafbab009233bac53
+msgid ""
+"Design novel protein therapeutics (binders, enzymes, scaffolds) using AI-"
+"guided de novo design. Uses RFdiffusion for backbone generation, "
+"ProteinMPNN for sequence design, ESMFold/AlphaFold2 for validation."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:506 8f69c33ea06c4904a779221874bc428e
+msgid ":bdg-info:`tooluniverse-protein-therapeutic-design`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:508 21c7e1459a8e462e98ace4a24f0ec62d
+msgid "Proteomics Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:514 4dcc23c5e36f4381b68c673aa63315e2
+msgid ""
+"Analyze mass spectrometry proteomics data including protein "
+"quantification, differential expression, post-translational modifications"
+" (PTMs), and protein-protein interactions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:517 477c68b5399e4a4ea6b8bb5a0ebea828
+msgid ":bdg-info:`tooluniverse-proteomics-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:519 812fe98f383d44a8b45d1498ed26ec42
+msgid "Rare Disease Diagnosis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:525 2b89e2d82c56464ebe3d84a7a9449b13
+msgid ""
+"Provide differential diagnosis for patients with suspected rare diseases "
+"based on phenotype and genetic data."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:528 ffaf72f750824bdaa5b63d3ea2369c8a
+msgid ":bdg-info:`tooluniverse-rare-disease-diagnosis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:530 93cedcc3d2f048749f8c7217b54b2513
+msgid "RNA-seq DESeq2"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:536 1e07b64fc25840d793eec2a7a1de2e64
+msgid ""
+"Production-ready RNA-seq differential expression analysis using PyDESeq2."
+" Performs DESeq2 normalization, dispersion estimation, Wald testing, LFC "
+"shrinkage, and result filtering."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:539 ffb59e961f19414bace58462c9cdc93d
+msgid ":bdg-info:`tooluniverse-rnaseq-deseq2`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:541 55610783016d4023805075ca71a8316f
+msgid "Sequence Retrieval"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:547 6badbfc92dba4f14b45928440b98c1f6
+msgid ""
+"Retrieves biological sequences (DNA, RNA, protein) from NCBI and ENA with"
+" gene disambiguation, accession type handling, and comprehensive sequence"
+" profiles."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:550 f1309dd0d588469c938132f2d6cbe229
+msgid ":bdg-info:`tooluniverse-sequence-retrieval`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:552 781243f902924ffabdffdee4389c9844
+msgid "Single Cell"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:558 b3fa3e933e014bf0a9aaa0f86f4c7829
+msgid ""
+"Production-ready single-cell and expression matrix analysis using scanpy,"
+" anndata, and scipy. Performs scRNA-seq QC, normalization, PCA, UMAP, "
+"Leiden/Louvain clustering, differential expression (Wilcoxon, t-test,..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:561 40a2119338db42e8ba607f1a9c6ad8dc
+msgid ":bdg-info:`tooluniverse-single-cell`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:563 87dbe7640d214d32aa1c32e5fc39e725
+msgid "Spatial Omics Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:569 ec889061e17c41bf9d2bd94d7c07aacd
+msgid ""
+"Computational analysis framework for spatial multi-omics data "
+"integration. Given spatially variable genes (SVGs), spatial domain "
+"annotations, tissue type, and disease context from spatial "
+"transcriptomics/proteomics..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:572 f33c99f26af84ecc8560bb5d1f70b770
+msgid ":bdg-info:`tooluniverse-spatial-omics-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:574 8a6120718ee94b6e8aa0c3c8e9787cb7
+msgid "Spatial Transcriptomics"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:580 8694b87a9b67490c883da4e0eecd88bf
+msgid ""
+"Analyze spatial transcriptomics data to map gene expression in tissue "
+"architecture. Supports 10x Visium, MERFISH, seqFISH, Slide-seq, and "
+"imaging-based platforms."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:583 6d834b783a204b16bd3177d67e685afa
+msgid ":bdg-info:`tooluniverse-spatial-transcriptomics`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:585 2508ea91422f44518cb08183392af331
+msgid "Statistical Modeling"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:591 19892895549b4f7fa254a082f45eff61
+msgid ""
+"Perform statistical modeling and regression analysis on biomedical "
+"datasets. Supports linear regression, logistic regression "
+"(binary/ordinal/multinomial), mixed-effects models, Cox proportional "
+"hazards survival..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:594 adb60c1e858e40f18a006f2f5d689112
+msgid ":bdg-info:`tooluniverse-statistical-modeling`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:596 41e837dd0ce04721854986b619fd2747
+msgid "Structural Variant Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:602 defa52729d7242fcae479fc30a79e0c1
+msgid ""
+"Comprehensive structural variant (SV) analysis skill for clinical "
+"genomics. Classifies SVs (deletions, duplications, inversions, "
+"translocations), assesses pathogenicity using ACMG-adapted criteria, "
+"evaluates gene..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:605 58cb72b698a2414fbbda15f94c32271d
+msgid ":bdg-info:`tooluniverse-structural-variant-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:607 2c38da8a9136455ea395617dc6bb4c76
+msgid "Systems Biology"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:613 1e3ea757627e4a3690129d095025f04c
+msgid ""
+"Comprehensive systems biology and pathway analysis using multiple pathway"
+" databases (Reactome, KEGG, WikiPathways, Pathway Commons, BioModels)."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:616 defe963e43c540cf8b9555b55be7686a
+msgid ":bdg-info:`tooluniverse-systems-biology`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:618 96dfc2393f6b4ce5bf698019fd35d515
+msgid "Target Research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:624 a0075a8b453d46fb8ed6dd9db57d99dc
+msgid ""
+"Gather comprehensive biological target intelligence from 9 parallel "
+"research paths covering protein info, structure, interactions, pathways, "
+"expression, variants, drug interactions, and literature."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:627 5b7dd4a80862444ebc7cebd37bafc522
+msgid ":bdg-info:`tooluniverse-target-research`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:629 36198618347143ee87ec317dee197e0c
+msgid "Variant Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:635 b8fb9e8efbec49acbb0f9a5b22b46ec0
+msgid ""
+"Production-ready VCF processing, variant annotation, mutation analysis, "
+"and structural variant (SV/CNV) interpretation for bioinformatics "
+"questions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:638 b20a32d6260343c69cb9744cb255aa74
+msgid ":bdg-info:`tooluniverse-variant-analysis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:640 3c6a848b4f8f4100a2d2d66881cc5a6b
+msgid "Variant Interpretation"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:646 f9d1462105124cbeb2645ff74327c702
+msgid ""
+"Systematic clinical variant interpretation from raw variant calls to "
+"ACMG-classified recommendations with structural impact analysis."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:649 98ff6877c6c946b7ad058aa4a1f70fb0
+msgid ":bdg-info:`tooluniverse-variant-interpretation`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:653 6a906dc755714efa8955350480778051
+msgid "Development Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:658 e83ea402c00942b6bbd908405506799d
+msgid "Create ToolUniverse Skill"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:664 7779098620df4ee0a7af461fbe1f0a53
+msgid ""
+"Create high-quality ToolUniverse skills following test-driven, "
+"implementation-agnostic methodology. Integrates tools from ToolUniverse's"
+" 1,264+ tool library, creates missing tools when needed using devtu-"
+"create-tool,..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:667 b7c9e5a100454283a666eadbfe07c375
+msgid ":bdg-info:`create-tooluniverse-skill`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:669 38c613b7d7a248afad9e872cead2aae4
+msgid "DevTU: Auto-Discover APIs"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:675 9d61fac744e145248dfc246d82c9883f
+msgid ""
+"Automatically discover life science APIs online, create ToolUniverse "
+"tools, validate them, and prepare integration PRs."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:678 74f39a377c284663b5728017a355b70c
+msgid ":bdg-info:`devtu-auto-discover-apis`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:680 8d50d07aae9b4b45bbe726ba6701d70b
+msgid "DevTU: Create Tool"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:686 727807726e444ea18794b6daf0bef543
+msgid ""
+"Create new scientific tools for ToolUniverse framework with proper "
+"structure, validation, and testing."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:689 3b404778c88e4351ac2348a4b4a3e22d
+msgid ":bdg-info:`devtu-create-tool`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:691 5b436bdef6b147329a5b4827e31528d8
+msgid "DevTU: Docs Quality"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:697 fe70ba4cc3b7407babb39dc64b700a01
+msgid ""
+"TOP PRIORITY skill — find and immediately fix or remove every piece of "
+"wrong, outdated, or redundant information in ToolUniverse docs."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:700 7e9019629299423a9c0dc127109a5bff
+msgid ":bdg-info:`devtu-docs-quality`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:702 80a91f855c3c42338985b4bd3b176e7f
+msgid "DevTU: Fix Tool"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:708 ce6beb03051a4ed983c633c32fb8f32b
+msgid ""
+"Fix failing ToolUniverse tools by diagnosing test failures, identifying "
+"root causes, implementing fixes, and validating solutions."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:711 ecdec6fd960f4cada005ea66bae056f4
+msgid ":bdg-info:`devtu-fix-tool`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:713 c487777df2ad4e7cbf9639dc5f673ec8
+msgid "DevTU: GitHub Workflow"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:719 f1c96ee5efac427ea9b370ffee0eaa10
+msgid ""
+"GitHub workflow for ToolUniverse - push code safely by moving temp files,"
+" activating pre-commit hooks, running tests, and cleaning staged files."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:722 a20a0242f86f49ea8005ac61c1bdce4c
+msgid ":bdg-info:`devtu-github`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:724 01c6d08d27d94ed891d687929f833ab1
+msgid "DevTU: Optimize Descriptions"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:730 231fbb4bce774cd28bb895e9e10a7593
+msgid ""
+"Optimize tool descriptions in ToolUniverse JSON configs for clarity and "
+"usability. Reviews descriptions for missing prerequisites, unexpanded "
+"abbreviations, unclear parameters, and missing usage guidance."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:733 521c350baaf6422aaa318cddf4be6e1d
+msgid ":bdg-info:`devtu-optimize-descriptions`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:735 ad850957a401456d87fe9455fd2dc526
+msgid "DevTU: Optimize Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:741 d974131077004f2facb9fcaec8af63a1
+msgid ""
+"Optimize ToolUniverse skills for better report quality, evidence "
+"handling, and user experience. Apply patterns like tool verification, "
+"foundation data layers, disambiguation-first, evidence grading, "
+"quantified..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:744 413889a0f9ac487092da7d01d52c276e
+msgid ":bdg-info:`devtu-optimize-skills`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:746 c212e91418ee44a49e298a48e617edaf
+msgid "Install Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:752 220f50c76df443e29a43f0ab85ba079a
+msgid ""
+"Detect and auto-install missing ToolUniverse research skills by checking "
+"common client skill directories and cloning from GitHub if absent."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:755 2d68c2eafe6d4c17ae7309e85f3cd84b
+msgid ":bdg-info:`tooluniverse-install-skills`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:757 57922fc5c1914b879dd351f25f5007cf
+msgid "Python SDK"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:763 0888598b4390400dbad5c8ca235b668f
+msgid ""
+"Build AI scientist systems using ToolUniverse Python SDK for scientific "
+"research. Use when users need to access 1000++ scientific tools through "
+"Python code, create scientific workflows, perform drug discovery, "
+"protein..."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:766 34e233e7a7c34c57aa5ca8665411cf57
+msgid ":bdg-info:`tooluniverse-sdk`"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:770 770d074bb41c42308b941918e39fb6a5
+msgid "How to Use Skills"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:772 293655ea4faa4715a9c8347150e91c0d
+msgid ""
+"After installation, skills are available in your AI coding agent. Some "
+"agents activate skills automatically based on your questions, while "
+"others may require you to explicitly mention the skill name."
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:781 3b90871e2de0432aa2146e204a0089f5
+msgid "**Ask**: \"Research aspirin comprehensively\""
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:783 03e5dc2923ea4b4086b65c4fc70528fa
+msgid "**Activates**: tooluniverse-drug-research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:785 2759d5a5d753404493ef86a03402c817
+msgid "Target Analysis"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:789 fdf56529cbea4a1d95fcd66e6713e62f
+msgid "**Ask**: \"Analyze EGFR as a drug target\""
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:791 c84a3abef3024aa6a3d0adada07f43cc
+msgid "**Activates**: tooluniverse-target-research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:793 02e4e18f5b6c4a34a96131aedc38aee1
+msgid "Disease Investigation"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:797 8aa6dc044dc34cf084d534ac53d9ed55
+msgid "**Ask**: \"Generate disease report for diabetes\""
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:799 0bba3f50ab0541b1bdc0065ff126651e
+msgid "**Activates**: tooluniverse-disease-research"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:801 cf66267cdc7c4a928aac810dc3b33242
+msgid "Literature Review"
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:805 b51fb233b2f047bd9671e1ca6f30843d
+msgid "**Ask**: \"Deep literature review on CRISPR\""
+msgstr ""
+
+#: ../../guide/skills_showcase.rst:807 198dd5de98284c1199e8aecc601e93bb
+msgid "**Activates**: tooluniverse-literature-deep-research"
+msgstr ""
+

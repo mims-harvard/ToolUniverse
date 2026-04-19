@@ -1,0 +1,387 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:2
+#: 2e7eed9b405b465b8ee28f47080e23b5
+msgid "Local Tools Tutorial"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:4
+#: 81ad743499ec4bceb7b8592157e0d6a3
+msgid ""
+"Learn how to create local Python tools with ToolUniverse. This tutorial "
+"teaches you step by step, from the simplest example to advanced features."
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:7
+#: 9ef94323592b447c9e5b71466c904703
+msgid "Quick Checklist"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:9
+#: 342275c6893d4dbd89481c3d8ea86657
+msgid "**How to add a local tool:**"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:11
+#: 79f5854428884ede9f853a0b678c61f6
+msgid "**Create Python file** with your tool class"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:12
+#: a6c3a0df55234c1f876ae3b4995ec97e
+#, python-brace-format
+msgid "**Add decorator** ``@register_tool('ToolName', config={...})``"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:13
+#: d650e39f047c43589734310863632591
+msgid "**Inherit from BaseTool** and implement ``run()`` method"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:14
+#: 6eaf3ee2426346fc9d0de9e1496c9cd1
+msgid "**Define parameters** in config (if needed)"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:15
+#: 78d566c3f06646438e0912cc0cea9afa
+msgid "**Import the file** to register the tool"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:16
+#: bacdb38b33244f30ba12bd0e4eae9282
+msgid "**Use with ToolUniverse** via ``run()``"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:19
+#: 4e97da36539942bfa9667cfbb021c40e
+msgid "**Self-Use**: This tutorial covers using tools in your own projects."
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:21
+#: 39df966d855d421baae5ffb6b1f2dc39
+msgid ""
+"**Contributing**: If you want to contribute tools to the ToolUniverse "
+"repository, see the contributing guide for additional steps."
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:24
+#: 0ca9ad9e8dfd41bd8156b8c102207c2e
+msgid "Step 1: Your First Tool (Simplest Example)"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:26
+#: c6f6b062b59c4f27a14aea85d2f156ca
+msgid "Let's start with the absolute minimum. This tool just says hello:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:55
+#: 27b3f1bfb9f8456587c91a3085d7349c
+msgid ""
+"**What just happened?** - ``@register_tool`` tells ToolUniverse about "
+"your tool - ``config`` defines the tool's name and description - "
+"``run()`` method does the actual work - ToolUniverse automatically "
+"discovers and loads your tool"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:61
+#: 2c7178645bad4a6f8857785909be02d8
+msgid "**Try it:** Save as `hello_tool.py`, run it, and see \"Hello!\" printed."
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:64
+#: 5a3aabd1657f4c8c9f64c6ad8d97507e
+msgid "Step 2: Adding Parameters"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:66
+#: 9b70fa3940124085b604ad8154293d6b
+msgid "Now let's add input parameters. This tool greets a specific person:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:97
+#: 55b4315bdeb24f5997d4d7bf0d6dc8e9
+msgid ""
+"**Understanding the config:** - ``\"parameter\"``: Defines what inputs "
+"your tool accepts - ``\"type\": \"object\"``: Tool accepts multiple "
+"parameters (not just one value) - ``\"properties\"``: Defines each "
+"parameter (name, type, description) - ``\"required\"``: Lists which "
+"parameters are mandatory"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:103
+#: c343ccf661094090a7e1975f5f48e3a3
+msgid ""
+"**Parameter types you can use:** - ``\"string\"``: Text input - "
+"``\"number\"``: Numeric input - ``\"boolean\"``: True/false input - "
+"``\"array\"``: List of values"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:110
+#: bb6e9b62653b4e76852dd88139b6982d
+msgid "Step 3: Adding Input Validation"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:112
+#: 07749f6a9a6c48d5a6cc78146c3eb455
+msgid "Let's add validation to catch bad inputs:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:152
+#: d05775e9582a4f79aaf2ed4090404543
+msgid ""
+"**Why validation matters:** - Prevents crashes from bad input - Gives "
+"clear error messages to users - Makes your tool more reliable"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:157
+#: 9c1f039d054e4ff7a632a2fe7360722d
+msgid "**Alternative: Using validate_parameters()**"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:159
+#: c580f4d98a564448815bf37676f818b2
+msgid ""
+"For more complex validation, you can override the `validate_parameters()`"
+" method instead:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:181
+#: da3cfc87bdbf4a5290e35c3de8454a8a
+msgid ""
+"**When to use which:** - Use `validate_input()` for simple validation in "
+"your `run()` method - Use `validate_parameters()` for complex validation "
+"that integrates with ToolUniverse's error system"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:186
+#: 202b756ce88d407cab356296bbcd90f5
+msgid "Step 4: Complete Real Example"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:188
+#: 33564f4a0a39476a97624bdb41989c21
+msgid "Now let's build something useful - a protein molecular weight calculator:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:263
+#: 592ec04d17a240649bcf215b9f41c3e0
+msgid ""
+"**This example shows:** - Complex business logic - Data initialization in"
+" ``__init__`` - Input validation with custom rules - Meaningful return "
+"values - Error handling"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:271
+#: 50f2290320d64bdfbf4cd05f6d7c0c1d
+msgid "Common Scenarios"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:274
+#: 3804126ef4bb48f383d50e6a8855a47b
+msgid "I want to call an external API"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:314
+#: 98b647af8e6647528ec98a82440c4c5c
+msgid "I want to process files"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:354
+#: 903c3577d8654ce1b74f27eb1a07ea71
+msgid "I want to use API keys (environment variables)"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:356
+#: 18fe89f720fe487296222e08a8af713f
+msgid "Add to your config:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:376
+#: 579c79fe92f54ac38bf969ee504067fc
+msgid "Then in your run method:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:386
+#: b7fd8c19d3b54d7e8db8015c83885cde
+msgid "I want better error handling"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:388
+#: 83a25ca82dda46fdb14b1a0f145d1af0
+msgid ""
+"For more sophisticated error handling, override the `handle_error()` "
+"method:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:423
+#: b4f9eb8f9c94469f9bcd8c7094634db7
+msgid ""
+"**Benefits of custom error handling:** - Users get specific, actionable "
+"error messages - Different error types can be handled differently - "
+"Better debugging and troubleshooting experience"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:429
+#: 4df47f5693b1472b96bf92ed2e9e1960
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:432
+#: 90b9c8500ae849bbb02f91ccc0ae0265
+msgid "Naming Conflicts (Failed to initialize tool for validation)"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:434
+#: 6607e62c6ae2439498b902317d7bf92e
+msgid "**Problem**: Getting \"Failed to initialize tool for validation\" error"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:436
+#: bd49257e9d2b4040a543610627a47702
+msgid "**Cause**: Wrapper function name matches the class name"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:438
+#: 3667830aa3484449bbfbea1250e26de7
+msgid "**Solution**: Use different names .. code-block:: python"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:441
+#: 1e789ce7e16846e783e69ff1c72b1ce1
+msgid ""
+"# Wrapper function must use snake_case def my_tool(...):  # ✅ Good def "
+"MyTool(...):  # ❌ Bad if class is also called MyTool"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:445
+#: fb67254d8bdc4c6a911aebb847357a43
+msgid ""
+"**Convention**: Class names use PascalCase, wrapper functions use "
+"snake_case."
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:448
+#: 63f939dd93c044879a246a13a09cb1cf
+msgid "Tool not found"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:450
+#: c126b0304127431ba2422b9769097efa
+msgid "Is the tool file imported? (need to ``import`` or run directly)"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:451
+#: 8b6362028406411aa3d81e37b5491433
+msgid "Is the ``@register_tool`` decorator used correctly?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:452
+#: 6d5e534162934f8ab3ad9303cf27abeb
+msgid "Is ToolUniverse instantiated after tool import?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:455
+#: 62c04497bf7c48e593a3533659080c82
+msgid "Parameter errors"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:457
+#: 9cd098e4ce384cb293703256881adf89
+msgid ""
+"Do ``\"parameter\"`` definitions in config match ``run()`` method "
+"parameters?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:458
+#: 51d7a9175f7f4f00b0fb74fcb4523366
+msgid "Are required parameters listed in ``\"required\"`` array?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:459
+#: 68679f29526344fab3385e7d40ee4170
+msgid "Are parameter types (``string``/``number``/``object``) correct?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:462
+#: 1055739da5ee4fbca3831563d0810a7f
+msgid "Execution failures"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:464
+#: 2701c8f1f47245ad8234d41298d1c6c3
+msgid "Does the class inherit from ``BaseTool``?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:465
+#: 3433f67c22574f668827f5d352297a44
+msgid "Does ``__init__`` call ``super().__init__(tool_config)``?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:466
+#: 67979e1d396a40e292190d593e72cc59
+msgid "Does ``run()`` return a dict with ``\"success\"`` field?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:467
+#: b82ad1df49414c73ab9d94a5cfd3a78d
+msgid "Is ``validate_input()`` implemented for parameter validation?"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:470
+#: ee74a070720f4fbb97e76320e81c5a57
+msgid "Next Steps"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:472
+#: c74fbf26dd0c4106a74c28e362fd832a
+msgid "Now that you can create local tools:"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:474
+#: 0628d6c0ae3e4e128502e4268f5aa2f8
+msgid "**Remote Tools**: Learn about remote tool integration"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:475
+#: ad89a42e827e4a9eb2f0e65cdcc40064
+msgid "**Contributing**: Submit your tools to ToolUniverse"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:476
+#: ee782bc63ab84ce1b3e6a9cfa87c6e1c
+msgid "**AI Integration**: Connect your tools with AI assistants"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:477
+#: 886ae51118af41b7a45d31f9cbbc9030
+msgid "**Scientific Workflows**: Build research pipelines"
+msgstr ""
+
+#: ../../expand_tooluniverse/local_tools/local_tools_tutorial.rst:480
+#: 21f3b22e35cc4a188b3b20a8776be0fc
+msgid ""
+"**Development tip**: Start simple, test thoroughly, and gradually add "
+"complexity. The ToolUniverse community is here to help if you get stuck!"
+msgstr ""
+

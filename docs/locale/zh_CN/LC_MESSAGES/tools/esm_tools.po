@@ -1,0 +1,287 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/esm_tools.rst:10 592f5ea68edc448cb53416454e8c8146
+msgid "Esm Tools"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:12 47c226ad179448b69223af2b7ca1dadf
+msgid ""
+"**Configuration File**: ``esm_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:16 7c98182de6de498ca16f14680d4e57ef
+msgid ""
+"This page contains all tools defined in the ``esm_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:19 a5775baf569e455bbee21bb7bd555500
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:22 00abc85c458d4720aea851c6d56db576
+msgid "**ESM_fold_protein** (Type: ESMTool)"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:24 ff22dc1312d74f0eb82a5f393ef847bd
+msgid ""
+"Predict protein 3D structure from sequence using ESM3, returning pTM "
+"(predicted TM-score), per-re..."
+msgstr ""
+
+#: ../../tools/esm_tools.rst 3c4c92db48c349f2ba9b442a41503b0f
+msgid "ESM_fold_protein tool specification"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:28 ../../tools/esm_tools.rst:69
+#: ../../tools/esm_tools.rst:113 ../../tools/esm_tools.rst:154
+#: 1b3498e3eae74de086f5cb1d10816429 727a0f6a883a4c0a992b3549f34d35cc
+#: d71177fb3bb94d8ea3ba93e0b1c93d79 dae5fdba040f46ae8176239f193770a1
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:30 068e864b862048f081cd36e5340e6621
+msgid "**Name**: ``ESM_fold_protein``"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:31 ../../tools/esm_tools.rst:72
+#: ../../tools/esm_tools.rst:116 ../../tools/esm_tools.rst:157
+#: b6ad5a40fd674597a439d00db0a3721a d8fd80a05f4240449686cd1275dbf39e
+#: e11139e9ea094a5fa08a16db27e3bdf0 eb825bcbbfae49d0ada2f89013940381
+msgid "**Type**: ``ESMTool``"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:32 a6b0af12dce24d0cbae6dd43a1deb9b8
+msgid ""
+"**Description**: Predict protein 3D structure from sequence using ESM3, "
+"returning pTM (predicted TM-score), per-residue pLDDT confidence scores, "
+"and backbone atom coordinates. ESM3 performs structure generation via "
+"iterative structure track decoding. pTM > 0.7 indicates confident "
+"prediction. Coordinates are (L, 37, 3) backbone atom positions in "
+"Angstroms (standard 37-atom representation). Use for: rapid structure "
+"prediction, confidence-based filtering, structure-guided design. "
+"Prerequisites: pip install esm; set ESM\\_API\\_KEY (from "
+"https://forge.evolutionaryscale.ai)."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:34 ../../tools/esm_tools.rst:75
+#: ../../tools/esm_tools.rst:119 ../../tools/esm_tools.rst:160
+#: 0428cdd7b4f0403f8cdcefcea3e0a9a9 0eb1e265869a4b0d922a7b5076d149a6
+#: 8187383fad914da794c4937b95ed8f1c af10bfd879b147c0a2cec88703f590e1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:36 ../../tools/esm_tools.rst:77
+#: ../../tools/esm_tools.rst:121 ../../tools/esm_tools.rst:162
+#: 35bc20b5a8af4b9ebacb5ccfae906dcd 715c3305c61f47368a13e9558b79b4c9
+#: 7f65386e4719434d9cf360330b824c9c 94e9b7c7eae14ddf9fa86836a1925cc2
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:39 340675d6734e44e8aa78cf4c5dd9750c
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code to fold (e.g. 'MKTAYIAKQRQISFVKSHFSRQ')."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:42 161a55166ec944c187d17ea77062f88d
+msgid "``model`` (string) (optional) ESM3 model to use for structure prediction."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:45 e5ea830a643b48e9b553eb46b417633b
+msgid ""
+"``num_steps`` (integer) (optional) Number of iterative structure decoding"
+" steps (default: 8). More steps may improve accuracy."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:48 ../../tools/esm_tools.rst:92
+#: ../../tools/esm_tools.rst:133 ../../tools/esm_tools.rst:171
+#: 16bf2c94211f48e798d425f435198c55 47bfb8ecc7cd4416ac180459533f63fa
+#: 487f7b4b55c543a989c3c64e9a98003b bc269f7abb7b4fafa1375a682f6bd48c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:63 a91fb4abf08a4a14852007d18e41d2c3
+msgid "**ESM_generate_protein_sequence** (Type: ESMTool)"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:65 094edb1d3c034eea87ac8ea1c443ea8b
+msgid ""
+"Generate or complete a protein sequence using ESM3, EvolutionaryScale's "
+"generative protein langua..."
+msgstr ""
+
+#: ../../tools/esm_tools.rst e728c45eb2bc417496bb4957e8777893
+msgid "ESM_generate_protein_sequence tool specification"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:71 aa298c23d6614950be461aa7a9c84ad4
+msgid "**Name**: ``ESM_generate_protein_sequence``"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:73 a1734b05acbd40bd8754eeba533f08ee
+msgid ""
+"**Description**: Generate or complete a protein sequence using ESM3, "
+"EvolutionaryScale's generative protein language model. Provide a "
+"prompt\\_sequence with '\\_' characters marking positions to generate "
+"(masked positions), and ESM3 will fill them in via iterative masked "
+"language modeling. Can generate entire sequences from scratch (all '\\_')"
+" or complete partial sequences. Use for: protein engineering, de novo "
+"protein design, completing truncated sequences, exploring sequence space "
+"around a template. Prerequisites: pip install esm; set ESM\\_API\\_KEY "
+"(from https://forge.evolutionaryscale.ai). Example: "
+"'MKTAY\\_\\_\\_\\_\\_QRQIS' generates 5 residues in the masked region."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:80 eefd135071fd4e6da42e7d1b046ed812
+msgid ""
+"``prompt_sequence`` (string) (required) Protein sequence template with "
+"'\\_' at positions to generate. Use standard amino acid letters for fixed"
+" positions and '\\_' for masked/generated positions. Example: "
+"'MKTAY\\_\\_\\_\\_\\_QRQISFVK' generates 5 residues in the middle."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:83 47dc3be18c704d048668d922bc19b366
+msgid "``model`` (string) (optional) ESM3 model to use for generation."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:86 661e46168e0e43979501e0ccead41beb
+msgid ""
+"``num_steps`` (integer) (optional) Number of iterative decoding steps "
+"(default: 8). More steps = slower but potentially better quality."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:89 51a31777ee8b4afe92d880f077ed4944
+msgid ""
+"``temperature`` (number) (optional) Sampling temperature (default: 1.0). "
+"Lower values (0.1-0.5) produce more conservative sequences; higher values"
+" (1.0-2.0) more diverse."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:107 e9f1d05937e84861b3ebce8357f10495
+msgid "**ESM_get_protein_embedding** (Type: ESMTool)"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:109 2988507fc4314d2eb3aeec313940c3cd
+msgid ""
+"Get protein sequence embeddings from EvolutionaryScale ESMC (ESM "
+"Cambrian) models via the Forge A..."
+msgstr ""
+
+#: ../../tools/esm_tools.rst 1fcb2780a5be43bea17ecdab572ba61c
+msgid "ESM_get_protein_embedding tool specification"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:115 c48127768082459b90663cef57c851f0
+msgid "**Name**: ``ESM_get_protein_embedding``"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:117 ee9f10900aca43ba81e9e7e965ca34b9
+msgid ""
+"**Description**: Get protein sequence embeddings from EvolutionaryScale "
+"ESMC (ESM Cambrian) models via the Forge API. Returns a mean-pooled "
+"embedding vector (320-dim for esmc-300m, 1152-dim for esmc-600m) "
+"representing the entire protein, and optionally per-residue embeddings. "
+"ESMC is a fast, high-quality protein language model suitable for "
+"downstream tasks: similarity search, clustering, property prediction. "
+"Prerequisites: pip install esm; set ESM\\_API\\_KEY environment variable "
+"(token from https://forge.evolutionaryscale.ai). Use for: encoding "
+"protein sequences for ML, computing protein-protein similarity, "
+"featurizing sequences."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:124 e280a1b8b6c94ada890d361902491f24
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code (e.g. 'MKTAYIAKQRQISFVKSHFSRQ'). Standard 20 amino acids; "
+"avoid gaps or non-standard characters."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:127 3016f7f2ed214eb9aa491eb99f3bdec3
+msgid ""
+"``model`` (string) (optional) ESMC model to use. 'esmc-300m-2024-12' "
+"(faster, 300M params) or 'esmc-600m-2024-12' (more accurate, 600M "
+"params)."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:130 8db9f593933e40509c4ea5ed0e4e8633
+msgid ""
+"``return_per_residue`` (boolean) (optional) If true, also return per-"
+"residue embedding vectors (one vector per amino acid). Default false to "
+"reduce response size."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:148 1bed2d2407b548dfb38546e36db31623
+msgid "**ESM_score_sequence** (Type: ESMTool)"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:150 faa03a9072b140c7bc25eb17a73f95dc
+msgid ""
+"Score a protein sequence using ESMC logits to compute per-residue log-"
+"probabilities and mean pseu..."
+msgstr ""
+
+#: ../../tools/esm_tools.rst baab1a7be5e341e0821dfe2c24f03fb0
+msgid "ESM_score_sequence tool specification"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:156 920ff450caab49e1bf5bb7457ce9d90d
+msgid "**Name**: ``ESM_score_sequence``"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:158 44ac0f7e906e46d8a1546f154a50fd5d
+msgid ""
+"**Description**: Score a protein sequence using ESMC logits to compute "
+"per-residue log-probabilities and mean pseudo-log-likelihood. Higher "
+"(less negative) mean log-probability indicates the sequence is more "
+"natural/likely according to the model's learned protein distribution. Use"
+" for: evaluating mutant fitness, comparing sequence variants, identifying"
+" low-confidence residues. Mean log-probability near 0 is highest "
+"confidence; values below -4 suggest unusual or low-quality residues. "
+"Prerequisites: pip install esm; set ESM\\_API\\_KEY (from "
+"https://forge.evolutionaryscale.ai)."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:165 1f13c51cf80e48fd92db6455e09a5c52
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code to score (e.g. 'MKTAYIAKQRQISFVKSHFSRQ')."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:168 9592300b47934175b43745c1ee9ad2e7
+msgid "``model`` (string) (optional) ESMC model to use for scoring."
+msgstr ""
+
+#: ../../tools/esm_tools.rst:186 fb011f37f9cb4f10b44c28a19f3a2ab8
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:188 c690fcb0be804126a177b79b795f204f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/esm_tools.rst:189 0b02e18abfd1405c98a1f60376fa7b57
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

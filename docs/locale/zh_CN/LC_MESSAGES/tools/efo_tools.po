@@ -7,96 +7,343 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/efo_tools.rst:2 7766b7d5e8174d03857c44656a408ff5
+#: ../../tools/efo_tools.rst:10 fb291fac3613433a88d1267bc6a79c5d
 msgid "Efo Tools"
 msgstr "Efo 工具"
 
-#: ../../tools/efo_tools.rst:4 2621d323fb48457fa5b55dffc05cf4e0
+#: ../../tools/efo_tools.rst:12 7812fac484e14a43a1277e91144e30a3
+#, fuzzy
 msgid ""
 "**Configuration File**: ``efo_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 1"
+"Count**: 6"
 msgstr ""
 "**配置文件**：``efo_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/efo_tools.rst:8 8086c484b4ac409faa025e4f42e7eaa8
+#: ../../tools/efo_tools.rst:16 949e26679e36407bb7113b971eff3cf3
 msgid ""
-"This page contains all tools defined in the ``efo_tools.json`` configuration"
-" file."
+"This page contains all tools defined in the ``efo_tools.json`` "
+"configuration file."
 msgstr "此页面包含 ``efo_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/efo_tools.rst:11 1327077f419a47988d860e13bed63aa1
+#: ../../tools/efo_tools.rst:19 cda6c2acfb4e4c5ea35a5446f9c89980
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/efo_tools.rst:14 cd95017300d740c3a06e444bbd7b7eac
+#: ../../tools/efo_tools.rst:22 61f4cdb90b184ac498e25b5a89c32183
 msgid "**OSL_get_efo_id_by_disease_name** (Type: EFOTool)"
 msgstr "**OSL_get_efo_id_by_disease_name**（类型：EFOTool）"
 
-#: ../../tools/efo_tools.rst:16 21975bd7a39142cc8f7e210bcb30977e
+#: ../../tools/efo_tools.rst:24 2fe7b70cf73c4be58a205acf27ac19f6
 msgid ""
-"Tool to lookup Experimental Factor Ontology (EFO) IDs for diseases via the "
-"EMBL-EBI OLS API."
-msgstr "用于通过 EMBL-EBI OLS API 查询疾病的实验因子本体（EFO）ID 的工具。"
+"Legacy helper to find an EFO term ID from a disease name using EMBL-EBI "
+"OLS search."
+msgstr ""
 
-#: ../../tools/efo_tools.rst 89ff26defcae44f5b55133cd22966fea
+#: ../../tools/efo_tools.rst:26 43222161499e4be2aa7bef8e7de70005
+msgid "Returns the ..."
+msgstr ""
+
+#: ../../tools/efo_tools.rst a94660140af84aee816ccbf510404504
 msgid "OSL_get_efo_id_by_disease_name tool specification"
 msgstr "OSL_get_efo_id_by_disease_name 工具规范"
 
-#: ../../tools/efo_tools.rst:20 aa740e01f866401ebb0f5e5c5d4cd776
+#: ../../tools/efo_tools.rst:30 ../../tools/efo_tools.rst:63
+#: ../../tools/efo_tools.rst:92 ../../tools/efo_tools.rst:129
+#: ../../tools/efo_tools.rst:167 ../../tools/efo_tools.rst:197
+#: 3bda7bc7bf8146a296b0ef758a118efd 4db10038e2a6436fb75c97f4263163ad
+#: 62ba3e85d7ef4fe18440910757ad947a 919c7de3bf0c446aae238d0873946ea5
+#: ad9f8234a2b84dc0bd62bd0749fc4f48 f4d23a65fefd4cef9183ce909991380d
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/efo_tools.rst:22 41fc1c18a6314d069d6d0bca19665cac
+#: ../../tools/efo_tools.rst:32 fe1ebd5515424a6c840ac3e19eac484a
 msgid "**Name**: ``OSL_get_efo_id_by_disease_name``"
 msgstr "**名称**：``OSL_get_efo_id_by_disease_name``"
 
-#: ../../tools/efo_tools.rst:23 5f5a280c3cae49288251ec73b8b0a4c4
+#: ../../tools/efo_tools.rst:33 e9920b897abe44d2afc5eee835ff4661
 msgid "**Type**: ``EFOTool``"
 msgstr "**类型**：``EFOTool``"
 
-#: ../../tools/efo_tools.rst:24 74d723bcd77246df8f67f8b433cc4241
+#: ../../tools/efo_tools.rst:34 9fb6dcbcbeff47d6a0c86e7bcfa1d3d4
 msgid ""
-"**Description**: Tool to lookup Experimental Factor Ontology (EFO) IDs for "
-"diseases via the EMBL-EBI OLS API."
-msgstr "**描述**：通过EMBL-EBI OLS API查询疾病的实验因子本体（EFO）ID的工具。"
+"**Description**: Legacy helper to find an EFO term ID from a disease name"
+" using EMBL-EBI OLS search."
+msgstr ""
 
-#: ../../tools/efo_tools.rst:26 63dd28722f4b489f94d78035cd2175d4
+#: ../../tools/efo_tools.rst:36 62b883f6bc8441708bdc8f5ff950ee90
+#, python-brace-format
+msgid ""
+"Returns the best match as \\`{efo\\_id, name}\\` (or \\`null\\` if none)."
+" Note: the tool name contains a legacy typo (\\`OSL\\_\\` vs "
+"\\`OLS\\_\\`). If you need richer ontology data (IRI, synonyms, "
+"children), use the newer \\`ols\\_\\*\\` tools in \\`efo\\_tools.json\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:38 ../../tools/efo_tools.rst:69
+#: ../../tools/efo_tools.rst:100 ../../tools/efo_tools.rst:137
+#: ../../tools/efo_tools.rst:173 ../../tools/efo_tools.rst:205
+#: 4db3fedb324b41a4b5440bdd2a3a18c5 7c31dbef9b814902b1d755ab285bda9e
+#: 95c609b1df1c47088aa0e8022aa338de b484c019a2cd4c82999175a5364a4e59
+#: b9143616bd6f40a9b0fcd478ab2b7b6e f2912c9f82384fe3899b30cf3b32dbc4
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/efo_tools.rst:28 f90a1a8c47e345a4a121c8469e10d200
+#: ../../tools/efo_tools.rst:40 ba273f76b205479499cf9c337f2e0c76
 msgid ""
-"``disease`` (string) (required) Search query for diseases. Provide the "
-"disease name to lookup the corresponding EFO ID."
-msgstr "``disease``（字符串）（必填）用于查询疾病的搜索参数。请提供疾病名称以查找对应的EFO ID。"
+"``disease`` (string) (required) Disease name or free-text query (e.g., "
+"'diabetes mellitus')."
+msgstr ""
 
-#: ../../tools/efo_tools.rst:31 22deaa6cd1e642529a6dc6a793b825dd
+#: ../../tools/efo_tools.rst:43 ../../tools/efo_tools.rst:73
+#: ../../tools/efo_tools.rst:108 ../../tools/efo_tools.rst:148
+#: ../../tools/efo_tools.rst:178 ../../tools/efo_tools.rst:213
+#: 09f0d9dc269541ef928e7c29dbe39ce8 3ef2779d4ef748f0a27fcd4f3473ed91
+#: 5cd2c1914be14456b572a2cd553487e8 86426c5cb3134721ac3b956c5ff64c82
+#: 988665bd5d8d44ebba2143b8f004689e f8cdbafd347b499daa960124c60cc359
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/efo_tools.rst:45 c86886dd73034fbca99703340490a7f7
+#: ../../tools/efo_tools.rst:57 6799b5ed38b94724a55bf4d2767cb718
+#, fuzzy
+msgid "**ols_get_efo_ontology_info** (Type: OLSRESTTool)"
+msgstr "**OSL_get_efo_id_by_disease_name**（类型：EFOTool）"
+
+#: ../../tools/efo_tools.rst:59 db561333524f45dd9b80efcd752a594a
+msgid ""
+"Get metadata about the EFO ontology itself (version, status, number of "
+"terms, title/description)."
+msgstr ""
+
+#: ../../tools/efo_tools.rst 57f5a71c681e46d1ba3bbe4ea1c00b48
+#, fuzzy
+msgid "ols_get_efo_ontology_info tool specification"
+msgstr "OSL_get_efo_id_by_disease_name 工具规范"
+
+#: ../../tools/efo_tools.rst:65 8a5563f1b4eb4d8abf7460b5b9579ba6
+#, fuzzy
+msgid "**Name**: ``ols_get_efo_ontology_info``"
+msgstr "**名称**：``OSL_get_efo_id_by_disease_name``"
+
+#: ../../tools/efo_tools.rst:66 ../../tools/efo_tools.rst:95
+#: ../../tools/efo_tools.rst:132 ../../tools/efo_tools.rst:170
+#: ../../tools/efo_tools.rst:200 5890f23d767f4caf95f874ef2534959c
+#: 9deeebe137eb4621b8d4dda3c3589622 a3a80346ffcc41daa4441bd72c29a7a2
+#: cee7307e21544fe8a4f8076d0eb91cda d2b41500052d460786973386c883d0ee
+#, fuzzy
+msgid "**Type**: ``OLSRESTTool``"
+msgstr "**类型**：``EFOTool``"
+
+#: ../../tools/efo_tools.rst:67 d5178211d7ab4572a7b4ff68748c1100
+msgid ""
+"**Description**: Get metadata about the EFO ontology itself (version, "
+"status, number of terms, title/description)."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:71 b09216f6768548aaad7c08ad6b6ca584
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:86 754a2007dae84e31b23148eab603ecf6
+#, fuzzy
+msgid "**ols_get_efo_term** (Type: OLSRESTTool)"
+msgstr "**OSL_get_efo_id_by_disease_name**（类型：EFOTool）"
+
+#: ../../tools/efo_tools.rst:88 8ac2f6a680a74a93908b47ec7789a3aa
+msgid ""
+"Get details for a single EFO term by \\`iri\\` (recommended) or "
+"\\`obo\\_id\\` (e.g., 'EFO:0000400'). ..."
+msgstr ""
+
+#: ../../tools/efo_tools.rst a9043e3519cb452189a30943df0b7ebb
+#, fuzzy
+msgid "ols_get_efo_term tool specification"
+msgstr "OSL_get_efo_id_by_disease_name 工具规范"
+
+#: ../../tools/efo_tools.rst:94 7c233b5b5eee41008ef6ac2a12d9f04f
+#, fuzzy
+msgid "**Name**: ``ols_get_efo_term``"
+msgstr "**名称**：``OSL_get_efo_id_by_disease_name``"
+
+#: ../../tools/efo_tools.rst:96 1c433be3419f4894b5bcb7632d200bc0
+msgid ""
+"**Description**: Get details for a single EFO term by \\`iri\\` "
+"(recommended) or \\`obo\\_id\\` (e.g., 'EFO:0000400'). Use "
+"\\`ols\\_search\\_efo\\_terms\\` first to discover IDs."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:98 58dcdb8d21bb4244a277f2efec69ec7b
+msgid "\\`iri\\` example: 'http://www.ebi.ac.uk/efo/EFO\\_0000400'."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:102 ../../tools/efo_tools.rst:139
+#: 528e6c564b79418bb0d2818f042d3333 bdef940893e04f07aef6740098098296
+msgid ""
+"``iri`` (string) (optional) Term IRI returned by "
+"\\`ols\\_search\\_efo\\_terms\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:105 ../../tools/efo_tools.rst:142
+#: af43697111784398b49e018680c5db37 bc4fc43820f5453e8827e010201d22d5
+msgid ""
+"``obo_id`` (string) (optional) OBO ID like 'EFO:0000400' (will be "
+"converted to an EFO IRI)."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:121 973db9f186d04be2998d486e19625281
+#, fuzzy
+msgid "**ols_get_efo_term_children** (Type: OLSRESTTool)"
+msgstr "**OSL_get_efo_id_by_disease_name**（类型：EFOTool）"
+
+#: ../../tools/efo_tools.rst:123 f699c8f77e5e45b9bc4d3ce260247167
+msgid ""
+"List children of an EFO term (ontology hierarchy). Provide \\`iri\\` or "
+"\\`obo\\_id\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:125 4cb331d2d5cc41e2b80344091cdd0afc
+msgid "Tip: use \\`ol..."
+msgstr ""
+
+#: ../../tools/efo_tools.rst 9a3e7ffc2f554d0eb896f5d0312e10f3
+#, fuzzy
+msgid "ols_get_efo_term_children tool specification"
+msgstr "OSL_get_efo_id_by_disease_name 工具规范"
+
+#: ../../tools/efo_tools.rst:131 2d8ad60e96a7415c91153df470ee6d71
+#, fuzzy
+msgid "**Name**: ``ols_get_efo_term_children``"
+msgstr "**名称**：``OSL_get_efo_id_by_disease_name``"
+
+#: ../../tools/efo_tools.rst:133 243ddf7bbb924c5a83112b3b56415214
+msgid ""
+"**Description**: List children of an EFO term (ontology hierarchy). "
+"Provide \\`iri\\` or \\`obo\\_id\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:135 72ea2127f64f4f7cbc29491dc427f772
+msgid ""
+"Tip: use \\`ols\\_search\\_efo\\_terms\\` first, then pass the returned "
+"\\`obo\\_id\\` or \\`iri\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:145 d633fc489a7e47f3afc0f42560929d47
+msgid "``size`` (integer) (optional) Maximum number of children to return."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:161 7a43636f7cc94413953bb0dd8a3ac92c
+msgid "**ols_list_ontologies** (Type: OLSRESTTool)"
+msgstr ""
+
+#: ../../tools/efo_tools.rst:163 a1f2310198fe4c44b36a582436ec136e
+msgid ""
+"List available ontologies in OLS (not limited to EFO). Useful to discover"
+" \\`ontologyId\\`, sizes, ..."
+msgstr ""
+
+#: ../../tools/efo_tools.rst bd04ba64c8e042e3a41db37058b00f2b
+msgid "ols_list_ontologies tool specification"
+msgstr ""
+
+#: ../../tools/efo_tools.rst:169 3e3727a6c9a3407aa365e691ed2209aa
+msgid "**Name**: ``ols_list_ontologies``"
+msgstr ""
+
+#: ../../tools/efo_tools.rst:171 ca2c59dc805844419789d3c26d399371
+msgid ""
+"**Description**: List available ontologies in OLS (not limited to EFO). "
+"Useful to discover \\`ontologyId\\`, sizes, and status."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:175 b6fecd5fcc5d4b6fbee613781e7976ff
+msgid "``size`` (integer) (optional) Maximum number of ontologies to return."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:191 83127f6787084117a5e7ab85f8fcc2e5
+msgid "**ols_search_efo_terms** (Type: OLSRESTTool)"
+msgstr ""
+
+#: ../../tools/efo_tools.rst:193 3b4146de3584440c82bfa0c106a49f59
+msgid ""
+"Search EFO terms (OLS v4). Use this to find term IRIs and OBO IDs for a "
+"concept, then pass the \\`..."
+msgstr ""
+
+#: ../../tools/efo_tools.rst 4e228e5d07fc4426a7ba02614870dd6f
+#, fuzzy
+msgid "ols_search_efo_terms tool specification"
+msgstr "OSL_get_efo_id_by_disease_name 工具规范"
+
+#: ../../tools/efo_tools.rst:199 cbc6cc76707048c39ee63fa2570df27c
+#, fuzzy
+msgid "**Name**: ``ols_search_efo_terms``"
+msgstr "**名称**：``OSL_get_efo_id_by_disease_name``"
+
+#: ../../tools/efo_tools.rst:201 3ca5cb54e3c44fa49bb877bbe9b94c08
+msgid ""
+"**Description**: Search EFO terms (OLS v4). Use this to find term IRIs "
+"and OBO IDs for a concept, then pass the \\`iri\\` (or \\`obo\\_id\\`) "
+"into \\`ols\\_get\\_efo\\_term\\` / "
+"\\`ols\\_get\\_efo\\_term\\_children\\`."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:203 05928b9525434d64a19dc172ddca6e95
+msgid ""
+"Example: search for 'diabetes mellitus' to discover \\`obo\\_id\\` like "
+"'EFO:0000400' and \\`iri\\` like "
+"'http://www.ebi.ac.uk/efo/EFO\\_0000400'."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:207 ddba24048ed94fadae4d514e358d4345
+msgid "``query`` (string) (required) Search query (free text)."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:210 0ed2648cfa4e46a6a71e392f7d2e3761
+msgid "``rows`` (integer) (optional) Maximum number of results to return."
+msgstr ""
+
+#: ../../tools/efo_tools.rst:227 191dc11170f1419f8081c733df0ed714
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/efo_tools.rst:47 ad953e2ca6dc4561beb809fd8a056cd4
+#: ../../tools/efo_tools.rst:229 9ba1ea98d2454b21bce217778f488dc4
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/efo_tools.rst:48 19bf623b269742cbaf46a627b90ba870
+#: ../../tools/efo_tools.rst:230 c00f7607e1eb417cbfe3a91a00be8812
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "Tool to lookup Experimental Factor "
+#~ "Ontology (EFO) IDs for diseases via "
+#~ "the EMBL-EBI OLS API."
+#~ msgstr "用于通过 EMBL-EBI OLS API 查询疾病的实验因子本体（EFO）ID 的工具。"
+
+#~ msgid ""
+#~ "**Description**: Tool to lookup Experimental"
+#~ " Factor Ontology (EFO) IDs for "
+#~ "diseases via the EMBL-EBI OLS API."
+#~ msgstr "**描述**：通过EMBL-EBI OLS API查询疾病的实验因子本体（EFO）ID的工具。"
+
+#~ msgid ""
+#~ "``disease`` (string) (required) Search query"
+#~ " for diseases. Provide the disease "
+#~ "name to lookup the corresponding EFO "
+#~ "ID."
+#~ msgstr "``disease``（字符串）（必填）用于查询疾病的搜索参数。请提供疾病名称以查找对应的EFO ID。"
+

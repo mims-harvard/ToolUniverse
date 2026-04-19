@@ -1,0 +1,215 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ena_portal_tools.rst:10 a142952a0b854c2ba931cd503bd39cba
+msgid "Ena Portal Tools"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:12 6859d987ebe943cb9924bb399322a1a1
+msgid ""
+"**Configuration File**: ``ena_portal_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:16 a8468bfec2c44fd285f485390b921e12
+msgid ""
+"This page contains all tools defined in the ``ena_portal_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:19 5e8ec7c7a82d401699d45d4b02278436
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:22 c83f138b284b42f59863831b064087b2
+msgid "**ENAPortal_count_records** (Type: ENAPortalTool)"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:24 7e281dd0a4fd44c3aa17ca687a99ed69
+msgid ""
+"Count the number of records matching a query in the European Nucleotide "
+"Archive (ENA). Supports c..."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst 72809a91fd4543b8bb93cd19c2ea77aa
+msgid "ENAPortal_count_records tool specification"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:28 ../../tools/ena_portal_tools.rst:62
+#: ../../tools/ena_portal_tools.rst:99 72428e02353c48d89797a55534558681
+#: b7272ff99f5242d496151c80127f6ee9 e215e07b14684314b10b128807dfe446
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:30 ae7885ade2b542b4a0fa92983da19030
+msgid "**Name**: ``ENAPortal_count_records``"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:31 ../../tools/ena_portal_tools.rst:65
+#: ../../tools/ena_portal_tools.rst:102 0a3a4d8678c94229a790c7a4fd64157a
+#: 60d5855c28e54462a3e9e6edc0a27730 ebabf1a955474f228bea4962fc6195f2
+msgid "**Type**: ``ENAPortalTool``"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:32 becd78e3539b47c0a91c8dd33c9b4caf
+msgid ""
+"**Description**: Count the number of records matching a query in the "
+"European Nucleotide Archive (ENA). Supports counting studies, samples, "
+"reads, and other result types. Useful for estimating dataset sizes before"
+" downloading. Example: counting studies with "
+"'description=\"transcriptomics\"' returns ~9,000+, showing the breadth of"
+" transcriptomics data in ENA."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:34 ../../tools/ena_portal_tools.rst:68
+#: ../../tools/ena_portal_tools.rst:105 64e7aa685fc747c0a453b102c00660e0
+#: 6d66b92371a5462986075f3d064ff0bf 8a79d3b2a7264f17bbdcd2fed5872d6b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:36 c5b8ddc489dc49758416deefccc7d41a
+msgid ""
+"``query`` (string) (required) ENA search query. Examples: "
+"'description=\"cancer\"', 'tax\\_tree(9606)', 'description=\"CRISPR\" AND"
+" tax\\_tree(10090)'."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:39 78103d76ce3b4a9a987ca8d7102fdc10
+msgid ""
+"``result_type`` (string, null) (optional) Type of records to count. "
+"Options: 'study', 'sample', 'read\\_run', 'analysis', 'assembly'. "
+"Default: 'study'."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:42 ../../tools/ena_portal_tools.rst:79
+#: ../../tools/ena_portal_tools.rst:116 64ab2dee5ee64a47b8273152327fc0ac
+#: b806c42412534b3582c2415ebedc8a84 f74051d7f7134e18a830bf690b8e6c1d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:56 acd4fe5a2cc14a12b3c780cba8d423fa
+msgid "**ENAPortal_search_samples** (Type: ENAPortalTool)"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:58 f579d2665e6d4271bff2dee370e84e8c
+msgid ""
+"Search the European Nucleotide Archive (ENA) for biological samples by "
+"taxonomy or text query. Re..."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst 55f2802a684649ee97e5613008f5e8d4
+msgid "ENAPortal_search_samples tool specification"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:64 33ef8d3903b54836a920f178ff767477
+msgid "**Name**: ``ENAPortal_search_samples``"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:66 96f54c7a52e543b2b154ef6266fc2cf9
+msgid ""
+"**Description**: Search the European Nucleotide Archive (ENA) for "
+"biological samples by taxonomy or text query. Returns sample accessions, "
+"descriptions, taxonomy, and publication dates. Useful for finding source "
+"material metadata across the world's nucleotide archives (INSDC). "
+"Example: 'tax\\_tree(562)' finds all E. coli samples; "
+"'description=\"liver\"' finds samples with liver in the description."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:70 0b486120a9bb4372b9fecae9a4234097
+msgid ""
+"``query`` (string) (required) ENA search query. Examples: "
+"'tax\\_tree(562)' (E. coli), 'description=\"liver\"', 'tax\\_tree(9606) "
+"AND description=\"tumor\"'."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:73 ../../tools/ena_portal_tools.rst:110
+#: 3b139a24e72847fb9b669bef03ac4f64 c63a6bc26c0a4feb9dd6c7f6cb9acf0f
+msgid ""
+"``limit`` (integer, null) (optional) Maximum results to return (1-100, "
+"default 10)."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:76 c97c4a892c884a639acb3d115e864d8a
+msgid ""
+"``fields`` (string, null) (optional) Comma-separated fields. Default: "
+"'sample\\_accession,sample\\_alias,description,tax\\_id,scientific\\_name,first\\_public'."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:93 f39f1cbe50254e389846245438de8d93
+msgid "**ENAPortal_search_studies** (Type: ENAPortalTool)"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:95 650ab1d4948e476695a23e62619cb907
+msgid ""
+"Search the European Nucleotide Archive (ENA) for sequencing studies using"
+" text queries or taxonom..."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst a70219c74c7a461abd420935817cc940
+msgid "ENAPortal_search_studies tool specification"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:101 b745f3699c4b44689be19dca3245496c
+msgid "**Name**: ``ENAPortal_search_studies``"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:103 4123136eddcf42faa1c2404a2d8bd6ef
+msgid ""
+"**Description**: Search the European Nucleotide Archive (ENA) for "
+"sequencing studies using text queries or taxonomy filters. Returns study "
+"accessions, titles, submitting centers, and publication dates. ENA is the"
+" world's largest repository of nucleotide sequences (>3 billion records)."
+" Supports powerful query syntax: use 'description=\"keyword\"' for text "
+"search, 'tax\\_tree(TAXID)' for taxonomy-based queries, or combine with "
+"AND/OR. Example: searching 'description=\"SARS-CoV-2\"' returns COVID-19 "
+"sequencing studies."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:107 e82ea899f1594377adea4ba1d2c30c6d
+msgid ""
+"``query`` (string) (required) ENA search query. IMPORTANT: Plain text "
+"keywords (e.g., 'cancer') will cause HTTP 400. Always wrap text keywords "
+"with description=\"...\". Examples: 'description=\"cancer\"', "
+"'tax\\_tree(9606)' (human), 'description=\"transcriptomics\" AND "
+"tax\\_tree(10090)' (mouse transcriptomics)."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:113 17b2acd3e911463db011868a6aed76df
+msgid ""
+"``fields`` (string, null) (optional) Comma-separated fields to return. "
+"Default: "
+"'study\\_accession,study\\_title,center\\_name,first\\_public,description'."
+" Other fields: 'last\\_updated,tax\\_id,scientific\\_name'."
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:130 34ba1c93a4cb411287f66b6d72631abc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:132 78299de004424f89922451c9506c2235
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ena_portal_tools.rst:133 85d1d95abe2f47e7b57f2ab85682cbb9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

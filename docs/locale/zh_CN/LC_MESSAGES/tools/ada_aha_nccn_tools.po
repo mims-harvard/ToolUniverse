@@ -1,0 +1,483 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ada_aha_nccn_tools.rst:10 d7d0f7cbbb5a4ebf974296aa0c393288
+msgid "Ada Aha Nccn Tools"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:12 6de0a67f65f045f8a7905515e8755814
+msgid ""
+"**Configuration File**: ``ada_aha_nccn_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:16 514adae2c3f94d1c9c6fa0c33dc958f4
+msgid ""
+"This page contains all tools defined in the ``ada_aha_nccn_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:19 a926793ac2be4363a036c9139f1cdf3e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:22 e85c208c76844b96b640925ffef3b540
+msgid "**ACC_list_guidelines** (Type: AHAACCGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:24 59526b9d3447437d9348b11d73256bf9
+msgid ""
+"List recent American College of Cardiology (ACC) clinical practice "
+"guidelines. Returns ACC-author..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst b271014b9719400e8ac357fe705d78f2
+msgid "ACC_list_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:28 ../../tools/ada_aha_nccn_tools.rst:61
+#: ../../tools/ada_aha_nccn_tools.rst:92 ../../tools/ada_aha_nccn_tools.rst:122
+#: ../../tools/ada_aha_nccn_tools.rst:156
+#: ../../tools/ada_aha_nccn_tools.rst:187
+#: ../../tools/ada_aha_nccn_tools.rst:224
+#: ../../tools/ada_aha_nccn_tools.rst:257
+#: ../../tools/ada_aha_nccn_tools.rst:288
+#: ../../tools/ada_aha_nccn_tools.rst:317 02eec172beef426b85ce5f9b2d4f7f49
+#: 2659e80a02c3453c84cffd9e97effde9 2c08ed179d95485b803bc0e4d8aed300
+#: 2d610f802b9e4928949990ba4d720e1e 600b52f468424e929ece81a94888a54e
+#: 7a0b53e16fab4cebbfdb9d6dcd7e3fb8 a91db0afeb26484eb5ea8d306c13e529
+#: ab35b9def92c4e05869a3efc685fb6b4 c7173d1fc81e4adf962c6d4e46d29627
+#: df8344e2984946f7be78388df8dfb02d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:30 274569040aeb4a9192af7356a69db9b8
+msgid "**Name**: ``ACC_list_guidelines``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:31 ../../tools/ada_aha_nccn_tools.rst:159
+#: ../../tools/ada_aha_nccn_tools.rst:190
+#: ../../tools/ada_aha_nccn_tools.rst:227 261a7e0f0dae401992a3589387367725
+#: 83e59fcf52f946bca7745a6eb996cef5 caa034839e4c462f83670dd7a9fac4f9
+#: e432e90c325c46edbb41fd70be87de30
+msgid "**Type**: ``AHAACCGuidelineTool``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:32 acb0b08fbefa4410bc64b1d906841835
+msgid ""
+"**Description**: List recent American College of Cardiology (ACC) "
+"clinical practice guidelines. Returns ACC-authored guidelines published "
+"in JACC and other ACC journals, sorted by date. ACC guidelines cover "
+"coronary revascularization, valvular heart disease, chest pain "
+"evaluation, cardiac catheterization, and cardiovascular risk assessment."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:34 ../../tools/ada_aha_nccn_tools.rst:67
+#: ../../tools/ada_aha_nccn_tools.rst:98 ../../tools/ada_aha_nccn_tools.rst:128
+#: ../../tools/ada_aha_nccn_tools.rst:162
+#: ../../tools/ada_aha_nccn_tools.rst:193
+#: ../../tools/ada_aha_nccn_tools.rst:230
+#: ../../tools/ada_aha_nccn_tools.rst:263
+#: ../../tools/ada_aha_nccn_tools.rst:294
+#: ../../tools/ada_aha_nccn_tools.rst:323 0546550fe336490698e5732ecfbedfdc
+#: 0a00ca7095b34809a183b3927857b0d2 19c7a60e6d3548f28d5c5aa2e497f813
+#: 43c1ea008ad94334af4fe3ce2b0113ff 44156881dcb64d90bb816024bb7fae3c
+#: 847a8c6ef5494742be0442e155b53dbe 8c4d254d02aa40ca8ea879a426b0eda2
+#: c3595d9ed1cc4707bb936a8b94e3c8fc ccbdc66318d4410d8e93a51e920db3c8
+#: d21d3209dc9a4721a9663ba11b3714c5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:36 ../../tools/ada_aha_nccn_tools.rst:232
+#: 86e8ac350ed243d3b77e4e06a237ce52 87268a1990704ce99e6f08e18dd703ad
+msgid ""
+"``limit`` (integer) (optional) Maximum number of guidelines to return "
+"(default: 10)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:39 ../../tools/ada_aha_nccn_tools.rst:201
+#: ../../tools/ada_aha_nccn_tools.rst:235 0cdbb63d145b4a1b86c8d7ba74832c03
+#: 7614c127e9804e449af2c0d2f139079b db4a2719345f4905bf0a95ea724ce1b0
+msgid ""
+"``year_from`` (integer, null) (optional) Filter to guidelines published "
+"from this year onward (e.g., 2020). Null for no date filter."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:42 ../../tools/ada_aha_nccn_tools.rst:72
+#: ../../tools/ada_aha_nccn_tools.rst:103
+#: ../../tools/ada_aha_nccn_tools.rst:136
+#: ../../tools/ada_aha_nccn_tools.rst:167
+#: ../../tools/ada_aha_nccn_tools.rst:204
+#: ../../tools/ada_aha_nccn_tools.rst:238
+#: ../../tools/ada_aha_nccn_tools.rst:268
+#: ../../tools/ada_aha_nccn_tools.rst:298
+#: ../../tools/ada_aha_nccn_tools.rst:331 09f8f1b838574093868589ecf0443033
+#: 0c29b232af1b492fafec8e987dadeedf 136bf23eca95496b9cef037c0f7d6189
+#: 3596f3b6148e4a83b15f1db482cb22aa 424c61ac1ae049cabefa326e093947a4
+#: 4323035a41c9425ab418bc1adb8428dd 8d63ea6b27cf4f269b3793578500ea25
+#: ade60fe370cd486591d0ff9f9eaee276 f2afb69b8b9341398cc88c93862558a5
+#: f6bc3b00fa1e463d932f22aae772321a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:55 3f48e8119cbd41b0873377032fa8dfab
+msgid "**ADA_get_standards_section** (Type: ADAStandardsTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:57 f929b12ddb404812b46782c0f9e4892c
+msgid ""
+"Fetch detailed content from a specific ADA Standards of Care section by "
+"PMID. Retrieves the abstr..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 93ac8e8e5bba40d6a4f3a3a883d20b02
+msgid "ADA_get_standards_section tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:63 6f9bdf425b454a628bbc8cfaa2df061f
+msgid "**Name**: ``ADA_get_standards_section``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:64 ../../tools/ada_aha_nccn_tools.rst:95
+#: ../../tools/ada_aha_nccn_tools.rst:125 24238b7677654164991074f6c5148aa3
+#: 594a15a4f04844d093aacdc7e5fb58eb 860945a911f64a919d88f93547a047f7
+msgid "**Type**: ``ADAStandardsTool``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:65 f441df1455f141aeae89ac9ced06ba07
+msgid ""
+"**Description**: Fetch detailed content from a specific ADA Standards of "
+"Care section by PMID. Retrieves the abstract and, when available via "
+"PubMed Central (PMC), a full-text snippet. Use "
+"ADA\\_list\\_standards\\_sections first to get PMIDs for each section. "
+"All ADA Standards sections are freely available in PMC. Returns title, "
+"abstract, full text snippet, and links."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:69 1d455d1d13ba495cb34175f58e5ab96f
+msgid ""
+"``pmid`` (string) (required) PubMed ID (PMID) of the ADA Standards "
+"section to retrieve (e.g., '41358900' for Section 9 Pharmacologic "
+"Approaches 2026)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:86 a3a742edd7a748b2a82be91daa40a48a
+msgid "**ADA_list_standards_sections** (Type: ADAStandardsTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:88 3f3ec8fa260f4d6da2585f5a7a2ceaf5
+msgid ""
+"List all sections/chapters of the current ADA Standards of Medical Care "
+"in Diabetes. The ADA publ..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 4ce8040f62e546899986f75e57cd9625
+msgid "ADA_list_standards_sections tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:94 1abd20dd85ab4c29b8e062ecef24fc2b
+msgid "**Name**: ``ADA_list_standards_sections``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:96 a7b1c6b61b3e42aea467f0ea563b3373
+msgid ""
+"**Description**: List all sections/chapters of the current ADA Standards "
+"of Medical Care in Diabetes. The ADA publishes the Standards of Care "
+"annually in Diabetes Care as a free supplement. Each section covers a "
+"specific clinical topic (e.g., glycemic goals, pharmacologic treatment, "
+"cardiovascular risk management, diabetes technology). Returns section "
+"titles, numbers, PMIDs, and PMC links. Use year parameter to access "
+"specific editions (default: 2026)."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:100 f12eb73a8e1b4b0fb44754dae2acdd36
+msgid ""
+"``year`` (integer) (optional) Year of the ADA Standards of Care edition "
+"to retrieve (default: 2026). Standards have been published annually since"
+" 2004."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:116 17790f01da5a4336a07a4606b7367f6b
+msgid "**ADA_search_standards** (Type: ADAStandardsTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:118 7290f51b3b6b4ad5b8d44afe403bb0dd
+msgid ""
+"Search ADA (American Diabetes Association) guidelines and publications by"
+" topic using PubMed. Sea..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 9e9b11410bc247ce8abca7e32c765a21
+msgid "ADA_search_standards tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:124 c34c691b1edd40689ba23cd798bcbcdb
+msgid "**Name**: ``ADA_search_standards``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:126 e1f966b83ea9418e82d788daac7bc61e
+msgid ""
+"**Description**: Search ADA (American Diabetes Association) guidelines "
+"and publications by topic using PubMed. Searches publications with ADA as"
+" corporate author, returning titles, abstracts, PMIDs, and PMC links. "
+"Useful for finding ADA recommendations on specific diabetes-related "
+"topics such as glycemic targets, insulin therapy, GLP-1 receptor "
+"agonists, SGLT2 inhibitors, gestational diabetes, diabetic kidney "
+"disease, or diabetes technology."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:130 7ef934c3d58b467a91f0b45c40869154
+msgid ""
+"``query`` (string) (required) Search topic (e.g., 'type 2 diabetes "
+"insulin therapy', 'gestational diabetes', 'diabetic kidney disease', "
+"'SGLT2 inhibitors cardiovascular')"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:133
+#: ../../tools/ada_aha_nccn_tools.rst:198
+#: ../../tools/ada_aha_nccn_tools.rst:328 5b2f937af0f64f7f8218fe30119c395e
+#: 86a7ed3fe93d40e2b7c8310f6665cc23 bac6b7915f254812a3a44787afb7896d
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 5)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:150 c06823c70b8b4467ab2ce6ea590ce22c
+msgid "**AHA_ACC_get_guideline** (Type: AHAACCGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:152 783dec852b78409b9211444edc2774cd
+msgid ""
+"Fetch the full text (or a detailed snippet) of a specific AHA (American "
+"Heart Association) or ACC..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 0474c1d6e6af4261ba6c77285aee0d03
+msgid "AHA_ACC_get_guideline tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:158 d2c406ce1e454831a65070a9f5650858
+msgid "**Name**: ``AHA_ACC_get_guideline``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:160 f8ddfe4b5e684a83929005908cc53f44
+msgid ""
+"**Description**: Fetch the full text (or a detailed snippet) of a "
+"specific AHA (American Heart Association) or ACC (American College of "
+"Cardiology) guideline from PubMed Central using its PMID. Returns the "
+"abstract and, when the article is open-access in PMC, the full guideline "
+"text up to 6000 characters covering recommendations, evidence tables, and"
+" rationale. Use AHA\\_list\\_guidelines or ACC\\_list\\_guidelines first "
+"to obtain PMIDs. Many recent AHA/ACC guidelines are open-access in PMC."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:164 b4345860b12847639d999944bd98e1ce
+msgid ""
+"``pmid`` (string) (required) PubMed ID (PMID) of the AHA/ACC guideline to"
+" retrieve (e.g., '37952199' for 2023 ACC/AHA Atrial Fibrillation "
+"Guideline)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:181 0da5e47353b54894bbab446c05da8af3
+msgid "**AHA_ACC_search_guidelines** (Type: AHAACCGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:183 b0aef6ef9d1d465d8d3fe3e1d20d8eb8
+msgid ""
+"Search AHA (American Heart Association) and ACC (American College of "
+"Cardiology) clinical practic..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst aa1c981572844a699915c4f94f3275d1
+msgid "AHA_ACC_search_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:189 751e5616d1894f4cb1b7808c282f33f0
+msgid "**Name**: ``AHA_ACC_search_guidelines``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:191 13af419051084776ad6316076e9df994
+msgid ""
+"**Description**: Search AHA (American Heart Association) and ACC "
+"(American College of Cardiology) clinical practice guidelines by topic "
+"via PubMed. Covers guidelines published in Circulation, JACC, and other "
+"AHA/ACC journals. Useful for finding recommendations on hypertension, "
+"heart failure, atrial fibrillation, coronary artery disease, valvular "
+"heart disease, lipid management, cardiac arrest, and other cardiovascular"
+" conditions."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:195 d4ce2315db2c45bcb2cb0276d4b46c1e
+msgid ""
+"``query`` (string) (required) Search topic (e.g., 'heart failure', "
+"'atrial fibrillation management', 'hypertension blood pressure', 'lipid "
+"cholesterol statin', 'coronary artery disease')"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:218 226fcf1cfeb24ab6a52714fd7645912f
+msgid "**AHA_list_guidelines** (Type: AHAACCGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:220 1b08855d3bdf4009b1f9b915688269a5
+msgid ""
+"List recent American Heart Association (AHA) clinical practice "
+"guidelines. Returns AHA-authored g..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 2d5228770d184d6b8b024d0279be1a3b
+msgid "AHA_list_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:226 bf8afc1c9bba4298a95a562748fc2425
+msgid "**Name**: ``AHA_list_guidelines``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:228 0e075659ce954656a5ce0b3654b26752
+msgid ""
+"**Description**: List recent American Heart Association (AHA) clinical "
+"practice guidelines. Returns AHA-authored guidelines and scientific "
+"statements published in Circulation and other AHA journals, sorted by "
+"date. Covers cardiovascular guidelines on topics including hypertension, "
+"heart failure, cardiac arrest, stroke, arrhythmias, and prevention."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:251 9819f4f443494501959cc9ff7858e1ac
+msgid "**NCCN_get_patient_guideline** (Type: NCCNGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:253 7faf68d0cda44f1e8e502bb2f16f7202
+msgid ""
+"Fetch content from a specific NCCN Guidelines for Patients page. Takes a "
+"URL obtained from NCCN\\_..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst f22b7d3928e94dc1bc960d993975c843
+msgid "NCCN_get_patient_guideline tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:259 7043d2d2722f4b1f9fd52657f3c0c535
+msgid "**Name**: ``NCCN_get_patient_guideline``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:260
+#: ../../tools/ada_aha_nccn_tools.rst:291
+#: ../../tools/ada_aha_nccn_tools.rst:320 247eca45803342028a9632c612dd62aa
+#: 39ff0040bc504372927c22a68485297d ea16dde58e7b444f86dc745595850070
+msgid "**Type**: ``NCCNGuidelineTool``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:261 0ef66f6c4bfe4a87a8ad8dc67adba612
+msgid ""
+"**Description**: Fetch content from a specific NCCN Guidelines for "
+"Patients page. Takes a URL obtained from "
+"NCCN\\_list\\_patient\\_guidelines and scrapes the page for title, "
+"content sections, and PDF download links. Returns the guideline page "
+"content organized by sections. Note: NCCN patient guidelines are "
+"educational summaries; for full professional guidelines, use "
+"NCCN\\_search\\_guidelines to find JNCCN publications."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:265 6d9c25f3ce294a02a97cc4067f7a3ed1
+msgid ""
+"``url`` (string) (required) URL of the NCCN patient guideline page (from "
+"NCCN\\_list\\_patient\\_guidelines output)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:282 b4ccf28842034fed88087efaff93cc80
+msgid "**NCCN_list_patient_guidelines** (Type: NCCNGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:284 f57c619b4b414d29a827ab2c3b27c5cb
+msgid ""
+"List all NCCN (National Comprehensive Cancer Network) Guidelines for "
+"Patients available on nccn.o..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst 1e1788d4cf104661856ce5b08a87de87
+msgid "NCCN_list_patient_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:290 59e663b00c484ca6b7c6256b2b8d8dc0
+msgid "**Name**: ``NCCN_list_patient_guidelines``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:292 a75a19db586849c48d1083918f624202
+msgid ""
+"**Description**: List all NCCN (National Comprehensive Cancer Network) "
+"Guidelines for Patients available on nccn.org. These are free, publicly "
+"accessible cancer treatment guides organized by cancer type, "
+"detection/prevention, supportive care, and specific populations. Returns "
+"cancer type names, URLs, and category. Over 70 cancer types are covered "
+"including breast, lung, colon, prostate, melanoma, leukemias, and "
+"lymphomas."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:296 eea9d221783b4113a7d8c2d0cc6dfe7b
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:311 1fd4d183751944f2b514a3748461f47c
+msgid "**NCCN_search_guidelines** (Type: NCCNGuidelineTool)"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:313 27f7fe2581ac412988d8e96bc95cf014
+msgid ""
+"Search NCCN (National Comprehensive Cancer Network) guidelines and "
+"publications via PubMed. Searc..."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst c2ce70625e0e4b50a505425bcd492101
+msgid "NCCN_search_guidelines tool specification"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:319 d15d87724e3a464e9a92743435e05b71
+msgid "**Name**: ``NCCN_search_guidelines``"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:321 c41ba474126b419c99b44d2e16b8010e
+msgid ""
+"**Description**: Search NCCN (National Comprehensive Cancer Network) "
+"guidelines and publications via PubMed. Searches the JNCCN (Journal of "
+"the NCCN) and other NCCN publications for clinical practice guidelines, "
+"evidence blocks, and discussion papers on cancer treatment. Useful for "
+"finding specific NCCN treatment recommendations and updates."
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:325 fea05f09e8184f57b8e951e733f5799d
+msgid ""
+"``query`` (string) (required) Search topic (e.g., 'breast cancer "
+"treatment', 'non-small cell lung cancer', 'prostate cancer screening', "
+"'melanoma immunotherapy', 'pancreatic cancer')"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:345 923a3f0ce42740b8880679043650a156
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:347 ee1038c79cbe4c38bbdf2b5f4b9e10cb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ada_aha_nccn_tools.rst:348 9441a4a3ee6d45e48ae61bf6a080f10c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

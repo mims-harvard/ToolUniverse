@@ -1,0 +1,201 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/openfda_label_tools.rst:10 9fcb5de87fa14729b9a2d08bf853bb44
+msgid "Openfda Label Tools"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:12 b3afd19ea2c344438b4b7a1e3f4aab3a
+msgid ""
+"**Configuration File**: ``openfda_label_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:16 e79f10c8954a4648b1e9313a5efe5a6c
+msgid ""
+"This page contains all tools defined in the ``openfda_label_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:19 40582de6c1db4e84a0dc9b97186a203b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:22 80a76469f7374067b810fe7e7efa9490
+msgid "**FDA_get_drug_label** (Type: FDALabelTool)"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:24 ea7486db9c654427a7a45f4c6bc20660
+msgid ""
+"Get the complete FDA-approved prescribing information for a specific drug"
+" by name. Returns all cl..."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst 0857bfbbbbf04acab32581489685006a
+msgid "FDA_get_drug_label tool specification"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:28
+#: ../../tools/openfda_label_tools.rst:59
+#: ../../tools/openfda_label_tools.rst:90 3b3a8236d85c4fd591b9b812b4eb2809
+#: 756d5fb12f7b47e1ab8e0fd6168e2eb3 ac4c86b88b5c4e41bce6ba36a764cee7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:30 b458d7b4adbc462fb89ac88a81b4608c
+msgid "**Name**: ``FDA_get_drug_label``"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:31
+#: ../../tools/openfda_label_tools.rst:62
+#: ../../tools/openfda_label_tools.rst:93 512e8c5233344dc3a206a44844088238
+#: 93175f47e37344c78abfefe003298909 eebdfc87adbb4a699d5cbb3d7dd96f54
+msgid "**Type**: ``FDALabelTool``"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:32 f25dbc52425349d7865966a22ae5cc03
+msgid ""
+"**Description**: Get the complete FDA-approved prescribing information "
+"for a specific drug by name. Returns all clinical sections of the "
+"official drug label: indications, dosing regimens, contraindications, "
+"black box warnings, drug interactions, use in specific populations "
+"(pregnancy, pediatrics, renal/hepatic impairment), pharmacokinetics, "
+"mechanism of action, and adverse reactions. This is the authoritative "
+"source for FDA-approved drug clinical information in the US."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:34
+#: ../../tools/openfda_label_tools.rst:65
+#: ../../tools/openfda_label_tools.rst:96 9d1c4b18626b45b799180b8c6a399949
+#: c79d9fa841144972b55d58546f178a45 d635885410c643c1a1ebe000e2972101
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:36 0bdd73a2c9f14cd78f41d937a51261b8
+msgid ""
+"``drug_name`` (string) (required) Brand or generic drug name (e.g., "
+"'warfarin', 'Eliquis', 'apixaban', 'atorvastatin', 'metformin')"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:39
+#: ../../tools/openfda_label_tools.rst:70
+#: ../../tools/openfda_label_tools.rst:107 00ed921526684c889786664d9565cf42
+#: 8955a47cf1624e19956d527e2fb4310f fb7ad1b5273a45cc83206cbc45b60b73
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:53 3ed70f3c2158489f8491c820d8b0323a
+msgid "**FDA_list_drug_classes** (Type: FDALabelTool)"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:55 38d6fe4e99294432a3cd572611ec863f
+msgid ""
+"List FDA pharmacological drug classes (Established Pharmacologic Class, "
+"EPC) and the number of dr..."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst aff077de6a4a4367b27c12e7b21a58e7
+msgid "FDA_list_drug_classes tool specification"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:61 63e67f74af6d4d758a2b5a8b55499504
+msgid "**Name**: ``FDA_list_drug_classes``"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:63 65549f751e354c3aa9805191752fe30d
+msgid ""
+"**Description**: List FDA pharmacological drug classes (Established "
+"Pharmacologic Class, EPC) and the number of drug products in each class. "
+"Classes include designations like 'Selective Serotonin Reuptake Inhibitor"
+" [EPC]', 'Beta-Adrenergic Blocker [EPC]', 'HMG-CoA Reductase Inhibitor "
+"[EPC]' (statins), 'ACE Inhibitor [EPC]', etc. Use this to discover drug "
+"class names for filtering or understanding drug categorization."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:67 55f744c78c8c40ed9ee98595b071b761
+msgid ""
+"``limit`` (integer) (required) Maximum number of drug classes to return "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:84 ba78dbacb1dc4189af496bfb72202b84
+msgid "**FDA_search_drug_labels** (Type: FDALabelTool)"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:86 2bfdc02c064341ebb82ab0af3be88971
+msgid ""
+"Search FDA-approved drug labels (prescribing information) by drug name or"
+" medical indication. Dru..."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst 1d8a804cc4ee4832b2a53d0037ca8c44
+msgid "FDA_search_drug_labels tool specification"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:92 ef477bbed17e4940acbdfd702ee42106
+msgid "**Name**: ``FDA_search_drug_labels``"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:94 b2cba8e91ff74b9cad43e3445e9edcbd
+msgid ""
+"**Description**: Search FDA-approved drug labels (prescribing "
+"information) by drug name or medical indication. Drug labels contain "
+"official clinical guidance: indications, dosing regimens, "
+"contraindications, black box warnings, drug interactions, and adverse "
+"reactions. Use drug\\_name for drug-specific lookups (e.g., 'metformin', "
+"'warfarin') or indication for condition-based searches (e.g., "
+"'hypertension', 'type 2 diabetes'). Returns a list of matching drug "
+"labels with key clinical sections."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:98 772b25d527ad4a599b198451b6c95c75
+msgid ""
+"``drug_name`` (string, null) (optional) Brand or generic drug name to "
+"search (e.g., 'metformin', 'atorvastatin', 'lisinopril'). Mutually "
+"exclusive with indication."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:101 59ed8c78107b4804919fcf72f29c914f
+msgid ""
+"``indication`` (string, null) (optional) Medical condition to search in "
+"indications sections (e.g., 'hypertension', 'type 2 diabetes', 'atrial "
+"fibrillation'). Mutually exclusive with drug\\_name."
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:104 8f676238c9b14705b83c93b6bec384a7
+msgid ""
+"``limit`` (integer) (required) Maximum number of results to return "
+"(default: 5, max: 20)"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:121 d9cee42f47094a5dab36aba960a606f7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:123 8499e4412e8b46b788eef8f95796f05e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/openfda_label_tools.rst:124 a388747a670f40708c7c3aabe2e491ea
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

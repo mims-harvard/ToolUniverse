@@ -1,0 +1,371 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/jaspar_tools.rst:10 a44c8686268d49ffa1197dde6512e38a
+msgid "Jaspar Tools"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:12 49346cb41ca04f72a2b78dc1fa2d3784
+msgid ""
+"**Configuration File**: ``jaspar_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 8"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:16 0fe92e2641bc4926914f2cf604facbd2
+msgid ""
+"This page contains all tools defined in the ``jaspar_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:19 3d65fb86a379491d8833deedd1c3076f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:22 d6cf0f17f68945058de242a383076c8d
+msgid "**JASPAR_get_transcription_factors** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:24 590d80e40f4e4453afa53d6a03e47023
+msgid ""
+"List all JASPAR transcription factor binding profiles. Returns all "
+"matrices; does NOT support fil..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst b939d3c0c0104460b5ddddd0aa677106
+msgid "JASPAR_get_transcription_factors tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:28 ../../tools/jaspar_tools.rst:64
+#: ../../tools/jaspar_tools.rst:95 ../../tools/jaspar_tools.rst:132
+#: ../../tools/jaspar_tools.rst:161 ../../tools/jaspar_tools.rst:194
+#: ../../tools/jaspar_tools.rst:227 ../../tools/jaspar_tools.rst:256
+#: 06fce4b7c9464ace8ad214501383e6d5 1d2cdc95c0e74e7a9d427e9079d83ec5
+#: 1de4847291fa4a009416c83c7faa2099 2c23aa3178664cde87d3f15f4b8ef9df
+#: 5573f0425d074d24b908ad611be09d21 9ac05d759e0d4c3db98ff8a0c127802e
+#: dd86fb0b0ed3492da8566edb144d00b1 f919cc08830d4061a5464885173c1581
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:30 545c3ea8ca5c482ab43967e9155528d0
+msgid "**Name**: ``JASPAR_get_transcription_factors``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:31 ../../tools/jaspar_tools.rst:67
+#: ../../tools/jaspar_tools.rst:98 ../../tools/jaspar_tools.rst:135
+#: ../../tools/jaspar_tools.rst:164 ../../tools/jaspar_tools.rst:197
+#: ../../tools/jaspar_tools.rst:230 ../../tools/jaspar_tools.rst:259
+#: 5084d387620e483da4bf457a4ad34966 5ce259e52aee446089de2b4430a5bb27
+#: 6e2df6f9b7e84cf299dc4fa58ce49d16 8a546d7f262d4cccabae1c51b26ee1a2
+#: 983c02b23a34494f8fa6d58c6d7ca0fd bd9cffe87864467f963f9acb37dd18af
+#: c85734ee49534ec883ed595cfdf7c9d8 f6752e751ea948a3a4fe883c431c3031
+msgid "**Type**: ``JASPARRESTTool``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:32 cc1f903abb394750be0f96724fb955d5
+#, python-brace-format
+msgid ""
+"**Description**: List all JASPAR transcription factor binding profiles. "
+"Returns all matrices; does NOT support filtering by TF name. To search by"
+" name, use jaspar\\_search\\_matrices with {\"name\": \"FOXA1\"}. "
+"Supports pagination via page/page\\_size."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:34 ../../tools/jaspar_tools.rst:70
+#: ../../tools/jaspar_tools.rst:101 ../../tools/jaspar_tools.rst:138
+#: ../../tools/jaspar_tools.rst:167 ../../tools/jaspar_tools.rst:200
+#: ../../tools/jaspar_tools.rst:233 ../../tools/jaspar_tools.rst:262
+#: 02df6bc09d764f9aadda9bd9061fb6a9 0e77e2d5b6504035b66bab551c75bd1e
+#: 2730f8bbb7e2477ea204713781b37212 78ed4fc0d4f447f680db33503d1a2d9b
+#: 837e900709424901b623cd4019271ffe bd139dd6d49b4ec4a2788e54ce9b50e3
+#: c2e5c37727cc4c52acc8267cbc88dee8 d1324e52c6c1420392cbf8dcc2a79908
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:36 e5d82392b841484c81ffb2bb873ff08e
+msgid "``collection`` (string) (optional) JASPAR collection (e.g., CORE)."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:39 ../../tools/jaspar_tools.rst:106
+#: ../../tools/jaspar_tools.rst:169 ../../tools/jaspar_tools.rst:202
+#: ../../tools/jaspar_tools.rst:279 03c440d3e3ac40c7b95365b6b92115a9
+#: 1f498d748509491ba9d775319f7f05c7 3e6f4c61de2d4852b03db4099396ec21
+#: 5365e299969d4a1e9a9742aa49a376b1 bec5f8c096f74212809c6d3e949f7be4
+msgid "``page`` (integer) (optional) Page number (1-based)."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:42 25943ebe9dc047508ca07e9eec446c72
+msgid ""
+"``page_size`` (integer) (optional) Results per page (JASPAR "
+"\\`page\\_size\\`)."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:45 ../../tools/jaspar_tools.rst:75
+#: ../../tools/jaspar_tools.rst:112 ../../tools/jaspar_tools.rst:142
+#: ../../tools/jaspar_tools.rst:175 ../../tools/jaspar_tools.rst:208
+#: ../../tools/jaspar_tools.rst:237 ../../tools/jaspar_tools.rst:285
+#: 03f820994e44438688500d1269f1e53f 30fc5600587140a58cef4b36691ec850
+#: 4f603c0234dc4c0097b3fd6a8b2ce632 559b36ac37584d8b8a51287a61db5bf3
+#: b431f649b4f54c4697451d5edd667eab b6f30db38e1b4b02a71eef36062d63c7
+#: da88b2943d4e413cafd92d8a504a1836 f8b516971d7d4f4fb7d724eb535d619a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:58 43d7d7dc38ec4d458c255c73071223c7
+msgid "**jaspar_get_matrix** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:60 55619988737b46f18a6d55a45261afbe
+msgid ""
+"Get full details for a single JASPAR matrix by \\`matrix\\_id\\` (e.g., "
+"MA0002.2). Returns metadata ..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst 6b0eb213f21b4a528ab53ab793ac045e
+msgid "jaspar_get_matrix tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:66 6a0532d85a0e44418e7080192c44c6c0
+msgid "**Name**: ``jaspar_get_matrix``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:68 25cb0f91e30645e0814940a9c9fa2c5d
+msgid ""
+"**Description**: Get full details for a single JASPAR matrix by "
+"\\`matrix\\_id\\` (e.g., MA0002.2). Returns metadata plus PFM/PWM. For "
+"reproducible analyses, use \\`jaspar\\_get\\_matrix\\_versions\\` with "
+"the corresponding \\`base\\_id\\` (e.g., MA0002) to see all versions and "
+"choose/cite the exact version you used."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:72 660b1060c20f43a98c1179f87b355d0d
+msgid ""
+"``matrix_id`` (string) (required) JASPAR matrix ID (e.g., 'MA0002.2'). "
+"You can discover IDs with \\`JASPAR\\_get\\_transcription\\_factors\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:89 3b9bf85756c34bd1a5b9181e3a923548
+msgid "**jaspar_get_matrix_versions** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:91 9219d45f0fa843309b37ab4952389e7a
+msgid ""
+"List all versions available for a JASPAR matrix base ID (e.g., base\\_id "
+"MA0002). This is useful f..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst 463da1c9468b45ca985c05afd1a81823
+msgid "jaspar_get_matrix_versions tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:97 06a515900b91477d8256c2a70871ea9f
+msgid "**Name**: ``jaspar_get_matrix_versions``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:99 1b93e84d1dbb493b8fc22edcac6ab9c3
+msgid ""
+"**Description**: List all versions available for a JASPAR matrix base ID "
+"(e.g., base\\_id MA0002). This is useful for reproducibility (choose a "
+"specific matrix version like MA0002.2) and for tracking updates across "
+"releases."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:103 42e3f2658b6d4398ab71e0d4c8de4e88
+msgid ""
+"``base_id`` (string) (required) JASPAR base matrix ID without version "
+"(e.g., 'MA0002'). You can get \\`base\\_id\\` from "
+"\\`jaspar\\_get\\_matrix\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:109 ../../tools/jaspar_tools.rst:172
+#: ../../tools/jaspar_tools.rst:205 ../../tools/jaspar_tools.rst:282
+#: 17a2e50d0bed4f3684e6ddb1c0d88c91 2d78662bab814a00b8803d9fe01063ac
+#: 65806780b81d402e988461432a1cd2e8 7e535d380d7d4a86b57ccb5ba22d5aec
+msgid "``page_size`` (integer) (optional) Results per page."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:126 e487f79f6d9c48ad834367bb3b5bc609
+msgid "**jaspar_list_collections** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:128 f8834b7c5c6d48b58511b32c734d3458
+msgid ""
+"List JASPAR collections (e.g., CORE, CNE). Useful for filtering matrices "
+"by \\`collection\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst 1f710b76499341418dfa5957d0a632a4
+msgid "jaspar_list_collections tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:134 a1151fe4af354f91b4942ae2deeb3e75
+msgid "**Name**: ``jaspar_list_collections``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:136 f0eb832c83f44f9083d596077a298d69
+msgid ""
+"**Description**: List JASPAR collections (e.g., CORE, CNE). Useful for "
+"filtering matrices by \\`collection\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:140 ../../tools/jaspar_tools.rst:235
+#: b34125c4d473454dbc683f3592aa6d0a d55e03a6507746ef83058294bbbc4f36
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:155 8d07427aafa542829f59edaaa64a39dc
+msgid "**jaspar_list_releases** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:157 ae0d4c43be0c4bb09a16427d0becb07f
+msgid ""
+"List available JASPAR releases (database version history). Useful for "
+"research reproducibility: r..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst 25484282f7c14a45a60f5f189b740257
+msgid "jaspar_list_releases tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:163 26a6fd3cd6004b3e9bfdf36ae202782f
+msgid "**Name**: ``jaspar_list_releases``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:165 28e5e0d805684209bc968fb370ebd60d
+msgid ""
+"**Description**: List available JASPAR releases (database version "
+"history). Useful for research reproducibility: record which JASPAR "
+"release you used when selecting motifs, or check what releases exist "
+"before comparing results across versions."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:188 0283c1fccd3e4cde940b840d86cbd438
+msgid "**jaspar_list_species** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:190 95f949465efa4105842380612418a4e9
+msgid ""
+"List species available in JASPAR (taxonomy IDs + names). Useful for "
+"filtering matrices by \\`speci..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst fa5223d19c5144b9b997204e6171e108
+msgid "jaspar_list_species tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:196 50ae33271ebb45df94d17c7567abcdcc
+msgid "**Name**: ``jaspar_list_species``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:198 341c88ac347941cfb462c12335853893
+msgid ""
+"**Description**: List species available in JASPAR (taxonomy IDs + names)."
+" Useful for filtering matrices by \\`species\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:221 864fbab247ac4dd2908b88e4b06b5674
+msgid "**jaspar_list_taxa** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:223 fa4d7c83157047949518d9df51666985
+msgid ""
+"List available taxonomic groups (taxa) in JASPAR (e.g., vertebrates, "
+"plants). Useful for filterin..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst bb6fac914dad4b01b3d20c75bcfff607
+msgid "jaspar_list_taxa tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:229 d3e9399489a644f3a0c32d1ec1b8dcac
+msgid "**Name**: ``jaspar_list_taxa``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:231 de7d237229224d6fbfc9ed50831fe3c6
+msgid ""
+"**Description**: List available taxonomic groups (taxa) in JASPAR (e.g., "
+"vertebrates, plants). Useful for filtering matrices by \\`tax\\_group\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:250 96ef11e091a34fda8998d6e50cafc936
+msgid "**jaspar_search_matrices** (Type: JASPARRESTTool)"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:252 913bb53ea4384018adde211fc037c5b4
+msgid ""
+"Search/filter JASPAR matrices using common query parameters. Typical "
+"filters include \\`search\\` (..."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst 190cfa34b8f14776866717c80be222bf
+msgid "jaspar_search_matrices tool specification"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:258 67b405196ed84ec3b3f3916af330c0f7
+msgid "**Name**: ``jaspar_search_matrices``"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:260 0507b2c5a01f4520a678cc0c95616a38
+msgid ""
+"**Description**: Search/filter JASPAR matrices using common query "
+"parameters. Typical filters include \\`search\\` (free text), \\`name\\`,"
+" \\`collection\\`, \\`tax\\_group\\`, \\`species\\`, and paging via "
+"\\`page\\`/\\`page\\_size\\`."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:264 f02fc78837ba473cbb5c65d6c04a8c25
+msgid ""
+"``search`` (string) (optional) Free-text search across matrices (e.g., "
+"'CTCF')."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:267 b8ad8919679549a89578e836077d77aa
+msgid "``name`` (string) (optional) Filter by TF name (e.g., 'CTCF')."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:270 eeac17c83f074a01a3cf7a8432e2f88f
+msgid "``collection`` (string) (optional) Filter by collection (e.g., 'CORE')."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:273 b691de4aed67406286f8b3859603fd59
+msgid ""
+"``tax_group`` (string) (optional) Filter by taxonomic group (e.g., "
+"'vertebrates')."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:276 0def95f50e2241899240cc0cabeccdf8
+msgid ""
+"``species`` (string) (optional) Filter by NCBI taxonomy ID (e.g., '9606' "
+"for human)."
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:298 8abcf401cdb24144bab3b09176f1af47
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:300 b907b47e78d640628a8dbcc9da63615a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/jaspar_tools.rst:301 fbf31624b98f490796ca157a7bc86247
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gencc_tools.rst:10 336b662f608149ff96092e021fdb6488
+msgid "Gencc Tools"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:12 34af2f82de1b495dbce4d23faece025b
+msgid ""
+"**Configuration File**: ``gencc_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:16 9a4453e4e45248a49c4a40db363fd942
+msgid ""
+"This page contains all tools defined in the ``gencc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:19 6d1a2a39e2df4eb09e8ff33cac51d95b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:22 fddaa5fe10d64104acb8f7e350422356
+msgid "**GenCC_get_classifications** (Type: GenCCTool)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:24 6154c8b63d3d43ddb2dbc38ba64b632a
+msgid ""
+"Get summary statistics of gene-disease validity classifications from "
+"GenCC. Returns counts per cl..."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst 8bff9278413e4d9f94f5c1324b24617c
+msgid "GenCC_get_classifications tool specification"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:28 ../../tools/gencc_tools.rst:67
+#: ../../tools/gencc_tools.rst:106 1d27904b40d7402c985f8025019c537b
+#: ad1fdc240b23490eb85ac996e05bb6ff b1081db959014d3d9c69fd3676dac13f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:30 b17897cae0494cf2b149e419a7a6cac7
+msgid "**Name**: ``GenCC_get_classifications``"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:31 ../../tools/gencc_tools.rst:70
+#: ../../tools/gencc_tools.rst:109 1dd3f4f7c9b747ffb1a98d6a0a80d041
+#: 93b8a1fdeee24b7888203a202186d1a6 967cca28af9447cfb19363d125a9bd09
+msgid "**Type**: ``GenCCTool``"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:32 737d9aaadf8c45cfbda8887e83f0c047
+msgid ""
+"**Description**: Get summary statistics of gene-disease validity "
+"classifications from GenCC. Returns counts per classification level "
+"(Definitive, Strong, Moderate, Limited, etc.). Optionally filter by "
+"gene\\_symbol (e.g., 'GBA'), disease name substring, or submitter "
+"organization. Without filters, returns global stats across all 40,000+ "
+"curated submissions."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:34 ../../tools/gencc_tools.rst:73
+#: ../../tools/gencc_tools.rst:112 0c6b053fe8654a1fa09c641e81b8d9f9
+#: 4edcd1b0a4b946d8bb612a53ee4e3d6f ab00a3892a444bc48b26d66cd18710cb
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:36 8b7c5c8365694a9c887c3fc3fd2424e8
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_classifications)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:39 5072deba903c4f44a49ea0c08c6a8a7a
+msgid ""
+"``gene_symbol`` (string) (optional) Optional HGNC gene symbol to filter "
+"classification stats (e.g., 'GBA', 'BRCA2')"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:42 b5797829487b492abf67ad00b599b076
+msgid ""
+"``disease`` (string) (optional) Optional disease name substring to filter"
+" classification stats (e.g., 'Gaucher', 'breast cancer')"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:45 3dde593751e8482587450f0f3db5ad5e
+msgid ""
+"``submitter`` (string) (optional) Optional filter by submitting "
+"organization name (e.g., 'ClinGen', 'Ambry', 'Genomics England')"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:48 ../../tools/gencc_tools.rst:87
+#: ../../tools/gencc_tools.rst:123 419a086c347d4a2ba2341a3e3f262693
+#: daf49ee52a1e4643aef37befd5662ae9 e8c31653e6b445d1ae21b738d286336b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:61 3544234121b54f7fa48e15feeb935b68
+msgid "**GenCC_search_disease** (Type: GenCCTool)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:63 eb938949a6604f35b1f4c3165270ba70
+msgid ""
+"Find genes with validity evidence for a disease from GenCC (Gene Curation"
+" Coalition). Search by d..."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst d6b37a1d50f14ae182d5777eacffe799
+msgid "GenCC_search_disease tool specification"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:69 12b936b6e73c4f02a2a5491e07d92f6b
+msgid "**Name**: ``GenCC_search_disease``"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:71 66d89860f3164eea9cee2deb14c2e92d
+msgid ""
+"**Description**: Find genes with validity evidence for a disease from "
+"GenCC (Gene Curation Coalition). Search by disease name or MONDO/OMIM "
+"identifier. Returns gene-disease validity classifications from multiple "
+"expert curators. Useful for identifying established gene-disease "
+"relationships for clinical interpretation."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:75 ae9be10254904002b5e5c02503947951
+msgid "``operation`` (string) (optional) Operation type (fixed: search\\_disease)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:78 1126b20305194df38e35ec3188f7a7cd
+msgid ""
+"``disease`` (string) (optional) Disease name or ID to search (e.g., "
+"'Marfan syndrome', 'MONDO:0007947', 'breast cancer')"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:81 b2706306a16648ffa93195bef27ef6fe
+msgid ""
+"``disease_name`` (string) (optional) Alias for disease. Disease name or "
+"ID to search."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:84 5bcec55a2475412f947c8df9eaba817f
+msgid ""
+"``classification`` (string) (optional) Optional filter by classification "
+"level (e.g., Definitive, Strong)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:100 e5dd5b69d2a34f389419fdc5f8fa9daf
+msgid "**GenCC_search_gene** (Type: GenCCTool)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:102 5cfd51e4c63e42ec9691d795436748ec
+msgid ""
+"Get gene-disease validity classifications for a gene from GenCC (Gene "
+"Curation Coalition). Return..."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst 1f1c0d2be1e345c4afdee51a16bc3f10
+msgid "GenCC_search_gene tool specification"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:108 a740f1656d444b72a04a210b64e0f834
+msgid "**Name**: ``GenCC_search_gene``"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:110 023617334ae6433b8cd36e4ce082990a
+msgid ""
+"**Description**: Get gene-disease validity classifications for a gene "
+"from GenCC (Gene Curation Coalition). Returns curated evidence levels "
+"(Definitive, Strong, Moderate, Limited, Disputed, Refuted) from multiple "
+"expert panels including ClinGen, Ambry Genetics, Genomics England "
+"PanelApp, and Orphanet. Essential for assessing clinical validity of "
+"gene-disease associations in genetic testing."
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:114 1d35af4fdf374c8b996a9b28b2793c23
+msgid "``operation`` (string) (optional) Operation type (fixed: search\\_gene)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:117 82a678924d6b4777a72f8ca78ab059f9
+msgid ""
+"``gene_symbol`` (string) (required) HGNC gene symbol (e.g., BRCA2, TP53, "
+"FBN1, CFTR)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:120 692f4ec6ee664fe0aba1d9f0469fab19
+msgid ""
+"``classification`` (string) (optional) Optional filter by classification "
+"level (e.g., Definitive, Strong, Moderate, Limited)"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:137 2377a338a639424eb591dc428d108f79
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:139 4139ba8e9e3a4cfdad3f2e1b1ffc6722
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gencc_tools.rst:140 2c7de7549e6f4c67915159cc0f8de41a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

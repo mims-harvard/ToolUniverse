@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/xenbase_tools.rst:10 3ae7a5c2e43c46919134c4b0f0c6128d
+msgid "Xenbase Tools"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:12 86ac507eb65541ad88d8be94d94fc721
+msgid ""
+"**Configuration File**: ``xenbase_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:16 1d7f886e336d4b5d966e7dde535c038b
+msgid ""
+"This page contains all tools defined in the ``xenbase_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:19 8a52cf5edf524318a8b5402661142f12
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:22 bf0ae53aba634991a80c2734e3dee098
+msgid "**Xenbase_get_gene** (Type: XenbaseTool)"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:24 6476b8ae0e744985963608762591d1cc
+msgid ""
+"Get detailed Xenopus gene information from Xenbase via the Alliance of "
+"Genome Resources. Returns ..."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst 4510ced1a09242cfbe341d0959b8765d
+msgid "Xenbase_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:28 ../../tools/xenbase_tools.rst:59
+#: 5395710733ab4b4495cbdafcc85ad4a8 6bb3a46f7f504c65923279b0e4eac246
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:30 b325742d5d164caf9a8d0ff801dc8d6f
+msgid "**Name**: ``Xenbase_get_gene``"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:31 ../../tools/xenbase_tools.rst:62
+#: 6914753283094e549ab3f7b78ef28e6e 961bbd5bb1ad4256a28dcc7d7de3876b
+msgid "**Type**: ``XenbaseTool``"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:32 61235d25e89d4fd7929fc15ccd22a4fa
+msgid ""
+"**Description**: Get detailed Xenopus gene information from Xenbase via "
+"the Alliance of Genome Resources. Returns gene symbol, name, synopsis, "
+"genomic location, synonyms, cross-references, and species details. "
+"Supports both Xenopus tropicalis and Xenopus laevis genes. Gene IDs use "
+"Xenbase format (e.g., 'XB-GENE-484286' or 'Xenbase:XB-GENE-484286')."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:34 ../../tools/xenbase_tools.rst:65
+#: 4979e42a20b142cf96d1a4a2027e6e13 de5694577b324b578ea9ee212fc76d1a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:36 96029204663349ebb34303794487301d
+msgid ""
+"``gene_id`` (string) (required) Xenbase gene ID. Can be with or without "
+"'Xenbase:' prefix. Examples: 'XB-GENE-484286' (tp53, X. tropicalis), 'XB-"
+"GENE-6252168' (tp53.L, X. laevis), 'XB-GENE-487192' (pax6, X. "
+"tropicalis)."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:39 ../../tools/xenbase_tools.rst:76
+#: 2a1e41658d34475abba0172702fa1b6b 6b45dfecc2c74ff2ade60edc3b58e050
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:53 6930ebdaf6734575a92d168c7ce80975
+msgid "**Xenbase_search_genes** (Type: XenbaseTool)"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:55 786c54f969434a94b4539f9ec40869e9
+msgid ""
+"Search for Xenopus (frog) genes in Xenbase via the Alliance of Genome "
+"Resources API. Returns gene..."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst 8ec713a9271f42039f5aa7dcdf9be495
+msgid "Xenbase_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:61 899fbcc60b89433a8272b8ca5ed0b0aa
+msgid "**Name**: ``Xenbase_search_genes``"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:63 f28cb23ed7b2426ba9d4625e8db84812
+msgid ""
+"**Description**: Search for Xenopus (frog) genes in Xenbase via the "
+"Alliance of Genome Resources API. Returns gene IDs, symbols, names, and "
+"species for both Xenopus tropicalis and Xenopus laevis. Xenbase is the "
+"primary database for Xenopus genetics and developmental biology. "
+"Optionally filter by species (tropicalis or laevis). Useful for finding "
+"amphibian homologs of human disease genes."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:67 fe39a23b50cb4b84ad3f74e4c1bf144c
+msgid ""
+"``query`` (string) (required) Gene symbol or name to search. Examples: "
+"'tp53', 'pax6', 'sox2', 'bmp4', 'wnt3a', 'fgf8'."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:70 c9b49f8129f84a489a6f8d6134adca2a
+msgid ""
+"``species`` (string) (optional) Optional species filter: 'tropicalis' for"
+" X. tropicalis, 'laevis' for X. laevis. Leave empty for both species."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:73 639b072a7fee433cae95e472404237d3
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return. "
+"Default: 10."
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:90 8b3f1905daa24bcbbcba35babe4f3ac3
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:92 a615be5ca39844bea27bc77968939014
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/xenbase_tools.rst:93 cd6a4d605b48422bbe513749f7b0266a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

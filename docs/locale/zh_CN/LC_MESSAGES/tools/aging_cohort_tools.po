@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/aging_cohort_tools.rst:10 42866f56b84c4de58901e280e3256104
+msgid "Aging Cohort Tools"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:12 56065b1601c5437d995f2f6f760a999b
+msgid ""
+"**Configuration File**: ``aging_cohort_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:16 4653756a9974453e98216e3075ee4482
+msgid ""
+"This page contains all tools defined in the ``aging_cohort_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:19 951535661a104bcc81ca21bc724eb156
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:22 fdf2baab61f44d169c6ec0b347ca7b76
+msgid "**AgingCohort_search** (Type: AgingCohortSearchTool)"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:24 987d9e23da82404aaa2ec26934582709
+msgid ""
+"Search a curated registry of ~30 major longitudinal cohort studies "
+"relevant to aging research wor..."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst 509d224c709b4590839b0bb7ac38daad
+msgid "AgingCohort_search tool specification"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:28 2cd8c40821e1469d8fdc166d80243361
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:30 7ad536afaf544391a09c0d17fa891847
+msgid "**Name**: ``AgingCohort_search``"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:31 8fdfdcf9053c4bbc9a5246df42e2ff4c
+msgid "**Type**: ``AgingCohortSearchTool``"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:32 143cde3106054faaacf9e8a4c3823bac
+msgid ""
+"**Description**: Search a curated registry of ~30 major longitudinal "
+"cohort studies relevant to aging research worldwide. Contains study "
+"metadata including design, sample size, age range, variable categories, "
+"and data access information. Use to find the right cohort for a specific "
+"research question, such as which studies measure iron intake, grip "
+"strength, or walking speed in older adults. Filters by country, study "
+"design (longitudinal/cross-sectional), minimum sample size, and specific "
+"variable availability."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:34 186863d148e84c1b9d70e03627f5a6af
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:36 38d0d09242814139988d6df300a6eb61
+msgid ""
+"``query`` (string) (required) Keyword search across study names, "
+"descriptions, variable categories, and topics. Examples: 'iron intake "
+"longitudinal', 'grip strength aging Europe', 'biomarkers elderly China'."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:39 0da3b2b2e34b427b889975fda0be0815
+msgid ""
+"``country`` (string, null) (optional) Filter by country or region. "
+"Examples: 'USA', 'UK', 'China', 'Europe', 'Netherlands'. Case-insensitive"
+" substring match."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:42 753f4bd66ed14439af3c2d0eae587160
+msgid ""
+"``design`` (string, null) (optional) Filter by study design. One of: "
+"'longitudinal', 'cross-sectional', 'both'."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:45 184d234c60c741139640a03965ee967d
+msgid ""
+"``min_sample_size`` (integer, null) (optional) Minimum sample size "
+"threshold. Only returns cohorts with sample\\_size >= this value."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:48 888ced2b4a3d4c60bb0bfe5f0f9bee3d
+msgid ""
+"``has_variable`` (string, null) (optional) Filter for cohorts that "
+"include a specific variable category. Substring match against variable "
+"categories. Examples: 'iron', 'grip\\_strength', 'walking\\_speed', "
+"'nutrition', 'cognitive', 'biomarkers', 'genetics'."
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:51 31e5d7b36df946d28ac0f08c2cde971f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:65 dd558e153d094be8aec033aff4249c0d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:67 c5f760428cd14a39b5f08e2f679c4df6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/aging_cohort_tools.rst:68 76917911fe3a4df281bdab2ab0b4a275
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

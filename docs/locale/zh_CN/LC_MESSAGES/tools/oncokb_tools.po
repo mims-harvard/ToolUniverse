@@ -1,0 +1,358 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/oncokb_tools.rst:10 daa841ba53ec44539fd22ee995199865
+msgid "Oncokb Tools"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:12 55ab82d4e0d74db79ba0fa2b8b81d9fd
+msgid ""
+"**Configuration File**: ``oncokb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:16 8430bff0c1fa47b1b3e1496518c8a2f1
+msgid ""
+"This page contains all tools defined in the ``oncokb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:19 af74a858afb142029a70ad60dcf25425
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:22 91b51426e1c949dd9312591b3487ed57
+msgid "**OncoKB_annotate_copy_number** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:24 4c35403387b74c92a78924c2c4727f2b
+msgid ""
+"Annotate copy number alterations (amplification/deletion) for oncogenic "
+"potential. Returns eviden..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst 7fb5fd4927414d50ad987fcce09b1478
+msgid "OncoKB_annotate_copy_number tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:28 ../../tools/oncokb_tools.rst:71
+#: ../../tools/oncokb_tools.rst:113 ../../tools/oncokb_tools.rst:158
+#: ../../tools/oncokb_tools.rst:188 ../../tools/oncokb_tools.rst:224
+#: 04c79f44ad904daf8fccf6198cf579bf 17b1943a9e044c4d8aa09e3f26045704
+#: 6d5cfc53718e4573b27194e9946996d3 828940b498494513a465daa51b0edcf9
+#: a94cdf15db344c16a7d46af40917c521 f1a31dd42a164b7bab92876a5652ad17
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:30 c6225e79ff2e404b9c19bc95c4e5ef03
+msgid "**Name**: ``OncoKB_annotate_copy_number``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:31 ../../tools/oncokb_tools.rst:74
+#: ../../tools/oncokb_tools.rst:116 ../../tools/oncokb_tools.rst:161
+#: ../../tools/oncokb_tools.rst:191 ../../tools/oncokb_tools.rst:227
+#: 1cf223464ef24fd584ffbb3c2ae93141 1de754866f8144a884f6abf48f1da0f5
+#: 2e534d0cfc4845b5a40a323ca5eb623b 3b128a95b3ff408db0f6fb9bf6b24a99
+#: 89aa1c4dbcb5454bb69aebaf0de68c97 c308edbc3ffa4fd5b3f2b0a3a9643689
+msgid "**Type**: ``OncoKBTool``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:32 bfc4b0e182044a929ae861e65919cdf2
+msgid ""
+"**Description**: Annotate copy number alterations "
+"(amplification/deletion) for oncogenic potential. Returns evidence for "
+"gene amplification or deletion in cancer. Example: ERBB2 amplification in"
+" breast cancer, CDKN2A deletion."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:34 ../../tools/oncokb_tools.rst:77
+#: ../../tools/oncokb_tools.rst:119 ../../tools/oncokb_tools.rst:164
+#: ../../tools/oncokb_tools.rst:194 ../../tools/oncokb_tools.rst:230
+#: 313da435c87949ba9aa3de25055a676a 4e86aea008a8488daf83a231d1ac3df0
+#: 55b3f936cd65491bace2cbe1660fe018 5afddf9fa6d64f359109b7969f231acd
+#: 60d2762f4dd44f18a9da2c1c4869146a f3af779e065f4d7d94072d758edfcdf9
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:36 0f47aba84753456aa6580b439f648bb5
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"annotate\\_copy\\_number)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:39 62dfebc04ceb43ed89115026b9918c14
+msgid "``gene`` (string) (required) Gene symbol (e.g., ERBB2, MYC, CDKN2A)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:42 1b5c1694abc8451da3935e8715fd4f89
+msgid ""
+"``copy_number_type`` (string) (optional) Type of copy number alteration "
+"(case-insensitive: AMPLIFICATION or DELETION)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:45 1d49a17465e54a81884b9431eb38ecae
+msgid "``tumor_type`` (string) (optional) Optional OncoTree tumor type code"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:48 6b986de8b2fb4f42aefafaa1912bc75c
+msgid ""
+"``copy_number_alteration`` (string) (optional) Alias for "
+"copy\\_number\\_type. Amplification or Deletion."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:51 ../../tools/oncokb_tools.rst:94
+#: ../../tools/oncokb_tools.rst:139 ../../tools/oncokb_tools.rst:169
+#: ../../tools/oncokb_tools.rst:205 ../../tools/oncokb_tools.rst:235
+#: 1d0d09db0b33449e9c430f0ebd4382bc 6085e537087748eca84e985036898450
+#: 71c50b2543914f3d8d9debccba4e61c4 9224f137e32343b7b800290a9ee1c671
+#: c0ccec87b15c4e52b4f281332647f438 e4aa768ffea544cebd174d1fbc540e84
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:65 d86699d1043b40e9bd9874c089e4f4c9
+msgid "**OncoKB_annotate_mutations** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:67 303a9eb46e8543118f408853bb60a703
+msgid ""
+"Annotate a cancer mutation using OncoKB. Accepts query string like 'BRAF "
+"V600E' or separate gene/..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst 649c5f51a4e34c56bf389a28b30ca5cc
+msgid "OncoKB_annotate_mutations tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:73 7246ef4cbe914c2cbdb65d4ecf06251a
+msgid "**Name**: ``OncoKB_annotate_mutations``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:75 e511aaf510be4f9ba0735bc8426b5b2b
+msgid ""
+"**Description**: Annotate a cancer mutation using OncoKB. Accepts query "
+"string like 'BRAF V600E' or separate gene/variant parameters. Returns "
+"oncogenicity, mutation effect, and FDA-approved therapies. Alias for "
+"OncoKB\\_annotate\\_variant with query-string parsing. Demo mode "
+"available for BRAF, TP53, ROS1."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:79 ../../tools/oncokb_tools.rst:121
+#: 47b55cc501404baaa6266656a67630ed 75d886de639545ca80297e1789e93401
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"annotate\\_variant)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:82 b6322b09458a4836aa77998517cb5b42
+msgid ""
+"``query`` (string) (optional) Mutation query string, e.g. 'BRAF V600E' or"
+" 'EGFR T790M'. Gene and variant separated by space."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:85 2c9f452d7c1e455a9e5e0ac39a4780ab
+msgid "``gene`` (string) (optional) Gene symbol (e.g., BRAF, EGFR, TP53)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:88 abbfd8ac35de411082749105b0aca10a
+msgid "``variant`` (string) (optional) Protein change (e.g., V600E, T790M)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:91 687a8cac23a04f42af85c7a84e138d2e
+msgid ""
+"``tumor_type`` (string) (optional) Optional OncoTree tumor type code "
+"(e.g., MEL, LUAD)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:107 8d3471065a254a2f92c10c0eb1181e95
+msgid "**OncoKB_annotate_variant** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:109 7f8897c373f2443592ce16ec9f6b225b
+msgid ""
+"Annotate a cancer variant for oncogenic potential and treatment "
+"implications using OncoKB. Return..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst d3ea8336b38e439dae78805fb61caa34
+msgid "OncoKB_annotate_variant tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:115 e3b6f8fa709f4fd2b3bd67394f343972
+msgid "**Name**: ``OncoKB_annotate_variant``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:117 13e87c31c2c041f99396a996b3d5de75
+msgid ""
+"**Description**: Annotate a cancer variant for oncogenic potential and "
+"treatment implications using OncoKB. Returns evidence level, "
+"oncogenicity, mutation effect, and FDA-approved therapies. Requires "
+"ONCOKB\\_API\\_TOKEN env var (demo mode available for BRAF, TP53, ROS1). "
+"Example: BRAF V600E in melanoma."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:124 520da10904df49fbaab846d680598648
+msgid "``gene`` (string) (optional) Gene symbol (e.g., BRAF, EGFR, TP53, KRAS)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:127 add98403520d4dfd8ea3eb7bb3ba0938
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene. Gene symbol (e.g., "
+"BRAF, EGFR, TP53, KRAS)."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:130 d07bdd3b7af84b0b851d5ccbc97ad241
+msgid ""
+"``variant`` (string) (optional) Variant notation - protein change (e.g., "
+"V600E, T790M, G12D)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:133 0b247bbe749848f280122aab47dca353
+msgid ""
+"``tumor_type`` (string) (optional) Optional OncoTree tumor type code "
+"(e.g., MEL for melanoma, LUAD for lung adenocarcinoma)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:136 80998b3898ef4f27a0e08ce85610ddb8
+msgid ""
+"``alteration`` (string) (optional) Alias for variant. Protein change "
+"notation (e.g., \"V600E\", \"T790M\", \"G12D\")."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:152 5234166bc7904727ab4024fc8a3f1b1e
+msgid "**OncoKB_get_cancer_genes** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:154 5cdbf23a25f9405fb0aa924a1a18d3f7
+msgid ""
+"Get list of all cancer genes curated in OncoKB. Returns genes classified "
+"as oncogenes and/or tumo..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst 1b128089b7064295beabe1c035486430
+msgid "OncoKB_get_cancer_genes tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:160 2f999592740f43d3bfcf67e9fbf95a89
+msgid "**Name**: ``OncoKB_get_cancer_genes``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:162 5641e39ed6db45f1a753b11a56e98dd1
+msgid ""
+"**Description**: Get list of all cancer genes curated in OncoKB. Returns "
+"genes classified as oncogenes and/or tumor suppressors. Useful for "
+"checking if a gene is a known cancer driver. Requires "
+"ONCOKB\\_API\\_TOKEN env var."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:166 0771f95027bd4dc1ab61408e49226363
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_cancer\\_genes)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:182 50850b0ad36b4be588939505d247b18b
+msgid "**OncoKB_get_gene_info** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:184 eb550e262fb34cb6952f8934a3ea534c
+msgid ""
+"Get gene-level oncogenic information from OncoKB. Returns whether gene is"
+" an oncogene, tumor supp..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst fee3d3a48ef2487f82a005578c3a01af
+msgid "OncoKB_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:190 571fd5f3e11f4ff6b85d372b36d9ccbc
+msgid "**Name**: ``OncoKB_get_gene_info``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:192 d781444ac1714e63a2fa2a36d6a8c621
+msgid ""
+"**Description**: Get gene-level oncogenic information from OncoKB. "
+"Returns whether gene is an oncogene, tumor suppressor, or both. Includes "
+"curated background information. Requires ONCOKB\\_API\\_TOKEN env var "
+"(demo mode available for BRAF, TP53, ROS1)."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:196 fb7852e3ba894eb4922daaa6e8494db5
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_gene\\_info)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:199 24744843a84a454aa23335df8a18810d
+msgid ""
+"``gene`` (string) (optional) Gene symbol (e.g., BRAF, TP53, ROS1). "
+"Without ONCOKB\\_API\\_TOKEN only BRAF, TP53, and ROS1 are available "
+"(demo mode)."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:202 1f93adccf30947af9e44f746295ae546
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol alias — alternative to "
+"gene parameter"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:218 5356b917e03344cc8ee323d39d302df6
+msgid "**OncoKB_get_levels** (Type: OncoKBTool)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:220 1817052549ff4a81acc8909f6493ce54
+msgid ""
+"Get OncoKB evidence level definitions. Returns descriptions of all "
+"therapeutic actionability leve..."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst 1e5f34c35e3b46d498e2f5d243cfd57d
+msgid "OncoKB_get_levels tool specification"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:226 2963882bd6794a74a608870fc25c8d9e
+msgid "**Name**: ``OncoKB_get_levels``"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:228 53729200645c49abbc390cf0cf160d18
+msgid ""
+"**Description**: Get OncoKB evidence level definitions. Returns "
+"descriptions of all therapeutic actionability levels (1, 2, 3A, 3B, 4, "
+"R1, R2). Level 1 = FDA-approved, Level 2 = Standard care, Level 3A = "
+"Compelling clinical evidence, etc."
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:232 9d2364e2be3d464b85433899d7d86f36
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_levels)"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:248 974629a96e73467e9cfac8e9caddc92f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:250 27b7c10997ca400aa1c0b1b075ae90fe
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/oncokb_tools.rst:251 f2ade4e564574defa6733261b975fca0
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,186 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gtex_tools.rst:10 0c03cb6680574f5a820fa3b5440b4693
+msgid "Gtex Tools"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:12 fe0f5b3dcea4460cb42b241569e8db0e
+msgid ""
+"**Configuration File**: ``gtex_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:16 6ae77d973cbb44d090b930915d6cc5e6
+msgid ""
+"This page contains all tools defined in the ``gtex_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:19 b052ba8d25f344848edfbf669bd56a47
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:22 fa6e6bd3df354b559077136a3888e77d
+msgid "**GTEx_get_expression_summary** (Type: GTExExpressionTool)"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:24 fd3fb802790f4c34bddd2cc5197da692
+msgid ""
+"Summarize tissue-specific expression (e.g., median TPM) for a gene across"
+" GTEx tissues. Accepts g..."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst 1bce2ff2c650491ea7e8231bb838435a
+msgid "GTEx_get_expression_summary tool specification"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:28 ../../tools/gtex_tools.rst:61
+#: d0df397fbc624059be07e9e5a4e4be85 d8daac502e3047bd9f542e6c07cec849
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:30 c3e87c7aae5a4a1a9fce559dc9b3b5cd
+msgid "**Name**: ``GTEx_get_expression_summary``"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:31 6fcb91d94fb34a18bca94ef96b5c898a
+msgid "**Type**: ``GTExExpressionTool``"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:32 22b49b8e25044058bf4f8b67fa77d253
+msgid ""
+"**Description**: Summarize tissue-specific expression (e.g., median TPM) "
+"for a gene across GTEx tissues. Accepts gene symbols (TP53, BRCA1) or "
+"Ensembl IDs. Use to profile baseline expression patterns for "
+"targets/biomarkers."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:34 ../../tools/gtex_tools.rst:67
+#: 4d2ca94de23f41e2a1f16b70b15e241f 89a5e9547de24f16aa28969c8337a594
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:36 8e9b1cd48a7041dfb937fd90704ecbb4
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol (e.g., 'TP53', 'BRCA1', "
+"'FBN1'). Auto-resolved to versioned GENCODE ID."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:39 1e3a738add3a404fae402cae6f2e68f4
+msgid ""
+"``ensembl_gene_id`` (string) (optional) Ensembl gene identifier (e.g., "
+"'ENSG00000141510' or 'ENSG00000141510.11'). Use gene\\_symbol instead if "
+"you have a gene name."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:42 ../../tools/gtex_tools.rst:93
+#: 2280c921b7a4412eaa8eec4c042e9b18 cc470ff0538342a5935d7e5a9a565411
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:55 9089be9b5db04f21b15d4b5fa005fb52
+msgid "**GTEx_query_eqtl** (Type: GTExEQTLTool)"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:57 7ffb75f0f48d4669b65da60165d7d3bb
+msgid ""
+"Query GTEx single-tissue eQTL associations for a gene. Accepts gene "
+"symbols (TP53, BRCA1) or Ense..."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst e6d297bb013e4f91a59f6b0a1115fdd4
+msgid "GTEx_query_eqtl tool specification"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:63 0ff632c3c85a469da6a28c2017efcfed
+msgid "**Name**: ``GTEx_query_eqtl``"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:64 a5ace6813b154711aee62fcfaf9be60a
+msgid "**Type**: ``GTExEQTLTool``"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:65 0c04ee04eb0841a7aa10314739236709
+msgid ""
+"**Description**: Query GTEx single-tissue eQTL associations for a gene. "
+"Accepts gene symbols (TP53, BRCA1) or Ensembl IDs. Use to identify "
+"regulatory variants (variantId, pValue, slope) relevant to expression "
+"regulation."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:69 cfdad64f7b604035bcc8304e6ffc12ba
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol (e.g., 'TP53', 'BRCA1'). "
+"Auto-resolved to versioned GENCODE ID."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:72 cc59996073ce47108e0f598a5b14f242
+msgid ""
+"``ensembl_gene_id`` (string) (optional) Ensembl gene identifier (e.g., "
+"'ENSG00000141510'). Use gene\\_symbol instead if you have a gene name."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:75 61265340bc94478383027ea822f16faf
+msgid ""
+"``gene_id`` (string) (optional) Alias for ensembl\\_gene\\_id. Ensembl "
+"gene ID (e.g., 'ENSG00000141510')."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:78 3eea48b6d55145ce8775936c75938671
+msgid ""
+"``gene_input`` (string) (optional) Alias for gene\\_symbol. Gene symbol "
+"or Ensembl ID (e.g., 'TP53', 'ENSG00000141510')."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:81 52cfded752a8492caf1ab3979e61c515
+msgid ""
+"``tissue_id`` (string) (optional) GTEx tissue ID to filter eQTL results "
+"(e.g., 'Brain\\_Cortex', 'Whole\\_Blood', 'Liver'). Case-sensitive."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:84 ba109db4994b4bb2b6389899177edd75
+msgid ""
+"``tissue`` (string) (optional) Alias for tissue\\_id. GTEx tissue name "
+"(e.g., 'Brain\\_Cortex', 'Whole\\_Blood')."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:87 784ca9c5dd324dfa9e2f97ce44895dce
+msgid "``page`` (integer) (optional) Page number (1-based)."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:90 68373f76b3af4a79bd9871d43e1823d9
+msgid "``size`` (integer) (optional) Number of records per page (1–100)."
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:106 91bcc1fb639a4e3e98a806c1680f501d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:108 ec832129449544c9ae7f6074e38265a7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gtex_tools.rst:109 2deb1ff8edd8456198f86f2a12942b56
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

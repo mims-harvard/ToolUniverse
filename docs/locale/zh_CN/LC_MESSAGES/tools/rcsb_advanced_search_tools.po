@@ -1,0 +1,241 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rcsb_advanced_search_tools.rst:10
+#: 40a22c0cfa424beeb689544707c73f7c
+msgid "Rcsb Advanced Search Tools"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:12
+#: 19064cfd7dfb471f9a84f8aba4190265
+msgid ""
+"**Configuration File**: ``rcsb_advanced_search_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:16
+#: 69dca6a617084c3a98fe2e26fb54afe7
+msgid ""
+"This page contains all tools defined in the "
+"``rcsb_advanced_search_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:19
+#: 259b5ca5d5204db0a320692ff40db8b8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:22
+#: 9a1398623a7d41468f4e09b47b4c68be
+msgid "**RCSBAdvSearch_search_by_motif** (Type: RCSBAdvancedSearchTool)"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:24
+#: 0f3158b492b04776a158bc1fa2acc9c2
+msgid ""
+"Search RCSB PDB for protein structures containing a specific sequence "
+"motif pattern. Supports PRO..."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst 1562aed3553249228005e0ddbe111f59
+msgid "RCSBAdvSearch_search_by_motif tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:28
+#: ../../tools/rcsb_advanced_search_tools.rst:68
+#: 5c94f912f4bc474183f3b5d71509ff91 aa07157506034d8a87a7203c805a2b67
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:30
+#: 99f95c7401254a0086a5439e5c079f18
+msgid "**Name**: ``RCSBAdvSearch_search_by_motif``"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:31
+#: ../../tools/rcsb_advanced_search_tools.rst:71
+#: 3d0332aac9ef413984a92b76f9c1530a 8f1c00c233a9472dbf5abcd52fb2d6da
+msgid "**Type**: ``RCSBAdvancedSearchTool``"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:32
+#: 0a64864cb1094458897aacbbfb5f572e
+msgid ""
+"**Description**: Search RCSB PDB for protein structures containing a "
+"specific sequence motif pattern. Supports PROSITE patterns, regular "
+"expressions, and simple patterns. Useful for finding structures with "
+"specific functional motifs like zinc fingers, kinase domains, or any "
+"sequence pattern of interest. Returns polymer entity identifiers "
+"(PDB\\_ID + entity number)."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:34
+#: ../../tools/rcsb_advanced_search_tools.rst:74
+#: 33f7a148bdac4db8ad67b6a315c23853 a827feb8eca94288b160b922a7bed6b4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:36
+#: 5936887892fb463ea544b026203ee84c
+#, python-brace-format
+msgid ""
+"``pattern`` (string) (required) Sequence motif pattern. PROSITE format "
+"examples: 'C-x(2,4)-C-x(3)-[LIVMFYWC]-x(8)-H-x(3,5)-H' (zinc finger), "
+"'G-x(4)-GK-[ST]' (P-loop NTP binding). Regex format: "
+"'C.{2,4}C.{3}[LIVMFYWC].{8}H.{3,5}H'. Simple format: 'CXXCXXXH' (X=any "
+"amino acid)."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:39
+#: 83abeb1259ca4dd39438b6eda4627761
+msgid ""
+"``pattern_type`` (string) (optional) Pattern format: 'prosite' (default, "
+"PROSITE-style), 'regex' (regular expression), 'simple' (X=any)."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:42
+#: 638646ba4d4f4016aaf4c637f1223bdb
+msgid ""
+"``sequence_type`` (string) (optional) Sequence type: 'protein' (default) "
+"or 'dna' or 'rna'."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:45
+#: ../../tools/rcsb_advanced_search_tools.rst:94
+#: 2bd37c3108f947fa84de095cd6f8c9eb 85022e45141446cf8262b2265ece834c
+msgid ""
+"``rows`` (integer) (optional) Number of results to return (default: 10, "
+"max: 50)."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:48
+#: ../../tools/rcsb_advanced_search_tools.rst:100
+#: 980ba22e13a0452e8934418799e68ed2 b87079558d5b4edc96dee5ededba1be7
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:62
+#: 9b118845b32344c2bf8c260447544d4d
+msgid "**RCSBAdvSearch_search_structures** (Type: RCSBAdvancedSearchTool)"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:64
+#: 35a15a7661094f0bbda36a12f4717ac0
+msgid ""
+"Advanced search of RCSB Protein Data Bank structures by combining "
+"multiple attribute filters. Fil..."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst 47853a2e8096486b97442385922fbd17
+msgid "RCSBAdvSearch_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:70
+#: 1be10b15770642b686ffae1554fd1086
+msgid "**Name**: ``RCSBAdvSearch_search_structures``"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:72
+#: a8bd17dc50d7492b81fe0e2df98f0118
+msgid ""
+"**Description**: Advanced search of RCSB Protein Data Bank structures by "
+"combining multiple attribute filters. Filter by organism (species), "
+"resolution, experimental method (X-RAY DIFFRACTION, ELECTRON MICROSCOPY, "
+"SOLUTION NMR), polymer description, and deposition date. Also supports "
+"free-text search combined with attribute filters. Use this when you need "
+"to find PDB structures matching specific criteria (e.g., all human cryo-"
+"EM structures below 3 Angstrom resolution). Returns PDB IDs sorted by "
+"resolution or date."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:76
+#: f834436df3f747809c12a94a171bd00f
+msgid ""
+"``query`` (string, null) (optional) Free-text search query. Examples: "
+"'insulin receptor', 'CRISPR-Cas9', 'COVID spike protein'. Can be combined"
+" with other attribute filters."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:79
+#: d4cb09fd02ac432abb6c3255e7b0234e
+msgid ""
+"``organism`` (string, null) (optional) Filter by source organism (exact "
+"match). Examples: 'Homo sapiens', 'Mus musculus', 'Escherichia coli', "
+"'Saccharomyces cerevisiae', 'SARS-CoV-2'."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:82
+#: aad92157baee456cb40d57f84db11388
+msgid ""
+"``max_resolution`` (number, null) (optional) Maximum resolution in "
+"Angstroms. Lower values mean higher resolution. Examples: 1.5 (very "
+"high), 2.0 (high), 3.0 (moderate), 4.0 (low). Only applies to X-ray and "
+"cryo-EM structures."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:85
+#: 5facfca335404a50bd864bdd5cfdf5b4
+msgid ""
+"``experimental_method`` (string, null) (optional) Filter by experimental "
+"method. Must be EXACT value: 'X-RAY DIFFRACTION', 'ELECTRON MICROSCOPY', "
+"'SOLUTION NMR', 'NEUTRON DIFFRACTION', 'ELECTRON CRYSTALLOGRAPHY'."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:88
+#: 50d589cf045c464d8326f10bdbbccd52
+msgid ""
+"``polymer_description`` (string, null) (optional) Filter by polymer "
+"entity description (contains words). Examples: 'kinase', 'hemoglobin', "
+"'antibody', 'DNA polymerase'."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:91
+#: eb61969ecc9542a7b66a4b06afdff4fc
+msgid ""
+"``min_deposition_date`` (string, null) (optional) Only structures "
+"deposited after this date. Format: YYYY-MM-DD. Example: '2023-01-01' for "
+"structures deposited in 2023 or later."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:97
+#: 7f8e349e0a2d4e9a88d82a209c5ae5aa
+msgid ""
+"``sort_by`` (string, null) (optional) Sort results by: 'resolution' (best"
+" resolution first, default), 'date' (newest first), 'weight' (smallest "
+"first)."
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:113
+#: 30324cb8f4b5418a87ad444c751fc624
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:115
+#: 8260fe676aeb4d7b848674425d6345a4
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rcsb_advanced_search_tools.rst:116
+#: 573df5be355c4807b79ab3e6c318433c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

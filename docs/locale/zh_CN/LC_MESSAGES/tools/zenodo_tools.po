@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,104 +18,290 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/zenodo_tools.rst:2 fea9afc123e24f6cb15fafa4f633eb86
+#: ../../tools/zenodo_tools.rst:10 8165dac33183433eac83890f97ca577b
 msgid "Zenodo Tools"
 msgstr "Zenodo 工具"
 
-#: ../../tools/zenodo_tools.rst:4 8fd6aec0070541348a4fc7aef1844b9e
+#: ../../tools/zenodo_tools.rst:12 e3eb1aa5f4a0405892afe082b5092aca
+#, fuzzy
 msgid ""
 "**Configuration File**: ``zenodo_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 1"
+"**Tools Count**: 5"
 msgstr ""
 "**配置文件**：``zenodo_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/zenodo_tools.rst:8 fc79f946ed3245408d5ae3e5c06e8c6e
+#: ../../tools/zenodo_tools.rst:16 216ff53e328d408188ea144a39857f6c
 msgid ""
 "This page contains all tools defined in the ``zenodo_tools.json`` "
 "configuration file."
 msgstr "本页面包含在 ``zenodo_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/zenodo_tools.rst:11 e7b242f961984b2ba2af8b2aed725640
+#: ../../tools/zenodo_tools.rst:19 b76c9056d6ba405db47e5a41e47b2375
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/zenodo_tools.rst:14 64a1f501af01418fa8613f27a9720ae4
-msgid "**Zenodo_search_records** (Type: ZenodoTool)"
+#: ../../tools/zenodo_tools.rst:22 1dcdcefe4ef54bc4bccb8b82f15df480
+#, fuzzy
+msgid "**Zenodo_get_license** (Type: ZenodoRESTTool)"
 msgstr "**Zenodo_search_records**（类型：Zenodo工具）"
 
-#: ../../tools/zenodo_tools.rst:16 213255580dff490185747d56986cc23d
+#: ../../tools/zenodo_tools.rst:24 cea308ab77ec45f78d7ba42fdce5c25c
+msgid ""
+"Get detailed information about a specific license by its license ID. "
+"Returns complete license met..."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst b1c20a258c6f4645bcef219ac6d8d784
+#, fuzzy
+msgid "Zenodo_get_license tool specification"
+msgstr "Zenodo_search_records 工具规格说明"
+
+#: ../../tools/zenodo_tools.rst:28 ../../tools/zenodo_tools.rst:59
+#: ../../tools/zenodo_tools.rst:90 ../../tools/zenodo_tools.rst:121
+#: ../../tools/zenodo_tools.rst:154 1fa0ddd555174a4eb3db30896414bcbb
+#: 2dd10b425f1743b5ae8fa9970a9890f2 58ca07bb1a6a4a38ab302d7295b0f803
+#: 9415281a9d984cb7960a3f414f426525 debe86df489b4d46950e546b68e6a558
+msgid "**Tool Information:**"
+msgstr "**工具信息：**"
+
+#: ../../tools/zenodo_tools.rst:30 108fd5f284a648989d864592c9798d3e
+#, fuzzy
+msgid "**Name**: ``Zenodo_get_license``"
+msgstr "**名称**：``Zenodo_search_records``"
+
+#: ../../tools/zenodo_tools.rst:31 ../../tools/zenodo_tools.rst:62
+#: ../../tools/zenodo_tools.rst:93 ../../tools/zenodo_tools.rst:124
+#: ../../tools/zenodo_tools.rst:157 1c85f640099f41f3916fafbc2874bc7b
+#: 273b3db7c13049298840010412aba0b1 2a205a63bfc84fa9b9fbb505a7c930ba
+#: ca1508f9ffe642ca91e42076e90d72d7 cf08883980df46ab8ba173406a389502
+#, fuzzy
+msgid "**Type**: ``ZenodoRESTTool``"
+msgstr "**类型**：``ZenodoTool``"
+
+#: ../../tools/zenodo_tools.rst:32 02e10da0474242c886b6ec3f9fa2a99a
+msgid ""
+"**Description**: Get detailed information about a specific license by its"
+" license ID. Returns complete license metadata including title, URL, "
+"description, domains of applicability (content/data/software), and "
+"license status. Use this to understand the specific terms and conditions "
+"of a license before applying it to your uploads or when checking the "
+"licensing of existing records. Find license IDs using "
+"Zenodo\\_list\\_licenses (common IDs: 'cc-by-4.0', 'cc-zero', 'MIT', "
+"'Apache-2.0', 'GPL-3.0')."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:34 ../../tools/zenodo_tools.rst:65
+#: ../../tools/zenodo_tools.rst:96 ../../tools/zenodo_tools.rst:127
+#: ../../tools/zenodo_tools.rst:160 1e8e27dfa57447d18e6ac374fac7fb09
+#: 54f4ffb639b94a81bc00b1da46673a98 740a6e95ada24274a26f05f5408e0710
+#: d315dff551ef408c84e97a88608de70f fa62b0cbd448432685da68acce699c76
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/zenodo_tools.rst:36 c767f1213dd04d18a78abbe03389a0fb
+msgid ""
+"``license_id`` (string) (required) License identifier (e.g., 'cc-by-4.0',"
+" 'MIT', 'Apache-2.0', 'GPL-3.0'). Find license IDs using "
+"Zenodo\\_list\\_licenses. Common IDs include Creative Commons licenses "
+"(cc-by, cc-by-sa, cc-zero), open source licenses (MIT, Apache, GPL), and "
+"others."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:39 ../../tools/zenodo_tools.rst:70
+#: ../../tools/zenodo_tools.rst:101 ../../tools/zenodo_tools.rst:135
+#: ../../tools/zenodo_tools.rst:171 3b26706e343f48058bd0412f31a805df
+#: 4e37d8a4be494da1985fdc130d4b51b1 8d50a6f75a2544cdb2bae0bc16b325a0
+#: ea7ff597a6134296bff42e646fff3bd4 f16193fa0df74d629bb6ac775fbdb821
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/zenodo_tools.rst:53 5baa46d1327645a2ae7173024dcf4fd9
+#, fuzzy
+msgid "**Zenodo_get_record** (Type: ZenodoRESTTool)"
+msgstr "**Zenodo_search_records**（类型：Zenodo工具）"
+
+#: ../../tools/zenodo_tools.rst:55 7546d6124a8d44d79380be02bee77235
+msgid ""
+"Get detailed metadata for a specific Zenodo record by its record ID. "
+"Returns comprehensive inform..."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst 49ca90a359b540a49dc15df559e70075
+#, fuzzy
+msgid "Zenodo_get_record tool specification"
+msgstr "Zenodo_search_records 工具规格说明"
+
+#: ../../tools/zenodo_tools.rst:61 a76678fd422f486db0dad27047d2cee5
+#, fuzzy
+msgid "**Name**: ``Zenodo_get_record``"
+msgstr "**名称**：``Zenodo_search_records``"
+
+#: ../../tools/zenodo_tools.rst:63 b8298dd210994b45adda535eae0c1ea1
+msgid ""
+"**Description**: Get detailed metadata for a specific Zenodo record by "
+"its record ID. Returns comprehensive information including title, "
+"description, authors, DOI, publication date, keywords, license, file "
+"information, citations, and related identifiers. Use this to get complete"
+" metadata for a record found via search or when you have a specific "
+"Zenodo record ID or DOI. Find record IDs from Zenodo\\_search\\_records "
+"(format: integer like 1234567)."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:67 63b52798ecc94d2d9d276feea8de3af4
+msgid ""
+"``record_id`` (integer) (required) Zenodo record identifier (e.g., "
+"1234567, 7654321). Find record IDs using Zenodo\\_search\\_records or "
+"from publication DOIs (DOI format: 10.5281/zenodo.1234567)."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:84 e13551d3e78c4519befa52f7844a83be
+#, fuzzy
+msgid "**Zenodo_get_record_files** (Type: ZenodoRESTTool)"
+msgstr "**Zenodo_search_records**（类型：Zenodo工具）"
+
+#: ../../tools/zenodo_tools.rst:86 ad2212039c904fedb346486f271113bc
+msgid ""
+"Get the list of files for a specific Zenodo record including file names, "
+"sizes, checksums, and do..."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst e5433ce043c946cbadf0ee43505e3851
+#, fuzzy
+msgid "Zenodo_get_record_files tool specification"
+msgstr "Zenodo_search_records 工具规格说明"
+
+#: ../../tools/zenodo_tools.rst:92 4bba3b6d3a5e4dde9f8f2626ddf1840a
+#, fuzzy
+msgid "**Name**: ``Zenodo_get_record_files``"
+msgstr "**名称**：``Zenodo_search_records``"
+
+#: ../../tools/zenodo_tools.rst:94 dbe2442681d44fa9aec43141dea2fa95
+msgid ""
+"**Description**: Get the list of files for a specific Zenodo record "
+"including file names, sizes, checksums, and download URLs. Returns "
+"detailed file metadata essential for downloading datasets, code, or "
+"supplementary materials. Each file includes direct download URL, MD5 "
+"checksum for verification, file type, and size in bytes. Use this to "
+"access the actual data files from a Zenodo record. Find record IDs from "
+"Zenodo\\_search\\_records or Zenodo\\_get\\_record."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:98 30133c16076940208020a49da4ede1fe
+msgid ""
+"``record_id`` (integer) (required) Zenodo record identifier (e.g., "
+"1234567). Find record IDs using Zenodo\\_search\\_records."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:115 b0a5d3006c2e4e4ba3f39605f91b1416
+#, fuzzy
+msgid "**Zenodo_list_licenses** (Type: ZenodoRESTTool)"
+msgstr "**Zenodo_search_records**（类型：Zenodo工具）"
+
+#: ../../tools/zenodo_tools.rst:117 3dfc23fa8ff04bd081893bc775a026f3
+msgid ""
+"List available licenses that can be applied to Zenodo uploads. Returns "
+"license metadata including..."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst 4d8ac95831614faf8ce7c88704d7b2f0
+#, fuzzy
+msgid "Zenodo_list_licenses tool specification"
+msgstr "Zenodo_search_records 工具规格说明"
+
+#: ../../tools/zenodo_tools.rst:123 0de5a9307a49463a85a0756b540a98cf
+#, fuzzy
+msgid "**Name**: ``Zenodo_list_licenses``"
+msgstr "**名称**：``Zenodo_search_records``"
+
+#: ../../tools/zenodo_tools.rst:125 e1f9f2ca43bb421fa28b70419b9fa041
+msgid ""
+"**Description**: List available licenses that can be applied to Zenodo "
+"uploads. Returns license metadata including license ID, title, URL, and "
+"description. Use this to discover available open licenses (e.g., Creative"
+" Commons, MIT, GPL) for your data uploads, or to understand the licensing"
+" terms of existing records. Essential for researchers planning to upload "
+"data or checking licensing compliance."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:129 3dda3ad9db2d468ab47c0c500e54f856
+msgid ""
+"``query`` (string) (optional) Optional search query to filter licenses by"
+" name or keyword (e.g., 'creative commons', 'MIT', 'GPL')."
+msgstr ""
+
+#: ../../tools/zenodo_tools.rst:132 b556ef86dfbc4cd3af2dba86a241f78a
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Maximum number of licenses to return "
+"(default: 25, max: 100)."
+msgstr "``max_results``（整数）（可选）返回的最大结果数。必须介于1到200之间。"
+
+#: ../../tools/zenodo_tools.rst:148 c6ec7059d80b47ddac95827fc0bd87d2
+#, fuzzy
+msgid "**Zenodo_search_records** (Type: ZenodoRESTTool)"
+msgstr "**Zenodo_search_records**（类型：Zenodo工具）"
+
+#: ../../tools/zenodo_tools.rst:150 db37df28a6b74ea0a34faf17cbb8e1a6
 msgid ""
 "Search Zenodo for research data, publications, and datasets. Zenodo is an"
 " open-access repository ..."
 msgstr "在 Zenodo 上搜索研究数据、出版物和数据集。Zenodo 是一个开放获取的存储库..."
 
-#: ../../tools/zenodo_tools.rst 5442ac7e81c04f85a55bbc872f36408c
+#: ../../tools/zenodo_tools.rst 2adfe48907be4d5f843a2439a971efd7
 msgid "Zenodo_search_records tool specification"
 msgstr "Zenodo_search_records 工具规格说明"
 
-#: ../../tools/zenodo_tools.rst:20 d9cc8c87a95b45db8f3f41ab14cc5700
-msgid "**Tool Information:**"
-msgstr "**工具信息：**"
-
-#: ../../tools/zenodo_tools.rst:22 852ba1fea31843388805b3732e9da08c
+#: ../../tools/zenodo_tools.rst:156 057665df9d41405683bbf880cae9256a
 msgid "**Name**: ``Zenodo_search_records``"
 msgstr "**名称**：``Zenodo_search_records``"
 
-#: ../../tools/zenodo_tools.rst:23 7b8ec4b23cf940ed94ea23842a1e8728
-msgid "**Type**: ``ZenodoTool``"
-msgstr "**类型**：``ZenodoTool``"
-
-#: ../../tools/zenodo_tools.rst:24 cbbf38c2e8ac40c1b509c9646876c808
+#: ../../tools/zenodo_tools.rst:158 2f346bd73687407199c96141755090a2
+#, fuzzy
 msgid ""
 "**Description**: Search Zenodo for research data, publications, and "
 "datasets. Zenodo is an open-access repository that hosts research outputs"
 " from all fields of science, including papers, datasets, software, and "
-"more."
+"more. Returns records with title, authors, DOI, and file information. Use"
+" this to discover datasets for your research topic, find citable DOIs, or"
+" explore community repositories. Find record IDs to use with "
+"Zenodo\\_get\\_record for complete metadata."
 msgstr ""
 "**描述**：在 Zenodo 中搜索研究数据、出版物和数据集。Zenodo "
 "是一个开放获取的存储库，托管来自各个科学领域的研究成果，包括论文、数据集、软件等。"
 
-#: ../../tools/zenodo_tools.rst:26 bee176e4df164c89841a3a8514a0aa38
-msgid "**Parameters:**"
-msgstr "**参数：**"
-
-#: ../../tools/zenodo_tools.rst:28 3933d383f75940a9959f48a8000b0c80
+#: ../../tools/zenodo_tools.rst:162 2f856941178b4952ae103466b8e2bed4
 msgid ""
 "``query`` (string) (required) Free text search query for Zenodo records. "
 "Use keywords to search across titles, descriptions, authors, and other "
 "metadata."
 msgstr "``query``（字符串）（必填）用于Zenodo记录的自由文本搜索查询。使用关键词在标题、描述、作者及其他元数据中进行搜索。"
 
-#: ../../tools/zenodo_tools.rst:31 97f4ec6adb8244bf9e8c1677ff3923ad
+#: ../../tools/zenodo_tools.rst:165 482f63a7f4ca4b3094d68a02514bb88f
 #, fuzzy
 msgid ""
-"``max_results`` (integer) (required) Maximum number of results to return."
-" Must be between 1 and 200."
+"``limit`` (integer) (optional) Maximum number of results to return. Must "
+"be between 1 and 200."
 msgstr "``max_results``（整数）（可选）返回的最大结果数。必须介于1到200之间。"
 
-#: ../../tools/zenodo_tools.rst:34 51ff924db9a647d6a6d870a13a6215ae
+#: ../../tools/zenodo_tools.rst:168 a2ddeb9618d44c6eaf78726fa2bf9e68
 msgid ""
 "``community`` (string) (optional) Optional community slug to filter "
 "results by specific research community (e.g., 'zenodo', 'ecfunded')."
 msgstr "``community``（字符串）（可选）可选的社区标识符，用于按特定研究社区筛选结果（例如，‘zenodo’、‘ecfunded’）。"
 
-#: ../../tools/zenodo_tools.rst:37 58782b350ccf46b8a8572d42ba76067e
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
-
-#: ../../tools/zenodo_tools.rst:52 febe2197afea45d186bbe183449c1df4
+#: ../../tools/zenodo_tools.rst:185 e7c26417f0ad48d9aca935d0e6faae94
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/zenodo_tools.rst:54 ee4d1155b5b144e1b066255211328f84
+#: ../../tools/zenodo_tools.rst:187 a83f7e33641b407a8d584e3be515c4e0
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/zenodo_tools.rst:55 f70f1183a3344bc792e8047d62de1d83
+#: ../../tools/zenodo_tools.rst:188 08793a74928740ff8fc7d589762c5809
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
 

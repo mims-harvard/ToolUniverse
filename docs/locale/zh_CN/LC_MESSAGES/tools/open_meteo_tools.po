@@ -1,0 +1,317 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/open_meteo_tools.rst:10 5f6cb0e0b9ac4977b7aebd52e85171db
+msgid "Open Meteo Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:12 df8dcab616f145458703172fb380b2d6
+msgid ""
+"**Configuration File**: ``open_meteo_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:16 fa17d0c9d6da42b8a2509ce6d642bfcd
+msgid ""
+"This page contains all tools defined in the ``open_meteo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:19 a5b8781a95aa4b988217df42fcc434d0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:22 e5e210cc1fb64b2682dc36999fe731ee
+msgid "**OpenMeteo_geocode_location** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:24 a7de639f98f14a9ea7ab000fe87834c6
+msgid ""
+"Search for city/location coordinates using Open-Meteo's free geocoding "
+"API. Returns latitude, lon..."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst 7411d28085114a85af25000e17631cd2
+msgid "OpenMeteo_geocode_location tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:28 ../../tools/open_meteo_tools.rst:65
+#: ../../tools/open_meteo_tools.rst:106 ../../tools/open_meteo_tools.rst:158
+#: 1c63e2d03d844629a081612e1c57a1e9 22261149f8c04f7b8b5dd8103b81c336
+#: 81e1f6dfe04f4d4184e15e366496c0a6 e0c1e351f69546e4b88ed86167382a46
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:30 bd698199d0d8478abdb7dbf0b8a9bfba
+msgid "**Name**: ``OpenMeteo_geocode_location``"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:31 ../../tools/open_meteo_tools.rst:68
+#: ../../tools/open_meteo_tools.rst:109 ../../tools/open_meteo_tools.rst:161
+#: 2c54daf680994b09a5554cee865fc70c a4bf06000aca4fad85e71dd9a1f79d4b
+#: acb3809e8bf7471087f3d450c6710f6c e1fa6525b0514bb082c22f51472e6804
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:32 7ea95e5846a84697a132d1849a81465d
+msgid ""
+"**Description**: Search for city/location coordinates using Open-Meteo's "
+"free geocoding API. Returns latitude, longitude, country, timezone, "
+"elevation, and population for matching locations. Use this to get "
+"coordinates before calling OpenMeteo\\_get\\_weather\\_forecast or "
+"OpenMeteo\\_get\\_historical\\_weather. Covers 300,000+ cities worldwide."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:34 ../../tools/open_meteo_tools.rst:71
+#: ../../tools/open_meteo_tools.rst:112 ../../tools/open_meteo_tools.rst:164
+#: 2cc945cd5c0c4da8becc029029c3e1df 47b005504c924b46afbc16562f6b51ec
+#: 51d7e9551fb94cc681ee2b410c2fdb5b c5c9250bec274eb5b356d4365af4806c
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:36 48e95f669b47475d90f278c271d1d3e7
+msgid ""
+"``name`` (string) (required) City or location name to search (e.g., "
+"'London', 'New York', 'Tokyo', 'Paris', 'Berlin', 'Sydney')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:39 64d572cdf8bc4ff385dd12ef26ad6e39
+msgid ""
+"``count`` (integer, null) (optional) Number of results to return (default"
+" 10, max 100)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:42 1d0576bc70eb45c2af0604703c5bb52c
+msgid ""
+"``language`` (string, null) (optional) Language for result names (e.g., "
+"'en', 'de', 'fr', 'ja', 'zh'). Default 'en'."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:45 ../../tools/open_meteo_tools.rst:85
+#: ../../tools/open_meteo_tools.rst:135 ../../tools/open_meteo_tools.rst:187
+#: 252e2d619d2f4e2c91a4e57f9ab1959b 5a2331c5c4224e58bfef39908f3b38a1
+#: 8f981bbb3afa49a99e8e2ce80c2cfcc2 9db5ba6a441f47f092d40cdfee3834a1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:59 39194d55a1aa49e8a5749a4e4fd456eb
+msgid "**OpenMeteo_get_air_quality** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:61 c6fa69945183411f9ba6a790a118d066
+msgid ""
+"Get current and forecasted air quality data for any location using Open-"
+"Meteo's free air quality ..."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst 4568d821444d465b8d6ead069b5519ab
+msgid "OpenMeteo_get_air_quality tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:67 7231da4b81c243c2bc5bd3e09b2d64f2
+msgid "**Name**: ``OpenMeteo_get_air_quality``"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:69 753b11601c4f4e8d9e73d5d87b8e1236
+msgid ""
+"**Description**: Get current and forecasted air quality data for any "
+"location using Open-Meteo's free air quality API. Returns PM2.5, PM10, "
+"ozone, nitrogen dioxide, carbon monoxide, European Air Quality Index "
+"(AQI), and more. Data sourced from CAMS (Copernicus Atmosphere Monitoring"
+" Service). No API key required."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:73 ../../tools/open_meteo_tools.rst:114
+#: 0348fbda91814dd4b2afc22ba8d4b952 4b64dbc9da294d939e84aa392f590e3f
+msgid ""
+"``latitude`` (number) (required) Latitude in decimal degrees (e.g., 51.5 "
+"for London, 40.7 for New York)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:76 ../../tools/open_meteo_tools.rst:117
+#: 2d506f848ac84f52a19fb1a746fbede0 de73168ff05c41d087bd5b5258852059
+msgid ""
+"``longitude`` (number) (required) Longitude in decimal degrees (e.g., "
+"-0.12 for London, -74.0 for New York)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:79 88ed42f8f1454dcba534421a8434fceb
+msgid ""
+"``current`` (string, null) (optional) Comma-separated current variables "
+"(e.g., "
+"'pm10,pm2\\_5,carbon\\_monoxide,nitrogen\\_dioxide,ozone,european\\_aqi,us\\_aqi')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:82 25d99991e7864abaa4cbc6fea4970cca
+msgid ""
+"``hourly`` (string, null) (optional) Comma-separated hourly variables "
+"(e.g., 'pm10,pm2\\_5,ozone,nitrogen\\_dioxide,european\\_aqi')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:100 1c899c56eb1e4841a3624a07fb77c258
+msgid "**OpenMeteo_get_historical_weather** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:102 be407651360843bf8ac34bb792a42b1d
+msgid ""
+"Get historical weather data for any location from Open-Meteo ERA5 "
+"reanalysis archive (1940-presen..."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst f18106e1ff85480fafd3c6c267b7ea78
+msgid "OpenMeteo_get_historical_weather tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:108 1ea4a641db584cb583b303076d854789
+msgid "**Name**: ``OpenMeteo_get_historical_weather``"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:110 82c0ca62de914a099cb9ee78b145149e
+msgid ""
+"**Description**: Get historical weather data for any location from Open-"
+"Meteo ERA5 reanalysis archive (1940-present). Free, no API key required. "
+"Returns daily or hourly historical weather including temperature, "
+"precipitation, wind speed, solar radiation, snowfall, and more. Useful "
+"for climate analysis, anomaly detection, and historical research. Use "
+"OpenMeteo\\_geocode\\_location to get coordinates from city names."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:120 dbe172d82ba74a32859ecd4df203722e
+msgid ""
+"``start_date`` (string) (required) Start date in YYYY-MM-DD format (e.g.,"
+" '2023-01-01'). Data available from 1940-01-01."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:123 e3f214fbd0374e448b9c14e103fc803a
+msgid ""
+"``end_date`` (string) (required) End date in YYYY-MM-DD format (e.g., "
+"'2023-12-31'). Maximum range: a few months per request."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:126 fb6e2c0832af42238f692e2eb946379d
+msgid ""
+"``daily`` (string, null) (optional) Comma-separated daily variables "
+"(e.g., "
+"'temperature\\_2m\\_max,temperature\\_2m\\_min,precipitation\\_sum,wind\\_speed\\_10m\\_max,sunshine\\_duration')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:129 58368fc747c34bf282ca2af4e99161ff
+msgid ""
+"``hourly`` (string, null) (optional) Comma-separated hourly variables "
+"(e.g., "
+"'temperature\\_2m,precipitation,wind\\_speed\\_10m,relative\\_humidity\\_2m')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:132 55568ad64202462dbff82bd319b97fe6
+msgid ""
+"``timezone`` (string, null) (optional) Timezone (e.g., 'Europe/London', "
+"'America/New\\_York', 'auto')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:152 88626a68167549f6880a2cc8e3c687dc
+msgid "**OpenMeteo_get_weather_forecast** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:154 1fc158de89c54c4e8b3b38b0fb852528
+msgid ""
+"Get current weather and forecasts for any location using Open-Meteo "
+"(free, no API key needed). Re..."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst 53951de84157427eb683fb6724d7b7da
+msgid "OpenMeteo_get_weather_forecast tool specification"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:160 59465a008d1b4b95a91ac01893dc24b0
+msgid "**Name**: ``OpenMeteo_get_weather_forecast``"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:162 a883cf4811de499a932585af8b193d01
+msgid ""
+"**Description**: Get current weather and forecasts for any location using"
+" Open-Meteo (free, no API key needed). Returns current conditions and "
+"hourly/daily forecasts up to 16 days. Essential for weather-aware "
+"applications, research, and decision making. Supports 170+ weather "
+"variables including temperature, precipitation, wind, humidity, UV index,"
+" cloud cover, and more. Latitude/longitude required (use "
+"OpenMeteo\\_geocode\\_location to get coordinates from city names). "
+"Example: latitude=51.5, longitude=-0.12 for London."
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:166 560b5d85441c44bcb7d8ef1c84543cb0
+msgid ""
+"``latitude`` (number) (required) Latitude in decimal degrees (e.g., 51.5 "
+"for London, 40.7 for New York, 35.7 for Tokyo)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:169 569d9a8cc8df4d0db2fcdaae02fb66e7
+msgid ""
+"``longitude`` (number) (required) Longitude in decimal degrees (e.g., "
+"-0.12 for London, -74.0 for New York, 139.7 for Tokyo)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:172 841a6c6ab5df431db6ee11738e5fe167
+msgid ""
+"``current`` (string, null) (optional) Comma-separated current weather "
+"variables (e.g., "
+"'temperature\\_2m,wind\\_speed\\_10m,precipitation,weather\\_code,relative\\_humidity\\_2m,surface\\_pressure')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:175 171b6c14e70242ec8040461dda578eaa
+msgid ""
+"``daily`` (string, null) (optional) Comma-separated daily forecast "
+"variables (e.g., "
+"'temperature\\_2m\\_max,temperature\\_2m\\_min,precipitation\\_sum,wind\\_speed\\_10m\\_max,uv\\_index\\_max')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:178 ffc1fe698fd74ba1a115eba0d63ca63d
+msgid ""
+"``hourly`` (string, null) (optional) Comma-separated hourly variables "
+"(e.g., "
+"'temperature\\_2m,precipitation\\_probability,wind\\_speed\\_10m,relative\\_humidity\\_2m')"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:181 9c6e618a323b41f8bbc8247a523ec092
+msgid ""
+"``forecast_days`` (integer, null) (optional) Number of forecast days "
+"(1-16, default 7)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:184 002527ae3ea947b9a9e83f4abb8db4ad
+msgid ""
+"``timezone`` (string, null) (optional) Timezone for local time (e.g., "
+"'Europe/London', 'America/New\\_York', 'Asia/Tokyo', 'auto' to detect "
+"from location)"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:202 51570ffe2d8a41c495c0c89be614ff5c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:204 750dffd5234f4f50a53aa51daabd0d10
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/open_meteo_tools.rst:205 93c31cdbf4e34c148e1caadd5efabee3
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

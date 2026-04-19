@@ -1,0 +1,227 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/genenetwork_tools.rst:10 4b814b5e10784851989e4685de55d302
+msgid "Genenetwork Tools"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:12 bda02f88205447b4823ef0de19c42101
+msgid ""
+"**Configuration File**: ``genenetwork_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:16 1f6f7ff958e647a5a6e40393f67b0735
+msgid ""
+"This page contains all tools defined in the ``genenetwork_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:19 3064080dfa314861be3bd241a09baed6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:22 1793440da25c4fdfbcaae56a40fb30e6
+msgid "**GeneNetwork_get_sample_data** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:24 c250456ece124ac68f01b8d3023a20c0
+msgid ""
+"Get expression or phenotype values for a specific gene/trait across all "
+"samples in a GeneNetwork ..."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst bc1dfa9f67cb460ab4e342a3460bea97
+msgid "GeneNetwork_get_sample_data tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:28 ../../tools/genenetwork_tools.rst:63
+#: ../../tools/genenetwork_tools.rst:94 ../../tools/genenetwork_tools.rst:125
+#: 293d671f438d44c2beaa94d72edc1749 3f487ad4fb8f4917b3207e3ce4ca82ad
+#: 417c2fe7d8904d5e89192be5268a5eae 8f0e25ed3fba4ba88ade846416bd63df
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:30 f73a192f6e64400ca0f17996095e2730
+msgid "**Name**: ``GeneNetwork_get_sample_data``"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:31 ../../tools/genenetwork_tools.rst:66
+#: ../../tools/genenetwork_tools.rst:97 ../../tools/genenetwork_tools.rst:128
+#: 3c8dec14a31c42c293cfa9def9bb0626 495823b314cf48479ec78db18bcd2cfa
+#: c56eb6ce17b34119b90cd0a8043e2466 cacb20ef58b24417a931fcf1c9ff6bef
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:32 f4ae0d24e88d4c19a698dd664ca7b302
+msgid ""
+"**Description**: Get expression or phenotype values for a specific "
+"gene/trait across all samples in a GeneNetwork dataset. Returns "
+"measurement values with standard errors for each inbred strain or "
+"individual in the genetic cross. Use this to find how a gene's expression"
+" varies across strains, identify strain differences, or get data for QTL "
+"analysis. Dataset abbreviation and trait/probe ID must match the dataset."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:34 ../../tools/genenetwork_tools.rst:69
+#: ../../tools/genenetwork_tools.rst:100 ../../tools/genenetwork_tools.rst:131
+#: 861c3460d0be457089d04d521a59ca56 bfdd8e03eee846af8c7961f58d753e76
+#: e6ac6ea71c0d43e194bfc71bd6126366 f3396f1feda74859b16fa296af0b080a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:36 de7949448e05496284a339ebb806b2d3
+msgid ""
+"``dataset_name`` (string) (required) Dataset long abbreviation (e.g., "
+"'HC\\_M2\\_0606\\_P' for BXD hippocampus, 'BXDPublish' for phenotypes). "
+"Obtain from GeneNetwork\\_list\\_datasets Long\\_Abbreviation field."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:39 dddb8175a49b4f26bc8e118274b58757
+msgid ""
+"``trait_name`` (string) (required) Probe/trait identifier within the "
+"dataset (e.g., '1436869\\_at' for a microarray probe, '10001' for a BXD "
+"phenotype trait). Must exist in the specified dataset."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:42 ../../tools/genenetwork_tools.rst:74
+#: ../../tools/genenetwork_tools.rst:105 ../../tools/genenetwork_tools.rst:135
+#: 4a6a3051e7cd4003b27798c3a82d8c84 4cb3b17d0a674ad098fc675f3f41aecf
+#: c602e7c050e54021ad58227df0f496b0 e2b4f3298d9445f1a8c7c87ab78a8ed6
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:57 9d6605b492f3426d9abeb4d71af625cb
+msgid "**GeneNetwork_list_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:59 9cd9d2dc23154a72bbb3e695e439cc9c
+msgid ""
+"List all datasets available for a specific genetic cross population in "
+"GeneNetwork. Datasets repr..."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst 829f297fa3634f45be166982cc843183
+msgid "GeneNetwork_list_datasets tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:65 f696eeacd1344546950ac8131768d7b8
+msgid "**Name**: ``GeneNetwork_list_datasets``"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:67 a629d9dc6abb4963bbe610d1f8406d9f
+msgid ""
+"**Description**: List all datasets available for a specific genetic cross"
+" population in GeneNetwork. Datasets represent different tissues, time "
+"points, or measurement technologies for the population (e.g., 'BXD Brain "
+"mRNA', 'BXD Liver Metabolites', 'BXD Phenotype'). Returns dataset names, "
+"abbreviations, data types, and timestamps. Use "
+"GeneNetwork\\_list\\_groups to find group names (e.g., 'bxd' for BXD "
+"cross)."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:71 5d6dd58a6bc641dd97015c9f4788bb0d
+msgid ""
+"``group`` (string) (required) Genetic cross group name in lowercase "
+"(e.g., 'bxd', 'bxh', 'hxb', 'bnlx-srjr-f2'). Obtain from "
+"GeneNetwork\\_list\\_groups."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:88 aba88473649e47ba9e512b41cc3210f3
+msgid "**GeneNetwork_list_groups** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:90 32e10e0bba5a47b1af5e9c80e949501f
+msgid ""
+"List genetic cross populations (groups) available in GeneNetwork for a "
+"given species. These group..."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst a104b7258ebd40b38251e354aadbb132
+msgid "GeneNetwork_list_groups tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:96 6ec2e7d6877a4c85ac2c4db13ac6307d
+msgid "**Name**: ``GeneNetwork_list_groups``"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:98 6543be5178f249348fe290fa4ba5cf62
+msgid ""
+"**Description**: List genetic cross populations (groups) available in "
+"GeneNetwork for a given species. These groups represent specific genetic "
+"crosses (e.g., BXD = C57BL/6J x DBA/2J recombinant inbred strains, BXH = "
+"BXH RI strains, HXB = Hybrid strains) used for QTL mapping and systems "
+"genetics. Each group can have hundreds of datasets measuring gene "
+"expression, metabolites, and phenotypes across the population. Returns "
+"group names, genetic types (riset, intercross, etc.), and IDs."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:102 49d1162fcb434a4099aaf7e358769960
+msgid ""
+"``species`` (string) (required) Species short name (e.g., 'mouse', 'rat',"
+" 'human', 'arabidopsis'). Get from GeneNetwork\\_list\\_species."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:119 c938d2799b284e318832f2adc0e7cbf3
+msgid "**GeneNetwork_list_species** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:121 706f9a912f8f45608aada6aaefc8ec2f
+msgid ""
+"List all species available in GeneNetwork, the open systems genetics "
+"database for behavioral, neu..."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst ce37d57e2e9b4143a2f573289d202ff7
+msgid "GeneNetwork_list_species tool specification"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:127 095542b598094978a6ca3a2e4b8df123
+msgid "**Name**: ``GeneNetwork_list_species``"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:129 dc792e234c044a648851d94a04279095
+msgid ""
+"**Description**: List all species available in GeneNetwork, the open "
+"systems genetics database for behavioral, neural, and physiological "
+"phenotypes. GeneNetwork contains genetic cross data for 13+ model "
+"organisms including mouse (BXD, BXH, AXB, etc.), rat, Arabidopsis, human,"
+" zebrafish, and barley. Returns species names and taxonomy IDs for use "
+"with other GeneNetwork tools."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:133 8d33c2b1d12c45df9712109741f8a25f
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:148 f2bff1cfe3df435ca43fc0e89ee1252c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:150 c7b64badc38447589c92bc9a8b335236
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/genenetwork_tools.rst:151 721f40b9b1b943cdb4b5f445e90c5023
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

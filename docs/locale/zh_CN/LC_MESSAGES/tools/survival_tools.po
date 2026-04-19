@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/survival_tools.rst:10 84407889160d47b3be4b99af2e05f78d
+msgid "Survival Tools"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:12 40441f2aa4b446038b6e03838d94ad65
+msgid ""
+"**Configuration File**: ``survival_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:16 405f25f72f0a45349e2b40d5948442f4
+msgid ""
+"This page contains all tools defined in the ``survival_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:19 7a7a3d4c724c436e96aa0406911db3e8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:22 e167d0d79562433ba79b0af62f32891e
+msgid "**Survival_cox_regression** (Type: SurvivalTool)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:24 b4bcc35b41544b0bbca3e489eb744c43
+msgid ""
+"Fit Cox proportional hazards regression model to assess effect of "
+"covariates on survival. Returns..."
+msgstr ""
+
+#: ../../tools/survival_tools.rst fc944fd7581f448dacb5cbba9fa8a11d
+msgid "Survival_cox_regression tool specification"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:28 ../../tools/survival_tools.rst:71
+#: ../../tools/survival_tools.rst:113 364f920a52e14923baa3e57fa0e1144d
+#: 8360b276a9384541a197caeafd64e55f f35304a3ac06479799516c1ff1c5a8c7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:30 479db53df136404f9a515916127f6b0d
+msgid "**Name**: ``Survival_cox_regression``"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:31 ../../tools/survival_tools.rst:74
+#: ../../tools/survival_tools.rst:116 6072d792e354422a860f0326e23f207d
+#: a7980f7fc08847b78fa74bc209649181 f4bf1e015c3f4324ac113c9032cd408e
+msgid "**Type**: ``SurvivalTool``"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:32 0e457d707e0441ffb26502df51235da4
+msgid ""
+"**Description**: Fit Cox proportional hazards regression model to assess "
+"effect of covariates on survival. Returns hazard ratios with 95% CI, "
+"p-values, and significance for each covariate. HR > 1 = increased hazard "
+"(worse survival); HR < 1 = decreased hazard (better survival). Use for: "
+"multivariate survival analysis, identifying prognostic biomarkers, "
+"adjusting for confounders."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:34 ../../tools/survival_tools.rst:77
+#: ../../tools/survival_tools.rst:119 2edca41eb73144c2b60f6724352ca499
+#: 9f5c258b6e9743c3ab3adffb536ab4cb beeeeb25083e4d5a983df2e065bf9799
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:36 ../../tools/survival_tools.rst:79
+#: ../../tools/survival_tools.rst:121 0450874e277a4ddc8c876cc668c1e5ed
+#: 5a1a86fd6183403fb094ffb1712210b6 c8b2f38f754d435ab3178f9ca25a6a9e
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:39 5b4ebc37c88c43f7a35d90cf83b68715
+msgid "``durations`` (array) (required) Observed time durations"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:42 ca0aaa9f05004606aff65f71fe61a851
+msgid ""
+"``event_observed`` (array) (required) Event indicators (1=event, "
+"0=censored)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:45 6f5701c03b0a4e579093a2b51bf4b632
+#, python-brace-format
+msgid ""
+"``covariates`` (object) (required) Dict mapping covariate name to array "
+"of values. E.g., {'age': [45, 62, ...], 'stage': [1, 2, ...]}"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:48 ../../tools/survival_tools.rst:91
+#: ../../tools/survival_tools.rst:136 8ee2d42dacf8473fb8f82ca1176a249a
+#: 9f298449582844d4ad1bc2abb91d81ac c3a6ed98d7bd40948816276cc7215a34
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:65 6f7f13f0bfa6453abc8e2718fce2712f
+msgid "**Survival_kaplan_meier** (Type: SurvivalTool)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:67 cae2c95290664182bf5b3e3696fc3ef5
+msgid ""
+"Compute Kaplan-Meier survival estimates from time-to-event data. Returns "
+"survival probability at ..."
+msgstr ""
+
+#: ../../tools/survival_tools.rst 9ff9b8b084864e0e8b6336a9abc529b5
+msgid "Survival_kaplan_meier tool specification"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:73 0f853539810543a3a7762cd0e2ea84f4
+msgid "**Name**: ``Survival_kaplan_meier``"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:75 2c1149dbdabc4d809a05ccfe4526a758
+msgid ""
+"**Description**: Compute Kaplan-Meier survival estimates from time-to-"
+"event data. Returns survival probability at each event time, number at "
+"risk, events, censored observations, and median survival time. Supports "
+"optional stratification by group for visual comparison. Use for: "
+"analyzing patient survival in clinical data, time-to-event analysis, "
+"comparing treatment groups."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:82 86c5710a404a4de5b7f337828e2803c2
+msgid ""
+"``durations`` (array) (required) Observed time durations (e.g., months to"
+" event or censoring). All values must be >= 0."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:85 6575af7427534e1ea6f77870aaaff8d0
+msgid ""
+"``event_observed`` (array) (required) Event indicator: 1 = event occurred"
+" (death/relapse), 0 = censored. Same length as durations."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:88 02e8c671a80d4729ba0ea44fa8ddaf74
+msgid ""
+"``group_labels`` (array, null) (optional) Optional group labels for "
+"stratified KM analysis (e.g., ['high', 'low', 'high', ...])"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:107 bc6901ebafd84e299db4a1346bb55406
+msgid "**Survival_log_rank_test** (Type: SurvivalTool)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:109 b0795672de604f1591da1632c439e63c
+msgid ""
+"Perform Mantel-Cox log-rank test to compare survival between two groups. "
+"Tests null hypothesis th..."
+msgstr ""
+
+#: ../../tools/survival_tools.rst 77b6ed3d36dc4d979a7f011f902cd2b5
+msgid "Survival_log_rank_test tool specification"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:115 05fefafc69314eb4b041d94434667681
+msgid "**Name**: ``Survival_log_rank_test``"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:117 f5a7812050fe4c4b902e3b1fbdfaab05
+msgid ""
+"**Description**: Perform Mantel-Cox log-rank test to compare survival "
+"between two groups. Tests null hypothesis that survival curves are "
+"identical. Returns chi-squared statistic, p-value, observed vs expected "
+"events per group. A p-value < 0.05 indicates statistically significant "
+"difference in survival. Use for: comparing treatment arms, high vs low "
+"expression groups."
+msgstr ""
+
+#: ../../tools/survival_tools.rst:124 3ff26ca8c7434134b53e564d76a0489e
+msgid "``durations_a`` (array) (required) Time durations for group A"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:127 b65bf746cb254ee79006b273212b9f3d
+msgid ""
+"``events_a`` (array) (required) Event indicators for group A (1=event, "
+"0=censored)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:130 8fb6a3e581ac44dea4704d13aac511b4
+msgid "``durations_b`` (array) (required) Time durations for group B"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:133 2c53ec558fdc4d279bfbdf915ec430fa
+msgid ""
+"``events_b`` (array) (required) Event indicators for group B (1=event, "
+"0=censored)"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:154 70a55546451f4539a438a83a015358b0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:156 16165dd2c3184f2c93e9849831718be1
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/survival_tools.rst:157 487d8bb0b58543f296f245508d9612f1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,272 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/inaturalist_tools.rst:10 7354e95d31e64c0f98687445cf44a59f
+msgid "Inaturalist Tools"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:12 38a5fccd3e2146f0a409123f3c087a52
+msgid ""
+"**Configuration File**: ``inaturalist_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:16 0ad5886acfd34c8fa2e827d69865c35b
+msgid ""
+"This page contains all tools defined in the ``inaturalist_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:19 3893a28da8f24855ae06b379d12e6768
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:22 2df7207a06a24be5a7f82ee4ad664631
+msgid "**iNaturalist_get_species_counts** (Type: INaturalistTool)"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:24 e8ae598d69d340a2b5aa375ff0edaf39
+msgid ""
+"Get species observation counts from iNaturalist for a given taxon group "
+"or location. Returns a ra..."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst 69e3f283359644ad884b2080dc379fbe
+msgid "iNaturalist_get_species_counts tool specification"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:28 ../../tools/inaturalist_tools.rst:67
+#: ../../tools/inaturalist_tools.rst:98 ../../tools/inaturalist_tools.rst:140
+#: 50d347356da64cfea553ec44f58f5d9b aa9ec66077084402b4db94f1dbe8a11b
+#: da5f7ec8e94f4ef3b3f934b171333bbe f33cb96b18e04d7294a0303a2f48c4e0
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:30 c74c6d9f9a3d4d14bb842247ee6a660a
+msgid "**Name**: ``iNaturalist_get_species_counts``"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:31 ../../tools/inaturalist_tools.rst:70
+#: ../../tools/inaturalist_tools.rst:101 ../../tools/inaturalist_tools.rst:143
+#: 228817769d4c449597edadadd72ab1ec 45bbc4d5d7ed4110867618d9181d9d4f
+#: bcba6b1f1d114311aa923484f769634c f7358b4a51fe4973931dbe9be7d9c9c7
+msgid "**Type**: ``INaturalistTool``"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:32 28a9611ff141493fbf1f9c651e11563b
+msgid ""
+"**Description**: Get species observation counts from iNaturalist for a "
+"given taxon group or location. Returns a ranked list of species by number"
+" of observations, showing which species are most frequently observed. "
+"Useful for biodiversity assessments, understanding species abundance, and"
+" identifying common species in an area. Example: species counts for "
+"Delphinidae (taxon 41479) returns bottlenose dolphin, common dolphin, "
+"etc. ranked by observations."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:34 ../../tools/inaturalist_tools.rst:73
+#: ../../tools/inaturalist_tools.rst:104 ../../tools/inaturalist_tools.rst:146
+#: 3c046c7f6e1142dc8cf6e750dd46b744 80aae6975e254a229225956518c509a7
+#: a5a69cab76f74b1a837830af36e0059d c6d4d2794a5a4825825be24f01b0b3ca
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:36 7215b62e600746fa88232322d902f1c8
+msgid ""
+"``taxon_id`` (integer, null) (optional) Parent taxon ID to get species "
+"counts within. Examples: 41479 (Delphinidae - dolphins), 41944 (Panthera "
+"- big cats), 47126 (Sequoioideae - redwoods)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:39 8b81cd876d4d4caf9910bd1f8d9fa6bb
+msgid ""
+"``place_id`` (integer, null) (optional) Place ID to filter by location. "
+"Example: 10211 (Yellowstone)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:42 f24236987c024813aa75383b8bd9daf7
+msgid ""
+"``quality_grade`` (string, null) (optional) Quality filter: 'research', "
+"'needs\\_id', or 'casual'. Default: 'research'."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:45 d75f2153f6474b70a5233ef6e7d6f1ae
+msgid ""
+"``per_page`` (integer, null) (optional) Number of species to return "
+"(1-500, default 20)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:48 ../../tools/inaturalist_tools.rst:78
+#: ../../tools/inaturalist_tools.rst:121 ../../tools/inaturalist_tools.rst:154
+#: 367b207ce96047d0a5680701e996bb7c 6e6ef6c4ccb2438db14a877b86a70e62
+#: af542d7f235a4893aa9d6dd14f45671d dce27e8924dc44e1877e0763e97f1776
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:61 dc366b08269c4c7d9c9cc7a2744df149
+msgid "**iNaturalist_get_taxon** (Type: INaturalistTool)"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:63 ccb5f585fe504e14b67de879ec3726f2
+msgid ""
+"Get detailed taxonomy information for a species by its iNaturalist taxon "
+"ID. Returns scientific n..."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst b5b19bce9a354ed98cc3cb58d16b7add
+msgid "iNaturalist_get_taxon tool specification"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:69 22d82777d96a4372a1fdbc343061e506
+msgid "**Name**: ``iNaturalist_get_taxon``"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:71 079f56a612694348946896be1403a2f3
+msgid ""
+"**Description**: Get detailed taxonomy information for a species by its "
+"iNaturalist taxon ID. Returns scientific name, common names, full "
+"taxonomic lineage (kingdom through species), observation count, "
+"conservation status, and Wikipedia link. Use iNaturalist\\_search\\_taxa "
+"first to find taxon IDs. Example: taxon 41482 returns Tursiops truncatus "
+"(bottlenose dolphin) with 19000+ observations."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:75 05d43547be4f474fbf58eeac017bf297
+msgid ""
+"``taxon_id`` (integer) (required) iNaturalist taxon ID. Examples: 41482 "
+"(bottlenose dolphin), 43584 (Homo sapiens), 41944 (Panthera tigris), "
+"48662 (monarch butterfly), 47126 (Sequoia sempervirens)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:92 7f3bf633bfc847bf850699b8af4c61b4
+msgid "**iNaturalist_search_observations** (Type: INaturalistTool)"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:94 0f08a4b8fbbd438b8230fb098dfb0743
+msgid ""
+"Search for georeferenced species observations from iNaturalist citizen "
+"scientists. Filter by taxo..."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst 973b6cb7d04e4def91e09d8c3aa23783
+msgid "iNaturalist_search_observations tool specification"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:100 8754fa99a959401fa69cdc5434ecf2f0
+msgid "**Name**: ``iNaturalist_search_observations``"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:102 b59635556f84456da3b787da91354dff
+msgid ""
+"**Description**: Search for georeferenced species observations from "
+"iNaturalist citizen scientists. Filter by taxon, location, date, and "
+"quality grade. Returns observation details including species, location, "
+"observer, date, and photo URLs. Useful for biodiversity surveys, species "
+"distribution mapping, and ecological research. Example: research-grade "
+"observations of bottlenose dolphins (taxon 41482) returns recent "
+"sightings with GPS coordinates."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:106 baf22215afd045d1bddc4032c8e74d40
+msgid ""
+"``taxon_id`` (integer, null) (optional) iNaturalist taxon ID to filter "
+"by. Examples: 41482 (bottlenose dolphin), 41944 (tiger), 48662 (monarch "
+"butterfly)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:109 b434fed58e124d9cb182e4259293d3ff
+msgid ""
+"``query`` (string, null) (optional) Text search for species name. "
+"Alternative to taxon\\_id."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:112 3eed5b98cb4f4ff082361ca7fec9bc24
+msgid ""
+"``quality_grade`` (string, null) (optional) Observation quality: "
+"'research' (community-verified), 'needs\\_id' (unverified), or 'casual'. "
+"Default: 'research'."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:115 1055f4f893334eb4ab29255ce2ed0d3a
+msgid ""
+"``place_id`` (integer, null) (optional) iNaturalist place ID to filter by"
+" location. Example: 10211 (Yellowstone National Park)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:118 dbfcd7c30ff245e1a1baee4c34e0c80d
+msgid ""
+"``per_page`` (integer, null) (optional) Number of results (1-200, default"
+" 10)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:134 b0fec17d55ee4e1aa6ce7d8f627d4be8
+msgid "**iNaturalist_search_taxa** (Type: INaturalistTool)"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:136 c6427df6252948c9aa52e906472e1922
+msgid ""
+"Search for species and taxa in the iNaturalist taxonomy. Returns matching"
+" organisms with their sc..."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst de9abe090f5e4b809a1a3f1044b17b51
+msgid "iNaturalist_search_taxa tool specification"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:142 c2317572b6fd47fea9db7f591dc73aaf
+msgid "**Name**: ``iNaturalist_search_taxa``"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:144 143bb03a0313427daf9b3d11eb38fe93
+msgid ""
+"**Description**: Search for species and taxa in the iNaturalist taxonomy."
+" Returns matching organisms with their scientific and common names, "
+"taxonomic rank, observation count, and conservation status. iNaturalist "
+"aggregates citizen science biodiversity observations worldwide. Example: "
+"searching 'Panthera tigris' returns the tiger with 22000+ observations."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:148 15b265709b6d4f8aa1f6594a4e5ddc27
+msgid ""
+"``query`` (string) (required) Search query for taxon name (scientific or "
+"common). Examples: 'Panthera tigris', 'monarch butterfly', 'redwood', "
+"'Homo sapiens', 'blue whale'."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:151 03b3c2bc9666480989abae1e8a0ba288
+msgid ""
+"``per_page`` (integer, null) (optional) Number of results to return "
+"(1-200, default 10)."
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:168 52d50863f08d49bfbee29403e8d8f785
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:170 5d3df94ed3a84304b7ef5c586d5d2484
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/inaturalist_tools.rst:171 878bc90e39d942f7a08862348bb815da
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

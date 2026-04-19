@@ -1,0 +1,374 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/drug_synergy_tools.rst:10 5b2258b7a8af4c3da1e4f8b7533f8537
+msgid "Drug Synergy Tools"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:12 69432784eb7b480fa288e4a94d6c5ec7
+msgid ""
+"**Configuration File**: ``drug_synergy_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:16 03d66c49bd5949eeb95f918d764f42af
+msgid ""
+"This page contains all tools defined in the ``drug_synergy_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:19 cc44dee709b34f0798d36eef0b7478e5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:22 d0b0111cf17140eeac87f5c2feff7fbf
+msgid "**DrugSynergy_calculate_bliss** (Type: DrugSynergyTool)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:24 2fbbd01d394f4eb98246ee1d9edb72d8
+msgid ""
+"Calculate Bliss Independence synergy score for a drug combination. Model:"
+" E\\_expected = E\\_a + E\\..."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst ca2b6d9956cf43b9a4e5ec1931e50962
+msgid "DrugSynergy_calculate_bliss tool specification"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:28 ../../tools/drug_synergy_tools.rst:71
+#: ../../tools/drug_synergy_tools.rst:133
+#: ../../tools/drug_synergy_tools.rst:176
+#: ../../tools/drug_synergy_tools.rst:235 1897cb144f4243bb873ea5340ce913cb
+#: 2e12a78eadc94051b90cd9e3e7b60c2c 5a8d7ce8d6724f9fab4e1261a090b312
+#: d1338dac330742338c727322e0bc27a7 d22f5da015854811afc51bfbd64b9b6d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:30 2d650da5edc44c00b844d2535b394746
+msgid "**Name**: ``DrugSynergy_calculate_bliss``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:31 ../../tools/drug_synergy_tools.rst:74
+#: ../../tools/drug_synergy_tools.rst:136
+#: ../../tools/drug_synergy_tools.rst:179
+#: ../../tools/drug_synergy_tools.rst:238 053af32ecfba4359a531a6edfa2ee5cb
+#: 06561174507c45358cacd4549caecac5 0a106e84e6f94fa8ab87002b11c39bb2
+#: 59ffb68cd73d4b5bbe397c121f0f9ef6 7d7761bb1f3340099f313541c418b4c4
+msgid "**Type**: ``DrugSynergyTool``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:32 8b6b95bef33c4ec8bab106d500af1b21
+msgid ""
+"**Description**: Calculate Bliss Independence synergy score for a drug "
+"combination. Model: E\\_expected = E\\_a + E\\_b - E\\_a\\*E\\_b. Synergy"
+" score = (E\\_combo - E\\_expected) \\* 100. Positive = synergy; Negative"
+" = antagonism. Inputs are fractional inhibition values (0-1). Based on "
+"Bliss (1939). Use for: single-concentration combination screening, high-"
+"throughput synergy assessment."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:34 ../../tools/drug_synergy_tools.rst:77
+#: ../../tools/drug_synergy_tools.rst:139
+#: ../../tools/drug_synergy_tools.rst:182
+#: ../../tools/drug_synergy_tools.rst:241 00dd115e3ec94cdfa44f9e1e35a4a190
+#: 44c1ad03be924649afdc424a950cdfa2 51ecc45d9d6740d39f10af6869139c37
+#: 8034badc419a4aad93c2a5a735beccf7 d9718f60b907407b84fd8c7d245c2bd4
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:36 ../../tools/drug_synergy_tools.rst:79
+#: ../../tools/drug_synergy_tools.rst:141
+#: ../../tools/drug_synergy_tools.rst:184
+#: ../../tools/drug_synergy_tools.rst:243 113b8e3eeb444f2db94f1a058e7f7d6f
+#: 42d26862d05c4e83acdf6840958809c7 4f7408490c374f29a6960877b0a8b99e
+#: 775c151ab4794891bbdfbf3f90f4328f b2509d9e235a4115a65af4be43e8bd59
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:39 ed72ade793b1408684dd17ab3453a06b
+msgid ""
+"``effect_a`` (number) (required) Fractional inhibition of drug A alone "
+"(0=no effect, 1=complete inhibition)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:42 1dd3a346ec9841ddbfcb28b76ebaf104
+msgid ""
+"``effect_b`` (number) (required) Fractional inhibition of drug B alone "
+"(0=no effect, 1=complete inhibition)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:45 43b6def0847442bb9862f5aa53798f64
+msgid ""
+"``effect_combination`` (number) (required) Observed fractional inhibition"
+" of the drug combination"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:48 ../../tools/drug_synergy_tools.rst:106
+#: ../../tools/drug_synergy_tools.rst:153
+#: ../../tools/drug_synergy_tools.rst:208
+#: ../../tools/drug_synergy_tools.rst:255 11b0f3caad394e78860438def9c2d048
+#: 1501267edaf642e88d7df6c4628ba92d 64b07a3546f041d5a59f75f97598962d
+#: 97a1a5a4316e440a907c219dfe5412ed d79affe3ae4a4a82b58b4810b9ce755d
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:65 bd6447fc1d1a43efb17e54285274f37b
+msgid "**DrugSynergy_calculate_ci** (Type: DrugSynergyTool)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:67 8a4a9a6bd35d4811bd4de900dc29f9f1
+msgid ""
+"Calculate Chou-Talalay Combination Index (CI) for drug synergy "
+"quantification. CI is derived from..."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst 90c141b703404c76b502357fb4d61cee
+msgid "DrugSynergy_calculate_ci tool specification"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:73 ee504907ea6d4c6499616b03935a749e
+msgid "**Name**: ``DrugSynergy_calculate_ci``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:75 1754978abd1c445bbbfcfd47f33a3a5c
+msgid ""
+"**Description**: Calculate Chou-Talalay Combination Index (CI) for drug "
+"synergy quantification. CI is derived from the Median Effect Equation: "
+"fa/fu = (D/Dm)^m. CI < 1 indicates synergy, CI = 1 is additive, CI > 1 is"
+" antagonism. Also computes the Dose Reduction Index (DRI) showing how "
+"much each drug dose can be reduced in combination. Supports both mutually"
+" exclusive (drugs with similar mechanisms) and mutually non-exclusive "
+"(drugs with different mechanisms) assumptions. Based on Chou & Talalay "
+"(1984). Use for: quantitative synergy assessment, dose optimization, "
+"isobologram analysis."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:82 ../../tools/drug_synergy_tools.rst:187
+#: 2e6df38751ea4ed59c3c43afa91d0173 326366f43d744e1ea305b3a2c648bd4f
+msgid ""
+"``doses_a_single`` (array) (required) Concentration values for drug A "
+"single-agent dose-response (e.g., [0.01, 0.1, 1, 10, 100])"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:85 b2c47016562241958189fedbee9c69b2
+msgid ""
+"``effects_a_single`` (array) (required) Fractional inhibition of drug A "
+"alone at each dose (0-1 scale)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:88 ../../tools/drug_synergy_tools.rst:193
+#: 3792ce361c494148a640e9ce2a838f3e 7921c90893ed45658d07fa5d83cae8af
+msgid ""
+"``doses_b_single`` (array) (required) Concentration values for drug B "
+"single-agent dose-response"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:91 e498a4dc7e4e48baa8378d0673342532
+msgid ""
+"``effects_b_single`` (array) (required) Fractional inhibition of drug B "
+"alone at each dose (0-1 scale)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:94 ../../tools/drug_synergy_tools.rst:199
+#: 89ffe556b11e4612b3d90e1638698764 ca95c6c7519b438aa84811cdaae296a8
+msgid ""
+"``dose_a_combo`` (number) (required) Dose of drug A used in the "
+"combination"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:97 ../../tools/drug_synergy_tools.rst:202
+#: 91f0b663232b4b0d93d441bc300f0425 e3f6def7f6624b95b449151194f3fb17
+msgid ""
+"``dose_b_combo`` (number) (required) Dose of drug B used in the "
+"combination"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:100 a06b8b4cfd154660858285622215a9ad
+msgid ""
+"``effect_combo`` (number) (required) Observed fractional inhibition of "
+"the combination (0-1 scale, must be between 0 and 1 exclusive)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:103 2039360f4f2a436a84a14dfce193a6ad
+msgid ""
+"``assumption`` (string) (optional) Whether drugs have similar "
+"(mutually\\_exclusive) or different (mutually\\_non\\_exclusive) "
+"mechanisms of action. Default: mutually\\_exclusive"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:127 ec089b8599024940bf4c5e910dd057f9
+msgid "**DrugSynergy_calculate_hsa** (Type: DrugSynergyTool)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:129 59ed40a548ba4e65b85ee0f7839723ea
+msgid ""
+"Calculate Highest Single Agent (HSA) synergy score for drug combinations "
+"across dose points. HSA ..."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst 4ec7b18d8302447ca69df97f9bbc302b
+msgid "DrugSynergy_calculate_hsa tool specification"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:135 5b81cbad7b98429fa8690c9f9c2566d5
+msgid "**Name**: ``DrugSynergy_calculate_hsa``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:137 81292755ab3146d6abf6a9ca46f09ce1
+msgid ""
+"**Description**: Calculate Highest Single Agent (HSA) synergy score for "
+"drug combinations across dose points. HSA expected = max(E\\_a, E\\_b) at"
+" each dose. Synergy = observed - HSA expected. Requires matching arrays "
+"of effects for drug A, drug B, and the combination. Use for: multi-dose "
+"combination matrices, identifying synergistic dose ranges."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:144 21f3ef4e5f0d497eb0450c4f018840ff
+msgid ""
+"``effects_a`` (array) (required) Array of drug A inhibition effects at "
+"each dose point (0-1 or 0-100)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:147 979d5d2205f047b7ba319cf4da6d919d
+msgid ""
+"``effects_b`` (array) (required) Array of drug B inhibition effects at "
+"each dose point (same length as effects\\_a)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:150 375d7fecfd464287b49a51312eb3021c
+msgid ""
+"``effects_combo`` (array) (required) Array of combination inhibition "
+"effects at each dose point (same length as effects\\_a)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:170 0c4ba83de6cd4b76bba87b8eb43e2bcf
+msgid "**DrugSynergy_calculate_loewe** (Type: DrugSynergyTool)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:172 9bf85708b6344d35a5c1b20a30902a27
+msgid ""
+"Calculate Loewe Additivity synergy score for a drug combination. The "
+"Loewe model is the most wide..."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst 67c0d9d5747d47569d3841e9af264b4c
+msgid "DrugSynergy_calculate_loewe tool specification"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:178 f8ab7ccc99b74d2dae1765c8ba44824f
+msgid "**Name**: ``DrugSynergy_calculate_loewe``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:180 268b2fe5ab2e4057906c89f2c981daff
+msgid ""
+"**Description**: Calculate Loewe Additivity synergy score for a drug "
+"combination. The Loewe model is the most widely used reference model for "
+"drug interaction: d\\_a/D\\_a(E) + d\\_b/D\\_b(E) = 1 at additivity. If "
+"sum < 1, the combination is synergistic (needs less drug than expected); "
+"if > 1, it is antagonistic. Requires single-agent dose-response data for "
+"each drug (to fit Hill curves) plus the combination doses and observed "
+"effect. Based on Loewe & Muischnek (1926). Use for: rigorous synergy "
+"quantification with dose-response data, comparison with Bliss/HSA/ZIP "
+"models."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:190 e7936e9a98c34afda261896368308b91
+msgid ""
+"``effects_a_single`` (array) (required) Fractional inhibition of drug A "
+"alone at each dose (0-1 scale, same length as doses\\_a\\_single)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:196 b9e1e4e0e859479994050dd750c9f67a
+msgid ""
+"``effects_b_single`` (array) (required) Fractional inhibition of drug B "
+"alone at each dose (0-1 scale, same length as doses\\_b\\_single)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:205 eee5d9753d1249a8a73dd45ea2d6ea3d
+msgid ""
+"``effect_combo`` (number) (required) Observed fractional inhibition of "
+"the combination (0-1 scale)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:229 ef4ed418275a4f309c32ffc1f86f2531
+msgid "**DrugSynergy_calculate_zip** (Type: DrugSynergyTool)"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:231 08854dab09664d83bb359700b00f4a50
+msgid ""
+"Calculate ZIP (Zero Interaction Potency) delta synergy score from a full "
+"dose-response matrix. Fi..."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst b324b6fedac34320b6f195e94499ddbe
+msgid "DrugSynergy_calculate_zip tool specification"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:237 27c32f43f39d4f89bd3835bed39b72e5
+msgid "**Name**: ``DrugSynergy_calculate_zip``"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:239 d1883f857a9744a99dbf0427fe2f0fd6
+msgid ""
+"**Description**: Calculate ZIP (Zero Interaction Potency) delta synergy "
+"score from a full dose-response matrix. Fits Hill curves to marginal "
+"dose-response data for each drug and calculates expected additivity. "
+"Returns delta matrix where positive values indicate synergy. Based on "
+"Yadav et al. (2015). IMPORTANT: Each drug must have ≥3 non-zero dose "
+"points with measurable inhibition for Hill curve fitting to succeed. A "
+"3×3 matrix with non-zero doses\\_a and doses\\_b (no zero-dose "
+"rows/columns) is the minimum; 4×4 or larger matrices are recommended. If "
+"Hill fitting fails, use calculate\\_bliss instead. Interpretation: score "
+"> 10 = Synergy, -10 to 10 = Additivity, < -10 = Antagonism. Use for: "
+"comprehensive combination screening matrices."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:246 e6b93a328c2644f79c33e68477264467
+msgid ""
+"``doses_a`` (array) (required) Concentration values for drug A (e.g., "
+"[0.01, 0.1, 1, 10])"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:249 458f819987f5423f9582496cf99ffe4a
+msgid ""
+"``doses_b`` (array) (required) Concentration values for drug B (e.g., "
+"[0.01, 0.1, 1, 10])"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:252 4d9692b81e62401195d04a94c211c6dc
+msgid ""
+"``viability_matrix`` (array) (required) 2D matrix of cell viability "
+"percentages (0-100). Rows = doses\\_a, Columns = doses\\_b."
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:272 de87cce554834d079a461e5410fc91df
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:274 a4992c84f8c74ffbba53d6eeae6a381a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/drug_synergy_tools.rst:275 1faffbb4831341e49ba98b76f3cbcf4c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

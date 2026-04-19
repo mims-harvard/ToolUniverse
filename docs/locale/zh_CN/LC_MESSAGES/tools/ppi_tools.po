@@ -7,185 +7,364 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/ppi_tools.rst:2 5b000c47914f4b97bcaa92a651bbe8e0
+#: ../../tools/ppi_tools.rst:10 87254f7777364fc2aede2e75419c72d8
 msgid "Ppi Tools"
 msgstr "Ppi 工具"
 
-#: ../../tools/ppi_tools.rst:4 71e57566ec7f4d799ddf16801a06877a
+#: ../../tools/ppi_tools.rst:12 01ca1035c04f45dd9188b0650bf608a6
+#, fuzzy
 msgid ""
 "**Configuration File**: ``ppi_tools.json`` **Tool Type**: Local **Tools "
-"Count**: 2"
+"Count**: 4"
 msgstr "**配置文件**: ``ppi_tools.json`` **工具类型**: 本地 **工具数量**: 2"
 
-#: ../../tools/ppi_tools.rst:8 c771b6ff03c842b3b1a369a49a64c0d7
+#: ../../tools/ppi_tools.rst:16 035f7c7df252496da4b48093a9a09aff
 msgid ""
-"This page contains all tools defined in the ``ppi_tools.json`` configuration"
-" file."
+"This page contains all tools defined in the ``ppi_tools.json`` "
+"configuration file."
 msgstr "此页面包含在``ppi_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/ppi_tools.rst:11 1d078fd07b1c4a3aafbb1d014870a72c
+#: ../../tools/ppi_tools.rst:19 e19e1bed165e46e98ace02211ade186f
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/ppi_tools.rst:14 8f728a2216934ba1a74b07140fb175a3
-msgid "**BioGRID_get_interactions** (Type: BioGRIDRESTTool)"
-msgstr "**BioGRID_get_interactions**（类型：BioGRIDRESTTool）"
+#: ../../tools/ppi_tools.rst:22 17e03c846f1644c7972fc576fc50a78c
+#, fuzzy
+msgid "**STRING_functional_enrichment** (Type: STRINGRESTTool)"
+msgstr "**STRING_get_protein_interactions**（类型：STRINGRESTTool）"
 
-#: ../../tools/ppi_tools.rst:16 5d4da09db62d4a968ce441733377897b
+#: ../../tools/ppi_tools.rst:24 9299db23a9c84b5b8b33a53d39c685f9
 msgid ""
-"Query protein and genetic interactions from the BioGRID database. BioGRID is"
-" a comprehensive data..."
-msgstr "查询蛋白质和基因交互信息可通过BioGRID数据库完成。BioGRID是一个全面的数据..."
+"Identify enriched biological functions, pathways, and processes for a "
+"protein set using STRING (S..."
+msgstr ""
 
-#: ../../tools/ppi_tools.rst 537885b99b4b49ec8f6e79825c53f8f1
-msgid "BioGRID_get_interactions tool specification"
-msgstr "BioGRID_get_interactions 工具规范"
+#: ../../tools/ppi_tools.rst 6f4f66424c784b21a723910e5623aee4
+#, fuzzy
+msgid "STRING_functional_enrichment tool specification"
+msgstr "STRING_get_protein_interactions工具规格"
 
-#: ../../tools/ppi_tools.rst:20 ../../tools/ppi_tools.rst:66
-#: eb62d2b12a664cb7a0bd1565b30eff4d f216e498c7a44cc496dff4ca24eabef2
+#: ../../tools/ppi_tools.rst:28 ../../tools/ppi_tools.rst:65
+#: ../../tools/ppi_tools.rst:108 ../../tools/ppi_tools.rst:148
+#: 1198818cccf148268686737161762431 e352c78508634167abeb4d10b7ea3f3d
+#: e76168f6b94541cab5550728b17f7117 f638672afbe94cbab6cc7d56da2e4bc6
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/ppi_tools.rst:22 6b1dacf6193c49cdbeee60dd9e04cad4
-msgid "**Name**: ``BioGRID_get_interactions``"
-msgstr "**名称**: ``BioGRID_get_interactions``"
-
-#: ../../tools/ppi_tools.rst:23 14e7ee57dcec4cf6ad514c4082236407
-msgid "**Type**: ``BioGRIDRESTTool``"
-msgstr "**类型**: ``BioGRIDRESTTool``"
-
-#: ../../tools/ppi_tools.rst:24 a648902fb97b4730be29a17a78de22b6
-msgid ""
-"**Description**: Query protein and genetic interactions from the BioGRID "
-"database. BioGRID is a comprehensive database of physical and genetic "
-"interactions with detailed experimental evidence."
-msgstr "**描述**：从BioGRID数据库查询蛋白质和基因交互信息。BioGRID是一个包含详细实验证据的全面物理和基因交互数据库。"
-
-#: ../../tools/ppi_tools.rst:26 ../../tools/ppi_tools.rst:72
-#: 278ba869c3594fe8aee6ad1a9d26dce5 fdd74a6f85414e0c84a8b6bb2328105a
-msgid "**Parameters:**"
-msgstr "**参数：**"
-
-#: ../../tools/ppi_tools.rst:28 60c8a872da7a4412a23ac77acf2b7de7
-msgid ""
-"``gene_names`` (array) (required) List of gene names or protein identifiers"
-msgstr "``gene_names``（数组）（必需）基因名称或蛋白质标识符列表"
-
-#: ../../tools/ppi_tools.rst:31 a310e8405e2d4b82b840529bb574cd05
-msgid ""
-"``organism`` (string) (optional) Organism name (e.g., 'Homo sapiens', 'Mus "
-"musculus')"
-msgstr "``organism``（字符串）（可选）生物名称（例如：'Homo sapiens'，'Mus musculus'）"
-
-#: ../../tools/ppi_tools.rst:34 e70d995a406f49c1afd7d7e750ee3c02
-msgid ""
-"``interaction_type`` (string) (optional) Type of interaction ('physical', "
-"'genetic', 'both')"
-msgstr "``interaction_type``（字符串）（可选）交互类型（'physical'、'genetic'、'both'）"
-
-#: ../../tools/ppi_tools.rst:37 3e0776e95ffe47799453daf8ca9937dc
-msgid ""
-"``evidence_types`` (array) (optional) List of evidence types to include"
-msgstr "``evidence_types``（数组）（可选）包含的证据类型列表"
-
-#: ../../tools/ppi_tools.rst:40 ac7bd37aa4ee47d3abef410ea367746e
-msgid ""
-"``limit`` (integer) (optional) Maximum number of interactions to return "
-"(default: 100)"
-msgstr "``limit``（整数）（可选）返回的最大交互数量（默认值：100）"
-
-#: ../../tools/ppi_tools.rst:43 0defbdaca4aa47cd8ccdc9b6f4662aa0
-msgid ""
-"``format`` (string) (optional) Output format ('json' or 'tab', default: "
-"'json')"
-msgstr "``format``（字符串）（可选）输出格式（“json”或“tab”，默认值：“json”）"
-
-#: ../../tools/ppi_tools.rst:46 ../../tools/ppi_tools.rst:89
-#: 51166e16e1424bfba612a1389411aaf4 9e8851337e2d4a608faf06c5673ecab4
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
-
-#: ../../tools/ppi_tools.rst:60 9e44f7b7fbd34718af55e8ed2df9705f
-msgid "**STRING_get_protein_interactions** (Type: STRINGRESTTool)"
-msgstr "**STRING_get_protein_interactions**（类型：STRINGRESTTool）"
-
-#: ../../tools/ppi_tools.rst:62 3a48012778a24cdead471616e70106f8
-msgid ""
-"Query protein-protein interactions from the STRING database. STRING is a "
-"comprehensive database o..."
-msgstr "从STRING数据库查询蛋白质-蛋白质相互作用。STRING是一个全面的数据库，专门用于存储和分析蛋白质之间的相互作用信息。"
-
-#: ../../tools/ppi_tools.rst ade0c8446b42469a8f9a2b0b1a6d80a5
-msgid "STRING_get_protein_interactions tool specification"
-msgstr "STRING_get_protein_interactions工具规格"
-
-#: ../../tools/ppi_tools.rst:68 78eacb43e38043f1a85fe91de8f4035c
-msgid "**Name**: ``STRING_get_protein_interactions``"
+#: ../../tools/ppi_tools.rst:30 6bbe2054718447a4bcc0e70ec937c1ac
+#, fuzzy
+msgid "**Name**: ``STRING_functional_enrichment``"
 msgstr "**名称**: ``STRING_get_protein_interactions``"
 
-#: ../../tools/ppi_tools.rst:69 0508b966006342a5a8ff1e9f17a52395
+#: ../../tools/ppi_tools.rst:31 ../../tools/ppi_tools.rst:68
+#: ../../tools/ppi_tools.rst:111 ../../tools/ppi_tools.rst:151
+#: 0844d4db28e04554a626547830a128a7 25bcf017b03d4e4b8aa99b783bda8e7f
+#: 90dfe2c4d36a4ff8a9ed2cd309dc3ffe a28ed3b76990488e9d074b09f958c7e4
 msgid "**Type**: ``STRINGRESTTool``"
 msgstr "**类型**: ``STRINGRESTTool``"
 
-#: ../../tools/ppi_tools.rst:70 0e1c72878adf4c3bb2b5c0a4daf15ff9
+#: ../../tools/ppi_tools.rst:32 6a291e7daffa428b906bbfaeb0690656
 msgid ""
-"**Description**: Query protein-protein interactions from the STRING "
-"database. STRING is a comprehensive database of known and predicted protein-"
-"protein interactions with confidence scores and functional annotations."
+"**Description**: Identify enriched biological functions, pathways, and "
+"processes for a protein set using STRING (Search Tool for Retrieval of "
+"Interacting Genes/Proteins) database. Performs statistical enrichment "
+"analysis against GO (Gene Ontology) terms, KEGG pathways, Reactome "
+"pathways, and other annotation databases. Returns significantly enriched "
+"terms with FDR-corrected p-values. Minimum 3-4 proteins required for "
+"meaningful statistical analysis. No API key required. Use for: "
+"discovering pathways enriched in protein network, identifying biological "
+"processes, finding shared functions among proteins, interpreting omics "
+"data (proteomics, interactomics), hypothesis generation."
 msgstr ""
-"**描述**：从STRING数据库查询蛋白质-蛋白质相互作用。STRING是一个全面的数据库，包含已知和预测的蛋白质-"
-"蛋白质相互作用信息，并提供置信评分和功能注释。"
 
-#: ../../tools/ppi_tools.rst:74 438bd2d1063549a5988ad03e155bc04b
+#: ../../tools/ppi_tools.rst:34 ../../tools/ppi_tools.rst:71
+#: ../../tools/ppi_tools.rst:114 ../../tools/ppi_tools.rst:154
+#: 67877fecf5c94539a484d230d0054fe7 700591fe08a74a78ac245c4555f6cf22
+#: 8b6c5246df344824819f61f6fbd5a622 9b0f896013b8429e80499b109dedac40
+msgid "**Parameters:**"
+msgstr "**参数：**"
+
+#: ../../tools/ppi_tools.rst:36 52b2060ccd6140c2a7c1cb675882e534
+#, fuzzy
 msgid ""
-"``protein_ids`` (array) (required) List of protein identifiers (UniProt IDs,"
-" gene names, etc.)"
+"``protein_ids`` (array) (required) List of protein identifiers (UniProt "
+"IDs, gene names, Ensembl IDs). Minimum 3 proteins recommended for "
+"meaningful enrichment."
 msgstr "``protein_ids``（数组）（必填）蛋白质标识符列表（UniProt ID、基因名称等）"
 
-#: ../../tools/ppi_tools.rst:77 1a800095ebf34abf88569e009c12ec2c
+#: ../../tools/ppi_tools.rst:39 ../../tools/ppi_tools.rst:76
+#: ../../tools/ppi_tools.rst:159 1dc28408cdcb44efa69b8ccef64deff9
+#: 33ef4283006e4726b4a60feb1f8311b3 efb0bb4901364ff49fe602b7396306d1
 msgid ""
-"``species`` (integer) (optional) NCBI taxonomy ID (default: 9606 for human)"
+"``species`` (integer) (optional) NCBI taxonomy ID (default: 9606 for "
+"human)"
 msgstr "``species``（整数）（可选）NCBI分类学ID（默认值：9606，表示人类）"
 
-#: ../../tools/ppi_tools.rst:80 a4505c2b858f46c198d591facae0e766
+#: ../../tools/ppi_tools.rst:42 55a67e0efb404c21b88ac74e1ef19ad7
+msgid ""
+"``category`` (string) (optional) Enrichment category: 'Process' (GO "
+"Biological Process), 'Component' (GO Cellular Component), 'Function' (GO "
+"Molecular Function), 'KEGG', 'Reactome', 'WikiPathways', 'COMPARTMENTS', "
+"'TISSUES', 'DISEASES'"
+msgstr ""
+
+#: ../../tools/ppi_tools.rst:45 ../../tools/ppi_tools.rst:88
+#: ../../tools/ppi_tools.rst:128 ../../tools/ppi_tools.rst:165
+#: 26ae317fa3be4b6285fdc73686c5f4d8 681dfb6947994730badebc9be44bb317
+#: c04b87e3b70e4714b41041b5488478db e88deeeeaa3042538ea5ca620c835231
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/ppi_tools.rst:59 c2867f6f0a174ad0abfcdcb1c894b7c1
+msgid "**STRING_get_protein_interactions** (Type: STRINGRESTTool)"
+msgstr "**STRING_get_protein_interactions**（类型：STRINGRESTTool）"
+
+#: ../../tools/ppi_tools.rst:61 7718b676ba0c415db01afb601d68e9a9
+msgid ""
+"Alternative method to retrieve protein interactions from STRING (Search "
+"Tool for Retrieval of Int..."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst e2a1f7ef0a064e14904eb2754a8be9bc
+msgid "STRING_get_protein_interactions tool specification"
+msgstr "STRING_get_protein_interactions工具规格"
+
+#: ../../tools/ppi_tools.rst:67 b566a5d976334444b57fb5a1e472618b
+msgid "**Name**: ``STRING_get_protein_interactions``"
+msgstr "**名称**: ``STRING_get_protein_interactions``"
+
+#: ../../tools/ppi_tools.rst:69 460aa2f7f44d4d72aa74cbbbafd4ed87
+msgid ""
+"**Description**: Alternative method to retrieve protein interactions from"
+" STRING (Search Tool for Retrieval of Interacting Genes/Proteins). "
+"Provides similar functionality to STRING\\_get\\_network but may return "
+"different response format. \\*\\*Recommend using STRING\\_get\\_network "
+"for most analyses\\*\\* - more commonly used and better documented. No "
+"API key required. Use for: alternative interaction retrieval if "
+"get\\_network has issues, specific data format requirements, "
+"compatibility with legacy code."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst:73 db70c91577f34eadb1e6a383c7f0ce82
+msgid ""
+"``protein_ids`` (array) (required) List of protein identifiers (UniProt "
+"IDs, gene names, etc.)"
+msgstr "``protein_ids``（数组）（必填）蛋白质标识符列表（UniProt ID、基因名称等）"
+
+#: ../../tools/ppi_tools.rst:79 037e84c9916d4fb38dc150a5006ec2f2
 msgid ""
 "``confidence_score`` (number) (optional) Minimum confidence score (0-1, "
 "default: 0.4)"
 msgstr "``confidence_score``（数字）（可选）最低置信分数（0-1，默认值：0.4）"
 
-#: ../../tools/ppi_tools.rst:83 55d04a718adb46e3a3b6f9e40fccedb8
+#: ../../tools/ppi_tools.rst:82 3e5499388a7a40dbb9594cdba0d1ab9a
 msgid ""
 "``limit`` (integer) (optional) Maximum number of interactions to return "
 "(default: 50)"
 msgstr "``limit``（整数）（可选）返回的最大交互数量（默认值：50）"
 
-#: ../../tools/ppi_tools.rst:86 7df4adbdb0b547d49e9fa80a3c594beb
+#: ../../tools/ppi_tools.rst:85 ba1cb2b4a2334a1a93e30d707473c605
 msgid ""
-"``network_type`` (string) (optional) Type of network ('full', 'physical', "
-"'functional')"
+"``network_type`` (string) (optional) Type of network ('full', 'physical',"
+" 'functional')"
 msgstr "``network_type``（字符串）（可选）网络类型（“完整”、“物理”、“功能”）"
 
-#: ../../tools/ppi_tools.rst:103 62de5771b45f43078d5ae0fb4043fb63
+#: ../../tools/ppi_tools.rst:102 876e31e6342c49ccbc695b4bf5fb2b3f
+#, fuzzy
+msgid "**STRING_map_identifiers** (Type: STRINGRESTTool)"
+msgstr "**STRING_get_protein_interactions**（类型：STRINGRESTTool）"
+
+#: ../../tools/ppi_tools.rst:104 834d71648ce34ac09c02657aa660dcd4
+msgid ""
+"Map protein identifiers to STRING (Search Tool for Retrieval of "
+"Interacting Genes/Proteins) datab..."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst 7d5bee571e95467c8e7c8b86a664d370
+#, fuzzy
+msgid "STRING_map_identifiers tool specification"
+msgstr "STRING_get_protein_interactions工具规格"
+
+#: ../../tools/ppi_tools.rst:110 85a6cdb3a13a4d44806f1ca688297f77
+#, fuzzy
+msgid "**Name**: ``STRING_map_identifiers``"
+msgstr "**名称**: ``STRING_get_protein_interactions``"
+
+#: ../../tools/ppi_tools.rst:112 cac7d8554b324a298528206251708567
+msgid ""
+"**Description**: Map protein identifiers to STRING (Search Tool for "
+"Retrieval of Interacting Genes/Proteins) database IDs. Essential first "
+"step before using other STRING tools - converts your protein names (gene "
+"symbols, UniProt IDs, Ensembl IDs) to STRING's internal identifiers. "
+"STRING database contains 14M+ proteins from 5,000+ organisms with "
+"functional association networks. No API key required (public API with "
+"rate limits). Use for: preparing protein lists for network analysis, "
+"converting between identifier types, validating protein names exist in "
+"STRING, batch identifier conversion."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst:116 12503ee86c5d41be92d29e0fad63868d
+#, fuzzy
+msgid ""
+"``protein_ids`` (array) (required) List of protein identifiers to map "
+"(UniProt IDs, gene names, Ensembl IDs, RefSeq IDs)"
+msgstr "``protein_ids``（数组）（必填）蛋白质标识符列表（UniProt ID、基因名称等）"
+
+#: ../../tools/ppi_tools.rst:119 79ae91e861134492b461edb79dffa787
+#, fuzzy
+msgid ""
+"``species`` (integer) (optional) NCBI taxonomy ID (default: 9606 for "
+"human, 10090 for mouse)"
+msgstr "``species``（整数）（可选）NCBI分类学ID（默认值：9606，表示人类）"
+
+#: ../../tools/ppi_tools.rst:122 f1fd3acad65b454b97117fc1bfbf1f9f
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Maximum number of matches per identifier "
+"(default: 1)"
+msgstr "``limit``（整数）（可选）返回的最大交互数量（默认值：100）"
+
+#: ../../tools/ppi_tools.rst:125 63a2918f4ea64e9f871f561575e60ece
+msgid ""
+"``echo_query`` (integer) (optional) Include query identifier in response "
+"(1=yes, 0=no, default: 1)"
+msgstr ""
+
+#: ../../tools/ppi_tools.rst:142 5a3a4a5f12a64babba4941d2325dd20a
+#, fuzzy
+msgid "**STRING_ppi_enrichment** (Type: STRINGRESTTool)"
+msgstr "**STRING_get_protein_interactions**（类型：STRINGRESTTool）"
+
+#: ../../tools/ppi_tools.rst:144 94e81f4e6a7c442f98bd12a33c26c56c
+msgid ""
+"Test if your protein set has more interactions than expected by chance "
+"(PPI = Protein-Protein Int..."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst 0163fc56a26541e490839a035cb7e113
+#, fuzzy
+msgid "STRING_ppi_enrichment tool specification"
+msgstr "STRING_get_protein_interactions工具规格"
+
+#: ../../tools/ppi_tools.rst:150 1ac7c024902b49569fc787b1282f8234
+#, fuzzy
+msgid "**Name**: ``STRING_ppi_enrichment``"
+msgstr "**名称**: ``STRING_get_protein_interactions``"
+
+#: ../../tools/ppi_tools.rst:152 8766759bca4c450aa9796b82a85a465f
+msgid ""
+"**Description**: Test if your protein set has more interactions than "
+"expected by chance (PPI = Protein-Protein Interaction enrichment). "
+"Compares observed interactions in your network to random expectation - "
+"significant enrichment suggests proteins work together functionally. "
+"Returns enrichment p-value and expected vs observed interaction counts. "
+"Useful for validating that your protein list forms a real functional "
+"module rather than random proteins. No API key required. Use for: "
+"validating protein complex predictions, testing if proteins form "
+"functional module, quality control for network analysis, distinguishing "
+"real complexes from random protein lists, assessing functional coherence."
+msgstr ""
+
+#: ../../tools/ppi_tools.rst:156 caad6f409c834ff79e73e65764490b99
+#, fuzzy
+msgid ""
+"``protein_ids`` (array) (required) List of protein identifiers (UniProt "
+"IDs, gene names, Ensembl IDs). Minimum 3 proteins required."
+msgstr "``protein_ids``（数组）（必填）蛋白质标识符列表（UniProt ID、基因名称等）"
+
+#: ../../tools/ppi_tools.rst:162 24a1c5f7c2cc498b899950163d1ad28a
+#, fuzzy
+msgid ""
+"``confidence_score`` (number) (optional) Minimum confidence score for "
+"counting interactions (0-1, default: 0.4)"
+msgstr "``confidence_score``（数字）（可选）最低置信分数（0-1，默认值：0.4）"
+
+#: ../../tools/ppi_tools.rst:179 eb1c1e2f16a444b3843f54640e6b4603
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/ppi_tools.rst:105 0f7e4de586554c0fb2f57232513ffcd8
+#: ../../tools/ppi_tools.rst:181 ea7b561bc1c64038bd0cccc94009c625
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/ppi_tools.rst:106 924302e2251a4619a438f1bfa8fc7210
+#: ../../tools/ppi_tools.rst:182 7078854a03e64766831e3261c36749fe
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid "**BioGRID_get_interactions** (Type: BioGRIDRESTTool)"
+#~ msgstr "**BioGRID_get_interactions**（类型：BioGRIDRESTTool）"
+
+#~ msgid ""
+#~ "Query protein and genetic interactions "
+#~ "from the BioGRID database. BioGRID is"
+#~ " a comprehensive data..."
+#~ msgstr "查询蛋白质和基因交互信息可通过BioGRID数据库完成。BioGRID是一个全面的数据..."
+
+#~ msgid "BioGRID_get_interactions tool specification"
+#~ msgstr "BioGRID_get_interactions 工具规范"
+
+#~ msgid "**Name**: ``BioGRID_get_interactions``"
+#~ msgstr "**名称**: ``BioGRID_get_interactions``"
+
+#~ msgid "**Type**: ``BioGRIDRESTTool``"
+#~ msgstr "**类型**: ``BioGRIDRESTTool``"
+
+#~ msgid ""
+#~ "**Description**: Query protein and genetic "
+#~ "interactions from the BioGRID database. "
+#~ "BioGRID is a comprehensive database of"
+#~ " physical and genetic interactions with "
+#~ "detailed experimental evidence."
+#~ msgstr "**描述**：从BioGRID数据库查询蛋白质和基因交互信息。BioGRID是一个包含详细实验证据的全面物理和基因交互数据库。"
+
+#~ msgid ""
+#~ "``gene_names`` (array) (required) List of "
+#~ "gene names or protein identifiers"
+#~ msgstr "``gene_names``（数组）（必需）基因名称或蛋白质标识符列表"
+
+#~ msgid ""
+#~ "``organism`` (string) (optional) Organism name"
+#~ " (e.g., 'Homo sapiens', 'Mus musculus')"
+#~ msgstr "``organism``（字符串）（可选）生物名称（例如：'Homo sapiens'，'Mus musculus'）"
+
+#~ msgid ""
+#~ "``interaction_type`` (string) (optional) Type "
+#~ "of interaction ('physical', 'genetic', 'both')"
+#~ msgstr "``interaction_type``（字符串）（可选）交互类型（'physical'、'genetic'、'both'）"
+
+#~ msgid "``evidence_types`` (array) (optional) List of evidence types to include"
+#~ msgstr "``evidence_types``（数组）（可选）包含的证据类型列表"
+
+#~ msgid ""
+#~ "``format`` (string) (optional) Output format"
+#~ " ('json' or 'tab', default: 'json')"
+#~ msgstr "``format``（字符串）（可选）输出格式（“json”或“tab”，默认值：“json”）"
+
+#~ msgid ""
+#~ "Query protein-protein interactions from "
+#~ "the STRING database. STRING is a "
+#~ "comprehensive database o..."
+#~ msgstr "从STRING数据库查询蛋白质-蛋白质相互作用。STRING是一个全面的数据库，专门用于存储和分析蛋白质之间的相互作用信息。"
+
+#~ msgid ""
+#~ "**Description**: Query protein-protein "
+#~ "interactions from the STRING database. "
+#~ "STRING is a comprehensive database of"
+#~ " known and predicted protein-protein "
+#~ "interactions with confidence scores and "
+#~ "functional annotations."
+#~ msgstr "**描述**：从STRING数据库查询蛋白质-蛋白质相互作用。STRING是一个全面的数据库，包含已知和预测的蛋白质-蛋白质相互作用信息，并提供置信评分和功能注释。"
+

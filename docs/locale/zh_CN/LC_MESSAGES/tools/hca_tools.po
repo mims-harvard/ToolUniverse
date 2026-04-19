@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hca_tools.rst:10 98f5a0aaf21746ca838ab20ac14b9e1d
+msgid "Hca Tools"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:12 a7ced5618c7e4d1fb906630b4f44743b
+msgid ""
+"**Configuration File**: ``hca_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:16 07c4578fe4b946a8a58cfa0c91f0284f
+msgid ""
+"This page contains all tools defined in the ``hca_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:19 4c080af78c504484a18bc45d453b82ca
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:22 a00e81d0bec04a33a55cdc09cd5193f0
+msgid "**hca_get_file_manifest** (Type: HCATool)"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:24 910f5cd8e88d4f1abe27a8170677b0e4
+msgid ""
+"Retrieves a list of downloadable files for a specific Human Cell Atlas "
+"(HCA) project identified b..."
+msgstr ""
+
+#: ../../tools/hca_tools.rst dd288b64b0ef4a289006e652851e9518
+msgid "hca_get_file_manifest tool specification"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:28 ../../tools/hca_tools.rst:66
+#: 369b424af00e428b81e5431903f62c81 6a311ff36a7d44dc82f488c3d39aceca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:30 6eed27a482024ccb9dda8bac0e7064fa
+msgid "**Name**: ``hca_get_file_manifest``"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:31 ../../tools/hca_tools.rst:69
+#: 57348301cff54200985745bcfeb4ebf4 e6f95ba8fefe49d9a11efc4a0f3d3595
+msgid "**Type**: ``HCATool``"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:32 b15040029e2b4067a3b9302bb009c4f6
+msgid ""
+"**Description**: Retrieves a list of downloadable files for a specific "
+"Human Cell Atlas (HCA) project identified by its Project ID."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:34 ../../tools/hca_tools.rst:72
+#: 2259cffd35064acb88c923c2144b6821 ad9f9dbab8e84fda8c14ced165a177cf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:36 01578470314f47f39c92a24f1aa13ba5
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'get\\_file\\_manifest'."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:39 6eaccb152e104e1497ff513c40731baf
+msgid ""
+"``project_id`` (string) (required) The unique UUID of the project "
+"(entryId) for which to retrieve files. This ID is typically obtained from"
+" the 'hca\\_search\\_projects' tool."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:42 b58e59649b064da680b9fc13d88494f8
+msgid ""
+"``limit`` (integer) (optional) The maximum number of files to list. The "
+"default is 10."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:45 ../../tools/hca_tools.rst:86
+#: 41ed70984a504467ad69a84993f9e9f2 bbd5a299b562466892e1199abca6c857
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:60 82f941de251042118ae820cc09c0f5bc
+msgid "**hca_search_projects** (Type: HCATool)"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:62 3cb5851b09b44c218f40360f92a320dd
+msgid ""
+"Searches for single-cell projects in the Human Cell Atlas (HCA) Data "
+"Coordination Platform (DCP)...."
+msgstr ""
+
+#: ../../tools/hca_tools.rst 3f77471a1c3747beb576162fb302175d
+msgid "hca_search_projects tool specification"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:68 16825ebf7c414a47aa6cac4fac35fc51
+msgid "**Name**: ``hca_search_projects``"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:70 21b7a020538f4ce390eac9e47c11c2c9
+msgid ""
+"**Description**: Searches for single-cell projects in the Human Cell "
+"Atlas (HCA) Data Coordination Platform (DCP). This tool allows filtering "
+"projects based on specific organs and disease states."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:74 3403503436294196b6d12f4ce3801250
+msgid ""
+"``action`` (string) (required) The specific action to perform. Must be "
+"set to 'search\\_projects'."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:77 f11f46ed5f05414890a84f245b8dbdc2
+msgid ""
+"``organ`` (string) (optional) The organ to filter projects by. Examples "
+"include 'heart', 'liver', 'brain', 'kidney'. This field is optional."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:80 35d7cebe558f4e04866ae309000101d4
+msgid ""
+"``disease`` (string) (optional) The disease state to filter by. Examples "
+"include 'normal', 'cancer', 'covid-19'. This field is optional."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:83 481c882ad9e948409c509bda07e89336
+msgid ""
+"``limit`` (integer) (optional) The maximum number of projects to return. "
+"The default is 10. Use this to control the size of the result set."
+msgstr ""
+
+#: ../../tools/hca_tools.rst:100 413f8d2149e54ffdb3a39e0f27fa749d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:102 795a086c37044f48a527884672f6b2d8
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hca_tools.rst:103 37a2d8b8f0ad4040ae9b8adf5e0f7cc6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:10
+#: fb72a408c1444f06860c0ef52a45fdaf
+msgid "Ebi Proteins Coordinates Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:12
+#: 5a21db024da7428bb3cab416c21f224b
+msgid ""
+"**Configuration File**: ``ebi_proteins_coordinates_tools.json`` **Tool "
+"Type**: Local **Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:16
+#: 984cf1f91deb4492b74c579d6ac704a4
+msgid ""
+"This page contains all tools defined in the "
+"``ebi_proteins_coordinates_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:19
+#: 1a991096e79a45c29ead0f6c107252fb
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:22
+#: 1a5ed80ecb294c1388e64855183d1fef
+msgid "**EBIProteins_get_coordinate_mapping** (Type: EBIProteinsCoordinatesTool)"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:24
+#: 7219d0e732f247f3a0c40eac1df6acdd
+msgid ""
+"Map UniProt protein positions to genomic coordinates at exon-level "
+"resolution. Returns chromosome..."
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst
+#: 640b6ebefc8f4fa3b1ff36647822f169
+msgid "EBIProteins_get_coordinate_mapping tool specification"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:28
+#: d0b9512a70494415b4d27064804c0c41
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:30
+#: f26cc254b8ba4e84a18f476dc28e0e15
+msgid "**Name**: ``EBIProteins_get_coordinate_mapping``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:31
+#: 6cee04bb98754bdd8a31475fed0016c5
+msgid "**Type**: ``EBIProteinsCoordinatesTool``"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:32
+#: bccd21d21bf34c31957aabf216644389
+msgid ""
+"**Description**: Map UniProt protein positions to genomic coordinates at "
+"exon-level resolution. Returns chromosome, strand, and per-exon mappings "
+"between protein residue positions and chromosomal coordinates for all "
+"transcript isoforms. Essential for translating protein variant positions "
+"(e.g., 'p.R273H at position 273') to genomic coordinates for variant "
+"analysis, connecting protein annotations to genome browsers, or "
+"understanding exon-intron structure at the protein level. Example: "
+"'P04637' (TP53) returns 6 transcript mappings on chromosome 17 (reverse "
+"strand) with 10 exons spanning positions 7669612-7676594; 'P00533' (EGFR)"
+" maps to chromosome 7."
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:34
+#: c1bd76a7a8804d1cb998cbab25d34494
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:36
+#: e1a87835cfb64fe2b657f6b8466bfb48
+msgid ""
+"``accession`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin), 'P69905' "
+"(HBA1 hemoglobin alpha)."
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:39
+#: 9d8d0b5f692d4dcfb681ff05dfabf881
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:53
+#: 2203c87d55e04fa9922199712d1850ef
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:55
+#: c6e6e603b4954c328f171f14bbda8f85
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ebi_proteins_coordinates_tools.rst:56
+#: c482a3239034489db9e784b3ab97f907
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

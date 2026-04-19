@@ -1,0 +1,205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/remote/esm.md:1 a676d3597d614a578b9d89ddb913c2c8
+msgid "ESM Cambrian (ESMC) Protein Embedding Tool"
+msgstr ""
+
+#: ../../tools/remote/esm.md:3 a410e9c8e15840479b1067ca807ddca6
+msgid "Overview"
+msgstr ""
+
+#: ../../tools/remote/esm.md:5 ca55cbaba41f42e1bcd1424c10aa2a44
+msgid ""
+"The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool "
+"from EvolutionaryScale provides contextualized protein embeddings using "
+"protein language models. ESM-C generates 960-dimensional embeddings "
+"(mean-pooled across tokens) that capture information about protein "
+"structure and function."
+msgstr ""
+
+#: ../../tools/remote/esm.md:7 3ae9fb656a93477787a57c182a9e6806
+msgid "Setup"
+msgstr ""
+
+#: ../../tools/remote/esm.md:9 97bfb7ac33a74abeb3d7c3a65aa4945d
+msgid "Step 1: Install and Start the ESM Server"
+msgstr ""
+
+#: ../../tools/remote/esm.md:11 089cb344240545e888558662b99d325f
+msgid "**Prerequisites:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:12 65e6f328834c4e40aaf1b264ba4b90ca
+msgid "Python 3.10+"
+msgstr ""
+
+#: ../../tools/remote/esm.md:13 d14c728f9c2f4f35bb3c3a1511361843
+msgid "Sufficient disk space for model weights"
+msgstr ""
+
+#: ../../tools/remote/esm.md:15 9a6d961c8c8447c39be28c913a413012
+msgid "**Installation:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:31 f23d992fc73b48f8bf2d954c0214775e
+msgid "**Start the server:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:37 9231a171395e4f118a54ee166b830259
+msgid ""
+"The server will start on port 8008. Leave it running in this terminal. If"
+" running locally, you are done here. If using a remote server, ask the "
+"server administrator to run these steps and provide you with the server's"
+" IP address."
+msgstr ""
+
+#: ../../tools/remote/esm.md:39 97974ccccfdb4b64bdcfaf913397f9ad
+msgid ""
+"**In a new terminal**, navigate to the ToolUniverse directory and "
+"activate your virtual environment:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:46 23d4d7b57c1b4b8fa400b252e4a97ab9
+msgid "Then follow one of the Usage Options below."
+msgstr ""
+
+#: ../../tools/remote/esm.md:49 327bd1edae964887ba9b901eee7dce85
+msgid "Usage Options"
+msgstr ""
+
+#: ../../tools/remote/esm.md:51 4c057779db3646c8b0afd267adcb1d94
+msgid "Option 1: Use ESM via LLM with MCP Support"
+msgstr ""
+
+#: ../../tools/remote/esm.md:53 2bc3581016c340939e87ffcbbd053bd5
+msgid ""
+"Connect any LLM client that supports MCP by pointing it to ToolUniverse "
+"with your server location:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:59 084987c2c337441381cca8e1da30d04c
+msgid ""
+"Then configure your LLM client to use ToolUniverse as an MCP server with "
+"the `ESM_MCP_SERVER_HOST` environment variable set."
+msgstr ""
+
+#: ../../tools/remote/esm.md:61 fe80b2dc5e884d59a8799e6dc40a0164
+msgid "Example: Using with Claude Code"
+msgstr ""
+
+#: ../../tools/remote/esm.md:63 9b138ba997164cfe975bc0069e56da9b
+msgid "Here's how to use ESM through Claude Code (an example of Option 1):"
+msgstr ""
+
+#: ../../tools/remote/esm.md:65 166587a6d9cc4d08b04693c1e61e1b35
+msgid "**1. Add the MCP Server to Claude:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:71 0722d6638a614fdbbf6b457377bfd122
+msgid "**2. Start Claude and use the tool:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:77 74bb7d1f0f244c78b49b80cbf2ee1e09
+msgid "Ask Claude:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:82 f0045781752d4524ba38b5c85c97af74
+msgid ""
+"Claude will automatically use the `esm_embed_sequence` tool to generate "
+"the embedding."
+msgstr ""
+
+#: ../../tools/remote/esm.md:84 24f7e2c8451d4d05b6340c0bc7090d40
+msgid "Option 2: Use ESM via ToolUniverse Script (Direct Python)"
+msgstr ""
+
+#: ../../tools/remote/esm.md:86 88ede8c7225b445aa46eda7be103671a
+msgid "Use ESM directly in Python scripts by setting the server location:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:92 6a26564e9db74aabb0de101a6939bc04
+msgid "**Python script example:**"
+msgstr ""
+
+#: ../../tools/remote/esm.md:111 d0a77edf65ca4480bdafb30092eb6ac6
+msgid "The tool will return:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:121 75628e0ce0d54cdaa293558d99351dad
+msgid "Advanced Configuration"
+msgstr ""
+
+#: ../../tools/remote/esm.md:123 3ebfbceec50b4e4b869f52a120931d84
+msgid "Change Model Size"
+msgstr ""
+
+#: ../../tools/remote/esm.md:125 0b39c64bee7a4bef9aae4b5584b0d6df
+msgid "Edit `get_client()` in `esm_tool.py`:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:136 d43e45d7860346858099c8091b881fd6
+msgid "Change Server Port"
+msgstr ""
+
+#: ../../tools/remote/esm.md:138 dbb88f0005b140a4a1d77d429fd7ee3c
+msgid "Edit the `@register_mcp_tool` decorator in `esm_tool.py`:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:144 94ca7ce8b45240e8ac29fa91a5f98534
+msgid "Then update `src/tooluniverse/data/mcp_auto_loader_esm.json`:"
+msgstr ""
+
+#: ../../tools/remote/esm.md:152 781f76c5775a44deaf6d881626dbbe91
+msgid "References"
+msgstr ""
+
+#: ../../tools/remote/esm.md:154 79a840ab99054082a11d07dce3f96c2c
+msgid "[ESM Cambrian Blog](https://www.evolutionaryscale.ai/blog/esm-cambrian)"
+msgstr ""
+
+#: ../../tools/remote/esm.md:155 0e1083c5cf0343409c02c8f7fc75e574
+msgid "[Official ESM Repository](https://github.com/evolutionaryscale/esm)"
+msgstr ""
+
+#: ../../tools/remote/esm.md:156 8f0632abdcb04bae9213f33f46cf983b
+msgid "[ESM-C Models on Hugging Face](https://huggingface.co/EvolutionaryScale)"
+msgstr ""
+
+#: ../../tools/remote/esm.md:157 4b65a174e77c4c63acfcd2188cad5d81
+msgid ""
+"[ToolUniverse Remote Tools "
+"Tutorial](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote_tools/tutorial.html)"
+msgstr ""
+
+#: ../../tools/remote/esm.md:159 2129f27a84154d29bc999d01b4772c87
+msgid "Citation"
+msgstr ""
+
+#: ../../tools/remote/esm.md:161 5a269b91cbac4566a697cfe7826bee0b
+msgid ""
+"For information on how to cite ESM-C, please refer to the [official "
+"EvolutionaryScale announcement](https://www.evolutionaryscale.ai/blog"
+"/esm-cambrian) and [ESM "
+"repository](https://github.com/evolutionaryscale/esm)."
+msgstr ""
+

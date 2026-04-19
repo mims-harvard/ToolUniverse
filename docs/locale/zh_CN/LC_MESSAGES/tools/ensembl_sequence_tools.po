@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_sequence_tools.rst:10 0313d948359a47d0bd630fe283b5d7cb
+msgid "Ensembl Sequence Tools"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:12 ba4054e1fa3042429c5d068367fa6af0
+msgid ""
+"**Configuration File**: ``ensembl_sequence_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:16 f9cdb4838a4b43ada588de541bddc5cf
+msgid ""
+"This page contains all tools defined in the "
+"``ensembl_sequence_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:19 d8fdd8c596bf48b3bcbe2d26511c6986
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:22 637ea55975ed46fe8361efe1d474a4e0
+msgid "**EnsemblSeq_get_id_sequence** (Type: EnsemblSequenceTool)"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:24 08b3dc2e04534fa895a3317bd8c5c8a7
+msgid ""
+"Get the amino acid or nucleotide sequence for an Ensembl ID (protein, "
+"transcript, or gene). Retri..."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst 91812064d81c484d972cce442cd43eb3
+msgid "EnsemblSeq_get_id_sequence tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:28
+#: ../../tools/ensembl_sequence_tools.rst:62 8261b3dac55a4a7c85a999400e830728
+#: d1cabc20e0d2450cb6ef324f114d046a
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:30 cf5bdd88a2eb4626af6dccc3c4b2b1df
+msgid "**Name**: ``EnsemblSeq_get_id_sequence``"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:31
+#: ../../tools/ensembl_sequence_tools.rst:65 25756f61c7ab4eed8f733033646e963c
+#: c84caf13882a40ea80d6afca54b6b863
+msgid "**Type**: ``EnsemblSequenceTool``"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:32 caf273f75ed941dc9e8eb1fc0f3e9d08
+msgid ""
+"**Description**: Get the amino acid or nucleotide sequence for an Ensembl"
+" ID (protein, transcript, or gene). Retrieves protein sequences from ENSP"
+" IDs, cDNA/CDS from ENST IDs, or genomic DNA from ENSG IDs. Example: "
+"ENSP00000269305 returns the 393 amino acid protein sequence of TP53 "
+"canonical isoform. ENST00000269305 with type='cdna' returns the 2512 bp "
+"cDNA sequence of TP53-201."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:34
+#: ../../tools/ensembl_sequence_tools.rst:68 4795a385dc47462d8aaea482568accca
+#: 66617448b0cc411b91dbc1e6e33c2f94
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:36 d263dc337f6b490889382ba8de2eb5f7
+msgid ""
+"``ensembl_id`` (string) (required) Ensembl stable ID. Examples: "
+"'ENSP00000269305' (TP53 protein, 393 aa), 'ENST00000269305' (TP53-201 "
+"transcript), 'ENSG00000141510' (TP53 gene). Protein IDs start with ENSP, "
+"transcript with ENST, gene with ENSG."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:39 b5c2f10e63d1477d9b084726823d8930
+msgid ""
+"``type`` (string) (optional) Sequence type to return. Options: 'protein' "
+"(amino acid), 'cdna' (spliced cDNA), 'cds' (coding sequence), 'genomic' "
+"(unspliced DNA). Default: 'protein' for ENSP IDs, auto-detected for "
+"others."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:42
+#: ../../tools/ensembl_sequence_tools.rst:76 74365bf5f0b24a23b2e135e560cd2174
+#: 9424c1ce98394b6081c4838e813fb05b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:56 5bf5fb6fed8d4c0786b3699d5b5579eb
+msgid "**EnsemblSeq_get_region_sequence** (Type: EnsemblSequenceTool)"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:58 92ca451002f849bab0874b9061c29b99
+msgid ""
+"Get the DNA nucleotide sequence for a specific genomic region from "
+"Ensembl. Retrieves the referen..."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst a2b298e448974dc78cd7084f89eb3f69
+msgid "EnsemblSeq_get_region_sequence tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:64 e5b6afe501b742c399155d7a567a5d82
+msgid "**Name**: ``EnsemblSeq_get_region_sequence``"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:66 ae9241a9d81d400c9364e6c4df73706a
+msgid ""
+"**Description**: Get the DNA nucleotide sequence for a specific genomic "
+"region from Ensembl. Retrieves the reference genome sequence for given "
+"chromosome coordinates. Useful for examining regulatory regions, "
+"intergenic sequences, or any arbitrary genomic interval. Example: region "
+"'17:7668421-7668520' in homo\\_sapiens returns 100 bp of the TP53 locus. "
+"Supports any Ensembl species and coordinate strand."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:70 63828e1e754a43cb859630ea7d375a77
+msgid ""
+"``region`` (string) (required) Genomic region in format 'chr:start-end' "
+"or 'chr:start..end:strand'. Examples: '17:7668421-7668520' (TP53 locus, "
+"100bp), '7:140424943-140425043' (BRAF locus, 100bp), "
+"'X:15560138-15602945' (MECP2 gene). Strand: 1 for forward, -1 for "
+"reverse."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:73 1a3d5e956cee4743bb45231d639884b0
+msgid ""
+"``species`` (string) (optional) Ensembl species name. Default: "
+"'homo\\_sapiens'. Examples: 'mus\\_musculus', 'danio\\_rerio', "
+"'drosophila\\_melanogaster'."
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:90 199384aebf97413287cba40f1350ddae
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:92 a4098cdf54184b3f9daaf9d1dbb2a9b6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_sequence_tools.rst:93 610d65dc602646769b04134c3b8a4d83
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

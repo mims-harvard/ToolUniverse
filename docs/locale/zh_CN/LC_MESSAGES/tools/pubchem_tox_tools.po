@@ -1,0 +1,355 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pubchem_tox_tools.rst:10 abd7f887ca3041509fa5a5e8eb219e93
+msgid "Pubchem Tox Tools"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:12 6b47a36d281243a39512896568ca07e7
+msgid ""
+"**Configuration File**: ``pubchem_tox_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:16 dc08c2cd715c47d7a9b35b8a309b1e3e
+msgid ""
+"This page contains all tools defined in the ``pubchem_tox_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:19 897a2c8388bf4dbea0942bf56997eab3
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:22 dfd62977b29245e7b3a30617a2194c19
+msgid "**PubChemTox_get_acute_effects** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:24 d89d1f394924468d92976fe6dfc1bb42
+msgid ""
+"Get acute toxicity effects for a chemical compound from PubChem. Returns "
+"documented acute (short-..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst 50af7c2c6efc40dfabfcb2b153402636
+msgid "PubChemTox_get_acute_effects tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:28 ../../tools/pubchem_tox_tools.rst:61
+#: ../../tools/pubchem_tox_tools.rst:94 ../../tools/pubchem_tox_tools.rst:127
+#: ../../tools/pubchem_tox_tools.rst:160 ../../tools/pubchem_tox_tools.rst:193
+#: 013fb01983b44bb6ad5fceff878490b9 47adfd41ce244659aabe25b0b9282973
+#: b23a96950f3141b3b461437594f9c696 c7e4cc19ee6d4c00ab7a89878de98cb5
+#: dae5ddac87a94ec2bb370940bd2d0999 ef9210f0fb0c4ae897c8e298ddb3da8f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:30 a481d202308647e1ad41d0194750736e
+msgid "**Name**: ``PubChemTox_get_acute_effects``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:31 ../../tools/pubchem_tox_tools.rst:64
+#: ../../tools/pubchem_tox_tools.rst:97 ../../tools/pubchem_tox_tools.rst:130
+#: ../../tools/pubchem_tox_tools.rst:163 ../../tools/pubchem_tox_tools.rst:196
+#: 1ebc90024ccd41cda8431d35824525a9 5988e6086c2941af8af262190f476976
+#: 66968d47d1244f8497cd1af8fe5ec43b b2115aa250e046febda7eac5344e12d3
+#: baaa7eb315de4cbaa61ff582a92f4266 dc007071a5314144bcfa27e3b069bb6e
+msgid "**Type**: ``PubChemToxTool``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:32 2c7abc2f48894df5a7c8bf3987e1b543
+msgid ""
+"**Description**: Get acute toxicity effects for a chemical compound from "
+"PubChem. Returns documented acute (short-term) health effects from "
+"exposure, including symptoms, clinical observations, and effects from "
+"different exposure routes (oral, inhalation, dermal). Data comes from "
+"toxicological databases and clinical case reports. For example, arsenic "
+"acute effects include severe gastrointestinal damage, cardiovascular "
+"collapse, and multi-organ failure. Methanol (CID 887) causes visual "
+"disturbances, metabolic acidosis, and CNS depression. Use this to "
+"understand immediate health risks from chemical exposure."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:34 ../../tools/pubchem_tox_tools.rst:67
+#: ../../tools/pubchem_tox_tools.rst:100 ../../tools/pubchem_tox_tools.rst:133
+#: ../../tools/pubchem_tox_tools.rst:166 ../../tools/pubchem_tox_tools.rst:199
+#: 006aa80d21094311a30c4ca2288665c7 7fcb257accd14da19fd346e623aa89ed
+#: 8adf8da445a949f3825caf995fa65a2a ac7abee8979543169bf431161668c042
+#: be041eadd6fa4ea28774269c0e3257b5 f8a2ccdf40714eae95e84f7a01bee9a5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:36 2443d67d9f48416b8439518a80006812
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 887 (methanol), 702 (ethanol), 241 (benzene)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:39 b2ad0bc98ae84c2f94795c7cda6a1b86
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'arsenic', 'methanol', 'cyanide', 'chlorine'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:42 ../../tools/pubchem_tox_tools.rst:75
+#: ../../tools/pubchem_tox_tools.rst:108 ../../tools/pubchem_tox_tools.rst:141
+#: ../../tools/pubchem_tox_tools.rst:174 ../../tools/pubchem_tox_tools.rst:207
+#: 578debf850a2439cb418186193299ebd 6fd17995c3224910a7bcd60b46649b9c
+#: a81c6471d7e04102ad80f0beb92026ce dc1788c9996448e4a41f3e17424e8b97
+#: dd3cf8af4a9e49eca4b1d1da45e56b3c ead21f67411044b995efe9354c55518c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:55 de74c012525b42d397c378cab2dc7194
+msgid "**PubChemTox_get_carcinogen_classification** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:57 d616fade00b647f28351cef5362204a7
+msgid ""
+"Get carcinogen classification data for a chemical compound from PubChem. "
+"Returns classifications ..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst 42a62446a9d34eb1bb5d48b80898077f
+msgid "PubChemTox_get_carcinogen_classification tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:63 19ec8e8230ad42238667e2e9a5a90398
+msgid "**Name**: ``PubChemTox_get_carcinogen_classification``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:65 575d8f5abf844e3c9cdba70b1c37d8fd
+msgid ""
+"**Description**: Get carcinogen classification data for a chemical "
+"compound from PubChem. Returns classifications from authoritative bodies "
+"including IARC (International Agency for Research on Cancer), NTP "
+"(National Toxicology Program), EPA, and others. IARC groups: Group 1 "
+"(Carcinogenic to humans), Group 2A (Probably carcinogenic), Group 2B "
+"(Possibly carcinogenic), Group 3 (Not classifiable). For example, arsenic"
+" (CID 5359596) is IARC Group 1 (Carcinogenic to humans), benzene (CID "
+"241) is also Group 1, while caffeine (CID 2519) is Group 3. Use this to "
+"assess cancer risk associated with chemical exposure."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:69 91d91c7ea701435aa86edc34d012c985
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 241 (benzene), 24524 (formaldehyde), 5462309 (cadmium)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:72 74a88c51494740169ee223161a4c4351
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'arsenic', 'benzene', 'formaldehyde', 'vinyl "
+"chloride'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:88 83badebc8ee647bd950162cc05d55345
+msgid "**PubChemTox_get_ghs_classification** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:90 cff46012966c44c8a1afa26491fcd6c4
+msgid ""
+"Get GHS (Globally Harmonized System) hazard classification for a chemical"
+" compound from PubChem. ..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst e7abb4f974cc494db52bfa4f86503a8f
+msgid "PubChemTox_get_ghs_classification tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:96 1797b0c8d4904912b0f2e1b1c4fcd4ac
+msgid "**Name**: ``PubChemTox_get_ghs_classification``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:98 b67e3b55b0ff48af8422e017053bf2a5
+msgid ""
+"**Description**: Get GHS (Globally Harmonized System) hazard "
+"classification for a chemical compound from PubChem. Returns hazard "
+"pictograms, signal words (Danger/Warning), GHS hazard statements (e.g., "
+"H301 'Toxic if swallowed'), and precautionary statements. GHS is the UN "
+"system for identifying hazardous chemicals. Can look up by PubChem CID or"
+" compound name. For example, arsenic (CID 5359596) has pictograms for "
+"Acute Toxic and Environmental Hazard with signal word 'Danger', while "
+"aspirin (CID 2244) has signal word 'Warning' with H302 'Harmful if "
+"swallowed'. Use this to assess chemical hazards and safety requirements."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:102 0091e6b2ee00470f92de705d9df96021
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 2244 (aspirin), 702 (ethanol), 5462309 (cadmium), 24524 "
+"(formaldehyde)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:105 7f1c109aba14428490532a600b0fb983
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'arsenic', 'aspirin', 'formaldehyde', "
+"'benzene', 'mercury'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:121 9a9544a361554360bf9dcee62265ec10
+msgid "**PubChemTox_get_target_organs** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:123 4f48a2d8f6cc401dbf337062b3e20789
+msgid ""
+"Get the target organs affected by a toxic chemical compound from PubChem."
+" Returns the organs and ..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst 4855e1ca733045dd9550e93fbb325076
+msgid "PubChemTox_get_target_organs tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:129 ebbe27e68d2c45b5a02c83dac0c0088c
+msgid "**Name**: ``PubChemTox_get_target_organs``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:131 3e6ac9f71786450da42e5122bd6b8050
+msgid ""
+"**Description**: Get the target organs affected by a toxic chemical "
+"compound from PubChem. Returns the organs and body systems known to be "
+"damaged by exposure to the chemical, based on toxicological studies and "
+"clinical evidence. For example, arsenic (CID 5359596) targets "
+"cardiovascular, dermal, endocrine, gastrointestinal, hematological, "
+"neurological, and renal systems, as well as liver, kidneys, skin, lungs, "
+"and lymphatic system. Lead (CID 5352425) primarily targets the nervous "
+"system, kidneys, and hematological system. Use this to understand which "
+"body systems are at risk from chemical exposure."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:135 42cd5d492532464e88f7caaacf3f0dc6
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 5352425 (lead), 23978 (mercury), 5462309 (cadmium)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:138 e5379211256b42bbacf9fe0dd82046ef
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'arsenic', 'lead', 'mercury', 'cadmium', "
+"'chromium'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:154 9685f4af85854cf096ab20cd5c8b53b5
+msgid "**PubChemTox_get_toxicity_summary** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:156 f39c0746d3274ceeb1f1a6d7950b61c3
+msgid ""
+"Get a comprehensive toxicity data summary for a chemical compound from "
+"PubChem. Returns an overvi..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst 987831e7abfe460f8890c8c358243bf8
+msgid "PubChemTox_get_toxicity_summary tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:162 08409ed4f32e49d0becfc1388b4faf26
+msgid "**Name**: ``PubChemTox_get_toxicity_summary``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:164 466dd26fa58d45c3a33a826b320d27f8
+msgid ""
+"**Description**: Get a comprehensive toxicity data summary for a chemical"
+" compound from PubChem. Returns an overview of all available toxicity "
+"data sections and subsections, including previews of each data type. This"
+" acts as a table of contents for all toxicological data available in "
+"PubChem for a compound. Sections include: Toxicological Information (EPA "
+"IRIS, hepatotoxicity, carcinogen classification, exposure routes, target "
+"organs, LD50 values, human/non-human toxicity excerpts), and Ecological "
+"Information (environmental screening levels, environmental fate, exposure"
+" routes). Use this as a first step to understand what toxicity data is "
+"available before querying specific sections."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:168 db05009cfefb4bee9e322c49bfff6f97
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 2244 (aspirin), 241 (benzene), 702 (ethanol)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:171 6e4d1e908cc1462f929ccc5a805aa354
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'arsenic', 'benzene', 'formaldehyde', "
+"'acetaminophen'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:187 0004c536e11c4325838b43906949fa04
+msgid "**PubChemTox_get_toxicity_values** (Type: PubChemToxTool)"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:189 d32472be9f8f4961a75c1d373d34974c
+msgid ""
+"Get non-human toxicity values (LD50, LC50, etc.) for a chemical compound "
+"from PubChem. Returns le..."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst a1e52cb184154377baa84d1bc51ec31e
+msgid "PubChemTox_get_toxicity_values tool specification"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:195 0383035724da48029817a10283752c13
+msgid "**Name**: ``PubChemTox_get_toxicity_values``"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:197 dd189ec77d694097b8b2e231a19f557c
+#, python-format
+msgid ""
+"**Description**: Get non-human toxicity values (LD50, LC50, etc.) for a "
+"chemical compound from PubChem. Returns lethal dose/concentration data "
+"from animal studies, typically including LD50 (dose lethal to 50% of test"
+" animals) values for different species and routes of exposure. Data "
+"sourced from HSDB (Hazardous Substances Data Bank) and other "
+"toxicological databases. For example, aspirin (CID 2244) has LD50 values "
+"of 1800 mg/kg (rabbit, oral) and 1500 mg/kg (rat, oral). Arsenic (CID "
+"5359596) has much lower LD50 values indicating higher toxicity. Use this "
+"to assess acute toxicity and compare chemical hazard levels."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:201 246faabb6fe84a75bee8215a57106d07
+msgid ""
+"``cid`` (integer, null) (optional) PubChem Compound ID. Examples: 5359596"
+" (arsenic), 2244 (aspirin), 702 (ethanol), 887 (methanol)."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:204 23ba8bf092c44af8b34b68d3e1700848
+msgid ""
+"``compound_name`` (string, null) (optional) Compound name (used if cid is"
+" not provided). Examples: 'aspirin', 'methanol', 'caffeine', 'lead'."
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:220 3b8850f06bc547dcaa9d9b387b383202
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:222 5ba80f7e7eca443ebd6e8bd836a9cb59
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pubchem_tox_tools.rst:223 b4210ad462d44e0ab08ca7b129bd0650
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

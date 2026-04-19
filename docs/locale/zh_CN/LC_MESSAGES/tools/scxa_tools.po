@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/scxa_tools.rst:10 9940eda3c9a04a7b98f69e5322ff5ce9
+msgid "Scxa Tools"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:12 0708ffb68595451c96846c2ac784c4ce
+msgid ""
+"**Configuration File**: ``scxa_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:16 cc0eb32497064135bd2a8f07cdb301de
+msgid ""
+"This page contains all tools defined in the ``scxa_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:19 fbcfd5a6a8044511850dc89a628a4c1e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:22 d1ef2e6f89104da08c0d35fcc5ae19eb
+msgid "**SCXA_list_experiments** (Type: SCExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:24 8f8c855508f94c19b3859a6cb8c5086d
+msgid ""
+"List single-cell RNA-seq experiments from EBI Single Cell Expression "
+"Atlas. Returns 380+ curated ..."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst dc8522d01e5a4090a85f5efb06f5de36
+msgid "SCXA_list_experiments tool specification"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:28 ../../tools/scxa_tools.rst:64
+#: 1cc339ebb303484baf4f65c78727d96b 40caa56dbf454f5aa53aa70288d2552f
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:30 fa432476b7574474ae49c5587199611e
+msgid "**Name**: ``SCXA_list_experiments``"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:31 ../../tools/scxa_tools.rst:67
+#: 242c290b3ea84a2bb088f1412106c4d9 ceca9b55f08342639d8199228f1e85cb
+msgid "**Type**: ``SCExpressionAtlasTool``"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:32 6830ddc5b22f4eef9460e1c343bdb3c0
+msgid ""
+"**Description**: List single-cell RNA-seq experiments from EBI Single "
+"Cell Expression Atlas. Returns 380+ curated scRNA-seq datasets with "
+"species, cell counts, technology (10x, Smart-seq2, Drop-seq), and "
+"experimental factors (cell type, tissue, disease). Filter by species or "
+"keyword. Covers Human Cell Atlas, GTEx, Tabula Sapiens, and more. "
+"Example: filtering by 'Homo sapiens' returns 159 experiments."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:34 ../../tools/scxa_tools.rst:70
+#: 1c67b6f9b2e3494d8a33106255ccf99e 55e488eb085b4419a9ecfd654b231595
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:36 8aac4deb099a4491a9179b140eff2ab2
+msgid ""
+"``species`` (string) (optional) Species name to filter by (e.g., 'Homo "
+"sapiens', 'Mus musculus', 'Drosophila melanogaster'). Case-insensitive."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:39 e2dffecc0c2749e2ae0579282e4b2fbd
+msgid ""
+"``keyword`` (string) (optional) Keyword to search in experiment "
+"descriptions and factors (e.g., 'pancreas', 'brain', 'cancer', 'immune')."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:42 be40ace2ce744c8984f8a360530dc6bd
+msgid ""
+"``limit`` (integer) (optional) Maximum number of experiments to return "
+"(default 20, max 100)."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:45 ../../tools/scxa_tools.rst:78
+#: 03787f20a8074dc2aacfd1645e4cb990 cbb861ffa4a64ad882ccff6a4048b2ca
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:58 9a249762294a404db74423edbad70600
+msgid "**SCXA_search_gene** (Type: SCExpressionAtlasTool)"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:60 9f0fd55459c14f59873ddd645e3b4148
+msgid ""
+"Search the EBI Single Cell Expression Atlas for single-cell experiments "
+"where a specific gene is ..."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst f67f4d58a4ae4b5093e3a6b8e5116f03
+msgid "SCXA_search_gene tool specification"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:66 81189d8147d7443bb7ecaa2e22a50a4c
+msgid "**Name**: ``SCXA_search_gene``"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:68 a10dcf333e994289952c2e4a80b9dea3
+msgid ""
+"**Description**: Search the EBI Single Cell Expression Atlas for single-"
+"cell experiments where a specific gene is expressed. Accepts gene symbols"
+" (TP53, BRCA1) or Ensembl IDs (ENSG00000141510). Returns matching scRNA-"
+"seq experiments with cell counts, technology, PubMed IDs, and DOIs. "
+"Useful for finding single-cell datasets studying a gene of interest. "
+"Example: TP53 returns 15 experiments including ovarian cancer, lung atlas"
+" datasets."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:72 e0eddc9d30ac4cb1975e2595d4013ec7
+msgid ""
+"``gene`` (string) (required) Gene symbol (e.g., 'TP53', 'BRCA1', 'INS') "
+"or Ensembl gene ID (e.g., 'ENSG00000141510')."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:75 6b90a41fc25b4c69961e5151b60647d8
+msgid ""
+"``species`` (string) (optional) Species name to filter (e.g., 'Homo "
+"sapiens', 'Mus musculus'). Optional."
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:92 4f58d23070e24f1893555f9f32668b7a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:94 0c9e227ca75e418db4d84c5027e90b49
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/scxa_tools.rst:95 4fab53ca50634f1ab8a8d88a12490d28
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

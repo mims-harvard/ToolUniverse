@@ -1,0 +1,209 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/github_tools.rst:10 b785254fbbb14beda1204ed926980f35
+msgid "Github Tools"
+msgstr ""
+
+#: ../../tools/github_tools.rst:12 1d2d70bfa1484d03b4fb668af155bc9a
+msgid ""
+"**Configuration File**: ``github_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/github_tools.rst:16 da7de56169574de39d6a0e6a12d93631
+msgid ""
+"This page contains all tools defined in the ``github_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/github_tools.rst:19 649305e163294f86b2c674ffa73595ac
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/github_tools.rst:22 a20d4188eb63468d94f0b6703daf6ede
+msgid "**GitHub_get_repository** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/github_tools.rst:24 0e64f6bce36f4ba2b852dd89120f6906
+msgid ""
+"Get detailed metadata for a specific GitHub public repository. Returns "
+"full repository informatio..."
+msgstr ""
+
+#: ../../tools/github_tools.rst 748ff58a28db4ab9ab3d702caf267002
+msgid "GitHub_get_repository tool specification"
+msgstr ""
+
+#: ../../tools/github_tools.rst:28 ../../tools/github_tools.rst:63
+#: ../../tools/github_tools.rst:94 0037d18c88704d7a8e49b650016adf9d
+#: 6348549b811b469abeab8402b2fd6e62 b1959309cacd4cbca6b9d6b2a719a53d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/github_tools.rst:30 15c2fcaa0aa649649ccef23f9b6e06f6
+msgid "**Name**: ``GitHub_get_repository``"
+msgstr ""
+
+#: ../../tools/github_tools.rst:31 ../../tools/github_tools.rst:66
+#: ../../tools/github_tools.rst:97 7b4fb7d5a99e44e9a195dba8749b6e32
+#: 92540c3348734d9cb770a702adeeb7c0 a2c3b99419a14030b2006dd640f700ea
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/github_tools.rst:32 a593cb4a1b02412c8bf9d2b48077d433
+msgid ""
+"**Description**: Get detailed metadata for a specific GitHub public "
+"repository. Returns full repository information including description, "
+"statistics (stars, forks, watchers, open issues), programming language, "
+"topics, license, README existence, and recent activity. Use full\\_name "
+"in owner/repo format (e.g., 'deepmind/alphafold'). Useful for getting "
+"repository details for scientific software tools."
+msgstr ""
+
+#: ../../tools/github_tools.rst:34 ../../tools/github_tools.rst:69
+#: ../../tools/github_tools.rst:100 28d700700f6c4232962d5024bfef49ad
+#: 69368cc6fd2b4da1b991273b7e87b8c7 d4d55d2bca0f41048a48249cde7f44c6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/github_tools.rst:36 cfc4374db356438d9a06cc754193e249
+msgid ""
+"``owner`` (string) (required) Repository owner (username or "
+"organization). Examples: 'deepmind', 'bioconductor', 'pytorch', "
+"'tensorflow', 'pandas-dev'"
+msgstr ""
+
+#: ../../tools/github_tools.rst:39 f0febeaa646d4ef0a9cc4597fd739716
+msgid ""
+"``repo`` (string) (required) Repository name. Examples: 'alphafold', "
+"'pytorch', 'pandas', 'scikit-learn', 'biopython'"
+msgstr ""
+
+#: ../../tools/github_tools.rst:42 ../../tools/github_tools.rst:74
+#: ../../tools/github_tools.rst:114 a91876b6e6fc418a9f15aa2a9dea7198
+#: bc5ae6e198474405ac36bed44c8971b6 f2444d18330c459e9b1930b754165a33
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/github_tools.rst:57 910720eaf26549f887e6574edb18e341
+msgid "**GitHub_get_user_profile** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/github_tools.rst:59 de28e60432fb4d67a4adb7da9b54267e
+msgid ""
+"Get a public GitHub user profile by username. Returns user metadata "
+"including name, bio, company,..."
+msgstr ""
+
+#: ../../tools/github_tools.rst 330b103188904f58a6ced0a1f289cd2e
+msgid "GitHub_get_user_profile tool specification"
+msgstr ""
+
+#: ../../tools/github_tools.rst:65 2e94591235e344979faf2a63c09ae59e
+msgid "**Name**: ``GitHub_get_user_profile``"
+msgstr ""
+
+#: ../../tools/github_tools.rst:67 e700bd452f8a4405b493e0caa6d21927
+msgid ""
+"**Description**: Get a public GitHub user profile by username. Returns "
+"user metadata including name, bio, company, location, public repository "
+"and gist counts, follower/following counts, and account creation date. No"
+" API key required (rate limited to 60 requests/hour unauthenticated). "
+"Useful for looking up developer profiles, finding researchers' GitHub "
+"activity, and exploring contributors to scientific software projects."
+msgstr ""
+
+#: ../../tools/github_tools.rst:71 7c6fad67811f417583b91c6fccfbcec6
+msgid ""
+"``username`` (string) (required) GitHub username. Examples: 'torvalds' "
+"(Linus Torvalds), 'gvanrossum' (Guido van Rossum), 'hadley' (Hadley "
+"Wickham), 'jlord' (Jessica Lord)"
+msgstr ""
+
+#: ../../tools/github_tools.rst:88 c4befbc9079d46e8ba2115b4047cbc54
+msgid "**GitHub_search_repositories** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/github_tools.rst:90 4e5ea7e84d4e43f0ac119e25918c7f67
+msgid ""
+"Search GitHub public repositories using GitHub's search API. Returns "
+"repository metadata includin..."
+msgstr ""
+
+#: ../../tools/github_tools.rst 7e2b25fcb035453fabcac8bca4e830fc
+msgid "GitHub_search_repositories tool specification"
+msgstr ""
+
+#: ../../tools/github_tools.rst:96 6cb8146c1f0641698502acf3a823ec15
+msgid "**Name**: ``GitHub_search_repositories``"
+msgstr ""
+
+#: ../../tools/github_tools.rst:98 adcab4d29ca04313a154e04e39295b60
+msgid ""
+"**Description**: Search GitHub public repositories using GitHub's search "
+"API. Returns repository metadata including name, description, language, "
+"star count, fork count, topics, license, and creation/update dates. "
+"Supports filtering by language, topic, stars, forks, and creation date. "
+"Useful for finding open-source bioinformatics tools, scientific computing"
+" packages, and research codebases. Rate limit: 10 requests/minute "
+"unauthenticated."
+msgstr ""
+
+#: ../../tools/github_tools.rst:102 3860d1f3c43f42ee9e282c59c8759699
+msgid ""
+"``q`` (string) (required) Search query with optional qualifiers. "
+"Examples: 'bioinformatics language:python stars:>100', 'protein structure"
+" prediction', 'topic:machine-learning language:python', 'alphafold "
+"protein', 'single cell RNA sequencing', 'user:deepmind'"
+msgstr ""
+
+#: ../../tools/github_tools.rst:105 22eba484749641deb3203a9bf6177687
+msgid ""
+"``sort`` (string, null) (optional) Sort by: 'stars', 'forks', 'help-"
+"wanted-issues', 'updated'. Default: best match."
+msgstr ""
+
+#: ../../tools/github_tools.rst:108 ee85a1060af34bacbca870b38b1d8b1c
+msgid ""
+"``order`` (string, null) (optional) Sort direction: 'desc' (default) or "
+"'asc'"
+msgstr ""
+
+#: ../../tools/github_tools.rst:111 51f5a2521e4c4db98809553ad49025ef
+msgid ""
+"``per_page`` (integer, null) (optional) Results per page (default 30, max"
+" 100)"
+msgstr ""
+
+#: ../../tools/github_tools.rst:128 3914e5c3136149a38434424ffb2cf539
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/github_tools.rst:130 d2a5a0ad9498454f997fdeebbea47058
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/github_tools.rst:131 3b6ce8e4c23149b2bb90d08e15c9ccd4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

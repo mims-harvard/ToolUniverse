@@ -1,0 +1,236 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/impc_tools.rst:10 a7c53863d76d49dda9ebddf9c24a1678
+msgid "Impc Tools"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:12 6e2ddaf1d6d44c968ee1f25b8721e8dc
+msgid ""
+"**Configuration File**: ``impc_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:16 44dad38c65a64b36a7d42024ea5770bc
+msgid ""
+"This page contains all tools defined in the ``impc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:19 d0686f1a1f634ed7a5f9b5cd89be1904
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:22 b376fd31e16e4c84b6b7dcc07f7dc019
+msgid "**IMPC_get_gene_phenotype_hits** (Type: IMPCTool)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:24 889097073f2a48b89d131146ae944e50
+msgid ""
+"Get detailed statistical results from IMPC phenotyping for a gene. "
+"Returns p-values, effect sizes..."
+msgstr ""
+
+#: ../../tools/impc_tools.rst a1592a9df60d4029b2657aed81497ae0
+msgid "IMPC_get_gene_phenotype_hits tool specification"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:28 ../../tools/impc_tools.rst:67
+#: ../../tools/impc_tools.rst:100 ../../tools/impc_tools.rst:136
+#: 0d06e6d998a049c59dd13019d1b6c831 6a34095a2e554296b36fe90b25429ba1
+#: d13a2a124394426babd586fda0289f06 ff20a0f1a97046d09d4a53905e3e4db6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:30 566d287869584d2bb73a93b89688d2c5
+msgid "**Name**: ``IMPC_get_gene_phenotype_hits``"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:31 ../../tools/impc_tools.rst:70
+#: ../../tools/impc_tools.rst:103 ../../tools/impc_tools.rst:139
+#: 2947c87e82b94cc1b62c9e810f8782e3 83f4d22f9c0c4ee59050d4284fefc561
+#: a6aedf504fb34831936e1186497463fc fadd07e9105e499ca4f9d2d83c1e36f3
+msgid "**Type**: ``IMPCTool``"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:32 96ace5e7f4a24498ba77419f806eae37
+msgid ""
+"**Description**: Get detailed statistical results from IMPC phenotyping "
+"for a gene. Returns p-values, effect sizes, and classification tags for "
+"each phenotyping parameter. Filter by significant results only. Useful "
+"for quantifying phenotype severity."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:34 ../../tools/impc_tools.rst:73
+#: ../../tools/impc_tools.rst:106 ../../tools/impc_tools.rst:142
+#: 3a7865b6d8b8406faade02313474cad2 611013c4713a47b796a3b027d7a2d6ec
+#: d3f789b9d70248cda48fd6d3c97e1ae4 e5fc8e9881e84520910099c26d241786
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:36 ../../tools/impc_tools.rst:108
+#: 94b78b0420a64185b8991c67f798fdfb ac320c6cfe15429a8f950a35b5dbdd12
+msgid ""
+"``gene_symbol`` (string) (optional) Mouse gene symbol (e.g., 'Trp53', "
+"'Brca1')"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:39 ../../tools/impc_tools.rst:111
+#: 62d7fd0cde184f3c92a6855b467fed68 af8bbf1d06454074b074c5601dd4f557
+msgid "``mgi_id`` (string) (optional) MGI accession ID (e.g., 'MGI:98834')"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:42 f633e025d7a24a458e8b6a36cdf62b97
+msgid ""
+"``significant_only`` (boolean) (optional) Return only significant results"
+" (default: true)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:45 06b9ed3959c445c690c9cac2998a251c
+msgid "``limit`` (integer) (optional) Maximum results (default: 100)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:48 ../../tools/impc_tools.rst:81
+#: ../../tools/impc_tools.rst:117 ../../tools/impc_tools.rst:150
+#: 33e179b5929f45aeb47cba7307bdb7f6 60a6e5eb016d4f88bb7ffe117ceb0ae1
+#: 6142c66506af4711bc4bc1ca1f4c9169 e94bce57937b403898028b75f268bfe1
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:61 03e399678757426cbc6e563074665e7c
+msgid "**IMPC_get_gene_summary** (Type: IMPCTool)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:63 24e114277df94980a770ecfb22d9b059
+msgid ""
+"Get mouse gene summary from IMPC including phenotyping status, viability,"
+" ortholog info, and MP/H..."
+msgstr ""
+
+#: ../../tools/impc_tools.rst 4ccf551a64ab499f801ce06ffde845b6
+msgid "IMPC_get_gene_summary tool specification"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:69 250833b9b6004aa29f8bdf2fd1c2b163
+msgid "**Name**: ``IMPC_get_gene_summary``"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:71 f494e6518c3d4268a2d031c3ffd42b28
+msgid ""
+"**Description**: Get mouse gene summary from IMPC including phenotyping "
+"status, viability, ortholog info, and MP/HP term annotations. Query by "
+"human gene symbol or MGI ID. No API key needed. Essential for "
+"safety/liability triangulation via mouse KO phenotypes."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:75 0284ef1d5b4a486583f52180b6d23d50
+msgid ""
+"``gene_symbol`` (string) (optional) Mouse gene symbol (e.g., 'Trp53', "
+"'Brca1', 'Wdr7'). Case-sensitive. Use mouse symbol, not human."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:78 7bfabef53dfd476f845efff4df950e04
+msgid ""
+"``mgi_id`` (string) (optional) MGI accession ID (e.g., 'MGI:98834'). Use "
+"if gene symbol is ambiguous."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:94 51ce166d20e444d9b461c410c57ce193
+msgid "**IMPC_get_phenotypes_by_gene** (Type: IMPCTool)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:96 6c68203ba8104472b60734a55f62daa6
+msgid ""
+"Get all phenotype annotations for a mouse gene from IMPC knockout "
+"screens. Returns MP ontology te..."
+msgstr ""
+
+#: ../../tools/impc_tools.rst d541ecf6d62b4e68a54ac4238990e1ee
+msgid "IMPC_get_phenotypes_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:102 50879fad48d44284879b7c4d78482390
+msgid "**Name**: ``IMPC_get_phenotypes_by_gene``"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:104 7810550cc3b7405bb9db50bbee47407b
+msgid ""
+"**Description**: Get all phenotype annotations for a mouse gene from IMPC"
+" knockout screens. Returns MP ontology terms grouped by physiological "
+"system (e.g., nervous, cardiovascular, immune). Essential for "
+"understanding gene function and predicting drug side effects."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:114 7bebd89f36264951ae2798888ebcaced
+msgid ""
+"``limit`` (integer) (optional) Maximum phenotype records to return "
+"(default: 100)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:130 af0537a3b4394ee7bb5b1a09b015b21d
+msgid "**IMPC_search_genes** (Type: IMPCTool)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:132 767bcf334acb47b3be56b47645f8e203
+msgid ""
+"Search IMPC for mouse genes by symbol, name, synonym, or MGI ID. Returns "
+"matching genes with thei..."
+msgstr ""
+
+#: ../../tools/impc_tools.rst 91722b8486a74c798f69c1f8cda9c27c
+msgid "IMPC_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:138 df83f84dd5d44aa683cfb2672851bbf9
+msgid "**Name**: ``IMPC_search_genes``"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:140 87f923eac7194326879b4920a97c40de
+msgid ""
+"**Description**: Search IMPC for mouse genes by symbol, name, synonym, or"
+" MGI ID. Returns matching genes with their phenotyping and production "
+"status. Use to find the correct MGI ID for a gene before querying "
+"phenotypes."
+msgstr ""
+
+#: ../../tools/impc_tools.rst:144 6d11baa5c3a1478bbb453b1f8d179954
+msgid ""
+"``query`` (string) (required) Search query: gene symbol, name fragment, "
+"or MGI ID (e.g., 'Wdr7', 'WD repeat', 'MGI:2442934')"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:147 475d34f6c545409893ada241125feade
+msgid "``limit`` (integer) (optional) Maximum results (default: 20)"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:164 0ea13d37e0704bb68958b6cb383d54f0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:166 954b1eb533c04ac7a9b71e4265628fbe
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/impc_tools.rst:167 265ebb6de3b24b658a653ac5f7a5662e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

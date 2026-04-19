@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/disease_ontology_tools.rst:10 da3c6e6bb43d47f5baa2b964db721735
+msgid "Disease Ontology Tools"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:12 57c1eff82574485fafa0b2c46492fce4
+msgid ""
+"**Configuration File**: ``disease_ontology_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:16 90b774090fe44126b503dacb4947da5b
+msgid ""
+"This page contains all tools defined in the "
+"``disease_ontology_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:19 45e60b4ef4ed467db1f9cee6a032be5b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:22 8ddadfe1aa7d45e995e5ce433db0e224
+msgid "**DiseaseOntology_get_parents** (Type: DiseaseOntologyTool)"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:24 da2faa57c4da47cea9281398282efeb4
+msgid ""
+"Get the parent disease terms for a Disease Ontology term, enabling "
+"navigation of the disease hier..."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst 037c915f56c14e4eadf6f3136ebce4ee
+msgid "DiseaseOntology_get_parents tool specification"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:28
+#: ../../tools/disease_ontology_tools.rst:59 211da2b9e47c40b38dd43927bf1bfc85
+#: bed537f57d8d49b3b395c5850092f8ac
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:30 87f2510506ac47b89f92a17bab5a2878
+msgid "**Name**: ``DiseaseOntology_get_parents``"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:31
+#: ../../tools/disease_ontology_tools.rst:62 73cfa19a713d4dbc93a1bde0b1407563
+#: 740e803d26b7403490408010c47f4d0e
+msgid "**Type**: ``DiseaseOntologyTool``"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:32 ce97b65a545c4ca2a21c427e40b11859
+msgid ""
+"**Description**: Get the parent disease terms for a Disease Ontology "
+"term, enabling navigation of the disease hierarchy. Returns the direct "
+"parent(s) via 'is\\_a' relationships, their definitions, and their own "
+"parents, allowing you to trace the full path from a specific disease to "
+"the root. Example: DOID:10283 (prostate cancer) has parent DOID:2998 "
+"(testicular cancer -> male reproductive gland cancer -> reproductive "
+"organ cancer -> urogenital system cancer)."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:34
+#: ../../tools/disease_ontology_tools.rst:65 149b369fadb34119b8e35b0a741d3e8c
+#: 4e4a9bf334f74e0eb8f1c67bbd9f24fd
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:36 21191be0fea043e9bb1c68030db74934
+msgid ""
+"``doid`` (string) (required) Disease Ontology identifier in format "
+"'DOID:XXXX'. Examples: 'DOID:10283' (prostate cancer), 'DOID:162' "
+"(cancer), 'DOID:9352' (type 2 diabetes)."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:39
+#: ../../tools/disease_ontology_tools.rst:70 57446d13976b41d7b18f17c8971f3364
+#: d0129b3a247440738200b93fc944399a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:53 4cc881dc4ec44729a5a69cf2b5ba17ca
+msgid "**DiseaseOntology_get_term** (Type: DiseaseOntologyTool)"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:55 6eef73b9f1214482ad65abf881c091d0
+msgid ""
+"Get detailed information about a disease from the Disease Ontology (DO) "
+"by its DOID identifier. R..."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst 01eaf11e7d4e48b4ad089834539a2d15
+msgid "DiseaseOntology_get_term tool specification"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:61 47005361b2f5495d9477d8970e7899f4
+msgid "**Name**: ``DiseaseOntology_get_term``"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:63 b6e5bc35b5174b8ba907ca20900cbf8a
+msgid ""
+"**Description**: Get detailed information about a disease from the "
+"Disease Ontology (DO) by its DOID identifier. Returns the disease name, "
+"definition, synonyms, parent diseases in the ontology hierarchy, cross-"
+"references to ICD-10, ICD-9, MeSH, NCI Thesaurus, SNOMED-CT, UMLS, and "
+"OMIM, and which DO classification subsets it belongs to (cancer slim, AGR"
+" slim, FlyBase slim, etc.). The Disease Ontology is a standardized "
+"ontology for human disease terms used widely in bioinformatics. Example: "
+"DOID:162 returns 'cancer' with 4 synonyms, 7 cross-references (ICD10CM, "
+"MeSH, NCI, SNOMED, UMLS), and membership in 6 subsets including "
+"cancer\\_slim."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:67 32b5d3f3c6ad4be0ab795743d7a2710a
+msgid ""
+"``doid`` (string) (required) Disease Ontology identifier in format "
+"'DOID:XXXX'. Examples: 'DOID:162' (cancer), 'DOID:9352' (type 2 diabetes "
+"mellitus), 'DOID:10283' (prostate cancer), 'DOID:2531' (hematologic "
+"cancer), 'DOID:684' (hepatocellular carcinoma), 'DOID:4' (disease - root "
+"term)."
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:84 e701a15d036241a79c95633ce62871df
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:86 bb58bc3d0e3949e99a48b76cb69b6408
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/disease_ontology_tools.rst:87 236ac1327f964cb2bfc3f0161b71879e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

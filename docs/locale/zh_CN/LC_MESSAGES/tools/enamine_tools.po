@@ -1,0 +1,212 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/enamine_tools.rst:10 fca0c096c4c44e2bbdb7676e2c54a068
+msgid "Enamine Tools"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:12 6520f4545e7145b2ba06f85934b921e6
+msgid ""
+"**Configuration File**: ``enamine_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:16 43a8b7aa033348daaf3bfb5c2cf4f41e
+msgid ""
+"This page contains all tools defined in the ``enamine_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:19 b880b50012eb40a8b00aa0c64522ea65
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:22 f955c072ecc14b10a3c2774c90b129ac
+msgid "**Enamine_get_compound** (Type: EnamineTool)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:24 304b84807fea4530a38fe3b4ce2cb67c
+msgid ""
+"Get compound details by Enamine ID. Returns structure, availability, "
+"pricing, and ordering inform..."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst 5de3076f00604a25ab5b37e5dafbd4a8
+msgid "Enamine_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:28 ../../tools/enamine_tools.rst:62
+#: ../../tools/enamine_tools.rst:92 ../../tools/enamine_tools.rst:129
+#: 9d3dc806dcb94ce3b9da4fd6313aa354 c3f852d3d84c401da35968f67980bda5
+#: c88d0f2519a64e348fba5beb56caf766 fdf099d845764b32805dedab56d30869
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:30 a539f9e0ce4f42ca82f27b5f7945fe69
+msgid "**Name**: ``Enamine_get_compound``"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:31 ../../tools/enamine_tools.rst:65
+#: ../../tools/enamine_tools.rst:95 ../../tools/enamine_tools.rst:132
+#: 9192bd6ec13e46bd8dc3c8d47553227f 9e67697091ad4653aa93ecc460aaed82
+#: e76ab9bfb44c4e6daa44c014d513c13e edefad714e4c4c948f7fec629ca1d65e
+msgid "**Type**: ``EnamineTool``"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:32 43db4e9567194944aa7d70680ec6234d
+msgid ""
+"**Description**: Get compound details by Enamine ID. Returns structure, "
+"availability, pricing, and ordering information."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:34 ../../tools/enamine_tools.rst:68
+#: ../../tools/enamine_tools.rst:98 ../../tools/enamine_tools.rst:135
+#: 5df345eaf6be47b58cbf4380f2275cd6 994924fe85d14fd6a2ab0500c99c4583
+#: a91f977804014f25a820a1007bd509ca d9ac0c4dc19446f0b844fcc3818c6e7f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:36 ../../tools/enamine_tools.rst:70
+#: ../../tools/enamine_tools.rst:100 ../../tools/enamine_tools.rst:137
+#: 0e434bfd73bd4718b64b6d792f631f1c 5bb5a51cc1a84d92953453a2afb9f3be
+#: 7a563fe454374e0fb1493fe56f5c606f 7d896ec6a2c246c0a5b69c92d8bc66dc
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:39 152463ce403d43529cb08974edeb2c3f
+msgid "``enamine_id`` (string) (required) Enamine compound ID (e.g., Z1234567890)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:42 ../../tools/enamine_tools.rst:73
+#: ../../tools/enamine_tools.rst:109 ../../tools/enamine_tools.rst:146
+#: 32b08cc2f48e40e2815102c113768e73 868e4f1d6e084e358c09e2e3234c3303
+#: da08c322c71a430797c24317f6e574cf fa7bfa4130a04b83acb9bff25548f54f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:56 0a4a3435661b401f816eb408508eb925
+msgid "**Enamine_get_libraries** (Type: EnamineTool)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:58 0c30ecd177b8462daa511e905d4ea650
+msgid ""
+"Get information about available Enamine compound libraries including REAL"
+" database, building bloc..."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst 77a9a4e71f7f4abc8b5daf1716a4da47
+msgid "Enamine_get_libraries tool specification"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:64 c8eead441375445094e1feca4c34e27e
+msgid "**Name**: ``Enamine_get_libraries``"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:66 460b1e0d62774df99a6fe28d1b22f344
+msgid ""
+"**Description**: Get information about available Enamine compound "
+"libraries including REAL database, building blocks, screening compounds, "
+"and specialized libraries (fragments, covalent)."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:86 0da791f3f0de42cd90480d754568465b
+msgid "**Enamine_search_catalog** (Type: EnamineTool)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:88 19ee9826d8f3453996bd379e5ea5694c
+msgid ""
+"Search Enamine compound catalog by keyword or name. Enamine is a leading "
+"supplier with 37B+ make-..."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst d4445ef9522b4d5f8fab76dc3ea33126
+msgid "Enamine_search_catalog tool specification"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:94 0cad292cd10549bbb51791017211d7c3
+msgid "**Name**: ``Enamine_search_catalog``"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:96 db23258c24f54c28a1980942476f0a05
+msgid ""
+"**Description**: Search Enamine compound catalog by keyword or name. "
+"Enamine is a leading supplier with 37B+ make-on-demand compounds (REAL "
+"database), 300K+ building blocks, and 3M+ screening compounds."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:103 3a53ee1008c74be7af57110e0eba6197
+msgid "``query`` (string) (required) Search query - compound name or keyword"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:106 12d69ececf794ff2862285a0a6f4e5e6
+msgid ""
+"``catalog`` (string) (optional) Catalog: REAL (make-on-demand), BB "
+"(building blocks), SCR (screening), all (default: all)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:123 90224d58317543bab1ecbf8a4cdef9eb
+msgid "**Enamine_search_smiles** (Type: EnamineTool)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:125 ecffe63b8ee141c997162fe05b9d4e47
+msgid ""
+"Search Enamine by chemical structure (SMILES). Supports exact match, "
+"substructure, and similarity..."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst cc985ae17fa84dbf8697e08ea2ce14ff
+msgid "Enamine_search_smiles tool specification"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:131 05e96cb9c750401faef434130cb598b1
+msgid "**Name**: ``Enamine_search_smiles``"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:133 ba9a928de3284c63b207f1e296ee2411
+msgid ""
+"**Description**: Search Enamine by chemical structure (SMILES). Supports "
+"exact match, substructure, and similarity search. Ideal for finding "
+"purchasable analogs of hit compounds."
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:140 419213e2cbef487c8ba77137edc83694
+msgid "``smiles`` (string) (required) SMILES string for the query compound"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:143 24c553ea526d49369950985cdbc93abb
+msgid ""
+"``search_type`` (string) (optional) Search type: exact, substructure, "
+"similarity (default: similarity)"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:160 35a80082732444858a368d0a3c5ff5fb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:162 7b6b94ac505e44d097e4bf1d31718ed0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/enamine_tools.rst:163 f09a7c21e54440e0bd0cb472d067f9bb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

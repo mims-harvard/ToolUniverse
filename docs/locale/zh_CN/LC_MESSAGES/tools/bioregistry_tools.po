@@ -1,0 +1,201 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bioregistry_tools.rst:10 8caf3d177c4c4a3a98dee41cc13108f6
+msgid "Bioregistry Tools"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:12 4c231205644248459a960c8d88427526
+msgid ""
+"**Configuration File**: ``bioregistry_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:16 4d1368de87f04e8cbda4bd3e3e62ee1c
+msgid ""
+"This page contains all tools defined in the ``bioregistry_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:19 1aca8fb40ede406cbb07146048df42a1
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:22 f608566b1b624062a9a94542e02d9658
+msgid "**Bioregistry_get_registry** (Type: BioregistryTool)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:24 7e54df521970474598f2168e765790c5
+msgid ""
+"Get metadata for a biological database/ontology by its Bioregistry "
+"prefix. Returns name, descript..."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst 0116358c9a284006b2e30404771dd53a
+msgid "Bioregistry_get_registry tool specification"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:28 ../../tools/bioregistry_tools.rst:62
+#: ../../tools/bioregistry_tools.rst:100 c1b44411b14d447e9c2b667095c99abc
+#: e3e91100258d4569b700474f175a147a f755b82a8ce54ed89e055950d33d6477
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:30 54f69c5340c9476392ea5e9fb53e48d3
+msgid "**Name**: ``Bioregistry_get_registry``"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:31 ../../tools/bioregistry_tools.rst:65
+#: ../../tools/bioregistry_tools.rst:103 153a2aad5cb94e70beeee68fc6243dee
+#: 57c6df5798e64a4e8b1f293067afe62d 5b82dc3763804949aa0a36e2fd74162a
+msgid "**Type**: ``BioregistryTool``"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:32 eb5bd7b69b70418787faa204f63f9c1a
+msgid ""
+"**Description**: Get metadata for a biological database/ontology by its "
+"Bioregistry prefix. Returns name, description, homepage, ID pattern, URI "
+"format, example IDs, and synonyms. Covers 2600+ resources including "
+"UniProt, ChEBI, GO, PDB, Ensembl, HGNC, and many more."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:34 ../../tools/bioregistry_tools.rst:68
+#: ../../tools/bioregistry_tools.rst:106 28e87ddd049a455db2cd95e63875134c
+#: 2a8e4e124a45400c86136ab8af2c3533 47743dc2bf9d44e290153f5a66c9379e
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:36 67b0e6f23cb74544b89c51352c232629
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_registry)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:39 8cea864e430a429489f1c90685de593e
+msgid ""
+"``prefix`` (string) (required) Bioregistry prefix (e.g., 'uniprot', "
+"'chebi', 'go', 'pdb', 'ensembl', 'hgnc', 'pubmed')"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:42 ../../tools/bioregistry_tools.rst:79
+#: ../../tools/bioregistry_tools.rst:117 55d7e713a951448891884acdb4fd2cad
+#: 77f03b78503f4feb95805d1365246a85 b1906c036d64408c89b2559902f20ba5
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:56 ac93cbbf6a2d4d7b813c9a0b4aa796ee
+msgid "**Bioregistry_resolve_reference** (Type: BioregistryTool)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:58 1debb4ba97094a06804fbd7f10333311
+msgid ""
+"Resolve a compact identifier (prefix:id) to provider URLs across 2600+ "
+"biological databases. Give..."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst b6a750344f7b45dfb63bfd9e431e627b
+msgid "Bioregistry_resolve_reference tool specification"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:64 506b3153af7940469157279c57c615fb
+msgid "**Name**: ``Bioregistry_resolve_reference``"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:66 4494fa5eefd24f94b1a4d01128816e82
+msgid ""
+"**Description**: Resolve a compact identifier (prefix:id) to provider "
+"URLs across 2600+ biological databases. Given a database prefix (e.g., "
+"'uniprot', 'chebi', 'go', 'pubmed') and an identifier, returns URLs from "
+"all known providers. Useful for cross-database linking and identifier "
+"resolution."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:70 2bbcc180b3cb44c6b1659474cf5d4337
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"resolve\\_reference)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:73 0e4a3308db384906b496a3bb40a8da51
+msgid ""
+"``prefix`` (string) (required) Database prefix (e.g., 'uniprot', 'chebi',"
+" 'go', 'pubmed', 'ensembl', 'hgnc')"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:76 e42290c324b24bb5bcbac0ff8f85b6dc
+msgid ""
+"``identifier`` (string) (required) Database identifier (e.g., 'P04637' "
+"for UniProt, '17234' for ChEBI, '0006915' for GO)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:94 9d62e6c4a7bd45a79015c4c1254d7335
+msgid "**Bioregistry_search_registries** (Type: BioregistryTool)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:96 e90d41df08614a12876f4c2f595ba46c
+msgid ""
+"Search the Bioregistry for databases, ontologies, and resources by "
+"keyword. Use to find the corre..."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst 7e6cd5380a204ff49081ab30b5a55b8a
+msgid "Bioregistry_search_registries tool specification"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:102 73ea50504b8e4950be50b89c3354e290
+msgid "**Name**: ``Bioregistry_search_registries``"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:104 813bb27d72ac465ea3aebd0f3a612456
+msgid ""
+"**Description**: Search the Bioregistry for databases, ontologies, and "
+"resources by keyword. Use to find the correct prefix for identifier "
+"resolution, or to discover databases related to a topic (e.g., 'protein',"
+" 'gene ontology', 'metabolite')."
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:108 e720a1379bf2428bb24003117acd8425
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_registries)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:111 107eff6e49cb41e19065bdb1ebd2fb8c
+msgid ""
+"``query`` (string) (required) Search term (e.g., 'protein', 'gene "
+"expression', 'metabolite')"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:114 50deef3bbf2f4a06b5de445265582a47
+msgid "``limit`` (integer) (optional) Maximum results to return (default: 10)"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:131 000a45ac7d0f494ab5fb2b6d58271e85
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:133 ad24524b3ebf4f79a7300da8c5bccce7
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bioregistry_tools.rst:134 e82bddbe627b452198ea3ea7422e03cc
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

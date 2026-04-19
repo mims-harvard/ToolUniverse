@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/omim_tools.rst:10 9fc8860dce5b439a8157b74e393e65a9
+msgid "Omim Tools"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:12 69d901b0b7154adc95ed71ead965b407
+msgid ""
+"**Configuration File**: ``omim_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 4"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:16 c9ba63a142b14d009c6b52ef4591119c
+msgid ""
+"This page contains all tools defined in the ``omim_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:19 b11d513c7219406e9c7687ee62b76d6d
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:22 65e53d79a4294fff87bfb101f15f4067
+msgid "**OMIM_get_clinical_synopsis** (Type: OMIMTool)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:24 a2c0847a751c4c2f9c5a84ac497adbd9
+msgid ""
+"Get clinical synopsis (phenotype features) for an OMIM phenotype entry. "
+"Returns structured clinic..."
+msgstr ""
+
+#: ../../tools/omim_tools.rst fbffd786058e4086b0c93f1c2ac088f8
+msgid "OMIM_get_clinical_synopsis tool specification"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:28 ../../tools/omim_tools.rst:62
+#: ../../tools/omim_tools.rst:99 ../../tools/omim_tools.rst:138
+#: 316a0bd7b4504124b0c2431e4d92ab76 8108cef26cd4427b82dc4677b557f796
+#: cba340a59eb7439ab1f31675abba330f e9c25e46435e4cd790afa5468765e819
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:30 470f978a72c44fdcb7295200b192be59
+msgid "**Name**: ``OMIM_get_clinical_synopsis``"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:31 ../../tools/omim_tools.rst:65
+#: ../../tools/omim_tools.rst:102 ../../tools/omim_tools.rst:141
+#: 162e7217c3184090812f64a3d1fa9367 896faa783d064e639a251a24074a6584
+#: ccf3513d1349497092958f400e0353f6 dabb13be45344b8f8dc89f935024d01b
+msgid "**Type**: ``OMIMTool``"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:32 bb7b21f5fbd24416912b07507be5eea4
+msgid ""
+"**Description**: Get clinical synopsis (phenotype features) for an OMIM "
+"phenotype entry. Returns structured clinical features organized by body "
+"system (e.g., neurologic, cardiovascular). Essential for phenotype-based "
+"disease matching. Requires OMIM\\_API\\_KEY."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:34 ../../tools/omim_tools.rst:68
+#: ../../tools/omim_tools.rst:105 ../../tools/omim_tools.rst:144
+#: 36ad1e49aa69445eaa5a89f71795cd69 57c09bbe03ed4b0bb6f771596e988569
+#: 6b6c0308792c48b5861fa03f1ba11591 e1804dc79ba849ac9bf76ab9d06efbc6
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:36 5e8abba043634172880c5ae5df0dce39
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"get\\_clinical\\_synopsis)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:39 57ea56b0450c47aaa2a6c184f2ddf38c
+msgid ""
+"``mim_number`` (string) (required) OMIM MIM number for phenotype (e.g., "
+"219700 for cystic fibrosis)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:42 ../../tools/omim_tools.rst:79
+#: ../../tools/omim_tools.rst:119 ../../tools/omim_tools.rst:158
+#: 7f89428c77704dcfbc7cffe2f9f13cbc a7a8e1eb63604de682881ec8fdb51cb6
+#: e214c5a2621b441a9ca020924d05cd9a fa5a7eef01e84a158b43c3309c510839
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:56 da9a68005d334b808a5e9a3313bbeb8b
+msgid "**OMIM_get_entry** (Type: OMIMTool)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:58 bc914b9b37ed4fc99daca454b3945677
+msgid ""
+"Get detailed OMIM entry by MIM number. Returns comprehensive information "
+"including text descripti..."
+msgstr ""
+
+#: ../../tools/omim_tools.rst d7ac1324b7ec4f2e8a5d186a9913cce7
+msgid "OMIM_get_entry tool specification"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:64 94a35bcfb91240d19271daadc4d0031f
+msgid "**Name**: ``OMIM_get_entry``"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:66 0e1773be77d44b2cbe3981e169e86e3f
+msgid ""
+"**Description**: Get detailed OMIM entry by MIM number. Returns "
+"comprehensive information including text description, clinical features, "
+"inheritance, molecular genetics, and references. MIM numbers are 6-digit "
+"identifiers (e.g., 164730 for BRAF gene). Requires OMIM\\_API\\_KEY."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:70 203ebe7e71624af89e6839efe926d835
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_entry)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:73 67a3df96ac8a4aa781cb508d9284a53e
+msgid ""
+"``mim_number`` (string) (required) OMIM MIM number (e.g., 164730, "
+"219700). Can include OMIM: prefix."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:76 8b643d173cb94f3ba0791fe3f974632d
+msgid ""
+"``include`` (string) (optional) Data sections to include (default: "
+"text,clinicalSynopsis,geneMap)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:93 612514df3f964a708b703833e88c1b7f
+msgid "**OMIM_get_gene_map** (Type: OMIMTool)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:95 6a3749086a4f462bac40cecc612d28e4
+msgid ""
+"Get OMIM gene-disease mapping information. Returns genes mapped to "
+"chromosomal locations with ass..."
+msgstr ""
+
+#: ../../tools/omim_tools.rst bca7f85c54a849feac48dc12fe0f0515
+msgid "OMIM_get_gene_map tool specification"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:101 83929331c6894951bfdc18d4cf2f3641
+msgid "**Name**: ``OMIM_get_gene_map``"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:103 a4c3b78ef12c4cd480d17bbca93a2e53
+msgid ""
+"**Description**: Get OMIM gene-disease mapping information. Returns genes"
+" mapped to chromosomal locations with associated phenotypes and "
+"inheritance patterns. Query by MIM number or chromosome. Useful for "
+"finding all disease genes on a chromosome."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:107 359f41a8aa70431bbaaf93e5f710b9e9
+msgid "``operation`` (string) (optional) Operation type (fixed: get\\_gene\\_map)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:110 0d88bfffe4a6437ebc1818462a596b3e
+msgid ""
+"``mim_number`` (string) (optional) OMIM MIM number for specific gene "
+"(optional if chromosome provided)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:113 e612ebfd7c8d406fa59e9e6f21fc52e2
+msgid ""
+"``chromosome`` (string) (optional) Chromosome number (1-22, X, Y) to get "
+"all genes (optional if mim\\_number provided)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:116 982c98379f184eb1bf8858df80ec7396
+msgid ""
+"``limit`` (integer) (optional) Maximum results for chromosome query "
+"(default: 50, max: 100)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:132 a84b61fee98a425e82c1d3c3d92dec8e
+msgid "**OMIM_search** (Type: OMIMTool)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:134 2c69a364bb784f07970ec0b7d37e469f
+msgid ""
+"Search OMIM database for Mendelian diseases and genes. OMIM is the "
+"authoritative source for human..."
+msgstr ""
+
+#: ../../tools/omim_tools.rst 414d2feb6e9e475289eaab80155a1b9d
+msgid "OMIM_search tool specification"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:140 cbf7bda1c9a542b99cb2ed6f297045d2
+msgid "**Name**: ``OMIM_search``"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:142 f2802dc1bb1f4b6a9cfb69abd9f334f4
+msgid ""
+"**Description**: Search OMIM database for Mendelian diseases and genes. "
+"OMIM is the authoritative source for human genetic disorders. Search by "
+"gene name, disease name, or phenotype keywords. Returns MIM numbers, "
+"titles, and entry types. Requires OMIM\\_API\\_KEY env var (register at "
+"omim.org/api)."
+msgstr ""
+
+#: ../../tools/omim_tools.rst:146 e88f68e9bdeb4ad78ecf3a6b474d8572
+msgid "``operation`` (string) (optional) Operation type (fixed: search)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:149 6ce1d690ea644d1a8d69be1e0f505403
+msgid ""
+"``query`` (string) (required) Search query - gene name (BRCA1), disease "
+"(cystic fibrosis), or phenotype (intellectual disability)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:152 ebe70205266e4e2a8ac1f6b3ec50cdcd
+msgid "``limit`` (integer) (optional) Maximum results (default: 10, max: 20)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:155 034e1004024240b4899a14d679d201dc
+msgid "``start`` (integer) (optional) Offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:172 9de69b3d31364b6ca11f41f1ff780dea
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:174 73ba7ae4a6d64b32a8a999e2dead08c3
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/omim_tools.rst:175 8d7573bf5c6a4ce69bf1d20af5af4d54
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

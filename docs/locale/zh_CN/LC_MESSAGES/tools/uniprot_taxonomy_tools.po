@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniprot_taxonomy_tools.rst:10 c6c6ca79084e4338a7985bf486316520
+msgid "Uniprot Taxonomy Tools"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:12 c60e1b875a2c496f96d6d64369c4833b
+msgid ""
+"**Configuration File**: ``uniprot_taxonomy_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:16 f4074df5126547668f1fbefe23aac97f
+msgid ""
+"This page contains all tools defined in the "
+"``uniprot_taxonomy_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:19 59bff851b98b4da29f917f7bc8d39d26
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:22 9fdedf3ee7614edab94f0c5ef876595d
+msgid "**UniProtTaxonomy_get_taxon** (Type: UniProtTaxonomyTool)"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:24 2bbbae9b41ac4e6ab33385d8740a8abb
+msgid ""
+"Get detailed taxonomy information for a species by NCBI taxonomy ID from "
+"UniProt. Returns scienti..."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst 17120b2a0909437784168db019ac0605
+msgid "UniProtTaxonomy_get_taxon tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:28
+#: ../../tools/uniprot_taxonomy_tools.rst:59 9b58401882a549c7baf526ad03297e37
+#: 9ff6b36055494253806f755a117cfc50
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:30 1fb6a51fe10042a48639502ded009a68
+msgid "**Name**: ``UniProtTaxonomy_get_taxon``"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:31
+#: ../../tools/uniprot_taxonomy_tools.rst:62 66fbde7478df4812bfa0e14d5883b697
+#: 8879961987d343619ae5cbb392f726ec
+msgid "**Type**: ``UniProtTaxonomyTool``"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:32 fe0bc09f63f1495db0e638a7fb708658
+msgid ""
+"**Description**: Get detailed taxonomy information for a species by NCBI "
+"taxonomy ID from UniProt. Returns scientific name, common name, taxonomic"
+" rank, mnemonic code, full lineage (up to 30 levels), and protein "
+"statistics (reviewed/unreviewed counts). Essential for cross-referencing "
+"species in protein databases and understanding taxonomic relationships. "
+"Example: taxon 9606 returns Homo sapiens (Human), rank=species, "
+"mnemonic=HUMAN, 20,432 reviewed proteins (Swiss-Prot), 184,812 unreviewed"
+" (TrEMBL), with lineage from cellular organisms through Eumetazoa to "
+"Primates."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:34
+#: ../../tools/uniprot_taxonomy_tools.rst:65 8cd6d24d6c4d423c97060bec24de477d
+#: 9f34e03931cb46d3ae47c3accca62c77
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:36 dfa64a101f7440719750dd66830b20b9
+msgid ""
+"``taxon_id`` (integer) (required) NCBI taxonomy ID. Examples: 9606 "
+"(human), 10090 (mouse), 7227 (fruit fly), 6239 (C. elegans), 559292 (S. "
+"cerevisiae), 562 (E. coli)."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:39
+#: ../../tools/uniprot_taxonomy_tools.rst:73 8ecfd87970f847ad87d1b38069bbf4a2
+#: e05df51838fc4baf85bc8c5207ba8acf
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:53 74bb892d951246a892e49abea5baa9ba
+msgid "**UniProtTaxonomy_search** (Type: UniProtTaxonomyTool)"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:55 2c9f240154194b7490b7fa4c8198dd11
+msgid ""
+"Search for taxonomic entries in UniProt by name, scientific name, or "
+"common name. Returns matchin..."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst 5361f255d68e4543b3593616261f99ed
+msgid "UniProtTaxonomy_search tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:61 ef96b07941e343cfb4cc20c80c64ab93
+msgid "**Name**: ``UniProtTaxonomy_search``"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:63 2b071d302f0a40069b392185d7eb7cf1
+msgid ""
+"**Description**: Search for taxonomic entries in UniProt by name, "
+"scientific name, or common name. Returns matching taxa with their IDs, "
+"names, ranks, and protein statistics. Useful for finding the correct NCBI"
+" taxonomy ID for a species or exploring taxonomic groups. Example: "
+"searching 'arabidopsis' returns Arabidopsis thaliana (3702), Arabidopsis "
+"lyrata (81972), and other Arabidopsis species with protein counts."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:67 096d7c68f40a4fdb90081341c2b71e00
+msgid ""
+"``query`` (string) (required) Search query (species name, common name, or"
+" partial match). Examples: 'homo sapiens', 'mouse', 'arabidopsis', "
+"'escherichia'."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:70 e0b4daad16ac4fe6bb38f77799ba35c7
+msgid ""
+"``size`` (integer) (optional) Maximum number of results. Default 10, max "
+"500."
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:87 464b55111959444f87925dfc637b7d90
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:89 d251e06709b34692bb35643f069cf9bb
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniprot_taxonomy_tools.rst:90 524ec7abadcd4579839baefed3ace26c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

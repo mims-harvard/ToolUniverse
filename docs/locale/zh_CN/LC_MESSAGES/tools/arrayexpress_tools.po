@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/arrayexpress_tools.rst:10 cb889cfaaf964081b25ccd73593e85fc
+msgid "Arrayexpress Tools"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:12 f701885ee4104b458e6acd5c7e6ae224
+msgid ""
+"**Configuration File**: ``arrayexpress_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:16 827bcd26d6514f45877f63a9a240f1ba
+msgid ""
+"This page contains all tools defined in the ``arrayexpress_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:19 f9c8e1f8b9464adb983d4d0a39610a05
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:22 3bc317bbd9f44b1cbdaf8f411b2ff838
+msgid "**arrayexpress_get_experiment** (Type: ArrayExpressRESTTool)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:24 8ffd28ae688e40deb50c4974770a5f1e
+msgid ""
+"Get detailed information about a specific ArrayExpress experiment by its "
+"accession ID (E-GEOD, E-..."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst 77a0326986de4eeabd8230e5cdc6f31e
+msgid "arrayexpress_get_experiment tool specification"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:28 ../../tools/arrayexpress_tools.rst:59
+#: ../../tools/arrayexpress_tools.rst:90 ../../tools/arrayexpress_tools.rst:121
+#: 1bf65575702340c6858334a3a47c5537 2ef69556887e437eb79af45833433205
+#: cd53fcf3ee8d4e8d915de4dbb53c44c1 d7d2b8236ac441a7988bba68c89a9301
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:30 fe88a404432948d9ac3ad8fdf9e922e8
+msgid "**Name**: ``arrayexpress_get_experiment``"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:31 ../../tools/arrayexpress_tools.rst:62
+#: ../../tools/arrayexpress_tools.rst:93 ../../tools/arrayexpress_tools.rst:124
+#: 1cd6611d70c246b0940ae27297315292 44df3765d140456eb9ceae8c903d09d2
+#: bf79ab9a9fec49e199a38d49475c43eb e4bfb3a59a9d4dd194739ab84b31dbf6
+msgid "**Type**: ``ArrayExpressRESTTool``"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:32 d4e876454f0a4409866dad6ca5781415
+msgid ""
+"**Description**: Get detailed information about a specific ArrayExpress "
+"experiment by its accession ID (E-GEOD, E-MTAB, etc.). Returns complete "
+"experiment metadata including title, description, protocols, experimental"
+" design, and publication information from the original ArrayExpress "
+"database."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:34 ../../tools/arrayexpress_tools.rst:65
+#: ../../tools/arrayexpress_tools.rst:96 ../../tools/arrayexpress_tools.rst:127
+#: 09e8aabf72de4eecaeb53204bf1a9413 16723064081344ac866044cebbbd1103
+#: 4b40616e7f2e49b0b853a2f851592ca9 c4b23e7130eb48a5bf7479774f9c09b0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:36 a1714eec4aa846cc848868440bf6a8ed
+msgid ""
+"``experiment_id`` (string) (required) ArrayExpress experiment ID (e.g., "
+"'E-MTAB-1234')"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:39 ../../tools/arrayexpress_tools.rst:70
+#: ../../tools/arrayexpress_tools.rst:101
+#: ../../tools/arrayexpress_tools.rst:144 70b1aec96a514bc290634dba7f1e0a3c
+#: 9c697d75bf3a400ab19f113f46fdce60 ae0f47d9d59f4a44b68f44643a69f8ef
+#: d6658cddac2845d98e67d08ddc6c221b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:53 efe2d6eefb6e438d92d6746a5e2442e0
+msgid "**arrayexpress_get_experiment_files** (Type: ArrayExpressRESTTool)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:55 3c15e57236114ca286a7dec41e6f3ac7
+msgid ""
+"Get list of files associated with an ArrayExpress experiment. Returns "
+"file metadata including fil..."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst f75265f3ec534960813a814d2e0f390f
+msgid "arrayexpress_get_experiment_files tool specification"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:61 5f400528635a4e9bb1605f0a18345b71
+msgid "**Name**: ``arrayexpress_get_experiment_files``"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:63 45cf47759136418b9479868b55f2cb02
+msgid ""
+"**Description**: Get list of files associated with an ArrayExpress "
+"experiment. Returns file metadata including file names, types, sizes, and"
+" download paths for raw data files, processed data files, and MAGE-TAB "
+"annotation files."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:67 ../../tools/arrayexpress_tools.rst:98
+#: 57978a60a58f479fb9911c1b8d1c5c17 e394e86b34eb4fffbdfe5e4660f9406e
+msgid "``experiment_id`` (string) (required) ArrayExpress experiment ID"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:84 aa459529b6774276bac0b0a80bd541ff
+msgid "**arrayexpress_get_experiment_samples** (Type: ArrayExpressRESTTool)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:86 c827005d36f9497ebb0fe167ec5e69fa
+msgid ""
+"Get sample information for an ArrayExpress experiment. Returns sample "
+"metadata including sample n..."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst aaab7421204641c6b796cd0daff47554
+msgid "arrayexpress_get_experiment_samples tool specification"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:92 8796808482354540a912f1e1f4652c3b
+msgid "**Name**: ``arrayexpress_get_experiment_samples``"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:94 2be2f27a8a884e3088adfed8770b94b1
+msgid ""
+"**Description**: Get sample information for an ArrayExpress experiment. "
+"Returns sample metadata including sample names, characteristics (e.g., "
+"organism part, developmental stage), experimental factors, and technical "
+"details from the original ArrayExpress MAGE-TAB annotations."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:115 dee71c70651e40188ff9e8bcd81c7dab
+msgid "**arrayexpress_search_experiments** (Type: ArrayExpressRESTTool)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:117 b5213a08ef5c4ddda5ef3a99d8de8b4f
+msgid ""
+"Search ArrayExpress experiments - the original functional genomics "
+"database from EMBL-EBI. Search..."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst 8512cc5103554b9caa0b0ad78f06b039
+msgid "arrayexpress_search_experiments tool specification"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:123 f5942025692f433fb8dc1b92c3d3f641
+msgid "**Name**: ``arrayexpress_search_experiments``"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:125 9e701bc070c74911aa0574e655515ab5
+msgid ""
+"**Description**: Search ArrayExpress experiments - the original "
+"functional genomics database from EMBL-EBI. Searches microarray and RNA-"
+"seq experiments by keywords, species, or array platform. Returns "
+"experiment metadata including accession IDs (E-GEOD, E-MTAB), titles, "
+"descriptions, and study information. Note: Some newer ArrayExpress data "
+"is now hosted in BioStudies - use BioStudies tools if an accession is not"
+" found here."
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:129 cee09847f93d4df28cab205be75e3710
+msgid ""
+"``keywords`` (string) (optional) Search keywords (e.g., disease name, "
+"tissue type, experimental condition)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:132 8c02dda9958d4fdaa51ca6b4bc22a718
+msgid ""
+"``species`` (string) (optional) Species name (e.g., 'Homo sapiens', 'Mus "
+"musculus')"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:135 6bf891bd8a15439284866e525f562317
+msgid "``array`` (string) (optional) Array platform name"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:138 7d69f93bc78d42bb9294bc8226dad41b
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (default: 10, "
+"max: 100)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:141 e5812f356fe44c2ab15ea952c31c61f1
+msgid "``offset`` (integer) (optional) Offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:157 d5c20d0c82d8466daf347346043679cc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:159 2ee3ec641ce74986884ee74b0c990fab
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/arrayexpress_tools.rst:160 d939804305a54a05bd72f7afff11aa2e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

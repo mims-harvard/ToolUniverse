@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/imgt_tools.rst:10 d3363121fdce4d4c9391c05481fb3c17
+msgid "Imgt Tools"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:12 5d2b6d36d3e74de4b5bdd022a78d57a4
+msgid ""
+"**Configuration File**: ``imgt_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:16 c9f40e3cb4984114ac3bbef87f46ad34
+msgid ""
+"This page contains all tools defined in the ``imgt_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:19 3dbd350634394144b0a325ea952fd316
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:22 fa8fe8f6aaeb4147bc829842330d1180
+msgid "**IMGT_get_gene_info** (Type: IMGTTool)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:24 82ee697696a6473ab035d8a88d2e87fd
+msgid ""
+"Get information about IMGT databases, gene nomenclature, and analysis "
+"tools. Returns descriptions..."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst 3cc38c468a9f412eabdc677f231abe2d
+msgid "IMGT_get_gene_info tool specification"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:28 ../../tools/imgt_tools.rst:58
+#: ../../tools/imgt_tools.rst:95 3f175bb73f72478c92c0cff576e57dd2
+#: 491d58f990dc4db2a6905e2969c22b55 a112cf9181214960bcd17295cbae71dd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:30 3f7fc24a4eb84e0baa53c049de091400
+msgid "**Name**: ``IMGT_get_gene_info``"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:31 ../../tools/imgt_tools.rst:61
+#: ../../tools/imgt_tools.rst:98 c41ff7b0edff4e6c8e19aca2480f1551
+#: d9124e7ddda94f409a959494b6463ae1 fc8af95947064b0daff092752161729c
+msgid "**Type**: ``IMGTTool``"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:32 c1106310ae7b47d4a4f3fec8437303af
+msgid ""
+"**Description**: Get information about IMGT databases, gene nomenclature,"
+" and analysis tools. Returns descriptions of IMGT resources (LIGM-DB, "
+"GENE-DB, V-QUEST) and gene naming conventions. Good starting point for "
+"immunogenetics research."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:34 ../../tools/imgt_tools.rst:64
+#: ../../tools/imgt_tools.rst:101 42b88a47b09a4e568e6b43682a9e2a5e
+#: 9d95074aa64845a79151b3b1956c420f aecf3842aef24eb88c9d727f10327a7a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:36 ../../tools/imgt_tools.rst:66
+#: ../../tools/imgt_tools.rst:103 247e744567f9408c8dea4a5e9a8e4d77
+#: 490d5c75c4e8402eb0f9c29bfad8eaa2 b82d83aa49d04617a58f42d10f8c24c4
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:39 ../../tools/imgt_tools.rst:75
+#: ../../tools/imgt_tools.rst:115 4d0d840cb11145708474e92cbb3e3dab
+#: 5c9f5b913f0b4648b8966f0584c1a9f6 6f600854c6204164b124a489e60a1304
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:52 8dcdad9342c64c63918ed5ebc660280b
+msgid "**IMGT_get_sequence** (Type: IMGTTool)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:54 c21d00e876d443489a604320445e8d78
+msgid ""
+"Get immunoglobulin/T cell receptor sequence from IMGT by accession "
+"number. IMGT is the reference ..."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst 41ddf5f5c872408597d8bd7ac2617a25
+msgid "IMGT_get_sequence tool specification"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:60 a643da55d27849f8a40655f7916b420a
+msgid "**Name**: ``IMGT_get_sequence``"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:62 5a8a152175e542c7a1bfa1368d754ad3
+msgid ""
+"**Description**: Get immunoglobulin/T cell receptor sequence from IMGT by"
+" accession number. IMGT is the reference for IG/TR/MHC gene sequences. "
+"Returns sequence in FASTA or EMBL format. Uses EBI DBFetch. No "
+"authentication required."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:69 ef7c76dad3b747b0b8c46f91697867d9
+msgid ""
+"``accession`` (string) (required) IMGT/LIGM-DB accession or EMBL/GenBank "
+"accession"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:72 9f283761114444228f52362e1e4fdc22
+msgid ""
+"``format`` (string) (optional) Output format: fasta or embl (default: "
+"fasta)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:89 9c9d957649ed470e888c9402abadb9ca
+msgid "**IMGT_search_genes** (Type: IMGTTool)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:91 71b6e386a3bb4a96b790a36643e7d08b
+msgid ""
+"Search IMGT for immunoglobulin/TCR germline genes. Filter by gene type "
+"(IGHV, IGKV, TRAV, etc.) a..."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst 953fa1305bfc439f8ae3bc9d488def93
+msgid "IMGT_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:97 196b609d385d4976ac498886cb3f3fd6
+msgid "**Name**: ``IMGT_search_genes``"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:99 ac70a5175f55431c8ff5dc6394da812b
+msgid ""
+"**Description**: Search IMGT for immunoglobulin/TCR germline genes. "
+"Filter by gene type (IGHV, IGKV, TRAV, etc.) and species. Returns search "
+"URLs and gene type information for navigating IMGT GENE-DB."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:106 4c058dd09d9242769af2a5fe0963ed36
+msgid "``query`` (string) (optional) Search query (gene name)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:109 d24c79be2af04ad9924d338cadc1f580
+msgid ""
+"``gene_type`` (string) (optional) Gene type: IGHV, IGHD, IGHJ, IGKV, "
+"IGLV, TRAV, TRBV, etc."
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:112 0ee8f4fac83a4c9180989c78b2d4b8ba
+msgid "``species`` (string) (optional) Species name (default: Homo sapiens)"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:128 b50137ca24dd46c7aaa68ae17a7bd62d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:130 7a0a7c24f92f4caca3dbce12c18b9a77
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/imgt_tools.rst:131 2739cfe2682c4ed6bbe450bfddceff74
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

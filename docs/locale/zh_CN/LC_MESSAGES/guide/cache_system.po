@@ -7,226 +7,381 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/cache_system.rst:2 9323b3b16dc0424ba602dda43f30f7c3
+#: ../../guide/cache_system.rst:2 014a4fba636841c4be9a1d4a93ff1291
 msgid "Result Caching"
 msgstr "结果缓存"
 
-#: ../../guide/cache_system.rst:4 adff8982a4ce429b9afdc9f3b344fa2b
+#: ../../guide/cache_system.rst:4 7e546289da3e48549073fd7c052727ad
 msgid ""
 "ToolUniverse ships with a two-tier result cache (in-memory + SQLite) so "
-"expensive tool calls can be reused across runs without any extra setup. This"
-" page explains what is cached, how to configure the cache, and how to "
-"inspect or clear cached entries."
+"expensive tool calls can be reused across runs without any extra setup. "
+"This page explains what is cached, how to configure the cache, and how to"
+" inspect or clear cached entries."
 msgstr ""
 "ToolUniverse 配备了双层结果缓存（内存 + "
 "SQLite），因此可以在多次运行中重复使用耗时的工具调用，而无需额外设置。本页面将解释缓存内容、如何配置缓存，以及如何检查或清除缓存条目。"
 
-#: ../../guide/cache_system.rst:10 4177506413c34c7190b679fca2e14e86
+#: ../../guide/cache_system.rst:10 f778915d5e6f4a17b330e06f6398a4b6
+#, fuzzy
+msgid "Why Use Caching?"
+msgstr "结果缓存"
+
+#: ../../guide/cache_system.rst:12 4435488a0fe54f58a22543e12649582d
+msgid "**The Problem**: Scientific API calls can be slow and rate-limited:"
+msgstr ""
+
+#: ../../guide/cache_system.rst:14 12b4e689e64945e5bac5a38c739222de
+msgid "PubMed searches: 0.3-2 seconds per query"
+msgstr ""
+
+#: ../../guide/cache_system.rst:15 d75a2823366c4cea916ee78e5cc3ae78
+msgid "UniProt lookups: 0.5-1 second per protein"
+msgstr ""
+
+#: ../../guide/cache_system.rst:16 5193073bcdc242d78447540f214b64b6
+msgid "ChEMBL queries: 1-3 seconds per compound"
+msgstr ""
+
+#: ../../guide/cache_system.rst:17 d0ef8eca01ed498abfb56e2dbbca4115
+msgid "Rate limits: 3-10 requests/second (even with API keys)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:19 edbaf23256c2452c9882aeabc87809de
+msgid "**The Solution**: Cache results to avoid redundant API calls."
+msgstr ""
+
+#: ../../guide/cache_system.rst:21 6b97980f851649fe82570a27776823dd
+msgid "**Benefits**:"
+msgstr ""
+
+#: ../../guide/cache_system.rst:23 cb12f66c78d849fa934a637cc58d4144
+msgid "**Speed**: Cached queries return in <1ms (vs 0.3-3 seconds)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:24 54ee6de1d5be46529e74446e3f50d6a1
+msgid "**Rate limit protection**: Avoid hitting API limits in batch workflows"
+msgstr ""
+
+#: ../../guide/cache_system.rst:25 eb4f537ec9084e73bc08211ce931dca7
+msgid ""
+"**Reproducibility**: Same query always returns same result (until source "
+"data changes)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:26 8ca023c7a9bf4fb793f870364740932a
+msgid "**Cost savings**: Fewer API calls = lower costs for paid services"
+msgstr ""
+
+#: ../../guide/cache_system.rst:27 9c14bb43062042a8ae1bddf5c7e6e129
+msgid "**Offline work**: Previously cached data available without internet"
+msgstr ""
+
+#: ../../guide/cache_system.rst:29 393d73482771489681c3ca20f1eac07b
+msgid "**Example Impact**: A 1000-protein batch analysis:"
+msgstr ""
+
+#: ../../guide/cache_system.rst:31 a618036b21794048bbbb2b9e1262c4f0
+msgid "Without cache: 1000 API calls × 0.5s = **8.3 minutes**"
+msgstr ""
+
+#: ../../guide/cache_system.rst:32 12b6d67d6301419a85b5884d779792a3
+#, python-format
+msgid ""
+"With cache (90% hit rate): 100 API calls × 0.5s + 900 cached × 0.001s = "
+"**51 seconds**"
+msgstr ""
+
+#: ../../guide/cache_system.rst:33 1c6ec19fad04444ab1f7443d9d9c68aa
+msgid "**10x faster** with caching!"
+msgstr ""
+
+#: ../../guide/cache_system.rst:36 b92bacec6ee2429d88cacc52f5220484
 msgid "Overview"
 msgstr "概述"
 
-#: ../../guide/cache_system.rst:12 2d386d5a88834c0a884c6e22bb4aac7e
+#: ../../guide/cache_system.rst:38 d39944670be84105a08f2d9e048b6828
 msgid ""
-"**In-memory LRU** – Fastest path for repeated calls during a single session."
+"**In-memory LRU** – Fastest path for repeated calls during a single "
+"session."
 msgstr "**内存中的LRU** – 单次会话期间重复调用的最快路径。"
 
-#: ../../guide/cache_system.rst:13 bd6b86a11dee43c88d771bf9ef41e57a
+#: ../../guide/cache_system.rst:39 6b8c95dc87924c93b650aa02ed946fab
 msgid ""
-"**SQLite persistence** – Stores results in ``~/.tooluniverse/cache.sqlite`` "
-"by default so results survive restarts (path configurable via environment "
-"variables)."
+"**SQLite persistence** – Stores results in "
+"``~/.tooluniverse/cache.sqlite`` by default so results survive restarts "
+"(path configurable via environment variables)."
 msgstr ""
 "**SQLite 持久化** – 默认将结果存储在 ``~/.tooluniverse/cache.sqlite`` "
 "中，以确保结果在重启后仍然保留（路径可通过环境变量进行配置）。"
 
-#: ../../guide/cache_system.rst:16 041122d7b03d4189985ba06856814d15
+#: ../../guide/cache_system.rst:42 97e07b5b66a347a5b61b6cca57385247
 msgid ""
-"**Per-tool fingerprints** – Each tool automatically fingerprints its source "
-"code and parameter schema. When either changes, the cache key changes and "
-"old entries are ignored."
+"**Per-tool fingerprints** – Each tool automatically fingerprints its "
+"source code and parameter schema. When either changes, the cache key "
+"changes and old entries are ignored."
 msgstr "**每个工具的指纹** – 每个工具会自动生成其源代码和参数结构的指纹。当其中任一发生变化时，缓存键也会随之改变，旧的条目将被忽略。"
 
-#: ../../guide/cache_system.rst:21 0364bae66ce04d8db7f1894362285a8b
+#: ../../guide/cache_system.rst:47 ca3302a026e642829a1bdb7cebfa13fc
 msgid "Quick Start"
 msgstr "快速开始"
 
-#: ../../guide/cache_system.rst:23 ef32bdfed51b4a4fbb2bab1d207744f3
+#: ../../guide/cache_system.rst:49 a4f0276cf8c1454e99c32955e212773b
 msgid ""
-"Caching is enabled by default. You only need to pass ``use_cache=True`` when"
-" calling a tool to reuse results:"
+"Caching is enabled by default. You only need to pass ``use_cache=True`` "
+"when calling a tool to reuse results:"
 msgstr "缓存功能默认启用。调用工具时，只需传递 ``use_cache=True`` 参数即可重用结果："
 
-#: ../../guide/cache_system.rst:42 8e128db382e6447cba76422d1a1595de
+#: ../../guide/cache_system.rst:68 5033988755a64dffb0cf1b2baa742dcb
 msgid ""
 "For model-training style workloads you can pass a list of calls to "
-"``tu.run`` and enable parallel workers. Each call still consults the cache "
-"before hitting the network:"
+"``tu.run`` and enable parallel workers. Each call still consults the "
+"cache before hitting the network:"
 msgstr "对于模型训练类型的工作负载，您可以传递调用列表给``tu.run``并启用并行工作线程。每次调用仍会在访问网络之前检查缓存："
 
-#: ../../guide/cache_system.rst:60 034f2b9c8aab4e18af7388c0b33b775b
+#: ../../guide/cache_system.rst:86 4e73c9da7d3143aaabab88550bd9c4b6
 msgid "Batch Execution Tips"
 msgstr "批处理执行提示"
 
-#: ../../guide/cache_system.rst:62 e22c011512e94040a69b1b47afc0eba1
+#: ../../guide/cache_system.rst:88 8a3242f9993b49c58471c31e96cad298
 msgid "The batch runner performs several optimisations automatically:"
 msgstr "批处理运行器会自动执行多项优化："
 
-#: ../../guide/cache_system.rst:64 04016bc78665456ea389403359fa0a30
+#: ../../guide/cache_system.rst:90 1a5df65e369a47ba878329dc2e67b066
 msgid ""
-"**Call deduplication** – identical ``name``/``arguments`` pairs are executed"
-" once and fanned out to every requester. With ``use_cache=True`` the result "
-"is also stored so later batches return instantly."
+"**Call deduplication** – identical ``name``/``arguments`` pairs are "
+"executed once and fanned out to every requester. With ``use_cache=True`` "
+"the result is also stored so later batches return instantly."
 msgstr ""
 "**调用去重** – "
 "相同的``name``/``arguments``对仅执行一次，并将结果分发给每个请求者。启用``use_cache=True``时，结果也会被存储，以便后续批次能够立即返回结果。"
 
-#: ../../guide/cache_system.rst:67 c96d8c11fd6243069c998cfbed16dbc4
+#: ../../guide/cache_system.rst:93 37217ff6062d457b8b7bcb105e68e09f
 msgid ""
 "**Per-tool concurrency** – each tool can advertise a "
-"``batch_max_concurrency`` limit in its JSON/definition. During a batch run "
-"the scheduler enforces that limit so that a slow or rate-limited API does "
-"not seize all workers."
+"``batch_max_concurrency`` limit in its JSON/definition. During a batch "
+"run the scheduler enforces that limit so that a slow or rate-limited API "
+"does not seize all workers."
 msgstr ""
 "**每个工具的并发性** – 每个工具可以在其 JSON/定义中声明一个 ``batch_max_concurrency`` "
 "限制。在批处理运行期间，调度程序会强制执行该限制，以确保缓慢或受速率限制的 API 不会占用所有工作线程。"
 
-#: ../../guide/cache_system.rst:71 337b4f879da24675b50b9a17d9a823b4
+#: ../../guide/cache_system.rst:97 1958dad65f614c35a839beb3d928c826
 msgid ""
-"**Configurable capacity** – increase ``TOOLUNIVERSE_CACHE_MEMORY_SIZE`` if "
-"you expect millions of cached entries. For example, setting it to "
-"``5000000`` keeps roughly five million results in RAM (watch RSS usage and "
-"adjust according to payload size)."
+"**Configurable capacity** – increase ``TOOLUNIVERSE_CACHE_MEMORY_SIZE`` "
+"if you expect millions of cached entries. For example, setting it to "
+"``5000000`` keeps roughly five million results in RAM (watch RSS usage "
+"and adjust according to payload size)."
 msgstr ""
 "**可配置容量** – 如果预计缓存条目数量达到数百万，可以增加 ``TOOLUNIVERSE_CACHE_MEMORY_SIZE`` "
 "的值。例如，将其设置为 ``5000000`` 可在 RAM 中大约保留五百万个结果（请监控 RSS 使用情况，并根据负载大小进行调整）。"
 
-#: ../../guide/cache_system.rst:77 2f19e873b1344e1a8b7652305309007a
+#: ../../guide/cache_system.rst:103 8a6b87b3715441f2b6340104368e334d
 msgid "Configuration"
 msgstr "配置"
 
-#: ../../guide/cache_system.rst:79 66dbdbbe1fa4475c862da6b1f92ab989
+#: ../../guide/cache_system.rst:105 e2e2077ca4564319904d74a8b25eb3ff
 msgid ""
 "Use environment variables to tune cache behavior before creating a "
 "``ToolUniverse`` instance:"
 msgstr "在创建 ``ToolUniverse`` 实例之前，请使用环境变量调整缓存行为："
 
-#: ../../guide/cache_system.rst:96 3ff235e6d4504fd7a38fa8b91cc4a654
+#: ../../guide/cache_system.rst:112 9f70991b193d4b10a3021b93cfa1c134
+msgid "Variable"
+msgstr ""
+
+#: ../../guide/cache_system.rst:113 a92d650f21ec4682acf444d2dea8280c
+msgid "Description"
+msgstr ""
+
+#: ../../guide/cache_system.rst:114 72f5af5b40ab4a8cada6df9fdde009b2
+msgid "``TOOLUNIVERSE_CACHE_ENABLED``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:115 e2e5a12248e64628b68ee5429e418010
+msgid "Turn caching on/off (``true`` by default)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:116 576bf40c6939438c8452df7b84c3751e
+msgid "``TOOLUNIVERSE_CACHE_PERSIST``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:117 61e0bbaafde0401aa24427ad59898768
+msgid "Enable SQLite persistence (``true`` by default)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:118 15f1c335af8045d9a56da6f7226901d3
+msgid "``TOOLUNIVERSE_CACHE_PATH``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:119 ebb17acff0544608a05115b39ebdbfcb
+msgid "Full path to the SQLite file"
+msgstr ""
+
+#: ../../guide/cache_system.rst:120 900e0fab32b64f418c22c59675ffc26c
+msgid "``TOOLUNIVERSE_CACHE_DIR``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:121 aa254ef33a3140d2b155838089bf2430
+msgid ""
+"Directory for the SQLite file. Defaults to ``~/.tooluniverse`` if "
+"``CACHE_PATH`` is unset."
+msgstr ""
+
+#: ../../guide/cache_system.rst:122 cb896ae539fb4db98490dbdf25587186
+msgid "``TOOLUNIVERSE_CACHE_MEMORY_SIZE``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:123 30086429b9f642fdbd940f36c90cb721
+msgid "Max entries in the in-memory LRU (default 256)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:124 f9ace047210740878b74e303b54aa285
+msgid "``TOOLUNIVERSE_CACHE_DEFAULT_TTL``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:125 05254707f4ad486da515116b6869e837
+msgid "Expiration in seconds (``None`` disables TTL)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:126 293377ed3550480599435411e1b619e4
+msgid "``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:127 27f5d206eda44f2db1e1421b9c1a02a0
+msgid "Deduplicate concurrent misses (``true``)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:128 9e0a744f2b07477bb93f7447350306c3
+msgid "``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``"
+msgstr ""
+
+#: ../../guide/cache_system.rst:129 07e398c57ec743849b631874ace53925
+msgid "Write cache entries to SQLite on a background thread (``true``)"
+msgstr ""
+
+#: ../../guide/cache_system.rst:132 e2140e5f641e454fbe5d4dca8b3c45f0
+msgid ""
+":doc:`../reference/environment_variables` for complete environment "
+"variable reference including logging, LLM, and other configuration "
+"options."
+msgstr ""
+
+#: ../../guide/cache_system.rst:134 4eea9f248e1e4f6c92c1b7851889037b
 msgid "Example configuration:"
 msgstr "示例配置："
 
-#: ../../guide/cache_system.rst:110 39a167c992ee403d9e7c15aa3650c94b
+#: ../../guide/cache_system.rst:148 d7ec6678311e412f9e4d0f9c71f26a07
 msgid "Inspecting & Managing Cache"
 msgstr "检查和管理缓存"
 
-#: ../../guide/cache_system.rst:112 2fe6a597e2af4056b452291adfef5096
+#: ../../guide/cache_system.rst:150 1116091b2c674422b25f623d16d8b991
 msgid "``ToolUniverse`` exposes helpers to understand and control the cache:"
 msgstr "``ToolUniverse`` 提供辅助工具以理解和控制缓存："
 
-#: ../../guide/cache_system.rst:126 adadfab3d24c4fa49f3560d176ff22ff
+#: ../../guide/cache_system.rst:164 7fc6a889abce4bc499105f70dc3fc6a4
 msgid "Versioning & TTL"
 msgstr "版本控制与TTL"
 
-#: ../../guide/cache_system.rst:128 e5fa93b86deb48e19209fe48810269ca
+#: ../../guide/cache_system.rst:166 d0d24dfc17a04e45a2b592b676fd0840
 msgid ""
 "Every tool inherits a default fingerprint (`get_cache_version`) that "
-"combines its source code and parameter schema. You can override the hook in "
-"a custom tool if you want finer control (for example, adding a manual "
-"``STATIC_CACHE_VERSION`` counter). Tools can also override ``get_cache_ttl``"
-" to specify per-result expiration."
-msgstr ""
-"每个工具都继承了一个默认的指纹（`get_cache_version`），该指纹结合了工具的源代码和参数结构。您可以在自定义工具中重写此钩子，以实现更精细的控制（例如，添加一个手动的``STATIC_CACHE_VERSION``计数器）。工具还可以重写``get_cache_ttl``，以指定每个结果的过期时间。"
+"combines its source code and parameter schema. You can override the hook "
+"in a custom tool if you want finer control (for example, adding a manual "
+"``STATIC_CACHE_VERSION`` counter). Tools can also override "
+"``get_cache_ttl`` to specify per-result expiration."
+msgstr "每个工具都继承了一个默认的指纹（`get_cache_version`），该指纹结合了工具的源代码和参数结构。您可以在自定义工具中重写此钩子，以实现更精细的控制（例如，添加一个手动的``STATIC_CACHE_VERSION``计数器）。工具还可以重写``get_cache_ttl``，以指定每个结果的过期时间。"
 
-#: ../../guide/cache_system.rst:135 f9613d04a1d84d818f7da6927ddad67c
+#: ../../guide/cache_system.rst:173 c998d89d52234f7fbc4a01f92b7bf304
 msgid "Asynchronous Persistence"
 msgstr "异步持久化"
 
-#: ../../guide/cache_system.rst:137 122941df1ea94c598822e8555d4bc48c
+#: ../../guide/cache_system.rst:175 4556c34ce095416ca8beca9dfa5492fd
 msgid ""
-"SQLite persistence is still enabled by default, but writes now happen on a "
-"background thread so tool calls are not blocked on disk I/O. You can tune "
-"this behaviour in two ways:"
-msgstr ""
-"SQLite 持久性仍默认启用，但现在写入操作在后台线程中进行，因此工具调用不会因磁盘 I/O 而被阻塞。您可以通过以下两种方式调整此行为："
+"SQLite persistence is still enabled by default, but writes now happen on "
+"a background thread so tool calls are not blocked on disk I/O. You can "
+"tune this behaviour in two ways:"
+msgstr "SQLite 持久性仍默认启用，但现在写入操作在后台线程中进行，因此工具调用不会因磁盘 I/O 而被阻塞。您可以通过以下两种方式调整此行为："
 
-#: ../../guide/cache_system.rst:141 3ef6f9d2a43c4c3fae63e8e212476b5a
+#: ../../guide/cache_system.rst:179 e829a08cd9414c5fb7993acdc5478f12
 msgid ""
 "Set ``TOOLUNIVERSE_CACHE_ASYNC_PERSIST=false`` before constructing "
-"``ToolUniverse`` to fall back to fully synchronous writes (useful when you "
-"need the result on disk immediately)."
+"``ToolUniverse`` to fall back to fully synchronous writes (useful when "
+"you need the result on disk immediately)."
 msgstr ""
 "在构造 ``ToolUniverse`` 之前，将 ``TOOLUNIVERSE_CACHE_ASYNC_PERSIST=false`` 设置为 "
 "false，以回退到完全同步写入（当您需要结果立即写入磁盘时非常有用）。"
 
-#: ../../guide/cache_system.rst:144 ac6d42677a9747249b1d9081a4e2fd78
+#: ../../guide/cache_system.rst:182 dffbb8accab14146a602f39ac3a954c2
 msgid ""
-"Create a custom ``ResultCacheManager`` with a larger queue if you expect an "
-"extremely write-heavy workload:"
+"Create a custom ``ResultCacheManager`` with a larger queue if you expect "
+"an extremely write-heavy workload:"
 msgstr "如果预计工作负载中写操作非常频繁，可以创建一个具有更大队列的自定义``ResultCacheManager``："
 
-#: ../../guide/cache_system.rst:159 366993c656cf42658d0a8c8e05587ab4
+#: ../../guide/cache_system.rst:197 1a3ad48391ee4c129945c082bae15db6
 msgid ""
-"Use ``tu.cache_manager.flush()`` if you need to wait for pending writes (for"
-" example, before shutting down a worker). ``tu.get_cache_stats()`` now "
-"reports ``pending_writes`` so you can monitor the queue depth during batch "
-"jobs."
-msgstr ""
-"使用``tu.cache_manager.flush()``，如果您需要等待未完成的写入操作（例如，在关闭工作线程之前）。现在``tu.get_cache_stats()``会报告``pending_writes``，因此您可以在批处理任务期间监控队列深度。"
+"Use ``tu.cache_manager.flush()`` if you need to wait for pending writes "
+"(for example, before shutting down a worker). ``tu.get_cache_stats()`` "
+"now reports ``pending_writes`` so you can monitor the queue depth during "
+"batch jobs."
+msgstr "使用``tu.cache_manager.flush()``，如果您需要等待未完成的写入操作（例如，在关闭工作线程之前）。现在``tu.get_cache_stats()``会报告``pending_writes``，因此您可以在批处理任务期间监控队列深度。"
 
-#: ../../guide/cache_system.rst:164 52cda95d633f45dfa3649743e5fbe72e
+#: ../../guide/cache_system.rst:202 6021fae8d3c441b19ef74e1f744590b6
 msgid "Best Practices"
 msgstr "最佳实践"
 
-#: ../../guide/cache_system.rst:166 97d74732cfc14630814bd69994a80fbe
+#: ../../guide/cache_system.rst:204 e9794ec43bbc482c9cbf04214002c15f
 msgid ""
-"Use caching for deterministic or idempotent operations (read-only API calls,"
-" expensive computations, etc.)."
+"Use caching for deterministic or idempotent operations (read-only API "
+"calls, expensive computations, etc.)."
 msgstr "对确定性或幂等操作（只读API调用、耗时计算等）使用缓存。"
 
-#: ../../guide/cache_system.rst:168 aef2f983f2db4fb2afcd54689d08747d
+#: ../../guide/cache_system.rst:206 9684a400fb334ef298b05e18a8536694
 msgid "Set an explicit TTL when results are time-sensitive."
 msgstr "在结果对时间敏感时，请设置明确的TTL。"
 
-#: ../../guide/cache_system.rst:169 99641a57bdd64597a8f4b84f6d70c4e0
+#: ../../guide/cache_system.rst:207 df7163dd21d34d6485bd8e06a8a1ad7e
 msgid ""
 "Call ``tu.clear_cache()`` in long-running services if you need a fresh "
 "start."
 msgstr "在长时间运行的服务中，如果需要重新开始，请调用 ``tu.clear_cache()``。"
 
-#: ../../guide/cache_system.rst:170 12f0f0bcefac41d68189c68a605417f3
+#: ../../guide/cache_system.rst:208 5f3e1ffe1857473e8f35b7063fd5aa56
 msgid ""
 "For hands-on demos, run ``examples/cache_usage_example.py`` (basic "
-"walkthrough) or ``examples/cache_stress_test.py`` (randomized load test with"
-" summary stats). .. code-block:: json"
+"walkthrough) or ``examples/cache_stress_test.py`` (randomized load test "
+"with summary stats). .. code-block:: json"
 msgstr ""
 "对于动手演示，请运行 ``examples/cache_usage_example.py``（基础演练）或 "
 "``examples/cache_stress_test.py``（随机负载测试及统计摘要）。 .. code-block:: json"
 
-#: ../../guide/cache_system.rst:174 c24fef9f5fd145d29f1fc5e75086b0ad
+#: ../../guide/cache_system.rst:212 ce59f9b8013e46e3a572988eb926ecd4
 msgid "{"
 msgstr "请提供需要翻译的具体文本内容，我将为您提供专业的中文翻译。"
 
-#: ../../guide/cache_system.rst:175 6c1d9eeca0d44141b8ce88cf40980c75
+#: ../../guide/cache_system.rst:213 75ec2e716886464ea5494d58271be6cf
 #, python-brace-format
 msgid ""
-"\"name\": \"SlowTool\", \"type\": \"SlowTool\", \"batch_max_concurrency\": "
-"2, \"parameter\": {\"type\": \"object\", \"properties\": {}}"
+"\"name\": \"SlowTool\", \"type\": \"SlowTool\", "
+"\"batch_max_concurrency\": 2, \"parameter\": {\"type\": \"object\", "
+"\"properties\": {}}"
 msgstr ""
 "\"name\": \"慢速工具\", \"type\": \"慢速工具\", \"batch_max_concurrency\": 2, "
 "\"parameter\": {\"type\": \"object\", \"properties\": {}}"
 
-#: ../../guide/cache_system.rst:179 8105cbc8510b48e7aaa8e859f77694f7
+#: ../../guide/cache_system.rst:217 7a3fa2cdd7f9482db7dee71f550072f9
 msgid "}"
 msgstr "请提供需要翻译的具体英文文本，我将为您进行翻译。"
+

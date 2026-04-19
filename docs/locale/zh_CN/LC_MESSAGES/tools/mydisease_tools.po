@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/mydisease_tools.rst:10 7afc7ff86464493b80e50503f774b1a7
+msgid "Mydisease Tools"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:12 a0b0367f94f847cd8812c272e0a5c4e6
+msgid ""
+"**Configuration File**: ``mydisease_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:16 3a2b97ed4220419c88150630cddf5f7e
+msgid ""
+"This page contains all tools defined in the ``mydisease_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:19 76c4fe3714f1498cbf4a3e1374d0f6ca
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:22 c29d9b9cc22b4afe98774c37e275bb67
+msgid "**MyDisease_get_disease** (Type: MyDiseaseTool)"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:24 65f9fccb237448e384db8b80c0017847
+msgid ""
+"Get comprehensive disease annotations from MyDisease.info, a BioThings "
+"disease aggregator that in..."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst 315b0427fe334d8d87839aa5644b4097
+msgid "MyDisease_get_disease tool specification"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:28 ../../tools/mydisease_tools.rst:62
+#: 192b73f27eb54e36b8066b2f5bcf6bc9 a7465df37d2b4db49071ecb5a500a861
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:30 dc32c1bbeac4431fba42786da15ad4a3
+msgid "**Name**: ``MyDisease_get_disease``"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:31 ../../tools/mydisease_tools.rst:65
+#: 0550c0715f854200bdf3213898ed2590 5b2e1f11e371402a96e01fabe6840e48
+msgid "**Type**: ``MyDiseaseTool``"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:32 6ebba5521231412a8948fc4a63baeab8
+msgid ""
+"**Description**: Get comprehensive disease annotations from "
+"MyDisease.info, a BioThings disease aggregator that integrates data from "
+"MONDO, Disease Ontology, CTD (chemicals and pathways related to disease),"
+" HPO (phenotypes), and DisGeNET (gene-disease associations). Returns "
+"standardized disease identifiers, definitions, cross-references, "
+"associated chemicals, pathways, and phenotypes. Example: MONDO:0005148 "
+"(type 2 diabetes) returns 160 CTD chemicals, 984 related pathways, and 3 "
+"HPO phenotypes including late onset and autosomal dominant inheritance."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:34 ../../tools/mydisease_tools.rst:68
+#: 1eb6cdb85b4441a6b7a8cf5b738a628a 9dec05c32173458987e308001daa0cee
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:36 2ced8f9c4fbb4c7baae6d85bb82bac66
+msgid ""
+"``disease_id`` (string) (required) Disease identifier. Supports MONDO IDs"
+" (e.g., 'MONDO:0005148' for T2DM), DOID IDs (e.g., 'DOID:9352'), OMIM IDs"
+" (e.g., 'OMIM:125853'), or MESH IDs (e.g., 'MESH:D003924'). MONDO IDs "
+"provide the most comprehensive results."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:39 ae5f968972b4478bac0eaa229e982f5d
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of data fields to "
+"return. Options: 'mondo', 'disease\\_ontology', 'ctd', 'hpo', 'disgenet',"
+" 'all'. Default: 'mondo,disease\\_ontology,ctd,hpo'. Use 'all' for "
+"complete data."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:42 ../../tools/mydisease_tools.rst:79
+#: 728508be32e4479ab28248063317a2e7 a8995f768b3b44ba980d2725c1bf6de0
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:56 c5d95c298eda405fbf71f6980703a285
+msgid "**MyDisease_search_diseases** (Type: MyDiseaseTool)"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:58 63677ca4043a43a194a34f2cc7b5d802
+msgid ""
+"Search for diseases by keyword in MyDisease.info, a BioThings aggregator "
+"combining data from MOND..."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst b9a7c2437739494c8ec478005e523525
+msgid "MyDisease_search_diseases tool specification"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:64 229ae4d1ed13487ca0c73841ffebccd9
+msgid "**Name**: ``MyDisease_search_diseases``"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:66 8ccce530c5714287b99e30bf79999cc5
+msgid ""
+"**Description**: Search for diseases by keyword in MyDisease.info, a "
+"BioThings aggregator combining data from MONDO, Disease Ontology, CTD, "
+"HPO, and DisGeNET. Returns matching disease identifiers with names and "
+"basic annotations. Useful for finding disease IDs from free-text names. "
+"Example: searching 'breast cancer' returns 45 hits including "
+"MONDO:0004438 (sporadic breast cancer), MONDO:0006512 (ER+ breast "
+"cancer), MONDO:0006513 (ER- breast cancer). Searching 'melanoma' returns "
+"104 hits."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:70 64cc1b7414144ce0a617e5f6b766b107
+msgid ""
+"``query`` (string) (required) Search query. Can be disease name (e.g., "
+"'breast cancer', 'melanoma', 'diabetes'), gene symbol (e.g., 'BRCA1'), or"
+" ontology term. Supports boolean operators: AND, OR, NOT."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:73 a86f4f399f6f447db68c5fe17a748591
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default 10, max 100)."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:76 ebaaf6a141b94742b1cbb9cadab690f3
+msgid ""
+"``fields`` (string) (optional) Comma-separated list of fields to include "
+"in results. Default: "
+"'mondo.label,disease\\_ontology.name,disease\\_ontology.doid,hpo.disease\\_name'."
+" Use 'all' for everything."
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:93 dda0dec8edde48ebbc28aedb47b8db76
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:95 3a3d86a091ce49369496b11bcd492663
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/mydisease_tools.rst:96 35dd9b92d1844d708422184495fa04d2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

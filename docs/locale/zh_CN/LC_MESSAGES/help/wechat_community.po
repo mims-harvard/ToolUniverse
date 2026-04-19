@@ -1,0 +1,74 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../help/wechat_community.rst:2 91ff84ecdab94ba6b56255e22613b715
+msgid "WeChat Community"
+msgstr ""
+
+#: ../../help/wechat_community.rst:4 a51ec6690b8e4ab39765fc4d23113323
+msgid ""
+"Join our WeChat community to connect with other ToolUniverse users, get "
+"help, and share your experiences!"
+msgstr ""
+
+#: ../../help/wechat_community.rst:6 bbefbff5d136443289514ea5b1651178
+msgid ""
+"**WeChat QR Code**: Visit `https://aiscientist.tools/wechat "
+"<https://aiscientist.tools/wechat>`_ to get the latest WeChat QR code for"
+" joining our community."
+msgstr ""
+
+#: ../../help/wechat_community.rst:9 533aad02518b499884f4b196135b8fb8
+msgid "Alternative Ways to Connect"
+msgstr ""
+
+#: ../../help/wechat_community.rst:11 f418d6cc564a408283ced57b9f546caf
+msgid "If you prefer other communication channels:"
+msgstr ""
+
+#: ../../help/wechat_community.rst:13 f052f6f5750f43e7920356abecc31c78
+msgid ""
+"**Slack**: `Join our Slack community "
+"<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-"
+"5xxoJch7TLNibNQn5_AREQ>`_"
+msgstr ""
+
+#: ../../help/wechat_community.rst:14 04eaab5502d3479facad69e30cd9339b
+msgid ""
+"**GitHub Discussions**: `GitHub Discussions <https://github.com/mims-"
+"harvard/ToolUniverse/discussions>`_"
+msgstr ""
+
+#: ../../help/wechat_community.rst:15 419762e1d74046d4b0b8d3586725958a
+msgid ""
+"**LinkedIn**: `Follow us on LinkedIn <https://www.linkedin.com/in"
+"/tooluniverse-at-harvard-b9aa88385/>`_"
+msgstr ""
+
+#: ../../help/wechat_community.rst:16 5c9c31d7398f49488c8509ce048b8170
+msgid "**X (Twitter)**: `Follow us on X <https://x.com/ScientistTools>`_"
+msgstr ""
+
+#: ../../help/wechat_community.rst:18 94200aed19ea41ceb785154941729464
+msgid "We look forward to welcoming you to our community!"
+msgstr ""
+

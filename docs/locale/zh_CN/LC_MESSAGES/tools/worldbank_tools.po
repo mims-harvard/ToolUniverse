@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/worldbank_tools.rst:10 ac9fcb1ed9514515a46cea9cedae3a1f
+msgid "Worldbank Tools"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:12 dd1874df113e4415ae1d3f378c8e4a20
+msgid ""
+"**Configuration File**: ``worldbank_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:16 fa45a4cea64a41ccbab73dd19f0996e6
+msgid ""
+"This page contains all tools defined in the ``worldbank_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:19 8b3c396e4381493190c3d0fce7a8a7e7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:22 f952d6e7a8914fa99167bd4478887294
+msgid "**WorldBank_get_country** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:24 6a5e5b9d4327411c8c4116ae6e8a4591
+msgid ""
+"Get metadata about a country from the World Bank database. Returns "
+"country name, ISO codes, world..."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst 5d010395e8e94ee2b6507e102d77b0f8
+msgid "WorldBank_get_country tool specification"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:28 ../../tools/worldbank_tools.rst:59
+#: ../../tools/worldbank_tools.rst:100 75f982d5de3349cbb7bcd1e2f55931a8
+#: 8a4f1a9260774b0b94b02a77142c0564 93f9ad46b9f34a42adb0d9e26f76cf81
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:30 39e16c23866f4d8987ffc7e00eb0c565
+msgid "**Name**: ``WorldBank_get_country``"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:31 ../../tools/worldbank_tools.rst:62
+#: ../../tools/worldbank_tools.rst:103 482e163aab27405d936fa08f0e81dc03
+#: b031fb85e6af4e73807df845d01bca14 bff47f530cbb4ad6ab3d4c735d05d1b2
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:32 a28e81047dd44344b38aab43d3a06c40
+msgid ""
+"**Description**: Get metadata about a country from the World Bank "
+"database. Returns country name, ISO codes, world region, income level, "
+"lending type, capital city, and geographic coordinates. Essential for "
+"looking up country codes before querying World Bank indicators."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:34 ../../tools/worldbank_tools.rst:65
+#: ../../tools/worldbank_tools.rst:106 13dcb3b6c1e047088b90fb54a27b4581
+#: 58efe2d84da34363afc6cd023ee1a9a3 59205b71dda84c3ebe732d038fcc9ac3
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:36 4a1adfea4a7e4965bd28f186b788fba7
+msgid ""
+"``country`` (string) (required) ISO 3166-1 alpha-2 or alpha-3 country "
+"code (e.g., 'US' or 'USA' for United States, 'GB' or 'GBR' for UK, 'DE' "
+"or 'DEU' for Germany)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:39 ../../tools/worldbank_tools.rst:79
+#: ../../tools/worldbank_tools.rst:114 104f50d4a80f4553b9db90c728776e95
+#: 77dd5f164b284375b749aa806c849236 a75254449d2541a39385dc9edce42bdd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:53 841012f0ad5f4679b3f04332c8a5e6d8
+msgid "**WorldBank_get_indicator** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:55 8d2188df57364487bf92d6ce387c400e
+msgid ""
+"Get World Bank development indicator data for one or more countries over "
+"time. Returns economic, ..."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst cc136fd40acb48d6bc246046c9a7d408
+msgid "WorldBank_get_indicator tool specification"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:61 c41b9e86f455497480a114656d1c9cfc
+msgid "**Name**: ``WorldBank_get_indicator``"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:63 4b0ecea318164d88b9c80507c9c39950
+msgid ""
+"**Description**: Get World Bank development indicator data for one or "
+"more countries over time. Returns economic, health, education, and social"
+" development metrics from the World Development Indicators (WDI) "
+"database. Covers 200+ countries with annual data going back to 1960s. "
+"Example indicators: NY.GDP.MKTP.CD (GDP current USD), SP.POP.TOTL (total "
+"population), SH.DYN.MORT (child mortality), SE.ADT.LITR.ZS (adult "
+"literacy rate), SP.DYN.LE00.IN (life expectancy), SH.MED.PHYS.ZS "
+"(physicians per 1000), EN.ATM.CO2E.PC (CO2 per capita), SL.UEM.TOTL.ZS "
+"(unemployment rate)."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:67 f285138dd25d4b63b0288be441d48f37
+msgid ""
+"``country`` (string) (required) ISO 3166-1 alpha-3 country code (e.g., "
+"'USA', 'GBR', 'DEU', 'CHN', 'IND', 'BRA') or 'all' for all countries, or "
+"semicolon-separated codes (e.g., 'USA;GBR;DEU')"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:70 0348294e35bf437ebb51f66cd150365b
+msgid ""
+"``indicator`` (string) (required) World Bank indicator code (e.g., "
+"'NY.GDP.MKTP.CD' for GDP, 'SP.POP.TOTL' for population, 'SH.DYN.MORT' for"
+" child mortality, 'SE.ADT.LITR.ZS' for literacy)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:73 d2607ebff8514dbc95289dd8fbf30c2f
+msgid ""
+"``mrv`` (integer, null) (optional) Most recent values - number of most "
+"recent years to return (e.g., 5 for last 5 years). Default returns all "
+"available years."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:76 d5b94ce8245843d2abd8bfc6d6f5df72
+msgid ""
+"``date`` (string, null) (optional) Year or year range to filter data "
+"(e.g., '2020', '2015:2023' for a range)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:94 9d8e150e369f46e08bd0e195992ae359
+msgid "**WorldBank_search_indicators** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:96 ab5d753c9d674d0d89de8df9b5be1865
+msgid ""
+"Search World Bank for development indicators by keyword. Returns "
+"indicator codes, names, descript..."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst f8125bb3cc78470cb1982c459cb175a5
+msgid "WorldBank_search_indicators tool specification"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:102 7d621031f37443e5a6e63446991108ee
+msgid "**Name**: ``WorldBank_search_indicators``"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:104 1f8712ac7d6c49b9a509a86bcb67ed6f
+msgid ""
+"**Description**: Search World Bank for development indicators by keyword."
+" Returns indicator codes, names, descriptions, units, and source "
+"databases. Use this to discover indicator codes for "
+"WorldBank\\_get\\_indicator. The World Development Indicators (WDI) "
+"database contains 1400+ indicators covering health, education, economy, "
+"environment, infrastructure, poverty, and more."
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:108 0f76561c1ad943089a66392b9c7980ea
+msgid ""
+"``query`` (string) (required) Search keyword for indicators (e.g., 'GDP',"
+" 'mortality', 'literacy', 'CO2', 'poverty', 'vaccination', 'life "
+"expectancy')"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:111 985fc361601f4a289f2555ffb7e14738
+msgid ""
+"``per_page`` (integer, null) (optional) Number of results to return "
+"(default 10, max 1000)"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:128 b0ddf12630484470b57adb15ace13bd9
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:130 5ebca5af9c0e4b01942790e60258219f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/worldbank_tools.rst:131 ab3ef908a791443cae231db5ea6c0684
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

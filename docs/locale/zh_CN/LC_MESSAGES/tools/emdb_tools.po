@@ -1,0 +1,317 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/emdb_tools.rst:10 be7435b4d2bd45e39eda8f1124b54448
+msgid "Emdb Tools"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:12 22161551fca44098867b016819449220
+msgid ""
+"**Configuration File**: ``emdb_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 7"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:16 5d9cef4a67b444c49c2696a34bac55cb
+msgid ""
+"This page contains all tools defined in the ``emdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:19 3864647e43c1428fb209c21023f2d047
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:22 8c1ca83a83ac45ca9bcbfe64e9b2706a
+msgid "**EMDB_get_imaging_info** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:24 4ea9db74194e4953b5ae3cfc3424bfc3
+msgid ""
+"Get electron microscopy imaging parameters for an EMDB entry including "
+"microscope model, detector..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst c4edad3957f84be8a81d06e88ac58d50
+msgid "EMDB_get_imaging_info tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:28 ../../tools/emdb_tools.rst:59
+#: ../../tools/emdb_tools.rst:90 ../../tools/emdb_tools.rst:121
+#: ../../tools/emdb_tools.rst:152 ../../tools/emdb_tools.rst:183
+#: ../../tools/emdb_tools.rst:214 065e8ab02e71462c95c11e21d579c16b
+#: 1c9dbec3866348339ce2a27518c4739d 1f38aafbedb04012b61e27980ef0c442
+#: 2846d66716364d2c8f36816b214a7356 29c1be1532594f898187943d969ec94d
+#: 6fa51eea55e147e4b30532644cb16074 c551d72702914b90a61cb79928f42e85
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:30 d35fea6111fd46ea8fae21274ebecd77
+msgid "**Name**: ``EMDB_get_imaging_info``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:31 ../../tools/emdb_tools.rst:62
+#: ../../tools/emdb_tools.rst:93 ../../tools/emdb_tools.rst:124
+#: ../../tools/emdb_tools.rst:155 ../../tools/emdb_tools.rst:186
+#: ../../tools/emdb_tools.rst:217 19c2c4b2357e4aad8a748a3d19024f4a
+#: 1f5040f109d64d018e29966faba8c1a4 730461b11e3a400aa1833f2054ecd939
+#: 7414f8fbfd274e2dbe2d5bca3ae4b11c 79272c1081374c7189bad845d9649907
+#: 8167a679ceea44ecb6ef10c70d001a90 8ae52a7068c64559bfa5ef26207299b5
+msgid "**Type**: ``EMDBRESTTool``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:32 471a0da9a70446a781ff8e0ee7be0c07
+msgid ""
+"**Description**: Get electron microscopy imaging parameters for an EMDB "
+"entry including microscope model, detector type, acceleration voltage, "
+"dose rate, total electron dose, defocus range, and data collection "
+"strategy. Returns technical details essential for understanding data "
+"quality, reproducing experiments, and optimizing imaging protocols. Use "
+"this to assess data collection quality or design similar experiments."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:34 ../../tools/emdb_tools.rst:65
+#: ../../tools/emdb_tools.rst:96 ../../tools/emdb_tools.rst:127
+#: ../../tools/emdb_tools.rst:158 ../../tools/emdb_tools.rst:189
+#: ../../tools/emdb_tools.rst:220 25fe6d004ba5454d82df132d25c7d19a
+#: 48a60792802a46768e58d3206bd8c4e2 50cd65f96cf542ff85a12467f1f94a36
+#: 7256bae86eea4a868ef255d2f602ea26 760a06f2a53d4be18e9a8a324be5f167
+#: bfa7b6ac8ca345dcaa7c102a3095c0f0 f3556ff86c61436580e47bbe7b30d117
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:36 ../../tools/emdb_tools.rst:67
+#: ../../tools/emdb_tools.rst:98 ../../tools/emdb_tools.rst:129
+#: ../../tools/emdb_tools.rst:160 ../../tools/emdb_tools.rst:191
+#: 1d33b5ba71274ae6b7cdf82d869c642b 2c5785354e344ef18999564dcddf4207
+#: 6de3a7213bfe4e72b9692a1991b09091 d6e7b126f78141bcb0cc5de14b2af5d8
+#: e392494703544b60a2b0186c49d6e577 feec6ee115464381932425b2e87b2385
+msgid ""
+"``emdb_id`` (string) (required) EMDB structure identifier in format "
+"'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or "
+"from publications."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:39 ../../tools/emdb_tools.rst:70
+#: ../../tools/emdb_tools.rst:101 ../../tools/emdb_tools.rst:132
+#: ../../tools/emdb_tools.rst:163 ../../tools/emdb_tools.rst:194
+#: ../../tools/emdb_tools.rst:228 3910fcf71f3c482fb285e9fa9c757b26
+#: 5565ca47019348bdbf9f930dacb9f2d6 737da148c4f349f6bd01c1a58d01179b
+#: 82be264343724b5597f29d3be65d019d d06407f32ce3492693aba50f3a32d630
+#: e4d1aeada26647f09462cc1372dc9ec2 e5fe6f72d3414727be99f5686aaa4b23
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:53 5d55d9caf9dd43309889bac6c9cf2913
+msgid "**EMDB_get_map_info** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:55 79a3ba9c8ed4422080c54c36dd07e2f3
+msgid ""
+"Get detailed electron density map information for an EMDB entry including"
+" map statistics, contour..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst 2ad0966d25d147e099b861bbd5e3f2df
+msgid "EMDB_get_map_info tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:61 99a489887a9f4b3e8de33f9e66eed873
+msgid "**Name**: ``EMDB_get_map_info``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:63 468399672a564bdd94125f50c039c1cf
+msgid ""
+"**Description**: Get detailed electron density map information for an "
+"EMDB entry including map statistics, contour levels, pixel spacing, "
+"dimensions, symmetry, and map file download URLs. Returns technical "
+"details essential for map visualization, model fitting, and computational"
+" analysis. Use this to prepare for structure visualization in tools like "
+"ChimeraX, Coot, or PyMOL."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:84 8b6e037cf95c4760895dbe23c6bd90ee
+msgid "**EMDB_get_publications** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:86 b40827f5d8614967beff4ac370dbe354
+msgid ""
+"Get publication information for an EMDB entry including journal articles,"
+" preprints, and citation..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst 5e8c3ea0e7fc4dcb8ef29885063906d5
+msgid "EMDB_get_publications tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:92 75c3ba45c6f844f9bf18d20eb56d01b3
+msgid "**Name**: ``EMDB_get_publications``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:94 8a5e41fc33044dfea2c5b94a775c339c
+msgid ""
+"**Description**: Get publication information for an EMDB entry including "
+"journal articles, preprints, and citations that describe the cryo-EM "
+"structure. Returns publication titles, authors, journals, DOIs, PubMed "
+"IDs, and abstracts. Use this to find the research papers associated with "
+"a structure, understand experimental context, or cite the original work. "
+"Use EMDB ID from EMDB\\_search\\_structures or EMDB\\_get\\_structure."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:115 a00c68cf1cc941d4a64fd948ac2c29ab
+msgid "**EMDB_get_sample_info** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:117 8f0a4ec4903948aa9d63f490fa17c678
+msgid ""
+"Get detailed sample preparation information for an EMDB entry including "
+"macromolecular compositio..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst 4a19762bc69a483998f337bad5a4ade8
+msgid "EMDB_get_sample_info tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:123 bbca12af234d45f882da2911a12aaa81
+msgid "**Name**: ``EMDB_get_sample_info``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:125 227f3403256f414ea27213cfec04aae5
+msgid ""
+"**Description**: Get detailed sample preparation information for an EMDB "
+"entry including macromolecular composition, organism source, expression "
+"system, molecular weight, oligomeric state, and ligands. Returns "
+"biological context essential for understanding the structure's "
+"physiological relevance, complex assembly, and binding partners. Use this"
+" to understand sample preparation before structural analysis."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:146 6079e6a2dc4249d2b91517d905dfe5c9
+msgid "**EMDB_get_structure** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:148 5bdd2cf8d2f24461accd74a119f13c1e
+msgid ""
+"Get 3D electron microscopy (EM) structure data from the Electron "
+"Microscopy Data Bank (EMDB). Ret..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst c86a15cffb164412bf100e208e8e460b
+msgid "EMDB_get_structure tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:154 581f853f61204e23a3efd01f7efd2df1
+msgid "**Name**: ``EMDB_get_structure``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:156 8017287b3aba4a71a789f0fdd7f182af
+msgid ""
+"**Description**: Get 3D electron microscopy (EM) structure data from the "
+"Electron Microscopy Data Bank (EMDB). Returns cryo-EM structure metadata "
+"including resolution (in Ångströms), imaging method, organism, molecule "
+"details, voxel dimensions, map download URLs, and cross-references to PDB"
+" entries. Use this for structural biology research, comparing protein "
+"conformations, drug design, and downloading electron density maps for "
+"visualization or model fitting."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:177 7074b264a06c485fbe72f90f6ef54f7a
+msgid "**EMDB_get_validation** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:179 3f5593f61f0e49258cf7981f8954b2b4
+msgid ""
+"Get validation analysis results for an EMDB entry including FSC curves, "
+"resolution estimates, map..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst d2b7cc0bc5f7461f912f232a136b6b91
+msgid "EMDB_get_validation tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:185 ea7fca92a2c74828afdcec57edafc9bc
+msgid "**Name**: ``EMDB_get_validation``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:187 ff400ee7b82b42b98f7078041eefaeb1
+msgid ""
+"**Description**: Get validation analysis results for an EMDB entry "
+"including FSC curves, resolution estimates, map-model correlation, "
+"B-factors, geometry validation, and quality scores. Returns comprehensive"
+" quality metrics essential for assessing structure reliability, "
+"identifying artifacts, and comparing with other structures. Use this to "
+"evaluate data quality before using a structure for drug design or "
+"mechanistic studies."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:208 1299b3c83b6b402c8bbe0a62496c3d11
+msgid "**EMDB_search_structures** (Type: EMDBRESTTool)"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:210 bd6bdb96bdec44b784d9424efd89736b
+msgid ""
+"Search the Electron Microscopy Data Bank (EMDB) for cryo-EM structures "
+"using keywords. Returns a ..."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst 86420135ae454e1c82c0669112c5bdb3
+msgid "EMDB_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:216 e58f2e2e9c844152b60730cb65e79d39
+msgid "**Name**: ``EMDB_search_structures``"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:218 faeb31106263461fb87e5783c4072e4e
+msgid ""
+"**Description**: Search the Electron Microscopy Data Bank (EMDB) for "
+"cryo-EM structures using keywords. Returns a list of matching EMDB "
+"entries with basic metadata including entry IDs, titles, organisms, "
+"methods, resolutions, and deposition dates. Use this to discover relevant"
+" structures by protein name, organism, biological process, or disease. "
+"Essential for finding structures to analyze or download."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:222 ac7c9eb947a54d2dbd27c47fe094e915
+msgid ""
+"``query`` (string) (required) Search query for EMDB structures. Examples:"
+" 'ribosome', 'spike protein', 'SARS-CoV-2', 'amyloid', 'ion channel'. "
+"Searches titles, descriptions, and molecule names."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:225 0c4d7966215f44e695d382a3005552c5
+msgid ""
+"``rows`` (integer) (optional) Maximum number of search results to return "
+"(default: 10, max: 1000)."
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:242 4f2aae3da6a34f32b6ba489719bfe002
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:244 3605c02d182c4c97b78fd47fda09810c
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/emdb_tools.rst:245 4f719b3b47cd4d55a7c11dbdd3489fbb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

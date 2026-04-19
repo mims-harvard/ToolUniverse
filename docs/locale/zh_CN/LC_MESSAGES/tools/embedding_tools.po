@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,403 +18,532 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/embedding_tools.rst:2 f64a79f933f74d41b218dee544e69ddf
+#: ../../tools/embedding_tools.rst:10 98bd238fcc8c42139249294bd0871885
 msgid "Embedding Tools"
 msgstr "嵌入工具"
 
-#: ../../tools/embedding_tools.rst:4 e3397aa8c5784b36b9a306aa5f95ade6
+#: ../../tools/embedding_tools.rst:12 d4a0a692b3ee488e81d3f1366a9c4c25
+#, fuzzy
 msgid ""
 "**Configuration File**: ``embedding_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 6"
+"**Tools Count**: 5"
 msgstr ""
 "**配置文件**：``embedding_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：6"
 
-#: ../../tools/embedding_tools.rst:8 ccc30060c0d7410aa82f114be5d26d01
+#: ../../tools/embedding_tools.rst:16 16366dee2d4a4d31b6f2d21a1e33f2b4
 msgid ""
 "This page contains all tools defined in the ``embedding_tools.json`` "
 "configuration file."
 msgstr "此页面包含在``embedding_tools.json``配置文件中定义的所有工具。"
 
-#: ../../tools/embedding_tools.rst:11 62d9761529d343fbb8eae85e4e24b054
+#: ../../tools/embedding_tools.rst:19 405ff4704bbb48b5b8b0f90d3f35a7ba
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/embedding_tools.rst:14 c2474dff37da4dcfabe41b713e8f43be
+#: ../../tools/embedding_tools.rst:22 401f6b15b95d48cabafd520d788a3185
 msgid "**embedding_database_add** (Type: EmbeddingDatabase)"
 msgstr "**embedding_database_add**（类型：EmbeddingDatabase）"
 
-#: ../../tools/embedding_tools.rst:16 dc6c5a32ff8942f8a1963f227aa9fedd
+#: ../../tools/embedding_tools.rst:24 08e2c56e33a74ab1b27f8a2a7781d1ad
 msgid ""
-"Add new documents to an existing embedding database. Generates embeddings"
-" for new documents using..."
-msgstr "将新文档添加到现有的嵌入数据库中。使用...为新文档生成嵌入。"
+"Append documents to an existing per-collection datastore (<name>.db + "
+"<name>.faiss). Uses the sam..."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst fc1c7d1a9edf4e00a43003dd92739956
+#: ../../tools/embedding_tools.rst 1c50308315ee4583b3fe0c706c26b22e
 msgid "embedding_database_add tool specification"
 msgstr "embedding_database_add 工具规范"
 
-#: ../../tools/embedding_tools.rst:20 ../../tools/embedding_tools.rst:63
-#: ../../tools/embedding_tools.rst:114 ../../tools/embedding_tools.rst:157
-#: ../../tools/embedding_tools.rst:204 ../../tools/embedding_tools.rst:247
-#: 406b2f263d8148bb8c7e14717ee2882e 6cd6312e11794e3291e7d3e7735bb414
-#: aca03c9c8e104c509ca728a2e808a187 bf2f0bc7e7ae4ef5ab4f21959c285603
-#: cc3b0e4bf72243e7955293cdc2712fd4 ec24cd657fb947269b0065a002f189db
+#: ../../tools/embedding_tools.rst:28 ../../tools/embedding_tools.rst:75
+#: ../../tools/embedding_tools.rst:125 ../../tools/embedding_tools.rst:175
+#: ../../tools/embedding_tools.rst:215 1f51b0fa46734a8eae08a15b644d03b7
+#: 3faafe18a9e144abb0237cd99f1f102b 5e7a3fa5a6b243c2b8616b0644d44317
+#: bcea1f0ab1fc41799860fcae156120fb ef04802ca8494db08a5d217899e31c42
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/embedding_tools.rst:22 fc993bfffcf34f9cb1d8b2fe75b94b9a
+#: ../../tools/embedding_tools.rst:30 c26c1298651740bd9686ae9a6b0f2744
 msgid "**Name**: ``embedding_database_add``"
 msgstr "**名称**：``embedding_database_add``"
 
-#: ../../tools/embedding_tools.rst:23 ../../tools/embedding_tools.rst:66
-#: ../../tools/embedding_tools.rst:117 ../../tools/embedding_tools.rst:160
-#: 2c4083e43ae1427c8293153f12c50ff3 3501055135d6488e94451f79e7bb0098
-#: 38a243c5331a42e5ad5c96189c754f31 8fac6a5a526f47b3873fe6f3e31acec4
+#: ../../tools/embedding_tools.rst:31 ../../tools/embedding_tools.rst:78
+#: ../../tools/embedding_tools.rst:128 18a757ed73a841f3894b150d13fc0ac4
+#: 81fbb5e615e5433dba4c6a41f9ac6b26 b88aad52cc144a6c9aa59759df95f2f9
 msgid "**Type**: ``EmbeddingDatabase``"
 msgstr "**类型**：``EmbeddingDatabase``"
 
-#: ../../tools/embedding_tools.rst:24 0066ffe8bdf745308ac034c3f4dc02e0
+#: ../../tools/embedding_tools.rst:32 27a6a2410a754f3eb2319e0878733089
 msgid ""
-"**Description**: Add new documents to an existing embedding database. "
-"Generates embeddings for new documents using the same model as the "
-"original database and appends them to the existing FAISS index."
-msgstr "**描述**：将新文档添加到现有的嵌入数据库中。使用与原始数据库相同的模型为新文档生成嵌入，并将其附加到现有的FAISS索引中。"
+"**Description**: Append documents to an existing per-collection datastore"
+" (<name>.db + <name>.faiss). Uses the same L2-normalized cosine setup. "
+"Enforces model/dimension consistency with the collection."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst:26 ../../tools/embedding_tools.rst:69
-#: ../../tools/embedding_tools.rst:120 ../../tools/embedding_tools.rst:163
-#: ../../tools/embedding_tools.rst:210 ../../tools/embedding_tools.rst:253
-#: 09867b70a341419391c7fc0438bb865f 106399d34ceb40c899b5140f70fdf69a
-#: 15839287c37a416cba8b94a36a20e734 6078a6e6a87f44f3bde4c3c47042dd0f
-#: ad43d9be65814da18ad7d6d61c8e35ab c0701d334c9449e3b4c442bdc27a9450
+#: ../../tools/embedding_tools.rst:34 ../../tools/embedding_tools.rst:81
+#: ../../tools/embedding_tools.rst:131 ../../tools/embedding_tools.rst:181
+#: ../../tools/embedding_tools.rst:221 45c5f04a23674d74acce899c873d88ea
+#: 6bd9b97327b54bc58de242c2fafdd439 78c22161ee1146d69aa9445560a28561
+#: 7caf8e67244e48909d2123d5bae4768a f758e6872a9045d39229296677cfe58a
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/embedding_tools.rst:28 ee422ab314c843748b785a8ff63170d9
+#: ../../tools/embedding_tools.rst:36 ../../tools/embedding_tools.rst:83
+#: ../../tools/embedding_tools.rst:133 ../../tools/embedding_tools.rst:183
+#: ../../tools/embedding_tools.rst:223 4fec551f39614cd590b2b2a2d5e6e6e5
+#: 67f067335d5c42419bdd18c86754134d 6b1382b4c2c5444f99347e3cabae7d32
+#: 85fafe2b0f2c4868816f12cf62f0e772 b637f654a5e0445f8cc1b4c924505fab
 #, fuzzy
-msgid ""
-"``action`` (string) (required) Action to add documents to existing "
-"database"
-msgstr "``action``（字符串）（可选）用于将文档添加到现有数据库的操作"
+msgid "``action`` (string) (optional) No description"
+msgstr "``description``（字符串）（可选）数据库的可选描述"
 
-#: ../../tools/embedding_tools.rst:31 6696e41026784103acafabc10452287d
-msgid ""
-"``database_name`` (string) (required) Name of the existing database to "
-"add documents to"
+#: ../../tools/embedding_tools.rst:39 cef75a2ccbbb4ab9b41c18702fcbb9d3
+#, fuzzy
+msgid "``database_name`` (string) (required) Existing collection/database name"
 msgstr "``database_name``（字符串）（必填）要添加文档的现有数据库名称"
 
-#: ../../tools/embedding_tools.rst:34 4681b950c441450cb8a2527225e3af83
+#: ../../tools/embedding_tools.rst:42 3c394522217c4f1c835236de17b0007c
 msgid ""
 "``documents`` (array) (required) List of new document texts to embed and "
 "add"
 msgstr "``documents``（数组）（必需）要嵌入并添加的新文档文本列表"
 
-#: ../../tools/embedding_tools.rst:37 6549be830d744922b2f1acd73aa97ad1
+#: ../../tools/embedding_tools.rst:45 1eb359fc147942929efa8de414eefa4a
 #, fuzzy
 msgid ""
-"``metadata`` (array) (required) Optional metadata for each new document "
-"(same length as documents)"
-msgstr "``metadata``（数组）（可选）每个新文档的可选元数据（与文档长度相同）"
+"``metadata`` (array) (optional) Optional metadata per document (must "
+"match length of documents if provided)"
+msgstr "``metadata``（数组）（可选）每个文档的可选元数据（与文档数量相同）。"
 
-#: ../../tools/embedding_tools.rst:40 ../../tools/embedding_tools.rst:89
-#: ../../tools/embedding_tools.rst:134 ../../tools/embedding_tools.rst:180
-#: ../../tools/embedding_tools.rst:224 ../../tools/embedding_tools.rst:273
-#: 172f90712861443caa6a6ca7ccf25bff 27b8e2b8ff674891a317056387c1151b
-#: 44676b0565de4f61a4d377780d066ea5 719e5bf26f7c4b4db07d8f6cfeb600ac
-#: e0a08d4f8e334856bd00e780f6605dee f18fb05468e243d6b4883db32708e742
+#: ../../tools/embedding_tools.rst:48 13fe94d9167e4cd3817df7c76ce3807d
+msgid ""
+"``provider`` (string) (optional) Embedding backend override. If omitted, "
+"falls back to collection/env."
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:51 fc0fe0a4809b493e945e5c85e814075a
+msgid ""
+"``model`` (string) (optional) Embedding model/deployment id override. If "
+"omitted, uses collection model or env default."
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:54 ../../tools/embedding_tools.rst:104
+#: ../../tools/embedding_tools.rst:154 ../../tools/embedding_tools.rst:195
+#: ../../tools/embedding_tools.rst:241 1eda104aeaf0474d961bd3e0ddb5e221
+#: 62331912c6d340fda494713c73fb1574 969de148e4db41bbbdc6f212bff7c6e0
+#: b4b8015d33144cf185e704adaaf34421 e5a451219228460aa5aa06c9d3496279
 msgid "**Example Usage:**"
 msgstr "**示例用法：**"
 
-#: ../../tools/embedding_tools.rst:57 fb0a15ed15f545729afb60a802f71684
+#: ../../tools/embedding_tools.rst:69 52c01b80e1244ad2be646d286debd886
 msgid "**embedding_database_create** (Type: EmbeddingDatabase)"
 msgstr "**embedding_database_create**（类型：EmbeddingDatabase）"
 
-#: ../../tools/embedding_tools.rst:59 e1f8b51cc9534b67b33a6bd3ea36f10d
+#: ../../tools/embedding_tools.rst:71 5a6d203c969d4f559b36dea5ddc9102a
 msgid ""
-"Create a new embedding database from a collection of documents. Generates"
-" embeddings using OpenAI..."
-msgstr "从文档集合中创建一个新的嵌入式数据库。使用 OpenAI 生成嵌入..."
+"Create a per-collection datastore: <name>.db (SQLite) + <name>.faiss "
+"(FAISS). Embeds documents us..."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst 1fb075a87e9b41f49260071a487e75ea
+#: ../../tools/embedding_tools.rst f90737fc35d94041b2a88292edc86f50
 msgid "embedding_database_create tool specification"
 msgstr "嵌入式数据库创建工具规范"
 
-#: ../../tools/embedding_tools.rst:65 70194317070b4e4894120da12382582d
+#: ../../tools/embedding_tools.rst:77 019c9b5913d74410a15bd9b0d60ff5a1
 msgid "**Name**: ``embedding_database_create``"
 msgstr "**名称**: ``embedding_database_create``"
 
-#: ../../tools/embedding_tools.rst:67 c1135aefafe949daad91e58914516369
+#: ../../tools/embedding_tools.rst:79 772ef8e1ef2344909141ceafed55c328
 msgid ""
-"**Description**: Create a new embedding database from a collection of "
-"documents. Generates embeddings using OpenAI or Azure OpenAI models and "
-"stores them in a searchable database with FAISS vector index and SQLite "
-"metadata storage."
+"**Description**: Create a per-collection datastore: <name>.db (SQLite) + "
+"<name>.faiss (FAISS). Embeds documents using the chosen provider "
+"(openai/azure/huggingface/local). Vectors are L2-normalized; FAISS index "
+"uses IndexFlatIP (cosine)."
 msgstr ""
-"**描述**：从文档集合中创建一个新的嵌入式数据库。使用 OpenAI 或 Azure OpenAI "
-"模型生成嵌入，并将其存储在一个可搜索的数据库中，该数据库采用 FAISS 向量索引和 SQLite 元数据存储。"
 
-#: ../../tools/embedding_tools.rst:71 ad10d2b658174c25b4158779b7e401aa
+#: ../../tools/embedding_tools.rst:86 0a3c8ca04ef74fbfb872e50235e1a0b6
 #, fuzzy
-msgid "``action`` (string) (required) Action to create database from documents"
-msgstr "``action``（字符串）（可选）用于从文档创建数据库的操作"
-
-#: ../../tools/embedding_tools.rst:74 644692a81deb4f668757de933b387882
 msgid ""
-"``database_name`` (string) (required) Name for the new database (must be "
-"unique)"
-msgstr "``database_name``（字符串）（必填）新数据库的名称（必须唯一）"
+"``database_name`` (string) (required) Collection/database name (produces "
+"<name>.db and <name>.faiss)"
+msgstr "``database_name``（字符串）（必填）要添加文档的现有数据库名称"
 
-#: ../../tools/embedding_tools.rst:77 eaeb4205248d4dad82f0d9ffba709568
+#: ../../tools/embedding_tools.rst:89 02833deb26bc42beb4743a20aee387c0
 msgid "``documents`` (array) (required) List of document texts to embed and store"
 msgstr "``documents``（数组）（必填）要嵌入和存储的文档文本列表"
 
-#: ../../tools/embedding_tools.rst:80 c2b207e156904ceb974d2ab1a3228412
+#: ../../tools/embedding_tools.rst:92 9e29865a6385403e8ad667ccd37c1678
 #, fuzzy
 msgid ""
-"``metadata`` (array) (required) Optional metadata for each document (same"
-" length as documents)"
+"``metadata`` (array) (optional) Optional metadata for each document (must"
+" match length of documents if provided)"
 msgstr "``metadata``（数组）（可选）每个文档的可选元数据（与文档数量相同）。"
 
-#: ../../tools/embedding_tools.rst:83 cd8ce24a1a9f4e72b136e669bc6fe3fa
-#, fuzzy
-msgid "``model`` (string) (required) OpenAI/Azure OpenAI embedding model to use"
-msgstr "``model``（字符串）（可选）用于指定 OpenAI/Azure OpenAI 嵌入模型"
+#: ../../tools/embedding_tools.rst:95 152c736c2e044c8e80bd1256ff055319
+msgid ""
+"``provider`` (string) (optional) Embedding backend. Defaults: "
+"EMBED\\_PROVIDER, else by available creds "
+"(azure>openai>huggingface>local)."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst:86 a57fe8fe6daa4ba8939966b024097ea9
+#: ../../tools/embedding_tools.rst:98 caa016ce97604001aa1bb98ed8ca6277
+msgid ""
+"``model`` (string) (optional) Embedding model/deployment id. Defaults: "
+"EMBED\\_MODEL, else provider-specific sensible default."
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:101 d33aa6193bdc49daaa33034a5f8aac02
 #, fuzzy
-msgid "``description`` (string) (required) Optional description for the database"
+msgid ""
+"``description`` (string) (optional) Optional human-readable description "
+"for the collection"
 msgstr "``description``（字符串）（可选）数据库的可选描述"
 
-#: ../../tools/embedding_tools.rst:108 ac8f1e9011d446ff82885f567ed4e5bc
-msgid "**embedding_database_load** (Type: EmbeddingDatabase)"
-msgstr "**embedding_database_load**（类型：EmbeddingDatabase）"
-
-#: ../../tools/embedding_tools.rst:110 58de7fc8fcb240e1a42aea29c9b800b5
-msgid ""
-"Load an existing embedding database from a local path or external source."
-" Allows importing databa..."
-msgstr "从本地路径或外部来源加载现有的嵌入数据库。支持导入数据库..."
-
-#: ../../tools/embedding_tools.rst eae9d6a166744fef9e27a5b17a9e56d5
-msgid "embedding_database_load tool specification"
-msgstr "embedding_database_load 工具规范"
-
-#: ../../tools/embedding_tools.rst:116 ec88bbda78954b11974ee89f5c77b2b8
-msgid "**Name**: ``embedding_database_load``"
-msgstr "**名称**：``embedding_database_load``"
-
-#: ../../tools/embedding_tools.rst:118 33eaf5e41ff9469db7fd1303b62534bb
-msgid ""
-"**Description**: Load an existing embedding database from a local path or"
-" external source. Allows importing databases created elsewhere or backed "
-"up databases into the current ToolUniverse instance."
-msgstr "**描述**：从本地路径或外部来源加载现有的嵌入式数据库。允许将其他地方创建的数据库或备份的数据库导入到当前的 ToolUniverse 实例中。"
-
-#: ../../tools/embedding_tools.rst:122 dc251c066f6f4340ba8cf7fc3abdfee3
-#, fuzzy
-msgid ""
-"``action`` (string) (required) Action to load database from external "
-"source"
-msgstr "``action``（字符串）（可选）用于从外部来源加载数据库的操作"
-
-#: ../../tools/embedding_tools.rst:125 e673348dc93f46babcb0e9b67b43142a
-msgid ""
-"``database_path`` (string) (required) Path to the existing database "
-"directory or file"
-msgstr "``database_path``（字符串）（必填）现有数据库目录或文件的路径"
-
-#: ../../tools/embedding_tools.rst:128 5e89c1b1e26b4d478a5863c9373a77f8
-msgid ""
-"``database_name`` (string) (required) Local name to assign to the loaded "
-"database"
-msgstr "``database_name``（字符串）（必填）分配给已加载数据库的本地名称"
-
-#: ../../tools/embedding_tools.rst:131 7699439f23fe4dacbc2fb953c40e0969
-#, fuzzy
-msgid ""
-"``overwrite`` (boolean) (required) Whether to overwrite existing database"
-" with same name"
-msgstr "``overwrite``（布尔值）（可选）是否覆盖同名的现有数据库"
-
-#: ../../tools/embedding_tools.rst:151 c45240ef426543cebfa8d9fae7ee5b83
+#: ../../tools/embedding_tools.rst:119 9bb4f867b71044ec9e39b201708518e9
 msgid "**embedding_database_search** (Type: EmbeddingDatabase)"
 msgstr "**embedding_database_search**（类型：EmbeddingDatabase）"
 
-#: ../../tools/embedding_tools.rst:153 65194cfc188741efaa4412d265244035
+#: ../../tools/embedding_tools.rst:121 7c3068855cd74aa691a3e5f1658982e4
 msgid ""
-"Search for semantically similar documents in an embedding database. Uses "
-"OpenAI embeddings to con..."
-msgstr "在嵌入数据库中搜索语义相似的文档。使用 OpenAI 嵌入进行..."
+"Semantic search over a per-collection datastore using FAISS (cosine via "
+"L2-normalized vectors). S..."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst 44c90345f5ef47f8814654c26455830a
+#: ../../tools/embedding_tools.rst db0c411fbbbf44a5873a460b34d2f12f
 msgid "embedding_database_search tool specification"
 msgstr "embedding_database_search 工具规范"
 
-#: ../../tools/embedding_tools.rst:159 3ee0669dd31f451c8ea03cde957daa79
+#: ../../tools/embedding_tools.rst:127 e85060bc9a0741e99b3ab839a0ba1f80
 msgid "**Name**: ``embedding_database_search``"
 msgstr "**名称**：``embedding_database_search``"
 
-#: ../../tools/embedding_tools.rst:161 73b98e96cd12481da61da24175423951
+#: ../../tools/embedding_tools.rst:129 f59a17cb3f734964b606652a24d13ae7
 msgid ""
-"**Description**: Search for semantically similar documents in an "
-"embedding database. Uses OpenAI embeddings to convert query text to "
-"vectors and performs similarity search using FAISS with optional metadata"
-" filtering."
+"**Description**: Semantic search over a per-collection datastore using "
+"FAISS (cosine via L2-normalized vectors). Supports optional metadata "
+"filtering."
 msgstr ""
-"**描述**：在嵌入式数据库中搜索语义相似的文档。使用 OpenAI 嵌入将查询文本转换为向量，并通过 FAISS "
-"执行相似度搜索，支持可选的元数据过滤。"
 
-#: ../../tools/embedding_tools.rst:165 682f47948d174a6fbfde851ea68be9b2
+#: ../../tools/embedding_tools.rst:136 f241e1475cfc4ee8b645e8b5dcbd94fe
 #, fuzzy
-msgid "``action`` (string) (required) Action to search the database"
-msgstr "``action``（字符串）（可选）用于搜索数据库的操作"
-
-#: ../../tools/embedding_tools.rst:168 b1706a2cfd7646d9985d741ea5df4aa8
-msgid "``database_name`` (string) (required) Name of the database to search in"
+msgid "``database_name`` (string) (required) Collection/database name to search"
 msgstr "``database_name``（字符串）（必填）要搜索的数据库名称"
 
-#: ../../tools/embedding_tools.rst:171 15b36b7484ef44d0b703fe911dee9882
-msgid "``query`` (string) (required) Query text to find similar documents for"
+#: ../../tools/embedding_tools.rst:139 565bb642d1a94891b3449433899c5c6c
+#, fuzzy
+msgid "``query`` (string) (required) Query text to embed and search with"
 msgstr "``query``（字符串）（必填）用于查找相似文档的查询文本"
 
-#: ../../tools/embedding_tools.rst:174 ab07e4b6d7ff4cc59105a66d294172ac
+#: ../../tools/embedding_tools.rst:142 9455529523ca4780be8f8af9a386446c
 #, fuzzy
-msgid "``top_k`` (integer) (required) Number of most similar documents to return"
+msgid "``top_k`` (integer) (optional) Number of most similar documents to return"
 msgstr "``top_k``（整数）（可选）返回的最相似文档数量"
 
-#: ../../tools/embedding_tools.rst:177 190adc99ae7f43caba55d6cbd9293143
+#: ../../tools/embedding_tools.rst:145 0e5fd7d837b4413d8ac075dc725dba48
 #, fuzzy
 msgid ""
-"``filters`` (object) (required) Optional metadata filters to apply to "
-"search results"
+"``filters`` (object) (optional) Optional metadata filters ('$gte', "
+"'$lte', '$in', '$contains', exact match)"
 msgstr "``filters``（对象）（可选）应用于搜索结果的可选元数据过滤器"
 
-#: ../../tools/embedding_tools.rst:198 a1272b6876a24cf09500f721eb66b795
+#: ../../tools/embedding_tools.rst:148 0e658c2b38d7437a90420c3df280e728
+msgid ""
+"``provider`` (string) (optional) Embedding backend for the query vector. "
+"Defaults to collection/env."
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:151 d282a151e5664d709343d6c0be07df67
+msgid ""
+"``model`` (string) (optional) Embedding model/deployment id for the query"
+" vector. Defaults to collection/env."
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:169 db76b677b31d459a862fa855f85c9a45
 msgid "**embedding_sync_download** (Type: EmbeddingSync)"
 msgstr "**embedding_sync_download**（类型：EmbeddingSync）"
 
-#: ../../tools/embedding_tools.rst:200 7a30dd878a0d4e43ad23e6950bfa8039
+#: ../../tools/embedding_tools.rst:171 55ce352473f74caa8e27be4e6c612453
 msgid ""
-"Download an embedding database from HuggingFace Hub to local storage. "
-"Allows accessing databases ..."
-msgstr "从 HuggingFace Hub 下载嵌入式数据库到本地存储。允许访问数据库..."
+"Download a per-collection datastore from Hugging Face Hub into "
+"./data/embeddings as <name>.db and..."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst 30aa5a4561414d33a18a8a93c8ffb710
+#: ../../tools/embedding_tools.rst d3838828ba4045158e9785c50b7e1757
 msgid "embedding_sync_download tool specification"
 msgstr "embedding_sync_download 工具规范"
 
-#: ../../tools/embedding_tools.rst:206 7b8466f1d5bd470b91e4a1ac3fd443bc
+#: ../../tools/embedding_tools.rst:177 c917bf7594804a34af022f09ef45a835
 msgid "**Name**: ``embedding_sync_download``"
 msgstr "**名称**：``embedding_sync_download``"
 
-#: ../../tools/embedding_tools.rst:207 ../../tools/embedding_tools.rst:250
-#: 7886c6bfc4bf4181a900bc69556593a8 a6d0cf17018c46aa844a75a8b1518022
+#: ../../tools/embedding_tools.rst:178 ../../tools/embedding_tools.rst:218
+#: 93a70e7b60914815b80f8456f1514bfb 9ce0fb61b8ec40d1ad2a7bc4ef03f008
 msgid "**Type**: ``EmbeddingSync``"
 msgstr "**类型**：``EmbeddingSync``"
 
-#: ../../tools/embedding_tools.rst:208 edd688c9aa5f4182bc56aca1fdab5929
+#: ../../tools/embedding_tools.rst:179 795fa1460e914cf2ad9245d1e8e3d20c
 msgid ""
-"**Description**: Download an embedding database from HuggingFace Hub to "
-"local storage. Allows accessing databases shared by others or your own "
-"backups."
-msgstr "**描述**：从 HuggingFace Hub 下载嵌入数据库到本地存储。支持访问他人共享的数据库或您自己的备份。"
+"**Description**: Download a per-collection datastore from Hugging Face "
+"Hub into ./data/embeddings as <name>.db and <name>.faiss."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst:212 008b33ef490b4d978a603d2dcb11db23
+#: ../../tools/embedding_tools.rst:186 bea2269dba6e402792a2f4108f8851ab
 #, fuzzy
 msgid ""
-"``action`` (string) (required) Action to download database from "
-"HuggingFace"
-msgstr "``action``（字符串）（可选）用于从 HuggingFace 下载数据库的操作"
-
-#: ../../tools/embedding_tools.rst:215 9dec1c33563741d085cb6d5cc8eb6083
-msgid ""
-"``repository`` (string) (required) HuggingFace repository to download "
-"from (format: username/repo-name)"
+"``repository`` (string) (required) HF dataset repo to download from "
+"(e.g., 'user/repo')"
 msgstr "``repository``（字符串）（必填）要下载的 HuggingFace 仓库（格式：用户名/仓库名）"
 
-#: ../../tools/embedding_tools.rst:218 8b3f9b1a25c6429b88f65027fe8190e0
+#: ../../tools/embedding_tools.rst:189 50881989f23d4dd9bc26ad15beebf8ed
 #, fuzzy
 msgid ""
-"``local_name`` (string) (required) Local name for the downloaded database"
-" (optional, defaults to repo name)"
+"``local_name`` (string) (optional) Local collection name to save as "
+"(defaults to repo basename)"
 msgstr "``local_name``（字符串）（可选）下载数据库的本地名称（可选，默认为仓库名称）"
 
-#: ../../tools/embedding_tools.rst:221 096aef2925e34ffcb4707f24bdc6a3a6
+#: ../../tools/embedding_tools.rst:192 36f6d8d1f00b464c91848352255f048e
 #, fuzzy
 msgid ""
-"``overwrite`` (boolean) (required) Whether to overwrite existing local "
-"database with same name"
+"``overwrite`` (boolean) (optional) Whether to overwrite existing local "
+"files"
 msgstr "``overwrite``（布尔值）（可选）是否覆盖同名的本地数据库"
 
-#: ../../tools/embedding_tools.rst:241 752b5fa2d5dd4e9e85ea7f5517529914
+#: ../../tools/embedding_tools.rst:209 15b84f325d484a588611d19d25ce7936
 msgid "**embedding_sync_upload** (Type: EmbeddingSync)"
 msgstr "**embedding_sync_upload**（类型：EmbeddingSync）"
 
-#: ../../tools/embedding_tools.rst:243 bf800864c18649568535803f50778ed6
+#: ../../tools/embedding_tools.rst:211 5dd8df3b51954f22810f352978e3b1a2
 msgid ""
-"Upload a local embedding database to HuggingFace Hub for sharing and "
-"collaboration. Creates a dat..."
-msgstr "将本地嵌入数据库上传至 HuggingFace Hub 以便共享与协作。创建一个数据..."
+"Upload a per-collection datastore to Hugging Face Hub: <name>.db and "
+"<name>.faiss, plus metadata ..."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst eb8f3f35feb64bd6acb3b15104a8d158
+#: ../../tools/embedding_tools.rst 9894bd3b8e0846b3b3370a57c24c8a3d
 msgid "embedding_sync_upload tool specification"
 msgstr "embedding_sync_upload 工具规范"
 
-#: ../../tools/embedding_tools.rst:249 3f0a3b2bb4554f8aad8ce52cc387cecf
+#: ../../tools/embedding_tools.rst:217 3a03aab2fee34f30a4ca8bcdf82a82cb
 msgid "**Name**: ``embedding_sync_upload``"
 msgstr "**名称**：``embedding_sync_upload``"
 
-#: ../../tools/embedding_tools.rst:251 341750589a3d4f8f9a3c9244efec38ea
+#: ../../tools/embedding_tools.rst:219 02810a325c474dc183faf7910eba7aae
 msgid ""
-"**Description**: Upload a local embedding database to HuggingFace Hub for"
-" sharing and collaboration. Creates a dataset repository with the "
-"database files and metadata."
-msgstr "**描述**：将本地嵌入数据库上传至 HuggingFace Hub 以便共享与协作。创建包含数据库文件和元数据的数据集仓库。"
+"**Description**: Upload a per-collection datastore to Hugging Face Hub: "
+"<name>.db and <name>.faiss, plus metadata files."
+msgstr ""
 
-#: ../../tools/embedding_tools.rst:255 84090b02751e4cd0ae407b50e9587fb8
+#: ../../tools/embedding_tools.rst:226 803ad9d3a46140f0bc40bac07ee83c73
+msgid ""
+"``database_name`` (string) (required) Collection/database name to upload "
+"(expects <name>.db and <name>.faiss under data\\_dir)"
+msgstr ""
+
+#: ../../tools/embedding_tools.rst:229 a0e8e2d0c5524e779ed6a6495a3c306f
 #, fuzzy
-msgid "``action`` (string) (required) Action to upload database to HuggingFace"
-msgstr "``action``（字符串）（可选）上传数据库到 HuggingFace 的操作"
-
-#: ../../tools/embedding_tools.rst:258 3aa639f34c994857be091af6a9efb3e7
-msgid "``database_name`` (string) (required) Name of the local database to upload"
-msgstr "``database_name``（字符串）（必填）本地数据库的名称，用于上传"
-
-#: ../../tools/embedding_tools.rst:261 d594d2ffe064418295cea92c2f9b144f
-msgid ""
-"``repository`` (string) (required) HuggingFace repository name (format: "
-"username/repo-name)"
+msgid "``repository`` (string) (required) HF dataset repo (e.g., 'user/repo')"
 msgstr "``repository``（字符串）（必填）HuggingFace 仓库名称（格式：用户名/仓库名）"
 
-#: ../../tools/embedding_tools.rst:264 ccf271da6a474b92b46a5baf8e93030e
+#: ../../tools/embedding_tools.rst:232 6d070d1894e349ce96ee5d6501414689
 #, fuzzy
 msgid ""
-"``description`` (string) (required) Description for the HuggingFace "
-"dataset"
-msgstr "``description``（字符串）（可选）HuggingFace 数据集的描述信息"
+"``description`` (string) (optional) Optional dataset description in the "
+"HF README"
+msgstr "``description``（字符串）（可选）数据库的可选描述"
 
-#: ../../tools/embedding_tools.rst:267 c664a8a491de4b58b58d707921e7cbcb
+#: ../../tools/embedding_tools.rst:235 684c955b838844b2a9255d6f06c9d856
 #, fuzzy
-msgid "``private`` (boolean) (required) Whether to create a private repository"
+msgid "``private`` (boolean) (optional) Create/use a private HF repo"
 msgstr "``private``（布尔值）（可选）是否创建私有仓库"
 
-#: ../../tools/embedding_tools.rst:270 3731a21bfff4489785f783f2e3f1f83a
+#: ../../tools/embedding_tools.rst:238 564df510447b4d30a395296f724a888f
 #, fuzzy
-msgid "``commit_message`` (string) (required) Commit message for the upload"
+msgid "``commit_message`` (string) (optional) Commit message for the upload"
 msgstr "``commit_message``（字符串）（可选）上传的提交信息"
 
-#: ../../tools/embedding_tools.rst:292 13f391e3dc1743cabcf5d2bd5c59f90d
+#: ../../tools/embedding_tools.rst:256 8f8de64165cf455898fff4b98818a7f0
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/embedding_tools.rst:294 dc9a5abfc43e4f02a494772a3ecf67bb
+#: ../../tools/embedding_tools.rst:258 76b70d7220bd4f1cbd0bbfe23cd43bd4
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具总览"
 
-#: ../../tools/embedding_tools.rst:295 9fc66d1978d7476cb077db3ca8c8ec8c
+#: ../../tools/embedding_tools.rst:259 f73b106712834ffca157ae9786726938
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "Add new documents to an existing "
+#~ "embedding database. Generates embeddings for"
+#~ " new documents using..."
+#~ msgstr "将新文档添加到现有的嵌入数据库中。使用...为新文档生成嵌入。"
+
+#~ msgid ""
+#~ "**Description**: Add new documents to an"
+#~ " existing embedding database. Generates "
+#~ "embeddings for new documents using the"
+#~ " same model as the original database"
+#~ " and appends them to the existing "
+#~ "FAISS index."
+#~ msgstr "**描述**：将新文档添加到现有的嵌入数据库中。使用与原始数据库相同的模型为新文档生成嵌入，并将其附加到现有的FAISS索引中。"
+
+#~ msgid ""
+#~ "``action`` (string) (required) Action to "
+#~ "add documents to existing database"
+#~ msgstr "``action``（字符串）（可选）用于将文档添加到现有数据库的操作"
+
+#~ msgid ""
+#~ "``metadata`` (array) (required) Optional "
+#~ "metadata for each new document (same "
+#~ "length as documents)"
+#~ msgstr "``metadata``（数组）（可选）每个新文档的可选元数据（与文档长度相同）"
+
+#~ msgid ""
+#~ "Create a new embedding database from "
+#~ "a collection of documents. Generates "
+#~ "embeddings using OpenAI..."
+#~ msgstr "从文档集合中创建一个新的嵌入式数据库。使用 OpenAI 生成嵌入..."
+
+#~ msgid ""
+#~ "**Description**: Create a new embedding "
+#~ "database from a collection of documents."
+#~ " Generates embeddings using OpenAI or "
+#~ "Azure OpenAI models and stores them "
+#~ "in a searchable database with FAISS "
+#~ "vector index and SQLite metadata "
+#~ "storage."
+#~ msgstr ""
+#~ "**描述**：从文档集合中创建一个新的嵌入式数据库。使用 OpenAI 或 Azure "
+#~ "OpenAI 模型生成嵌入，并将其存储在一个可搜索的数据库中，该数据库采用 FAISS 向量索引和"
+#~ " SQLite 元数据存储。"
+
+#~ msgid "``action`` (string) (required) Action to create database from documents"
+#~ msgstr "``action``（字符串）（可选）用于从文档创建数据库的操作"
+
+#~ msgid ""
+#~ "``database_name`` (string) (required) Name for"
+#~ " the new database (must be unique)"
+#~ msgstr "``database_name``（字符串）（必填）新数据库的名称（必须唯一）"
+
+#~ msgid ""
+#~ "``model`` (string) (required) OpenAI/Azure "
+#~ "OpenAI embedding model to use"
+#~ msgstr "``model``（字符串）（可选）用于指定 OpenAI/Azure OpenAI 嵌入模型"
+
+#~ msgid "**embedding_database_load** (Type: EmbeddingDatabase)"
+#~ msgstr "**embedding_database_load**（类型：EmbeddingDatabase）"
+
+#~ msgid ""
+#~ "Load an existing embedding database from"
+#~ " a local path or external source. "
+#~ "Allows importing databa..."
+#~ msgstr "从本地路径或外部来源加载现有的嵌入数据库。支持导入数据库..."
+
+#~ msgid "embedding_database_load tool specification"
+#~ msgstr "embedding_database_load 工具规范"
+
+#~ msgid "**Name**: ``embedding_database_load``"
+#~ msgstr "**名称**：``embedding_database_load``"
+
+#~ msgid ""
+#~ "**Description**: Load an existing embedding"
+#~ " database from a local path or "
+#~ "external source. Allows importing databases"
+#~ " created elsewhere or backed up "
+#~ "databases into the current ToolUniverse "
+#~ "instance."
+#~ msgstr ""
+#~ "**描述**：从本地路径或外部来源加载现有的嵌入式数据库。允许将其他地方创建的数据库或备份的数据库导入到当前的 "
+#~ "ToolUniverse 实例中。"
+
+#~ msgid ""
+#~ "``action`` (string) (required) Action to "
+#~ "load database from external source"
+#~ msgstr "``action``（字符串）（可选）用于从外部来源加载数据库的操作"
+
+#~ msgid ""
+#~ "``database_path`` (string) (required) Path to"
+#~ " the existing database directory or "
+#~ "file"
+#~ msgstr "``database_path``（字符串）（必填）现有数据库目录或文件的路径"
+
+#~ msgid ""
+#~ "``database_name`` (string) (required) Local "
+#~ "name to assign to the loaded "
+#~ "database"
+#~ msgstr "``database_name``（字符串）（必填）分配给已加载数据库的本地名称"
+
+#~ msgid ""
+#~ "``overwrite`` (boolean) (required) Whether to"
+#~ " overwrite existing database with same "
+#~ "name"
+#~ msgstr "``overwrite``（布尔值）（可选）是否覆盖同名的现有数据库"
+
+#~ msgid ""
+#~ "Search for semantically similar documents "
+#~ "in an embedding database. Uses OpenAI"
+#~ " embeddings to con..."
+#~ msgstr "在嵌入数据库中搜索语义相似的文档。使用 OpenAI 嵌入进行..."
+
+#~ msgid ""
+#~ "**Description**: Search for semantically "
+#~ "similar documents in an embedding "
+#~ "database. Uses OpenAI embeddings to "
+#~ "convert query text to vectors and "
+#~ "performs similarity search using FAISS "
+#~ "with optional metadata filtering."
+#~ msgstr ""
+#~ "**描述**：在嵌入式数据库中搜索语义相似的文档。使用 OpenAI 嵌入将查询文本转换为向量，并通过 "
+#~ "FAISS 执行相似度搜索，支持可选的元数据过滤。"
+
+#~ msgid "``action`` (string) (required) Action to search the database"
+#~ msgstr "``action``（字符串）（可选）用于搜索数据库的操作"
+
+#~ msgid ""
+#~ "Download an embedding database from "
+#~ "HuggingFace Hub to local storage. Allows"
+#~ " accessing databases ..."
+#~ msgstr "从 HuggingFace Hub 下载嵌入式数据库到本地存储。允许访问数据库..."
+
+#~ msgid ""
+#~ "**Description**: Download an embedding "
+#~ "database from HuggingFace Hub to local"
+#~ " storage. Allows accessing databases shared"
+#~ " by others or your own backups."
+#~ msgstr "**描述**：从 HuggingFace Hub 下载嵌入数据库到本地存储。支持访问他人共享的数据库或您自己的备份。"
+
+#~ msgid ""
+#~ "``action`` (string) (required) Action to "
+#~ "download database from HuggingFace"
+#~ msgstr "``action``（字符串）（可选）用于从 HuggingFace 下载数据库的操作"
+
+#~ msgid ""
+#~ "Upload a local embedding database to "
+#~ "HuggingFace Hub for sharing and "
+#~ "collaboration. Creates a dat..."
+#~ msgstr "将本地嵌入数据库上传至 HuggingFace Hub 以便共享与协作。创建一个数据..."
+
+#~ msgid ""
+#~ "**Description**: Upload a local embedding "
+#~ "database to HuggingFace Hub for sharing"
+#~ " and collaboration. Creates a dataset "
+#~ "repository with the database files and"
+#~ " metadata."
+#~ msgstr "**描述**：将本地嵌入数据库上传至 HuggingFace Hub 以便共享与协作。创建包含数据库文件和元数据的数据集仓库。"
+
+#~ msgid "``action`` (string) (required) Action to upload database to HuggingFace"
+#~ msgstr "``action``（字符串）（可选）上传数据库到 HuggingFace 的操作"
+
+#~ msgid ""
+#~ "``database_name`` (string) (required) Name of"
+#~ " the local database to upload"
+#~ msgstr "``database_name``（字符串）（必填）本地数据库的名称，用于上传"
+
+#~ msgid ""
+#~ "``description`` (string) (required) Description "
+#~ "for the HuggingFace dataset"
+#~ msgstr "``description``（字符串）（可选）HuggingFace 数据集的描述信息"
 

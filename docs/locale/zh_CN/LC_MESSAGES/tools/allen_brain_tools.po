@@ -1,0 +1,237 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/allen_brain_tools.rst:10 362e4750a42c45fba301f7c18cbd4286
+msgid "Allen Brain Tools"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:12 8cebd699591f41f9bd9f98b993c4a03a
+msgid ""
+"**Configuration File**: ``allen_brain_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:16 362a712df68f4a5aa425fbb4be7c92cb
+msgid ""
+"This page contains all tools defined in the ``allen_brain_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:19 7d581752efb748c08893fe4f3e76b6c4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:22 f4c8b4ac5fd44500a9a102307a7d8c0f
+msgid "**AllenBrain_get_expression_datasets** (Type: AllenBrainTool)"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:24 58e8fa9465de4d5692fad0f3d274343e
+msgid ""
+"Get gene expression experiment datasets from the Allen Mouse Brain Atlas "
+"for a given gene. Return..."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst 59e52bd77e8346f9836e3e872dac4dd3
+msgid "AllenBrain_get_expression_datasets tool specification"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:28 ../../tools/allen_brain_tools.rst:65
+#: ../../tools/allen_brain_tools.rst:96 ../../tools/allen_brain_tools.rst:132
+#: 169c414fa6a049cf965d49612c735da3 7eba14fc4c994068ab05d01000522093
+#: 9ea465ba26c346dcac2fdecd033a042e f744de0b2c3c4528a557e39ec80587e8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:30 c86927dcd87941688ef01f42653b9379
+msgid "**Name**: ``AllenBrain_get_expression_datasets``"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:31 ../../tools/allen_brain_tools.rst:68
+#: ../../tools/allen_brain_tools.rst:99 ../../tools/allen_brain_tools.rst:135
+#: 0ca67890ee3346bb9b6a292bb5c3dd2e 560bc35e5e784e0daeda5e5d1d3b81e4
+#: 9596b393511441ccbafa0e81f4616b8c ba2e9a9fafee48b1bd81f560d61d5890
+msgid "**Type**: ``AllenBrainTool``"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:32 0ce90cf3be994e1983243703a19675b7
+msgid ""
+"**Description**: Get gene expression experiment datasets from the Allen "
+"Mouse Brain Atlas for a given gene. Returns section data sets including "
+"plane of section, section thickness, and linked gene info. These datasets"
+" contain ISH (in situ hybridization) gene expression images. Example: "
+"'Gad1' returns 22 ISH experiment datasets."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:34 ../../tools/allen_brain_tools.rst:71
+#: ../../tools/allen_brain_tools.rst:102 ../../tools/allen_brain_tools.rst:138
+#: 1823e024ad914d8a8909520d5d77e446 2a7e37d5a81a42a296404cb852c74433
+#: 962629814a2a4cfb8383ac4ee27b3680 dfb1386823bf4c9fb8b3cdd435d0e697
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:36 b03dabbce9c748f280b34705a106041f
+msgid ""
+"``gene_acronym`` (string) (required) Gene symbol/acronym. Examples: "
+"'Gad1', 'Pvalb', 'Sst', 'Bdnf', 'Th', 'Slc17a7'."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:39 518fd533f57b47c8b875f2ad08a8fd6d
+msgid ""
+"``product_id`` (integer) (optional) Product ID for the dataset type. "
+"1=Mouse Brain ISH, 2=Mouse Brain microarray. Default: 1."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:42 ../../tools/allen_brain_tools.rst:110
+#: ../../tools/allen_brain_tools.rst:146 01ffbe085014474585e556aacb962c95
+#: 46dccf839131460699ef66943f77f546 6b3a31dfbb3a4facb4b91cc60b9427a4
+msgid "``num_rows`` (integer) (optional) Max results to return. Default: 50."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:45 ../../tools/allen_brain_tools.rst:76
+#: ../../tools/allen_brain_tools.rst:113 ../../tools/allen_brain_tools.rst:149
+#: 41578cd7d5b74332a78a3126d1883e19 9405b8f439234aa8917cf48e7fdf85d6
+#: b03edd6c6a244f0084944977429ea72f d1e1f12698e843a88ccb82ba1949a379
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:59 cbd27e8501c648db8abb8af75b9e2ba5
+msgid "**AllenBrain_get_structure** (Type: AllenBrainTool)"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:61 462a75d3498943e5ade0c45577ada9a2
+msgid ""
+"Get detailed information about a brain structure by its Allen Brain Atlas"
+" structure ID. Returns f..."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst 34098d81295d45f0a4a67994be709c3e
+msgid "AllenBrain_get_structure tool specification"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:67 100019a8001343ee9724349143d1b574
+msgid "**Name**: ``AllenBrain_get_structure``"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:69 4050c371d8014d0b88bab70c68cc5b57
+msgid ""
+"**Description**: Get detailed information about a brain structure by its "
+"Allen Brain Atlas structure ID. Returns full structure record including "
+"name, hierarchy path, parent structure, color code. Example: "
+"structure\\_id=382 returns 'Field CA1' in hippocampus."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:73 6cab63ec0c6246eaaacf66a5c92d9a8b
+msgid ""
+"``structure_id`` (integer) (required) Allen Brain Atlas structure ID. "
+"Examples: 382 (CA1), 375 (Hippocampus), 315 (Isocortex), 997 (root)."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:90 d33334a700fd4110bae5092ae294d2a9
+msgid "**AllenBrain_search_genes** (Type: AllenBrainTool)"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:92 03a1820240f2403e8ea9384a1c298c44
+msgid ""
+"Search for genes in the Allen Brain Atlas by gene symbol (acronym) or "
+"name. Returns gene metadata..."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst 2ac44f5d4304460d91bd9b39895368ca
+msgid "AllenBrain_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:98 7bbeb8d819ed499f8a4a1e19c7eac8b4
+msgid "**Name**: ``AllenBrain_search_genes``"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:100 9022ff01b4614f0f85c95605f176be9c
+msgid ""
+"**Description**: Search for genes in the Allen Brain Atlas by gene symbol"
+" (acronym) or name. Returns gene metadata including Entrez ID, "
+"chromosome, homologene ID. Useful for finding gene IDs needed to query "
+"expression data. Example: 'Gad1' returns glutamate decarboxylase 1 "
+"records for mouse and rat."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:104 867be577c52a441c880b1d7600d2eb45
+msgid ""
+"``gene_acronym`` (string, null) (optional) Gene symbol/acronym for exact "
+"match. Examples: 'Gad1', 'Pvalb', 'Sst', 'Bdnf', 'Th'."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:107 07e30fbb365d4b6a9d0148b2fd408b55
+msgid ""
+"``gene_name`` (string, null) (optional) Gene name for partial match "
+"search (alternative to gene\\_acronym). Example: 'glutamate "
+"decarboxylase'."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:126 c486a35f84124b46a2aaf09489976c5a
+msgid "**AllenBrain_search_structures** (Type: AllenBrainTool)"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:128 322bb1e3498d460cb02aee8192de0f6f
+msgid ""
+"Search for brain structures/regions in the Allen Brain Atlas ontology by "
+"acronym or name. Returns..."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst 7535cf77cf634ba580a28c2390386803
+msgid "AllenBrain_search_structures tool specification"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:134 133865ff57524f92a2d6bd3bd685247c
+msgid "**Name**: ``AllenBrain_search_structures``"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:136 9cef2d846d2c4bd3a1afa9ea9f43aade
+msgid ""
+"**Description**: Search for brain structures/regions in the Allen Brain "
+"Atlas ontology by acronym or name. Returns structure hierarchy, atlas "
+"coordinates, and color coding. Example: 'CA1' returns hippocampal Field "
+"CA1 across multiple atlases."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:140 e7494bbf90b04925bf1f8c48340df22d
+msgid ""
+"``acronym`` (string, null) (optional) Structure acronym for exact match. "
+"Examples: 'CA1', 'VISp', 'TH', 'HIP', 'CTX'."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:143 970bea4c610d49bda094efb983179007
+msgid ""
+"``name`` (string, null) (optional) Structure name for partial match "
+"(alternative to acronym). Example: 'hippocampus', 'cerebellum'."
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:162 a87e34389d4d4836a6ad4acaf2b9aa92
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:164 a5d80784f429413e9f204f29af3f9472
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/allen_brain_tools.rst:165 58eaa1a36b9c48bebda4e6d5ad6f207e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

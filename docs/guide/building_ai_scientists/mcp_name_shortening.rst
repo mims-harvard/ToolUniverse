@@ -81,10 +81,10 @@ Examples
      - 34
 
 When to Use This Feature
-=========================
+========================
 
- USE in These Scenarios
---------------------------
+Use in These Scenarios
+----------------------
 
 MCP Integration (Automatic)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,10 +145,10 @@ External API Integration with Length Constraints
 - Building UIs with limited display space
 
 When NOT to Use This Feature
-=============================
+============================
 
- DO NOT USE in These Scenarios
----------------------------------
+Do Not Use in These Scenarios
+-----------------------------
 
 Direct Python API Usage (Default)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,7 +210,7 @@ Usage Guide
 ===========
 
 For MCP Users (Automatic)
---------------------------
+-------------------------
 
 If you're using ToolUniverse through MCP (Claude Desktop, Claude Code, etc.), name shortening is **automatically enabled**. No configuration needed!
 
@@ -458,7 +458,7 @@ For Python API Users
     tu = ToolUniverse(enable_name_shortening=True)
 
 Testing and Validation
-=======================
+======================
 
 Run Tests
 ---------
@@ -475,7 +475,7 @@ Expected Output
     ======================= 13 passed, 13 warnings in 0.97s ========================
 
 Validate MCP Compatibility
----------------------------
+--------------------------
 
 .. code-block:: python
 
@@ -523,16 +523,16 @@ Key Takeaways
 4. **Simple implementation** - 380 lines, well-tested
 5. **Production ready** - All tests passing, validated with real tools
 
- When to Use
---------------
+When to Use
+-----------
 
 - **MCP integration** (automatic)
 - **Custom MCP servers** (opt-in)
 - **External systems with name length limits**
 - **Testing and validation**
 
- When NOT to Use
-------------------
+When Not to Use
+---------------
 
 - **Direct Python API** (no constraints)
 - **Internal tool development** (use full names)

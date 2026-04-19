@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/veupathdb_tools.rst:10 0158e83b5b3f407692a75171f84601c9
+msgid "Veupathdb Tools"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:12 770dfae8e05f40dbaec3bb95133f239a
+msgid ""
+"**Configuration File**: ``veupathdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:16 13c9a91b013d419288863c33d1b2118f
+msgid ""
+"This page contains all tools defined in the ``veupathdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:19 89e92f2462ed49baaf2543d338e11e25
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:22 d60aef7dc8484b7fa426d63f0c7b2798
+msgid "**VEuPathDB_list_gene_searches** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:24 9c3ff8f1d08e4384ab89479e0e6660cd
+msgid ""
+"List all available gene search strategies in VEuPathDB. Returns the "
+"search types that can be used..."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst 3117c691dd7744fcb547d413beb0ed24
+msgid "VEuPathDB_list_gene_searches tool specification"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:28 ../../tools/veupathdb_tools.rst:57
+#: ../../tools/veupathdb_tools.rst:86 996519eba456460ca1915049aeba3814
+#: ae2b76d171f5491b88be1f32b08b48c6 dfc754ed5d8b4f6ba6e51edd5e19203c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:30 2dfc2156a3714dc48641648fce46dafe
+msgid "**Name**: ``VEuPathDB_list_gene_searches``"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:31 ../../tools/veupathdb_tools.rst:60
+#: ../../tools/veupathdb_tools.rst:89 419829c33e03421796564a227a390999
+#: 98119098c5b54811a31c7e46980ad884 c913608d69d4488297224d7dbe341d84
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:32 5350eaf05d6b447e941f5575a03d9230
+msgid ""
+"**Description**: List all available gene search strategies in VEuPathDB. "
+"Returns the search types that can be used to query genes across pathogen,"
+" vector, and host genomes. Each search has a URL segment, display name, "
+"description, and the parameters it accepts. Common searches include: "
+"GenesByTaxonGene (by organism), GenesFromTranscripts (transform "
+"transcript results to genes), and single gene lookups. Use this to "
+"discover what types of gene queries are available before constructing "
+"searches."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:34 ../../tools/veupathdb_tools.rst:63
+#: ../../tools/veupathdb_tools.rst:92 4916f2998f4c467ea2464838184d5398
+#: 5abb99b7e635475bb868614f05ed95b3 bf8c0cca10204776b175e081ef81158d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:36 ../../tools/veupathdb_tools.rst:65
+#: ../../tools/veupathdb_tools.rst:94 2da1a10a47cc4bc884bd9d2e5adacffe
+#: 5099b36ad04c4723bbd12486f0cbf83c fee04f59e2b441fa98945aa3ee31b0af
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:38 ../../tools/veupathdb_tools.rst:67
+#: ../../tools/veupathdb_tools.rst:96 1e298180b65f461190aba316d5949286
+#: a6b9faaab46c49a6bd2a4269c912685b c0f5858ef2604302963d6391768f4309
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:51 6f94cf6b6f904ccf94e5a6cd4de15d0f
+msgid "**VEuPathDB_list_organism_searches** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:53 c341c1276fa64e66bd50c27b23f78720
+msgid ""
+"List all available organism search strategies in VEuPathDB. Returns the "
+"search types that can be ..."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst a3e5a177ddca416fb9156b2c0ad40e3c
+msgid "VEuPathDB_list_organism_searches tool specification"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:59 c8dfee0bb8304c0597073240a3a57944
+msgid "**Name**: ``VEuPathDB_list_organism_searches``"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:61 cf50c0b9d1b14b68b1f4c25e17a14b1b
+msgid ""
+"**Description**: List all available organism search strategies in "
+"VEuPathDB. Returns the search types that can be used to query organisms "
+"in the VEuPathDB database, covering 785+ pathogen, vector, and host "
+"organism genomes. Useful for discovering what organism queries are "
+"available. Common searches include: AllOrganisms (list all), "
+"GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and "
+"OrganismsByText (text search)."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:80 d395fde1f8ac404882379091de889f0d
+msgid "**VEuPathDB_list_record_types** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:82 07be08b42db04985a376819c04d577b9
+msgid ""
+"List all available record types in VEuPathDB (Eukaryotic Pathogen, Vector"
+" and Host Informatics Re..."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst 7d768f6a245a4c128f1a79fbfd1d195e
+msgid "VEuPathDB_list_record_types tool specification"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:88 62e66fbe2e0145bca0388b126ad644aa
+msgid "**Name**: ``VEuPathDB_list_record_types``"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:90 7a4cbde801f44b4e93112f8ceada1749
+msgid ""
+"**Description**: List all available record types in VEuPathDB (Eukaryotic"
+" Pathogen, Vector and Host Informatics Resources). VEuPathDB is a unified"
+" bioinformatics resource for eukaryotic pathogen and host genomics "
+"covering Plasmodium (malaria), Toxoplasma, Cryptosporidium, Trypanosoma, "
+"Leishmania, fungi, and vector organisms. Returns the available record "
+"types (gene, transcript, organism, genomic-sequence, etc.) that can be "
+"queried through VEuPathDB's search API. Encompasses sub-databases: "
+"PlasmoDB, ToxoDB, CryptoDB, TriTrypDB, FungiDB, AmoebaDB, "
+"MicrosporidiaDB, PiroplasmaDB, GiardiaDB, TrichDB, HostDB, VectorBase, "
+"and SchistoDB."
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:109 9d27b790eb6d4349b2879d3270005324
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:111 4742a89fa0794c2fbd4fc2029a3bd474
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/veupathdb_tools.rst:112 3a6791b8fbc34bdab02f7df418521034
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

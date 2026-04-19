@@ -1,0 +1,269 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/nca_tools.rst:10 9b158a510e3d48858d8c08d125090168
+msgid "Nca Tools"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:12 bbd6d7c53e28495080d0644103c6f5e5
+msgid ""
+"**Configuration File**: ``nca_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 3"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:16 6768573f614140408a7b73fc4009d2d7
+msgid ""
+"This page contains all tools defined in the ``nca_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:19 4809465d522845deafe4c49a99e6b5e6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:22 0426991153c14b308c070ef99c6f445f
+msgid "**NCA_calculate_bioavailability** (Type: NCATool)"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:24 42aa7a21b4df440787ad140f9bd2c929
+msgid ""
+"Calculate absolute oral bioavailability (F) from paired IV and PO "
+"pharmacokinetic study AUC value..."
+msgstr ""
+
+#: ../../tools/nca_tools.rst 9a5e688af7284996bc821a8f3f5a0358
+msgid "NCA_calculate_bioavailability tool specification"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:28 ../../tools/nca_tools.rst:71
+#: ../../tools/nca_tools.rst:121 0fb021e57f9948c4b680450776531641
+#: 3a29cf24fe894481bf380a9c75480d09 817819b73bcd424282d30927c0b7fac5
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:30 4e30821dceab471ba8bdb6d62aafc1b1
+msgid "**Name**: ``NCA_calculate_bioavailability``"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:31 ../../tools/nca_tools.rst:74
+#: ../../tools/nca_tools.rst:124 484bb484c3214308a7a7a7d1d30a62e6
+#: 5d2130b1620e4476bfe2881d2b27a4ff fa09238b91db4c9eb40df0b398f8267b
+msgid "**Type**: ``NCATool``"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:32 3baafb339338426288719b2a5012bc4b
+#, python-format
+msgid ""
+"**Description**: Calculate absolute oral bioavailability (F) from paired "
+"IV and PO pharmacokinetic study AUC values and doses. Formula: F = "
+"(AUC\\_PO × Dose\\_IV) / (AUC\\_IV × Dose\\_PO). Classifies result as "
+"High (≥80%), Moderate (30–80%), Low (10–30%), or Very Low (<10%) with "
+"clinical interpretation. F > 20% is typically considered acceptable for "
+"small molecule oral drugs. F ≥ 80% required for bioequivalence. Use after"
+" NCA\\_compute\\_parameters to calculate AUC from raw time-concentration "
+"data for both IV and PO arms."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:34 ../../tools/nca_tools.rst:77
+#: ../../tools/nca_tools.rst:127 3c0b660e21c34412b50d77bfab0f56ac
+#: a0b9bde368504c6c9642efdd6688b60e cc5031d47f784d3688da9752f5109f5f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:36 27b38d28c5e6419eb7dafb5153a0a752
+msgid ""
+"``auc_po`` (number) (required) AUC from the oral (PO) arm. Must be in "
+"same units as auc\\_iv. Example: 2400 (ng/mL·h)."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:39 bfc897bd0caa466288626dc4bd25a1db
+msgid ""
+"``dose_po`` (number) (required) Dose administered orally. Must be in same"
+" units as dose\\_iv. Example: 100 (mg)."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:42 788d8ca2f0764752bb258888a0028459
+msgid ""
+"``auc_iv`` (number) (required) AUC from the intravenous (IV) arm. "
+"Example: 3500 (ng/mL·h)."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:45 f06f8945d0de44dcb77420b7f5d14c89
+msgid ""
+"``dose_iv`` (number) (required) Dose administered intravenously. Example:"
+" 50 (mg)."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:48 ../../tools/nca_tools.rst:100
+#: ../../tools/nca_tools.rst:147 24a14411078043709a63d7fb86dc4170
+#: 47f8ba47ce3c4adcbdf71f784ddc6483 780fa87e305f4d8ebf1530c3a3df8026
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:65 bbb3adf0ba69471483e32b585e95c194
+msgid "**NCA_compute_parameters** (Type: NCATool)"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:67 0fdcc31509cf4bfa9bbb1bc1a93bd9ee
+msgid ""
+"Perform Non-Compartmental Analysis (NCA) on time-concentration "
+"pharmacokinetic data. Computes key..."
+msgstr ""
+
+#: ../../tools/nca_tools.rst 20c64e4ecfea4b4db3a30ee54a33cbdd
+msgid "NCA_compute_parameters tool specification"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:73 e036be76d68e4ce1ae2138200838e5aa
+msgid "**Name**: ``NCA_compute_parameters``"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:75 5a26df2f477547f0b01b99f3fef5e4c5
+msgid ""
+"**Description**: Perform Non-Compartmental Analysis (NCA) on time-"
+"concentration pharmacokinetic data. Computes key PK parameters: Cmax "
+"(peak concentration), Tmax (time to peak), AUC0-t (area under curve to "
+"last measured point using linear-log trapezoidal method), AUC0-inf "
+"(extrapolated), terminal elimination half-life (t½), elimination rate "
+"constant (λz), clearance (CL), and volume of distribution (Vd) when dose "
+"is provided. Follows FDA/EMA NCA guidelines. Use this when you have raw "
+"plasma concentration vs. time data from a PK study. Output includes "
+"goodness of AUC extrapolation assessment."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:79 d2713149b80e4e3a8c592593b9aed45d
+msgid ""
+"``times`` (array) (required) Time points in consistent units (hours "
+"recommended). Example: [0, 0.25, 0.5, 1, 2, 4, 8, 12, 24]."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:82 4ea4ca0e5a824479a4d6b8d9e5bdb2dc
+msgid ""
+"``concentrations`` (array) (required) Plasma concentrations at each time "
+"point (same length as times). Example: [0, 150, 280, 220, 180, 120, 60, "
+"30, 8]."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:85 7d3b1086ed0f42fe8c013384553a6be1
+msgid ""
+"``dose`` (number, null) (optional) Administered dose (optional). Required"
+" to calculate CL and Vd. Example: 100 (for 100 mg dose)."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:88 82100dddcb124b3a99013b8db373ef36
+msgid ""
+"``route`` (string, null) (optional) Route of administration: 'iv' "
+"(default) or 'po'. Affects Vd calculation formula."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:91 4ee556a259314cdc916afacad0a91294
+msgid ""
+"``dose_unit`` (string, null) (optional) Unit of dose (default: 'mg'). "
+"Examples: 'mg', 'ug', 'nmol'."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:94 8f8caf0e3dd94323bf839436f7476d40
+msgid ""
+"``conc_unit`` (string, null) (optional) Unit of concentration (default: "
+"'ng/mL'). Examples: 'ng/mL', 'ug/L', 'nM'."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:97 626ec152752a4e55af9f10ab32ce860f
+msgid ""
+"``time_unit`` (string, null) (optional) Unit of time (default: 'h'). "
+"Examples: 'h', 'min', 'd'."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:115 4815ccc1eded4140954bc1f652b64a39
+msgid "**NCA_fit_one_compartment** (Type: NCATool)"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:117 c1d93fea59394e21af2d7b561561e27d
+msgid ""
+"Fit a one-compartment IV bolus pharmacokinetic model (C(t) = C0 × "
+"exp(-k\\_el × t)) to plasma conc..."
+msgstr ""
+
+#: ../../tools/nca_tools.rst 27e2ef76d29e478f9c7aeae4196dfcd3
+msgid "NCA_fit_one_compartment tool specification"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:123 8bd1f20a33fb4d37b32049dabe0ec808
+msgid "**Name**: ``NCA_fit_one_compartment``"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:125 6c0fe6c224b94fb097f84fbcca205058
+msgid ""
+"**Description**: Fit a one-compartment IV bolus pharmacokinetic model "
+"(C(t) = C0 × exp(-k\\_el × t)) to plasma concentration-time data using "
+"nonlinear least squares. Returns C0 (initial concentration), k\\_el "
+"(elimination rate constant), t½ (half-life), R², and when dose is "
+"provided: Vd (volume of distribution) and CL (clearance). Assumes mono-"
+"exponential decline — appropriate for drugs with rapid distribution and "
+"linear elimination. If R² < 0.85, consider a two-compartment model. Use "
+"NCA\\_compute\\_parameters for model-independent analysis."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:129 b9c68ecfb5f84fca851a6d7b3d8b119e
+msgid ""
+"``times`` (array) (required) Time points after IV administration. "
+"Example: [0, 0.5, 1, 2, 4, 8, 12, 24]."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:132 5eb7c67d6ac84d9ba11df3e5d605c1eb
+msgid ""
+"``concentrations`` (array) (required) Plasma concentrations at each time "
+"point. Example: [500, 380, 290, 170, 60, 8, 1.1, 0.1]."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:135 3e04feafcdc34a2295a6379f8f41b1e7
+msgid ""
+"``dose`` (number, null) (optional) Administered IV dose. Required to "
+"calculate Vd and CL."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:138 745abb599a13418c9108674aee1f3a8c
+msgid "``dose_unit`` (string, null) (optional) Unit of dose (default: 'mg')."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:141 fcdb51926cae4d7f9e66d238ad788174
+msgid ""
+"``conc_unit`` (string, null) (optional) Unit of concentration (default: "
+"'ng/mL')."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:144 16ec5769a2f5497daa96413647d90ca3
+msgid "``time_unit`` (string, null) (optional) Unit of time (default: 'h')."
+msgstr ""
+
+#: ../../tools/nca_tools.rst:162 0db22af7d73b425ea8425427471c0261
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:164 61716408ac6144be83d7c1d08330803d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/nca_tools.rst:165 0d5173d0b39544958b9c089057fed396
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

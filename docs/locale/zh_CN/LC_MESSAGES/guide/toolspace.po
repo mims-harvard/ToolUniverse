@@ -7,210 +7,85 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-19 13:50-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/toolspace.rst:2 19d584bd1669456287c1cb68a5273206
-msgid "Space Configuration System"
-msgstr "空间配置系统"
-
-#: ../../guide/toolspace.rst:4 27151bf2b8fe45c28ebc9de0b800fc5b
-msgid ""
-"Space is a powerful configuration system that allows you to easily load, "
-"share, and manage tool configurations for ToolUniverse. It supports both "
-"simple presets and complex workspaces with AI integration."
+#: ../../guide/toolspace.rst:2 186a19bdec6f46a691033f28a0b3934c
+msgid "Profile & Workspace"
 msgstr ""
-"Space 是一个强大的配置系统，可让您轻松加载、共享和管理 ToolUniverse 的工具配置。它同时支持简单的预设和具有 AI "
-"集成的复杂工作空间。"
 
-#: ../../guide/toolspace.rst:7 212ef185a6a74fbf84ffc6cd16a1d9e0
+#: ../../guide/toolspace.rst:4 59a1d754490242249f4b05d3289527f0
+msgid "Two distinct concepts:"
+msgstr ""
+
+#: ../../guide/toolspace.rst:6 505f63638c724a488d3674350176f58a
+msgid ""
+"**Profile** (``profile.yaml``) — *what* to load: tools, cache settings, "
+"LLM config."
+msgstr ""
+
+#: ../../guide/toolspace.rst:7 c72e9f1956be4d739e9d01d69d49ddd6
+msgid ""
+"**Workspace** (``.tooluniverse/``) — *where* config and API keys live on "
+"disk."
+msgstr ""
+
+#: ../../guide/toolspace.rst:10 ec1cc42d16344142ae540af02aaa6802
 msgid "Quick Start"
 msgstr "快速开始"
 
-#: ../../guide/toolspace.rst:9 06721a0278d44bc4ae36810d86ac76dc
-msgid "Load a Space configuration in just one line:"
-msgstr "只需一行代码即可加载空间配置："
+#: ../../guide/toolspace.rst:25 a7c5f3527d51419087f6aa78456d0c15
+msgid "Load a profile on the fly:"
+msgstr ""
 
-#: ../../guide/toolspace.rst:23 ec12207a9d924978ae8720128fb86bff
-msgid "Command Line Usage"
-msgstr "命令行使用"
+#: ../../guide/toolspace.rst:31 ../../guide/toolspace.rst:75
+#: ../../guide/toolspace.rst:106 16186d4aa1524584bf0d2d33f5b12179
+#: 1c50cc17b7e2413fa689a247a556634f 56f0fbb2a7c94258a21714a06d2154e9
+msgid "---"
+msgstr ""
 
-#: ../../guide/toolspace.rst:25 2e757e7125a4435e82b6e9a3c90e72be
-msgid "Use Space configurations with MCP servers:"
-msgstr "使用空间配置与MCP服务器："
+#: ../../guide/toolspace.rst:34 b8e175f5a0274a9b943fb56c7de5a7fa
+msgid "profile.yaml Reference"
+msgstr ""
 
-#: ../../guide/toolspace.rst:39 82a077f0ba374299bb0dad7514725d63
-msgid "What is Space?"
-msgstr "什么是空间？"
+#: ../../guide/toolspace.rst:73 7ec254184f8c4b648f40372b7cd65a25
+msgid "Put API key *values* in ``.tooluniverse/.env``, not in profile.yaml."
+msgstr ""
 
-#: ../../guide/toolspace.rst:41 c8def458b9724f07ad74bd682182825a
-msgid ""
-"Space is a unified system for managing tool configurations that supports:"
-msgstr "Space 是一个统一的系统，用于管理工具配置，支持："
-
-#: ../../guide/toolspace.rst:43 fb256058dbfa486f87845aac592a6fbf
-msgid "**Presets**: Simple tool collections for specific domains"
-msgstr "**预设**：针对特定领域的简单工具集合"
-
-#: ../../guide/toolspace.rst:44 aa2fcb0c849b4a9cb79aefe3285e5021
-msgid ""
-"**Workspaces**: Complete environments with tools, AI config, and workflows"
-msgstr "**工作空间**：包含工具、AI配置和工作流程的完整环境"
-
-#: ../../guide/toolspace.rst:45 16f6ca10650d4ebcaa108b787919aca4
-msgid ""
-"**Sharing**: Easy sharing via HuggingFace Hub, HTTP URLs, or local files"
-msgstr "**共享**：通过 HuggingFace Hub、HTTP URL 或本地文件轻松共享"
-
-#: ../../guide/toolspace.rst:46 32720c5177ee4c62b461a1edb151db41
-msgid "**Versioning**: Support for versioned configurations"
-msgstr "**版本控制**：支持版本化配置"
-
-#: ../../guide/toolspace.rst:47 bdfec7de981148b4bf18bebd6befb1fd
-msgid "**Validation**: Built-in configuration validation"
-msgstr "**验证**：内置配置验证"
-
-#: ../../guide/toolspace.rst:50 81b9300760b647e0ba6ee9eb2278eb7d
-msgid "Configuration Types"
-msgstr "配置类型"
-
-#: ../../guide/toolspace.rst:53 3403ce0d92824bdeb1025f2d74838180
-msgid "Preset (Simple)"
-msgstr "预设（简单）"
-
-#: ../../guide/toolspace.rst:55 5caa1e1f3631416cb8bbe5f03b31dac0
-msgid "A preset is a collection of tools with basic configuration:"
-msgstr "预设是一组具有基本配置的工具集合："
-
-#: ../../guide/toolspace.rst:71 5dd785c531af4354b46e5a88f1cc22da
-msgid "Workspace (Advanced)"
-msgstr "工作区（高级）"
-
-#: ../../guide/toolspace.rst:73 93191042410f49b2ae8b2c834719b709
-msgid "A workspace includes tools plus AI configuration and workflows:"
-msgstr "工作区包括工具、AI配置和工作流程："
-
-#: ../../guide/toolspace.rst:98 418adb0474e04ea889f6e82c6403bcfb
-msgid "Loading Configurations"
-msgstr "加载配置"
-
-#: ../../guide/toolspace.rst:101 c896b61da2a346ea89063b794cf710e7
-msgid "HuggingFace Hub"
-msgstr "HuggingFace 资源库"
-
-#: ../../guide/toolspace.rst:103 45b1bac30e52408885ff9381d75df1c0
-msgid "Load configurations from HuggingFace Hub:"
-msgstr "从 HuggingFace Hub 加载配置："
-
-#: ../../guide/toolspace.rst:117 571c2c6de8434394bfc9c94abb62eedf
-msgid "Local Files"
-msgstr "本地文件"
-
-#: ../../guide/toolspace.rst:119 96d027f42cb549d8a4618f4ebf48dba7
-msgid "Load from local files:"
-msgstr "从本地文件加载："
-
-#: ../../guide/toolspace.rst:133 2ab90d1246a640638593a53ed9bd3fc6
-msgid "HTTP URLs"
-msgstr "HTTP URL"
-
-#: ../../guide/toolspace.rst:135 0a860fe3020c4c24bc020403b487a34b
-msgid "Load from any HTTP URL:"
-msgstr "从任何 HTTP URL 加载："
-
-#: ../../guide/toolspace.rst:142 e46c74a434c64b3da1d9238516f3c732
-msgid "Configuration Overrides"
-msgstr "配置覆盖"
-
-#: ../../guide/toolspace.rst:144 6280b9ec31b440c99adc44975211bc9e
-msgid "Override Space settings with parameters:"
-msgstr "使用参数覆盖空间设置："
-
-#: ../../guide/toolspace.rst:157 6160a6e5d1b849ba9df5310a1e7dc86e
-msgid "Configuration Merging"
-msgstr "配置合并"
-
-#: ../../guide/toolspace.rst:159 792a5280888f43c88180f380bacbe58e
-msgid "Command line arguments take priority over Space configuration:"
-msgstr "命令行参数优先于Space配置。"
-
-#: ../../guide/toolspace.rst:170 72a2b8442a9240daa61426e9f13240d8
-msgid "Creating Configurations"
-msgstr "创建配置"
-
-#: ../../guide/toolspace.rst:173 dd9940c350a64abb93dfc717e4f24588
-msgid "Basic Preset"
-msgstr "基础预设"
-
-#: ../../guide/toolspace.rst:175 61fe7d7427414f1ead0cacf85f1fe123
-msgid "Create a simple preset:"
-msgstr "创建一个简单的预设："
-
-#: ../../guide/toolspace.rst:203 5b9b4b5541194f6596d0b0771f393e7a
-msgid "Advanced Workspace"
+#: ../../guide/toolspace.rst:78 e1a6cdba25954c478854616392a4a04f
+#, fuzzy
+msgid "Workspace"
 msgstr "高级工作区"
 
-#: ../../guide/toolspace.rst:205 ba9087f3a133462fb4a07531c604d548
-msgid "Create a complete workspace:"
-msgstr "创建完整的工作空间："
+#: ../../guide/toolspace.rst:93 c0f7cb3cc3e6440790cd51bcf04ea21a
+msgid ""
+"Priority: ``--workspace`` → ``TOOLUNIVERSE_HOME`` → ``--global`` → "
+"``./.tooluniverse/``"
+msgstr ""
 
-#: ../../guide/toolspace.rst:241 04d77048965549f5ba2c62dc6fe43011
-msgid "Configuration Validation"
-msgstr "配置验证"
+#: ../../guide/toolspace.rst:95 950b329e31f346f3ba2db697c563cc7b
+msgid "**Python API:**"
+msgstr ""
 
-#: ../../guide/toolspace.rst:243 143fe4dc926340ef964b3af40a9d0569
-msgid "Validate configurations before using:"
-msgstr "在使用前验证配置："
+#: ../../guide/toolspace.rst:109 94367de4c4a745fa8d8ce974a7c179df
+msgid "Merging"
+msgstr ""
 
-#: ../../guide/toolspace.rst:259 6db505091f2046c6b95d90c30a5032cf
-msgid "Command Line Validation"
-msgstr "命令行验证"
-
-#: ../../guide/toolspace.rst:261 39da09ffb43a44bdbfdf83091f358703
-msgid "Validate from command line using Python:"
-msgstr "使用 Python 从命令行进行验证："
-
-#: ../../guide/toolspace.rst:273 9498c794961f47fbbc3899b198cb184c
-msgid "Configuration Schema"
-msgstr "配置架构"
-
-#: ../../guide/toolspace.rst:276 4c2a208f94224957a0c9d0498f7578f4
-msgid "Basic Fields"
-msgstr "基本字段"
-
-#: ../../guide/toolspace.rst:287 64a7b6d365944aa3b66942b587d8412d
-msgid "Tool Configuration"
-msgstr "工具配置"
-
-#: ../../guide/toolspace.rst:304 a1648b11aeca4945b50149b7258e41c2
-msgid "Prompt Templates"
-msgstr "提示模板"
-
-#: ../../guide/toolspace.rst:316 a9b7246421e44fb9b4d0ee3066618590
-msgid "LLM Configuration"
-msgstr "LLM 配置"
-
-#: ../../guide/toolspace.rst:328 41cf28f59ca54a3c91503c3dbd1dad8e
-msgid "Hooks Configuration"
-msgstr "钩子配置"
-
-#: ../../guide/toolspace.rst:346 800ed82ecff74b1dadd435aaf8d3cd9c
-msgid "Environment Variables"
-msgstr "环境变量"
-
-#: ../../guide/toolspace.rst:356 b5e988382ede464c9408c2f70636c216
-msgid "Usage Instructions"
-msgstr "使用说明"
+#: ../../guide/toolspace.rst:111 cf7274e67d1447bbb018f61c05649087
+msgid ""
+"When ``--load`` is used, your workspace ``profile.yaml`` is the base and "
+"the loaded file overrides only what it specifies."
+msgstr ""
 
 #~ msgid "Sharing Configurations"
 #~ msgstr "共享配置"
@@ -345,11 +220,13 @@ msgstr "使用说明"
 #~ msgstr "配置与覆盖"
 
 #~ msgid ""
-#~ "This completes the Space documentation. The system provides a powerful and "
-#~ "flexible way to manage tool configurations, making it easy to share research"
-#~ " setups and maintain consistent workflows across different projects."
-#~ msgstr ""
-#~ "这部分空间文档已完成。该系统提供了一种强大且灵活的方式来管理工具配置，使得共享研究设置变得更加容易，并能够在不同项目之间保持一致的工作流程。"
+#~ "This completes the Space documentation. "
+#~ "The system provides a powerful and "
+#~ "flexible way to manage tool "
+#~ "configurations, making it easy to share"
+#~ " research setups and maintain consistent"
+#~ " workflows across different projects."
+#~ msgstr "这部分空间文档已完成。该系统提供了一种强大且灵活的方式来管理工具配置，使得共享研究设置变得更加容易，并能够在不同项目之间保持一致的工作流程。"
 
 #~ msgid "**Sharing**: Easy sharing via HuggingFace Hub, GitHub, or local files"
 #~ msgstr "**共享**：通过 HuggingFace Hub、GitHub 或本地文件轻松共享"
@@ -368,3 +245,150 @@ msgstr "使用说明"
 
 #~ msgid "Validate from command line:"
 #~ msgstr "从命令行验证："
+
+#~ msgid "Space Configuration System"
+#~ msgstr "空间配置系统"
+
+#~ msgid ""
+#~ "Space is a powerful configuration system"
+#~ " that allows you to easily load, "
+#~ "share, and manage tool configurations "
+#~ "for ToolUniverse. It supports both "
+#~ "simple presets and complex workspaces "
+#~ "with AI integration."
+#~ msgstr ""
+#~ "Space 是一个强大的配置系统，可让您轻松加载、共享和管理 ToolUniverse "
+#~ "的工具配置。它同时支持简单的预设和具有 AI 集成的复杂工作空间。"
+
+#~ msgid "Load a Space configuration in just one line:"
+#~ msgstr "只需一行代码即可加载空间配置："
+
+#~ msgid "Command Line Usage"
+#~ msgstr "命令行使用"
+
+#~ msgid "Use Space configurations with MCP servers:"
+#~ msgstr "使用空间配置与MCP服务器："
+
+#~ msgid "What is Space?"
+#~ msgstr "什么是空间？"
+
+#~ msgid ""
+#~ "Space is a unified system for "
+#~ "managing tool configurations that supports:"
+#~ msgstr "Space 是一个统一的系统，用于管理工具配置，支持："
+
+#~ msgid "**Presets**: Simple tool collections for specific domains"
+#~ msgstr "**预设**：针对特定领域的简单工具集合"
+
+#~ msgid ""
+#~ "**Workspaces**: Complete environments with "
+#~ "tools, AI config, and workflows"
+#~ msgstr "**工作空间**：包含工具、AI配置和工作流程的完整环境"
+
+#~ msgid ""
+#~ "**Sharing**: Easy sharing via HuggingFace "
+#~ "Hub, HTTP URLs, or local files"
+#~ msgstr "**共享**：通过 HuggingFace Hub、HTTP URL 或本地文件轻松共享"
+
+#~ msgid "**Versioning**: Support for versioned configurations"
+#~ msgstr "**版本控制**：支持版本化配置"
+
+#~ msgid "**Validation**: Built-in configuration validation"
+#~ msgstr "**验证**：内置配置验证"
+
+#~ msgid "Configuration Types"
+#~ msgstr "配置类型"
+
+#~ msgid "Preset (Simple)"
+#~ msgstr "预设（简单）"
+
+#~ msgid "A preset is a collection of tools with basic configuration:"
+#~ msgstr "预设是一组具有基本配置的工具集合："
+
+#~ msgid "Workspace (Advanced)"
+#~ msgstr "工作区（高级）"
+
+#~ msgid "A workspace includes tools plus AI configuration and workflows:"
+#~ msgstr "工作区包括工具、AI配置和工作流程："
+
+#~ msgid "Loading Configurations"
+#~ msgstr "加载配置"
+
+#~ msgid "HuggingFace Hub"
+#~ msgstr "HuggingFace 资源库"
+
+#~ msgid "Load configurations from HuggingFace Hub:"
+#~ msgstr "从 HuggingFace Hub 加载配置："
+
+#~ msgid "Local Files"
+#~ msgstr "本地文件"
+
+#~ msgid "Load from local files:"
+#~ msgstr "从本地文件加载："
+
+#~ msgid "HTTP URLs"
+#~ msgstr "HTTP URL"
+
+#~ msgid "Load from any HTTP URL:"
+#~ msgstr "从任何 HTTP URL 加载："
+
+#~ msgid "Configuration Overrides"
+#~ msgstr "配置覆盖"
+
+#~ msgid "Override Space settings with parameters:"
+#~ msgstr "使用参数覆盖空间设置："
+
+#~ msgid "Configuration Merging"
+#~ msgstr "配置合并"
+
+#~ msgid "Command line arguments take priority over Space configuration:"
+#~ msgstr "命令行参数优先于Space配置。"
+
+#~ msgid "Creating Configurations"
+#~ msgstr "创建配置"
+
+#~ msgid "Basic Preset"
+#~ msgstr "基础预设"
+
+#~ msgid "Create a simple preset:"
+#~ msgstr "创建一个简单的预设："
+
+#~ msgid "Create a complete workspace:"
+#~ msgstr "创建完整的工作空间："
+
+#~ msgid "Configuration Validation"
+#~ msgstr "配置验证"
+
+#~ msgid "Validate configurations before using:"
+#~ msgstr "在使用前验证配置："
+
+#~ msgid "Command Line Validation"
+#~ msgstr "命令行验证"
+
+#~ msgid "Validate from command line using Python:"
+#~ msgstr "使用 Python 从命令行进行验证："
+
+#~ msgid "Configuration Schema"
+#~ msgstr "配置架构"
+
+#~ msgid "Basic Fields"
+#~ msgstr "基本字段"
+
+#~ msgid "Tool Configuration"
+#~ msgstr "工具配置"
+
+#~ msgid "Prompt Templates"
+#~ msgstr "提示模板"
+
+#~ msgid "LLM Configuration"
+#~ msgstr "LLM 配置"
+
+#~ msgid "Hooks Configuration"
+#~ msgstr "钩子配置"
+
+#~ msgid "Environment Variables"
+#~ msgstr "环境变量"
+
+#~ msgid "Usage Instructions"
+#~ msgstr "使用说明"
+

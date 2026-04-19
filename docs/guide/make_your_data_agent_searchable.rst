@@ -193,9 +193,8 @@ Use this when you want explicit IDs and metadata.
 
 Produces the same ``cardiology_tutorial.db`` and ``cardiology_tutorial.faiss`` artifacts as QuickBuild.
 Note: 
-* **Required:** `doc_key` (unique per collection), `text`
-* **Optional:** `metadata` (any JSON object), `text_hash` (string)
----
+* **Required:** ``doc_key`` (unique per collection), ``text``
+* **Optional:** ``metadata`` (any JSON object), ``text_hash`` (string)
 
 4. Create the agent tool for your collection
 -----------------------------------------
@@ -209,10 +208,10 @@ Save as ``cardiology_expert_search.json``:
 
    [
      {
-       "name": "cardiology_expert_search", # choose an appropriate name for your tool
-       "description": "Searches comprehensive cardiology knowledge base for clinical information about EKG interpretation, arrhythmias, cardiac physiology, and case studies.",  # make sure "description" is as detailed as possible so the agent gets a good explanation of what your data is
+       "name": "cardiology_expert_search",
+       "description": "Searches comprehensive cardiology knowledge base for clinical information about EKG interpretation, arrhythmias, cardiac physiology, and case studies.",
        "type": "EmbeddingCollectionSearchTool",
-       "fields": {"collection": "cardiology_tutorial"}, # name of the data collection this tool will look into
+       "fields": {"collection": "cardiology_tutorial"},
        "parameter": {
          "type": "object",
          "properties": {
@@ -341,9 +340,6 @@ How it works
 
 * Using the above commands, ToolUniverse syncs your local datastore, the `.db` and `.faiss` files (e.g. `<user_cache_dir>/embeddings/cardiology_tutorial.db` and `<user_cache_dir>/embeddings/cardiology_tutorial.faiss`) and associated JSON tools you create to search the associated `.db` and `.faiss` (e.g. `cardiology_expert_search.json`) directly with your **Hugging Face account**. This way others can download and use the exact same searchable dataset you built with ToolUniverse agents — complete with your embeddings and metadata.
 
--------------------------------------------------------------
-
-
 7. Understanding the three search methods
 -----------------------------------------
 
@@ -378,13 +374,21 @@ Blends keyword and embedding scores. Documents must be relevant on BOTH dimensio
 
 **Comparison:**
 
-| Method | Strength | Use Case |
-|--------|----------|----------|
-| **Keyword** | Fast, exact | Technical queries with known terms |
-| **Embedding** | Understands meaning | Natural language, conceptual queries |
-| **Hybrid** | Both (agents use this) | Recommended for agents; combines precision + recall |
+.. list-table:: Search Method Comparison
+   :header-rows: 1
 
----
+   * - Method
+     - Strength
+     - Use Case
+   * - **Keyword**
+     - Fast, exact
+     - Technical queries with known terms
+   * - **Embedding**
+     - Understands meaning
+     - Natural language, conceptual queries
+   * - **Hybrid**
+     - Both (agents use this)
+     - Recommended for agents; combines precision + recall
 
 
 Optional
@@ -582,5 +586,4 @@ These optional tests pass for all supported providers once credentials are set.
 ---
 
 With these steps, your data becomes **searchable, agent-ready, and shareable** — powering everything from local testing to public, reproducible ToolUniverse tools.
-
 

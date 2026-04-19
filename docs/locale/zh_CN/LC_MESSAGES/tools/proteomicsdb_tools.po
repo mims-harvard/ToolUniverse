@@ -1,0 +1,274 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/proteomicsdb_tools.rst:10 bf93c7d7e9a242fbb60e72c714dd25b1
+msgid "Proteomicsdb Tools"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:12 dd9b501a73be46b0b6a5e6f1354fa767
+msgid ""
+"**Configuration File**: ``proteomicsdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:16 a14912d56e284dc88db8709a6ba1cdec
+msgid ""
+"This page contains all tools defined in the ``proteomicsdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:19 3471747087024bf6b57cbf6a738c3470
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:22 d2072742c1de4cf1bdf4ae439ded4dc8
+msgid "**ProteomicsDB_get_expression_summary** (Type: ProteomicsDBTool)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:24 f8f3e65c85de4920ab75a49044b2e092
+msgid ""
+"Get a tissue expression summary for a protein from ProteomicsDB, showing "
+"the top tissues/cell lin..."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst 4fd7d9ad8a4d4c7fa62703a97bbfdc34
+msgid "ProteomicsDB_get_expression_summary tool specification"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:28 ../../tools/proteomicsdb_tools.rst:66
+#: ../../tools/proteomicsdb_tools.rst:107
+#: ../../tools/proteomicsdb_tools.rst:141 318bca30d87748648bf1973ab3903eaf
+#: 34c38d9736ea49aa920cadc9712865f7 9f6bab26c17c497ab65b122069bf9f52
+#: feb4fe324a7f47cdbdf37c88e25e56b9
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:30 b2b003240436460ebd6723854f2dd655
+msgid "**Name**: ``ProteomicsDB_get_expression_summary``"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:31 ../../tools/proteomicsdb_tools.rst:69
+#: ../../tools/proteomicsdb_tools.rst:110
+#: ../../tools/proteomicsdb_tools.rst:144 240871fbfbfd4d75922b0f49dde5dd89
+#: 4ff992dc938a49ee83c1580498601de2 544122870a55405097ac29c49ef51efc
+#: f3fe5ae8c26748fab994c9282899ed56
+msgid "**Type**: ``ProteomicsDBTool``"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:32 a71c4829c29948d2b2c62bcecc75a2e5
+msgid ""
+"**Description**: Get a tissue expression summary for a protein from "
+"ProteomicsDB, showing the top tissues/cell lines/fluids ranked by MS-"
+"based expression level. Given a UniProt accession, returns the top N "
+"biological sources where the protein is most highly expressed (by iBAQ "
+"quantification), along with total counts of tissues, cell lines, and body"
+" fluids where the protein was detected. Useful for quickly identifying "
+"which tissues/cell lines express a protein most abundantly based on mass "
+"spectrometry evidence. Complements antibody-based tissue expression from "
+"HPA."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:34 ../../tools/proteomicsdb_tools.rst:72
+#: ../../tools/proteomicsdb_tools.rst:113
+#: ../../tools/proteomicsdb_tools.rst:147 2e342105dc334f3a96edcd3e6c42cab8
+#: 3921bf21255a48edba57c013e8254056 444c91fae7cf4a7b93f39d1a19310af7
+#: 92612300593a442d95d581e169cb057a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:36 ../../tools/proteomicsdb_tools.rst:74
+#: ../../tools/proteomicsdb_tools.rst:115
+#: ../../tools/proteomicsdb_tools.rst:149 396342de26544cddafffe49b5242858b
+#: b93d9fdea4694dfba177b852e032fb86 bc1a194d157e41f59dc95ec93713b538
+#: cd5e64179a6e4fd3b942478552d9273c
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:39 3042ae9f0b924ee18fb6cf0313284f67
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession for the protein "
+"(e.g., 'P04637' for TP53, 'P00533' for EGFR)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:42 5ad21e75421e4cfca2b804576b4657b3
+msgid ""
+"``top_n`` (integer) (optional) Number of top tissues to return, ranked by"
+" expression level (default: 10)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:45 ../../tools/proteomicsdb_tools.rst:86
+#: ../../tools/proteomicsdb_tools.rst:121
+#: ../../tools/proteomicsdb_tools.rst:161 0f8001b305b745b3b711c41141aa4e78
+#: 2a1fe9b488ec4cee81ee370ab2ceb4dc 2cbabbdedff44f2aa5e60ba982f84974
+#: 30d67eb8aed1478a8caf8c3f2e874e52
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:60 f00bc0cb8c6a471497afbb3e992c11fc
+msgid "**ProteomicsDB_get_protein_expression** (Type: ProteomicsDBTool)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:62 181b25ec027a45d9827e3721c411c0eb
+msgid ""
+"Get mass spectrometry-based protein expression data across human tissues,"
+" cell lines, and body fl..."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst eccf996cfa0a4e409cc8dd7dda2dee30
+msgid "ProteomicsDB_get_protein_expression tool specification"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:68 7e9862e959be43608f7e9a8f58f56c2d
+msgid "**Name**: ``ProteomicsDB_get_protein_expression``"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:70 edda13c12974431c80d8692e514e767a
+msgid ""
+"**Description**: Get mass spectrometry-based protein expression data "
+"across human tissues, cell lines, and body fluids from ProteomicsDB. "
+"Given a UniProt accession (e.g., P04637 for TP53), returns quantitative "
+"expression values (log10 iBAQ or TOP3) for each biological source where "
+"the protein was detected. ProteomicsDB provides MS-based proteomics data "
+"complementary to antibody-based expression in HPA and cancer proteomics "
+"in PDC. Filter by tissue category (tissue, cell line, fluid) and "
+"calculation method (iBAQ, TOP3). Expression values are log10-transformed "
+"normalized intensities. Returns tissue name, group, category, and "
+"expression statistics per source."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:77 07cc15ae44624ffc8a5941ae9e380479
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession for the protein "
+"(e.g., 'P04637' for TP53, 'P00533' for EGFR, 'P01116' for KRAS)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:80 44efe9f3ca37460287fdd7bb63211c59
+msgid ""
+"``tissue_category`` (string) (optional) Filter by biological source "
+"category. 'tissue' for normal tissues, 'cell line' for cell lines, "
+"'fluid' for body fluids, 'all' for everything. Default: all."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:83 7fbb558fcf4646ffb1b946515d61944b
+msgid ""
+"``calculation_method`` (string) (optional) Protein quantification method."
+" iBAQ (intensity-Based Absolute Quantification) or TOP3 (sum of top 3 "
+"peptide intensities). Default: iBAQ."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:101 482b579c65ae4f18af29b3dbb7a6241c
+msgid "**ProteomicsDB_list_tissues** (Type: ProteomicsDBTool)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:103 e5842b5a93264ff5adff54bc4ddff42a
+msgid ""
+"List all available tissues, cell lines, and body fluids in ProteomicsDB "
+"with their BTO ontology I..."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst f92ca6614a69479386b98f50a466912c
+msgid "ProteomicsDB_list_tissues tool specification"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:109 2be8a38bb9ee4ea7a80c612e801cb105
+msgid "**Name**: ``ProteomicsDB_list_tissues``"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:111 ce98716410624f44a6ada2bb48345bf2
+msgid ""
+"**Description**: List all available tissues, cell lines, and body fluids "
+"in ProteomicsDB with their BTO ontology IDs, names, categories, and "
+"anatomical groupings. Optionally filter by category (tissue, cell line, "
+"or fluid). Returns the full catalog of biological sources for which "
+"ProteomicsDB has mass spectrometry-based proteomics data, including "
+"tissue ID (BTO identifier), name, category, and anatomical group. Useful "
+"for discovering what biological sources are available before querying "
+"specific protein expression data."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:118 59de50771c4642bbab6d28a4116cdce3
+msgid ""
+"``tissue_category`` (string) (optional) Filter by biological source "
+"category. Optional - omit to list all categories."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:135 1059bbc11c8a477b8e77911d9b16671d
+msgid "**ProteomicsDB_search_proteins** (Type: ProteomicsDBTool)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:137 6324ec61cda546a6a8d7d4f385f77e69
+msgid ""
+"Search ProteomicsDB for proteins by gene symbol, UniProt accession, or "
+"protein name. ProteomicsDB..."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst 1bd0bb347f604214b53128b3db879f8c
+msgid "ProteomicsDB_search_proteins tool specification"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:143 de57a634587b413798e13b149d13b87d
+msgid "**Name**: ``ProteomicsDB_search_proteins``"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:145 1795f4837061488ea23223d8de8b6c9c
+msgid ""
+"**Description**: Search ProteomicsDB for proteins by gene symbol, UniProt"
+" accession, or protein name. ProteomicsDB contains mass spectrometry-"
+"based proteomics data for human (and other organisms) proteins. Returns "
+"matching protein entries with UniProt IDs, gene names, protein names, "
+"entry names, and molecular masses. Useful for finding the correct UniProt"
+" accession before querying expression data with "
+"ProteomicsDB\\_get\\_protein\\_expression. Searches across gene name, "
+"UniProt ID, and protein name fields simultaneously."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:152 861e74fa53b844909fac0eb1e739d5c4
+msgid ""
+"``query`` (string) (required) Search term - gene symbol (e.g., 'KRAS', "
+"'TP53'), UniProt ID (e.g., 'P04637'), or protein name keyword (e.g., "
+"'kinase', 'GTPase KRas')"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:155 446b7e58c5834dd999d432641a230ed5
+msgid ""
+"``organism_id`` (integer) (optional) NCBI taxonomy ID for organism "
+"filter. Default: 9606 (human). Other options: 10090 (mouse), 10116 (rat)."
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:158 ffb035281cfc4489b9957972e8293230
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 100)"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:176 cbc42a790a59417b97390966e5fcb64d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:178 7f59edaf14934f2bb588a618aa76e375
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/proteomicsdb_tools.rst:179 d37fd4da45af463097f15f5d1c2860cf
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

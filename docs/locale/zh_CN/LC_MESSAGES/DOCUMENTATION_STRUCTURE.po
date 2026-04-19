@@ -1,0 +1,77 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../DOCUMENTATION_STRUCTURE.md:1 36ea36ba55f047e482f809bd57d200a8
+msgid "Documentation Structure"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:3 937f8f8aa53a4258bfd3b3ede69b8bfa
+msgid ""
+"This document describes how the docs folder is organized to match the "
+"doctree (sidebar navigation)."
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:5 118a3c82e2df4512a5f89642388336ee
+msgid "Overview"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:63 6c5f3a026a414e5c833477fad485dd39
+msgid "Doctree Sections"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:65 5ed60f41055c4e7bb8e71a078291be55
+msgid ""
+"**Get Started**: `guide/python_guide`, "
+"`guide/building_ai_scientists/index`, `guide/skills_showcase`, "
+"`guide/api_keys`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:66 80953be934d7402a8e274e19dc162935
+msgid ""
+"**Tutorials & Advanced**: `guide/index` and all tutorial/advanced pages "
+"under `guide/`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:67 62be89d88b274a1fa44048bee95631f5
+msgid "**Expand ToolUniverse**: `expand_tooluniverse/`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:68 28682ee874bd4773bd0ef8c0abaf1e02
+msgid "**Tools Catalog**: `tools/`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:69 72a89f7c409841f9b7a074c9c98f23b6
+msgid "**API Reference**: `api/`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:70 8247a4f832a7476b97729a5a0d6f181c
+msgid ""
+"**Help & Reference**: `reference/`, `help/`, `about/`, "
+"`expand_tooluniverse/reference/`"
+msgstr ""
+
+#: ../../DOCUMENTATION_STRUCTURE.md:72 023a553629bc4496a1cf1bd5abd45137
+msgid ""
+"Files live in the same directory as their doctree siblings so the folder "
+"structure matches the sidebar."
+msgstr ""
+

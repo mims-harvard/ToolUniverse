@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/visualization_tutorial.rst:2 7edda166ffeb4ae7ab83a6bca9b5dbf2
+msgid "Scientific Visualization Tools"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:4 b5bc40d2925b4ce4aee96852293de57a
+msgid ""
+"ToolUniverse provides simple and powerful visualization tools for "
+"proteins and molecules. Generate beautiful interactive HTML "
+"visualizations with just a few lines of code."
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:7 a2eceaa1b3e94390aef48c1e4f424a00
+msgid "Quick Start"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:28 554ad60f759d40d29f849d798eed4909
+msgid "Installation"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:30 19f79967dc5d46f6b613fc9f35e45804
+msgid "Install with visualization dependencies:"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:37 6f2e08070f6a4971a5d601ebc1fec607
+msgid "Available Tools"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:40 c6e6ae2451454b8da71881a2d2652c1f
+msgid "1. Protein 3D Visualization"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:42 abdf43751fbe464e8cd789adcd41fba8
+msgid "**Tool:** ``visualize_protein_structure_3d``"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:44 ef669664d1b846ca8a5fea56f0f17328
+msgid "Visualize 3D protein structures from PDB database."
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:46
+#: ../../guide/visualization_tutorial.rst:69
+#: ../../guide/visualization_tutorial.rst:92 051723b496d44f40879d7e004711046f
+#: 12e83ed6def14e6e9b5c66d198d8ec4d 7371a5c5c8bd4f728f56bd57d60a8832
+msgid "**Basic Usage:**"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:55 d77bf819b87d4a73b50220fc58199a37
+msgid ""
+"**Options:** - ``pdb_id``: PDB ID (e.g., \"1CRN\", \"7CGO\") - ``style``:"
+" \"cartoon\", \"stick\", \"sphere\", \"line\" (default: \"cartoon\") - "
+"``color_scheme``: \"spectrum\", \"rainbow\", \"ssPyMOL\" (default: "
+"\"spectrum\") - ``width``: Width in pixels (default: 800) - ``height``: "
+"Height in pixels (default: 600)"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:63 1a845a5dec1848268439450b411a6740
+msgid "2. Molecule 2D Visualization"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:65 2f3651d6b0b040148e374fcbc2bff9c4
+msgid "**Tool:** ``visualize_molecule_2d``"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:67 74d4045bb2364bbaa76ca31ecd4f1926
+msgid "Generate 2D molecular structure images."
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:78 76b271de06af479ab2e4712a96c01440
+msgid ""
+"**Options:** - ``smiles``: SMILES string (e.g., \"CCO\" for ethanol) - "
+"``molecule_name``: Common name (e.g., \"aspirin\", \"caffeine\") - "
+"``width``: Width in pixels (default: 400) - ``height``: Height in pixels "
+"(default: 400) - ``output_format``: \"png\" or \"svg\" (default: \"png\")"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:86 301463b73d9f4d46b045a12d66486948
+msgid "3. Molecule 3D Visualization"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:88 96a8a570dc034c90802b022729df3f2e
+msgid "**Tool:** ``visualize_molecule_3d``"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:90 005f972d316e4accac1b9244936d282b
+msgid "Create interactive 3D molecular structures."
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:101 db853ba5fd2d463680418357c7fc0e12
+msgid ""
+"**Options:** - ``smiles``: SMILES string - ``style``: \"stick\", "
+"\"sphere\", \"cartoon\", \"line\", \"spacefill\" (default: \"stick\") - "
+"``color_scheme``: \"default\", \"spectrum\", \"rainbow\" (default: "
+"\"default\") - ``width``: Width in pixels (default: 800) - ``height``: "
+"Height in pixels (default: 600)"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:109 f1a28102d23549909120bbb3fe4149d6
+msgid "Output Format"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:111 d5062b03a93e44dc91f9c76af14dc79c
+msgid "All tools return the same format:"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:126 e2ec93bc3306465ca6b11f23507b4c9b
+msgid "Examples"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:128 2252eb78eca14c418efa63e910c080ba
+msgid "Run the examples:"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:139 6ffada3905b2468c80315859020466b0
+msgid "Common Examples"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:141 516e7e0126554eddb8115a0968b6d1dd
+msgid "**Visualize different proteins:**"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:154 904db9fa970d477cb44f4c72a98e0ebe
+msgid "**Visualize different molecules:**"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:168 6fe57d6461054f1f8a5bd94dfa883ec4
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:170 ddb0d686572e441daf31cd73a24a3b80
+msgid "**Common Issues:**"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:172 cc7f872db05f43838ce0cb7b3db15389
+msgid "**Missing dependencies:** .. code-block:: bash"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:175 1ec8274f892545c1a0eeeed6c0f9973c
+msgid "pip install py3Dmol rdkit"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:177 9ec31cab3e5540e5a52e5a703b7cb44d
+msgid "**Invalid SMILES:** - Check SMILES syntax - Use valid chemical notation"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:181 c0704394378b401293e4b01648a138eb
+msgid ""
+"**PDB ID not found:** - Verify PDB ID exists at https://www.rcsb.org/ - "
+"Check spelling"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:185 fdc5ae97276d4c2fba5253489cee8368
+msgid ""
+"**Performance Tips:** - Use smaller dimensions for large molecules - "
+"Disable surface rendering for better performance"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:190 a3e2f54f450249e8bf79704a14490fb8
+msgid "Resources"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:192 baf5102c31344c308443e82c5dfddfa6
+msgid "`PDB Database <https://www.rcsb.org/>`_"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:193 2f89e6ae2c26439d9349306a60659a2d
+msgid "`PubChem Database <https://pubchem.ncbi.nlm.nih.gov/>`_"
+msgstr ""
+
+#: ../../guide/visualization_tutorial.rst:194 289238b642574216968c850d733e6efb
+msgid "`RDKit Documentation <https://www.rdkit.org/docs/>`_"
+msgstr ""
+

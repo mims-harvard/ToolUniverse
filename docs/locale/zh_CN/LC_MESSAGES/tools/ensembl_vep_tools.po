@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_vep_tools.rst:10 723eca9223a749289a4ce08bb86b90c0
+msgid "Ensembl Vep Tools"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:12 71992cbe71014277ba8b39631cd79b73
+msgid ""
+"**Configuration File**: ``ensembl_vep_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:16 a07c9077fb6340a990f884ef865a6559
+msgid ""
+"This page contains all tools defined in the ``ensembl_vep_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:19 510a36c655c34022826a00027c8465b7
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:22 c5bef7482c2c48729d2b0be25d08e20d
+msgid "**EnsemblVEP_annotate_hgvs** (Type: EnsemblVEPTool)"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:24 5fd097062d8d429191b5e1742597a550
+msgid ""
+"Predict functional consequences of a genetic variant using HGVS notation "
+"via the Ensembl Variant ..."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst 50249b8ba6044796aa4e99e11547d228
+msgid "EnsemblVEP_annotate_hgvs tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:28 ../../tools/ensembl_vep_tools.rst:62
+#: ../../tools/ensembl_vep_tools.rst:101 75a30da163f8456e80d2dcca62898286
+#: dc66f1f757134d9c91b809938bf5aae1 e073fead1b9f4aab80560aded8e4b5e6
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:30 84a5d60fca0a409b9a687af22e17ee2a
+msgid "**Name**: ``EnsemblVEP_annotate_hgvs``"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:31 ../../tools/ensembl_vep_tools.rst:65
+#: ../../tools/ensembl_vep_tools.rst:104 5ef9c432d25e403cac2be552a8f83c1e
+#: 7faab4bc184645a8af5e8f2559bc8da2 d2a27666e5284f8bb05b7b055ff98f6b
+msgid "**Type**: ``EnsemblVEPTool``"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:32 f49d8bc0f06241ba90c11a008edc8921
+msgid ""
+"**Description**: Predict functional consequences of a genetic variant "
+"using HGVS notation via the Ensembl Variant Effect Predictor (VEP). "
+"Returns impact on genes, transcripts, and proteins including "
+"SIFT/PolyPhen pathogenicity scores, consequence types, amino acid "
+"changes, and colocated known variants. HGVS notation examples: "
+"'BRAF:p.Val600Glu' (protein), 'ENST00000366667:c.803C>T' (coding DNA). "
+"This complements the existing region-based VEP tool by accepting standard"
+" clinical variant nomenclature."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:34 ../../tools/ensembl_vep_tools.rst:68
+#: ../../tools/ensembl_vep_tools.rst:107 2c43d9467e574dc0a0c98e3be9b2a1c3
+#: 578f167bdaa4444c8d2daddcb38c7d8a a9b76b56bd3a45e0af0faf0d66a41236
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:36 3afb2751f68d4a1d9500930d319b741e
+msgid ""
+"``hgvs_notation`` (string) (required) Variant in HGVS notation. Supports "
+"protein (p.), coding DNA (c.), and genomic (g.) notation. Examples: "
+"'BRAF:p.Val600Glu', 'ENST00000366667:c.803C>T', "
+"'NC\\_000007.14:g.140753336A>T'."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:39 f247979bc3f549aab325431689b93b78
+msgid ""
+"``species`` (string) (optional) Species name. Default: 'human'. Other "
+"options: 'mouse', 'rat', 'zebrafish', etc."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:42 ../../tools/ensembl_vep_tools.rst:82
+#: ../../tools/ensembl_vep_tools.rst:115 d4e2c1ea2b674ba58c36ab4b603628b3
+#: dfed7774fcd149539d33c6b86dc9843c e761948757104c1fa9c40fec80e4fb67
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:56 169acfb5c50a477f9d1ced8aff13c5fc
+msgid "**EnsemblVEP_annotate_rsid** (Type: EnsemblVEPTool)"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:58 405a8b0972e6487c96a01cbb1f2dc1a4
+msgid ""
+"Predict functional consequences of a genetic variant using its dbSNP rs "
+"identifier via the Ensemb..."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst cf7d89f4ccbd448f9dc1aae544ad778a
+msgid "EnsemblVEP_annotate_rsid tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:64 f7be121f8fc34b6496f63ef2d9c56a97
+msgid "**Name**: ``EnsemblVEP_annotate_rsid``"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:66 77c0baad9b6d4c25a1e9ba1467396b7e
+msgid ""
+"**Description**: Predict functional consequences of a genetic variant "
+"using its dbSNP rs identifier via the Ensembl Variant Effect Predictor "
+"(VEP). Returns impact on genes, transcripts, and proteins including "
+"SIFT/PolyPhen scores, consequence types, amino acid changes, and "
+"colocated variants. Useful when you have a variant's rs number from GWAS,"
+" clinical reports, or literature. Example: 'rs7903146' (TCF7L2 T2D "
+"variant), 'rs429358' (APOE Alzheimer variant)."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:70 92960252f0734b51b53e765522c93e49
+msgid ""
+"``variant_id`` (string) (optional) dbSNP rs identifier. Examples: "
+"'rs7903146' (TCF7L2, type 2 diabetes), 'rs429358' (APOE, Alzheimer's), "
+"'rs1801133' (MTHFR C677T). Aliases: rsid, rs\\_id."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:73 e35d9b3f21d440a6ac76bde792ffe206
+msgid ""
+"``rsid`` (string) (optional) Alias for variant\\_id. dbSNP rs identifier "
+"(e.g., 'rs7903146')."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:76 df36dc7e14cd456da374fb8b33f2a70d
+msgid ""
+"``rs_id`` (string) (optional) Alias for variant\\_id. dbSNP rs identifier"
+" (e.g., 'rs7903146')."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:79 ../../tools/ensembl_vep_tools.rst:112
+#: 2fab3fa93c2544c89b7551077f0ca5df caab18b02dcd423ca73b8c37103f4573
+msgid "``species`` (string) (optional) Species name. Default: 'human'."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:95 9d8441a7e979448f86717f0a9c835ab4
+msgid "**EnsemblVEP_variant_recoder** (Type: EnsemblVEPTool)"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:97 604eee239cd84ad0a7444dec7be02739
+msgid ""
+"Convert genetic variant identifiers between different nomenclature "
+"formats using the Ensembl Vari..."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst aa5f0f443d7b42f88f8da2c28a3528f5
+msgid "EnsemblVEP_variant_recoder tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:103 1b0edce812c04149bed2d0d6901477c3
+msgid "**Name**: ``EnsemblVEP_variant_recoder``"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:105 19a1894407cf4051a5c30afc0ef3ea7b
+msgid ""
+"**Description**: Convert genetic variant identifiers between different "
+"nomenclature formats using the Ensembl Variant Recoder. Given a variant "
+"ID (e.g., rs number), returns equivalent representations in HGVS genomic "
+"(hgvsg), HGVS coding (hgvsc), HGVS protein (hgvsp), and SPDI format. "
+"Essential for cross-referencing variants across databases that use "
+"different notation systems. Example: 'rs429358' returns HGVS coding "
+"notation for all APOE transcripts."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:109 e93f872f5de945f891f8aa5d5ea17de4
+msgid ""
+"``variant_id`` (string) (required) Variant identifier to recode. Accepts:"
+" rsID (e.g., 'rs429358'), HGVS notation (e.g., 'AGT:c.803T>C'), SPDI "
+"(e.g., 'NC\\_000019.10:44908683:T:C')."
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:129 fc626deb8a6d49e696d4ad2340690c90
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:131 9d8ef44a55344ea8bb22e83c90c617bf
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_vep_tools.rst:132 85a972239db744939a6bdaa524d82e0a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

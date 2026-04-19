@@ -7,43 +7,44 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../guide/hooks/file_save_hook.rst:2 f56b441ed87b46f685043dbe2cae75d1
+#: ../../guide/hooks/file_save_hook.rst:2 8e6bd322fdef4fddbf93c9abcea0ff0d
 msgid "FileSaveHook"
 msgstr "文件保存钩子"
 
-#: ../../guide/hooks/file_save_hook.rst:4 4bfa0553007741f49c6f6915baa362f6
+#: ../../guide/hooks/file_save_hook.rst:4 70fa219e786c47a9a260397a157d97b9
 msgid "**File-based output processing and archiving**"
 msgstr "**基于文件的输出处理与归档**"
 
-#: ../../guide/hooks/file_save_hook.rst:6 93d65b36aef44736a67539ea66361684
+#: ../../guide/hooks/file_save_hook.rst:6 d03e37e1f7804092abd7bc5dbe597aa5
 msgid ""
 "The FileSaveHook saves tool outputs to temporary files and returns file "
-"information instead of the original output. This is ideal for handling large"
-" outputs or when you need to process outputs as files."
+"information instead of the original output. This is ideal for handling "
+"large outputs or when you need to process outputs as files."
 msgstr ""
-"FileSaveHook 将工具输出保存到临时文件中，并返回文件信息，而非原始输出内容。此方法非常适合处理大容量输出或需要将输出作为文件进行处理的场景。"
+"FileSaveHook "
+"将工具输出保存到临时文件中，并返回文件信息，而非原始输出内容。此方法非常适合处理大容量输出或需要将输出作为文件进行处理的场景。"
 
-#: ../../guide/hooks/file_save_hook.rst:9 c765777f7c5848adbe6678eaae2a15dd
+#: ../../guide/hooks/file_save_hook.rst:9 bdbdb846c70e4c899c6700446d9cd638
 msgid "Overview"
 msgstr "概述"
 
-#: ../../guide/hooks/file_save_hook.rst:11 284e5bb1d0564fe99457f19a9870c6a9
+#: ../../guide/hooks/file_save_hook.rst:11 b3328007e793463cb2a319df1c80de71
 msgid ""
-"**What it does:** - Saves tool outputs to temporary files - Analyzes data "
-"format and structure automatically - Returns file metadata (path, size, "
+"**What it does:** - Saves tool outputs to temporary files - Analyzes data"
+" format and structure automatically - Returns file metadata (path, size, "
 "format, structure) - Supports automatic cleanup of old files"
 msgstr ""
 "**功能说明：**  \n"
@@ -52,11 +53,11 @@ msgstr ""
 "- 返回文件元数据（路径、大小、格式、结构）  \n"
 "- 支持自动清理旧文件"
 
-#: ../../guide/hooks/file_save_hook.rst:17 418ebbcb748a45808585779a08cbbb66
+#: ../../guide/hooks/file_save_hook.rst:17 dc6b7b1ce6d343b7b7aa1a0d669b8151
 msgid ""
-"**When to use:** - Very large outputs that exceed memory limits - Processing"
-" outputs as files for external tools - Archiving tool outputs for later "
-"analysis - Reducing memory usage in long-running processes"
+"**When to use:** - Very large outputs that exceed memory limits - "
+"Processing outputs as files for external tools - Archiving tool outputs "
+"for later analysis - Reducing memory usage in long-running processes"
 msgstr ""
 "**使用场景：**  \n"
 "- 输出数据量非常大，超出内存限制时  \n"
@@ -64,191 +65,188 @@ msgstr ""
 "- 归档工具输出以便后续分析时  \n"
 "- 在长时间运行的进程中减少内存使用时"
 
-#: ../../guide/hooks/file_save_hook.rst:24 cd9b58ff281b49929227bdfd876d61ec
+#: ../../guide/hooks/file_save_hook.rst:24 555be29c1ab04e6791619df3d8135f02
 msgid "Quick Start"
 msgstr "快速入门"
 
-#: ../../guide/hooks/file_save_hook.rst:26 5d414cd92fb244cfada5fbc9d9fb99cf
+#: ../../guide/hooks/file_save_hook.rst:26 3d5f6c048f2b430dad10decf99408db3
 msgid "**Simple Usage**"
 msgstr "**简单使用方法**"
 
-#: ../../guide/hooks/file_save_hook.rst:46 4181604a506749c289a44065ca7f6390
+#: ../../guide/hooks/file_save_hook.rst:46 bb45d96007bc49f5ba78e005540cd798
 msgid "**Advanced Configuration**"
 msgstr "**高级配置**"
 
-#: ../../guide/hooks/file_save_hook.rst:74 8dec29f6992347319a03d48421a3a190
+#: ../../guide/hooks/file_save_hook.rst:74 532d9b3b7f5945169f567c25226a6590
 msgid "Configuration Options"
 msgstr "配置选项"
 
-#: ../../guide/hooks/file_save_hook.rst:76 e569d98e0a484161b726443d51f322bb
+#: ../../guide/hooks/file_save_hook.rst:76 a1bb7ea942a7482da7b71d56d6d34755
 msgid ""
 "**Temp Directory** - Directory where files are saved - Default: System "
 "temporary directory - Use absolute paths for custom locations"
 msgstr "**临时目录** - 文件保存的目录 - 默认：系统临时目录 - 自定义位置请使用绝对路径"
 
-#: ../../guide/hooks/file_save_hook.rst:81 fb9431bf5518491a9b62ebb00fadf5c3
+#: ../../guide/hooks/file_save_hook.rst:81 197415cbc1fe41929829af7023cf0d8f
 msgid ""
-"**File Prefix** - Prefix for generated filenames - Default: \"tool_output\" "
-"- Helps organize files by purpose"
+"**File Prefix** - Prefix for generated filenames - Default: "
+"\"tool_output\" - Helps organize files by purpose"
 msgstr "**文件前缀** - 生成文件名的前缀 - 默认值：\"tool_output\" - 有助于按用途组织文件"
 
-#: ../../guide/hooks/file_save_hook.rst:86 dddd3a761f784feb81a1430748db521a
+#: ../../guide/hooks/file_save_hook.rst:86 deb3760db5fe4afc8288375bbea0bddf
 msgid ""
 "**Include Metadata** - Whether to include file metadata in response - "
 "Default: True - Provides file information and context"
 msgstr "**包含元数据** - 是否在响应中包含文件元数据 - 默认值：True - 提供文件信息和上下文"
 
-#: ../../guide/hooks/file_save_hook.rst:91 84c1122382fc43a5b2f9437ee7b5192a
+#: ../../guide/hooks/file_save_hook.rst:91 01ebade2c1384d648f4aff676e414853
 msgid ""
-"**Auto Cleanup** - Automatically remove old files - Default: False - Helps "
-"manage disk space"
+"**Auto Cleanup** - Automatically remove old files - Default: False - "
+"Helps manage disk space"
 msgstr "**自动清理** - 自动删除旧文件 - 默认值：False - 有助于管理磁盘空间"
 
-#: ../../guide/hooks/file_save_hook.rst:96 4aef94fcba1849c1913472641b36a782
+#: ../../guide/hooks/file_save_hook.rst:96 7a0e5075caa84dd1a3aa435e8d1c2b66
 msgid ""
-"**Cleanup Age Hours** - Age threshold for automatic cleanup - Default: 24 "
-"hours - Files older than this are removed"
+"**Cleanup Age Hours** - Age threshold for automatic cleanup - Default: 24"
+" hours - Files older than this are removed"
 msgstr "**清理时长（小时）** - 自动清理的时间阈值 - 默认值：24 小时 - 超过该时长的文件将被删除"
 
-#: ../../guide/hooks/file_save_hook.rst:102 e800fd6cbd5a4bc9a22f80daae66a58b
+#: ../../guide/hooks/file_save_hook.rst:102 61c7fa5960c743679203a696fe9445b7
 msgid "Data Format Detection"
 msgstr "数据格式检测"
 
-#: ../../guide/hooks/file_save_hook.rst:104 cb261e47d06e4840b62f9751cb26f834
+#: ../../guide/hooks/file_save_hook.rst:104 1cc67e02b9874bbcba695fcb874935aa
 msgid "The hook automatically detects and handles different data types:"
 msgstr "该钩子能够自动检测并处理不同的数据类型："
 
-#: ../../guide/hooks/file_save_hook.rst:106 ca70366afea549e0851ee98cb7d354a1
+#: ../../guide/hooks/file_save_hook.rst:106 0c8c6a471c7e4dd9b7e5dba0fb8df70b
 msgid ""
-"**JSON Data** - Dictionaries, lists, JSON strings - Saved as `.json` files -"
-" Structure: \"dict with X keys\", \"list with X items\""
+"**JSON Data** - Dictionaries, lists, JSON strings - Saved as `.json` "
+"files - Structure: \"dict with X keys\", \"list with X items\""
 msgstr ""
 "**JSON 数据** - 字典、列表、JSON 字符串 - 以 `.json` 文件保存 - 结构：“包含 X 个键的字典”、“包含 X "
 "个元素的列表”"
 
-#: ../../guide/hooks/file_save_hook.rst:111 f3f49845c7af45b5b947ffb6d160fe96
+#: ../../guide/hooks/file_save_hook.rst:111 5c404da2b3344627acf533808a391b80
 msgid ""
 "**Text Data** - Plain text, strings - Saved as `.txt` files - Structure: "
 "\"text\", \"string\""
 msgstr "**文本数据** - 纯文本，字符串 - 以 `.txt` 文件保存 - 结构：“text”，“string”"
 
-#: ../../guide/hooks/file_save_hook.rst:116 1cd66c1848c547a9a71f68d8154fe970
+#: ../../guide/hooks/file_save_hook.rst:116 178610011c0446c7a0dabcac9aad0e9f
 msgid ""
 "**Binary Data** - Non-text data - Saved as `.bin` files - Structure: "
 "\"binary\", \"data\""
 msgstr "**二进制数据** - 非文本数据 - 以 `.bin` 文件保存 - 结构：“binary”，“data”"
 
-#: ../../guide/hooks/file_save_hook.rst:121 6b738cd70dbb4a64afe516c5d7580cd2
+#: ../../guide/hooks/file_save_hook.rst:121 d075ca66fb794a9d9f4eca94bcf5efdc
 msgid ""
-"**Other Formats** - Custom data types - Saved with appropriate extensions - "
-"Structure: \"custom\", \"unknown\""
+"**Other Formats** - Custom data types - Saved with appropriate extensions"
+" - Structure: \"custom\", \"unknown\""
 msgstr "**其他格式** - 自定义数据类型 - 以相应扩展名保存 - 结构：\"custom\"、\"unknown\""
 
-#: ../../guide/hooks/file_save_hook.rst:127 6b09cadf92494ce78cfae098e0f885f8
+#: ../../guide/hooks/file_save_hook.rst:127 3d38a14ac7d949109ec430cac344d9c7
 msgid "Examples"
 msgstr "示例"
 
-#: ../../guide/hooks/file_save_hook.rst:129 4b4d35170f4a43be93b7ce243678da80
+#: ../../guide/hooks/file_save_hook.rst:129 a68593f979574e049a7d7e6bc70ce9b4
 msgid "**Large Dataset Processing**"
 msgstr "**大规模数据集处理**"
 
-#: ../../guide/hooks/file_save_hook.rst:153 404b5256b9a64b8c8add68a8509f5371
+#: ../../guide/hooks/file_save_hook.rst:153 7ceaa66a5ffd468590719b8fdf127cd2
 msgid "**Custom Directory and Cleanup**"
 msgstr "**自定义目录与清理**"
 
-#: ../../guide/hooks/file_save_hook.rst:177 02c1ace1dde045f3876c9321d04c5e1c
+#: ../../guide/hooks/file_save_hook.rst:177 03b4ef42953e42e6a7c17d23c3fae256
 msgid "**External Tool Integration**"
 msgstr "**外部工具集成**"
 
-#: ../../guide/hooks/file_save_hook.rst:197 f7eaa06ad6d24a02a192c5d64e177e7b
+#: ../../guide/hooks/file_save_hook.rst:197 eb11d4f83dbd4ccab163c71d15389960
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../guide/hooks/file_save_hook.rst:199 11f50c771d6a4bc79d5616f333d2bcdd
+#: ../../guide/hooks/file_save_hook.rst:199 5262492b03d743fd9d261f95c50da75d
 msgid ""
-"**File Permission Errors** - Ensure directory exists and is writable - Check"
-" file permissions and ownership - Use absolute paths for temp directories"
+"**File Permission Errors** - Ensure directory exists and is writable - "
+"Check file permissions and ownership - Use absolute paths for temp "
+"directories"
 msgstr "**文件权限错误** - 确保目录存在且可写 - 检查文件权限和所有权 - 对临时目录使用绝对路径"
 
-#: ../../guide/hooks/file_save_hook.rst:204 3f01e62f48c94f6cb03c912463f858d9
+#: ../../guide/hooks/file_save_hook.rst:204 7dfebcf3f9b045919ef976255aead713
 msgid ""
-"**Memory Issues** - Use FileSaveHook for large outputs - Enable auto-cleanup"
-" for temporary files - Monitor disk space usage"
+"**Memory Issues** - Use FileSaveHook for large outputs - Enable auto-"
+"cleanup for temporary files - Monitor disk space usage"
 msgstr "**内存问题** - 对于大输出使用 FileSaveHook - 启用临时文件自动清理 - 监控磁盘空间使用情况"
 
-#: ../../guide/hooks/file_save_hook.rst:209 db6db42cdc0f4a47a9d2e2d3753c27b2
+#: ../../guide/hooks/file_save_hook.rst:209 4a638d004b5c44c6b0e05f0042a31fad
 msgid ""
-"**Hook Not Triggering** - Check trigger conditions and thresholds - Verify "
-"hook configuration and enabled status - Review hook priority settings"
+"**Hook Not Triggering** - Check trigger conditions and thresholds - "
+"Verify hook configuration and enabled status - Review hook priority "
+"settings"
 msgstr "**钩子未触发** - 检查触发条件和阈值 - 验证钩子配置及启用状态 - 审核钩子优先级设置"
 
-#: ../../guide/hooks/file_save_hook.rst:214 26e2e7d861834a95a2685cbc763312f3
+#: ../../guide/hooks/file_save_hook.rst:214 431ebffc447c4515a898b57136063e86
 msgid ""
-"**Performance Problems** - Use tool-specific hooks instead of global hooks -"
-" Set appropriate thresholds to avoid unnecessary processing - Monitor hook "
-"execution times"
+"**Performance Problems** - Use tool-specific hooks instead of global "
+"hooks - Set appropriate thresholds to avoid unnecessary processing - "
+"Monitor hook execution times"
 msgstr ""
 "**性能问题**  \n"
 "- 使用特定工具的钩子，避免使用全局钩子  \n"
 "- 设置适当的阈值以避免不必要的处理  \n"
 "- 监控钩子执行时间"
 
-#: ../../guide/hooks/file_save_hook.rst:219 7b4a9c855c7f4f038f485147242e0936
+#: ../../guide/hooks/file_save_hook.rst:219 5087518690fc4bf081c65a9ef503ee82
 msgid "**Debugging**"
 msgstr "**调试**"
 
-#: ../../guide/hooks/file_save_hook.rst:221 71db5265a347404a974d0e76bef3e232
+#: ../../guide/hooks/file_save_hook.rst:221 c9bcefdfe8fe48e693a97bdb6425d7a8
 msgid "Enable detailed logging for hook operations:"
 msgstr "启用钩子操作的详细日志记录："
 
-#: ../../guide/hooks/file_save_hook.rst:231 aab88441203546eebc4eea4c2a030cbf
+#: ../../guide/hooks/file_save_hook.rst:231 7b6f46219beb497cb497a6d71b59687a
 msgid "**Validation**"
 msgstr "**验证**"
 
-#: ../../guide/hooks/file_save_hook.rst:233 0c83a3c1f40b4a0f969a9aa4ca2c6c89
+#: ../../guide/hooks/file_save_hook.rst:233 14b69b7a00ac449da9bf61594a920a13
 msgid "Verify hook configuration:"
 msgstr "验证钩子配置："
 
-#: ../../guide/hooks/file_save_hook.rst:246 0ed4e54eec3a48ea9c49b2c2673f3ea9
+#: ../../guide/hooks/file_save_hook.rst:246 cec82d98677d47159fd237e7e60d304c
 msgid "Next Steps"
 msgstr "下一步"
 
-#: ../../guide/hooks/file_save_hook.rst:248 2530ee09581444d2802f23d39697f15c
-msgid "**Learn More**"
-msgstr "了解更多"
-
-#: ../../guide/hooks/file_save_hook.rst:250 05059819d5ea4bcd86fdf66118a28427
-msgid ""
-"**SummarizationHook** → :doc:`summarization_hook` - AI-powered output "
-"summarization"
+#: ../../guide/hooks/file_save_hook.rst:250 c99f8c00512749838c93c710f8e01373
+#, fuzzy
+msgid ":doc:`summarization_hook` - AI-powered output summarization"
 msgstr "**SummarizationHook** → :doc:`summarization_hook` - 基于AI的输出摘要"
 
-#: ../../guide/hooks/file_save_hook.rst:251 a4cb7cf891f646dfae2aa59768675100
-msgid ""
-"**Configuration** → :doc:`hook_configuration` - Advanced configuration "
-"options"
+#: ../../guide/hooks/file_save_hook.rst:251 771cfe5194b34364951da2a2b8aa2e81
+#, fuzzy
+msgid ":doc:`hook_configuration` - Advanced configuration options"
 msgstr "**配置** → :doc:`hook_configuration` - 高级配置选项"
 
-#: ../../guide/hooks/file_save_hook.rst:252 544a9457423640e9ae82cebed9bd3034
-msgid "**Hooks Overview** → :doc:`index` - Complete hooks system Tutorial"
+#: ../../guide/hooks/file_save_hook.rst:252 e94d3d1df94140eba25ac2e98e68eb5a
+#, fuzzy
+msgid ":doc:`index` - Complete hooks system overview"
 msgstr "**Hooks 概览** → :doc:`index` - 完整的 Hooks 系统教程"
 
-#: ../../guide/hooks/file_save_hook.rst:254 358fb5e2fbb247f4ac0ad0849e06fe13
-msgid "**Related Topics**"
-msgstr "**相关主题**"
-
-#: ../../guide/hooks/file_save_hook.rst:256 bfc7e822feb64eafb517cbcf78c331a3
-msgid ""
-"**Tool Composition** → :doc:`../tool_composition` - Chain tools into "
-"workflows"
+#: ../../guide/hooks/file_save_hook.rst:253 54059c188cad437ea1af15e03cc107ee
+#, fuzzy
+msgid ":doc:`../tool_composition` - Chain tools into workflows"
 msgstr "**工具组成** → :doc:`../tool_composition` - 将工具链接成工作流"
 
-#: ../../guide/hooks/file_save_hook.rst:257 a993bb97c41b4e1c9045fff8596fbd53
-msgid ""
-"**Best Practices** → :doc:`../best_practices` - Performance optimization "
-"tips"
-msgstr "**最佳实践** → :doc:`../best_practices` - 性能优化建议"
+#~ msgid "**Learn More**"
+#~ msgstr "了解更多"
 
-#: ../../guide/hooks/file_save_hook.rst:258 fc085cc320d0458a9d42b1c86032ec63
-msgid "**Examples** → :doc:`../examples` - More usage examples"
-msgstr "**示例** → :doc:`../examples` - 更多使用示例"
+#~ msgid "**Related Topics**"
+#~ msgstr "**相关主题**"
+
+#~ msgid ""
+#~ "**Best Practices** → :doc:`../best_practices` "
+#~ "- Performance optimization tips"
+#~ msgstr "**最佳实践** → :doc:`../best_practices` - 性能优化建议"
+
+#~ msgid "**Examples** → :doc:`../examples` - More usage examples"
+#~ msgstr "**示例** → :doc:`../examples` - 更多使用示例"
+

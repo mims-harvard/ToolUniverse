@@ -1,0 +1,209 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/rxnorm_extended_tools.rst:10 c41c744b2144481f90fd7e0212eee92d
+msgid "Rxnorm Extended Tools"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:12 f0089ba414ea4b51a04d91cb860ce7fa
+msgid ""
+"**Configuration File**: ``rxnorm_extended_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:16 0a70ec8f449b4bd8abac6631960fa6a8
+msgid ""
+"This page contains all tools defined in the "
+"``rxnorm_extended_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:19 7c5e637c9728437ea6433c9f77259a60
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:22 20cc3ab2beeb4193bbc48ece7f964324
+msgid "**RxNorm_find_rxcui** (Type: RxNormExtendedTool)"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:24 7874879977794f9e8a0c3d3c9bc40cde
+msgid ""
+"Resolve a drug name to its RxNorm RXCUI (RxNorm Concept Unique "
+"Identifier) using the NLM RxNorm A..."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst b995513a9dd247e196f7073964e86945
+msgid "RxNorm_find_rxcui tool specification"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:28
+#: ../../tools/rxnorm_extended_tools.rst:59
+#: ../../tools/rxnorm_extended_tools.rst:92 b0e988040ae847e287d965d2939641b7
+#: befbd8ed346b486caea1acf8f0069149 ecd4488cb40a4646bd05dea05467ad60
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:30 c67c7f41315848b8befdd91d9a761bb4
+msgid "**Name**: ``RxNorm_find_rxcui``"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:31
+#: ../../tools/rxnorm_extended_tools.rst:62
+#: ../../tools/rxnorm_extended_tools.rst:95 213ec5038362474e8df224e1b594ac39
+#: 392b1c12cc9b4eff9cbaff9da4ab79e9 ff9a87862ed04f7ca53f253a1a614f97
+msgid "**Type**: ``RxNormExtendedTool``"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:32 dd5a6fde588c4425843dbcd700a48722
+msgid ""
+"**Description**: Resolve a drug name to its RxNorm RXCUI (RxNorm Concept "
+"Unique Identifier) using the NLM RxNorm API. Returns one or more RXCUIs "
+"that match the drug name. RXCUI is the standard identifier needed for "
+"subsequent RxNorm lookups. No API key required. Examples: 'metformin' -> "
+"RXCUI 6809; 'warfarin' -> RXCUI 11289; 'Tylenol' -> RXCUI 161 "
+"(acetaminophen)."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:34
+#: ../../tools/rxnorm_extended_tools.rst:65
+#: ../../tools/rxnorm_extended_tools.rst:98 921dd21f566743d1b425679a4d39ba0f
+#: e6b831df62504ccdbeb1e222c665daab f5354d8201d944ff8e5fc112aff23831
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:36 1b82b81f9ddd4196992d31b49e6f2155
+msgid ""
+"``drug_name`` (string) (required) Drug name to look up (generic, brand, "
+"or synonym). Examples: 'metformin', 'Lipitor', 'acetaminophen', 'warfarin"
+" sodium'."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:39
+#: ../../tools/rxnorm_extended_tools.rst:73
+#: ../../tools/rxnorm_extended_tools.rst:109 3544913dbf244becadece4bb67b3e377
+#: 67c5286ab33b4b74875acfec79ad6d2f bf672e3122bf40d8abaebfe0e8aeeddd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:53 9ccef9c054ae4d82b23c003c4b6c4da1
+msgid "**RxNorm_get_drug_info** (Type: RxNormExtendedTool)"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:55 d4d6720b9c034ad9b7c9dea1907f9572
+msgid ""
+"Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug "
+"name. Returns the canonical ..."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst 737b36e0f7574880a471a8c6823f94bb
+msgid "RxNorm_get_drug_info tool specification"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:61 4a0608d51a4c426f84fcf13a9812d4af
+msgid "**Name**: ``RxNorm_get_drug_info``"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:63 6995cc2a46994f82b0005f1a0f1b8e25
+msgid ""
+"**Description**: Fetch comprehensive drug properties from NLM RxNorm by "
+"RXCUI or drug name. Returns the canonical name, term type (ingredient, "
+"brand name, clinical drug product, etc.), synonym, and language. Term "
+"types include IN (Ingredient/generic), BN (Brand Name), SCD (Semantic "
+"Clinical Drug = generic product with dose), SBD (Semantic Branded Drug). "
+"No API key required. Example: RXCUI 860975 -> '24 HR metformin "
+"hydrochloride 500 MG Extended Release Oral Tablet' (SCD)."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:67 dff9397394524866a46eda49060dfeb1
+msgid ""
+"``rxcui`` (string) (optional) RxNorm Concept Unique Identifier (e.g., "
+"'6809' for metformin, '11289' for warfarin). Use RxNorm\\_find\\_rxcui to"
+" obtain this."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:70 e23261016ec74ca9a24e79c8c37d6a46
+msgid ""
+"``drug_name`` (string) (optional) Drug name to look up if RXCUI is not "
+"known. Will auto-resolve to RXCUI first."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:86 a5f126cd046d4085bd38800b663b181b
+msgid "**RxNorm_get_related_drugs** (Type: RxNormExtendedTool)"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:88 ceb9462465964e64971c2e8c405d5a6d
+msgid ""
+"List all related drug products (branded names, generic products, "
+"ingredient names) for a drug RXC..."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst d3ad076a202d4a35b8d1bfa3a7d692b5
+msgid "RxNorm_get_related_drugs tool specification"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:94 02a1ddc6648d41aeacdf15e7a4ae7153
+msgid "**Name**: ``RxNorm_get_related_drugs``"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:96 e7fc0c259a4e4a8f86df535d910083f4
+msgid ""
+"**Description**: List all related drug products (branded names, generic "
+"products, ingredient names) for a drug RXCUI or name using the NLM RxNorm"
+" API. Returns grouped results by term type: Ingredient, Brand Name, "
+"Semantic Clinical Drug (generic product with dose/form), and Semantic "
+"Branded Drug (brand product). Useful for finding all brand names for a "
+"generic drug, or vice versa. No API key required. Example: metformin "
+"(RXCUI 6809) returns Glucophage, Glumetza, Fortamet as brand names plus "
+"dozens of generic products."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:100 81e59c6be7654fafa4f25ec3f3b6d9aa
+msgid ""
+"``rxcui`` (string) (optional) RxNorm Concept Unique Identifier. Use "
+"RxNorm\\_find\\_rxcui to resolve a drug name."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:103 4e41ff91db714b3893e3e1f93c1171f0
+msgid ""
+"``drug_name`` (string) (optional) Drug name to look up if RXCUI is not "
+"known."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:106 ae4d26aea8984415948d28b1777804bf
+msgid ""
+"``tty`` (string) (optional) Space/plus-separated term types to include. "
+"Options: IN (ingredient), BN (brand name), SBD (branded drug), SCD "
+"(generic clinical drug), PIN (precise ingredient). Default: "
+"'IN+BN+SBD+SCD'."
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:122 bad17dcfcbf6493da0fd13abf16f4c18
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:124 48b587368fa04936a3cd908ebe23f3f0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/rxnorm_extended_tools.rst:125 0a55191c1cc240bd86691996666ac75a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

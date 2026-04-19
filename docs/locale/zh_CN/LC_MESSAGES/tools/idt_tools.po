@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/idt_tools.rst:10 d8c6e56a3577424db2bd4d328466fccc
+msgid "Idt Tools"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:12 8abd7683246949be8d626e8551ccc08c
+msgid ""
+"**Configuration File**: ``idt_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:16 caaa01e7e90a4220a1ae30f40557ed57
+msgid ""
+"This page contains all tools defined in the ``idt_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:19 45340d962577464ca89f4e3d6cfa23f9
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:22 550911e731874cc29f4bcfb9792fc6a8
+msgid "**IDT_analyze_oligo** (Type: IDTTool)"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:24 655c701d4f2b417b96979715350b9636
+msgid ""
+"Analyze an oligonucleotide using the IDT OligoAnalyzer API. Calculates "
+"melting temperature (Tm), ..."
+msgstr ""
+
+#: ../../tools/idt_tools.rst dc38c10b01fe4afb8b0f0ca60f86f92b
+msgid "IDT_analyze_oligo tool specification"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:28 ../../tools/idt_tools.rst:74
+#: e462b2c3c0f1473fbba8145d6f208efa f798cd8482dc434bbdd08ec61d6bea9c
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:30 f233b41165794f59be9e0489faba4409
+msgid "**Name**: ``IDT_analyze_oligo``"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:31 ../../tools/idt_tools.rst:77
+#: bc411d45954e4d0c85861474826b1f19 c3d9b21ad7ac4a2c9dc2b0326502fe4f
+msgid "**Type**: ``IDTTool``"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:32 41f25c6137924707853e863b367c6e6e
+msgid ""
+"**Description**: Analyze an oligonucleotide using the IDT OligoAnalyzer "
+"API. Calculates melting temperature (Tm), GC content, molecular weight, "
+"molar extinction coefficient, and nmol/OD260 and ug/OD260 yields. Tm is "
+"calculated using nearest-neighbor thermodynamic parameters (SantaLucia "
+"1998) under user-specified salt conditions (Na+, Mg2+, dNTPs). Supports "
+"DNA and RNA oligos up to 200 bases. Use this BEFORE ordering "
+"primers/probes to verify Tm, check GC balance, and estimate synthesis "
+"yields. Complements NEB\\_Tm\\_calculate (which provides polymerase-"
+"specific Tm with salt corrections) and DNA\\_calculate\\_gc\\_content "
+"(local, no Tm). For self-dimer/homodimer assessment, use "
+"IDT\\_check\\_self\\_dimer."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:34 ../../tools/idt_tools.rst:80
+#: 4b4cd2067bf547419e899690b202c3b9 ea39a41491dd4e72827f7f6adb816081
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:36 3b8ae48312b645f3920773dd1e1d606b
+msgid ""
+"``sequence`` (string) (required) Oligonucleotide sequence (5' to 3'). "
+"Must contain only A, T, C, G (DNA) or A, U, C, G (RNA) bases. Length: "
+"5-200 bases. Example: 'AGCGGATAACAATTTCACACAGGA'"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:39 b3bcad99fe1142a49889dd7565aefcfa
+msgid ""
+"``na_concentration_mm`` (number, null) (optional) Sodium (Na+) "
+"concentration in millimolar (mM). Affects Tm calculation. Typical range: "
+"0-1000 mM. Default: 50 mM. Standard PCR buffer is ~50 mM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:42 bdfe104d7e8647979f172fc6b33d8703
+msgid ""
+"``mg_concentration_mm`` (number, null) (optional) Magnesium (Mg2+) "
+"concentration in millimolar (mM). Stabilizes duplexes, raising Tm. "
+"Typical range: 0-20 mM. Default: 0 mM. Standard PCR uses 1.5-3.0 mM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:45 046396c2028f4cc1b535c3fc6a3d21a8
+msgid ""
+"``dntps_concentration_mm`` (number, null) (optional) dNTPs concentration "
+"in millimolar (mM). dNTPs chelate Mg2+, reducing effective Mg2+. Typical "
+"range: 0-10 mM. Default: 0 mM. Standard PCR uses 0.2-0.8 mM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:48 f67cefd6f8874ea28b227e730b9a0522
+msgid ""
+"``oligo_concentration_um`` (number, null) (optional) Oligo concentration "
+"in micromolar (uM). Affects Tm slightly. Default: 0.25 uM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:51 75522228dcfd45a190f1475c6b6115ad
+msgid ""
+"``oligo_type`` (string, null) (optional) Type of oligonucleotide: 'DNA' "
+"or 'RNA'. Default: 'DNA'."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:54 ../../tools/idt_tools.rst:94
+#: 1fe52da2026e4eeaaced571504f26246 a6d08bfb186b421cbac4316ad126566c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:68 19ef25b266f44557ba2ea03523f34c11
+msgid "**IDT_check_self_dimer** (Type: IDTTool)"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:70 f08ba10ec4d94ea7a51f3cd8901e1d3e
+msgid ""
+"Check an oligonucleotide for self-complementarity and homodimer (self-"
+"dimer) formation using the ..."
+msgstr ""
+
+#: ../../tools/idt_tools.rst fc65dc3ce193443a96cdae43c900c769
+msgid "IDT_check_self_dimer tool specification"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:76 96659df3a66744a7a7e242c09eb78efb
+msgid "**Name**: ``IDT_check_self_dimer``"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:78 46749ca0997746debe6ecf151aa93860
+msgid ""
+"**Description**: Check an oligonucleotide for self-complementarity and "
+"homodimer (self-dimer) formation using the IDT OligoAnalyzer API. Returns"
+" predicted self-dimer structures with their thermodynamic stability "
+"(delta-G in kcal/mol), number of base pairs, and alignment diagrams. A "
+"more negative delta-G indicates a more stable (problematic) dimer. Risk "
+"assessment: delta-G > -3.0 kcal/mol is low risk, -3.0 to -6.0 is moderate"
+" risk, < -6.0 is high risk. Use this tool AFTER designing primers "
+"(DNA\\_primer\\_design or manual) and BEFORE ordering, to verify primers "
+"won't form stable homodimers that reduce PCR efficiency. For basic oligo "
+"properties (Tm, GC%, MW), use IDT\\_analyze\\_oligo instead."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:82 fc5a1d80a07545ee991bb55bf80c81bb
+msgid ""
+"``sequence`` (string) (required) Oligonucleotide sequence (5' to 3'). "
+"Must contain only A, T, C, G, U bases. Length: 5-200 bases. Example: "
+"'AGCGGATAACAATTTCACACAGGA'"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:85 91fb1a24bb55472ea6fe908250c93e1c
+msgid ""
+"``na_concentration_mm`` (number, null) (optional) Sodium (Na+) "
+"concentration in millimolar (mM). Affects dimer stability. Default: 50 "
+"mM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:88 759bcf9d0b734ab7881e3e8c7af10276
+msgid ""
+"``mg_concentration_mm`` (number, null) (optional) Magnesium (Mg2+) "
+"concentration in millimolar (mM). Default: 0 mM."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:91 d2a1850372934fc9a9ea6d6fde470a28
+msgid ""
+"``temperature_celsius`` (number, null) (optional) Temperature in Celsius "
+"for dimer stability calculation. Use your expected annealing temperature."
+" Default: 25."
+msgstr ""
+
+#: ../../tools/idt_tools.rst:108 7ee97ddccee3440887362b23d9a8b64a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:110 9e9eec4c10004c6d91765b49e210c2db
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/idt_tools.rst:111 30685bc19db047198eac77c68d5c425c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

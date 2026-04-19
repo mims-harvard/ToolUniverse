@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/kegg_ext_tools.rst:10 3ec085935a5b41de8c3a7e4f4b414d9b
+msgid "Kegg Ext Tools"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:12 31981c5051774c56a2907e65c66e7c0e
+msgid ""
+"**Configuration File**: ``kegg_ext_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:16 98f86053bdc1403ab1f9ff890d4d4ec4
+msgid ""
+"This page contains all tools defined in the ``kegg_ext_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:19 2a3b137d085a498fbcbbc95c543eb15b
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:22 c548fd5f13aa48949e4b77f5d95a9d0b
+msgid "**KEGG_get_compound** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:24 53e9223d2647447a958fb879ed97c72a
+msgid ""
+"Get KEGG compound/metabolite details including names, formula, molecular "
+"weight, associated pathw..."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst 39d8a5e9e901481da44d8097c61a5493
+msgid "KEGG_get_compound tool specification"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:28 ../../tools/kegg_ext_tools.rst:59
+#: ../../tools/kegg_ext_tools.rst:98 05c11a3223d945a49a29c71b878fe84c
+#: 74c4ce59ca674c5bb33bcd51f9d5d31b fc560023fe90471f8b33dfb81a568f49
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:30 bef72dd550224027b797bddb6690bc3c
+msgid "**Name**: ``KEGG_get_compound``"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:31 ../../tools/kegg_ext_tools.rst:62
+#: ../../tools/kegg_ext_tools.rst:101 1b0c3e9c41ac480dba221143476296a9
+#: 73c7df19c29d44a891bdca5ee0118e51 95ba5d45fb2c42aab12798d9040be8d5
+msgid "**Type**: ``KEGGExtTool``"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:32 ad1b2ab9cb2343c7a0f04df083a09aac
+msgid ""
+"**Description**: Get KEGG compound/metabolite details including names, "
+"formula, molecular weight, associated pathways, enzymes, and database "
+"cross-references. Example: C00002 (ATP) has formula C10H16N5O13P3, "
+"molecular weight 507.18, and is involved in hundreds of metabolic "
+"reactions and pathways. Covers metabolites, cofactors, drugs, and other "
+"small molecules in the KEGG COMPOUND database."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:34 ../../tools/kegg_ext_tools.rst:65
+#: ../../tools/kegg_ext_tools.rst:104 070410f7dde2444aad96fda32b866de6
+#: 424f05e82dc749b3a23213745041602e ff6c8b2fe26b41e5acb339f692f2ce37
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:36 ec39f0c0444444bf96be7d6dfaf9a230
+msgid ""
+"``compound_id`` (string) (required) KEGG compound ID (e.g., 'C00002' for "
+"ATP, 'C00031' for D-Glucose, 'C00033' for Acetate, 'C00186' for Ethanol)."
+" Always starts with 'C' followed by 5 digits."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:39 ../../tools/kegg_ext_tools.rst:79
+#: ../../tools/kegg_ext_tools.rst:109 3645bab94b2c4e24b795df70c15b87f4
+#: 3990c213714e4de2a1c8ef8b4cb52493 8cb5d54447234be4a80f905e26a7f414
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:53 676caf8cc3dd455fa3a9c0ccfb4031a6
+msgid "**KEGG_get_gene_pathways** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:55 4e99c2fad0c04e6dba0a6ecd6f530c2b
+msgid ""
+"Get all KEGG pathways that a gene participates in. Returns pathway IDs "
+"and names for a given KEGG..."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst 206c2b3c11914696af78c29ef48d8dd1
+msgid "KEGG_get_gene_pathways tool specification"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:61 48bc5091dc2c4bc08faa73f17a746a65
+msgid "**Name**: ``KEGG_get_gene_pathways``"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:63 8ce915dfb3654e6f9e2f69043214f48e
+msgid ""
+"**Description**: Get all KEGG pathways that a gene participates in. "
+"Returns pathway IDs and names for a given KEGG gene identifier. Example: "
+"hsa:7157 (human TP53) participates in 51 pathways including p53 signaling"
+" pathway (hsa04115), apoptosis (hsa04210), cell cycle (hsa04110), and 48 "
+"disease pathways (various cancers, viral infections). Requires KEGG "
+"organism:id format."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:67 854b1b18fa7f4691be61bbdbbb2d192f
+msgid ""
+"``gene_id`` (string) (optional) KEGG gene identifier in organism:id "
+"format. Examples: 'hsa:7157' (human TP53), 'hsa:672' (human BRCA1), "
+"'mmu:22059' (mouse Trp53). Use organism prefix: hsa=human, mmu=mouse, "
+"rno=rat, dme=fly, sce=yeast."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:70 5883c8b7b0ef471a94d7aace1c634b24
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene\\_id: human gene "
+"symbol (e.g. 'TP53', 'BRCA1'). Auto-resolved to KEGG gene ID using "
+"organism='hsa'."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:73 ac210960d8974e278e018c50523e1095
+msgid ""
+"``gene`` (string) (optional) Alias for gene\\_id: human gene symbol (e.g."
+" 'TP53', 'EGFR')."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:76 d9cb319a2b424d0aa90d44c418bf42af
+msgid ""
+"``organism`` (string) (optional) KEGG organism code for gene symbol "
+"resolution (default: 'hsa' for human). Used only when gene\\_symbol is "
+"provided instead of gene\\_id."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:92 880c42a4f13843c782f4d69690552cf3
+msgid "**KEGG_get_pathway_genes** (Type: KEGGExtTool)"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:94 c364eb0d347e419fb14bd2f2a0dd3f52
+msgid ""
+"Get all genes in a KEGG pathway. Returns gene IDs for all member genes of"
+" a specific pathway. Exa..."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst 74baf80740e949f3922c7ba1b8ecfe49
+msgid "KEGG_get_pathway_genes tool specification"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:100 e87b6445997a4a2f9cbf2f9be4c8f5f3
+msgid "**Name**: ``KEGG_get_pathway_genes``"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:102 0ab4158b90da49cca11830beb5e26d94
+msgid ""
+"**Description**: Get all genes in a KEGG pathway. Returns gene IDs for "
+"all member genes of a specific pathway. Example: hsa04115 (p53 signaling "
+"pathway) contains genes including CDK2 (hsa:1017), CDK4 (hsa:1019), CDK6 "
+"(hsa:1021), CDKN1A (hsa:1026), CDKN2A (hsa:1029), and many more involved "
+"in p53-mediated cell cycle arrest, apoptosis, and senescence."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:106 4222a27be7364ea88bfa5362453f5470
+msgid ""
+"``pathway_id`` (string) (required) KEGG pathway identifier (e.g., "
+"'hsa04115' for p53 signaling pathway, 'hsa04110' for cell cycle, "
+"'hsa04210' for apoptosis). Use organism prefix: hsa=human, mmu=mouse."
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:123 babc5e7f143644e49dd154a6984fcffd
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:125 2cc23e09529f4bfc931e84c9f63758f0
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/kegg_ext_tools.rst:126 05fb88495b6942d29b5af1d9f2e8df2a
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

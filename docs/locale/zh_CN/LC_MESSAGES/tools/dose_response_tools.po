@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dose_response_tools.rst:10 d1e86921381341deb9bf0c6a6e7e5b02
+msgid "Dose Response Tools"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:12 ca48c4cec71b4878825f926e509aa439
+msgid ""
+"**Configuration File**: ``dose_response_tools.json`` **Tool Type**: Local"
+" **Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:16 d30f5ab954e34256bfc3b9d4dcbdd0ab
+msgid ""
+"This page contains all tools defined in the ``dose_response_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:19 6b58d30a8b2343e2bec42fe651cdb2af
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:22 971130f2c3994d51ba6adfa05ba58582
+msgid "**DoseResponse_calculate_ic50** (Type: DoseResponseTool)"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:24 72a7c95a8c0b42b7962886e1570ff106
+msgid ""
+"Determine the half-maximal inhibitory or effective concentration "
+"(IC50/EC50) from paired concentr..."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst 0710f2fb638448738a20d8de6deec12d
+msgid "DoseResponse_calculate_ic50 tool specification"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:28
+#: ../../tools/dose_response_tools.rst:67
+#: ../../tools/dose_response_tools.rst:114 b5885cd763f8451fa705b29790a28b4c
+#: d5489b8d39854476b4e917452e12957b eeba7d3a987e41c79b4279d9d8ecdcdb
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:30 7f0ade0ed036450d9ad9cf88b57474bf
+msgid "**Name**: ``DoseResponse_calculate_ic50``"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:31
+#: ../../tools/dose_response_tools.rst:70
+#: ../../tools/dose_response_tools.rst:117 423aeedb902742bcae70961084c34bdf
+#: b7baac11143e47539b781a9d00d1fa7d f5860dbd31b448a08829fe623618856e
+msgid "**Type**: ``DoseResponseTool``"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:32 a5168c79dba24cfa908d50d11b197f37
+#, python-format
+msgid ""
+"**Description**: Determine the half-maximal inhibitory or effective "
+"concentration (IC50/EC50) from paired concentration-response data by "
+"fitting the Hill sigmoidal equation. Requires a minimum of 4 data points "
+"that span the dynamic response range. Output includes EC50 with 95% "
+"confidence interval, Hill exponent n, top plateau Emax, bottom plateau "
+"Emin, R2 goodness-of-fit, and log10(EC50) for convenient pIC50 "
+"conversion. Suited to potency ranking in compound screens, structure-"
+"activity relationship analysis, and cross-assay comparisons."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:34
+#: ../../tools/dose_response_tools.rst:73
+#: ../../tools/dose_response_tools.rst:120 3dec741cd0154bf08e3b63312fdd6a62
+#: 4adb7f307570475dabbb30c2b9325f71 d893cb2a9c344ff99c23c1492099ecaa
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:36
+#: ../../tools/dose_response_tools.rst:75
+#: ../../tools/dose_response_tools.rst:122 7c099ace9ab54fd681b0cd0aa9b75da7
+#: bb068958463042a294150ec14b2a0a91 d689f77cbef8436c9930bef514456511
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:39 79c08eaadfde49d6b06cf12031c86ac3
+msgid ""
+"``concentrations`` (array) (required) Drug concentrations (positive "
+"values, e.g., in µM or nM)"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:42 9144500fc7f6407d80b62976a9a3e403
+msgid ""
+"``responses`` (array) (required) Percent inhibition or effect values at "
+"each concentration"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:45
+#: ../../tools/dose_response_tools.rst:90
+#: ../../tools/dose_response_tools.rst:131 7859198ca78c44ce89563e87f7f1496c
+#: 82d0c93f1de041dfa9a3ec519fb063f6 fef56daeb1534ac2a063e634e0d6187b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:61 92c8763caf5c4dacbaf6b12b200860a2
+msgid "**DoseResponse_compare_potency** (Type: DoseResponseTool)"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:63 33f9b9a7e16e4ae5b781cd4cc0e9ee85
+msgid ""
+"Quantify relative potency between two compounds by independently fitting "
+"Hill sigmoidal curves to..."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst b579864593ed4912bd3a89d6439d53cc
+msgid "DoseResponse_compare_potency tool specification"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:69 8e41318f4bf446d0b2733f3aea923750
+msgid "**Name**: ``DoseResponse_compare_potency``"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:71 1868fad473d14ef699a91c7e424efd25
+msgid ""
+"**Description**: Quantify relative potency between two compounds by "
+"independently fitting Hill sigmoidal curves to each concentration-"
+"response dataset and computing the EC50 fold-shift (compound B EC50 / "
+"compound A EC50). Reports EC50, Hill exponent, and plateau Emax per "
+"compound, the potency fold-ratio, and which compound is more potent. "
+"Applications include lead optimisation, matched-pair structure-activity "
+"analysis, and selectivity profiling."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:78 af5493d1a8ce459e87b9b7f2eb57ef58
+msgid "``conc_a`` (array) (required) Concentrations for compound A"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:81 f3920c660bd844dcbc775b6a78914400
+msgid "``resp_a`` (array) (required) Responses for compound A"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:84 8e0cad4cdc874fab90582c9b62e3a3b5
+msgid "``conc_b`` (array) (required) Concentrations for compound B"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:87 68778ae1c02f4c408173b5ed9712589f
+msgid "``resp_b`` (array) (required) Responses for compound B"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:108 8c4d4416ae574434a359acdcf6c6f5ea
+msgid "**DoseResponse_fit_curve** (Type: DoseResponseTool)"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:110 02e0733195fb4668837b63468cbdcd05
+msgid ""
+"Nonlinear regression of paired concentration-response measurements to the"
+" Hill sigmoidal (4PL) mo..."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst 19a709a7ea164af7b3f63671db6ca464
+msgid "DoseResponse_fit_curve tool specification"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:116 83a3978baa3b4435b78037a51dcf683e
+msgid "**Name**: ``DoseResponse_fit_curve``"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:118 a3f37d4c9d26474a88e8ec41395c7ded
+msgid ""
+"**Description**: Nonlinear regression of paired concentration-response "
+"measurements to the Hill sigmoidal (4PL) model: f(x) = Emin + (Emax - "
+"Emin) / (1 + (EC50/x)^n). Returns the four fitted parameters (baseline "
+"Emin, plateau Emax, midpoint EC50, Hill exponent n) with standard errors,"
+" 95% CI for EC50, coefficient of determination R2, and predicted response"
+" at each measured concentration. Requires at least 4 positive "
+"concentration inputs. Useful for characterising pharmacological potency "
+"and assessing assay data quality."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:125 d37de7852c024d7ca6e51520bcbc8e37
+msgid ""
+"``concentrations`` (array) (required) Drug concentrations (must be "
+"positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in µM). At least 4 points "
+"required."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:128 6c42725ae9a7489491960f03b43fc40c
+#, python-format
+msgid ""
+"``responses`` (array) (required) Observed responses at each concentration"
+" (e.g., % inhibition [0-100] or viability [0-100]). Same length as "
+"concentrations."
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:147 71d357a512134be9a9114b8038f2c484
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:149 c7e524890e5d46ff98372856d2a3bc59
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dose_response_tools.rst:150 cf6adc83568f4743bb4201201b01bc5b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

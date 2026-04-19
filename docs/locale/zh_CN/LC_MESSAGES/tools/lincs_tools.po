@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/lincs_tools.rst:10 e1ca414e6d5243488d07666e879c6f8c
+msgid "Lincs Tools"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:12 09da04e2b905468d9d5ecd18bfc53266
+msgid ""
+"**Configuration File**: ``lincs_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 2"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:16 e794343b4e78422b8f6ad54ba7bedb35
+msgid ""
+"This page contains all tools defined in the ``lincs_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:19 01ccb7c066d845fca674a2a59f5bd22f
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:22 a3cda39068f14c409e600232b81b6394
+msgid "**LINCS_list_libraries** (Type: LINCSSignatureTool)"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:24 08cc803e4e034623877a262f902aae0a
+msgid ""
+"List available LINCS signature libraries with metadata. LINCS SigCom "
+"contains 431+ libraries cove..."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst 82dda92c0ddf4655bdb6a8d043a1d02c
+msgid "LINCS_list_libraries tool specification"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:28 ../../tools/lincs_tools.rst:61
+#: 7d07d92cdce7498486f28ca553a999e1 7ea94246e11941229c0e0aaf9fe16840
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:30 77f676a1788c489db38be3e5517b8a4f
+msgid "**Name**: ``LINCS_list_libraries``"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:31 ../../tools/lincs_tools.rst:64
+#: 98072605771144acbe42e3dcc5f1f897 c6e4bbcb7638429e825c953198fb4259
+msgid "**Type**: ``LINCSSignatureTool``"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:32 6c9dcfdf6c454ccdbc6f3ab90ebc7fb1
+msgid ""
+"**Description**: List available LINCS signature libraries with metadata. "
+"LINCS SigCom contains 431+ libraries covering L1000 gene expression, "
+"kinase profiling, cell growth inhibition, proteomics, and other assay "
+"types. Optionally filter by keyword (e.g., 'L1000', 'kinase', "
+"'proteomics'). Returns library IDs, dataset identifiers, assay types, "
+"organisms, and descriptions."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:34 ../../tools/lincs_tools.rst:67
+#: 3e1a3673e68b44218a988d5cf22b1ef8 d931c62c5efc4934b52c376edee71d5d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:36 3c1892a68d684d689f82fcfeac11b943
+msgid ""
+"``keyword`` (string) (optional) Optional keyword to filter libraries "
+"(case-insensitive). Examples: 'L1000', 'kinase', 'proteomics', 'RNA-seq',"
+" 'CRISPR'. Leave empty to list all."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:39 18e8cb2365ab4a7aabe1659a03715b7c
+msgid ""
+"``limit`` (integer) (optional) Maximum number of libraries to return "
+"(1-100). Default: 50."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:42 ../../tools/lincs_tools.rst:78
+#: cf5fb423b05e4714ba719a99fb6cfc2a e9352da2e08a418b9c3dc45442b72bdc
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:55 2e95d71d59514830be005551ca8c9cec
+msgid "**LINCS_search_signatures** (Type: LINCSSignatureTool)"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:57 a86eab8782ee4784b7845241e6b6f5a9
+msgid ""
+"Search LINCS (Library of Integrated Network-Based Cellular Signatures) "
+"for drug perturbation gene..."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst 78d6b24422a844a594bb51e9e63094ea
+msgid "LINCS_search_signatures tool specification"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:63 351f3941bffa4ad0b7bba239e3442ea1
+msgid "**Name**: ``LINCS_search_signatures``"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:65 120073cca0194692852c65ce6d2afaa5
+msgid ""
+"**Description**: Search LINCS (Library of Integrated Network-Based "
+"Cellular Signatures) for drug perturbation gene expression signatures. "
+"Find L1000 and other assay signatures by drug/compound name, optionally "
+"filtered by cell line. Returns signature IDs, doses, time points, tissue,"
+" disease context, and PubChem IDs. LINCS contains 1.5M+ signatures from "
+"431+ libraries covering thousands of drugs across hundreds of cell lines."
+" Example: searching 'vorinostat' returns HDAC inhibitor signatures across"
+" multiple cell lines and doses."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:69 f5db6d9a4b5c4714a54ae3c86f56cdb2
+msgid ""
+"``drug_name`` (string) (required) Drug or perturbagen name to search for."
+" Case-sensitive, use lowercase for best results. Examples: 'vorinostat', "
+"'imatinib', 'dexamethasone', 'trichostatin-a'."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:72 1aa6bbcde0e2496195ef23faa52c0d1f
+msgid ""
+"``cell_line`` (string) (optional) Optional cell line filter. Examples: "
+"'MCF7', 'A549', 'HepG2', 'PC3'. Leave empty to search all cell lines."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:75 30709120126a4d76a7ecc3dccce11b08
+msgid ""
+"``limit`` (integer) (optional) Maximum number of signatures to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:92 043d55f971ec4e068948888f25b2888c
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:94 2f89907cadbe4b26970a95074981a510
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/lincs_tools.rst:95 e8f2fb713e5043b19f3ffecce5dbbf29
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

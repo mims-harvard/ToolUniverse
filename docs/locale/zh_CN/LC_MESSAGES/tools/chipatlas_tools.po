@@ -1,0 +1,314 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/chipatlas_tools.rst:10 1f9fa12abe47432abf09d367d5ad76b7
+msgid "Chipatlas Tools"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:12 f082a06a72df4d6e907844cfeb600a8c
+msgid ""
+"**Configuration File**: ``chipatlas_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:16 e7941244e2ce4341a06af8cc821183f7
+msgid ""
+"This page contains all tools defined in the ``chipatlas_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:19 2c8d509655ba443fa9670f120d30d32c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:22 93bd094bd40249788c70e61368002acc
+msgid "**ChIPAtlas_enrichment_analysis** (Type: ChIPAtlasTool)"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:24 10cb80b17139431ca3653106a79e6d1b
+msgid ""
+"Perform enrichment analysis to identify transcription factors and histone"
+" modifications enriched ..."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst 311650bc1b414e319d33a349400b072a
+msgid "ChIPAtlas_enrichment_analysis tool specification"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:28 ../../tools/chipatlas_tools.rst:82
+#: ../../tools/chipatlas_tools.rst:124 ../../tools/chipatlas_tools.rst:167
+#: 1b15be798c8c4696947aba1c9df44fa1 453732f0526f4c3b915dc9b5ee5b4f21
+#: 8c72ec71a0bd405da28868afaae84a88 cbc7ae5c89504d6bb8218c2b7972990b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:30 1c640fbd433d4d689228e9dfc5afbaf4
+msgid "**Name**: ``ChIPAtlas_enrichment_analysis``"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:31 ../../tools/chipatlas_tools.rst:85
+#: ../../tools/chipatlas_tools.rst:127 ../../tools/chipatlas_tools.rst:170
+#: 71030edf832841ed9717691e9522efa8 aba9b7bd727042be9c536ac9f2a74909
+#: d688bf73c5ca4dcda38aa4b51245f781 d9b157d044ee480199f7aadff7803184
+msgid "**Type**: ``ChIPAtlasTool``"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:32 8179a2bfd39d42ae91c7235ad95c75c2
+msgid ""
+"**Description**: Perform enrichment analysis to identify transcription "
+"factors and histone modifications enriched in your data. \\*\\*Required: "
+"Provide ONE input type\\*\\* - (1) BED genomic regions, (2) DNA sequence "
+"motif (IUPAC notation: A/T/G/C/W/S/M/K/R/Y/B/D/H/V/N), or (3) gene symbol"
+" list. Compares your input against 433,000+ ChIP-seq/ATAC-seq/Bisulfite-"
+"seq experiments to identify significant enrichment. Returns ranked list "
+"of proteins bound to your regions/motif or regulating your genes. Note: "
+"Returns submission URL (web form-based analysis). Use for: identifying "
+"regulators of genomic regions, finding proteins bound to sequence motifs,"
+" discovering transcription factors regulating gene sets."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:34 ../../tools/chipatlas_tools.rst:88
+#: ../../tools/chipatlas_tools.rst:130 ../../tools/chipatlas_tools.rst:173
+#: 23afb936b82b40aead27a299396a3e86 9eec990c2e234f379c73d8951b37153b
+#: af2f567c5a4b4ae0baaa0d890c6360f2 b75985f0edbb4bf382fcef8083ad6dcf
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:36 ../../tools/chipatlas_tools.rst:90
+#: ../../tools/chipatlas_tools.rst:132 ../../tools/chipatlas_tools.rst:175
+#: 15180500b8fb4586a7b0c91100f7dd33 1787c4843d4840d7a1fed7b3681db922
+#: 1dbb9fc5ef9e4d34b1298cceac3c0cca df40a1f428ee43e994cdb5f114f88da6
+msgid "``operation`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:39 dfaace698fa24454b26f73f2287e37f6
+msgid ""
+"``bed_data`` (string) (optional) \\*\\*Option 1\\*\\*: BED format genomic"
+" regions (tab-separated: chr, start, end). For finding proteins bound to "
+"specific genomic regions. Example: "
+"'chr1\\\\t1000\\\\t2000\\\\nchr2\\\\t3000\\\\t4000'."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:42 5210f98a153248329270c94a76fbae0d
+msgid ""
+"``motif`` (string) (optional) \\*\\*Option 2\\*\\*: DNA sequence motif in"
+" IUPAC notation. Use: A/T/G/C (bases), W=A\\|T, S=G\\|C, M=A\\|C, "
+"K=G\\|T, R=A\\|G, Y=C\\|T, B=C\\|G\\|T, D=A\\|G\\|T, H=A\\|C\\|T, "
+"V=A\\|C\\|G, N=any. For finding proteins bound to specific DNA sequences."
+" Example: 'CANNTG' (E-box motif)."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:45 c377deead5bd4351ba764004643d310b
+msgid ""
+"``gene_list`` (array, string) (optional) \\*\\*Option 3\\*\\*: Gene "
+"symbols (HGNC for human, MGI for mouse, RGD for rat, FlyBase, WormBase, "
+"SGD for yeast). Provide as array or single gene. For finding "
+"transcription factors regulating genes. Example: ['TP53', 'MDM2', "
+"'CDKN1A']."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:48 ../../tools/chipatlas_tools.rst:138
+#: ../../tools/chipatlas_tools.rst:184 2a21afb1d2834d0580c695d2e5a43922
+#: 31beba26bfc04584a0a0806a2528a8a7 a1e537eddede44a8a1efc22b9e61131c
+msgid "``genome`` (string) (optional) Genome assembly"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:51 6ad663bef51646f0a96c4e64383dee55
+msgid ""
+"``antigen_class`` (string) (optional) Filter by antigen class (e.g., 'TFs"
+" and others', 'Histone', 'RNA polymerase')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:54 c4332e36a49f41b58e0908ae6deaa5dd
+msgid ""
+"``cell_type_class`` (string) (optional) Filter by cell type class (e.g., "
+"'Blood', 'Liver', 'Brain')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:57 c7b655b522a046b78b09f93d1940e072
+msgid ""
+"``threshold`` (string) (optional) Peak calling stringency (MACS2 "
+"Q-value). Options: '05'=1e-5 (permissive, more peaks, broader features), "
+"'10'=1e-10 (moderate, balanced), '20'=1e-20 (strict, high confidence "
+"only, narrow peaks). Default '05' suitable for most analyses. Higher "
+"values = fewer but more confident peaks."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:60 311836949a274d369b72713176338fc7
+msgid ""
+"``distance`` (string) (optional) Distance from Transcription Start Site "
+"(TSS) in base pairs for gene-TF association. Defines promoter region. "
+"Default 5000 (±5kb, captures typical promoters). Use 1000-2000 for narrow"
+" promoters, 10000+ for enhancer regions."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:63 ../../tools/chipatlas_tools.rst:105
+#: ../../tools/chipatlas_tools.rst:147 ../../tools/chipatlas_tools.rst:187
+#: 0254bcb72e3443579810c875949c3701 45b1388674384534a748eb6e74fa2727
+#: d5e1a9cf37e543f4893331ae9714669d d915466490c845c784288308d3c4ecfa
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:76 1bfff4bbe5bc461b977b39d3de7711b8
+msgid "**ChIPAtlas_get_experiments** (Type: ChIPAtlasTool)"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:78 2601c57cb8144a3480549cc4d1cfd9d5
+msgid ""
+"Search ChIP-Atlas experiment metadata including experiment IDs, antigens,"
+" cell types, and process..."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst 341dd61ee45e42d990ffff420cb6d9be
+msgid "ChIPAtlas_get_experiments tool specification"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:84 fc6bae5e436f455797500832de6cbbbc
+msgid "**Name**: ``ChIPAtlas_get_experiments``"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:86 2ca2d5badf4c4fbcb3572551bb4fc180
+msgid ""
+"**Description**: Search ChIP-Atlas experiment metadata including "
+"experiment IDs, antigens, cell types, and processing statistics. Filter "
+"by genome, antigen (TF/histone), or cell type. Returns experiment details"
+" with SRX/ERX/DRX IDs. Use for: finding relevant experiments, getting "
+"experiment metadata, dataset discovery, batch analysis planning."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:93 c2df5200f3b64e3982f3b53a3a33c8d3
+msgid "``genome`` (string) (optional) Filter by genome assembly"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:96 7bea4495468b4f7f85bdad8d378bc3e7
+msgid ""
+"``antigen`` (string) (optional) Filter by antigen/protein name (e.g., "
+"'CTCF', 'H3K4me3')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:99 583df7ec7a2743a3a8c48f4b1ecf23f8
+msgid ""
+"``cell_type`` (string) (optional) Filter by cell type (e.g., 'K-562', "
+"'HepG2', 'CD4')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:102 540ea147500a47bc8577d931d77358dc
+msgid "``limit`` (integer) (optional) Maximum results to return"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:118 ef3280a781804d05acf55338f63eb7f5
+msgid "**ChIPAtlas_get_peak_data** (Type: ChIPAtlasTool)"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:120 8c1fa50334b54d679ce2607b08daff9e
+msgid ""
+"Get download URLs for ChIP-Atlas peak-call data in BigWig, BED, or BigBed"
+" format. BigWig contains..."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst e6e701a27a644134bac3f51768dbfefb
+msgid "ChIPAtlas_get_peak_data tool specification"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:126 e8d0a60692cb4850b77c0cd2fb112c1b
+msgid "**Name**: ``ChIPAtlas_get_peak_data``"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:128 34367bd903b8438f9fab2ea9497b74e7
+msgid ""
+"**Description**: Get download URLs for ChIP-Atlas peak-call data in "
+"BigWig, BED, or BigBed format. BigWig contains coverage scores in RPM "
+"(Reads Per Million). BED/BigBed contain peak regions with MACS2 (Model-"
+"based Analysis of ChIP-Seq) peak caller scores. Use for: downloading raw "
+"data, integrating with genome browsers (UCSC, IGV), custom analysis, "
+"visualization."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:135 9f3d9862049f49e8a89e2f33e828b712
+msgid ""
+"``experiment_id`` (string) (required) Experiment ID (SRX/ERX/DRX format, "
+"required)"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:141 12f280981f884f43aeaacfe7037ad6ce
+msgid "``format`` (string) (optional) Output format"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:144 9f11a7675867419ca663deb42c62348e
+msgid ""
+"``threshold`` (string) (optional) Q-value threshold for BED/BigBed peak "
+"files. '05'=1e-5 (more peaks), '10'=1e-10 (moderate), '20'=1e-20 (high "
+"confidence only). Only applies to BED/BigBed formats. Default '05'."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:161 fbeb3648f69248b58835388b49e3bf51
+msgid "**ChIPAtlas_search_datasets** (Type: ChIPAtlasTool)"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:163 e0ae19d58c174d738d05383e71801789
+msgid ""
+"Search ChIP-Atlas by antigen or cell type to find available datasets. "
+"Returns number of experimen..."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst 6d2b67af09d4422c968e62da281f3bec
+msgid "ChIPAtlas_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:169 705022f1bc5b4afab11c86fb4ad4640c
+msgid "**Name**: ``ChIPAtlas_search_datasets``"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:171 32289b0feab148cf8416dd52c5f0e02e
+msgid ""
+"**Description**: Search ChIP-Atlas by antigen or cell type to find "
+"available datasets. Returns number of experiments and experiment IDs. Use"
+" antigenList for finding TF/histone datasets across cell types. Use "
+"celltypeList for finding all factors in specific cell type. Use for: "
+"dataset discovery, planning comparative analysis, checking data "
+"availability."
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:178 62bd7163be9043d4981e22168927a100
+msgid ""
+"``antigen`` (string) (optional) Search by antigen/protein name (e.g., "
+"'CTCF', 'H3K27ac')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:181 edf37d13c3894310a5e613dc8fea0b91
+msgid ""
+"``cell_type`` (string) (optional) Search by cell type (e.g., 'K-562', "
+"'HeLa', 'MCF-7')"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:200 d4e901e720d64ce49bf1c027ee9bf802
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:202 df8bb6db425e4c54b1e0e455a614b61d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/chipatlas_tools.rst:203 8a32a680bfd047718d07e25f9dcf316c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

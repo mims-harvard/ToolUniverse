@@ -1,0 +1,230 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pharos_tools.rst:10 77d17f15062048c8bde76bea0cb78c24
+msgid "Pharos Tools"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:12 502af6e64fd34eaab6be7581d35b1962
+msgid ""
+"**Configuration File**: ``pharos_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:16 7d1c72d392314c5085c72576871cf6b7
+msgid ""
+"This page contains all tools defined in the ``pharos_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:19 be75fe975e6d4f33b4befefa686dfc95
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:22 74d6b638d84447d4b0e8ea330135f858
+msgid "**Pharos_get_disease_targets** (Type: PharosTool)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:24 ea840eea8a344f58ae3cb9948d956f28
+msgid ""
+"Get drug targets associated with a disease from Pharos. Returns targets "
+"with TDL classification t..."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst 665384a0aa3a46bbacd53c14cb987750
+msgid "Pharos_get_disease_targets tool specification"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:28 ../../tools/pharos_tools.rst:65
+#: ../../tools/pharos_tools.rst:98 ../../tools/pharos_tools.rst:127
+#: 5be790f9fb2745d69418c94b5f7126a0 8429942465ab42918fdc6b31e709b47f
+#: 8bec6e1df0cc46bbb62f0e6fdd40a0e9 bca1c2fceaee422b828a89347c7f48ce
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:30 3214e821355b4771a3a228a400977928
+msgid "**Name**: ``Pharos_get_disease_targets``"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:31 ../../tools/pharos_tools.rst:68
+#: ../../tools/pharos_tools.rst:101 ../../tools/pharos_tools.rst:130
+#: 34f8efa5e7e742e9b012cbe82fdf386f 4a5cbb48e465406bb3ba0b60fa215fb1
+#: 55fbdeeaedac480ba67d051d6629585b 87039dd19a024c31b51419a5660d55d6
+msgid "**Type**: ``PharosTool``"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:32 d41be796627d4b63870d4c29f4d52df3
+msgid ""
+"**Description**: Get drug targets associated with a disease from Pharos. "
+"Returns targets with TDL classification to identify druggable vs "
+"understudied proteins for the disease. Supports TDL filtering to find "
+"Tdark opportunities."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:34 ../../tools/pharos_tools.rst:71
+#: ../../tools/pharos_tools.rst:104 ../../tools/pharos_tools.rst:133
+#: 1aecce3d933b4660b53f89c5821b299c 1b2abe003fdb47799c3a2067048e0f46
+#: 6e5b45ec0f78488eb745419b61321bbc cc3021e4893b43efb718ac3b438ce13a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:36 61d22f76b95641eca019f3897bad5467
+msgid ""
+"``disease`` (string) (required) Disease name (e.g., 'breast cancer', "
+"'Alzheimer disease', 'diabetes mellitus')"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:39 2087a710a95f415c98fa69a36a024973
+msgid "``tdl`` (string) (optional) Optional filter by Target Development Level"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:42 ../../tools/pharos_tools.rst:141
+#: 0c76d4c63baf4e32b032e69312447c4a 7c8f777a73a64a44b9c707848e350a2a
+msgid "``top`` (integer) (optional) Maximum number of results (1-100)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:45 ../../tools/pharos_tools.rst:79
+#: ../../tools/pharos_tools.rst:108 ../../tools/pharos_tools.rst:144
+#: 3ad40abb2a534c9c8af7bd441cf22df4 6e957a838c46454db2f2a65fd622424e
+#: b55205fdf9c7432d88a63808f801b13b d8540f0d497c4deb82a93547869f895b
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:59 6e37b91a443048df9bbd89c9006830ef
+msgid "**Pharos_get_target** (Type: PharosTool)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:61 cde15a97e0fc491d931c4bb9dfb26b8a
+msgid ""
+"Get detailed drug target information from Pharos/TCRD by gene symbol or "
+"UniProt ID. Returns Targe..."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst bcfe2a5283a2416ebfddc944eda0c4be
+msgid "Pharos_get_target tool specification"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:67 d42a388549194102afcf0d42d9ea8b89
+msgid "**Name**: ``Pharos_get_target``"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:69 0033bb45805f496bb14ff5c08acf88ea
+msgid ""
+"**Description**: Get detailed drug target information from Pharos/TCRD by"
+" gene symbol or UniProt ID. Returns Target Development Level "
+"(Tdark/Tbio/Tchem/Tclin), protein family, diseases, ligands, and "
+"druggability data. Essential for identifying understudied proteins."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:73 1eeb49baea5d499ba46d75575fa4dbbe
+msgid ""
+"``gene`` (string) (optional) Gene symbol (e.g., 'EGFR', 'TP53', 'BRCA1')."
+" Use either gene or uniprot."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:76 5ec24dab1e4c439c873c8f94b4d73ba9
+msgid ""
+"``uniprot`` (string) (optional) UniProt accession (e.g., 'P00533'). Use "
+"either gene or uniprot."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:92 ef46cb35f8b14c36bc473bdbc72fa8c3
+msgid "**Pharos_get_tdl_summary** (Type: PharosTool)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:94 409c45fff0cf4028a7268749da123270
+msgid ""
+"Get Target Development Level statistics from Pharos. Returns counts of "
+"human proteome targets at ..."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst 2a92019d54aa477eab1c2990f97b015d
+msgid "Pharos_get_tdl_summary tool specification"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:100 172a852a0e9c43838e9c49a5e73af5b9
+msgid "**Name**: ``Pharos_get_tdl_summary``"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:102 838910af5d71478eb7fbc0740fd5d65d
+msgid ""
+"**Description**: Get Target Development Level statistics from Pharos. "
+"Returns counts of human proteome targets at each TDL: Tclin (approved "
+"drugs), Tchem (chemical probes), Tbio (biological annotations), Tdark "
+"(understudied). Use to understand druggable genome coverage."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:106 53e8617aa55c49c186197ff09114111e
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:121 d14a0e581c1241b09ec2f2d5749f2a15
+msgid "**Pharos_search_targets** (Type: PharosTool)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:123 bc15df240c36431daf86a8c89a3f1fdf
+msgid ""
+"Search drug targets in Pharos database by keyword. Supports filtering by "
+"Target Development Level..."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst 9b5c9c0d62ef458ebaed601e7dfa0d97
+msgid "Pharos_search_targets tool specification"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:129 4a2423cb26d849c081829a25ba771b87
+msgid "**Name**: ``Pharos_search_targets``"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:131 6b69583f0bce4a9cac00753d73ea46ef
+msgid ""
+"**Description**: Search drug targets in Pharos database by keyword. "
+"Supports filtering by Target Development Level (Tdark for understudied, "
+"Tchem for chemically tractable, Tclin for approved drugs). Returns TDL, "
+"protein family, and novelty scores."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:135 f4668f0c8ea04c9398c6534b5de4389a
+msgid ""
+"``query`` (string) (required) Search query (gene name, protein name, or "
+"keyword)"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:138 2b2cbe6536674c4683e684b63213c924
+msgid ""
+"``tdl`` (string) (optional) Filter by Target Development Level. "
+"Tdark=understudied, Tbio=biological annotations, Tchem=chemical probes, "
+"Tclin=approved drugs."
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:158 c03137cbf73f4960a1ec1e8bf46db546
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:160 eca9eb2dfb9841fcb35fd22414afdcfa
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pharos_tools.rst:161 e37fd4c4ae094109947d07a141153ef4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

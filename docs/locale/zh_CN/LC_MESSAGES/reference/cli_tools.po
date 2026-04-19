@@ -1,0 +1,797 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../reference/cli_tools.rst:2 f8a98ff149fd42e4b91d9b8d6a131604
+msgid "CLI Tools Reference"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:4 af1a0afef0c64802805eace32e75b812
+msgid ""
+"ToolUniverse provides several command-line tools for tool discovery, "
+"execution, server management, and data management."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:8 43ee8b16682c4fc1b03371dc95e40fcd
+msgid "Table of Contents"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:11 5d1ffa2ae3c244f88ba4ea47a17041b2
+msgid "tu — ToolUniverse CLI"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:13 66d4a6b6afa945168089b24514d0559f
+msgid ""
+"The primary command-line interface for discovering, inspecting, running, "
+"and testing scientific tools."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:15 ../../reference/cli_tools.rst:75
+#: ../../reference/cli_tools.rst:131 ../../reference/cli_tools.rst:156
+#: ../../reference/cli_tools.rst:167 ../../reference/cli_tools.rst:178
+#: ../../reference/cli_tools.rst:211 ../../reference/cli_tools.rst:253
+#: ../../reference/cli_tools.rst:264 ../../reference/cli_tools.rst:302
+#: ../../reference/cli_tools.rst:319 ../../reference/cli_tools.rst:399
+#: ../../reference/cli_tools.rst:432 ../../reference/cli_tools.rst:445
+#: ../../reference/cli_tools.rst:459 014442ba870d4239a10a6b1655860679
+#: 0c435618df4349f9922616d13f9f71bc 0ed585ff4038416d93ab3ddc90682a55
+#: 4846b3e74aac42c698fbd6cc43924bc3 5d6b11e01daa4ac5bcc89a13bd9e0333
+#: 7c8c3c3c239a427ebbac00044f46a897 7e328dbc3bf64198accccba199fdfb6e
+#: 8afba166551a48b9b56decb84f6074dd 8bd383d6998d4a27acc2c2884f972d72
+#: 8d715e06de0f49cb98ceefc98e642603 c33c26f9e9f64a809277f5ba9d639f2c
+#: d158da722a7a461fbe47e646f48c2cc5 d92f1711ef8242608cf20335c52ed6d8
+#: de57f84b146b4a4fb15194de9ca5e602 f310ab9e83bb4cdf86fb874767b513c8
+msgid "**Usage**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:19 ../../reference/cli_tools.rst:257
+#: 2ec737c5140246ed885ddb6ab24c2d70 ddf4b9eb693d4959b7ab3fb54d962314
+msgid "**Commands**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:25 72c764f11df04abd99f1301513c3a6d3
+msgid "Command"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:26 ../../reference/cli_tools.rst:87
+#: ../../reference/cli_tools.rst:190 ../../reference/cli_tools.rst:275
+#: ../../reference/cli_tools.rst:330 ../../reference/cli_tools.rst:366
+#: ../../reference/cli_tools.rst:410 19411b50e032408b833db19f71c41da1
+#: 229c8cf46168499e80b855638890fe57 66551a174a7e4099a795c123e62b4749
+#: 9884162065f34f5e98f20c2d345199d0 992893fe1a8e455bacd8b37217a13b4f
+#: f03c75c7f7634b1ebfad7533cb7ba5bf f0dbf4d1f53f44c48fc17ffb82fad864
+msgid "Description"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:27 91a7cc3707464474bb3e3187bc4b1fb1
+msgid "``tu list``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:28 944447a39110490a84d0e764bafffeef
+msgid "List available tools (filter with ``--categories``)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:29 0c76fa8ddd104ca8870b544ed3eed471
+msgid "``tu grep PATTERN``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:30 88667ed9724940b48ec91f0a89f82ce3
+msgid "Search tools by text or regex (``--field name|description|type|category``)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:31 c5f701a3604944e5acca850db9deec58
+msgid "``tu find QUERY``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:32 37f7f0f26198473e8dba96b0177103a8
+msgid "Natural-language tool search (``--limit N``)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:33 380d076579ab4d34a4a0b68c0539b960
+msgid "``tu info TOOL``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:34 aeaab2c9cf0a4ae4ace17dff44522aa3
+msgid "Show tool details (parameters, description, examples)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:35 b60c7f34687145a789aa4a576a7eba85
+msgid "``tu run TOOL [ARGS]``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:36 9e2bd401369f48aaa5aa78796df2e892
+msgid "Execute a tool (pass args as ``key=value`` or JSON)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:37 58d65d98065a454bbd0d2e216c2dd2b0
+msgid "``tu test TOOL [INPUT]``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:38 8a6ba1af5fcc485183a8e0f2d24827a7
+msgid "Test a tool with example inputs and report pass/fail"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:39 048685725a2b4caaa7664da8ac92a427
+msgid "``tu status``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:40 de7644aab3b745958ed01992e0cfb6f0
+msgid "Show ToolUniverse status (version, tool count, config)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:41 6e6734707ade42af9de57dace870acc4
+msgid "``tu build``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:42 85d96fa2a50144b09e33506c6afe99ee
+msgid "Rebuild the static tool registry after adding built-in tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:43 8e13ebb99a0c47f8a52caa40208c07d1
+msgid "``tu serve``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:44 fcba67868c26475686faaa9d83d3a1ad
+msgid "Start the MCP stdio server (identical to ``tooluniverse``)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:46 ../../reference/cli_tools.rst:107
+#: ../../reference/cli_tools.rst:137 1fee9f0630f64de4a79f89547324c74a
+#: 221f51202e97445b928c002eeeec5391 7cfc87419e824f53869cd7e454d4b57e
+msgid "**Examples**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:68 639a175926b14057bd4685ec6f6949c6
+msgid "MCP Server Commands"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:71 58206e4659f240b582eff2d8ab96cd4f
+msgid "tooluniverse-smcp"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:73 948f47994aa9402cbae135fe66f4eb34
+msgid ""
+"Start the Scientific Model Context Protocol (SMCP) server with HTTP/SSE "
+"transport."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:79 4c03707e63874d618c4e757481961440
+msgid "**Common Options**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:85 ../../reference/cli_tools.rst:188
+#: ../../reference/cli_tools.rst:274 ../../reference/cli_tools.rst:329
+#: ../../reference/cli_tools.rst:365 ../../reference/cli_tools.rst:409
+#: 4b5f407b74494f1a97a88ad2c62c1f87 85ea8f9a2665440eb940c17945ac41b7
+#: 85f1a550631241af96ffeb759bbfea7f a4656d2391e041799a3cc4ab14537779
+#: d770bdf3520e457a9e7f28f2df2d56f0 e7204ac77b7a4f97a6279a881f190e0d
+msgid "Option"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:86 ../../reference/cli_tools.rst:189
+#: 07cd4ab6af13420ba18895d0284e69e7 58e4093fff1949ba9388212d3a58f070
+msgid "Default"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:88 ../../reference/cli_tools.rst:191
+#: 1e0c68aa479344c7b6b8292a15117680 edb7df5730a841f982a3ae99dead7e98
+msgid "``--host``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:89 e13c0c640e6244f1b0e824c51e577514
+msgid "0.0.0.0"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:90 ../../reference/cli_tools.rst:193
+#: bd9f5c353fdc4125a94ed194d3baaf74 c3119b2881f448d1a3ab7e92166588ac
+msgid "Server host address"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:91 ../../reference/cli_tools.rst:194
+#: 316bd6d70dce4133b1e266e3673265f7 e466afa10b5d439f8ccc83cb7e9f88c9
+msgid "``--port``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:92 51e680ec4e0342ff83df12499b62e689
+msgid "7000"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:93 ../../reference/cli_tools.rst:196
+#: 5f8a90bfeae44f6c81d9a305aa6237e9 bb847b83596c470999bd5a135611f276
+msgid "Server port"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:94 661ffce6c6824854a070e651633f8ec4
+msgid "``--compact-mode``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:95 ../../reference/cli_tools.rst:101
+#: 6bb36fa5aff34ab194bc6887821c3fde 77fc19e6e730433aac6d8824607365b8
+msgid "False"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:96 2159c06d1f624267baf04ba4b4bb3954
+#, python-format
+msgid "Enable compact tool names (40% shorter)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:97 ac670060601645dfa9a7e14d99d16b16
+msgid "``--categories``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:98 75949955afce41148f1d963f7eaf963f
+msgid "all"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:99 59470c1a9dee4517889d8d3a38b1fa8e
+msgid "Load specific tool categories only"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:100 5daf5f240ade45f882b37ea166e9f19f
+msgid "``--hooks-enabled``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:102 164f98813a7547d4a9ed871a79abd91c
+msgid "Enable output processing hooks"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:103 c8ebc598ef6247aeb28bef123c19e09e
+msgid "``--load``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:104 ad77896c5035411b9ce2bd89660faea8
+msgid "None"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:105 bc90bcc06f98481fa74044a1593896ac
+msgid "Load profile configuration (preset/workspace)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:124 ac4436e9103b47bc85e310a4c5388fe3
+msgid ""
+"**See also**: :doc:`../guide/building_ai_scientists/mcp_support` for "
+"detailed MCP integration guide"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:127 e2ea86609c2947d29d10119e61da0025
+msgid "tooluniverse-smcp-stdio"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:129 8ebe977a192e46fda68c6e8e66698449
+msgid ""
+"Start SMCP server with STDIO transport for desktop AI applications "
+"(Claude Desktop, Cursor, etc.)."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:135 6496f2ad887448a4b9c2d0455d7a8833
+msgid ""
+"**Common Options**: Same as ``tooluniverse-smcp`` except transport-"
+"related options."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:149 96c101f561c240de85fb1d9d3e0d4fe6
+msgid "**See also**: :doc:`../guide/building_ai_scientists/claude_desktop`"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:152 a1c4eea023934d0d80e2f847fd5e4260
+msgid "tooluniverse-mcp"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:154 da8b35a108c6405c92513d8db8ffeadd
+msgid "Alias for ``tooluniverse-smcp-server`` — starts the MCP HTTP server."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:160 e95e71aa6cf84b0385c945914810df91
+msgid ""
+"This command is identical to ``tooluniverse-smcp-server`` and provided "
+"for compatibility with MCP-first workflows."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:163 11a9a09dbda74df7b7fb5ac786ae8822
+msgid "tooluniverse-smcp-server"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:165 ea6f126e0abd4c4faacba6b2d898fffa
+msgid "Starts the HTTP/SSE server (same function as ``tooluniverse-mcp``)."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:171 1b956457cba942a488da080be9c24caf
+msgid ""
+"Unlike ``tooluniverse-smcp`` (which supports ``--transport stdio``), this"
+" command always uses HTTP transport."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:174 0241f662ee57477aaa2f6c6b08920556
+msgid "tooluniverse-http-api"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:176 7a5f2895bd3c4a559fd595b19b845911
+msgid "Start HTTP API server for ToolUniverse class methods."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:182 ../../reference/cli_tools.rst:268
+#: ../../reference/cli_tools.rst:323 ../../reference/cli_tools.rst:403
+#: 23eca2f092c14ab59e37ec05a295e137 ca3149d9333a44a081fcce90a5f4d022
+#: d075b26244fb43eb9dd453eb5fc9830f ebb3bd505bf2483c83b26455611ffd32
+msgid "**Options**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:192 9b298d663055491fbff2b30f5310f4b3
+msgid "127.0.0.1"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:195 7fb86ae750d244309672c683499dab7b
+msgid "8080"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:197 24f6fc5f0bc64371a85a5a3c13d8cab5
+msgid "``--workers``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:198 b60875881a1d4332b5db29b5cac39701
+msgid "1"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:199 af0b040540544b8cbbca416699c9f1dd
+msgid "Number of worker processes"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:201 a3046ad8c9924174a3ec4694d21f891e
+msgid "**See also**: :doc:`../guide/http_api`"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:204 d60a5b6567cf474d98f979555e6d99de
+msgid "Diagnostic Tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:207 93cd25da1d884f4bb33497e9688b8716
+msgid "tooluniverse-doctor"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:209 71fafc32bb484d03b064007ff85523e7
+msgid ""
+"Health check tool that diagnoses ToolUniverse installation and tool "
+"availability."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:215 3fa1cd3738554e4ab3789ee4805f6ba5
+msgid "**What it checks**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:217 aa9e288380c2461da8bd27ddcb84804b
+msgid "ToolUniverse installation and imports"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:218 db73db2764764706b54da2a450241007
+msgid "Tool loading status (available vs unavailable)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:219 f1f8533cc8204f3bb106711eaebf3138
+msgid "Missing dependencies for specific tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:221 16188ab9dd714e3a8ba4215bca3e328c
+msgid "**Example Output**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:238 3548fc9293c142628ead24cfc91946cf
+msgid "**Use cases**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:240 df1d65787f804a3fa7f935261134964e
+msgid "After fresh installation to verify setup"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:241 66a5e8eb672f4738af031e28bb11f426
+msgid "Debugging tool loading issues"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:242 fe53407b5e694de4a9a9ad49ca26fd4a
+msgid "Before important analyses to ensure all needed tools are available"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:243 f2def1bb93fc43f8b4a315d1d26ce332
+msgid "Identifying missing optional dependencies"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:246 a069706a6b4a40d3be45dbc17b5485f4
+msgid "Data Management Tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:249 f4a9864af58c4dcda343459c04ef96e0
+msgid "tu-datastore"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:251 a8132af875c54dd7ac41f3e7474ba1f8
+msgid ""
+"Manage local searchable datastores for building custom tool collections "
+"with semantic search."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:260 52f5f74b78a24a3a9b0f81063193d1d3
+msgid "build"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:262 d323850abbeb4e2e9a8b1a97ce05bfca
+msgid "Build or extend a collection from JSON documents."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:276 ../../reference/cli_tools.rst:331
+#: ../../reference/cli_tools.rst:367 2e939a54cdc94d0f90967c417c43d49a
+#: 447d14831841405286d7a1bc43db0145 bdf9ab2d388f436587d7d6c795cc5f07
+msgid "``--collection``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:277 ../../reference/cli_tools.rst:332
+#: ../../reference/cli_tools.rst:368 155275dc6db04882a8f0696481d24589
+#: 289a8cc157b3432bba350c580543f2b2 a0ad4aa6127046bcb0d44c67cbe55283
+msgid "Collection name (required)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:278 c9b004a126d5434f8bf8fc8346a4c60b
+msgid "``--docs-json``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:279 924c1f415f4e4feab4ff600acb767d29
+msgid "Path to JSON file with documents (required)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:280 22873b02a78e430aa6e7c636c185ae2b
+msgid "``--db``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:281 5937d320ed894b5289f85d2ec1924e7f
+msgid ""
+"Optional path to SQLite database (default: "
+"~/.tooluniverse/embeddings/<name>.db)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:282 27ffcb28c9b9426c980617638d2f72c1
+msgid "``--provider``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:283 b4d037fbd0744b4ea14bbc0f5dba06fe
+msgid "Embedding provider: openai, azure, huggingface, local"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:284 f75efa5363e3457ca2905821afbd79f8
+msgid "``--model``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:285 ade351b65317403aa517b8b6c8ae0763
+msgid "Embedding model name"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:286 ../../reference/cli_tools.rst:415
+#: 38a08fcdc3624259b85646c4d6bf12f8 a6874334408849dbbe68f09a0a5a1e76
+msgid "``--overwrite``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:287 dfa5d6ce7c214557a59ad7dc668669f7
+msgid "Rebuild FAISS index if exists"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:289 ../../reference/cli_tools.rst:306
+#: ../../reference/cli_tools.rst:342 ../../reference/cli_tools.rst:380
+#: ../../reference/cli_tools.rst:418 506f916e4153473a86b47490f5cff864
+#: 7038746ae4c24852987e9d1869e88a6a 96d6c1ef24954550aefeb74d9e9dff31
+#: daa709a7e69940ac858000a1ec5482c8 fd75be15c722412cbbbe0687f01c7127
+msgid "**Example**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:298 9aaf027e97424fb49d2431d2d2f7c38e
+msgid "quickbuild"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:300 96594d920dc948609806d00b65488d05
+msgid "Build a collection from a folder of text files (.txt/.md)."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:315 c33eec714a2a4cceb39596a91c6a060a
+msgid "search"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:317 23c30a46527b43b1971d14afe81e192a
+msgid "Query an existing collection."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:333 291c247754fe4f43ba53c068ed4c170b
+msgid "``--query``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:334 fac58a85f52e4f2bb408ac9f952623b3
+msgid "Search query text (required)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:335 da7343dd06b74939a44697323bf82418
+msgid "``--method``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:336 c01075cb1adb47d3a705b4cea6114cb0
+msgid "Search method: keyword, embedding, hybrid (default: hybrid)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:337 72d1af8701fe4c238accba36b2e0f552
+msgid "``--top-k``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:338 5baca4fef5ce412897317cb59bb69b49
+msgid "Number of results to return (default: 10)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:339 74c0c6ce5c6f4f7f92c1b99d91644b6f
+msgid "``--alpha``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:340 42b98cea943448db9112811a37397c0e
+msgid "Hybrid mix weight (default: 0.5)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:351 8307d15bebd6407fbe71148529cdb1c9
+msgid "sync-hf"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:353 ba6819a0b0b24f21a6ef470b31a2f0a5
+msgid "Upload/download datastore artifacts to/from Hugging Face."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:355 bc3c92f980aa4830ac5d0821a23173da
+msgid "**Upload Usage**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:359 fa376cc085cb4ffb8fd0781aa0f20a9e
+msgid "**Upload Options**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:369 d0f7b078c0b04c1ea33b41401b3fbd08
+msgid "``--repo``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:370 4d9dc7b101f541f29c6499ad150a9109
+msgid "HF dataset repo ID (default: <username>/<collection>)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:371 366f45547eba44dba0dfbd39df236768
+msgid "``--private``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:372 11b780b1219d4747be31e8851ef8c35e
+msgid "Make dataset private (default: True)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:373 2b7572cd988c4567a6421b293031cd05
+msgid "``--tool-json``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:374 218a402e049a4b50b82e6e049f7f2190
+msgid "Path(s) to tool JSON file(s) to include"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:376 67f60baa93044504b331a59a2b09a627
+msgid "**Download Usage**::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:395 44233de3ca79403bb6d2b47117a38fa6
+msgid "add-tool"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:397 3c84f60823dd4f47a76d4d1ba89470b0
+msgid ""
+"Register a tool JSON in ``~/.tooluniverse/data/user_tools`` for auto-"
+"loading."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:411 7824f5110b0a4b10ad92e47c6478c386
+msgid "``json_file``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:412 a75fcb8217374a0087d9b96d125c6592
+msgid "Path to tool JSON file (required)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:413 026fbb6685fb4be6a3aba85c3570b264
+msgid "``--name``"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:414 01b6739090644d2c8ee2fe1439112d58
+msgid "Custom filename (default: source filename)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:416 64f086349c8c43e1b2350fa1de447717
+msgid "Overwrite if file exists"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:422 b775064224174bea999a9a9d2f83111d
+msgid ""
+"**Use case**: Create custom tools that will be automatically loaded by "
+"ToolUniverse without modifying the installation."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:425 8f8a35e6927b4baabceef616f8572b09
+msgid "Expert Feedback Tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:428 9b845de02d6a4b7d9f7de2d85279a758
+msgid "tooluniverse-expert-feedback"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:430 1eb941b0bb5a4ac79e477aa3e76d79d6
+msgid "Start the human expert feedback MCP server for validation workflows."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:436 ec92d24e59c74b129f14b188517f218d
+msgid ""
+"This starts an MCP server that provides tools for collecting human expert"
+" feedback on scientific analyses."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:438 da727e16b5f7439e9e6ffc0c992ac844
+msgid "**See also**: Remote tools documentation"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:441 c656c25a83eb4019943f824494dddc39
+msgid "tooluniverse-expert-feedback-web"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:443 18accaf261e04c4688a5eae039b6eaa9
+msgid "Start the web interface for human expert feedback system."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:449 ad76aa962f3b4115bed019e680f9b8ca
+msgid ""
+"Opens a web interface where human experts can review and validate "
+"scientific tool outputs."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:452 c24586324181402b84f898badf5fda00
+msgid "Utility Commands"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:455 a881c14df11f4727a01d388311dc3f49
+msgid "generate-mcp-tools"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:457 cd45c8988645463da9bf498e19d47a87
+msgid "Generate MCP tool configurations from ToolUniverse tool definitions."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:463 48e4cc66af75474385829d060cf1305e
+msgid ""
+"This tool helps convert ToolUniverse tool specifications into MCP-"
+"compatible format for custom integrations."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:466 e174dabf37004a3b99340740ca7e8f17
+msgid ""
+"This is an advanced tool for developers extending ToolUniverse. Most "
+"users should use the built-in MCP servers instead."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:469 92a06e07f3404015a8cbefda601c66e6
+msgid "Environment Variables"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:471 8aa400fae980467ab138af1e093b9d0e
+msgid "CLI tools respect these environment variables:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:473 b92c2960ae624f44b34611b218e5f7ae
+msgid "**Embedding Configuration** (for tu-datastore):"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:475 1be171ce26af44239f1a4c17bf69f21f
+msgid ""
+"``EMBED_PROVIDER`` - Embedding provider (openai, azure, huggingface, "
+"local)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:476 03fc82f54ec14000bd5438f4994a063c
+msgid "``EMBED_MODEL`` - Embedding model name"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:477 d5319cc9d3b24d78821b7000ad58c75a
+msgid "``OPENAI_API_KEY`` - OpenAI API key (if using OpenAI embeddings)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:478 96fcf0b0d52b45babe22dff43e7a2d0b
+msgid "``HF_TOKEN`` - Hugging Face token (if using HF embeddings)"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:480 b355021943a84109bc8ec83bf075fdd0
+msgid "**See also**: :doc:`environment_variables` for complete reference"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:483 4fa7472dcb8d4b518c1231c15027cfe3
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:486 d040ba11b84e47a6b1be46cd0ec806ea
+msgid "Server won't start"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:488 22949a45c1a84dfa98ab4d3095898811
+msgid "**Problem**: Server fails to start or exits immediately."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:490 dc143deec43e4f3e978911cfa5eebc79
+msgid "**Solutions**:"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:492 03e4fa9152ca40b88588d8abaa0e78cc
+msgid "Check if port is already in use::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:496 d67c10d4104743d6bcdbc2ac1c1b1432
+msgid "Run health check::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:500 3b591ef8a59c4ca0a7450e83ad487892
+msgid "Try different port::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:505 94a1e416fdec483180c5bc3886f780ad
+msgid "Tools not loading"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:507 68b157a8670d45a9b32bdb09d56a727e
+msgid "**Problem**: ``tooluniverse-doctor`` shows many unavailable tools."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:509 76a91f7a6e9f48d7bb4ffb4c24abc8f0
+msgid "**Solution**: Install missing dependencies::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:517 8d88ce0179b445cd886c67d579aec239
+msgid "Command not found"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:519 001034e02d9445858c4e9569ebedd8cd
+msgid "**Problem**: CLI commands are not recognized."
+msgstr ""
+
+#: ../../reference/cli_tools.rst:521 2e970e59ed2740b29aff79533d7d6a82
+msgid "**Solution**: Ensure ToolUniverse is installed correctly::"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:529 dcdf9d2c3be6499c84dfe321a35f7a98
+msgid "See Also"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:531 1f050a0f26154d3ca4347d4412e6c4a5
+msgid ":doc:`../guide/python_guide` - Installation and Python API guide"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:532 8d0b81c80b0d4d2cb61c55a57a0d6589
+msgid ":doc:`../guide/building_ai_scientists/mcp_support` - MCP integration guide"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:533 80602509adb74c27a74af6dd8bccb5e1
+msgid ":doc:`../help/troubleshooting` - Troubleshooting guide"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:534 bc4a05bfb72747f3bc3fe0ab2e8a7216
+msgid ":doc:`environment_variables` - Environment variables reference"
+msgstr ""
+
+#: ../../reference/cli_tools.rst:535 454fe1da02dd44839f78cc42ea94966c
+msgid ":doc:`../guide/api_keys` - API keys configuration"
+msgstr ""
+

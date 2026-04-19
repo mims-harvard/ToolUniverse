@@ -1,0 +1,268 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sgd_tools.rst:10 5eec5c13dabe4e2fa671eb50cfbe93a9
+msgid "Sgd Tools"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:12 da89ce273ef045b9af6ebdea383737d0
+msgid ""
+"**Configuration File**: ``sgd_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 5"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:16 6535f3139b0849f5a6c686b58f115fc3
+msgid ""
+"This page contains all tools defined in the ``sgd_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:19 cf39ce6c06894a859487ef434c745e13
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:22 48a628bbdd7d42058f5e7cb0d6ae37e3
+msgid "**SGD_get_gene** (Type: SGDTool)"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:24 cc95e839f39f4774b991a8aad18a0440
+msgid ""
+"Get yeast gene/locus overview from SGD (Saccharomyces Genome Database) by"
+" SGD identifier. Returns..."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst e8a616870e2d45a8b39afa843114a885
+msgid "SGD_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:28 ../../tools/sgd_tools.rst:59
+#: ../../tools/sgd_tools.rst:90 ../../tools/sgd_tools.rst:121
+#: ../../tools/sgd_tools.rst:152 828867738a2b42c9a8c64c17d9e1559d
+#: 888d8769298a4d53960146a1e4d96f01 aeae72c5a9014bdcafe5d84ac7b77088
+#: d03f0bc28f8d475fb07ac985325d1fec de3c73b279574ab7b18f309bb3e26935
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:30 2da07b147d2744e6a7f585de4d9b54eb
+msgid "**Name**: ``SGD_get_gene``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:31 ../../tools/sgd_tools.rst:62
+#: ../../tools/sgd_tools.rst:93 ../../tools/sgd_tools.rst:124
+#: ../../tools/sgd_tools.rst:155 2eff7951239343279f97727714085d8e
+#: 93e998c08c614ef4ae775f0d15800783 9ee99254ec164cb38ae503bfc54715f3
+#: c6dc1a08001841a7816dfd8a7a2fc360 cb8eaf76f8294b50a07817776de5229e
+msgid "**Type**: ``SGDTool``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:32 8dfdafc924884f27a8aaa4e7ffd38819
+msgid ""
+"**Description**: Get yeast gene/locus overview from SGD (Saccharomyces "
+"Genome Database) by SGD identifier. Returns gene name, systematic name, "
+"description, UniProt ID, aliases, and functional annotations. S. "
+"cerevisiae is the primary model organism for eukaryotic cell biology. "
+"Example: S000000259 returns GAL4, the galactose metabolism transcription "
+"factor."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:34 ../../tools/sgd_tools.rst:65
+#: ../../tools/sgd_tools.rst:96 ../../tools/sgd_tools.rst:127
+#: ../../tools/sgd_tools.rst:158 468a5a7a974349eea52a0ee6509934c8
+#: 5975fc25702d4ea88ad37ec9e86db6f2 6302b05e086b4e228d48ef864a652491
+#: d6efd389d085423a98c3e4c6ab421e9c f37cf125be0449f9821c1701cd6f359b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:36 e91d34c0df8041b99b9d8c3dca55af05
+msgid ""
+"``sgd_id`` (string) (required) SGD locus identifier. Examples: "
+"'S000000259' (GAL4), 'S000003219' (RMR1), 'S000005564' (ACT1)."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:39 ../../tools/sgd_tools.rst:70
+#: ../../tools/sgd_tools.rst:101 ../../tools/sgd_tools.rst:132
+#: ../../tools/sgd_tools.rst:172 097d138caf8f4c92a0600ebffcd49011
+#: 31dde591c3064471913bcf565555c2ee 6293e55dac9a45ed85d500a6a42166d3
+#: 923ecbecd7d2491ea1381c289075e1f5 f2b1da253560412e909e9820be3d2298
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:53 049b79efd16f4960b9c060358e876161
+msgid "**SGD_get_go_annotations** (Type: SGDTool)"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:55 32f018036f1b4d11a5b2f85cc162a491
+msgid ""
+"Get Gene Ontology annotations for a yeast gene from SGD. Returns GO terms"
+" (biological process, mo..."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst 703482b6a3de4a8699f66fb82d58b32b
+msgid "SGD_get_go_annotations tool specification"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:61 e330ce912fa3426db14912c2c746b1f8
+msgid "**Name**: ``SGD_get_go_annotations``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:63 95a38d8c4cfe4d0f983ad2a15fb80da2
+msgid ""
+"**Description**: Get Gene Ontology annotations for a yeast gene from SGD."
+" Returns GO terms (biological process, molecular function, cellular "
+"component), evidence codes, qualifiers, and references. SGD GO "
+"annotations are among the most thoroughly curated in any model organism. "
+"Example: S000003219 (RMR1) has annotations for meiotic recombination and "
+"cytoplasm localization."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:67 ../../tools/sgd_tools.rst:98
+#: a8a9b7f5d60e490d9d83a098ad876f7c e80bdbbe032d4a93972e4742a8a19b56
+msgid ""
+"``sgd_id`` (string) (required) SGD locus identifier. Examples: "
+"'S000003219' (RMR1), 'S000005564' (ACT1), 'S000000259' (GAL4)."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:84 c14b4c05fd7b4ce6beb229b7b6a8375a
+msgid "**SGD_get_interactions** (Type: SGDTool)"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:86 2c05c925088143a58cc7202b9048f66d
+msgid ""
+"Get genetic and physical interactions for a yeast gene from SGD. Returns "
+"interaction type (Physic..."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst b9a691fa68594deca02286d767d879fb
+msgid "SGD_get_interactions tool specification"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:92 6de3b8361c3b479787806c0fdc1de93b
+msgid "**Name**: ``SGD_get_interactions``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:94 d250919441024f2eba364254a3f25a30
+msgid ""
+"**Description**: Get genetic and physical interactions for a yeast gene "
+"from SGD. Returns interaction type (Physical/Genetic), experiment type "
+"(Two-hybrid, Affinity Capture-MS, Synthetic Lethality, etc.), interacting"
+" gene names, and references. Yeast interaction data is the most "
+"comprehensive of any organism. Example: S000003219 (RMR1) has 178 "
+"interactions."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:115 284ddd4c96bb4b16b273b6fc9233635c
+msgid "**SGD_get_phenotypes** (Type: SGDTool)"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:117 74ec965fada7435e8506785209e72b34
+msgid ""
+"Get curated phenotype annotations for a yeast gene from SGD. Returns "
+"observable phenotypes (growt..."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst 30e7654eaf9e4cf5974c78df1b0a4e8f
+msgid "SGD_get_phenotypes tool specification"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:123 9deebadc5a8543d2a3c73d1f427b10aa
+msgid "**Name**: ``SGD_get_phenotypes``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:125 c02a0910c038425487543a929f7fb02c
+msgid ""
+"**Description**: Get curated phenotype annotations for a yeast gene from "
+"SGD. Returns observable phenotypes (growth, morphology, fitness), mutant "
+"types, experimental methods, strain backgrounds, and chemical conditions."
+" Yeast phenotypes are a key resource for functional genomics. Example: "
+"S000003219 (RMR1) has 29 phenotype annotations including competitive "
+"fitness, respiratory growth defects."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:129 1895df22af8145458cdc3da596c57012
+msgid ""
+"``sgd_id`` (string) (required) SGD locus identifier. Examples: "
+"'S000003219' (RMR1), 'S000000259' (GAL4), 'S000005564' (ACT1)."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:146 78f886afdd3741f7a58f7446ffe7a3ab
+msgid "**SGD_search** (Type: SGDTool)"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:148 ee57b48a3acc42e3907d3bd484f352b2
+msgid ""
+"Search SGD across all data types (genes, GO terms, phenotypes, "
+"references, alleles, diseases, com..."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst 155d8daf6d7c47ca9ff114f9b7afb64c
+msgid "SGD_search tool specification"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:154 9f5e1431fcbd4cb48fb751bb9b9d5e93
+msgid "**Name**: ``SGD_search``"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:156 6ca8a2b751974530b50b091b9f65eaa3
+msgid ""
+"**Description**: Search SGD across all data types (genes, GO terms, "
+"phenotypes, references, alleles, diseases, complexes, pathways). Returns "
+"matching entries with categories, descriptions, and links. Supports "
+"category filtering. Example: searching 'GAL4' finds the transcription "
+"factor gene, related references, alleles, and GO terms."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:160 6ab006a457f64a96a28b9b5b6242a444
+msgid ""
+"``query`` (string) (required) Search query string. Examples: 'GAL4', "
+"'cell cycle', 'sporulation'."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:163 7d2d3faf805c41da8fe6194dc7b3df82
+msgid ""
+"``category`` (string) (optional) Filter by category. Options: 'locus', "
+"'reference', 'biological\\_process', 'molecular\\_function', "
+"'cellular\\_component', 'phenotype', 'disease', 'allele', 'complex', "
+"'pathway', 'chemical', 'strain', 'download'."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:166 e8a8d3a4a1b64a36a388f9a0d5eaac77
+msgid ""
+"``limit`` (integer) (optional) Maximum results to return (default 10, max"
+" 50)."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:169 0ab248d331af43f4a5d4a612590ca7f0
+msgid "``offset`` (integer) (optional) Pagination offset (default 0)."
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:186 41c1f9d9ac714034a1d9b529704f86c7
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:188 ac3f0cc0b97447f49aa7425275fb041d
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sgd_tools.rst:189 67bb1af6360047baab84a5424f28c176
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,147 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sabiork_tools.rst:10 ad5bebd5c4ae4c5c9feb0c1a758ff6b3
+msgid "Sabiork Tools"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:12 50c24f9abb6f42f8aba5ecd9776ddf30
+msgid ""
+"**Configuration File**: ``sabiork_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:16 3c7ab7765cf54720b7ba96a9e097bce0
+msgid ""
+"This page contains all tools defined in the ``sabiork_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:19 5e7edfc61a234a5d9fbe5c98dc120513
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:22 00d89047c3f34350ad10bd11ecb3a8ce
+msgid "**SABIO_RK_search_reactions** (Type: SABIORKTool)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:24 512f6384e73c4ab890bc361d94c76bb6
+msgid ""
+"Search SABIO-RK database for biochemical reaction kinetic parameters. "
+"Returns Km, kcat, Vmax, Ki ..."
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst 28a5429ae82f4a148ecb59cc3759728a
+msgid "SABIO_RK_search_reactions tool specification"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:28 d2e8a22d4d3446be827297edc66e64f7
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:30 e2dfa15878024a368e14bd71d211650a
+msgid "**Name**: ``SABIO_RK_search_reactions``"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:31 d36e2170bb1b452ea477dc4e52ddbfd2
+msgid "**Type**: ``SABIORKTool``"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:32 bd43f1a7eaf24e1b94d824aec6406cb1
+msgid ""
+"**Description**: Search SABIO-RK database for biochemical reaction "
+"kinetic parameters. Returns Km, kcat, Vmax, Ki values with substrate "
+"specificity, organism, and literature references. No authentication "
+"required. Search by EC number (e.g., 1.1.1.1), enzyme name (e.g., alcohol"
+" dehydrogenase), substrate (e.g., ethanol), organism (e.g., Homo "
+"sapiens), or product. SABIO-RK contains >200,000 kinetic entries curated "
+"from published literature."
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:34 2bd5e1bf487642238634a491bb919b3f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:36 82a0696d0c5d431493b228e41ba50d71
+msgid ""
+"``operation`` (string) (optional) Operation type (fixed: "
+"search\\_reactions)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:39 b00b4d65546744619dabb8b3760d8820
+msgid ""
+"``ec_number`` (string) (optional) EC number (e.g., 1.1.1.1 for alcohol "
+"dehydrogenase, 2.7.1.1 for hexokinase)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:42 1724d3d81b6049a1abe73b80297332cd
+msgid ""
+"``enzyme_name`` (string) (optional) Enzyme common name (e.g., alcohol "
+"dehydrogenase, hexokinase, lactate dehydrogenase)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:45 0eed9d58f3a84c2da1e31fb5ddd7ba39
+msgid ""
+"``substrate`` (string) (optional) Substrate name (e.g., ethanol, glucose,"
+" ATP)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:48 9cc685e4d6d1476980ec299896e85102
+msgid ""
+"``organism`` (string) (optional) Organism name (e.g., Homo sapiens, "
+"Escherichia coli, Saccharomyces cerevisiae)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:51 410be1a2539b45f493a3d657b53cc4d7
+msgid ""
+"``product`` (string) (optional) Product name (e.g., acetaldehyde, "
+"pyruvate)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:54 34dd488961a6478f84f0945f13a7dd82
+msgid ""
+"``parameter_type`` (string) (optional) Filter by kinetic parameter type "
+"(e.g., Km, kcat, Vmax, Ki)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:57 37ab32e9e38f41c28763a3e048f19f1b
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of kinetic laws to "
+"return (default 20, max 100)"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:60 6fb121c349584adca0d3d03a05df2a4f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:73 eb964a4401a74e45858900fb7f6f732a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:75 208586ad147e41de8b78e7ac60d46a16
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sabiork_tools.rst:76 6359a00b9289449d9a3242030540d9cb
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

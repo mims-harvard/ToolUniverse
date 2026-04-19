@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/sdss_tools.rst:10 772e64248cb84da2b4c91e81a215e7c1
+msgid "Sdss Tools"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:12 9ce687db6b114f4695cc71e80e642afe
+msgid ""
+"**Configuration File**: ``sdss_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 1"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:16 b96c8ad6dd0449ffbe988a668c1022bb
+msgid ""
+"This page contains all tools defined in the ``sdss_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:19 debb97a8d8cf49539da3ae9c81778081
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:22 bbe5f88f4e1e4fe98846d1cde86c5306
+msgid "**SDSS_sql_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:24 1ce2b8a351fe4e8da314327a7026682f
+msgid ""
+"Query the Sloan Digital Sky Survey (SDSS) Data Release 18 database using "
+"SQL. SDSS is one of the ..."
+msgstr ""
+
+#: ../../tools/sdss_tools.rst fc6d6a128f8a422c96a9b0f259ee0b29
+msgid "SDSS_sql_search tool specification"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:28 18c6686e0e1a418ab617e3049bc5e9fd
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:30 141d5bf9fef447dfa1bd56815f4d48af
+msgid "**Name**: ``SDSS_sql_search``"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:31 8ec4ab2207004b05b5455e15bfb7f34c
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:32 bb3679719fc7488583a99501b2e7ef91
+msgid ""
+"**Description**: Query the Sloan Digital Sky Survey (SDSS) Data Release "
+"18 database using SQL. SDSS is one of the most comprehensive astronomical"
+" surveys, imaging 1/3 of the sky with data on 500 million objects. Key "
+"tables: PhotoObjAll (photometric objects: galaxies, stars, quasars), "
+"SpecObj (spectroscopic objects with redshifts and classifications), "
+"PhotoPrimary (unique photometric sources). Key columns: ra, dec "
+"(coordinates), objid (unique ID), z (redshift for SpecObj), class "
+"(STAR/GALAXY/QSO), u/g/r/i/z (magnitudes in 5 photometric bands). Use SQL"
+" TOP N for limiting results."
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:34 f3f0af7acfee4807990504d8217c125f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:36 3c45169c60a64f6b99c432d2a2873cd7
+msgid ""
+"``cmd`` (string) (required) SQL query against the SDSS DR18 database. "
+"Examples: 'SELECT TOP 10 objid,ra,dec,r FROM PhotoObjAll WHERE ra BETWEEN"
+" 180 AND 181 AND dec BETWEEN 0 AND 1', 'SELECT TOP 5 "
+"specObjID,ra,dec,z,class FROM SpecObj WHERE class=\\\\'GALAXY\\\\' AND z "
+"BETWEEN 0.1 AND 0.2', 'SELECT TOP 5 objid,ra,dec,g,r,i FROM PhotoPrimary "
+"WHERE g < 18 ORDER BY g'"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:39 88a7b66a28e2416dbc56e92c591831a2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:53 7a13a47896364b2aac12e5072963117b
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:55 2ccbb6ec687e4ec5b2ee9c8e3e7905d6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/sdss_tools.rst:56 dcd0a427b17145ed85dec05ed0ce23f9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

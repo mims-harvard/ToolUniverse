@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/panelapp_tools.rst:10 30f6c48f2ae84e01a945cbf942fde736
+msgid "Panelapp Tools"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:12 5206b45f1e904dbc9cb967fdf2436037
+msgid ""
+"**Configuration File**: ``panelapp_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:16 af9de52f8c434c09ae8896252920f060
+msgid ""
+"This page contains all tools defined in the ``panelapp_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:19 1fb72f917a5744b6bacbdefe007bcb69
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:22 048a742b5b94454da72b0c647728ace2
+msgid "**PanelApp_get_panel** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:24 9053903852c74b80b333a34d6b67f5cc
+msgid ""
+"Get the full gene list and details for a specific Genomics England "
+"PanelApp gene panel by panel I..."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst b76cef6aa49241b682aa73aac2e2578e
+msgid "PanelApp_get_panel tool specification"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:28 ../../tools/panelapp_tools.rst:59
+#: ../../tools/panelapp_tools.rst:90 163f7bd74a894da3960ceb7e0d896032
+#: 3c5efa7d40dd4e4693fe424909ca5a2e ca4d0dcef7c54acfb48f71b20e2e6812
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:30 d0b878486f00416a9858d1d21b8f36f1
+msgid "**Name**: ``PanelApp_get_panel``"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:31 ../../tools/panelapp_tools.rst:62
+#: ../../tools/panelapp_tools.rst:93 8ef113b18d9c40f59e2d1e037ecc26ab
+#: c20a243cc66d4a47b42c3efc36f38dbe d17dce5b321949bdb4c038381983eba7
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:32 40e5ddc462e54931a33da735a4d01df9
+msgid ""
+"**Description**: Get the full gene list and details for a specific "
+"Genomics England PanelApp gene panel by panel ID. Returns all genes in "
+"the panel with their confidence levels (3=green/diagnostic, "
+"2=amber/borderline, 1=red/limited), mode of inheritance, mode of "
+"pathogenicity, penetrance, phenotypes, publications, and evidence "
+"sources. This is the definitive resource for which genes are included in "
+"clinical genetic testing panels used by the NHS. Use "
+"PanelApp\\_search\\_panels to find panel IDs."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:34 ../../tools/panelapp_tools.rst:65
+#: ../../tools/panelapp_tools.rst:96 50b5543aa2034268a3d17e18a9e67c31
+#: 7a4ee61e5a164addb75a90622cac7a66 92b1ee20e5844ca29988fa21d4203821
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:36 35ad7f9f1b1c4926babd8180e41f42b6
+msgid ""
+"``panel_id`` (integer) (required) PanelApp panel ID (e.g., 504 for "
+"'Inherited polyposis and early onset colorectal cancer'). Find IDs using "
+"PanelApp\\_search\\_panels."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:39 ../../tools/panelapp_tools.rst:70
+#: ../../tools/panelapp_tools.rst:101 17909dd36ac84fc8b7978e25e69f96a1
+#: 34692ae632e8467da78a21e821148440 e8c257f7b08f4ef88b94e2b7e0983f7a
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:53 8bb0bae2f81c429581670a54f60d4d6e
+msgid "**PanelApp_search_genes** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:55 af71df316c054024bafa6bf4e6bb6ea5
+msgid ""
+"Search for a gene across all Genomics England PanelApp panels to find "
+"which clinical testing pane..."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst f98500eab7114c188713fcbd0fb34bd8
+msgid "PanelApp_search_genes tool specification"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:61 710e1f0c4f084f6e8f234836ae168dc2
+msgid "**Name**: ``PanelApp_search_genes``"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:63 3154ce552e8d46a294f7d56f44f1e78d
+msgid ""
+"**Description**: Search for a gene across all Genomics England PanelApp "
+"panels to find which clinical testing panels include it. Returns all "
+"panels containing the gene, along with the confidence level, mode of "
+"inheritance, and associated phenotypes for each panel. This is invaluable"
+" for understanding the clinical significance of a gene - if it appears in"
+" multiple high-confidence panels, it has strong clinical evidence. Use "
+"gene symbols (e.g., 'TP53', 'BRCA1')."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:67 9e67008e16ef45b9ab2326d0c5d0a8c2
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol to search across all "
+"panels (e.g., 'TP53', 'BRCA1', 'EGFR', 'MLH1')"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:84 d5c68b95d65e4c47813d7f9ae3a3eb44
+msgid "**PanelApp_search_panels** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:86 79434d2f178448a7839cdd8000f8b04c
+msgid ""
+"Search Genomics England PanelApp for gene panels used in clinical genetic"
+" testing. PanelApp is th..."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst 8ba14d737b2043449cdf22a7416cff09
+msgid "PanelApp_search_panels tool specification"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:92 9c21ae46c3ea407295430aa7586670df
+msgid "**Name**: ``PanelApp_search_panels``"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:94 fb6722054bee49f0873903187d28d724
+msgid ""
+"**Description**: Search Genomics England PanelApp for gene panels used in"
+" clinical genetic testing. PanelApp is the authoritative source for "
+"curated gene panels used by the NHS and global genomic medicine services."
+" Returns panel IDs, names, disease groups, status, version, and gene "
+"count statistics. Use this to find relevant gene panels for a disease "
+"area, then use PanelApp\\_get\\_panel to get the full gene list. Panels "
+"contain genes with confidence levels (green=3 for diagnostic grade, "
+"amber=2 for borderline, red=1 for limited evidence)."
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:98 c178aa25c49e4808865529a2eda7d1df
+msgid ""
+"``search`` (string) (required) Search query for panel name or disease "
+"(e.g., 'breast cancer', 'epilepsy', 'hearing loss', 'intellectual "
+"disability')"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:115 acd5cdec74d649dfa83a98d426dc4a5f
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:117 39c918fb4cb641d2975e61334d19660b
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/panelapp_tools.rst:118 dc162aaba3ef4d3fa92de30f06ded8a6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

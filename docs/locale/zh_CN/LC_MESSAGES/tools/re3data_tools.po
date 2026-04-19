@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/re3data_tools.rst:10 4aecb09d3d214161b1cdbefbf5ecacdb
+msgid "Re3Data Tools"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:12 1e0f82be560640cd9482b8020184c090
+msgid ""
+"**Configuration File**: ``re3data_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:16 305316e0a0c24e9ea8a6d988e9fc4213
+msgid ""
+"This page contains all tools defined in the ``re3data_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:19 e048f1830406436ab674d5d4b6fd42be
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:22 1880ed92cde342dc9cf59a78ad427092
+msgid "**re3data_get_repository** (Type: Re3DataTool)"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:24 ee55c6d4156e471d9624b11bcfa22e79
+msgid ""
+"Get detailed metadata for a specific research data repository from "
+"re3data.org by its re3data ID...."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst 7d7847a310144edca1f353263b3210b4
+msgid "re3data_get_repository tool specification"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:28 ../../tools/re3data_tools.rst:59
+#: 3453581af8e44ccd909e527f354e5f24 cfbd1a4b20de43e19c7895a7028f3654
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:30 63716d91bcc243cea46b9cb2968f8934
+msgid "**Name**: ``re3data_get_repository``"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:31 ../../tools/re3data_tools.rst:62
+#: 8b39bcfbd84349f6809858889ef0e11e ef8e179a62f145c9a845fccbed444eb2
+msgid "**Type**: ``Re3DataTool``"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:32 3ef64b628e5848a786aa8ce67752ab87
+msgid ""
+"**Description**: Get detailed metadata for a specific research data "
+"repository from re3data.org by its re3data ID. Returns comprehensive "
+"information including repository name, URL, description, subjects, "
+"keywords, content types, data access conditions, data licenses, hosting "
+"institutions, and countries. Use this after "
+"re3data\\_search\\_repositories to get full details about a repository of"
+" interest, or when you already have a re3data ID (format: r3d100XXXXXX). "
+"Essential for evaluating whether a repository is suitable for data "
+"deposit or data discovery."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:34 ../../tools/re3data_tools.rst:65
+#: ba2fa591b86c4ab78ac1dc7f0c0533a9 de7d184902aa468c92b010bafce78fc1
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:36 7172d6135e7d45beb1d8d8ab615446ff
+msgid ""
+"``repository_id`` (string) (required) re3data repository identifier "
+"(e.g., 'r3d100011969', 'r3d100000001'). Find IDs using "
+"re3data\\_search\\_repositories."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:39 ../../tools/re3data_tools.rst:76
+#: 83422c0d43b0445babedc338f852988b f0bf9ac0b2fd44569def17af51d62cab
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:53 df5881ee4abf411d8aae4d4cd040ff5c
+msgid "**re3data_search_repositories** (Type: Re3DataTool)"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:55 4ec846d729bf4656acd3e27bd669072f
+msgid ""
+"Search re3data.org for research data repositories worldwide. re3data is a"
+" global registry of 3,00..."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst f16fd9ae856f4d378433b55a605c4ddc
+msgid "re3data_search_repositories tool specification"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:61 4f3c0429934543908520481b437603f6
+msgid "**Name**: ``re3data_search_repositories``"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:63 c78caf13bd894cfd85dc48e293d054a6
+msgid ""
+"**Description**: Search re3data.org for research data repositories "
+"worldwide. re3data is a global registry of 3,000+ research data "
+"repositories covering all academic disciplines. Search by keyword to find"
+" repositories that host datasets for a specific research topic, data "
+"type, or discipline. Returns repository names, IDs, and DOIs. Use "
+"re3data\\_get\\_repository with the returned ID for detailed metadata "
+"including subjects, access conditions, content types, and institutional "
+"affiliations. Useful for finding where to deposit research data, "
+"discovering domain-specific data repositories, or identifying "
+"repositories hosting longitudinal, clinical, or cohort study data."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:67 e9a28519688049c1829bcb888d5c9715
+msgid ""
+"``query`` (string) (required) Search keyword(s) to find repositories "
+"(e.g., 'nutrition longitudinal', 'genomics', 'climate data', 'medical "
+"imaging'). Searches across repository names, descriptions, subjects, and "
+"keywords."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:70 2696576932f54267a80045fe8704666e
+msgid ""
+"``subjects`` (string, null) (optional) Optional subject filter to narrow "
+"results (e.g., 'medicine', 'biology', 'chemistry', 'social sciences'). "
+"Applied as client-side filter on repository names."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:73 c626fe9047b64e5694ee32ff61cccced
+msgid ""
+"``countries`` (string, null) (optional) Optional country filter using ISO"
+" 3166 country code (e.g., 'USA', 'GBR', 'DEU'). Note: requires fetching "
+"detail for each result so use sparingly."
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:90 b8feffe23d5448098f4a076a2701fb67
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:92 bfb92061957a48b8b42e467b8597b7dd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/re3data_tools.rst:93 b880a6311c3f4850828c3ff40e9b1853
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

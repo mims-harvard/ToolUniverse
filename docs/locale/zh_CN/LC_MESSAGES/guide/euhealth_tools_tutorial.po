@@ -1,0 +1,449 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../guide/euhealth_tools_tutorial.rst:2 22fdb915b4a1426b831c9bbd4a0e1ed5
+msgid "EUHealth tools: find and explore EU public-health datasets"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:4 690ef970602840008ca1e00f25ae1720
+msgid "Use these tools to:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:6 d529396d39c842189b0907549bf751c2
+msgid ""
+"**Search** public EU health datasets by topic (e.g., cancer, vaccination,"
+" obesity, mental health…)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:7 aab6137ce72047dd84d9fc0c1e51826f
+msgid ""
+"**Deep-dive** a dataset’s landing page to surface useful outgoing links "
+"(download portals, etc.)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:9 69f02bf3d72d4afea4bfaa1bc3ff86d2
+msgid ""
+"You do **not** need to understand embeddings or FAISS. Everything is "
+"handled automatically. All you need is a Hugging Face token (for "
+"downloading or uploading); ToolUniverse handles embedding models, "
+"caching, and FAISS indexing under the hood."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:12 dd44c08352fe450eab4516f1ead5b531
+msgid "The tools read from a local library (a small database + index)::"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:17 2553079464fa407898bb3893be38dbda
+msgid ""
+"Most users will never open these files — the tools use them behind the "
+"scenes."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:21 6eb7d198473941c4838dfb46a73402dd
+msgid ""
+"All search methods (``keyword``, ``embedding``, ``hybrid``) always work. "
+"If your environment does not support vector search, the tools "
+"automatically fall back to ``keyword`` with a helpful message. You will "
+"still get correct results."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:26
+#: ../../guide/euhealth_tools_tutorial.rst:52
+#: ../../guide/euhealth_tools_tutorial.rst:79
+#: ../../guide/euhealth_tools_tutorial.rst:155
+#: ../../guide/euhealth_tools_tutorial.rst:236
+#: ../../guide/euhealth_tools_tutorial.rst:265 05244268ae524734b49e7e7b78fe3df0
+#: 59dae55f8f814272ace264ba29bc53af 6b2ccadeb80e43df8bcb7572d55fb208
+#: 6bf280c35d9e4f4dbffcbf2d4b95a808 80b2559b35864aa1a8487a2f39eaed9c
+#: fb73e5f84fbc4412b5aeec102816ef27
+msgid "---"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:29 710508b739de4d19940b81b3e9773dc5
+msgid "Quick start (recommended): use the prebuilt library"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:31 3d62ba3992b64a47a3daa18545afa0d9
+msgid ""
+"**Get a Hugging Face token** (free account). Copy it once (Settings → "
+"Access Tokens)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:34 f489932f6d854fe58aae8400954a4084
+msgid "**Download the ready-to-use EUHealth library:**"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:43 cd21c8ceb0b3404389e0c8f969144aa9
+msgid ""
+"That’s it — the files land in `<user_cache_dir>/embeddings/` and the "
+"tools will now work with the ToolUniverse agent."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:45 aff5a72adac642c4be4f58ecd68fae5d
+msgid ""
+"Don’t have a token or prefer not to make an account? Skip to “Build it "
+"yourself” below."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:48 c5a169626fb842c0845f0c09d75b3083
+msgid ""
+"Tip: If you previously uploaded your own copy of the EUHealth datastore "
+"(`tu-datastore sync-hf upload --collection euhealth`), it lives at "
+"`huggingface.co/<your_username>/euhealth`."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:55 bf0a3d7376224336b94e584934c1533f
+msgid "Codex Configuration"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:57 26a82b3c628c4bfcb8a692e9bbe2e5b0
+msgid "To enable embedding/hybrid search in Codex, configure the MCP server:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:59 e63fdc80cc524e889820dbac5ac572ef
+msgid "Edit ``~/.codex/config.toml``"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:60 cc75dc6399c24f3f9f4ff60861d0e5d1
+msgid "Add the ToolUniverse MCP server block with Azure credentials:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:75 4fe9d03ea15c45e99acd8e40665ad156
+msgid "Restart Codex."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:77 3bdd7c2346934c2b81adcd429d236c2f
+msgid ""
+"Without this config, searches fall back to keyword (still works, just "
+"slower)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:82 a7e87b36b7a44374ad1e74331e484678
+msgid "Use it"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:85 0c532c7c8ab34e16ab861246569ba38a
+msgid "With ToolUniverse"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:87 c1bdac81dedd4f908952630fb149c28c
+msgid ""
+"In Codex (after MCP setup above), just talk to your agent in plain "
+"English. Examples:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:89 22a9f3d0d6c147478bd0761fc094d4f6
+msgid ""
+"“**Find cancer datasets for Germany**.” → The agent may use the *euhealth"
+" cancer search* tool and returns a list."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:92 b2b7a7dcd5f5421ca37337b828e21b10
+msgid ""
+"“**Show vaccination datasets in English using euhealth vaccination "
+"tools.**.” → The agent can call the vaccination topic tool with a "
+"language filter."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:95 d90941bfbde94b35a07ef9896a61a1ad
+msgid ""
+"“**Deep-dive the first 3 results and give me the best download links**.” "
+"→ The agent calls the deep-dive tool to classify links from each "
+"dataset’s landing page (e.g., `html_portal`, `login_or_error`, etc.)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:98 716c49cad281466a8b2149c4c390b427
+msgid ""
+"Behind the scenes, the agent uses the tools defined in "
+"`src/tooluniverse/data/euhealth_tools.json` (20 topics are pre-wired; you"
+" don’t have to touch this)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:102 2da65393a60049399e0c126d91d41692
+msgid "**OR**"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:105 72237fd320774fa3b0804a3c57c1e2df
+msgid "Non-agent use"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:107 c974a8b9c2d340dab250f34228f80115
+msgid "If you want to sanity-check from Terminal (no coding):"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:111 f7c59cc43d2340c3b684c2d00f05fb16
+msgid "# Keyword search (works without any API keys)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:113 8ece7b4709e541538250dc5145e68b57
+msgid ""
+"tu-datastore search --collection euhealth --query cancer --method keyword"
+" --top-k 5"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:115 0a7101aa69ad480497e5c7453781f1b6
+msgid ""
+"You should see a few JSON results (uuid, title, landing_page, etc.). "
+"(Inside the agent you’ll get nicely formatted results. This is just a "
+"quick check.)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:118 3de4fdbb7d594f358490257d0a56c726
+msgid "**That's it!!** ---"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:122 135bd8f9ea6d4d048bf16221c2562d6b
+msgid "Advanced:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:125 3ecd740b9187493d8f5978f387a42a0f
+msgid "Build it yourself (only if you can’t use the prebuilt)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:127 8c68ed84d20b4cb7b447f72fdc1fd774
+msgid ""
+"If you can’t download from Hugging Face, you can build locally. You’ll "
+"need any one of:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:129 305c62c034cc4f36b885a7f0a12705fd
+msgid ""
+"**OpenAI** (simplest): `OPENAI_API_KEY`, `EMBED_PROVIDER=openai`, "
+"`EMBED_MODEL=text-embedding-3-small`"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:130 498fc4240ec64cd3a39c9e3701e6c584
+msgid ""
+"**Azure OpenAI**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, "
+"`OPENAI_API_VERSION`"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:131 15ead488c8b14eb2afd173b7c762089e
+msgid ""
+"**Hugging Face**: `HF_TOKEN`, `EMBED_PROVIDER=huggingface`, `EMBED_MODEL"
+"=sentence-transformers/all-MiniLM-L6-v2`"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:133 c995f9b533da4197ad96e176673617e4
+msgid "Then run:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:137 5e77422abc6f400980de7316844fc128
+msgid "# pick one provider, for example OpenAI:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:139 da21304c17be45e49898432f34aa8e0f
+msgid ""
+"export EMBED_PROVIDER=openai export EMBED_MODEL=text-embedding-3-small "
+"export OPENAI_API_KEY=YOUR_KEY"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:143 273b7774b3c64237aea2ad5880d83a00
+msgid "# build (crawl the portal, normalize, embed, index)"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:145 98b8ddd146f443bbab7b140b6fa64c4a
+msgid "python -m tooluniverse.euhealth.euhealth_live"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:147 1f1c5289d0b04bd2b7180741841014a4
+msgid ""
+"This writes the same two files to `<user_cache_dir>/embeddings/`. Re-"
+"running is safe; it adds new items and skips duplicates."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:152 7a0f9d6905c6496f89b678ebfcf2461c
+msgid ""
+"A self-built datastore is treated as a **custom build**, so the tools "
+"will **honor embedding/hybrid directly** with whichever provider/model "
+"you used."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:158 60908081c33649bcbd741fe5cff312a2
+msgid "Optional (for understanding):"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:161 f73a0111cfbe463ba9c03ab57e6cef02
+msgid "How search methods are chosen"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:163 8a7fce3ddb2d44fab709804ca2389e50
+msgid ""
+"The public tools accept ``method=\"keyword\"|\"embedding\"|\"hybrid\"`` "
+"(default ``\"hybrid\"``)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:165 83bef7ab6e02446fafc9e3fdb3fa1908
+msgid "The EUHealth library downloaded from Hugging Face is built using:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:167 667c24ec055442eba6cd33404751f78f
+msgid "**Azure OpenAI + text-embedding-3-small**"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:169 3b338471be874e59bb16319f0e16af81
+msgid "To keep everything working smoothly:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:171 4b91dfed00a443fc81b1693c8b739784
+msgid ""
+"**If your environment resolves to Azure + text-embedding-3-small** (e.g.,"
+" you set):"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:181 81d3c528d4c94397969dbe92977c9f25
+msgid "→ the tools perform **true vector search** (embedding or hybrid)."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:183 c172e5e641a44355803d2400334ec966
+msgid ""
+"**Otherwise** → ToolUniverse **automatically falls back to keyword "
+"search** so everything keeps working."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:186 db5b462ee3ff4a71bff414b64201bbe5
+msgid "You will see a message like:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:188 351af7fe608b4af197a4f2019874dce1
+msgid ""
+"``Requested 'embedding' is not available without Azure + text-"
+"embedding-3-small. Falling back to 'keyword'.``"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:190 70ef9b0caeca4b018cacec9f953e3aab
+msgid ""
+"**If you build the EUHealth library yourself** using any provider/model "
+"(OpenAI, Azure, HuggingFace, local), the requested method is **always "
+"honored with no fallback**."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:194 4ce48881b47745a8bc6bce4c130ee30c
+msgid ""
+"This design ensures the **prebuilt library “just works” everywhere**, "
+"while advanced users can opt-in to embedding search."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:198 8daca13258b44d6f91cfe0647c43e2b8
+msgid "What each tool returns"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:200 c1c625963bf34cd8a2521a68498bbf38
+msgid ""
+"**Topic search tools** (e.g., cancer, vaccination, mental health) return "
+"a list of:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:217 c1190a86f21d4dcfbd31a88f35e736d3
+msgid "**Deep-dive tool** (for selected datasets) returns:"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:239 d56ce95729d64aceb3f2331da0ae19f3
+msgid "Common questions"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:241 0ed591bfd9ea41be8c25140687282f51
+msgid ""
+"**Do I need to configure anything in code?** No, the tools are already "
+"registered. If the library exists in `<user_cache_dir>/embeddings/`, you "
+"can just ask the agent."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:244 65f4b371b95846fdb7f5e31f00395546
+msgid ""
+"**Can I filter by country/language?** Yes, just say ask for it in your "
+"query (“Germany”, “DE”, “English”, “en”). The tools accept both plain "
+"names and codes."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:247 03cc2cc9171547f288cf3b093ad855cf
+msgid ""
+"**What if some links say `login_or_error`?** Some portals require "
+"accounts or block automated requests. The tool still shows you what’s "
+"there."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:250 8bf924cd7c5d41888bce02794d00dd3d
+msgid ""
+"**My agent says the EUHealth library isn’t found.** Make sure the files "
+"exist at::"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:256 20cd04ca83fc4c2892e1ab365e839fb0
+msgid ""
+"If not, use the **Quick start** download or the **Build it yourself** "
+"step."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:258 bf81565c52cc423691ec42e9f2e3c0ec
+msgid "**Why did embedding fall back to keyword?**"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:259 58eaae909f4d4edebefc21b2f85721ef
+msgid ""
+"Either the Codex MCP config (above) isn't set, or your environment "
+"doesn't have Azure + text-embedding-3-small configured. Add the config "
+"block to `~/.codex/config.toml` and restart Codex to enable embedding "
+"search."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:261 e79c3072207b4d779320965414c3f295
+msgid ""
+"**Where does my data upload now?** When you run `tu-datastore sync-hf "
+"upload --collection euhealth`, ToolUniverse automatically detects your "
+"`HF_TOKEN` and uploads to **your own Hugging Face namespace** "
+"(`your_username/euhealth`). The `--repo` flag is optional; if omitted, it"
+" defaults to `<your_username>/<collection>`."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:268 a46b4624115d4a46bb204b7ee86275bd
+msgid "You’re set"
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:270 e5fa1e1d5da84cfe9f04b6bd74705e54
+msgid "Prefer the **Quick start** download."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:271 ab99567c1c1a4d6aa6045d281aca0a66
+msgid ""
+"Ask the agent normal questions (“Find cancer datasets in Germany”). Or "
+"use tu-datastore search from Terminal if you don't want to use agents."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:272 2ba1d132ec3844bab60ad822efdfb816
+msgid "Use **deep-dive** when you want the actual outgoing links."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:274 3679565ae66d4eebbb3de75c5dc08077
+msgid ""
+"If you later want the nitty-gritty (how we crawl, embed, index), see the "
+"developer notes in: `src/tooluniverse/euhealth/*` and "
+"`src/tooluniverse/database_setup/*`."
+msgstr ""
+
+#: ../../guide/euhealth_tools_tutorial.rst:278 6384495757dc4c9d9f4eca38ed1d862a
+msgid ""
+"Want to build or share your **own** searchable dataset or tool (like "
+"EUHealth)? See: :doc:`make_your_data_agent_searchable` - the 3-minute "
+"guide to creating and publishing your own ToolUniverse datastore."
+msgstr ""
+

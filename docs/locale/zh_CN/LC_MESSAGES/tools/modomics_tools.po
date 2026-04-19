@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/modomics_tools.rst:10 6d48e94cf8624efbac4ee9cff8853458
+msgid "Modomics Tools"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:12 c49b074c08544a7ca6845d2f493c6e42
+msgid ""
+"**Configuration File**: ``modomics_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:16 8e5ce54005c74c04932f2ee158913886
+msgid ""
+"This page contains all tools defined in the ``modomics_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:19 1aac321c8d084b38a274b3081ddcf990
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:22 c9c69240d05544eb8c9487adea513c47
+msgid "**MODOMICS_get_modification** (Type: MODOMICSTool)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:24 01bf696acd004d76b339286cdcf5223c
+msgid ""
+"Get detailed information about a specific RNA modification from MODOMICS "
+"by its numeric ID. Retur..."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst cc19497d9a3b4e93aeb3d21f8c26f3b8
+msgid "MODOMICS_get_modification tool specification"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:28 ../../tools/modomics_tools.rst:59
+#: ../../tools/modomics_tools.rst:89 470ead34f29e4b0e83002f0b37dd38d3
+#: 4af4bbfeca644c458f82092fd8bb73f4 e73da9603f354f0aa31df41983f43c8e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:30 0d1a0fe664be43f7a2dc0d889584db8a
+msgid "**Name**: ``MODOMICS_get_modification``"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:31 ../../tools/modomics_tools.rst:62
+#: ../../tools/modomics_tools.rst:92 2510296ffcf64207b0f7dafcc015fbef
+#: 8dcbf5214b60428d80c4f27ff883c0de 9bf17e10f737478585204ebe8dfa70df
+msgid "**Type**: ``MODOMICSTool``"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:32 22018565af1f4ee981c91baddce5bfb0
+msgid ""
+"**Description**: Get detailed information about a specific RNA "
+"modification from MODOMICS by its numeric ID. Returns the full chemical "
+"structure (SMILES), molecular formula, average and monoisotopic masses, "
+"protonated mass (for mass spectrometry), reference moiety, abbreviation, "
+"product ions, and LC elution data. Useful for identifying RNA "
+"modifications in mass spectrometry experiments."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:34 ../../tools/modomics_tools.rst:65
+#: ../../tools/modomics_tools.rst:95 2a9d3e9b0c084e45b16f6e444c73f736
+#: 7bd9f4739ecb4b9a80cc45ae44f10c86 ffdc1fe299394db5b9fbe42706366061
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:36 0977f1349e474522ada1e14b77beb956
+msgid ""
+"``modification_id`` (integer) (required) MODOMICS modification numeric "
+"ID. Examples: 78 (pseudouridine), 2 (5,2'-O-dimethylcytidine), 58 "
+"(N6-methyladenosine/m6A), 22 (5-methylcytidine/m5C)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:39 ../../tools/modomics_tools.rst:70
+#: ../../tools/modomics_tools.rst:103 20f35b08016443e48423cceb518e00a5
+#: 2d1a4816ba4544a18495d938f93738a0 2f35cf220f9c401fbebb349fe491e595
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:53 138ebf45c94c42c88bd76f22f86f603a
+msgid "**MODOMICS_list_modifications** (Type: MODOMICSTool)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:55 b29c345a4dbd48b5b1e393796f893451
+msgid ""
+"List all known RNA modifications from the MODOMICS database. Returns "
+"modification names, chemical..."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst 18c241d9ddee467c8b6157b1646bc291
+msgid "MODOMICS_list_modifications tool specification"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:61 c3635fd32f2a4c56a144c8df9bbf57f7
+msgid "**Name**: ``MODOMICS_list_modifications``"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:63 7a9e424b87744cf5827b17358272deb8
+msgid ""
+"**Description**: List all known RNA modifications from the MODOMICS "
+"database. Returns modification names, chemical formulas, molecular "
+"masses, SMILES structures, and reference moieties (which standard "
+"nucleoside the modification derives from: A, C, G, U). MODOMICS catalogs "
+"430+ distinct RNA modifications found across all domains of life. Use "
+"limit parameter to control the number of results returned."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:67 cb8514276f444b218765b7065354ba9e
+msgid ""
+"``limit`` (integer) (optional) Maximum number of modifications to return "
+"(default: 50, max: 500)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:83 a8d1ae3d8bcc49b890f4155cd7dbd1f3
+msgid "**MODOMICS_search_modifications** (Type: MODOMICSTool)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:85 fe91c64df2084bc88df8a363d6be4ab5
+msgid ""
+"Search MODOMICS RNA modifications by name, short name, or chemical "
+"formula. Searches across the f..."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst 0b049a405daa4a10b61140d2e6d84a68
+msgid "MODOMICS_search_modifications tool specification"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:91 821e37af5e7e45f9be0a8f82a0d80ed7
+msgid "**Name**: ``MODOMICS_search_modifications``"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:93 d6bf16e67a0545b4b4d97bbb5f7460ff
+msgid ""
+"**Description**: Search MODOMICS RNA modifications by name, short name, "
+"or chemical formula. Searches across the full MODOMICS database of 430+ "
+"RNA modifications. Query matches against modification name (e.g., "
+"'pseudouridine', 'methyladenosine'), short name (e.g., 'm6A', 'm5C'), or "
+"formula. Returns matching modifications with their chemical details."
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:97 ed0cdb4bba3147fdb79c1b09841ce6bd
+msgid ""
+"``query`` (string) (required) Search term to match against modification "
+"name, short name, or formula. Examples: 'pseudouridine', 'methyl', 'm6A',"
+" 'inosine', 'thio'"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:100 326823c615ae49a789243acd85b60e18
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(default: 20)"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:117 0154cb08b0334bd6951c81fa94e8a789
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:119 40056bd3af4b47b0bc994de0e94e440f
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/modomics_tools.rst:120 e07ac80193d44684ae52f3b9edaadd7b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

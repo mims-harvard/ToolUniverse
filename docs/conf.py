@@ -5,6 +5,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("./_ext"))
 
 # -- Project information -----------------------------------------------------
 project = "ToolUniverse"
@@ -21,13 +22,15 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.mathjax",
+    "sphinx.ext.graphviz",
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.autosectionlabel",
     "myst_parser",
     "sphinx_copybutton",
-    # "sphinx_tabs.tabs",  # Temporarily disabled due to Sphinx 9.x compatibility issue
+    "sphinx_tabs.tabs",
     "sphinx_design",
+    "admonition_aliases",
     # "notfound.extension",  # Temporarily disabled due to theme compatibility issue
 ]
 
@@ -149,6 +152,8 @@ autodoc_default_options = {
 # Skip problematic modules that have import issues or blocking operations
 autodoc_mock_imports = [
     "flask_cors",
+    "tooluniverse.ghost_tool",
+    "tooluniverse.medrxiv_tool",
     "tooluniverse.web_tools.literature_search_ui",
     "tooluniverse.visualization_tool",
     "tooluniverse.tool_graph_web_ui",

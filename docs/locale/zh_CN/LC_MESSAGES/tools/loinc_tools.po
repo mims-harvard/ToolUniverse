@@ -1,0 +1,235 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/loinc_tools.rst:10 cd4d0e010faa4706a8f3db852ed44892
+msgid "Loinc Tools"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:12 7716a40435534191b89a6a9c74ee078b
+msgid ""
+"**Configuration File**: ``loinc_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 4"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:16 4290d71ca7634a0e8d1f3744ef47d27a
+msgid ""
+"This page contains all tools defined in the ``loinc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:19 45762e0049aa4411aae315d4195264b0
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:22 6871cf9fb94149759e11d1e8b943eb2c
+msgid "**LOINC_get_answer_list** (Type: LOINCTool)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:24 6a784b3e77584c5f98d79e4f1b99fea3
+msgid ""
+"Search LOINC answer-type codes matching a LOINC code or search term. "
+"Returns LOINC codes classifi..."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst 3fdf2d9ef86047fd87e669c131ae9c3d
+msgid "LOINC_get_answer_list tool specification"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:28 ../../tools/loinc_tools.rst:59
+#: ../../tools/loinc_tools.rst:90 ../../tools/loinc_tools.rst:124
+#: 108a2d4e13034380b390e4d5bf56bd63 1faa1cda09cb434f807b0757d172091b
+#: c62ba598327d4410bbd48a19258f2304 fe0154eeaedd4244b9744d319e629846
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:30 118c187d47b34f59b57b3e893e4ff610
+msgid "**Name**: ``LOINC_get_answer_list``"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:31 ../../tools/loinc_tools.rst:62
+#: ../../tools/loinc_tools.rst:93 ../../tools/loinc_tools.rst:127
+#: 62a69652fd47456794c7f08636b4f581 8e3e38538df94d4fa10f9b71779aef57
+#: e27ba3374a254e49b8e98f2356ff1db4 fb2f7f7a476642ffb98d0b5ceb22707c
+msgid "**Type**: ``LOINCTool``"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:32 45920eba591943dea066bbf35fcd5565
+msgid ""
+"**Description**: Search LOINC answer-type codes matching a LOINC code or "
+"search term. Returns LOINC codes classified as answer-type items "
+"(categorical/coded result values used in clinical assessments). Use to "
+"find standardized answer codes for clinical observations."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:34 ../../tools/loinc_tools.rst:65
+#: ../../tools/loinc_tools.rst:96 ../../tools/loinc_tools.rst:130
+#: 1df93290ab524f5d9756889b9164a9c8 23b10909e5de465c90cfc1fc7188e125
+#: 7f798fc78edd4e179dad8d2c6394ebeb c97ac65443254914b2ac2665183760d5
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:36 bb26bdf81a0d453cb0b134a7ecdaa8e2
+msgid ""
+"``loinc_code`` (string) (required) LOINC code or search term to find "
+"answer-type codes (e.g., '883-9' for ABO blood group answers, '11502-2' "
+"for laboratory report codes, 'ABO' or 'blood type' for broader search)."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:39 ../../tools/loinc_tools.rst:70
+#: ../../tools/loinc_tools.rst:104 ../../tools/loinc_tools.rst:141
+#: 531678b540874619aceb6a0ba9bc5ac5 749991d2f1764c6d9bb896ce29be4837
+#: 966ab3cdb94540f0b747e33cc895c80e af3ab10096d948619d9764a4e7b24119
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:53 b6290648dc24423b84e0f209d01c1b8b
+msgid "**LOINC_get_code_details** (Type: LOINCTool)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:55 04db69c741494ea794b7675d7a616086
+msgid ""
+"Get detailed information for a specific LOINC code including full name, "
+"component, property, syst..."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst 068469a8e6ca43d7a959460835d32516
+msgid "LOINC_get_code_details tool specification"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:61 e492a572197d4b9584117749574ae2cf
+msgid "**Name**: ``LOINC_get_code_details``"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:63 5c4ab09dcab04866bbdde7bd8be92d80
+msgid ""
+"**Description**: Get detailed information for a specific LOINC code "
+"including full name, component, property, system, scale, method, and "
+"clinical classification. Use this to understand the precise meaning and "
+"context of a LOINC code obtained from lab results or clinical data."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:67 d0a3f41883eb4f7380b4e98382b22f4c
+msgid ""
+"``loinc_code`` (string) (required) LOINC code identifier (e.g., '2093-3' "
+"for Cholesterol in Serum/Plasma, '4548-4' for Hemoglobin A1c, '8867-4' "
+"for Heart rate). The code should be in standard LOINC format with hyphen."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:84 fb97e63d306647d587acb648c51cbac6
+msgid "**LOINC_search_forms** (Type: LOINCTool)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:86 b3c545bfb5444604804c903d1bc2a778
+msgid ""
+"Search LOINC clinical forms and survey instruments such as standardized "
+"questionnaires and assess..."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst 09e27a9fe7bf45f49f7171080c7a1a5a
+msgid "LOINC_search_forms tool specification"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:92 3795c13e079f464ea9b44a1084eb45ea
+msgid "**Name**: ``LOINC_search_forms``"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:94 0711292a36e3421bb418cd8be0d8058e
+msgid ""
+"**Description**: Search LOINC clinical forms and survey instruments such "
+"as standardized questionnaires and assessment tools. Examples include "
+"PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain scales, and "
+"other validated clinical assessment instruments. Returns LOINC codes for "
+"complete forms that can be used in electronic health records."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:98 f297f93094b34832bcf6824d7838e397
+msgid ""
+"``terms`` (string) (required) Search terms for clinical forms or survey "
+"instruments (e.g., 'PHQ-9', 'depression screening', 'GAD-7', 'anxiety', "
+"'pain scale', 'MMSE', 'cognitive assessment'). Use specific form names or"
+" general assessment types."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:101 e9f90513cbe64d129c7e684c612e6da1
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 200)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:118 d5bfd977bbce4d5197f1afd494b838d9
+msgid "**LOINC_search_tests** (Type: LOINCTool)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:120 d2a32dc814a847ebbd77fac4df60681d
+msgid ""
+"Search LOINC (Logical Observation Identifiers Names and Codes) lab tests "
+"and clinical observation..."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst 716e48fd0ebf43629e62527160afa903
+msgid "LOINC_search_tests tool specification"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:126 de2fd7a1f0044b36b2ad541667c37230
+msgid "**Name**: ``LOINC_search_tests``"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:128 c32a0ea74d904abb9e2437953ffff9e0
+msgid ""
+"**Description**: Search LOINC (Logical Observation Identifiers Names and "
+"Codes) lab tests and clinical observations by name or keywords. Returns "
+"standardized codes for laboratory tests, vital signs, and clinical "
+"measurements. Essential for standardizing lab test names across "
+"healthcare systems and research studies."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:132 aa6caafbd7ce48ab8cbc636087f6f649
+msgid ""
+"``terms`` (string) (required) Search terms for lab tests or observations "
+"(e.g., 'cholesterol', 'blood glucose', 'hemoglobin', 'creatinine'). Can "
+"include test names, components, or abbreviations."
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:135 37cfa781999c4340b1214f5bb424da5f
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return "
+"(default: 20, max: 500)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:138 ffd36dc6b4b74bb0ae493d46d12d863d
+msgid ""
+"``exclude_copyrighted`` (boolean) (optional) Exclude items with external "
+"copyright notices (default: true)"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:155 59ed693d59bc439cad94e59d0ddbe324
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:157 56413c05aa4e404488675f8a29016df9
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/loinc_tools.rst:158 1d1839d4cc98453dbbff858392e17ca4
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

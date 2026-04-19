@@ -1,0 +1,353 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/tcia_tools.rst:10 acc76519ea894a3b84840b004e27ddef
+msgid "Tcia Tools"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:12 94005eb3097e4a919d55238f51cf5c11
+msgid ""
+"**Configuration File**: ``tcia_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 7"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:16 d409f42b9d3e4ccb9e63d7f3e2347056
+msgid ""
+"This page contains all tools defined in the ``tcia_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:19 091cde7556e54c7e9a2d87eabb7be40c
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:22 a305311376f947509523ab31b2f325df
+msgid "**TCIA_get_body_part_values** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:24 6296777eb7344bf48eafc8d763256e81
+msgid ""
+"Get the body parts examined in TCIA imaging collections. Returns body "
+"part names for filtering se..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst 91ad9fe2d1c04ac9aa96b68b1c0ddc7b
+msgid "TCIA_get_body_part_values tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:28 ../../tools/tcia_tools.rst:61
+#: ../../tools/tcia_tools.rst:94 ../../tools/tcia_tools.rst:130
+#: ../../tools/tcia_tools.rst:172 ../../tools/tcia_tools.rst:203
+#: ../../tools/tcia_tools.rst:234 0ee542715a6542beb16251005b1ac9b8
+#: 14c3d3d0e18841e496abd5b0bf5a6df6 4a82fd72c133446585d492fd3e907446
+#: 63539b7eed42413b90a99e90c71a731f 9930ac89d69a47778c6d941681fd3a9b
+#: ab373819ba7c4dfda36294e94fc06ad9 c326be1712c54470b5907c926a2a241b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:30 70b2e12d46dd4c7eb4e44be8efe6b6ae
+msgid "**Name**: ``TCIA_get_body_part_values``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:31 ../../tools/tcia_tools.rst:64
+#: ../../tools/tcia_tools.rst:97 ../../tools/tcia_tools.rst:133
+#: ../../tools/tcia_tools.rst:175 ../../tools/tcia_tools.rst:206
+#: ../../tools/tcia_tools.rst:237 08a76d72bf6041cb9e3d1612eb8673ca
+#: 1e8bdef986f44ffa8edf310f6110acba 71de1b413fa44eebbf47e8ced0d78086
+#: 8104f65dc6e04c31a575de1386034535 b215581e89a2437eb43a9ab98b056184
+#: b283de0a827840f4ad5706cdcd89ca67 caab64f8a6a94222b5dee1de589b673a
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:32 5065e79719434b4e9459d84c03717d35
+msgid ""
+"**Description**: Get the body parts examined in TCIA imaging collections."
+" Returns body part names for filtering series queries. Optionally filter "
+"by collection or modality."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:34 ../../tools/tcia_tools.rst:67
+#: ../../tools/tcia_tools.rst:100 ../../tools/tcia_tools.rst:136
+#: ../../tools/tcia_tools.rst:178 ../../tools/tcia_tools.rst:209
+#: ../../tools/tcia_tools.rst:240 184e68cbfcd042c9a9621ad87c752b19
+#: 9c21135fe5f646619826ce1ff1f4f0fe 9e5dd9000b304b298e1aee4eac9694fb
+#: bb68fa8ca6a241fd858d49a6871caf99 c5fe50887bd34e1788e1d827bab452e9
+#: d78eef9ba36746c8b879e81e7a7b1bc0 f655ee5b1b6d4f85a0fe42e31d45cbce
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:36 06c77eb872d749dcb733a3d150af498c
+msgid ""
+"``Collection`` (string, null) (optional) Collection name to filter by "
+"(e.g., 'TCGA-GBM')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:39 31eea9d75064473ead7ed8c1289d0d47
+msgid ""
+"``Modality`` (string, null) (optional) Imaging modality to filter by "
+"(e.g., 'CT', 'MR')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:42 ../../tools/tcia_tools.rst:75
+#: ../../tools/tcia_tools.rst:111 ../../tools/tcia_tools.rst:153
+#: ../../tools/tcia_tools.rst:183 ../../tools/tcia_tools.rst:214
+#: ../../tools/tcia_tools.rst:244 09497dcc6e864cdebef9d29d272a22b5
+#: 1727ea88cb7b4e2fb7aa0f6a8126e5ea 88579b2664a1412eb47ac31323237f5e
+#: 8f0b2a3f3da04274838e2a38db19ffb6 b568ef5fe77647b4ab9b0987378a8ebc
+#: cf8ae0086ca343c2a0bdce6f901fbe34 ee97dd6d4ba74a25b83cf2460bb67a0f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:55 2f04ca1f9e9b45fc9a293a8b773c9207
+msgid "**TCIA_get_modality_values** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:57 44efd5ca753747668c8c0d4497473e29
+msgid ""
+"Get the imaging modalities available in a specific TCIA collection or "
+"across all collections. Ret..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst 36f9d41f665f42059a333053a4bc2e6c
+msgid "TCIA_get_modality_values tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:63 291d0216ee394ebb852181ca37d00fa0
+msgid "**Name**: ``TCIA_get_modality_values``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:65 a7fd1388f7b0407284a9e42a03bf45bc
+msgid ""
+"**Description**: Get the imaging modalities available in a specific TCIA "
+"collection or across all collections. Returns modality codes such as CT, "
+"MR, PT (PET), CR, DX, US (ultrasound), NM."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:69 5c88d9813548489588143d078bc1f867
+msgid ""
+"``Collection`` (string, null) (optional) Collection name to filter by "
+"(e.g., 'LIDC-IDRI'). Omit to get all modalities."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:72 0c19013322284fa092d48180f3f5b0c2
+msgid ""
+"``BodyPartExamined`` (string, null) (optional) Body part to filter by "
+"(e.g., 'CHEST')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:88 90201e18c8514da5b6c629c1e62df97d
+msgid "**TCIA_get_patient_studies** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:90 6afb06f7dc8745619009a00aff5a9abe
+msgid ""
+"Get study information for patients in The Cancer Imaging Archive (TCIA). "
+"Returns study metadata i..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst 47af37ff8cb8451f9bacb7e6c91ca125
+msgid "TCIA_get_patient_studies tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:96 199103020f3b4e14ab1d6145982c2f2e
+msgid "**Name**: ``TCIA_get_patient_studies``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:98 0443c72e39f64ab585871cdb1e956cc5
+msgid ""
+"**Description**: Get study information for patients in The Cancer Imaging"
+" Archive (TCIA). Returns study metadata including study date, "
+"description, and patient details. Filter by collection name or patient "
+"ID."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:102 172b65126353416daf49ab421654188a
+msgid ""
+"``Collection`` (string, null) (optional) Collection name (e.g., 'TCGA-"
+"GBM', 'LIDC-IDRI')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:105 ../../tools/tcia_tools.rst:141
+#: 8028ffaa1b2647419fb4e14d38a7d517 90a54007b1794d0e8820777563d56fb1
+msgid "``PatientID`` (string, null) (optional) Patient identifier"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:108 ../../tools/tcia_tools.rst:144
+#: 408d85df1694457787215de8d274d1bd f8c8edbcffb640ccb709026f69f17d39
+msgid "``StudyInstanceUID`` (string, null) (optional) DICOM Study Instance UID"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:124 d151e4dbc2bb4ec2831a384a3fb130be
+msgid "**TCIA_get_series** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:126 7f8815e7e60d4faa917427be1a69ba93
+msgid ""
+"Get imaging series from The Cancer Imaging Archive (TCIA). A series is a "
+"set of related images fr..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst 3d97b1be1ac14a76849b7f648fcd4e3d
+msgid "TCIA_get_series tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:132 21bbd423ba4042c0a87a2f62d2174f87
+msgid "**Name**: ``TCIA_get_series``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:134 17fff4f139154562a23ba2fa8b42007a
+msgid ""
+"**Description**: Get imaging series from The Cancer Imaging Archive "
+"(TCIA). A series is a set of related images from a single imaging "
+"session. Returns metadata including modality, body part, patient ID, "
+"image count, and file size. Filter by collection name, patient ID, study "
+"UID, modality, or body part. Example collections: 'TCGA-GBM', 'LIDC-"
+"IDRI', 'TCGA-LUAD', 'TCGA-BRCA'."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:138 6bb5779a57fe432b8168017ea80a7ae8
+msgid ""
+"``Collection`` (string, null) (optional) Collection name (e.g., 'TCGA-"
+"GBM', 'LIDC-IDRI', 'TCGA-LUAD')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:147 73d2cb7f9dc543f19d67c1e29538e80d
+msgid ""
+"``Modality`` (string, null) (optional) Imaging modality (e.g., 'CT', "
+"'MR', 'PT', 'CR', 'DX')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:150 91a1299c12b04c628696a08d470f0c1c
+msgid ""
+"``BodyPartExamined`` (string, null) (optional) Body part examined (e.g., "
+"'CHEST', 'BRAIN', 'ABDOMEN')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:166 5c93c27f426045a083618dea0c5e229d
+msgid "**TCIA_get_series_metadata** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:168 0e495897c42449f0a3b777f6478be0d4
+msgid ""
+"Get detailed DICOM metadata for a specific imaging series in TCIA by its "
+"Series Instance UID. Ret..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst b2925c4a1f08467fb4c04d390289d9af
+msgid "TCIA_get_series_metadata tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:174 1a38f24534054af89cb80b9e96665b9e
+msgid "**Name**: ``TCIA_get_series_metadata``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:176 dadca79780cf4e059d3ad86333ae02da
+msgid ""
+"**Description**: Get detailed DICOM metadata for a specific imaging "
+"series in TCIA by its Series Instance UID. Returns equipment information,"
+" acquisition parameters, and series attributes."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:180 d1fdaf49066d44b7b409c5ece8cee4ad
+msgid ""
+"``SeriesInstanceUID`` (string) (required) DICOM Series Instance UID "
+"(e.g., "
+"'1.3.6.1.4.1.14519.5.2.1.6279.6001.141365756818074698800993818518')"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:197 43d288d839454492b861f650210848d0
+msgid "**TCIA_get_series_size** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:199 d85d6e36ddf3475689c75e4711bc3845
+msgid ""
+"Get the total file size and image count for a specific imaging series in "
+"The Cancer Imaging Archi..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst b1c7107ea25249bea19f4c2d8e7c6c84
+msgid "TCIA_get_series_size tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:205 ebdefd676d0f46afb8b43379215b5a74
+msgid "**Name**: ``TCIA_get_series_size``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:207 b688fb581ee14ada8432cd26abdea506
+msgid ""
+"**Description**: Get the total file size and image count for a specific "
+"imaging series in The Cancer Imaging Archive (TCIA). Returns total size "
+"in bytes and number of DICOM objects. Use this to estimate download sizes"
+" before retrieving imaging data. Obtain SeriesInstanceUID from "
+"TCIA\\_get\\_series results."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:211 d093675eac45474dbeeae7ea401abc5e
+msgid ""
+"``SeriesInstanceUID`` (string) (required) DICOM Series Instance UID. "
+"Example: "
+"'1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860'. "
+"Obtain from TCIA\\_get\\_series results."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:228 456f9a06cb124f3fa11183cbb73d2d0a
+msgid "**TCIA_list_collections** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:230 ef86c951450545a8934321103c967b33
+msgid ""
+"List all publicly available imaging collections in The Cancer Imaging "
+"Archive (TCIA). TCIA is a l..."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst bcd96b1fb74640b19fe713b4b5f92f3f
+msgid "TCIA_list_collections tool specification"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:236 b69a5b1dfcdf4ebfa19d94421440af60
+msgid "**Name**: ``TCIA_list_collections``"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:238 a2a7c6bd71ea4e0ba654fa6b72a3ee7b
+msgid ""
+"**Description**: List all publicly available imaging collections in The "
+"Cancer Imaging Archive (TCIA). TCIA is a large archive of medical images "
+"of cancer available for public download. Returns collection names for use"
+" with other TCIA tools."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:242 3119353854834d448443589e15151e02
+msgid "No parameters required."
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:257 39d637d8a5de4d9fafe6970abc4143cc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:259 9769208b890b48f890da3d35221f9bfe
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/tcia_tools.rst:260 c5eee4f5dd1140ecb55a310584573164
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

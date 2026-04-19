@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 01:48-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -18,98 +18,1426 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../tools/chembl_tools.rst:2 ba2f731655e541ff801485ad058358e1
+#: ../../tools/chembl_tools.rst:10 5496205dd80d419abb8b657373c94a1f
 msgid "Chembl Tools"
 msgstr "Chembl 工具"
 
-#: ../../tools/chembl_tools.rst:4 d8dd7c2b4d814c4d9bc575e221d76786
+#: ../../tools/chembl_tools.rst:12 939f1c28fa114556ac9efe3db6c1c46e
+#, fuzzy
 msgid ""
 "**Configuration File**: ``chembl_tools.json`` **Tool Type**: Local "
-"**Tools Count**: 1"
+"**Tools Count**: 29"
 msgstr ""
 "**配置文件**：``chembl_tools.json``  \n"
 "**工具类型**：本地  \n"
 "**工具数量**：1"
 
-#: ../../tools/chembl_tools.rst:8 dcd696d53774477c9f6c3cd9d4bc5be9
+#: ../../tools/chembl_tools.rst:16 34e5a73f9e824508a705621ddd6e06dd
 msgid ""
 "This page contains all tools defined in the ``chembl_tools.json`` "
 "configuration file."
 msgstr "此页面包含在 ``chembl_tools.json`` 配置文件中定义的所有工具。"
 
-#: ../../tools/chembl_tools.rst:11 e13c5f6b020a4c06b364edcd31f96458
+#: ../../tools/chembl_tools.rst:19 8bb5148f01f94430966bd22a307df879
 msgid "Available Tools"
 msgstr "可用工具"
 
-#: ../../tools/chembl_tools.rst:14 584c857d34964a20a3e85fa9c687d587
-msgid "**ChEMBL_search_similar_molecules** (Type: ChEMBLTool)"
+#: ../../tools/chembl_tools.rst:22 e9034be817b1443b9c8245bbddb50516
+#, fuzzy
+msgid "**ChEMBL_get_activity** (Type: ChEMBLRESTTool)"
 msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
 
-#: ../../tools/chembl_tools.rst:16 1df4e17c5dcf46deb45d2b957c4ac792
+#: ../../tools/chembl_tools.rst:24 e3865ea4c36e48e996caa727fd8acbb0
 msgid ""
-"Search for molecules similar to a given SMILES, chembl_id, or compound or"
-" drug name, using the Ch..."
-msgstr "使用 Ch... 搜索与给定的 SMILES、chembl_id 或化合物/药物名称相似的分子。"
+"Get detailed information about a specific activity by its activity ID. "
+"Activity IDs are found in ..."
+msgstr ""
 
-#: ../../tools/chembl_tools.rst d01818ebcf444082957fb809a692259c
-msgid "ChEMBL_search_similar_molecules tool specification"
+#: ../../tools/chembl_tools.rst 88c24044951544c89c86aadcdd467f86
+#, fuzzy
+msgid "ChEMBL_get_activity tool specification"
 msgstr "ChEMBL_search_similar_molecules 工具规格说明"
 
-#: ../../tools/chembl_tools.rst:20 04ddec08d857477f953cc2085ccd3814
+#: ../../tools/chembl_tools.rst:28 ../../tools/chembl_tools.rst:59
+#: ../../tools/chembl_tools.rst:93 ../../tools/chembl_tools.rst:130
+#: ../../tools/chembl_tools.rst:161 ../../tools/chembl_tools.rst:198
+#: ../../tools/chembl_tools.rst:232 ../../tools/chembl_tools.rst:277
+#: ../../tools/chembl_tools.rst:313 ../../tools/chembl_tools.rst:347
+#: ../../tools/chembl_tools.rst:383 ../../tools/chembl_tools.rst:417
+#: ../../tools/chembl_tools.rst:456 ../../tools/chembl_tools.rst:493
+#: ../../tools/chembl_tools.rst:547 ../../tools/chembl_tools.rst:592
+#: ../../tools/chembl_tools.rst:628 ../../tools/chembl_tools.rst:667
+#: ../../tools/chembl_tools.rst:706 ../../tools/chembl_tools.rst:745
+#: ../../tools/chembl_tools.rst:784 ../../tools/chembl_tools.rst:826
+#: ../../tools/chembl_tools.rst:868 ../../tools/chembl_tools.rst:922
+#: ../../tools/chembl_tools.rst:961 ../../tools/chembl_tools.rst:1000
+#: ../../tools/chembl_tools.rst:1041 ../../tools/chembl_tools.rst:1078
+#: ../../tools/chembl_tools.rst:1126 053806b8f9ed4d1fb2836788712796fe
+#: 0cc1a03b1e7a4092abb7d3c7d99dbe22 1303379c5bba4329b0f4bf33a835ee67
+#: 1c23c0f6b6a34766be7dce4401ce32b1 202f127eb9c944c7b53a7dc6ba2be8a8
+#: 2c5b71370f1d429c999bd93ed0c5400b 33d21af1f60a4ef4af154c14dcceef8e
+#: 3a2e794613224c33852e15ccfaa55fb8 3f1f317e833e493d8759c547e85d4cbf
+#: 47286e3e6622450ba99c9d086fbfa7e6 4a6d967925834c9b88c28f6f1fd10ff8
+#: 4fcdffdb7c994ba59812b77121777533 53735d04ace041e6953c6fdc98431d93
+#: 6497096c849746bfb779085fe155ef32 770ab8eda0314e8689ab23401406f842
+#: 791ecc0c56a2432cb00398894f0c80c4 92c273270e9d48b4aa733820c73092d4
+#: 9a7b8a1a100540989e18e2e8b9959c5e a0cc40d4aeb746529a97c5015d440b2f
+#: b52c2e47f04342538d64a295ef2488fa be2aa675d0d4483fb6e7d99a8f471e13
+#: c09c7849939d4a08b146ca45b4a0d0d0 c283a191ea7d49efaf67178e30f783a0
+#: ce9986a8cee1442c90100a19c83fa596 d4470cf5f1664c998169ebcecac9b182
+#: d83e674d66294dbbb713458d8f195d7b e1cc510df4314aac82f14a71c653aa9a
+#: ebeff6b194ee4b7185799da7bc501e47 f3a82e588b764f8996d187d15fab204c
 msgid "**Tool Information:**"
 msgstr "**工具信息：**"
 
-#: ../../tools/chembl_tools.rst:22 788b871da0ca408db6224ddb58034ea8
-msgid "**Name**: ``ChEMBL_search_similar_molecules``"
+#: ../../tools/chembl_tools.rst:30 b20b33a4eb694452bacb788777534981
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_activity``"
 msgstr "**名称**：``ChEMBL_search_similar_molecules``"
 
-#: ../../tools/chembl_tools.rst:23 f47da4da1853408486bd6e30b555e3f3
-msgid "**Type**: ``ChEMBLTool``"
+#: ../../tools/chembl_tools.rst:31 ../../tools/chembl_tools.rst:62
+#: ../../tools/chembl_tools.rst:96 ../../tools/chembl_tools.rst:133
+#: ../../tools/chembl_tools.rst:164 ../../tools/chembl_tools.rst:201
+#: ../../tools/chembl_tools.rst:235 ../../tools/chembl_tools.rst:280
+#: ../../tools/chembl_tools.rst:316 ../../tools/chembl_tools.rst:350
+#: ../../tools/chembl_tools.rst:386 ../../tools/chembl_tools.rst:420
+#: ../../tools/chembl_tools.rst:459 ../../tools/chembl_tools.rst:496
+#: ../../tools/chembl_tools.rst:550 ../../tools/chembl_tools.rst:595
+#: ../../tools/chembl_tools.rst:631 ../../tools/chembl_tools.rst:670
+#: ../../tools/chembl_tools.rst:709 ../../tools/chembl_tools.rst:748
+#: ../../tools/chembl_tools.rst:787 ../../tools/chembl_tools.rst:829
+#: ../../tools/chembl_tools.rst:871 ../../tools/chembl_tools.rst:925
+#: ../../tools/chembl_tools.rst:1003 ../../tools/chembl_tools.rst:1044
+#: ../../tools/chembl_tools.rst:1081 ../../tools/chembl_tools.rst:1129
+#: 01b6dabe1ac84574aefe795412ca8b84 082ce86a3a4f41428e3eb8c52836ccc8
+#: 13bb07173758418da90fab1530aa6fc9 209546f620de4c869ba14a8cf6513f46
+#: 213a969ad93d4867b64af351b6570e5c 21cec454dfe94a54bfa22b21f15eaeb0
+#: 26e1b86ceec24a54aa846c681b07c09c 41930e9336304e48a25654687ba2a86e
+#: 4e3a11f352784b50acd90d4316144b6b 51c91a928c634cf3b93d02e0c06795ac
+#: 6817ca128d1a46ba9505f9e5fe3280bb 724c2e8833de4d8381f03b205ccb9344
+#: 747473e83e4c4308843287a465dbe0dd 829c48f6cb604f83b19af1ed494893f5
+#: 864ae1b6f52e45ccaba9fac2a25fd742 a96b554f2c4e4ec8af583f8304fd0c88
+#: aac4f95563ce4e48a5728d36567d0ae0 af10a6a4bb3f49e99dcb9a4cd4cd204c
+#: b006dc020c8946cab9cb3f7681808cb1 b0792e9739304edfbc35fadde407b4cb
+#: bbd2bdc3305a4849abaef432a11eda91 c0fbdfbea95b4192ad1fe776d8460659
+#: cb7bd4966e12428eaf469c72a6ad9309 cc6836561fa14ae491bc0fcc31fe77d5
+#: d0b7765edbb14c2e9b75f3b3794b7212 e2b1e44c06c7439b98fe9be217d17ce1
+#: edf8b707e3f7409f931f11a4c12c5918 f32146c6180e4624a70d39d2bee904d1
+#, fuzzy
+msgid "**Type**: ``ChEMBLRESTTool``"
 msgstr "**类型**：``ChEMBLTool``"
 
-#: ../../tools/chembl_tools.rst:24 2ab8588897ed49d7b1e82d2c656803d8
+#: ../../tools/chembl_tools.rst:32 9a6d6777232b4873876c9f8e08ec7446
 msgid ""
-"**Description**: Search for molecules similar to a given SMILES, "
-"chembl_id, or compound or drug name, using the ChEMBL Web Services."
-msgstr "**描述**：使用ChEMBL Web服务，根据给定的SMILES、chembl_id或化合物或药物名称搜索相似的分子。"
+"**Description**: Get detailed information about a specific activity by "
+"its activity ID. Activity IDs are found in the results from "
+"ChEMBL\\_search\\_activities or ChEMBL\\_get\\_target\\_activities."
+msgstr ""
 
-#: ../../tools/chembl_tools.rst:26 f7d62d9948e14c15b87cddedf955d229
+#: ../../tools/chembl_tools.rst:34 ../../tools/chembl_tools.rst:65
+#: ../../tools/chembl_tools.rst:99 ../../tools/chembl_tools.rst:136
+#: ../../tools/chembl_tools.rst:167 ../../tools/chembl_tools.rst:204
+#: ../../tools/chembl_tools.rst:238 ../../tools/chembl_tools.rst:283
+#: ../../tools/chembl_tools.rst:319 ../../tools/chembl_tools.rst:353
+#: ../../tools/chembl_tools.rst:389 ../../tools/chembl_tools.rst:423
+#: ../../tools/chembl_tools.rst:462 ../../tools/chembl_tools.rst:499
+#: ../../tools/chembl_tools.rst:553 ../../tools/chembl_tools.rst:598
+#: ../../tools/chembl_tools.rst:634 ../../tools/chembl_tools.rst:673
+#: ../../tools/chembl_tools.rst:712 ../../tools/chembl_tools.rst:751
+#: ../../tools/chembl_tools.rst:790 ../../tools/chembl_tools.rst:832
+#: ../../tools/chembl_tools.rst:874 ../../tools/chembl_tools.rst:928
+#: ../../tools/chembl_tools.rst:967 ../../tools/chembl_tools.rst:1006
+#: ../../tools/chembl_tools.rst:1047 ../../tools/chembl_tools.rst:1084
+#: ../../tools/chembl_tools.rst:1132 014233730cdc4434a069490a51137cb5
+#: 068795ee91f24a029a6799388f65f421 0888c2c23e2d4001b1e72e00ce9871dc
+#: 0d1636f47d9744ca88d3a11efaf9a04d 28eae242c05e4f749eca38c93e60f0e5
+#: 2a044d84e05a4b189cb62e29003fdfb8 307818e09af047e1b071e8a2f61bfa80
+#: 351029da392a4210ad73de0b37374eed 4431d024a9524784a4fc76460ffea818
+#: 46247b9c2d5345c380d4222bf7b8cd6f 49f00ce34fbe4a10a797e9a6146bbcf1
+#: 6e6161e43d724a8a881718d87936eed4 712c4811a7424aed9cc6b80ac95ff0e1
+#: 7501c756ac444ffeaa24404a64b9629f 80fdecd0b1e844d2a8e4433b214923d2
+#: 8286895b590b420b9266d5c75edec03a 85e1375425374f9b998e9b9b32066b36
+#: 8c6dc846927e4f20a1c3dc81e96aabc3 b00b4048e2f74ea5967706c1c4324d8f
+#: b9f30c542167421db0f3d3e7a657f92b c446c1ecd2ec45bfae208ce7f22476b5
+#: c47e782e866e4f0893812bf440dcfb10 c771137257ea47eb9fee0e5edc8344a7
+#: d36b6d9d2b104de39a899bab44ad5701 e454383ac95646e998d1f27eccd4ecc9
+#: efebd4a12b024db5990a428b9c181aa8 f1289b505f49425bba5db3383c3d4b82
+#: fb4b5f049ab7432da73b87d4f14c1f60 fcbd1529ca4f4429a7ba25809cb04b99
 msgid "**Parameters:**"
 msgstr "**参数：**"
 
-#: ../../tools/chembl_tools.rst:28 2f30ce0347374d509e2facb2d40c75f3
+#: ../../tools/chembl_tools.rst:36 7eb8ffded1dd4da7b8c8fb98eda31daf
+msgid "``activity_id`` (string) (required) ChEMBL activity ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:39 ../../tools/chembl_tools.rst:73
+#: ../../tools/chembl_tools.rst:110 ../../tools/chembl_tools.rst:141
+#: ../../tools/chembl_tools.rst:178 ../../tools/chembl_tools.rst:212
+#: ../../tools/chembl_tools.rst:258 ../../tools/chembl_tools.rst:294
+#: ../../tools/chembl_tools.rst:327 ../../tools/chembl_tools.rst:364
+#: ../../tools/chembl_tools.rst:397 ../../tools/chembl_tools.rst:437
+#: ../../tools/chembl_tools.rst:473 ../../tools/chembl_tools.rst:528
+#: ../../tools/chembl_tools.rst:573 ../../tools/chembl_tools.rst:609
+#: ../../tools/chembl_tools.rst:648 ../../tools/chembl_tools.rst:687
+#: ../../tools/chembl_tools.rst:726 ../../tools/chembl_tools.rst:765
+#: ../../tools/chembl_tools.rst:807 ../../tools/chembl_tools.rst:849
+#: ../../tools/chembl_tools.rst:903 ../../tools/chembl_tools.rst:942
+#: ../../tools/chembl_tools.rst:978 ../../tools/chembl_tools.rst:1020
+#: ../../tools/chembl_tools.rst:1058 ../../tools/chembl_tools.rst:1107
+#: ../../tools/chembl_tools.rst:1146 1683244346a94b5991eeb0a2eebb36a3
+#: 2a0c07651c0b436c9eb2cc51bbe7afa7 32c90789c3ad4fe896d9fdc7611d327d
+#: 3635b5da3ea64b5e91d076e1c217e17e 370c0eac68344b1bab8bab7c00dda5cb
+#: 39941489f99b42c0aa7b7db8866ac234 3f46556c92ff4b9d928a68e1e7d164a9
+#: 47e99b41f57743cdaf7bb4cbbbe55f70 48a641c8d2b5468f975184a2c00524b0
+#: 6378616ffd894a0fbbba326a832f05d8 677d8a6c3a9244bc8abf3b822f592929
+#: 6e81f21dd557457196323dc0c579ed16 75079de4f03c4447b120d56c1266f4c9
+#: 7663593e1c0d47a69c8a5d69a47a77bb 81cbbccbed17433baa6815fdeac3830b
+#: 8aee76d9403f491bbdf7bc5d47eb713a 8c8b8c5bf6be40a6900fbb0649d0d111
+#: 9ef833ecd74b4593a93b23cc2e0e1bed a0201939e6194a57b9962e35ffc56caf
+#: a3387b632d0a4c1eb936eeeb77b69c44 aaef790341984dc0a5cd76a23c705fb3
+#: af2fbb0fd9a44559af4b4c0f6990b1b6 c6f253981b694f98a50c9688ca1815b2
+#: cf3c9594dfaf4b14adefb4644ce64085 d4a7bdefda6d41219a7bc4bdb078fc97
+#: d8309cd13a754c8c9d06d56cf818f9b9 df8f8de234a44705b38d343a7e37fb91
+#: e064cc8aeb2b4b418fc8e1c2f8853c16 e07c37adfbb447908151c5e604fad501
+msgid "**Example Usage:**"
+msgstr "**示例用法：**"
+
+#: ../../tools/chembl_tools.rst:53 49ce20d3674f4d00b1c8d41c2787fce2
+#, fuzzy
+msgid "**ChEMBL_get_assay** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:55 28eaa0da2cff4b52867df2c823d1a630
 msgid ""
-"``query`` (string) (required) SMILES string, chembl_id, or compound or "
-"drug name."
+"Get detailed information about an assay by its ChEMBL assay ID. To find "
+"an assay ID, use ChEMBL\\_..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 4c397935e6394678a7cbc220d70cb458
+#, fuzzy
+msgid "ChEMBL_get_assay tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:61 94ae1132a208467795544041b6af2de2
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_assay``"
+msgstr "**类型**：``ChEMBLTool``"
+
+#: ../../tools/chembl_tools.rst:63 a15327ecb6e046c081f54a29e6bef479
+msgid ""
+"**Description**: Get detailed information about an assay by its ChEMBL "
+"assay ID. To find an assay ID, use ChEMBL\\_search\\_assays or "
+"ChEMBL\\_get\\_target\\_assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:67 70879f0fc6fe4b8b8ef50d86cb64a6da
+msgid ""
+"``assay_chembl_id`` (string) (required) ChEMBL assay ID, e.g., "
+"'CHEMBL1217641'"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:70 ../../tools/chembl_tools.rst:209
+#: ../../tools/chembl_tools.rst:394 ../../tools/chembl_tools.rst:900
+#: 2c44c68247674705baf5a641813da5ec 91722443ef664fab889d1cd5500abf8d
+#: acfa1f1215db4c57a9afb3ff593037d0 b8755e480c14463d9a5e19dd8cfc595f
+msgid "``format`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:87 e0b32f2ad6984fcb8e27e5d62bdaf7c4
+#, fuzzy
+msgid "**ChEMBL_get_assay_activities** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:89 4ef5227cc8e5401fa59b666c3114f6eb
+msgid ""
+"Get all activity data for an assay by ChEMBL assay ID. Returns "
+"bioactivity measurements from the ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 7432e5a116fc45e19b162b162b36a2bc
+#, fuzzy
+msgid "ChEMBL_get_assay_activities tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:95 34cce8a2e5b54d1d8cefefa6c5b408bf
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_assay_activities``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:97 bc06efab3fb0488fa699c69c54b21126
+msgid ""
+"**Description**: Get all activity data for an assay by ChEMBL assay ID. "
+"Returns bioactivity measurements from the specified assay. To find an "
+"assay ID, use ChEMBL\\_search\\_assays or ChEMBL\\_get\\_target\\_assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:101 e864ef65ca6c47468341e5c4921186ff
+msgid ""
+"``assay_chembl_id__exact`` (string) (required) ChEMBL assay ID (e.g., "
+"'CHEMBL615117'). To find an assay ID, use ChEMBL\\_search\\_assays or "
+"ChEMBL\\_get\\_target\\_assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:104 ../../tools/chembl_tools.rst:172
+#: ../../tools/chembl_tools.rst:240 ../../tools/chembl_tools.rst:428
+#: ../../tools/chembl_tools.rst:467 ../../tools/chembl_tools.rst:522
+#: ../../tools/chembl_tools.rst:567 ../../tools/chembl_tools.rst:603
+#: ../../tools/chembl_tools.rst:642 ../../tools/chembl_tools.rst:681
+#: ../../tools/chembl_tools.rst:720 ../../tools/chembl_tools.rst:759
+#: ../../tools/chembl_tools.rst:798 ../../tools/chembl_tools.rst:843
+#: ../../tools/chembl_tools.rst:936 ../../tools/chembl_tools.rst:1101
+#: ../../tools/chembl_tools.rst:1140 5bb63009964f4feda18bc5bb409dd988
+#: 7438fd0f64754eabbbaa3f0ba7be04d6 77f88d3410924fb58f148d3553e82f5f
+#: 8159776aaa7d483aa14d924d6dab3491 8a8c24d0319049dc95d82ad34333d2b2
+#: 8e3b1a65bd2a415a9883e2abb2c39a9a 9d757f19119140e8ab64145755461080
+#: 9ffded2945b94d6fa152f392276d683e a213a07d47f04da4b910c791b00ad841
+#: ac5eed4eb4504ddf927f3b3a60a3d055 bf81b42d27184c1da7090b1bbdd3ab32
+#: d0465b4218a64af48e6f2802c73002f9 ded9899ddec1403f99da10778b5de654
+#: ee352ea908254914ab08bdbfecb98805 f002f531ca384b74ae9effaeea730c7f
+#: f9a09c0383894f30a455964f8b47958e ff8bbf0f1477428f94bc676b6934fc14
+msgid "``limit`` (integer) (optional) No description"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:107 ../../tools/chembl_tools.rst:175
+#: ../../tools/chembl_tools.rst:243 ../../tools/chembl_tools.rst:431
+#: ../../tools/chembl_tools.rst:470 ../../tools/chembl_tools.rst:525
+#: ../../tools/chembl_tools.rst:570 ../../tools/chembl_tools.rst:606
+#: ../../tools/chembl_tools.rst:645 ../../tools/chembl_tools.rst:684
+#: ../../tools/chembl_tools.rst:723 ../../tools/chembl_tools.rst:762
+#: ../../tools/chembl_tools.rst:801 ../../tools/chembl_tools.rst:846
+#: ../../tools/chembl_tools.rst:939 ../../tools/chembl_tools.rst:1104
+#: ../../tools/chembl_tools.rst:1143 091f7011bb3045d9a018347b3b958e3e
+#: 1a0097c9d12f416ea1ec69bc49bd51ae 1c1d317a006645489186070de5cefa39
+#: 212c0005a752416a84088629b1db559d 3bb058603a1c44aa9f881ce05f679d53
+#: 44566d0d617f43c2abdea473f1089219 51f3988552244f369face1f034ee0ddc
+#: 5fa3087679834cf8befc2563ba3963c9 78ed31191cf14ff0b6271b7c20abc224
+#: 80366203bafa433fab479b89d6ff5506 86d754d3348c4c7a832a62c6e9c94f95
+#: b082b1c2e8bb46c89faecd0eacb1df75 c11ca4d59ba04dc2844d732a6b1484e8
+#: ca2a2b00ea0b4428b50b02604e99a558 cb34547aabec49a5bb32d59f4804c72f
+#: f31f7e50342b4d219ac6ef14308cd879 f65d97cfcad94b2d87887c786ad6745b
+msgid "``offset`` (integer) (optional) No description"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:124 aaa57209b482461abfbc929d0073ee40
+#, fuzzy
+msgid "**ChEMBL_get_compound_record** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:126 8bc7b78c69d045ecadd6c0716250828d
+msgid "Get compound record information by ChEMBL compound record ID."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 184693d5968b4aee9c52d9af0e69668c
+#, fuzzy
+msgid "ChEMBL_get_compound_record tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:132 4128c4e796c449a188883357b5347630
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_compound_record``"
+msgstr "**类型**：``ChEMBLTool``"
+
+#: ../../tools/chembl_tools.rst:134 e2c92d2392e0476886735599e22bd731
+msgid ""
+"**Description**: Get compound record information by ChEMBL compound "
+"record ID."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:138 eb58626989ff46eba09102d624d7083b
+#, fuzzy
+msgid "``compound_record_id`` (string) (required) ChEMBL compound record ID"
 msgstr "``query``（字符串）（必填）SMILES字符串、chembl_id、化合物名称或药物名称。"
 
-#: ../../tools/chembl_tools.rst:31 460d793dce0340c7bd7f6f11c367aac1
+#: ../../tools/chembl_tools.rst:155 6313745142e04aeba20561ad4bf7b380
+#, fuzzy
+msgid "**ChEMBL_get_compound_record_activities** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:157 a77d3e6e6033462b848d6c7125d90de0
+msgid ""
+"Get all activities for a compound record by compound record ID. Returns "
+"bioactivity measurements ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 92da6dfc477d45c39b0b1ce2073eb029
+#, fuzzy
+msgid "ChEMBL_get_compound_record_activities tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:163 a21bde20a27b45a288c80a674bc7086e
+msgid "**Name**: ``ChEMBL_get_compound_record_activities``"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:165 600ce33cc8614a198fc89021489f4286
+msgid ""
+"**Description**: Get all activities for a compound record by compound "
+"record ID. Returns bioactivity measurements for the specified compound "
+"record."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:169 6c9a944ac9354f968393e47edf92ec64
+msgid ""
+"``compound_record_id__exact`` (string) (required) ChEMBL compound record "
+"ID. To find a compound record ID, use ChEMBL\\_get\\_compound\\_record or"
+" search activities."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:192 2981f7d14f994dd48373456d8c696e73
+#, fuzzy
+msgid "**ChEMBL_get_drug** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:194 bdb5a6b361da4c2bb1660a4159e14e48
+msgid ""
+"Get detailed information about a drug by its ChEMBL drug ID. Includes "
+"approval status, indication..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 2dfeccc1c5c648ca83bcb61c38d3eed6
+#, fuzzy
+msgid "ChEMBL_get_drug tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:200 463808446c7640d58cc98b7ece6b6109
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_drug``"
+msgstr "**类型**：``ChEMBLTool``"
+
+#: ../../tools/chembl_tools.rst:202 ba36a314f4c642c1b2fad1890c127e26
+msgid ""
+"**Description**: Get detailed information about a drug by its ChEMBL drug"
+" ID. Includes approval status, indications, and mechanisms. To find a "
+"drug ID, use ChEMBL\\_search\\_drugs with a drug name."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:206 a08986a9307a464f86e8dd85577f875a
+msgid ""
+"``drug_chembl_id`` (string) (required) ChEMBL drug ID, e.g., "
+"'CHEMBL1201581'"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:226 bf0ee05733064877a3f04e2877e5b19b
+#, fuzzy
+msgid "**ChEMBL_get_drug_mechanisms** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:228 cf3efc8a400c490eb1bf7d16dfc40b92
+msgid ""
+"Get mechanisms of action for a drug by ChEMBL drug ID or drug name. "
+"Accepts drug\\_chembl\\_id (e.g..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst bd0a2a7d35d546d5b25a114da1f66efe
+#, fuzzy
+msgid "ChEMBL_get_drug_mechanisms tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:234 f7f1fce61fa54eff9f7fef5188c8b171
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_drug_mechanisms``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:236 35870bd4813349739b3e48d0388abcec
+msgid ""
+"**Description**: Get mechanisms of action for a drug by ChEMBL drug ID or"
+" drug name. Accepts drug\\_chembl\\_id (e.g., 'CHEMBL1201581') or "
+"drug\\_name (e.g., 'trastuzumab') — drug\\_name triggers automatic ChEMBL"
+" ID lookup."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:246 771eacb512c24d4794b3d1491266d683
+msgid ""
+"``drug_chembl_id`` (string) (optional) ChEMBL drug/molecule ID (e.g., "
+"\"CHEMBL1201581\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:249 5df522921c294a64b4107ff25fadb69d
+msgid ""
+"``drug_name`` (string) (optional) Drug name for automatic ChEMBL ID "
+"lookup (e.g., \"trastuzumab\", \"lapatinib\", \"aspirin\"). Case-"
+"insensitive. Triggers internal ChEMBL molecule search — use "
+"drug\\_chembl\\_id if you already know the ID."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:252 05dfc17aa3d9460c832607b748438c5e
+msgid ""
+"``molecule_chembl_id`` (string) (optional) Alias for drug\\_chembl\\_id. "
+"ChEMBL molecule ID (e.g., \"CHEMBL25\" for aspirin)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:255 898af43222854501ac9050ddc12c57c6
+msgid ""
+"``chembl_id`` (string) (optional) Alias for drug\\_chembl\\_id. ChEMBL ID"
+" (e.g., \"CHEMBL3301622\")."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:271 f4ec2d9571794d2c8bc798fbc4d9a674
+#, fuzzy
+msgid "**ChEMBL_get_molecule** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:273 f1369003706840f78dc5905a0c42a8c1
+msgid ""
+"Get detailed information about a molecule by its ChEMBL ID. Returns "
+"molecule properties, structur..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 9df90fce72c74f7a9f5870ae4819efa8
+#, fuzzy
+msgid "ChEMBL_get_molecule tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:279 965566b6ec7d4e57bf8bf788fc2a0c65
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_molecule``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:281 e4a357f399fc430392ff23fd4e04201c
+msgid ""
+"**Description**: Get detailed information about a molecule by its ChEMBL "
+"ID. Returns molecule properties, structures, synonyms, and related data."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:285 a0f12188f60d4dbaa2dea39556a3d8a5
+msgid "``chembl_id`` (string) (optional) ChEMBL molecule ID, e.g., 'CHEMBL25'"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:288 50fda4f56da4479cbeca03ceec0d8118
+msgid "``format`` (string) (optional) Response format"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:291 6de1eaa6aa5141119a4b7cae21e29f2c
+msgid ""
+"``molecule_chembl_id`` (string) (optional) Alias for chembl\\_id. ChEMBL "
+"molecule ID, e.g., CHEMBL1229517."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:307 720e9fcf0ff24521bc98dec7c202c7b1
+#, fuzzy
+msgid "**ChEMBL_get_molecule_image** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:309 61b01ed0cb16471f893ff72b2db0132b
+msgid ""
+"Get molecular structure image (SVG or PNG format) for a molecule by "
+"ChEMBL ID. Returns the image ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 0551db05d00849ab8fd830782b334290
+#, fuzzy
+msgid "ChEMBL_get_molecule_image tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:315 d75f0fb4133642bfb4bb4ab523e9a15d
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_molecule_image``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:317 3d253f05269946dc9de6111b978a6295
+msgid ""
+"**Description**: Get molecular structure image (SVG or PNG format) for a "
+"molecule by ChEMBL ID. Returns the image URL and metadata."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:321 110314b5a5094406ba9a1503845003ef
+msgid ""
+"``chembl_id`` (string) (required) ChEMBL molecule ID (e.g., 'CHEMBL25'). "
+"To find a molecule ID, use ChEMBL\\_search\\_molecules with a molecule "
+"name."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:324 7fa604616524496d916712a1db8ad0be
+msgid "``format`` (string) (optional) Image format"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:341 a9d1f5dac8d84af09ce499a331531ec8
+#, fuzzy
+msgid "**ChEMBL_get_molecule_targets** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:343 956e99c8838e495ebad6bd19dd996dd2
+msgid ""
+"Get all unique targets associated with a molecule by ChEMBL ID. Returns "
+"targets that have activit..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst aa11ab7e44ad4c5ab7d670de82afa67b
+#, fuzzy
+msgid "ChEMBL_get_molecule_targets tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:349 edf2277d29114c5f977e10a8580ab04f
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_molecule_targets``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:351 9d7567c88d8c4e91ad5fb0254b158d8d
+msgid ""
+"**Description**: Get all unique targets associated with a molecule by "
+"ChEMBL ID. Returns targets that have activity data for the specified "
+"molecule (deduplicated from activity records)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:355 cf3a9d483ba047f8b360c815d61634a1
+msgid ""
+"``molecule_chembl_id__exact`` (string) (optional) ChEMBL molecule ID "
+"(e.g., 'CHEMBL25' for aspirin). To find a molecule ID, use "
+"ChEMBL\\_search\\_molecules. Alias: molecule\\_chembl\\_id."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:358 edc157217cfd4245aeae30019c966146
+msgid ""
+"``molecule_chembl_id`` (string) (optional) Alias for "
+"molecule\\_chembl\\_id\\_\\_exact. ChEMBL molecule ID."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:361 4c02fdf55a204399b954dbf5a9bf3594
+msgid ""
+"``limit`` (integer) (optional) Maximum number of activity records to "
+"fetch for target deduplication (default 500)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:377 9ddbf1c0c45748efb4f84561a11eb141
+#, fuzzy
+msgid "**ChEMBL_get_target** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:379 98108b3a2e2f44a7bf63886573742182
+msgid ""
+"Get detailed information about a target (protein, gene, etc.) by its "
+"ChEMBL target ID. To find a ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 3043d8ee054648bebfcf4656d1e1a58f
+#, fuzzy
+msgid "ChEMBL_get_target tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:385 debffe529135456d8e4f43525f07639b
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_target``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:387 3acf249326684fbcbdfaf1953a7f82ef
+msgid ""
+"**Description**: Get detailed information about a target (protein, gene, "
+"etc.) by its ChEMBL target ID. To find a target ID, use "
+"ChEMBL\\_search\\_targets with a target name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:391 74c75dc5a0154be489b73f98283f4f02
+msgid ""
+"``target_chembl_id`` (string) (required) ChEMBL target ID (e.g., "
+"'CHEMBL2074'). To find a target ID, use ChEMBL\\_search\\_targets with a "
+"target name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:411 b2e061b681a54dc6862d985067079d87
+#, fuzzy
+msgid "**ChEMBL_get_target_activities** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:413 2d1d74e877544d638622a600366b0fd8
+msgid ""
+"Get all activity data for a target by ChEMBL target ID. Returns "
+"bioactivity measurements (IC50, K..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst ff3a1f3d398541499b21faf70c2ef05f
+#, fuzzy
+msgid "ChEMBL_get_target_activities tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:419 c3da265426b640ee8a527441243e7b90
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_target_activities``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:421 919bcba740a9416c9d1e1a70c1aa6023
+msgid ""
+"**Description**: Get all activity data for a target by ChEMBL target ID. "
+"Returns bioactivity measurements (IC50, Ki, etc.) for molecules tested "
+"against this target. Note: activity values may be in different units (nM "
+"or uM) depending on the assay — check the 'standard\\_units' field in "
+"each result. To find a target ID, use ChEMBL\\_search\\_targets with a "
+"target name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:425 e2ac22dead79493383ddbea5d8d299a4
+msgid ""
+"``target_chembl_id__exact`` (string) (optional) ChEMBL target ID (e.g., "
+"'CHEMBL2074'). To find a target ID, use ChEMBL\\_search\\_targets with a "
+"target name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:434 14672056c65d4e118843d7608c87bca6
+msgid ""
+"``target_chembl_id`` (string) (optional) Alias for "
+"target\\_chembl\\_id\\_\\_exact. ChEMBL target ID (e.g., CHEMBL213)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:450 db4ffd2ec79141f0b497f51c8bc6945c
+#, fuzzy
+msgid "**ChEMBL_get_target_assays** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:452 fd358d49abb14426986f695b2ed63de5
+msgid ""
+"Get all assays associated with a target by ChEMBL target ID. To find a "
+"target ID, use ChEMBL\\_sea..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 9debf01610404ed0a79cb9b36d56db4a
+#, fuzzy
+msgid "ChEMBL_get_target_assays tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:458 1bc3fbf76dae4eb6a389b950fe79052c
+#, fuzzy
+msgid "**Name**: ``ChEMBL_get_target_assays``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:460 06b5193b050b44e0be4c901fd13b50e0
+msgid ""
+"**Description**: Get all assays associated with a target by ChEMBL target"
+" ID. To find a target ID, use ChEMBL\\_search\\_targets with a target "
+"name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:464 e83357f8c02d4f2094f4ac6ae5a93a6a
+msgid ""
+"``target_chembl_id__exact`` (string) (required) ChEMBL target ID (e.g., "
+"'CHEMBL2074'). To find a target ID, use ChEMBL\\_search\\_targets with a "
+"target name or gene symbol."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:487 c44519b3771a4eadb5ba004a93ba4e20
+#, fuzzy
+msgid "**ChEMBL_search_activities** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:489 15ee2e3dfa8e4f618a822618ba59f647
+msgid ""
+"Search activity data by molecule, target, assay, or activity values. "
+"Supports filtering by IC50, ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 2a7f4fed8d914a01a91cc6841cbe8b81
+#, fuzzy
+msgid "ChEMBL_search_activities tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:495 a0e0427d9fe9473d8796cf4aab93aee1
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_activities``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:497 6c1b0df58fe6411eb0db9b3865b9b099
+msgid ""
+"**Description**: Search activity data by molecule, target, assay, or "
+"activity values. Supports filtering by IC50, Ki, EC50, etc. Note: "
+"activity data is sparse and depends on curation; some specific filter "
+"combinations can legitimately return zero results. For reliable "
+"retrieval, prefer starting from a known target "
+"(\\`target\\_chembl\\_id\\_\\_exact\\`) or assay "
+"(\\`assay\\_chembl\\_id\\_\\_exact\\`). To find molecule or target IDs, "
+"use ChEMBL\\_search\\_molecules or ChEMBL\\_search\\_targets."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:501 ../../tools/chembl_tools.rst:714
+#: 001d02d0c5bc498b9232f7dc0ca18c5c 11c2c32aec504074bc546bb2f57a7eaf
+msgid "``molecule_chembl_id`` (string) (optional) Filter by molecule ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:504 ../../tools/chembl_tools.rst:561
+#: ../../tools/chembl_tools.rst:636 ../../tools/chembl_tools.rst:837
+#: ../../tools/chembl_tools.rst:930 ../../tools/chembl_tools.rst:1086
+#: 13fcba33884842f38a14af85fd97c59f 23cd0c2fe01541d9a85eed0537cdee6b
+#: 69e4701dd4404dd8a139662548bdaf99 7262e50755944d11906e9a4335227d45
+#: 7bd4d2a001ce4d10bb1410d33b7f5ae6 7e94041293c64785992da79c3f947cef
+msgid "``target_chembl_id`` (string) (optional) Filter by target ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:507 ../../tools/chembl_tools.rst:555
+#: a809107097cc47b191672c58d3101df9 f9089af762234d88b72e28cd487e517f
+msgid "``assay_chembl_id`` (string) (optional) Filter by assay ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:510 f9a78459f01542fd9fca3c18fa595cef
+msgid ""
+"``standard_type`` (string) (optional) Filter by activity type (e.g., "
+"'IC50', 'Ki', 'EC50')"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:513 f5cd34fd3d65465fb1b70789e38ea0ff
+msgid ""
+"``standard_value__lte`` (number) (optional) Filter by maximum activity "
+"value"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:516 069fca0f66434ddfb23abb5e0279ac03
+msgid ""
+"``standard_value__gte`` (number) (optional) Filter by minimum activity "
+"value"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:519 e33fab5115d24100bab8d6271756756f
+msgid ""
+"``fields`` (array) (optional) Optional list of ChEMBL activity fields to "
+"include in each returned activity object (projection). ToolUniverse maps "
+"this to ChEMBL's \\`only\\` query parameter (comma-separated). Supported "
+"fields: activity\\_id, molecule\\_chembl\\_id, target\\_chembl\\_id, "
+"assay\\_chembl\\_id, standard\\_type, standard\\_value, standard\\_units,"
+" pchembl\\_value, standard\\_relation, standard\\_flag."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:541 9391793939394d118941f7181286b40b
+#, fuzzy
+msgid "**ChEMBL_search_assays** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:543 16ecfab92d8e4a14bb064c87de073b57
+msgid ""
+"Search assays by various criteria including assay type, target, organism."
+" Use this tool to find a..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 60a935aed313472a967f7cd13853e72e
+#, fuzzy
+msgid "ChEMBL_search_assays tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:549 6b4663e8e88f45919210c6750d5ddde2
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_assays``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:551 164988501c364c81bd8f45cb042c4595
+msgid ""
+"**Description**: Search assays by various criteria including assay type, "
+"target, organism. Use this tool to find assay ChEMBL IDs needed for other"
+" tools."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:558 6d7e92a4a9d441dc8739bf9f00896473
+msgid ""
+"``assay_type`` (string) (optional) Filter by assay type (e.g., 'B', 'F', "
+"'A')"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:564 d1ff43d8c9eb41898f20fe872052af4e
+msgid ""
+"``fields`` (array) (optional) Optional list of ChEMBL assay fields to "
+"include in each returned assay object (projection). ToolUniverse maps "
+"this to ChEMBL's \\`only\\` query parameter (comma-separated). Supported "
+"fields: assay\\_chembl\\_id, description, assay\\_type, "
+"confidence\\_score, target\\_chembl\\_id, assay\\_organism, bao\\_label."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:586 bf7cc0ae8ad24be680eb342bf265a0be
+#, fuzzy
+msgid "**ChEMBL_search_atc_classification** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:588 871945a93f8d4618861a07ddf284f5a0
+msgid ""
+"Search ATC (Anatomical Therapeutic Chemical) classifications for drugs. "
+"To find a drug ID, use Ch..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 85286ad2d0654793810b95959472455c
+#, fuzzy
+msgid "ChEMBL_search_atc_classification tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:594 bc90388d1bf448758bb86bc7252f4b31
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_atc_classification``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:596 d328e668bbdf47939fa34ad1612d542c
+msgid ""
+"**Description**: Search ATC (Anatomical Therapeutic Chemical) "
+"classifications for drugs. To find a drug ID, use "
+"ChEMBL\\_search\\_drugs."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:600 b44de762f69e47ab9033b3f829011d90
+msgid "``level4`` (string) (optional) Filter by ATC level 4 code"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:622 e8de16e49ffc4e59b327f4645289ec7e
+#, fuzzy
+msgid "**ChEMBL_search_binding_sites** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:624 9a3e2528042849cfbc9bc68f5f369d4d
+msgid "Search binding sites by target, site name, or other criteria."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst ad958e8acd6c4a26b6bd36b46143d11d
+#, fuzzy
+msgid "ChEMBL_search_binding_sites tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:630 acee1ee5f2604f22811a512838e16693
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_binding_sites``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:632 75c90150e3a24184991a620b7ea41a7b
+msgid ""
+"**Description**: Search binding sites by target, site name, or other "
+"criteria."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:639 b4b17194e777423986f6b6816c8acb74
+msgid "``site_name__contains`` (string) (optional) Filter by site name (contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:661 4086b86adc624999836a4fa00bef91d6
+#, fuzzy
+msgid "**ChEMBL_search_cell_lines** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:663 50169db2fbe944e49bff8fc36fc158c2
+msgid "Search cell lines used in ChEMBL assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 17d2a49bdcdb4f9ca7d86be3548c405b
+#, fuzzy
+msgid "ChEMBL_search_cell_lines tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:669 c9eddd82ad8e439e9ab243ace752e49e
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_cell_lines``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:671 96a1cdb8e8fa45639d73dd35097050f1
+msgid "**Description**: Search cell lines used in ChEMBL assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:675 9549981c65ea418eb1fe52d4ce5e48ec
+msgid "``cell_chembl_id`` (string) (optional) Filter by cell line ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:678 8d4e64d6725b4d0da353874a05051df7
+msgid ""
+"``cell_name__contains`` (string) (optional) Filter by cell line name "
+"(contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:700 4473b173d5134f5ea7cee28aba336d0b
+#, fuzzy
+msgid "**ChEMBL_search_compound_structural_alerts** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:702 b637fc8dc5b0407a81f8949d5aca0cba
+msgid ""
+"Search compound structural alerts (toxicity warnings) by molecule or "
+"alert type."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 51fd01a25d644b3383fb622847edab53
+#, fuzzy
+msgid "ChEMBL_search_compound_structural_alerts tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:708 6eb20913176e42019d4b5827ee94e503
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_compound_structural_alerts``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:710 0a066fd292cf40ef94856f914a3111ff
+msgid ""
+"**Description**: Search compound structural alerts (toxicity warnings) by"
+" molecule or alert type."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:717 8149faa61f154a229dd38d66d875f8f7
+msgid ""
+"``alert_name__contains`` (string) (optional) Filter by alert name "
+"(contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:739 fd95912934dd4e63ad1b119d0da329a6
+#, fuzzy
+msgid "**ChEMBL_search_documents** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:741 dbea536e3e84451e9fdb3d4d481dc575
+msgid "Search ChEMBL documents (publications) by various criteria."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 20616a581e6f4ddbb711f12a0076ba46
+#, fuzzy
+msgid "ChEMBL_search_documents tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:747 eb4c2c95eac74ef0b508c58bf6e7bbe3
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_documents``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:749 aceb984711f44ff289f1007a784c8c3f
+msgid ""
+"**Description**: Search ChEMBL documents (publications) by various "
+"criteria."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:753 ddb60433ae8742fd913bb30fc192128b
+msgid "``document_id`` (string) (optional) Filter by document ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:756 3cc23f4435b145779538cb1e7e7e6f78
+msgid ""
+"``title__contains`` (string) (optional) Filter by document title "
+"(contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:778 93abfc16fb2741c0ae7a4a3df5540a96
+#, fuzzy
+msgid "**ChEMBL_search_drugs** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:780 eebbed9f69b34ccaa7b2644dd1f81b32
+msgid ""
+"Search drugs by name, approval status, or other criteria. Use the "
+"\\`query\\` parameter to search b..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 3de7a17a1ead4ee782256579a3ffd64c
+#, fuzzy
+msgid "ChEMBL_search_drugs tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:786 4158f4833291475487c009c28f6e0091
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_drugs``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:788 33068946805b4107ad49bc744d9f64ba
+#, python-brace-format
+msgid ""
+"**Description**: Search drugs by name, approval status, or other "
+"criteria. Use the \\`query\\` parameter to search by drug name (e.g., "
+"{\"query\": \"sotorasib\"}). Use \\`max\\_phase\\` to filter by "
+"development phase."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:792 28469a54165640a39da8c633585968b3
+msgid ""
+"``query`` (string) (optional) Drug name to search for (partial match, "
+"case-insensitive). E.g., \"sotorasib\", \"olaparib\", \"imatinib\"."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:795 fd5b24d00c2b4d81b1b8fb31de44c6cf
+msgid ""
+"``max_phase`` (integer) (optional) Filter by maximum development phase "
+"(0-4)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:804 3416ef9fcbf144b99eba0a5f041c1ad2
+msgid ""
+"``molecule_chembl_id`` (string) (optional) Filter by ChEMBL molecule ID "
+"(e.g., \"CHEMBL1201581\" for adalimumab)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:820 fffe60663d90419a9b768084a5836d83
+#, fuzzy
+msgid "**ChEMBL_search_mechanisms** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:822 c617c92e04e04a86903b991cfa12b457
+msgid ""
+"Search mechanisms of action by drug, target, or mechanism type. To find "
+"drug or target IDs, use C..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst a26648b8c6e14807b77e640a263eaf4f
+#, fuzzy
+msgid "ChEMBL_search_mechanisms tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:828 99d5787602bc47c19d6dc6efb0317528
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_mechanisms``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:830 9f44f49865b8474f9b28d975963c24a4
+msgid ""
+"**Description**: Search mechanisms of action by drug, target, or "
+"mechanism type. To find drug or target IDs, use ChEMBL\\_search\\_drugs "
+"or ChEMBL\\_search\\_targets."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:834 af5b935029fd41c897531efde758871b
+msgid "``drug_chembl_id`` (string) (optional) Filter by drug ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:840 bfa8e217f39b418199b9c6307d35baf7
+msgid ""
+"``mechanism_of_action__contains`` (string) (optional) Filter by mechanism"
+" description (contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:862 1999bf961ddd415aafaa8ff2498c4601
+#, fuzzy
+msgid "**ChEMBL_search_molecules** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:864 67759decc523472ba3ef3cf51eadd845
+msgid ""
+"Search molecules by name, ChEMBL ID, or other criteria. Supports "
+"filtering and pagination. Note: ..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 0b80b0b0cc9c4ea3966184de28b63b6a
+#, fuzzy
+msgid "ChEMBL_search_molecules tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:870 2a6508eef74d4f19aaeaea8a9a2a4517
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_molecules``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:872 4ff76073ef1e49f9b760574df1459295
+msgid ""
+"**Description**: Search molecules by name, ChEMBL ID, or other criteria. "
+"Supports filtering and pagination. Note: some text-based filters "
+"(especially \\`pref\\_name\\_\\_contains\\`) may legitimately return zero"
+" results because \\`pref\\_name\\` coverage is incomplete and may not "
+"contain common drug names. For reliable retrieval, prefer ID-based "
+"filters like \\`molecule\\_chembl\\_id\\` or use "
+"\\`ChEMBL\\_get\\_molecule\\` when you already have a ChEMBL ID."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:876 bf06f8bc79004d5584c59530ddb130cf
+msgid ""
+"``molecule_chembl_id`` (string) (optional) Filter by ChEMBL ID (exact "
+"match)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:879 a59db63d15c344d9b13c8e86c5cdabd7
+msgid ""
+"``pref_name__contains`` (string) (optional) Filter by preferred name "
+"(contains). Note: \\`pref\\_name\\` coverage is incomplete in ChEMBL, so "
+"this can legitimately return zero results even for common names; prefer "
+"\\`molecule\\_chembl\\_id\\` for reliable retrieval."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:882 91fddeda03c146efaee3359a4a95741a
+msgid ""
+"``query`` (string) (optional) Molecule name to search for. Alias for "
+"pref\\_name\\_\\_contains."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:885 2f070719a48f4b62980472fd9e2c129b
+#, fuzzy
+msgid ""
+"``max_results`` (integer) (optional) Maximum number of results to return."
+" Alias for limit."
+msgstr "``max_results``（整数）（可选）返回结果的最大数量。"
+
+#: ../../tools/chembl_tools.rst:888 85225d8893d2442792ecca5ec064096c
+msgid ""
+"``molecule_type`` (string) (optional) Filter by molecule type (e.g., "
+"'Small molecule', 'Antibody')"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:891 85ccd6f854234e3abb0c85e5261aac99
+msgid ""
+"``fields`` (array) (optional) Optional list of ChEMBL molecule fields to "
+"include in each returned molecule object (projection). ToolUniverse maps "
+"this to ChEMBL's \\`only\\` query parameter (comma-separated). Supported "
+"fields: molecule\\_chembl\\_id, pref\\_name, molecule\\_type, "
+"max\\_phase, first\\_approval, black\\_box\\_warning, withdrawn\\_flag, "
+"molecule\\_structures, molecule\\_properties."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:894 ../../tools/chembl_tools.rst:1014
+#: ../../tools/chembl_tools.rst:1052 2db4346bf7214e9cb165f41e629d9d2e
+#: bd9a29753f5d48759818e3e9069a8a70 fbfdebdb74214649b9d56fdf0be5d921
+#, fuzzy
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results (default: 20, "
+"max: 1000)"
+msgstr "``max_results``（整数）（可选）返回结果的最大数量。"
+
+#: ../../tools/chembl_tools.rst:897 ../../tools/chembl_tools.rst:1017
+#: ../../tools/chembl_tools.rst:1055 485b0c79a9e641c2a39a6c3abdf83461
+#: 5a28d8477487475aa66f7a2efd58ff81 9668284c343e4c72acc73cd7dfb3c4aa
+msgid "``offset`` (integer) (optional) Offset for pagination (default: 0)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:916 0a1af10e4ff147b19890da1dba6b1aac
+#, fuzzy
+msgid "**ChEMBL_search_protein_classification** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:918 2e72563ba0b241d884e87bb73138a3e7
+msgid ""
+"Search protein classifications by target, classification type, or other "
+"criteria. To find a targe..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 3bcf0361593a42cdb82e2f3c3124ee4e
+#, fuzzy
+msgid "ChEMBL_search_protein_classification tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:924 3f506f88030c4778a9eec1635b3743c1
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_protein_classification``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:926 fbb8d29616b947908dfd7c9b258aa0fb
+msgid ""
+"**Description**: Search protein classifications by target, classification"
+" type, or other criteria. To find a target ID, use "
+"ChEMBL\\_search\\_targets."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:933 538bb6fb57d5409fb306d71808f46f65
+msgid "``protein_class_id`` (string) (optional) Filter by protein class ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:955 4f26059821004aefa510495f8ba1bbda
+msgid "**ChEMBL_search_similar_molecules** (Type: ChEMBLTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:957 8ca1ad4b9f37425c8011e4ecefd04137
+#, fuzzy
+msgid ""
+"Search for molecules similar to a given SMILES, chembl\\_id, or compound "
+"or drug name, using the C..."
+msgstr "使用 Ch... 搜索与给定的 SMILES、chembl_id 或化合物/药物名称相似的分子。"
+
+#: ../../tools/chembl_tools.rst e47939289fd4464c856ff84fac40bdf7
+msgid "ChEMBL_search_similar_molecules tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:963 e1d137b85e334d6292f124b3754706ee
+msgid "**Name**: ``ChEMBL_search_similar_molecules``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:964 a1de6cb525224814b5e488c4553e407f
+msgid "**Type**: ``ChEMBLTool``"
+msgstr "**类型**：``ChEMBLTool``"
+
+#: ../../tools/chembl_tools.rst:965 1fe6b40c10d744db99f2e0c918577f26
+msgid ""
+"**Description**: Search for molecules similar to a given SMILES, "
+"chembl\\_id, or compound or drug name, using the ChEMBL Web Services. "
+"Note: This tool is designed for small molecule compounds only. Biologics "
+"(antibodies, proteins, oligonucleotides, etc.) do not have SMILES "
+"structures and cannot be used for similarity search. For biologics "
+"similarity search, use BLAST\\_protein\\_search (requires amino acid "
+"sequence) or UniProt\\_search. For small molecules, use "
+"PubChem\\_search\\_compounds\\_by\\_similarity (requires SMILES input)."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:969 fee40a66242c4036aff58d4f5268672f
+msgid ""
+"``query`` (string) (required) SMILES string, chembl\\_id, or compound or "
+"drug name. Note: Only small molecule compounds are supported. Biologics "
+"(antibodies, proteins, etc.) will return an error as they lack SMILES "
+"structures."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:972 f700c3b3422a422b8d89294402ba4cd2
 #, fuzzy
 msgid ""
 "``similarity_threshold`` (integer) (required) Similarity threshold "
 "(0–100)."
 msgstr "``similarity_threshold``（整数）（可选）相似度阈值（0–100）。"
 
-#: ../../tools/chembl_tools.rst:34 16cf87174cf04faa867a5388693609b1
+#: ../../tools/chembl_tools.rst:975 0ad80e8c13784b58a06cbc9b5541d002
 #, fuzzy
 msgid "``max_results`` (integer) (required) Maximum number of results to return."
 msgstr "``max_results``（整数）（可选）返回结果的最大数量。"
 
-#: ../../tools/chembl_tools.rst:37 fed6ac2622924502bc81fa6e05506f9f
-msgid "**Example Usage:**"
-msgstr "**示例用法：**"
+#: ../../tools/chembl_tools.rst:994 8d7d6e7a6cc942f49942b591e91f9b7b
+#, fuzzy
+msgid "**ChEMBL_search_similarity** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
 
-#: ../../tools/chembl_tools.rst:53 62f1e86c0715437c9267972c8437c5a5
+#: ../../tools/chembl_tools.rst:996 d6fe4412c4704b1ea60bbbcfe395d703
+#, fuzzy
+msgid ""
+"Search molecules similar to a given SMILES string using Tanimoto "
+"similarity. Returns molecules wi..."
+msgstr "使用 Ch... 搜索与给定的 SMILES、chembl_id 或化合物/药物名称相似的分子。"
+
+#: ../../tools/chembl_tools.rst 474918ba85ed41a794cb3fb981393012
+#, fuzzy
+msgid "ChEMBL_search_similarity tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:1002 be43d8c1514f4ec99d828562a1a27424
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_similarity``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:1004 fdc10fa08df94c1abee8112fd70f4462
+msgid ""
+"**Description**: Search molecules similar to a given SMILES string using "
+"Tanimoto similarity. Returns molecules with similarity above the "
+"threshold."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1008 0576957008964dd390940fe19e2ffe73
+#, fuzzy
+msgid ""
+"``smiles`` (string) (required) SMILES string to search for similar "
+"molecules"
+msgstr "``query``（字符串）（必填）SMILES字符串、chembl_id、化合物名称或药物名称。"
+
+#: ../../tools/chembl_tools.rst:1011 522955740aa342deb63d1115cf7395a7
+#, fuzzy
+msgid ""
+"``threshold`` (integer) (required) Similarity threshold (0-100). "
+"Molecules with similarity >= threshold will be returned."
+msgstr "``similarity_threshold``（整数）（可选）相似度阈值（0–100）。"
+
+#: ../../tools/chembl_tools.rst:1035 548e29d226814d20b6fdc10d4da0d53d
+#, fuzzy
+msgid "**ChEMBL_search_substructure** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:1037 f5c1c630700f4d1e915871745362ca06
+msgid ""
+"Search molecules by substructure using SMILES. Returns molecules "
+"containing the specified substru..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst c40a9ce4fe474866a582cabb7d7b975e
+#, fuzzy
+msgid "ChEMBL_search_substructure tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:1043 59b4e03aef4546b0a778905fd7164c5d
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_substructure``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:1045 1869fcd4ba3e4ce3abd4d2209e8b01d9
+msgid ""
+"**Description**: Search molecules by substructure using SMILES. Returns "
+"molecules containing the specified substructure."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1049 5c7358302a894bed9928643b2a4bcc45
+msgid ""
+"``smiles`` (string) (required) SMILES string representing the "
+"substructure to search for"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1072 23b9fa8777814ced8c1475175da499a8
+#, fuzzy
+msgid "**ChEMBL_search_targets** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:1074 f92a6ebbc9af40cd93e520400454cb07
+msgid ""
+"Search targets by name, organism, target type, or other criteria. Use "
+"this tool to find target Ch..."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst d8a89fa8ad2f46f78db78ebf07129fd0
+#, fuzzy
+msgid "ChEMBL_search_targets tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:1080 63b8cbeb6e94406598e9ad5e228399a5
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_targets``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:1082 81633ed40cfc4b11af651931067a2c9c
+msgid ""
+"**Description**: Search targets by name, organism, target type, or other "
+"criteria. Use this tool to find target ChEMBL IDs needed for other tools."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1089 275369627db742d2aed566202d2ab25f
+msgid ""
+"``pref_name__contains`` (string) (optional) Filter by target name "
+"(contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1092 2f756d113513495589777c9d33609aca
+msgid "``organism`` (string) (optional) Filter by organism (e.g., 'Homo sapiens')"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1095 516776f66d3d431d98193a87067fbf1c
+msgid ""
+"``target_type`` (string) (optional) Filter by target type (e.g., 'SINGLE "
+"PROTEIN', 'PROTEIN COMPLEX')"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1098 6f225f443eb6499dbd65bc4f70aafca6
+msgid ""
+"``fields`` (array) (optional) Optional list of ChEMBL target fields to "
+"include in each returned target object (projection). ToolUniverse maps "
+"this to ChEMBL's \\`only\\` query parameter (comma-separated). Supported "
+"fields: target\\_chembl\\_id, pref\\_name, organism, target\\_type, "
+"target\\_components."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1120 d3da8aada1464676b28c606ef96da54b
+#, fuzzy
+msgid "**ChEMBL_search_tissue** (Type: ChEMBLRESTTool)"
+msgstr "**ChEMBL_search_similar_molecules**（类型：ChEMBL工具）"
+
+#: ../../tools/chembl_tools.rst:1122 111dee83141f4ef483f8cb49683eaee7
+msgid "Search tissues used in ChEMBL assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst 09eda834b2274b07962037688f919abe
+#, fuzzy
+msgid "ChEMBL_search_tissue tool specification"
+msgstr "ChEMBL_search_similar_molecules 工具规格说明"
+
+#: ../../tools/chembl_tools.rst:1128 fb625e17b6cb48b59239e4ea01a08b2d
+#, fuzzy
+msgid "**Name**: ``ChEMBL_search_tissue``"
+msgstr "**名称**：``ChEMBL_search_similar_molecules``"
+
+#: ../../tools/chembl_tools.rst:1130 43d8d7721587440c9b507a1b42cecaee
+msgid "**Description**: Search tissues used in ChEMBL assays."
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1134 a9e146a0197a4966acd58ccb1d6a9bc9
+msgid "``tissue_chembl_id`` (string) (optional) Filter by tissue ChEMBL ID"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1137 9f932cdc97a64111ae293fe7649eedb6
+msgid ""
+"``pref_name__contains`` (string) (optional) Filter by tissue name "
+"(contains)"
+msgstr ""
+
+#: ../../tools/chembl_tools.rst:1159 129533674b5e4b8bb56059fa6b43e0a1
 msgid "Navigation"
 msgstr "导航"
 
-#: ../../tools/chembl_tools.rst:55 3351457adb394c3288fbcbc26c8e628f
+#: ../../tools/chembl_tools.rst:1161 75e0b9a3b57141e8b8025329759b4d23
 msgid ":doc:`tools_config_index` - Back to Tools Overview"
 msgstr ":doc:`tools_config_index` - 返回工具概览"
 
-#: ../../tools/chembl_tools.rst:56 269a4dd44d1c4dddabd9e42e9cc53972
+#: ../../tools/chembl_tools.rst:1162 b8a2b82f6d8a4d0fbbc7f1fe933aea2c
 msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
 msgstr ":doc:`../guide/loading_tools` - 加载本地工具"
+
+#~ msgid ""
+#~ "**Description**: Search for molecules similar"
+#~ " to a given SMILES, chembl_id, or "
+#~ "compound or drug name, using the "
+#~ "ChEMBL Web Services."
+#~ msgstr "**描述**：使用ChEMBL Web服务，根据给定的SMILES、chembl_id或化合物或药物名称搜索相似的分子。"
 

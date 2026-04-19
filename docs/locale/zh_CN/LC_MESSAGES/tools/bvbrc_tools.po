@@ -1,0 +1,732 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/bvbrc_tools.rst:10 71a3282757554b7e89df275b942f2102
+msgid "Bvbrc Tools"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:12 db9d52bad973472db90c5d2998108d06
+msgid ""
+"**Configuration File**: ``bvbrc_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 13"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:16 c2c2394312424cbfbcfdea8350ce79c4
+msgid ""
+"This page contains all tools defined in the ``bvbrc_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:19 829070133b024c779b9a0ffa4de9f3de
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:22 1e86c320267a4c1eaadc271e61b10db5
+msgid "**BVBRC_get_genome** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:24 411901934db248d0a79577a2c7d443b5
+msgid ""
+"Get detailed genome information from BV-BRC (Bacterial and Viral "
+"Bioinformatics Resource Center, ..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 1b431f2ced3f418984e13dc9edd58d76
+msgid "BVBRC_get_genome tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:28 ../../tools/bvbrc_tools.rst:59
+#: ../../tools/bvbrc_tools.rst:90 ../../tools/bvbrc_tools.rst:121
+#: ../../tools/bvbrc_tools.rst:160 ../../tools/bvbrc_tools.rst:202
+#: ../../tools/bvbrc_tools.rst:244 ../../tools/bvbrc_tools.rst:278
+#: ../../tools/bvbrc_tools.rst:320 ../../tools/bvbrc_tools.rst:359
+#: ../../tools/bvbrc_tools.rst:401 ../../tools/bvbrc_tools.rst:446
+#: ../../tools/bvbrc_tools.rst:488 02cbe5b2377d432bbec34054bda4a913
+#: 0597a8a1bf7541f6960178a5ec119afc 19834f0c231c4f3e8bdb4f7d2f1c469b
+#: 3b7b92a064e14941b34518712a303020 4ae9f88c641d495582b877f08f0a7f9b
+#: 7b668a0997f04259997741b5f676a49f 95b592c1e6354656899d0b34e5e91d2e
+#: c283b17d3acd4d75bad886af63c65f9b e01372f9a69e467f87f8de082c95c95e
+#: ecd2cc3ef8b145f3a7798ca1abc6ec94 eda622154b5a4fd886e6c6fea34b5fdc
+#: ef717bea11b54e64b6f88aea504dfa2a f40720e5f21d4e01b02edf655f8c4b10
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:30 715ec0d678e34c7f8b84abcb384b4156
+msgid "**Name**: ``BVBRC_get_genome``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:31 ../../tools/bvbrc_tools.rst:62
+#: ../../tools/bvbrc_tools.rst:93 ../../tools/bvbrc_tools.rst:124
+#: ../../tools/bvbrc_tools.rst:163 ../../tools/bvbrc_tools.rst:205
+#: ../../tools/bvbrc_tools.rst:247 ../../tools/bvbrc_tools.rst:281
+#: ../../tools/bvbrc_tools.rst:323 ../../tools/bvbrc_tools.rst:362
+#: ../../tools/bvbrc_tools.rst:404 ../../tools/bvbrc_tools.rst:449
+#: ../../tools/bvbrc_tools.rst:491 15bfb96a9f82491ea76247a4b87170ea
+#: 1624c78a21284ce6a2f1779ea3d455ea 1ff0e78210f7476db6485a97fae38cd2
+#: 286fa4ac4d5a4228b062d1bf30b70112 52543757342046dc89d66cd20795191f
+#: 774605544c974af39cef7f9fec7130cc 910f5c02f49d4ae7acfcf0dfbf33e8dc
+#: 9787402bc49c40a29f49d33c7b6ece65 9c212659f92847009bc676b730f2fe8b
+#: c247bf09595a4ac99255c9113b282398 c4d8211fa17a40be93e78c4ab25ec570
+#: d61697c9a4d946a386ceb618bad9d336 f0275351ffde48a49e15566b6313442f
+msgid "**Type**: ``BVBRCTool``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:32 a6b0eb09fcc142f698f8c5e47c5a931e
+msgid ""
+"**Description**: Get detailed genome information from BV-BRC (Bacterial "
+"and Viral Bioinformatics Resource Center, formerly PATRIC). Returns "
+"genome metadata including organism name, taxonomy, genome size, GC "
+"content, assembly status, host, disease, and isolation information. BV-"
+"BRC is the primary NIAID-funded resource for bacterial and viral pathogen"
+" genomics. Example: '83332.12' returns Mycobacterium tuberculosis H37Rv."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:34 ../../tools/bvbrc_tools.rst:65
+#: ../../tools/bvbrc_tools.rst:96 ../../tools/bvbrc_tools.rst:127
+#: ../../tools/bvbrc_tools.rst:166 ../../tools/bvbrc_tools.rst:208
+#: ../../tools/bvbrc_tools.rst:250 ../../tools/bvbrc_tools.rst:284
+#: ../../tools/bvbrc_tools.rst:326 ../../tools/bvbrc_tools.rst:365
+#: ../../tools/bvbrc_tools.rst:407 ../../tools/bvbrc_tools.rst:452
+#: ../../tools/bvbrc_tools.rst:494 0385520e91fc4d0dad6fbfa8d2c6582d
+#: 1090d525da5b45e78302cd22fce68014 1f4c212f2ed04ad083f737516dc070cb
+#: 2cdbcdb3f1744b0d9bac1bb4693441f9 36c265eee3254786bf78f7a6a63930d1
+#: 44aed326f41b427cb8c027175d5b9005 6519290c61894244bb097fe0719bd845
+#: 7996499e44614f46b62a35901f689fa0 8a78e7360204457883462ad47c063086
+#: a11f1514eab94ba9a3629de84a03e056 f6c7b578817d4f64b297378ff3255f2a
+#: fda513dcef5d4f29a13b66adcf788a73 fdd21aa69f5740258a40cedc33319d5b
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:36 dfbae5a06b3b46a19f299ce2dc75c8a3
+msgid ""
+"``genome_id`` (string) (required) BV-BRC genome identifier "
+"(taxon\\_id.version format). Examples: '83332.12' (M. tuberculosis "
+"H37Rv), '511145.12' (E. coli K-12 MG1655), '93061.5' (S. aureus NCTC "
+"8325)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:39 ../../tools/bvbrc_tools.rst:70
+#: ../../tools/bvbrc_tools.rst:101 ../../tools/bvbrc_tools.rst:141
+#: ../../tools/bvbrc_tools.rst:183 ../../tools/bvbrc_tools.rst:225
+#: ../../tools/bvbrc_tools.rst:258 ../../tools/bvbrc_tools.rst:301
+#: ../../tools/bvbrc_tools.rst:340 ../../tools/bvbrc_tools.rst:382
+#: ../../tools/bvbrc_tools.rst:427 ../../tools/bvbrc_tools.rst:469
+#: ../../tools/bvbrc_tools.rst:502 007165dcfad44e4690cc3ec94d95018e
+#: 2f69d1af48be4196b09ab89fbd02f261 300eb3a193664a10b3fdacaf1905bad6
+#: 4c10f7b35fb646f18114680f68a3c341 6c922bc43d87433aabd8b485e89b8183
+#: 7447dbcee1c3456dab2df1cb6f2b4c4c 8beacf26990e43b7a0ed13d0e5070c81
+#: 8e700f0a2d534e5b97d419e2124dc974 95f7e313b90543698d66e1f823b45113
+#: bf5b3870f2f14f8c9385faede1ce925e d8fbe38243c349b09c5c279a77cc7d3c
+#: dced0b776bbe464d805ee50d790d7d28 ed718767890342f5954892e401ef913f
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:53 519d4f7c09f146518c0fa2d69562ba26
+msgid "**BVBRC_get_protein_structure** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:55 9e0455454a624ed09ae11cef96871fd4
+msgid ""
+"Get detailed pathogen protein structure information from BV-BRC by PDB "
+"ID. Returns structure meta..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 121ff488d76c467a94bfdfda44e6f17b
+msgid "BVBRC_get_protein_structure tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:61 e74254dcde5f45a0a4405626c781833d
+msgid "**Name**: ``BVBRC_get_protein_structure``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:63 60a27d8a92024ef59516fda4b55077aa
+msgid ""
+"**Description**: Get detailed pathogen protein structure information from"
+" BV-BRC by PDB ID. Returns structure metadata including title, "
+"resolution, method, gene, organism, UniProt accession, PMID references, "
+"sequence, and taxonomic lineage. Useful for structural biology research "
+"on pathogen proteins. Example: '6VSB' returns the SARS-CoV-2 spike "
+"glycoprotein structure."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:67 d0effee55df043a991fb66dfbdbea871
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier for the protein structure. "
+"Examples: '6VSB' (SARS-CoV-2 spike), '7CMD' (SARS-CoV-2 PLpro), '6VW1' "
+"(SARS-CoV-2 RBD-ACE2 complex)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:84 d75167166ff8425e8bea5ae2c2a816af
+msgid "**BVBRC_get_taxonomy** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:86 0e141a006e8c4e77aff1bd04d5f630db
+msgid ""
+"Get detailed taxonomy information for a pathogen from BV-BRC by NCBI "
+"Taxonomy ID. Returns taxon n..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst d44cb5764ba14e46b85134267b1c2bda
+msgid "BVBRC_get_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:92 83ff6aa7431041099828b13da4b5a01b
+msgid "**Name**: ``BVBRC_get_taxonomy``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:94 9aa472f983e94a84a2bce78f43fc4d0e
+msgid ""
+"**Description**: Get detailed taxonomy information for a pathogen from "
+"BV-BRC by NCBI Taxonomy ID. Returns taxon name, rank, lineage, "
+"alternative names, and genome counts. Useful for resolving pathogen "
+"taxonomy and understanding classification hierarchy. Example: '2697049' "
+"returns SARS-CoV-2 taxonomy with full lineage from Viruses to species."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:98 649e89a0cc4b413f8fc2dbf0bfafbbe6
+msgid ""
+"``taxon_id`` (string) (required) NCBI Taxonomy ID. Examples: '2697049' "
+"(SARS-CoV-2), '1773' (M. tuberculosis), '1280' (S. aureus), '11320' "
+"(Influenza A)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:115 c3b2f39cf7bc4db9890a46a0cd5ddc66
+msgid "**BVBRC_search_amr** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:117 fc1a86091eae403ea1d71e5641c30a6f
+msgid ""
+"Search for antimicrobial resistance (AMR) phenotype data in BV-BRC. "
+"Returns resistance/susceptibi..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 90b2ed2c456742b499ec42259d1dfaa8
+msgid "BVBRC_search_amr tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:123 7849e405d8304e8ab7b9cc35fa819d8f
+msgid "**Name**: ``BVBRC_search_amr``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:125 8efbd79b38ba42efaca90a4b9a3192f9
+msgid ""
+"**Description**: Search for antimicrobial resistance (AMR) phenotype data"
+" in BV-BRC. Returns resistance/susceptibility data for pathogens against "
+"specific antibiotics, including MIC values, testing methods, and "
+"evidence. Essential for AMR surveillance research. Example: search for "
+"methicillin resistance in Staphylococcus aureus."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:129 601f71098c4d4eeea3afef04e9cd510b
+msgid ""
+"``antibiotic`` (string, null) (optional) Antibiotic name to search for. "
+"Examples: 'methicillin', 'vancomycin', 'ciprofloxacin', 'amikacin', "
+"'isoniazid'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:132 7bdabab1444f45d78a017aea00164449
+msgid ""
+"``genome_id`` (string, null) (optional) BV-BRC genome ID to get AMR data "
+"for a specific genome. Example: '83332.12'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:135 edf933f6f5bf4db192e8d0aaa59ea36f
+msgid ""
+"``resistant_phenotype`` (string, null) (optional) Filter by resistance "
+"phenotype. Options: 'Resistant', 'Susceptible', 'Intermediate'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:138 ../../tools/bvbrc_tools.rst:180
+#: ../../tools/bvbrc_tools.rst:298 ../../tools/bvbrc_tools.rst:379
+#: ../../tools/bvbrc_tools.rst:424 ../../tools/bvbrc_tools.rst:466
+#: 97613f8e2e704a4c93db8e200b1de084 b95642e48dc74b53b19147c203d1ad67
+#: cba53fd5091742aba5103b8c31d9ebbd e99928929cd449c38d447947f6b76cae
+#: fa6e8db67dd64a34a6c20405c90c61d8 fefcdd7a055c46ac87e152a9ce881da3
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results. Default: "
+"25. Max: 100."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:154 3f120749954b4da2a02d9de98958e6d7
+msgid "**BVBRC_search_epitopes** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:156 992b2a846d2d40ce8a10f6a5ad1de37d
+msgid ""
+"Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns "
+"epitope sequences, types, pro..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 6c5624bf243b4e198e86dfa8011b87ec
+msgid "BVBRC_search_epitopes tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:162 bdea38a98ff24921993a3e742d448adf
+msgid "**Name**: ``BVBRC_search_epitopes``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:164 7c9364f7c873465c849fad0ee251df94
+msgid ""
+"**Description**: Search for pathogen epitopes (B-cell and T-cell) in BV-"
+"BRC. Returns epitope sequences, types, protein associations, and assay "
+"results for vaccine and immunology research. Covers epitopes from IEDB "
+"for bacteria and viruses including SARS-CoV-2, influenza, tuberculosis, "
+"and other pathogens. Example: search taxon\\_id 2697049 for SARS-CoV-2 "
+"spike glycoprotein epitopes."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:168 d60cd32a87854c738cc19baeb24e1817
+msgid ""
+"``taxon_id`` (string, null) (optional) NCBI Taxonomy ID for the pathogen "
+"organism. Examples: '2697049' (SARS-CoV-2), '11320' (Influenza A), '1773'"
+" (M. tuberculosis)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:171 a22d13c4edff40b2942234cc910b7e43
+msgid ""
+"``protein_name`` (string, null) (optional) Target protein name to filter "
+"epitopes. Examples: 'Spike glycoprotein', 'Nucleocapsid protein', "
+"'Replicase polyprotein 1ab'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:174 b1d9229a99024649ba44b1f6a298a5f6
+msgid ""
+"``epitope_type`` (string, null) (optional) Type of epitope. Options: "
+"'Linear peptide', 'Discontinuous peptide'. Most epitopes are linear "
+"peptides."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:177 f9e33ac19db641509df46335109bc131
+msgid ""
+"``organism`` (string, null) (optional) Organism name keyword to search "
+"across epitope records. Example: 'coronavirus', 'influenza'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:196 5e43bf60c8794a42a0dcae2b8ec083b8
+msgid "**BVBRC_search_genome_features** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:198 8c28254919244bb68b56ebc97bc95bca
+msgid ""
+"Search for genome features (genes, proteins, CDS) in BV-BRC pathogen "
+"genomes. Find specific genes..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 023db8d887674a7b96b78500b49a6598
+msgid "BVBRC_search_genome_features tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:204 73979137cb1243c1bba827a8d51cf951
+msgid "**Name**: ``BVBRC_search_genome_features``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:206 8a1638086f504aec963a91963eb63404
+msgid ""
+"**Description**: Search for genome features (genes, proteins, CDS) in BV-"
+"BRC pathogen genomes. Find specific genes like antimicrobial resistance "
+"genes (mecA, blaTEM), virulence factors, or any annotated feature across "
+"thousands of pathogen genomes. Example: search for 'mecA' gene "
+"(methicillin resistance) across all genomes."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:210 50d2b997e9064d519642f7b03f9e0776
+msgid ""
+"``gene`` (string, null) (optional) Gene name to search for. Examples: "
+"'mecA' (methicillin resistance), 'blaTEM' (beta-lactamase), 'katG' "
+"(isoniazid resistance)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:213 014fa8e466d94ac587d0ba7b2fc7217b
+msgid ""
+"``product`` (string, null) (optional) Gene product keyword to search. "
+"Examples: 'beta-lactamase', 'penicillin-binding protein', 'DNA gyrase'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:216 3144f815f86741f08fa98de68497c971
+msgid ""
+"``genome_id`` (string, null) (optional) Restrict search to a specific "
+"genome. Example: '83332.12'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:219 ../../tools/bvbrc_tools.rst:337
+#: ../../tools/bvbrc_tools.rst:499 0ca90157476b4ef2be1bb0ee0762fe1e
+#: 8816af07123643dc9e0cca61684fa963 c486d0077a394e7282c198113d6d926b
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results. Default: "
+"10. Max: 100."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:222 2302800d34684b8eb43867a537444cf4
+msgid ""
+"``keyword`` (string, null) (optional) Alias for product: gene product "
+"keyword to search (e.g., 'spike protein', 'beta-lactamase')."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:238 f71afa3d2f3941b9841d826de46e57bc
+msgid "**BVBRC_search_genomes** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:240 13b66dcc5c1948c9a9c82fabbe89e81d
+msgid ""
+"Search for pathogen genomes in BV-BRC by organism name or keyword. "
+"Returns a list of matching gen..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst e3816c0f5a4943ca982eb7d8fbddebf1
+msgid "BVBRC_search_genomes tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:246 5fd7311f035a4763bad2f9f02f6c1e6e
+msgid "**Name**: ``BVBRC_search_genomes``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:248 ac0ea9c19425486c9f54676c096c690e
+msgid ""
+"**Description**: Search for pathogen genomes in BV-BRC by organism name "
+"or keyword. Returns a list of matching genomes with metadata. Useful for "
+"finding bacterial or viral genome assemblies. Example: 'Staphylococcus "
+"aureus' returns all S. aureus genome assemblies."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:252 988b822d75ad4f2f987ad8c08f7df4e8
+msgid ""
+"``keyword`` (string) (required) Search keyword - organism name, strain, "
+"or pathogen. Examples: 'Staphylococcus aureus', 'Escherichia coli', "
+"'Salmonella enterica', 'SARS-CoV-2'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:255 030f0ad36e644ec6ab2d80708c58c41d
+msgid ""
+"``limit`` (integer, null) (optional) Maximum number of results to return."
+" Default: 10. Max: 100."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:272 57a7e744e36b4bfead1eba972718d705
+msgid "**BVBRC_search_pathways** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:274 778fdadc1eac4e25a87ff2a00579aced
+msgid ""
+"Search for metabolic pathways in pathogen genomes from BV-BRC. Returns "
+"KEGG pathway assignments w..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst a0bad92df3a2430d8044015de6576f94
+msgid "BVBRC_search_pathways tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:280 3ddaeecae1104182a79205ed092db755
+msgid "**Name**: ``BVBRC_search_pathways``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:282 a2bb462eee3a431ebfdf87da6ae397ef
+msgid ""
+"**Description**: Search for metabolic pathways in pathogen genomes from "
+"BV-BRC. Returns KEGG pathway assignments with EC numbers, enzyme "
+"descriptions, and genome associations. Useful for understanding pathogen "
+"metabolism and identifying potential drug targets. Example: search for "
+"pathways in M. tuberculosis (taxon\\_id 1773)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:286 2c2ab894044c477b97e346de7a09c3e6
+msgid ""
+"``taxon_id`` (string, null) (optional) NCBI Taxonomy ID. Examples: '1773'"
+" (M. tuberculosis), '562' (E. coli), '1280' (S. aureus)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:289 c91aacf113394d28b741c212b35a0cd7
+msgid ""
+"``pathway_name`` (string, null) (optional) Pathway name keyword. "
+"Examples: 'Glycolysis', 'Fatty acid', 'Amino acid', 'Sulfur metabolism'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:292 b6864896b8504485ac7918e818b1016e
+msgid ""
+"``ec_number`` (string, null) (optional) Enzyme Commission number. "
+"Examples: '1.11.1.6' (catalase), '2.7.1.1' (hexokinase)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:295 2b8c6f03a4714164973f2b7f53403599
+msgid ""
+"``genome_id`` (string, null) (optional) Restrict to a specific genome. "
+"Example: '83332.12' (M. tuberculosis H37Rv)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:314 2604c23b1c844305a1d1aba350df0f7a
+msgid "**BVBRC_search_protein_structures** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:316 eceb78e4f26947dd8ca38a4d41e29581
+msgid ""
+"Search for pathogen protein structures in BV-BRC by organism "
+"(taxon\\_id), gene name, or experimen..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 400f52c40d3b4e9da54edf3849b1bd9c
+msgid "BVBRC_search_protein_structures tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:322 891d37213919422ab4e0731dca64a4c0
+msgid "**Name**: ``BVBRC_search_protein_structures``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:324 5bf70e61fc754b848da7163621d2776e
+msgid ""
+"**Description**: Search for pathogen protein structures in BV-BRC by "
+"organism (taxon\\_id), gene name, or experimental method. Returns PDB "
+"entries with titles, resolution, methods, and references. Covers viral "
+"and bacterial protein structures linked to BV-BRC genome annotations. "
+"Example: search for all SARS-CoV-2 protein structures with taxon\\_id "
+"2697049."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:328 33ae6be7330845a4a98b668ba7b8b116
+msgid ""
+"``taxon_id`` (string, null) (optional) NCBI Taxonomy ID. Examples: "
+"'2697049' (SARS-CoV-2), '1773' (M. tuberculosis), '11320' (Influenza A)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:331 cc7d9e9697d04fd19d32fa3aebecb841
+msgid ""
+"``gene`` (string, null) (optional) Gene name filter. Examples: 'S' "
+"(spike), 'rep' (replicase), 'N' (nucleocapsid)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:334 5fbc403a428841a8b2fd72daf73b4755
+msgid ""
+"``method`` (string, null) (optional) Experimental method. Examples: "
+"'X-ray diffraction', 'Electron microscopy', 'Solution NMR'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:353 066a0621fe42420d8ac83feac377b83d
+msgid "**BVBRC_search_specialty_genes** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:355 4dfad0d4fc8344c486094e8323bbe0c1
+msgid ""
+"Search for specialty genes in BV-BRC including virulence factors, "
+"antibiotic resistance genes, dr..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 7a2cf0992ed243629d494df7a1e99ad4
+msgid "BVBRC_search_specialty_genes tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:361 8db1cd5375914b67b3183b59b6e0989b
+msgid "**Name**: ``BVBRC_search_specialty_genes``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:363 7e2e803caf31429ea912df15b0cc3a26
+msgid ""
+"**Description**: Search for specialty genes in BV-BRC including virulence"
+" factors, antibiotic resistance genes, drug targets, and human homologs "
+"across pathogen genomes. Data sourced from CARD, NDARO, VFDB, "
+"PATRIC\\_VF, and other curated databases. Essential for identifying key "
+"pathogenicity and resistance determinants. Example: search for 'mecA' "
+"(methicillin resistance gene in Staphylococcus)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:367 b1fdc5312a024eb0a6d283df3b382116
+msgid ""
+"``gene`` (string, null) (optional) Gene name to search. Examples: 'mecA' "
+"(methicillin resistance), 'katG' (isoniazid resistance), 'drrC' (efflux "
+"pump)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:370 ab12a87e41014008aaf7c96ffbec55a3
+msgid ""
+"``property`` (string, null) (optional) Specialty gene property category. "
+"Options: 'Antibiotic Resistance', 'Virulence Factor', 'Drug Target', "
+"'Transporter', 'Human Homolog'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:373 c3619c3970b948acb8715d4fd60f3c23
+msgid ""
+"``source`` (string, null) (optional) Source database for annotation. "
+"Options: 'CARD', 'NDARO', 'PATRIC\\_VF', 'VFDB', 'DrugBank', 'TTD', "
+"'Human'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:376 9efc9996503c46fb8da21e35366ba06a
+msgid ""
+"``taxon_id`` (string, null) (optional) NCBI Taxonomy ID. Examples: '1280'"
+" (S. aureus), '1773' (M. tuberculosis), '562' (E. coli)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:395 c56e7a2a5b1a49ecbeb24e8d94258e80
+msgid "**BVBRC_search_subsystems** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:397 582e20fd194c45628c5d63a02284e637
+msgid ""
+"Search for functional subsystems (curated groups of functionally related "
+"proteins) in BV-BRC path..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 342f8e514c7141e197be67b533141f12
+msgid "BVBRC_search_subsystems tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:403 7fa4c733ba4d49cc98c0e04e32f74104
+msgid "**Name**: ``BVBRC_search_subsystems``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:405 efba7f4909754c7db7f2d2153f73f6cb
+msgid ""
+"**Description**: Search for functional subsystems (curated groups of "
+"functionally related proteins) in BV-BRC pathogen genomes. Returns "
+"subsystem classifications including superclass, class, subclass, and "
+"specific functional roles. Useful for understanding pathogen functional "
+"organization and comparing metabolic capabilities. Example: search for "
+"virulence-related subsystems in M. tuberculosis."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:409 7f46d54ee23240df829e7cafd2e6271e
+msgid ""
+"``taxon_id`` (string, null) (optional) NCBI Taxonomy ID. Examples: '1773'"
+" (M. tuberculosis), '1280' (S. aureus), '562' (E. coli)."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:412 d03d7cb132e4483dae3943ba023030dd
+msgid ""
+"``superclass`` (string, null) (optional) Top-level functional category. "
+"Options include: 'METABOLISM', 'STRESS RESPONSE, DEFENSE, VIRULENCE', "
+"'ENERGY', 'CELLULAR PROCESSES', 'DNA PROCESSING', 'PROTEIN PROCESSING', "
+"'CELL ENVELOPE', 'RNA PROCESSING'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:415 4caa562afc4c4f6c808165cddbd1a409
+msgid ""
+"``subsystem_name`` (string, null) (optional) Subsystem name keyword. "
+"Examples: 'mycothiol', 'iron acquisition', 'beta-lactam resistance'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:418 7669269c54c144d29bb4e2cb648c3d9c
+msgid ""
+"``role_name`` (string, null) (optional) Specific functional role keyword."
+" Examples: 'catalase', 'penicillin-binding protein'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:421 08a092e6330e4837bf96ad0a88a9d474
+msgid ""
+"``genome_id`` (string, null) (optional) Restrict to a specific genome. "
+"Example: '83332.12'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:440 8073e9fa352c45298d2b4455dfc260a6
+msgid "**BVBRC_search_surveillance** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:442 5f030a59c8794d4d880e398539d8d97b
+msgid ""
+"Search influenza and pathogen surveillance data in BV-BRC. Returns "
+"surveillance samples with host..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst cd7df3df487442189cdf114b65e66d5c
+msgid "BVBRC_search_surveillance tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:448 b9cf95d989134e5d9c6ce99e0589d967
+msgid "**Name**: ``BVBRC_search_surveillance``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:450 18c6c4d36bb84e5487ca8856c9589b37
+msgid ""
+"**Description**: Search influenza and pathogen surveillance data in BV-"
+"BRC. Returns surveillance samples with host species, geographic location,"
+" subtype, and collection metadata. Essential for epidemiological tracking"
+" of influenza subtypes (H5N1, H1N1, H3N2) and other monitored pathogens "
+"across global regions. Example: search for H5N1 cases in North America."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:454 c59b34ae06ec4ee3a59aa03ee0ebb433
+msgid ""
+"``subtype`` (string, null) (optional) Influenza subtype to search for. "
+"Examples: 'H5N1', 'H1N1', 'H3N2', 'H7N9'. Common in surveillance "
+"tracking."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:457 a17d0ffcd786414b8171f944befd0f76
+msgid ""
+"``geographic_group`` (string, null) (optional) Geographic region filter. "
+"Options: 'North America', 'Europe', 'Asia', 'Africa', 'South America', "
+"'Oceania'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:460 e4947955e5d947b6922c3918f51c4a07
+msgid ""
+"``host_group`` (string, null) (optional) Host organism group. Options: "
+"'Human', 'Animal', 'Avian', 'Swine', 'Environment'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:463 2a3b625e589d470f9e59c37b6f786c83
+msgid ""
+"``collection_country`` (string, null) (optional) Country of sample "
+"collection. Examples: 'USA', 'China', 'Egypt', 'Vietnam'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:482 d2ca89b81c934962a366e81acc19fd8c
+msgid "**BVBRC_search_taxonomy** (Type: BVBRCTool)"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:484 cf028ecf77cc495ca6e96ecb1636f7e8
+msgid ""
+"Search for pathogen taxonomy entries in BV-BRC by keyword. Returns "
+"matching taxa with names, rank..."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst 15d294ada887404cba65a777b21e2d52
+msgid "BVBRC_search_taxonomy tool specification"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:490 0fe7991750134ba9ac7ff985f762c7aa
+msgid "**Name**: ``BVBRC_search_taxonomy``"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:492 76608719500a4aa69624a924269f1165
+msgid ""
+"**Description**: Search for pathogen taxonomy entries in BV-BRC by "
+"keyword. Returns matching taxa with names, ranks, genome counts, and "
+"lineage information. Useful for discovering pathogen taxon IDs for use "
+"with other BV-BRC tools. Example: 'Mycobacterium' returns the "
+"Mycobacterium genus and all its species."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:496 9ed3f1e196ad43779a850e64c4badcea
+msgid ""
+"``keyword`` (string) (required) Taxonomy search keyword. Examples: "
+"'Mycobacterium', 'coronavirus', 'Salmonella', 'influenza', 'Ebola'."
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:516 a8a06800c7d44e3abae7c8b63131f2ed
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:518 6df2c40595084d8fb835e95996db35f6
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/bvbrc_tools.rst:519 fecc6ce44c9042bc8557a88a13ed29a1
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

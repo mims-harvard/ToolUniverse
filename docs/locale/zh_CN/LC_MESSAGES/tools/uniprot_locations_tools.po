@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/uniprot_locations_tools.rst:10 ccba1c2f03f74a96bb01e383c68d5755
+msgid "Uniprot Locations Tools"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:12 428ddf3c6d97407a8d727998a2398bae
+msgid ""
+"**Configuration File**: ``uniprot_locations_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:16 b0be0285751a4b6e858179e7a87921c3
+msgid ""
+"This page contains all tools defined in the "
+"``uniprot_locations_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:19 953cfdceb1ff49fbb957e30fae3b6bfc
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:22 ac64a6f7d4d6407ba9ab9ef5bf5c3ff0
+msgid "**UniProtLocations_get_location** (Type: UniProtLocationsTool)"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:24 9692a58166ac4161b628cb31f518f37c
+msgid ""
+"Get detailed information about a UniProt subcellular location by its ID. "
+"Returns the location nam..."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst 022c72279d88438e88b9d3b412e38cf5
+msgid "UniProtLocations_get_location tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:28
+#: ../../tools/uniprot_locations_tools.rst:59 7801ab39e6b64178bef647c330ae9912
+#: 7e9898982f8e4d69874df65df9f2fdac
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:30 4f294d8e176e4c249001fe7c9bd20fcd
+msgid "**Name**: ``UniProtLocations_get_location``"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:31
+#: ../../tools/uniprot_locations_tools.rst:62 58aeb7a95448407ab8c2bcdf0ce4bca2
+#: dbd1b5ec8a20449180756381034bc3ef
+msgid "**Type**: ``UniProtLocationsTool``"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:32 f77c9e04974c4132bf626619a1301598
+msgid ""
+"**Description**: Get detailed information about a UniProt subcellular "
+"location by its ID. Returns the location name, definition, category "
+"(Cellular component, Topology, Orientation), Gene Ontology mappings, "
+"associated UniProt keyword, protein count statistics "
+"(reviewed/unreviewed), hierarchical relationships (parent and child "
+"locations), and synonyms. Use this to understand where proteins are "
+"localized within cells."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:34
+#: ../../tools/uniprot_locations_tools.rst:65 0abc7c82a80f47f4be5bf06d4afdc697
+#: 9763c90d89b844078b8a511006994f6d
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:36 1a4ae78ceb814f26955a8360632dff66
+msgid ""
+"``location_id`` (string) (required) UniProt subcellular location ID. "
+"Format: SL-XXXX. Examples: 'SL-0091' (Cytosol), 'SL-0191' (Nucleus), "
+"'SL-0173' (Mitochondrion), 'SL-0204' (Plasma membrane), 'SL-0147' "
+"(Endomembrane system), 'SL-0123' (Golgi apparatus)."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:39
+#: ../../tools/uniprot_locations_tools.rst:73 76546ce17b344b26b368621d00ba6768
+#: 9244d4b8287f4ddc958badee2bbbb0b9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:53 96c5edd2ece74b90b8a52ac830f173cb
+msgid "**UniProtLocations_search** (Type: UniProtLocationsTool)"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:55 ca20cd5af27f40d58151c2c11e2874ef
+msgid ""
+"Search UniProt subcellular locations by name or keyword. Find cellular "
+"compartments, organelles, ..."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst 3154d85a329e4bc6968590e2986e6c8c
+msgid "UniProtLocations_search tool specification"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:61 e34d2b275fda4bd7920d10d82e56429a
+msgid "**Name**: ``UniProtLocations_search``"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:63 380fa4e72aa1498ebd8df7b3879a68a4
+msgid ""
+"**Description**: Search UniProt subcellular locations by name or keyword."
+" Find cellular compartments, organelles, membrane locations, and other "
+"subcellular structures. Returns matching locations with IDs, definitions,"
+" categories, GO mappings, and protein count statistics. Use this to "
+"discover relevant subcellular locations for cell biology research."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:67 afdb28e50c3644c9a38abaab94c750a0
+msgid ""
+"``query`` (string) (required) Search query for subcellular locations. "
+"Examples: 'nucleus', 'membrane', 'mitochondria', 'endoplasmic reticulum',"
+" 'lysosome', 'extracellular', 'cytoskeleton'."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:70 f95c49e38a4d466db8b2b878166b06f6
+msgid ""
+"``size`` (integer) (optional) Maximum number of results to return "
+"(default: 10, max: 50)."
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:87 732366b2cba64a2e98c94f2bc276b9da
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:89 634fd25a5e7a4ccea290b1169b7c1bca
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/uniprot_locations_tools.rst:90 916e95ee6fe94e3088c005fab41fcd09
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

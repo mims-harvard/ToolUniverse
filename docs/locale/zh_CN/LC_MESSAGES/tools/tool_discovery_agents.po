@@ -1,0 +1,409 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/tool_discovery_agents.rst:10 6f1337fe5c3044248e9c3984c53be055
+msgid "Tool Discovery Agents"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:12 9e657f6dff244330a2ed32383461c62b
+msgid ""
+"**Configuration File**: ``tool_discovery_agents.json`` **Tool Type**: "
+"Local **Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:16 81b733e05a7e4a06af6b37d82f54a687
+msgid ""
+"This page contains all tools defined in the "
+"``tool_discovery_agents.json`` configuration file."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:19 2cf1900b53344af894bf9720a3b9b820
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:22 1860d98db75349c2b1bca14113a5f44a
+msgid "**CodeQualityAnalyzer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:24 482c6af8351d445a8f01600bab67e3b7
+msgid ""
+"Analyzes code quality from multiple dimensions including algorithmic "
+"correctness, functional impl..."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 34bafbcffee247e9aebe524eecdfc46d
+msgid "CodeQualityAnalyzer tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:28
+#: ../../tools/tool_discovery_agents.rst:79
+#: ../../tools/tool_discovery_agents.rst:114
+#: ../../tools/tool_discovery_agents.rst:149
+#: ../../tools/tool_discovery_agents.rst:184
+#: ../../tools/tool_discovery_agents.rst:227
+#: ../../tools/tool_discovery_agents.rst:266 114e0c6ee8e54cf28621a392dfd18cb8
+#: 209dbedf3d544a5393d3fdc884440d53 598d6e49742a4dab899eb8f6203a1de4
+#: 59a9992cacb04ea899d3f2ee5c58eb02 a241a43a909d49f7bebd29c961e98d89
+#: fdae1f93c2f842a58b41c1cd973514e0 fdfafc245f0a4fd683153e1a0cf783b2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:30 9e035ea2af084c149ef681b2a732783f
+msgid "**Name**: ``CodeQualityAnalyzer``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:31
+#: ../../tools/tool_discovery_agents.rst:82
+#: ../../tools/tool_discovery_agents.rst:117
+#: ../../tools/tool_discovery_agents.rst:152
+#: ../../tools/tool_discovery_agents.rst:230
+#: ../../tools/tool_discovery_agents.rst:269 039b886b067a4b16b4738b58d2f23977
+#: 5153d264ae2b48f091c8ce7ea2588362 741531d1a50240b1822bd70bd0102e7b
+#: 862fe93c0a8d4fd1b72cb18cffba66b6 8a3d134834a548879647a5351f9e793a
+#: e3584a69f99640adb2057b5285106348
+msgid "**Type**: ``AgenticTool``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:32 954cc45c952541ee8dd08a289a319fbf
+msgid ""
+"**Description**: Analyzes code quality from multiple dimensions including"
+" algorithmic correctness, functional implementation capability, "
+"performance characteristics, and best practices. Provides detailed "
+"feedback and improvement suggestions."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:34
+#: ../../tools/tool_discovery_agents.rst:85
+#: ../../tools/tool_discovery_agents.rst:120
+#: ../../tools/tool_discovery_agents.rst:155
+#: ../../tools/tool_discovery_agents.rst:190
+#: ../../tools/tool_discovery_agents.rst:233
+#: ../../tools/tool_discovery_agents.rst:272 1a1ba2ca8460449f8edcd7685b304e61
+#: 5ad5ee339f5b4ed5a1071253ec0ad647 7fd46ed87e2843c8a82911b9a584b2a5
+#: cc5a47997a814789b24a543e83863531 d814668e982f4fe9a051a5627f3d0af2
+#: e1407f1bcc1d4b429ea1414275ab34b6 e532b4ac3e024cc39da2539edcc892ce
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:36 9e87ee90df2744a1a51597cd932fe0e8
+msgid "``tool_name`` (string) (required) Name of the tool being analyzed"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:39 175e76089ff3423397dbda1621da40bb
+msgid ""
+"``tool_description`` (string) (required) Description of what the tool is "
+"supposed to do"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:42 38c8588115cb487b99b08b2d46c6f0f9
+msgid ""
+"``tool_parameters`` (string) (required) JSON string of tool parameters "
+"and their types"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:45 b2b79c1bac444c56928bd5cc6a53c345
+msgid ""
+"``implementation_code`` (string) (required) The actual implementation "
+"code to analyze"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:48 49b4dc2d3ecb4e2db04c3b93e46159ce
+msgid "``test_cases`` (string) (required) JSON string of test cases for the tool"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:51 fa191d6a685d435781c513ed0d99ce81
+msgid ""
+"``test_execution_results`` (string) (required) JSON string of test "
+"execution results including pass/fail status and actual outputs"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:54
+#: ../../tools/tool_discovery_agents.rst:93
+#: ../../tools/tool_discovery_agents.rst:128
+#: ../../tools/tool_discovery_agents.rst:163
+#: ../../tools/tool_discovery_agents.rst:207
+#: ../../tools/tool_discovery_agents.rst:244
+#: ../../tools/tool_discovery_agents.rst:280 1ceaae1770ee47f59efd7dd90726596b
+#: 1fd3aafb0b564d2c95b87803ce67f9a3 2d70811c4fff4979859b7eea26185a83
+#: 61720798e71144c8b607f09b9e1c94ab a1a987a39e214c21bc3c42b4a4997e19
+#: a85b03290db04fe9b69bd6477b7827c2 b82fd14c6ad146ad8980b4126b3e3858
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:73 9f13e12a63614386ba0a9e47e5cc4462
+msgid "**PackageAnalyzer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:75 9a136c7688834ddabe8b0053afdadbe5
+msgid ""
+"Analyzes package candidates and recommends the best options based on "
+"quality metrics and suitability"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 8098b4d6fec84bbfa6edca6562010200
+msgid "PackageAnalyzer tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:81 ba589083f4164feabf8a563bbdc21112
+msgid "**Name**: ``PackageAnalyzer``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:83 9f52d706a00c49c3991c12d6b9a4c5b4
+msgid ""
+"**Description**: Analyzes package candidates and recommends the best "
+"options based on quality metrics and suitability"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:87
+#: ../../tools/tool_discovery_agents.rst:122 118c956b24594d7a985541a5d684815c
+#: cf63c47585a14544bc5403170c9b2d97
+msgid ""
+"``tool_description`` (string) (required) Description of the tool being "
+"generated"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:90 ff0ff0ce86db465a9d67f4118b3bb2c2
+msgid ""
+"``package_candidates`` (string) (required) JSON string containing package"
+" candidates with their metadata (from PyPI, search results, etc.)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:108 1aebd7ed54bc4b1fbb910b51b55863b5
+msgid "**ReferenceInfoAnalyzer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:110 93cab768bf924629bb253f6c520e0ae4
+msgid ""
+"Analyzes and curates reference information to provide high-quality "
+"context for tool generation"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 72752880a1c34052b9ea511a5e94b7e5
+msgid "ReferenceInfoAnalyzer tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:116 820c9fc5a1c54726bf642431f58a44de
+msgid "**Name**: ``ReferenceInfoAnalyzer``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:118 a77d3de070674273a663b71f9ef0203e
+msgid ""
+"**Description**: Analyzes and curates reference information to provide "
+"high-quality context for tool generation"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:125 dd8b50af41b74b2483d405ad61181ef8
+msgid ""
+"``raw_reference_info`` (string) (required) JSON string containing raw "
+"reference information from web search and package discovery"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:143 ec416eaa487d4d8a9dbec9522377e280
+msgid "**TestResultsAnalyzer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:145 5cad17605dac4c84a1c79056147a40fc
+msgid ""
+"Analyzes test execution results and extracts key issues for targeted "
+"optimization"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 15aa2dbaa5e1487b89f4710b31657186
+msgid "TestResultsAnalyzer tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:151 3b2e0b1afeb3451f9da294d7e68dadb9
+msgid "**Name**: ``TestResultsAnalyzer``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:153 aa6cb2d89ca94b37b78799cf8f84950b
+msgid ""
+"**Description**: Analyzes test execution results and extracts key issues "
+"for targeted optimization"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:157 42d22c1feeeb461eab02d181a14b45f5
+msgid ""
+"``test_results`` (string) (required) JSON string containing test "
+"execution results with pass/fail status, error messages, and tracebacks"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:160 cb73668c407e4b3f8581b6e4e8f15f97
+msgid ""
+"``tool_implementation`` (string) (required) Current tool implementation "
+"code for context"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:178 d65919c97c4247728d55808256b79c68
+msgid "**ToolDiscover** (Type: ComposeTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:180 25d0fbdd94fa456eb2f7240079371264
+msgid ""
+"Generates new ToolUniverse-compliant tools based on short descriptions "
+"using XML format for simul..."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 4f4588f5d15a48b4a7cf130a7cc50c7a
+msgid "ToolDiscover tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:186 158a2f8a311c476e870c4566fe3bf544
+msgid "**Name**: ``ToolDiscover``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:187 90ba61f466f547b6b641bffea25a3396
+msgid "**Type**: ``ComposeTool``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:188 5263fdf39837411ea661e4bf9bffcd1e
+msgid ""
+"**Description**: Generates new ToolUniverse-compliant tools based on "
+"short descriptions using XML format for simultaneous code and "
+"specification generation. Automatically discovers similar tools, curates "
+"high-quality reference information, and iteratively optimizes the tool "
+"using agentic optimization."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:192 6380bfcfd11e4ae39651285c72eca612
+msgid ""
+"``tool_description`` (string) (required) Short description of the desired"
+" tool functionality"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:195 c6197de3486b4f32b0b12d4e791bb0ad
+msgid ""
+"``max_iterations`` (integer) (optional) Maximum number of optimization "
+"iterations"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:198 f9086b9884bd4b91b4ed6fce78fab405
+msgid ""
+"``save_to_file`` (boolean) (optional) Whether to save the generated tool "
+"files"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:201 12b1647308d34773ad595bbe7125afe5
+msgid ""
+"``output_file`` (string) (optional) Optional file path to save the "
+"generated tool"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:204 6b8eb5f2a5994a1e8fe502af3a0c5e0a
+msgid ""
+"``save_dir`` (string) (optional) Directory path to save the generated "
+"tool files (defaults to current working directory)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:221 9e10486690ba480384a4093b060c2d4b
+msgid "**UnifiedToolGenerator** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:223 900c69b7dab2411c9375a4a769aed9a5
+msgid ""
+"Generates complete ToolUniverse tools using simplified XML format that "
+"simultaneously creates bot..."
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 60199c08a5954fe8af24924aad8e9160
+msgid "UnifiedToolGenerator tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:229 b7785b0536624e9497b87bb1d7331be1
+msgid "**Name**: ``UnifiedToolGenerator``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:231 7728bae9e2ec46fa88509a1b32077d5c
+msgid ""
+"**Description**: Generates complete ToolUniverse tools using simplified "
+"XML format that simultaneously creates both implementation code and "
+"specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:235 e42ea767db9346f78f3350d2ac8a8422
+msgid ""
+"``tool_description`` (string) (required) Description of the desired tool "
+"functionality"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:238 8ebfd55041a84768ba5b811c3d4b867b
+msgid ""
+"``reference_info`` (string) (required) JSON string containing curated "
+"reference information including API documentation and package "
+"recommendations"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:241 559cea534bd342b0a91ee18bca030984
+msgid ""
+"``xml_template`` (string) (required) XML template example showing the "
+"expected format with code and spec sections"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:260 b1f0c1f9fdc14172bb54e3dbd381ec67
+msgid "**XMLToolOptimizer** (Type: AgenticTool)"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:262 535e80abd9e64a9e8ece6650a6590367
+msgid ""
+"Optimizes tools defined in XML format based on test results and quality "
+"feedback"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst 28e62bcca26b4450b44f92b29a624e10
+msgid "XMLToolOptimizer tool specification"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:268 8cfc6ef8272b45adba12c1dc0b19a926
+msgid "**Name**: ``XMLToolOptimizer``"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:270 082ccb3e7e8b4605a467bc64916a5ee2
+msgid ""
+"**Description**: Optimizes tools defined in XML format based on test "
+"results and quality feedback"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:274 95c5209e8c0b4196a16dc14d4d9163c8
+msgid ""
+"``xml_tool`` (string) (required) Current XML-formatted tool definition "
+"with code and spec sections"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:277 3e98368b95d74cd597aefd61611e32dd
+msgid ""
+"``optimization_context`` (string) (required) JSON string containing test "
+"results, quality feedback, iteration info, improvement history, and any "
+"special instructions"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:295 91a8d0f655f049e284a0bd7efaa3e9bc
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:297 1f79df716c90413287a55b1c82e7ecbc
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/tool_discovery_agents.rst:298 0ad978feca864e3898a2c9482039b5e6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

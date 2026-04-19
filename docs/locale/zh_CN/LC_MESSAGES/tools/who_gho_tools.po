@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/who_gho_tools.rst:10 f04989867317439eaa504a5caacf0072
+msgid "Who Gho Tools"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:12 b43e7b3ddb1442e69dc050824862e5e5
+msgid ""
+"**Configuration File**: ``who_gho_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:16 2e0c4849df6a4e21a2a12cfdf5f98744
+msgid ""
+"This page contains all tools defined in the ``who_gho_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:19 a3ddd1d9b079419391202f2bba82a99e
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:22 0c6809acacc643f58c67cf4744fa4d52
+msgid "**WHOGHO_get_indicator_data** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:24 07ca659e834e49eda6580ee1c9df0472
+msgid ""
+"Get actual health data values for a specific WHO Global Health "
+"Observatory indicator by its code...."
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst 608e026a8b2a460dad98dc86ed19e6e6
+msgid "WHOGHO_get_indicator_data tool specification"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:28 ../../tools/who_gho_tools.rst:65
+#: 28f1985fbe024c95abc10e6129a17be2 dd32fbf8b01b43ee9ce000eecbe11d92
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:30 9302354412774efabefe81f3e687fc27
+msgid "**Name**: ``WHOGHO_get_indicator_data``"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:31 ../../tools/who_gho_tools.rst:68
+#: af4e6fccf78e4e53b0d397e78c27e96e b5d606a68c1b4bc7bbd8db06fe4c9df9
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:32 f9d2e37db940478091319c170d097a4e
+msgid ""
+"**Description**: Get actual health data values for a specific WHO Global "
+"Health Observatory indicator by its code. Returns country-level data with"
+" values, confidence intervals, year, and sex/age breakdowns. No "
+"authentication required. Common indicator codes: WHOSIS\\_000001 (life "
+"expectancy at birth), MALARIA002 (malaria cases), MDG\\_0000000026 (HIV "
+"prevalence), NCD\\_BMI\\_30C (obesity prevalence), SDGPM25 (PM2.5 air "
+"pollution), WHS4\\_100 (hospital beds per 10000)."
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:34 ../../tools/who_gho_tools.rst:71
+#: 30a0205ebb60459097c50702b060ba13 c273b136958343fc998ab41e711753ca
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:36 3091fa70217742d3b655be917c165ade
+msgid ""
+"``indicator_code`` (string) (required) WHO GHO indicator code. Examples: "
+"'WHOSIS\\_000001' (life expectancy), 'MALARIA002' (malaria cases), "
+"'MDG\\_0000000026' (HIV prevalence), 'NCD\\_BMI\\_30C' (obesity), "
+"'SDGPM25' (air pollution PM2.5), 'WHS4\\_100' (hospital beds)"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:39 4e045df3a70f4632ad93282be8bd3fe3
+msgid ""
+"``filter`` (string, null) (optional) OData filter for data rows. "
+"Examples: \"SpatialDim eq 'USA'\", \"TimeDim eq 2022\", \"Dim1 eq "
+"'SEX\\_FMLE' and TimeDim ge 2015\""
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:42 29b2f3af9ad44eaf9b287705c9229ba6
+msgid ""
+"``top`` (integer, null) (optional) Maximum number of data rows to return."
+" Default: 20"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:45 ../../tools/who_gho_tools.rst:79
+#: 3415eefa003f428e9960cf1969109ac5 935d0e034d65423e81ae11dfe97ebf46
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:59 3ec7998317d14b239ea4098d2326ffec
+msgid "**WHOGHO_search_indicators** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:61 169106c3ca3a45fba6ce4ee9ff53468b
+msgid ""
+"Search WHO Global Health Observatory (GHO) health indicators by name "
+"using the ODATA API. Returns..."
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst aa3ad0e3447e4ee5916111ae2eb4f40b
+msgid "WHOGHO_search_indicators tool specification"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:67 ee528ba189ef44c5a3769dde021896fd
+msgid "**Name**: ``WHOGHO_search_indicators``"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:69 47bb7b0521934a1184c3d46d778258f5
+msgid ""
+"**Description**: Search WHO Global Health Observatory (GHO) health "
+"indicators by name using the ODATA API. Returns indicator codes and names"
+" covering mortality, disease, nutrition, maternal health, mental health, "
+"and more. No authentication required. Use indicator codes with "
+"WHOGHO\\_get\\_indicator\\_data to retrieve actual data values. Examples:"
+" 'life expectancy' (WHOSIS\\_000001), 'malaria' (MALARIA002), 'obesity' "
+"(NCD\\_BMI\\_30C)."
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:73 a9b5ab25a8dd434cb14320b0939ef2f5
+msgid ""
+"``filter`` (string, null) (optional) OData filter string for indicator "
+"names. Examples: \"contains(IndicatorName,'malaria')\", "
+"\"contains(IndicatorName,'HIV')\", "
+"\"contains(IndicatorName,'mortality')\", "
+"\"contains(IndicatorName,'obesity')\""
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:76 64711f26816344daa2618a8d00f51b67
+msgid ""
+"``top`` (integer, null) (optional) Maximum number of results to return. "
+"Default: 10, max: 100"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:92 5ecc04e7cbc84d3eb472158b9cc0fe55
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:94 74b80eee5b944a2190f2b9d61a40247a
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/who_gho_tools.rst:95 0a6bf927229e40fb925e34e5e090ec24
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

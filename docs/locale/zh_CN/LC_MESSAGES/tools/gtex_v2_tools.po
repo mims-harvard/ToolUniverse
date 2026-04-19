@@ -1,0 +1,584 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gtex_v2_tools.rst:10 11dd75621f7e4951a77fcde26f80905c
+msgid "Gtex V2 Tools"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:12 78e425475cad49c4ac11db58f3c64dc8
+msgid ""
+"**Configuration File**: ``gtex_v2_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 10"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:16 081e7da4242a4a17857746055ebbd83d
+msgid ""
+"This page contains all tools defined in the ``gtex_v2_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:19 7a9db78d4f044a12b3dd4e7d05d2d381
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:22 b3acffdffb154a039dfd046552b6b87b
+msgid "**GTEx_calculate_eqtl** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:24 3e556ced21204639851d6306908f3c32
+msgid ""
+"Calculate custom eQTL for any gene-variant pair in any tissue. "
+"Dynamically calculates gene-varian..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 47d4e84055784d9abcc0f487e91c74a8
+msgid "GTEx_calculate_eqtl tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:28 ../../tools/gtex_v2_tools.rst:73
+#: ../../tools/gtex_v2_tools.rst:106 ../../tools/gtex_v2_tools.rst:148
+#: ../../tools/gtex_v2_tools.rst:197 ../../tools/gtex_v2_tools.rst:245
+#: ../../tools/gtex_v2_tools.rst:291 ../../tools/gtex_v2_tools.rst:345
+#: ../../tools/gtex_v2_tools.rst:393 ../../tools/gtex_v2_tools.rst:432
+#: 0410626ce7b64b2db29bb016f2c20296 2dba952390c5488a8c4875299248d93f
+#: 6a9b1ca52b0b4df5ab484f24994cf075 7c8349fddd2c405788f3d55089edf47e
+#: 83891c9a331f471db82dc697d209fa18 8b50ba9e67b4473ebc47ab5b92f4cc69
+#: cff4552f9162473ab98c1acce9ebda92 d30e8f453d5b44eea2de85e106b468c2
+#: db71b01d8b0f4d07b948bdd171845fd9 fef2fff025bc4d7bb81d9fed070efbf2
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:30 975a2fb8dd1242679fdf34048041e203
+msgid "**Name**: ``GTEx_calculate_eqtl``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:31 ../../tools/gtex_v2_tools.rst:76
+#: ../../tools/gtex_v2_tools.rst:109 ../../tools/gtex_v2_tools.rst:151
+#: ../../tools/gtex_v2_tools.rst:200 ../../tools/gtex_v2_tools.rst:248
+#: ../../tools/gtex_v2_tools.rst:294 ../../tools/gtex_v2_tools.rst:348
+#: ../../tools/gtex_v2_tools.rst:396 ../../tools/gtex_v2_tools.rst:435
+#: 06e8eb5267904ff5b48d52351597ede6 0754a439e59e4dfbb5916e40530ccf98
+#: 1ad9e2ecfc564f4fafc8d59f5fc8b8ea 1ead898cef81458888bb33f8e38f5278
+#: 71983e9554e8411eb4f3dbc809137ab1 84b2a328f7274ca596e67a56c8aa7507
+#: a087579a6d8d4808b29f3fd791368394 ad76dcc3f0434b01ab5bd494bb9684f0
+#: b4f04613fcf94dec8dadb108444029ad cdb457b0778e49d98a5a0dd92f39c741
+msgid "**Type**: ``GTExV2Tool``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:32 76eeac83afcd497698c0e4c33ac38fb1
+msgid ""
+"**Description**: Calculate custom eQTL for any gene-variant pair in any "
+"tissue. Dynamically calculates gene-variant association statistics "
+"including p-value, normalized effect size (NES), t-statistic, and "
+"genotype data. Works for both significant and non-significant "
+"associations. Returns detailed statistics even if association not in "
+"precomputed results. Use for: testing specific hypotheses, custom "
+"variant-gene pairs, dynamic eQTL analysis, validating findings. Requires "
+"all three: gencode\\_id, variant\\_id, and tissue\\_site\\_detail\\_id."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:34 ../../tools/gtex_v2_tools.rst:79
+#: ../../tools/gtex_v2_tools.rst:112 ../../tools/gtex_v2_tools.rst:154
+#: ../../tools/gtex_v2_tools.rst:203 ../../tools/gtex_v2_tools.rst:251
+#: ../../tools/gtex_v2_tools.rst:297 ../../tools/gtex_v2_tools.rst:351
+#: ../../tools/gtex_v2_tools.rst:399 ../../tools/gtex_v2_tools.rst:438
+#: 059da576d9864d4e9efdd91e30551626 1d34af306d2d4189af7b708067d007cd
+#: 1f0913443f0b496e8823cff1ac1fc743 bc625581e35b4f179ca8b5876b16845e
+#: c39a481059fc4ad89250d43852fa0e54 d64681384cdf4a06943ebc806bbfc2a2
+#: dc8117da150a446083aad87ae91f125a eed5484fa8634675be401df87427da09
+#: f0302befd3054017b71b271889218202 f6316af55a1a469a8322e456ff0c758f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:36 ../../tools/gtex_v2_tools.rst:81
+#: ../../tools/gtex_v2_tools.rst:114 ../../tools/gtex_v2_tools.rst:156
+#: ../../tools/gtex_v2_tools.rst:205 ../../tools/gtex_v2_tools.rst:253
+#: ../../tools/gtex_v2_tools.rst:299 ../../tools/gtex_v2_tools.rst:353
+#: ../../tools/gtex_v2_tools.rst:401 ../../tools/gtex_v2_tools.rst:440
+#: 202ae3f6385d4079810b661c4d6a37c8 2e7010c3e406499ba6a8df6d162a6058
+#: 7e1affe58004441b81ef9dfc2fb65770 8d3b288289a8403db9c29fbc66c2cec0
+#: a3bfa4d80e604f1babb1b005a0d56590 a59867cfb2c946d285c1be207e64444f
+#: bebce1b4565b4121b71b8587d1b92a98 c0c614863ef74ae9a4cfd047049fa844
+#: cbce810ce0d74d44af4c89ad0084e2f2 e56f81ab55b4415298e224498a8ec743
+msgid "``operation`` (string) (optional) Operation type"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:39 620ccfbdfe164985b66e1dca1a9578f4
+msgid ""
+"``gencode_id`` (string) (required) Required: Versioned GENCODE ID (e.g. "
+"ENSG00000141510.18)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:42 8c55ade973624443827619ff89ba66ef
+msgid "``variant_id`` (string) (required) Required: GTEx variant ID"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:45 c7a895b5c4444b92aa085939437f0b90
+msgid ""
+"``tissue_site_detail_id`` (string) (required) Required: Tissue ID (e.g. "
+"'Whole\\_Blood')"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:48 ../../tools/gtex_v2_tools.rst:168
+#: ../../tools/gtex_v2_tools.rst:262 ../../tools/gtex_v2_tools.rst:317
+#: ../../tools/gtex_v2_tools.rst:365 ../../tools/gtex_v2_tools.rst:449
+#: 24d66ddd331448138e78919a30740dc3 35902a64cce947f48881612ec56d3821
+#: 55ecd754742046b49fc0ff8599bc082b 58dcc4c46bc44560b7a591e4bef6e5b7
+#: 8a44d80ad8e24ce5974856dbc3ce0e25 e83c9f40c06a4c53908b302bd62e833b
+msgid "``dataset_id`` (string) (optional) No description"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:51 ../../tools/gtex_v2_tools.rst:87
+#: ../../tools/gtex_v2_tools.rst:129 ../../tools/gtex_v2_tools.rst:177
+#: ../../tools/gtex_v2_tools.rst:226 ../../tools/gtex_v2_tools.rst:271
+#: ../../tools/gtex_v2_tools.rst:326 ../../tools/gtex_v2_tools.rst:374
+#: ../../tools/gtex_v2_tools.rst:413 ../../tools/gtex_v2_tools.rst:458
+#: 057a357bc499424b9aa0a21c2c5c1c82 181bdf08b577470fbe50cec63f9ecddc
+#: 29dff8d874ba44579c1cca1392f3b5e7 4c317d9ef0ba44d9abf759984f818b76
+#: 5c2bbf0370344064af294cb7204b048b 7e1a302a958e4719b55dfb3a785db2a6
+#: bb1d4c7c574347b3b5717d1d106a64f4 c2eb920b51fb4ba799b1847a05ee4b59
+#: c9b0fa226215432bba5237bc836e4165 e1a9e44ea31344b2be9232e641a901dd
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:67 78ee9977c5ed4485b2723126e8ac437f
+msgid "**GTEx_get_dataset_info** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:69 dc026ae7915141efaaaddc5ea41f9c87
+msgid ""
+"Get GTEx dataset metadata and version information. Returns dataset "
+"details including GENCODE vers..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 72fc681582ce4ec5b0b8daf2cf8b6d60
+msgid "GTEx_get_dataset_info tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:75 26c7a7b6bc8344f4b67ee6f574cd37e5
+msgid "**Name**: ``GTEx_get_dataset_info``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:77 a48ae90382034793b86425ecdd7917bd
+msgid ""
+"**Description**: Get GTEx dataset metadata and version information. "
+"Returns dataset details including GENCODE version, genome build "
+"(GRCh38/hg38), dbSNP build, sample counts, tissue counts, and release "
+"information. Shows Adult GTEx V11 details (January 2026) by default. Use "
+"for: understanding data versions, checking sample sizes, verifying genome"
+" builds, documentation. Check this first to understand what data is "
+"available."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:84 0cb5f5c857e64259b832832353e42ebd
+msgid ""
+"``dataset_id`` (string) (optional) Optional: Specific dataset ID. Omit to"
+" get all datasets"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:100 9fb93867ba1c4b7d8415340716d27424
+msgid "**GTEx_get_eqtl_genes** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:102 f3273814b02e4b4aa74558e2bb5dfa68
+msgid ""
+"Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at"
+" least one significant e..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 3c3158d7992f414fb596834e4cfc50d9
+msgid "GTEx_get_eqtl_genes tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:108 5b587f3ef2ed4fb9b05bd7b883fed159
+msgid "**Name**: ``GTEx_get_eqtl_genes``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:110 cb71c4737ec94f6da1377ac04024fbeb
+msgid ""
+"**Description**: Get eQTL genes (eGenes) with significant cis-eQTLs. "
+"Returns genes with at least one significant expression quantitative trait"
+" locus (eQTL) in specified tissues. Includes allelic fold change, "
+"p-values, q-values (FDR < 0.05), and effect sizes. Filter by tissue or "
+"get all eGenes. Use for: identifying genes with genetic regulation, "
+"finding tissue-specific eQTLs, studying regulatory variants, genetic "
+"association studies. Essential for understanding genetic control of gene "
+"expression."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:117 608371fb51ee4793bb885b4cb2b9be22
+msgid ""
+"``tissue_site_detail_id`` (array) (optional) Optional: Filter by tissue "
+"IDs. Omit for all tissues"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:120 ../../tools/gtex_v2_tools.rst:404
+#: 077aee7feb0f4a2e82fa6af3824f0270 6599d4e3ebe344c68def1ceec478a1e7
+msgid "``dataset_id`` (string) (optional) GTEx dataset version"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:123 ../../tools/gtex_v2_tools.rst:171
+#: ../../tools/gtex_v2_tools.rst:265 ../../tools/gtex_v2_tools.rst:320
+#: ../../tools/gtex_v2_tools.rst:368 ../../tools/gtex_v2_tools.rst:452
+#: 5cab1f44908d4524844b18a7f69b4e24 6ab82f0822574ba68e4e7f0985c4f2c3
+#: 7d0ba2cbcac24cd7b8762d5d4daf59d0 89af726072be40b693432bd82fd742bb
+#: 8e2dcd6c369f43f781841eacf27eb882 daeb60ad10d74b57b323c46217ea480b
+msgid "``page`` (integer) (optional) No description"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:126 ../../tools/gtex_v2_tools.rst:174
+#: ../../tools/gtex_v2_tools.rst:268 ../../tools/gtex_v2_tools.rst:323
+#: ../../tools/gtex_v2_tools.rst:371 ../../tools/gtex_v2_tools.rst:455
+#: 0ab2bbe9c0d049cf8cfca0a3131c3ca6 1ab58d5d555c47069150a198ed20f234
+#: 1faf330641b941b6a4f3aa28cdf98429 3cd794ffa2034d87904c8e53cf367ee9
+#: 6a29a40e11c34cf1a885408e33308ac2 eec4cb46ac394105866f19fbcaccf36a
+msgid "``items_per_page`` (integer) (optional) No description"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:142 591536e34d064476b1aae2791fdbce45
+msgid "**GTEx_get_gene_expression** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:144 33f28d72dde044b08dd8346deec19f6f
+msgid ""
+"Get gene expression data at individual sample level (not aggregated). "
+"Returns normalized expressi..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 6f52fda7c4b742128309f2e05bf4cb94
+msgid "GTEx_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:150 5961bf163ae24d2a8992efafb5986d41
+msgid "**Name**: ``GTEx_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:152 092693f8cbde482582c4e1737418fc9e
+msgid ""
+"**Description**: Get gene expression data at individual sample level (not"
+" aggregated). Returns normalized expression values (TPM) for each sample,"
+" allowing detailed distribution analysis. Can subset by donor attributes "
+"(sex, age\\_bracket) for demographic-specific analysis. Much more data "
+"than median expression. Use for: expression variability analysis, outlier"
+" detection, sample-level QC, demographic comparisons. Warning: large "
+"result sets for multiple genes/tissues."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:159 c9c378eaa23d43f69e3ccf3b158f3c2f
+msgid ""
+"``gencode_id`` (string, array) (required) Required: Versioned GENCODE "
+"ID(s)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:162 ../../tools/gtex_v2_tools.rst:308
+#: 781d33d67a094475a81d2de593117b2e 9aa0bf1180b8483ba6e2483f51d6b997
+msgid "``tissue_site_detail_id`` (array) (optional) Optional: Filter by tissues"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:165 da9e4536a13447e3af8304aeccb692d3
+msgid ""
+"``attribute_subset`` (string) (optional) Optional: Subset by donor sex or"
+" age bracket"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:191 c94a8e994ee0465fb9323631ab0ad3dc
+msgid "**GTEx_get_median_gene_expression** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:193 4478cda1c652486b8f0e2b07e162dfae
+msgid ""
+"Get median gene expression levels across GTEx tissues. Returns median "
+"expression in TPM (Transcri..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 968a370092e14a93ab8571f4c0d015e6
+msgid "GTEx_get_median_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:199 965063126c794f35a67863681cd94237
+msgid "**Name**: ``GTEx_get_median_gene_expression``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:201 20f3a48679c749c8ad6129b34e5c4205
+msgid ""
+"**Description**: Get median gene expression levels across GTEx tissues. "
+"Returns median expression in TPM (Transcripts Per Million) for one or "
+"more genes across 54 tissue sites. Filter by specific tissues or get "
+"expression across all tissues. Based on Adult GTEx V11 (January 2026). "
+"Use for: tissue-specific expression profiling, identifying highly "
+"expressed genes, comparing expression patterns across tissues. Example: "
+"Get brain vs liver expression for TP53 gene."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:208 dfb1d468beba4e1dac6c7e0a206791e4
+msgid ""
+"``gencode_id`` (string, array) (optional) Gene identifier(s): gene symbol"
+" (e.g. 'TP53'), unversioned Ensembl ID (e.g. 'ENSG00000141510'), or "
+"versioned GENCODE ID (e.g. 'ENSG00000141510.18'). Auto-resolved to "
+"versioned GENCODE ID. Can be single string or array."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:211 63a0b1d20d794469971ac6aeb5e86595
+msgid ""
+"``tissue_site_detail_id`` (array) (optional) Optional: Tissue IDs to "
+"filter (e.g. ['Liver', 'Brain\\_Cortex']). Omit for all tissues. See "
+"GTEx\\_get\\_tissue\\_sites for valid IDs"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:214 9a8d974ab6b34d3ba6541d941c231180
+msgid ""
+"``dataset_id`` (string) (optional) GTEx dataset version (default: "
+"gtex\\_v8; v10 returns empty for most endpoints)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:217 2e7cceae26ea477d9f1c891108f28d97
+msgid "``page`` (integer) (optional) Page number for pagination (0-based)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:220 ../../tools/gtex_v2_tools.rst:410
+#: 33e1f5ad38454eec90fc50230f035ad1 a8e5dbb19b714ab8b4ec7158f4defd61
+msgid "``items_per_page`` (integer) (optional) Results per page"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:223 dcff40f2ff8344289bb5846b66f3c45d
+msgid ""
+"``gene_symbol`` (string) (optional) Gene symbol alias for gencode\\_id "
+"(e.g., \"TP53\", \"COL5A1\")"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:239 8d05affd46fa476e8badd1490616c87e
+msgid "**GTEx_get_multi_tissue_eqtls** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:241 1ce2ecbf16a74ec29eee3622a15c09e7
+msgid ""
+"Get multi-tissue eQTL meta-analysis results (Metasoft). Returns m-values "
+"(posterior probability o..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst a2f6038de9ee4aba8f617cf403dbf7cc
+msgid "GTEx_get_multi_tissue_eqtls tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:247 af18ecc8d10f42a1913c4fe73f8ab75b
+msgid "**Name**: ``GTEx_get_multi_tissue_eqtls``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:249 4de5c46621d04959988ce54d0975c079
+msgid ""
+"**Description**: Get multi-tissue eQTL meta-analysis results (Metasoft). "
+"Returns m-values (posterior probability of eQTL effect in each tissue), "
+"normalized effect sizes, p-values, and standard errors across all tissues"
+" for a gene-variant pair. Shows tissue-sharing patterns of eQTL effects. "
+"Use for: understanding tissue-specificity of eQTLs, finding shared vs "
+"tissue-specific effects, cross-tissue meta-analysis, regulatory mechanism"
+" studies. Requires gencode\\_id, optionally filter by variant\\_id."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:256 1c7c93adffba45188db57907673ad9e4
+msgid "``gencode_id`` (string) (required) Required: Versioned GENCODE ID"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:259 79bfca20ccef4b8297e930fa6ddd6b90
+msgid ""
+"``variant_id`` (string) (optional) Optional: GTEx variant ID to filter "
+"specific variant"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:285 46d994ba48c84ba3b3575cacf3821cef
+msgid "**GTEx_get_sample_info** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:287 62dadf10f40444a793620339e767ae9a
+msgid ""
+"Get detailed GTEx sample and subject metadata. Returns sample IDs, tissue"
+" types, donor demographi..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 7a781478a8f642ec9ff11530c7ee6c34
+msgid "GTEx_get_sample_info tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:293 4da4678e86d44253809668493eb45ef6
+msgid "**Name**: ``GTEx_get_sample_info``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:295 94466e34904f48018a9aa72fe607fe61
+msgid ""
+"**Description**: Get detailed GTEx sample and subject metadata. Returns "
+"sample IDs, tissue types, donor demographics (age, sex), ischemic time, "
+"RIN scores, Hardy scale, pathology notes, and QC metrics. Filter by "
+"sample ID, subject ID, tissue, demographics, or data type. Use for: "
+"sample selection, cohort design, QC filtering, demographic analysis, "
+"understanding data provenance. Essential for selecting appropriate "
+"samples for analysis."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:302 fb06406ead8d405aa3ff73effd24d5cc
+msgid "``sample_id`` (array) (optional) Optional: GTEx sample IDs"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:305 6f67dc12e2924497ad5a9063ca1a2181
+msgid "``subject_id`` (array) (optional) Optional: GTEx subject/donor IDs"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:311 5bf9f9edb43a4d7da233aa0edde6a9ed
+msgid "``sex`` (string) (optional) Optional: Filter by donor sex"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:314 1f3a572325f24520bf9f24efe4e9b3f4
+msgid "``age_bracket`` (array) (optional) Optional: Filter by age brackets"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:339 1b93442b2822434b8f0ebc01ac7e8a12
+msgid "**GTEx_get_single_tissue_eqtls** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:341 22806bf19d8e485f94d8e6168aa90442
+msgid ""
+"Get significant single-tissue eQTL associations. Returns precomputed "
+"gene-variant associations wi..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 1c50d20d63ca41458cf0957e8724505d
+msgid "GTEx_get_single_tissue_eqtls tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:347 46741654dad14a62abd3eb2684dad112
+msgid "**Name**: ``GTEx_get_single_tissue_eqtls``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:349 0b160bf0dc4b4d7bacb302aa344c83e3
+msgid ""
+"**Description**: Get significant single-tissue eQTL associations. Returns"
+" precomputed gene-variant associations with p-values, effect sizes (NES),"
+" and genomic positions. Query by gene ID, variant ID, tissue, or "
+"combination. Results show which genetic variants affect gene expression "
+"in specific tissues. Use for: finding eQTLs for candidate genes, looking "
+"up variant effects, tissue-specific regulatory analysis, GWAS follow-up. "
+"Must provide at least one filter: gencode\\_id, variant\\_id, or "
+"tissue\\_site\\_detail\\_id."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:356 82069c469faa402dbaf1757358fd7d8a
+msgid ""
+"``gencode_id`` (array) (optional) Optional: Versioned GENCODE ID(s) to "
+"query"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:359 342c1039e31848669e8c7f48637318ab
+msgid "``variant_id`` (array) (optional) Optional: GTEx variant ID(s) to query"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:362 7a75bf2ec9234f82a3306e0143f7b0c7
+msgid ""
+"``tissue_site_detail_id`` (array) (optional) Optional: Tissue ID(s) to "
+"filter. At least one of gencode\\_id, variant\\_id, or "
+"tissue\\_site\\_detail\\_id required"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:387 42abad767dff460bad3d3055b7200d18
+msgid "**GTEx_get_tissue_sites** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:389 8a6c42d1ac6b46eab6c81142f96c5cc5
+msgid ""
+"Get all available GTEx tissue sites with metadata. Returns tissue IDs, "
+"names, sample counts, eGen..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst c657d1af621d479691aa763b1d0881fe
+msgid "GTEx_get_tissue_sites tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:395 ff079f21171543b78efc08dbc7e120b2
+msgid "**Name**: ``GTEx_get_tissue_sites``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:397 fce73284f36b4db8ae380d10473bfeb0
+msgid ""
+"**Description**: Get all available GTEx tissue sites with metadata. "
+"Returns tissue IDs, names, sample counts, eGene counts, and color codes "
+"for 54 non-diseased tissue sites. Includes RNA-seq sample summaries with "
+"donor age and sex statistics. Use for: discovering available tissues, "
+"finding tissue IDs for queries, checking sample sizes, understanding "
+"tissue coverage. Essential first step before querying tissue-specific "
+"data."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:407 499a9217de634fa5a60fe622abf68b27
+msgid "``page`` (integer) (optional) Page number"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:426 9e51c1922c8049dba7ab55431ea0bcd5
+msgid "**GTEx_get_top_expressed_genes** (Type: GTExV2Tool)"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:428 dfe2eea0ecfe49ffb24f9b3008d42da3
+msgid ""
+"Get top expressed genes in a specific tissue sorted by median expression."
+" Returns gene list with ..."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst 3927004737514daebffcb1feabd214e5
+msgid "GTEx_get_top_expressed_genes tool specification"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:434 f7a3faa4ecc9498ba6a00aaca7a0bd2e
+msgid "**Name**: ``GTEx_get_top_expressed_genes``"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:436 d7473f9603fa4fc1a3e79ef1b316d0e9
+msgid ""
+"**Description**: Get top expressed genes in a specific tissue sorted by "
+"median expression. Returns gene list with expression levels (TPM), useful"
+" for understanding tissue-specific gene signatures. Option to filter "
+"mitochondrial genes (default: true). Use for: tissue characterization, "
+"finding housekeeping genes, identifying tissue markers, quality control. "
+"Essential for understanding what genes are active in each tissue type."
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:443 3e5a4ff67ee4401198de213678fde51d
+msgid ""
+"``tissue_site_detail_id`` (string) (required) Required: Tissue ID (e.g. "
+"'Liver', 'Brain\\_Cortex'). Use GTEx\\_get\\_tissue\\_sites to find valid"
+" IDs"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:446 8b969dd7474c47fcb8cf1c1a799f40f1
+msgid ""
+"``filter_mt_genes`` (boolean) (optional) Exclude mitochondrial genes from"
+" results"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:472 a83bde44156e4990b128337228920698
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:474 99af631c4f314767ba9caec3c71a0bce
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gtex_v2_tools.rst:475 0af58b8239804eeab9bc6bfc9988af02
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

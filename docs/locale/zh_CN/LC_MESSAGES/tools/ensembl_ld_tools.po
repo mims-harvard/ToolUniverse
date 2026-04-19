@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ensembl_ld_tools.rst:10 6ea3ef06698347388e62deff521487b2
+msgid "Ensembl Ld Tools"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:12 c55df325ed60436a9bfe99d20e1432af
+msgid ""
+"**Configuration File**: ``ensembl_ld_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:16 88a8a2021117494e8b76ce0e58c0458e
+msgid ""
+"This page contains all tools defined in the ``ensembl_ld_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:19 57378da5de07473eae5c4d9215578104
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:22 6278a6a211814c94893bbbbf3fc45756
+msgid "**EnsemblLD_get_ld_pairwise** (Type: EnsemblLDTool)"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:24 f1c95dc319a14896b82ffebefbe8e716
+msgid ""
+"Get pairwise linkage disequilibrium (LD) statistics between two specific "
+"variants from the Ensemb..."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst c46ec8c7e9cc4f36bed870abbeeed261
+msgid "EnsemblLD_get_ld_pairwise tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:28 ../../tools/ensembl_ld_tools.rst:63
+#: b00c6c30951543fa9b89ed7a0143af35 e23ccc4a127f43399ade33a6440f01ca
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:30 39db7cfeea5b409791a5b0dae6b509a1
+msgid "**Name**: ``EnsemblLD_get_ld_pairwise``"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:31 ../../tools/ensembl_ld_tools.rst:66
+#: 0809b9e52fbc46df9c3a6e6504b95082 7fe6dce5ac8e4360968ff691822a717f
+msgid "**Type**: ``EnsemblLDTool``"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:32 55cdc066db61482eac2dbc958ff2cab7
+msgid ""
+"**Description**: Get pairwise linkage disequilibrium (LD) statistics "
+"between two specific variants from the Ensembl REST API. Returns "
+"r-squared and D' across ALL 1000 Genomes populations, allowing comparison"
+" of LD patterns across ancestries. Useful for assessing whether two GWAS "
+"signals are correlated or independent. Example: rs6792369 vs rs1042779 "
+"shows r2=1.0 in East Asian populations but r2=0.84 in African "
+"populations."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:34 ../../tools/ensembl_ld_tools.rst:69
+#: b07551d3c5ab4175857f0ff4593a07a7 cde332b5d8fa478e952caac0c9689a5f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:36 3ab27cbce7e546af8e21c70b7a47e3ea
+msgid ""
+"``variant1`` (string) (required) rs ID of the first variant. Examples: "
+"'rs6792369', 'rs429358'."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:39 351d5c49d3c84a859e0ff455bcf30128
+msgid ""
+"``variant2`` (string) (required) rs ID of the second variant. Examples: "
+"'rs1042779', 'rs7412'."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:42 ../../tools/ensembl_ld_tools.rst:83
+#: 04aeafa94d8e468bbf3fbdcdefca45c4 4de0e9f7e6f140ef9dac56996ee11203
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:57 fd0b4a8dde53476db881dc62f5a7b48e
+msgid "**EnsemblLD_get_ld_variants** (Type: EnsemblLDTool)"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:59 5616d035d0644c46a5a64ca9b8149c33
+msgid ""
+"Get linkage disequilibrium (LD) data for a variant from the Ensembl REST "
+"API. Returns all variant..."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst 87aa896c797e44c58b3949a622ec474d
+msgid "EnsemblLD_get_ld_variants tool specification"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:65 b284bd0800084a318a651c98c04368d7
+msgid "**Name**: ``EnsemblLD_get_ld_variants``"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:67 9594f193e1e54d96a83e22b430f58ef8
+msgid ""
+"**Description**: Get linkage disequilibrium (LD) data for a variant from "
+"the Ensembl REST API. Returns all variants in LD with the query variant "
+"in a specified 1000 Genomes population, with r-squared and D' statistics."
+" LD measures the non-random association of alleles at different loci, "
+"critical for GWAS interpretation and fine-mapping. Example: rs1042779 in "
+"KHV population returns 708 LD partners with r2 and D' values."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:71 7ffeb137376148f2bc777ec759f92235
+msgid ""
+"``variant_id`` (string) (required) rs ID of the variant. Examples: "
+"'rs1042779', 'rs429358', 'rs7903146', 'rs6792369'."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:74 982c758fb2474e7193903052bdd4846f
+msgid ""
+"``population`` (string) (required) 1000 Genomes population. Format: "
+"'1000GENOMES:phase\\_3:<POP>'. Common populations: 'KHV' (Kinh "
+"Vietnamese), 'CEU' (CEPH Utah), 'YRI' (Yoruba), 'CHB' (Han Chinese "
+"Beijing), 'GBR' (British), 'JPT' (Japanese Tokyo), 'ASW' (African SW US)."
+" Example: '1000GENOMES:phase\\_3:CEU'."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:77 028344ebfc854e75b5f906169265cb7a
+msgid ""
+"``r2_threshold`` (number, null) (optional) Minimum r-squared threshold to"
+" report. Default: 0.05. Set higher (e.g., 0.8) for strong LD only."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:80 2c24706fe14c4e55bc788ef1995085fe
+msgid ""
+"``d_prime_threshold`` (number, null) (optional) Minimum D' threshold. "
+"Default: none. Set e.g., 0.8 for high D' only."
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:98 e2839ac339324bff8cc3b47a66ef38be
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:100 18b18172b65545b8943bb3981860404e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ensembl_ld_tools.rst:101 56ae2ed2034f4a7c8c7827409d3d752f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

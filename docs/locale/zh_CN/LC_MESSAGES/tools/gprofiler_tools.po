@@ -1,0 +1,283 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/gprofiler_tools.rst:10 6dcdf897b10b4f46a925e5455d0291e0
+msgid "Gprofiler Tools"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:12 7ea9c6fa62434059bbe1d3f5a5664bb8
+msgid ""
+"**Configuration File**: ``gprofiler_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 4"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:16 45ccca9e1c8e442e86f25a3dd8a5d42e
+msgid ""
+"This page contains all tools defined in the ``gprofiler_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:19 d62d7554d1b4404bb71938883115d104
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:22 df1eac2b2a134820931cda5804ac7b5b
+msgid "**gProfiler_annotate_snps** (Type: GProfilerTool)"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:24 ad302c2e816843b1be53a206c685e275
+msgid ""
+"Map SNP rsIDs to genes and annotate their functional consequences using "
+"g:Profiler (g:SNPense) fr..."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst 26e7548b259a4caeae8eb11e0b5fd3b8
+msgid "gProfiler_annotate_snps tool specification"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:28 ../../tools/gprofiler_tools.rst:62
+#: ../../tools/gprofiler_tools.rst:99 ../../tools/gprofiler_tools.rst:136
+#: 9f5e0e50f8204629bf3940aed67575a1 afc16ebc09c04208b9762e98edfba8c8
+#: c975fbf10e244832ac2d12681cab577c c9940e2d214640549b87ac10af8b013d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:30 ee3faf4b85ff43928992c12e87d5ea93
+msgid "**Name**: ``gProfiler_annotate_snps``"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:31 ../../tools/gprofiler_tools.rst:65
+#: ../../tools/gprofiler_tools.rst:102 ../../tools/gprofiler_tools.rst:139
+#: 154b4465a74b47c1a6e66f28a3bbfa92 19678018258a43c58f84e699bcd04899
+#: 5a255aa182604e5185adbb3c105fbcfe c456431619e647cb97d597a4d3cd0315
+msgid "**Type**: ``GProfilerTool``"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:32 2073668a996047359e691672af4e16b5
+msgid ""
+"**Description**: Map SNP rsIDs to genes and annotate their functional "
+"consequences using g:Profiler (g:SNPense) from the University of Tartu. "
+"Given a list of SNP rsIDs, returns the chromosome, position, strand, "
+"associated Ensembl gene IDs, gene names, and predicted variant "
+"consequences (missense\\_variant, synonymous\\_variant, intron\\_variant,"
+" etc.) with counts. Useful for annotating GWAS hits, linking variants to "
+"genes, or understanding the functional impact of SNPs. Example: "
+"'rs11540652' maps to chromosome 17 position 7674220, gene TP53 "
+"(ENSG00000141510), with 18 missense variant consequences; 'rs429358' maps"
+" to APOE on chromosome 19."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:34 ../../tools/gprofiler_tools.rst:68
+#: ../../tools/gprofiler_tools.rst:105 ../../tools/gprofiler_tools.rst:142
+#: 06a69fe1c98347efaf4dc0435d8d6d56 2ee3e691b31c484e84ccaaa037d8607e
+#: 7c5430d90f2649edb14128349f387b15 f09c9d79f8dc49469ddf3dabd62abb6a
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:36 876dea69c9c64115a6adbf869a5211e5
+msgid ""
+"``snp_list`` (string) (required) Comma-separated list of SNP rsIDs. "
+"Examples: 'rs11540652,rs429358,rs7903146' or 'rs1042779,rs6792369'. "
+"Maximum ~200 SNPs per query."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:39 da0b34a094294e7bae954c8c37749826
+msgid ""
+"``organism`` (string) (optional) Organism identifier. Default: "
+"'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:42 ../../tools/gprofiler_tools.rst:79
+#: ../../tools/gprofiler_tools.rst:116 ../../tools/gprofiler_tools.rst:153
+#: 4416a02ada7f475fa704332a0876ce98 a8f60562bfe7450aa91bfd52b0cc43d7
+#: b1206b4d705140de8f092b24702ef077 ba28e130e4914d06ae00a74f6e22eea4
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:56 7f3b18bdd30c40879bf3a2b89c091ed0
+msgid "**gProfiler_convert_ids** (Type: GProfilerTool)"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:58 cbfaa09e9b4b488c9ca0135eec4cbfe7
+msgid ""
+"Convert gene identifiers between different namespaces using g:Profiler "
+"(g:Convert) from the Unive..."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst 87379f9919a9417280886171c94bbf6f
+msgid "gProfiler_convert_ids tool specification"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:64 d6d84703d2aa4e36ab0e8e58afab1895
+msgid "**Name**: ``gProfiler_convert_ids``"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:66 f8e884290c674e6793a88e692526007c
+msgid ""
+"**Description**: Convert gene identifiers between different namespaces "
+"using g:Profiler (g:Convert) from the University of Tartu. Supports "
+"conversion between gene symbols, Ensembl IDs, Entrez IDs, UniProt "
+"accessions, RefSeq IDs, and many other identifiers. Input is a list of "
+"gene identifiers and a target namespace. Supports 500+ organisms. "
+"Example: convert 'TP53,BRCA1,EGFR' to Ensembl gene IDs (ENSG). Available "
+"target namespaces: ENSG (Ensembl Gene), ENST (Ensembl Transcript), ENSP "
+"(Ensembl Protein), UNIPROTSWISSPROT (UniProt reviewed), ENTREZGENE\\_ACC "
+"(Entrez Gene), WIKIGENE\\_ACC (WikiGene)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:70 fda07265bde6446393cfc7ab1283dddd
+msgid ""
+"``gene_list`` (string) (required) Comma-separated list of gene "
+"identifiers to convert. Examples: 'TP53,BRCA1,EGFR' (symbols), "
+"'ENSG00000141510,ENSG00000012048' (Ensembl IDs)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:73 049512bbca8540fcabca668eb72716a7
+msgid ""
+"``target_namespace`` (string) (optional) Target namespace for conversion."
+" Default: 'ENSG'. Options: ENSG (Ensembl Gene), ENST (Ensembl "
+"Transcript), ENSP (Ensembl Protein), UNIPROTSWISSPROT (UniProt), "
+"ENTREZGENE\\_ACC (Entrez), WIKIGENE\\_ACC (WikiGene), "
+"REFSEQ\\_MRNA\\_ACC, REFSEQ\\_PEPTIDE\\_ACC."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:76 ee16e3cb037847e2a875f877a49539be
+msgid ""
+"``organism`` (string) (optional) Organism identifier. Default: "
+"'hsapiens'. Examples: 'hsapiens', 'mmusculus'."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:93 3275fa1a44514d848dcebea757f0fc06
+msgid "**gProfiler_enrichment** (Type: GProfilerTool)"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:95 486564bde86f4d68a661e9a50baf97e3
+msgid ""
+"Perform functional enrichment analysis on a gene list using g:Profiler "
+"(g:GOSt) from the Universi..."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst 9ce493d2bf954c01a455a4cf8ef7b42e
+msgid "gProfiler_enrichment tool specification"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:101 475935f3b790411b8aea99c850de6607
+msgid "**Name**: ``gProfiler_enrichment``"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:103 9abf64aee6d74bacb6df5a8c0da674df
+msgid ""
+"**Description**: Perform functional enrichment analysis on a gene list "
+"using g:Profiler (g:GOSt) from the University of Tartu. Identifies "
+"statistically overrepresented biological functions, pathways, and "
+"phenotypes in your gene list. Supports multiple data sources: Gene "
+"Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, "
+"Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein "
+"complexes, and Transcription Factor targets (TF). Returns enriched terms "
+"with p-values (g:SCS multiple testing correction), term sizes, "
+"intersection genes, precision, and recall. Input is a list of gene "
+"symbols (e.g., ['TP53', 'BRCA1', 'EGFR', 'KRAS', 'PTEN']). Supports 500+ "
+"organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', "
+"'dmelanogaster')."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:107 1abddd9ec30e4c06a738ce935ae382ed
+msgid ""
+"``gene_list`` (string) (required) Comma-separated list of gene symbols. "
+"Examples: 'TP53,BRCA1,EGFR,KRAS,PTEN' or 'Trp53,Brca1,Egfr' (mouse)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:110 fede9fe81ac84378bdc18e84c205e519
+msgid ""
+"``organism`` (string) (optional) Organism identifier. Default: "
+"'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse), "
+"'dmelanogaster' (fly), 'scerevisiae' (yeast), 'drerio' (zebrafish)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:113 440b2549e0254b22b0a789d896115592
+msgid ""
+"``sources`` (string) (optional) Comma-separated data sources to query. "
+"Default: 'GO:BP,GO:MF,GO:CC,KEGG,REAC,WP,HP'. Options: GO:BP, GO:MF, "
+"GO:CC, KEGG, REAC, WP, MIRNA, HPA, CORUM, HP, TF."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:130 4913032f2e3043778db3d3a0efae0502
+msgid "**gProfiler_find_orthologs** (Type: GProfilerTool)"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:132 7d9d0bdb83754eab9ec9c89571cc6896
+msgid ""
+"Find orthologous genes across species using g:Profiler (g:Orth) from the "
+"University of Tartu. Map..."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst f9275d7baded48c7bb2b46a868d218cf
+msgid "gProfiler_find_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:138 7aea97e3d6b84666a5b5332551191c6f
+msgid "**Name**: ``gProfiler_find_orthologs``"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:140 3035b9ec360f4682a1134aa5980ce708
+msgid ""
+"**Description**: Find orthologous genes across species using g:Profiler "
+"(g:Orth) from the University of Tartu. Maps genes from a source organism "
+"to their orthologs in a target organism using Ensembl orthology data. "
+"Useful for translating gene lists between model organisms. Example: find "
+"mouse orthologs of human TP53 and BRCA1. Supports 500+ organisms in the "
+"Ensembl database. Input is a list of gene identifiers from the source "
+"organism, and the target organism to map to."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:144 4d3155a976204221985b3401e565c964
+msgid ""
+"``gene_list`` (string) (required) Comma-separated list of gene "
+"identifiers from the source organism. Examples: 'TP53,BRCA1,EGFR' (human "
+"genes to find mouse orthologs)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:147 094e933228b343ee92613ac95dcbeee4
+msgid ""
+"``source_organism`` (string) (optional) Source organism. Default: "
+"'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:150 ffce1a0dda4445a59d0b4739d50b20b8
+msgid ""
+"``target_organism`` (string) (optional) Target organism to find orthologs"
+" in. Default: 'mmusculus'. Examples: 'mmusculus' (mouse), 'rnorvegicus' "
+"(rat), 'drerio' (zebrafish), 'dmelanogaster' (fly), 'celegans' (worm)."
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:167 f1019b99ac4249c6b6104dbe68d015b0
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:169 11eda555dee444c7af184762ee13b9c5
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/gprofiler_tools.rst:170 766c32a4dde542189fa09dd1846eadf6
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

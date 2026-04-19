@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/hocomoco_tools.rst:10 b4bb34befdc144069f947ecbeda52c5b
+msgid "Hocomoco Tools"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:12 a09c0a53f02d4c18b71b0536039f318b
+msgid ""
+"**Configuration File**: ``hocomoco_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:16 b4861d7f91754136a12ad30a114c64a4
+msgid ""
+"This page contains all tools defined in the ``hocomoco_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:19 5b14fda1efde4a4eaf2dd4bdfbcd7073
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:22 35c472c4e89d4f97894c5e9c145fac0a
+msgid "**HOCOMOCO_get_motif** (Type: HocomocoTool)"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:24 1312224902cc408e954d5b4b4501c122
+msgid ""
+"Get detailed information about a specific HOCOMOCO transcription factor "
+"binding motif. Returns ge..."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst 97a1e226930742c2a47b516b0d72973e
+msgid "HOCOMOCO_get_motif tool specification"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:28 ../../tools/hocomoco_tools.rst:62
+#: 22a6fde6c91341eda113d768101b44d2 cbf8cea782b94d959a86b1f19c231229
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:30 b118b540a4004efd88f4e0563722d0cc
+msgid "**Name**: ``HOCOMOCO_get_motif``"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:31 ../../tools/hocomoco_tools.rst:65
+#: 5d6809f2b9c84246a4e4c14187ee9914 fa66f15f0f44459b8ac9af7edae88787
+msgid "**Type**: ``HocomocoTool``"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:32 6411fb02b9e746079fe8c795f3579f53
+msgid ""
+"**Description**: Get detailed information about a specific HOCOMOCO "
+"transcription factor binding motif. Returns gene names, UniProt IDs, TF "
+"classification, quality metrics, consensus sequence, and optionally the "
+"position weight matrix (PWM). Quality grades: A (best), B, C, D (lowest)."
+" Data sources: P (ChIP-Seq peaks), S (HT-SELEX). Example: "
+"'P53.H14CORE.0.P.B' returns TP53 motif details."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:34 ../../tools/hocomoco_tools.rst:68
+#: a648038b537d423fa6c83397a7aeb4b3 c4c1864d607f4bda834664dfe39639d7
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:36 a2e5175756c947a19d29758295a3b08d
+msgid ""
+"``motif_id`` (string) (required) HOCOMOCO motif identifier. Format: "
+"GENE.COLLECTION.SUBTYPE.SOURCE.QUALITY. Examples: 'P53.H14CORE.0.P.B', "
+"'CTCF.H14CORE.0.P.B', 'STAT3.H14CORE.0.P.B'."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:39 3dc210c5b303425d94b12c1c654adc76
+msgid ""
+"``include_pwm`` (boolean) (optional) Whether to include the position "
+"weight matrix (PWM) in the response. Default: false."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:42 ../../tools/hocomoco_tools.rst:73
+#: 475b7c6de0d44c71a7e019fa75e8d8c7 f56246eb0b57480ea1b35178585a3853
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:56 77c7f5ac165940ce9364c30338694898
+msgid "**HOCOMOCO_search_motifs** (Type: HocomocoTool)"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:58 6ea5aed565a245e2ab0bf655aa9d720c
+msgid ""
+"Search HOCOMOCO v14 for transcription factor binding motifs by gene or "
+"protein name. Returns moti..."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst bfc64be92d8b411a9e5f61d8f57792fc
+msgid "HOCOMOCO_search_motifs tool specification"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:64 7027a366bfcb4119a7d764c041bc68c9
+msgid "**Name**: ``HOCOMOCO_search_motifs``"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:66 69f9669e2e65436ea03dc4adb06756b9
+msgid ""
+"**Description**: Search HOCOMOCO v14 for transcription factor binding "
+"motifs by gene or protein name. Returns motif IDs, quality scores, "
+"consensus sequences, and TF classification. HOCOMOCO contains high-"
+"quality TF binding models derived from ChIP-Seq data for human and mouse."
+" Complementary to JASPAR. Example: query 'TP53' returns P53.H14CORE.0.P.B"
+" with consensus sequence and quality grade."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:70 30b100c3a20a4b77a422636e71e22432
+msgid ""
+"``query`` (string) (required) Gene symbol or protein name to search for "
+"TF binding motifs. Examples: 'TP53', 'CTCF', 'STAT3', 'SOX2', 'MYC'."
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:87 89379812e296432bbfba7eab17497611
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:89 0f3ea30a0e7147f89ffbd16f70af2b0e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/hocomoco_tools.rst:90 ea42d2cef78e45739f4a3674e9b6b22b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

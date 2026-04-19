@@ -1,0 +1,154 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/archs4_tools.rst:10 2404d01f62ae4807b494cef7d1d04618
+msgid "Archs4 Tools"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:12 1b83fad5802e445fa13aed8f9c014569
+msgid ""
+"**Configuration File**: ``archs4_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 2"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:16 bd4a1938dc8e444ba5f2c67e6ad8ee9e
+msgid ""
+"This page contains all tools defined in the ``archs4_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:19 c4a1c200f07d4f2aa32c1e36b1e880d8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:22 a4f0bd0366374172aa805c5bf74c7ad8
+msgid "**ARCHS4_get_gene_correlations** (Type: ARCHS4Tool)"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:24 9bf976a05c2d46a18fc9467763bb2c3d
+msgid ""
+"Get genes most co-expressed with a query gene from ARCHS4, based on "
+"Pearson correlation computed ..."
+msgstr ""
+
+#: ../../tools/archs4_tools.rst 948a786c0fc2497b9339eadb1c53a27d
+msgid "ARCHS4_get_gene_correlations tool specification"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:28 ../../tools/archs4_tools.rst:62
+#: 6e3415e00d9e4f5f97495532fcb56649 a4d6fc587bd84c129609e6c59d6b6581
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:30 da465b0456ba4c85b81e4e27b4f7f2fd
+msgid "**Name**: ``ARCHS4_get_gene_correlations``"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:31 ../../tools/archs4_tools.rst:65
+#: 53f048ff65ad4f1dbb08dea39c986c93 55cf9584d08f4b229b49d6f5345acb0e
+msgid "**Type**: ``ARCHS4Tool``"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:32 1516497c989d446192c7153689865e43
+msgid ""
+"**Description**: Get genes most co-expressed with a query gene from "
+"ARCHS4, based on Pearson correlation computed across 300K+ uniformly "
+"processed RNA-seq samples. Returns the top N most correlated genes with "
+"their Pearson correlation coefficients. Useful for identifying "
+"functionally related genes, predicting gene function, and building co-"
+"expression networks."
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:34 ../../tools/archs4_tools.rst:68
+#: 6ff77ac457844e71be3c35c9c7931f97 b745f5a6752343a6b09f172c86703e77
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:36 ../../tools/archs4_tools.rst:70
+#: d08990894c8f4356b49d5fbdb41e936a fb601b47fbd841148230ff3fe5265408
+msgid "``gene`` (string) (required) Gene symbol (e.g., TP53, BRCA1, EGFR, MYC)"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:39 bab7bd935ccf4ed2bb12360dee602cff
+msgid ""
+"``count`` (integer, null) (optional) Number of top correlated genes to "
+"return (default: 20, max: 200)"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:42 ../../tools/archs4_tools.rst:79
+#: 8a5ef610494d496f99393809759efe5d accb92fa16da4eb982bdb9071cb05ac9
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:56 1ea4e128115d49c2a8ad5d6ba8598b0f
+msgid "**ARCHS4_get_gene_expression** (Type: ARCHS4Tool)"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:58 81b5b0023e41498fbf713539e7365add
+msgid ""
+"Get gene expression levels across human or mouse tissues and cell lines "
+"from ARCHS4 (All RNA-seq ..."
+msgstr ""
+
+#: ../../tools/archs4_tools.rst efdec92cadc14214b5e3041d548f3729
+msgid "ARCHS4_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:64 5bc586a363494c33b27e57ab38e72fba
+msgid "**Name**: ``ARCHS4_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:66 440070d13b114e0eb7e9944f387e7888
+msgid ""
+"**Description**: Get gene expression levels across human or mouse tissues"
+" and cell lines from ARCHS4 (All RNA-seq and ChIP-seq Sample and "
+"Signature Search). Returns box-plot statistics (min, Q1, median, Q3, max)"
+" in log2(TPM+1) units for each tissue/cell line, computed from 300K+ "
+"uniformly processed RNA-seq samples. Choose type='tissue' for "
+"organ/tissue expression or type='cellline' for cell line expression. "
+"Results are sorted by median expression (highest first)."
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:73 5a7ddf20ad5d42b5bf22b30409023187
+msgid ""
+"``species`` (string, null) (optional) Species: human or mouse (default: "
+"human)"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:76 e99d832a71084590a346a84642c6d82e
+msgid ""
+"``type`` (string, null) (optional) Expression type: tissue "
+"(organs/tissues) or cellline (cell lines). Default: tissue"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:93 e9c7391d17d344869b184ccd8f1ec3ec
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:95 03c49e3c298641e1890431354c966f1e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/archs4_tools.rst:96 aefd51c2347641f1954eaad4ca69aa81
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

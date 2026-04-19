@@ -1,0 +1,179 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/elm_tools.rst:10 7063ba0a92d94665b5a01d042eec0848
+msgid "Elm Tools"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:12 16ea1eff807b4e90a033e8c3028e5cab
+msgid ""
+"**Configuration File**: ``elm_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:16 5b40da5a2631486192af67e948c90941
+msgid ""
+"This page contains all tools defined in the ``elm_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/elm_tools.rst:19 08f376144d9142428e5b8f9f9dc4e271
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:22 ced8a1c3b9834a59b26ae7fe99bdc3d2
+msgid "**ELM_get_instances** (Type: ELMTool)"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:24 866a6c9bf0bf4d4a9e6f134fda3d0208
+msgid ""
+"Get experimentally validated short linear motif (SLiM) instances for a "
+"protein from the ELM datab..."
+msgstr ""
+
+#: ../../tools/elm_tools.rst 5136dc1571954b92803a5a2a2d689c78
+msgid "ELM_get_instances tool specification"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:28 ../../tools/elm_tools.rst:68
+#: 243abb9397f94dddb7511afc2cbdeb7f d9c49c79405e4669a389f419efa4104b
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:30 2fd4532ff85c4d499685fb6b7658be52
+msgid "**Name**: ``ELM_get_instances``"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:31 ../../tools/elm_tools.rst:71
+#: 6f6f12a8a6e14319824ed4ff6d04f07e eac295b7e46a4fe89a8c3e8d5d13c509
+msgid "**Type**: ``ELMTool``"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:32 418ea09929c94a56b0fa40b9e4b31405
+msgid ""
+"**Description**: Get experimentally validated short linear motif (SLiM) "
+"instances for a protein from the ELM database. Returns motif positions, "
+"types (CLV=cleavage, DEG=degradation/degrons, DOC=docking, LIG=ligand "
+"binding, MOD=modification sites, TRG=targeting signals), experimental "
+"methods used for validation, PubMed references, and PDB structures where "
+"the motif was observed. SLiMs are compact protein interaction interfaces "
+"(3-11 residues) that mediate regulatory functions. Use with UniProt "
+"accession (e.g., P04637 for TP53)."
+msgstr ""
+
+#: ../../tools/elm_tools.rst:34 ../../tools/elm_tools.rst:74
+#: ef06b974a4e64a86b96e65117c94d532 ff16c8d74d8f4856baa7639222730df8
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:36 ../../tools/elm_tools.rst:76
+#: 69ebe833383d46c9924eca12a188b303 e26b69b434ab4017a5da216785160da9
+msgid "``operation`` (string) (required) Operation type"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:39 f972c4b98edd451098d95f52660a90e9
+msgid ""
+"``uniprot_id`` (string, null) (optional) UniProt accession, e.g., P04637 "
+"(TP53), P00533 (EGFR), P38398 (BRCA1), P42336 (PIK3CA)"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:42 c1e64b10cda9484d8b9c175fbf668815
+msgid ""
+"``uniprot_acc`` (string, null) (optional) Alias for uniprot\\_id. UniProt"
+" accession, e.g., P04637 (TP53)"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:45 560a2a61a03143778bbd7da6537877e3
+msgid ""
+"``motif_type`` (string, null) (optional) Filter by motif functional type."
+" CLV=cleavage sites, DEG=degradation motifs, DOC=docking sites, "
+"LIG=ligand binding, MOD=modification sites, TRG=targeting signals. Omit "
+"for all types."
+msgstr ""
+
+#: ../../tools/elm_tools.rst:48 ../../tools/elm_tools.rst:88
+#: 060ce088cbdf4950b0ca5d446332c44d 47cac7e1a69f442fac79620a2cd249db
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:62 44dd18ae0abf445f8884f51f92e91209
+msgid "**ELM_list_classes** (Type: ELMTool)"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:64 46cd41fdd8e847a9ae449bc9d3aa3b5f
+msgid ""
+"List short linear motif (SLiM) classes from the ELM database. Each class "
+"represents a distinct ty..."
+msgstr ""
+
+#: ../../tools/elm_tools.rst fc1afb4ba2544b92a74d3e0ce6673249
+msgid "ELM_list_classes tool specification"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:70 a4f256e3d8ce48d9b9f3954168089710
+msgid "**Name**: ``ELM_list_classes``"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:72 a59ccec727af465d986eb9c163ba1a4f
+msgid ""
+"**Description**: List short linear motif (SLiM) classes from the ELM "
+"database. Each class represents a distinct type of functional motif with "
+"a regex pattern, description, and statistics on known instances. Filter "
+"by functional type (CLV/DEG/DOC/LIG/MOD/TRG) or search by keyword (e.g., "
+"'caspase', 'phosphorylation', 'nuclear', 'ubiquitin'). The regex patterns"
+" can be used to scan protein sequences for potential motif matches. ELM "
+"contains 353 motif classes covering cleavage, degradation, docking, "
+"ligand binding, modification, and targeting functions."
+msgstr ""
+
+#: ../../tools/elm_tools.rst:79 0850c069823241c89bab1706d7005ede
+msgid ""
+"``motif_type`` (string, null) (optional) Filter by motif functional type."
+" CLV=cleavage, DEG=degradation, DOC=docking, LIG=ligand binding, "
+"MOD=modification, TRG=targeting. Omit for all types."
+msgstr ""
+
+#: ../../tools/elm_tools.rst:82 1346c7462950482a833aa9275a05ab86
+msgid ""
+"``query`` (string, null) (optional) Search keyword to filter by name, "
+"identifier, or description. E.g., 'caspase', 'kinase', 'ubiquitin', "
+"'nuclear'"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:85 6188dd7181dd4f51bca092d0b16bf102
+msgid ""
+"``max_results`` (integer) (optional) Maximum results to return (default: "
+"50, max: 400 covers all classes)"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:102 aba1f973310e4d6c9a6fa4b0776c0b48
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:104 c88d3484c3d4429ca13cbc531de2e898
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/elm_tools.rst:105 2ad1ed5e91d4499bbd69217cd12c9b88
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

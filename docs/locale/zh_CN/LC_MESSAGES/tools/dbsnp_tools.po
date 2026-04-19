@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/dbsnp_tools.rst:10 ab770d36df7c4853988763679809b8ec
+msgid "Dbsnp Tools"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:12 fc0d35e9cfbc4740a1cab5d65486a6a7
+msgid ""
+"**Configuration File**: ``dbsnp_tools.json`` **Tool Type**: Local **Tools"
+" Count**: 3"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:16 1bba75639ea745fb8b0ced608dec5101
+msgid ""
+"This page contains all tools defined in the ``dbsnp_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:19 1ec1a8017c0f45fe8e9ef725318463f8
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:22 9aea3244e9f044bcbb3f0631cd79c396
+msgid "**dbsnp_get_frequencies** (Type: dbSNPGetFrequencies)"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:24 b0dc2b1bc15b409ca6acd7d8dd2e96ff
+msgid ""
+"Get allele frequencies for a variant from dbSNP. Returns population-"
+"specific allele frequency data."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst 7248575c2b9c44a0b0f84e673703ae10
+msgid "dbsnp_get_frequencies tool specification"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:28 ../../tools/dbsnp_tools.rst:59
+#: ../../tools/dbsnp_tools.rst:90 399f033959ec4d7bafda0e683eb965f8
+#: 4563193b29a64a34af89b360633f2379 cca4e8dafdad47289c5c697fb50d8907
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:30 77c3ef5155af4dbcbb0e93ce3f15b33f
+msgid "**Name**: ``dbsnp_get_frequencies``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:31 234f263e269544e5a1bd58da9d2fa173
+msgid "**Type**: ``dbSNPGetFrequencies``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:32 e8730c9219ce47dea73021c61e42553c
+msgid ""
+"**Description**: Get allele frequencies for a variant from dbSNP. Returns"
+" population-specific allele frequency data."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:34 ../../tools/dbsnp_tools.rst:65
+#: ../../tools/dbsnp_tools.rst:96 a1a1683cd7124becb2d6fb4d2deb0316
+#: baccce74b9d74de197fabe396b13f4ba cd0b87505e894771a670425f5c7189ef
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:36 ../../tools/dbsnp_tools.rst:67
+#: 3a4f0289a7c840c0988669a50d9b447b f9ba21a090d34d3992047ee4ebf092e3
+msgid "``rsid`` (string) (required) dbSNP rsID (e.g., 'rs12345', '12345')"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:39 ../../tools/dbsnp_tools.rst:70
+#: ../../tools/dbsnp_tools.rst:104 a4bf83ea6cef403cb14c35189589a14b
+#: cbe180e11674481fa4a1f75be0516d21 d70fe6d06f1c4786a1fb6cc7f40fd322
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:53 3030a3a2723b46919ae8860e4175465b
+msgid "**dbsnp_get_variant_by_rsid** (Type: dbSNPGetVariantByRsID)"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:55 e8409cf21d4941f2a048c3f32b72c5e3
+msgid ""
+"Get variant information from dbSNP by rsID. Returns genomic coordinates, "
+"alleles, and basic varia..."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst a40464d50d454eb8b30596c9e8b70251
+msgid "dbsnp_get_variant_by_rsid tool specification"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:61 e0bb09c2fd484d9ab92de7cc3ba29921
+msgid "**Name**: ``dbsnp_get_variant_by_rsid``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:62 7f083ffab6f74d0db9c7f3bae6845ddf
+msgid "**Type**: ``dbSNPGetVariantByRsID``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:63 c99f2e5112474dffbcb6f594bef9ac09
+msgid ""
+"**Description**: Get variant information from dbSNP by rsID. Returns "
+"genomic coordinates, alleles, and basic variant information."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:84 64dbb009d5bd42739df6bdf41fc9ff5c
+msgid "**dbsnp_search_by_gene** (Type: dbSNPSearchByGene)"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:86 d8631607b0e44313a24a31dc7e5c23cd
+msgid ""
+"Search for variants in a specific gene. Returns variants associated with "
+"the gene symbol."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst a9fb7f448493435181672c102a20ed35
+msgid "dbsnp_search_by_gene tool specification"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:92 13b46ed5e99044cf9d597d23f6c8a512
+msgid "**Name**: ``dbsnp_search_by_gene``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:93 ca6265560c144db78c7d9dcf7bb2081e
+msgid "**Type**: ``dbSNPSearchByGene``"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:94 efdfa48acc764362a67d6d6031d2beb8
+msgid ""
+"**Description**: Search for variants in a specific gene. Returns variants"
+" associated with the gene symbol."
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:98 ac933ec0470d411a8fb5efbf0ffaae9d
+msgid ""
+"``gene_symbol`` (string) (required) Gene symbol (e.g., 'BRCA1', 'TP53', "
+"'APOE')"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:101 6d238a7a6065425e8852ee3774067406
+msgid "``limit`` (integer) (optional) Maximum number of results to return"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:118 cebe445ad2f3418f952b9368f4434502
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:120 e92fcaff1d344ab4b916fbdf6464678e
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/dbsnp_tools.rst:121 3a6536fb0b7043169c845a0d3c65ffe8
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -8,6 +8,7 @@ This section aggregates setup guides for all integrations under ``src/tooluniver
 
    remote/boltz.md
    remote/depmap_24q2.md
+   remote/esm.md
    remote/expert_feedback.md
    remote/immune_compass.md
    remote/pinnacle.md

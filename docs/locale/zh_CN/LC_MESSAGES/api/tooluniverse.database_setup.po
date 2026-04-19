@@ -1,0 +1,1271 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../api/tooluniverse.database_setup.rst:2 4e495b16bd6b4a11b3ec1818fd0f88e6
+msgid "tooluniverse.database\\_setup package"
+msgstr ""
+
+#: 00a7261346984ab4addf343a6c90443c d8b4104419bb4b7284f14846aad26223 of
+#: tooluniverse.database_setup.pipeline.build_collection:1
+msgid "Create/extend a collection, embed docs, and populate FAISS."
+msgstr ""
+
+#: 126e4668cb7148e5a490974efcfad2c9 a78734b4212e402a8341a4c4987a7dfb of
+#: tooluniverse.database_setup.pipeline.build_collection:3
+msgid ""
+"Inserts/merges documents (dedupe by (collection, doc_key) and by "
+"(collection, text_hash) when present), computes embeddings with the "
+"requested provider/model, L2-normalizes them, and appends to "
+"<collection>.faiss via VectorStore."
+msgstr ""
+
+#: 73166cb612814796917ef96141ff445b da6f2c9e0c7641e29c5d93a6f9a964cb of
+#: tooluniverse.database_setup.pipeline.build_collection:8
+msgid "Idempotency"
+msgstr ""
+
+#: 5ae90e704768409cbf938d1f6d69e5b6 aefe0305bddf4489bd3e5706646bb0f9 of
+#: tooluniverse.database_setup.pipeline.build_collection:9
+msgid ""
+"Re-running is safe: existing (doc_key) are ignored; content duplicates "
+"(text_hash) are skipped."
+msgstr ""
+
+#: 272bb5eadcbe4fbf86b6c7bd4adcc5d1 5a01818e665d4134ba05c35d6bdd3cf9 of
+#: tooluniverse.database_setup.pipeline.build_collection:12
+msgid "Side effects"
+msgstr ""
+
+#: 63c207b2be3a41288da4f8de48255d72 8116eef022f8420ab27a397663195b85 of
+#: tooluniverse.database_setup.pipeline.build_collection:13
+msgid "Records the true embedding model and dimension in the `collections` table."
+msgstr ""
+
+#: 799aab8a549641aea2d94fc0e449b2c8 of
+#: tooluniverse.database_setup.hf.sync_hf.upload:1
+msgid ""
+"Upload a collection’s DB and FAISS index (and optional tool JSON file(s))"
+" to the user’s own HF account."
+msgstr ""
+
+#: 8d805ca9f5f64fc6a7460377369dd333 of
+#: tooluniverse.database_setup.hf.sync_hf.download:1
+msgid ""
+"Download <collection>.db and <collection>.faiss (and optionally any .json"
+" tool files) using the unified helper."
+msgstr ""
+
+#: 4f2db6a069fb49828e259bf483806752 7aa8d84b1ae349f49e462e68bba0a3cf
+#: bb03df16e55b4e8b9fb184ffba63237d c70c72ec581748329f68c07a1a43ef4c
+#: c9e968a2250d427db07a2fb386959a1c e1ac388995444e0492baa3060f80b0e0
+#: f8b7e1f5fc6c4ccaa075f6f0b8953a5d fef52e849ecd45fbb269d4962b3d1e3e of
+#: tooluniverse.database_setup.embedder.Embedder:1
+#: tooluniverse.database_setup.search.SearchEngine:1
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore:1
+#: tooluniverse.database_setup.vector_store.VectorStore:1
+msgid "Bases: :py:class:`object`"
+msgstr ""
+
+#: 2f5962ac95fb41ac88377761b2226457 78a360ebdbf245a9b34191fa8eb8388f of
+#: tooluniverse.database_setup.search.SearchEngine:1
+msgid "Unified keyword + embedding + hybrid search for a given DB path."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst 044afc7e5afc4db39bc259df771f8e0f
+#: 281acfd048a34bf9b3793fec30e69f0e 2f7c99ff8d50407ea11d3fcf508c01ce
+#: 804a8ec3b4d34f16b249a4b725514105 8bba534abdb245738c093124e1bb2c22
+#: 980b3813358d48bf9521d6239c0dd864 ac0f696dd20b41d8b1b935eaeb327fd3
+#: badce392bb9c471495fabdecccc0d20b bca22053091843b295e18b5b107dddfb
+#: c906488c504b4daab2091e4e9966579b d989b8dd3887462abc9f5979f641723c
+#: f4d44b80b53f4ec380b30d2331229e2d of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool
+msgid "Parameters"
+msgstr ""
+
+#: 02398fbc529c47ea9667483b1bd35881 7b3da5c6aaf94d09bf9948ad7a5e1a2f of
+#: tooluniverse.database_setup.search.SearchEngine:3
+msgid ""
+"Path to the SQLite database file that also anchors <collection>.faiss "
+"files."
+msgstr ""
+
+#: 923a63d7e46d44f2a19ebdefbfa2552a c57464c94651454187e6ca95301c0d42 of
+#: tooluniverse.database_setup.search.SearchEngine:5
+msgid "Default embedder provider. May be overridden per-call."
+msgstr ""
+
+#: 9a0de9c5343e465799123b00c2a7e9c5 fcf90423191e45808835250a7b962340 of
+#: tooluniverse.database_setup.search.SearchEngine:7
+msgid "Default embedding model. May be overridden per-call."
+msgstr ""
+
+#: 22f205feb2a4419d902e4ea7d54b3c4a 893a76f66dea4bd29d8a358f55ef0cf6 of
+#: tooluniverse.database_setup.search.SearchEngine:11
+msgid ""
+"/Users/apple/learn/ToolUniverse/src/tooluniverse/database_setup/search.py:docstring"
+" of tooluniverse.database_setup.search.SearchEngine:11: (WARNING/2) "
+"Inline literal start-string without end-string."
+msgstr ""
+
+#: 1d89379ce4fb43e8b0836a1ae05500e2 5161e926d0dd4f6cb019c5ea7b80f1a8
+#: 8b3342ca413d4d70bd7fe13e63bdc47e 9125210b75ce41bb987173ca1c70e60d
+#: c029bfdac8f84ccc9ca819cd7d91d561 of tooluniverse.database_setup.pipeline:10
+#: tooluniverse.database_setup.search.SearchEngine:18
+#: tooluniverse.database_setup.search.SearchEngine.multi_collection_search:3
+msgid "Notes"
+msgstr ""
+
+#: 648510ec8bf947ddbf61eebdfb1dd04d 9ff41761978748d3b53da5ed6eabfc47 of
+#: tooluniverse.database_setup.search.SearchEngine:20
+msgid ""
+"If a collection's `embedding_model` is \"precomputed\", you MUST pass "
+"(provider, model) when calling `embedding_search` or `hybrid_search`."
+msgstr ""
+
+#: 67ccfa89ac8242a582a530899b5c17a5 80aa513af42d42df95045bbcfc1ff2bd of
+#: tooluniverse.database_setup.search.SearchEngine.keyword_search:1
+msgid "FTS5 keyword search (normalized text). Returns fixed score=1.0 hits."
+msgstr ""
+
+#: 43aa553119c141fa8120647b43b9b8ce 44acb2139ad144989bfbc41054d01560 of
+#: tooluniverse.database_setup.search.SearchEngine.embedding_search:1
+msgid "Vector search using FAISS (IndexFlatIP with L2-normalized vectors)."
+msgstr ""
+
+#: a9cc7022f27444dc8ceb8f768a9420b5 df3ea7386d264f9ab5b0b46ad775cb2d of
+#: tooluniverse.database_setup.search.SearchEngine.hybrid_search:1
+msgid "Blend keyword and embedding results with score = alpha*emb + (1-alpha)*kw."
+msgstr ""
+
+#: 051777d6aa404139b62883d83b75ae66 260ac4ac00694f28be00d618dd867d72 of
+#: tooluniverse.database_setup.search.SearchEngine.list_collections:1
+msgid ""
+"Return the list of collection names registered in the SQLite "
+"`collections` table."
+msgstr ""
+
+#: 334137b39db84448a5a438d1da0dddc5 ee6244b210624bbf84aca26a002e8ca2 of
+#: tooluniverse.database_setup.search.SearchEngine.fetch_docs:1
+msgid ""
+"Fetch raw docs by doc_key using SQLiteStore.fetch_docs (for inspection or"
+" tooling)."
+msgstr ""
+
+#: 1d22fdffad99410db91ef9696014f481 cbf8d61544b84e708e5a7b2836ed003f of
+#: tooluniverse.database_setup.search.SearchEngine.fetch_random_docs:1
+msgid "Return `n` random documents from a collection (for sampling/demo)."
+msgstr ""
+
+#: b8bd5dab12e44ddaa7c133ac7dd72af9 de0a68a7a1ec4127b7ae54fa55cdb32e of
+#: tooluniverse.database_setup.search.SearchEngine.search_collection:1
+msgid "Dispatch to keyword/embedding/hybrid search for a single collection."
+msgstr ""
+
+#: a6b28e3a9acd4b4a8cda968175b6b6a7 f1bd2b44c86c47198dc021639bf20721 of
+#: tooluniverse.database_setup.search.SearchEngine.multi_collection_search:1
+msgid "Run the same query across all collections and return top-k by score."
+msgstr ""
+
+#: ced9a651efcd4e4d902bd9818ed5fd42 f53c5750e7ec41fe87aaa21cb8b36fcb of
+#: tooluniverse.database_setup.search.SearchEngine.multi_collection_search:5
+msgid "Attaches a 'collection' field to each hit."
+msgstr ""
+
+#: 0a485dc464b04b7cbe0034f1e5d005ac 5daf422ca4124a1d807a3e641b370e6d of
+#: tooluniverse.database_setup.search.SearchEngine.multi_collection_search:6
+msgid "Silently warns and skips collections that fail to search."
+msgstr ""
+
+#: 041f9c8422c540b781bc447464af6e22 2eb58fc166624c689e9524c882f49856 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore:1
+msgid "Lightweight SQLite store with FTS5 mirror and vector bookkeeping."
+msgstr ""
+
+#: 7d6b5dbf26304053a57c0fd3347866a4 f1c6df120f9e43e3959791a1f7eefdf2 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore:3
+msgid ""
+"Creates schema/triggers on first use and exposes helpers to manage "
+"collections, documents, and FTS5 keyword search."
+msgstr ""
+
+#: bbd21bff818240c48b5e04058377736c c142497ac500444596ddb599cd763050 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.upsert_collection:1
+msgid "Create or update a row in `collections` with optional embedding metadata."
+msgstr ""
+
+#: 09e7f0f94f4b42a096de2d5312a636c2 673c7cdec2c04ff4b4d43ea8c0d4c158 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.upsert_collection:3
+msgid ""
+"Keeps `updated_at` fresh and sets/updates description, embedding_model, "
+"embedding_dimensions, and index_type when provided."
+msgstr ""
+
+#: 8a0dcaf6da4140e1bbfd41b798b12e6e deaeeec30c314214a29692d16a6b7f4d of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.insert_docs:1
+msgid ""
+"Insert a batch of documents with de-dup by (collection, doc_key) and "
+"(collection, text_hash)."
+msgstr ""
+
+#: 204ed3f7c09c4b36bd6d3b3f6f376f89 4346e2a267c4433788d7b6ba1a4bc4fb of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.insert_docs:3
+msgid "Computes `text_norm` using normalize_text."
+msgstr ""
+
+#: 4b0726ccc4604d7d8fff0717084803f7 64913d4befa048b6bbbc346762bb3d2d of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.insert_docs:4
+msgid "Normalizes string/list metadata values for the *_norm fields used by FTS."
+msgstr ""
+
+#: b695162c948f49a1ab3852ac9f94f458 b7808c9ed72b4aaabe735af6aa3eea23 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.insert_docs:5
+msgid "Maintains docs_fts via triggers."
+msgstr ""
+
+#: 19bbdf8be20b4023a6ecd9987de68132 43387e10cfb04243b392a93277dd67f5 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.fetch_docs:1
+msgid "Fetch documents by collection (optionally filtered by doc_key list)."
+msgstr ""
+
+#: 3d25c88c5de04ce4bb180068ff02e1af 8f8de69c1414430aa1a44f5519096241 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.fetch_docs:3
+#, python-brace-format
+msgid ""
+"Returns a list of dicts: {id, doc_key, text, metadata}. Order is "
+"unspecified."
+msgstr ""
+
+#: 00c7406451c6431396105e4fa0b77d83 c6967fe9f464449ba65d9abf252760a0 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.fetch_random_docs:1
+msgid "Return `n` random docs from a collection for sampling/demo."
+msgstr ""
+
+#: 7218592efe584697b4587c74e972b4f8 852b22371c2f4c7aac412f7d68d35759 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.search_keyword:1
+msgid "FTS5 keyword search on `text_norm` (or `text` if use_norm=False)."
+msgstr ""
+
+#: 11a10770ae014b2ab15ff97876095b83 97465ded59884836b36bb32995eeaf5f of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.search_keyword:3
+msgid "Free-text query; sanitized for FTS via safe_for_fts()."
+msgstr ""
+
+#: 252edf88f14140d3a28f805c9da55a5f 4c6f24f79c04433d95e4669caa92de68 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.search_keyword:5
+msgid "Max rows to return."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst 14e3f4ef667a472587a53443c803ebda
+#: 22a3b43a27ce416dbbd233f220d478a6 b0b01c51b9d1465d9447e74cf8fc2cd0
+#: caeb38310b8d4433856def9a3a3d7477 d2b45b1ef6d24a28b7974aceb92be3e0
+msgid "Returns"
+msgstr ""
+
+#: 0171b9e6141141379fb645061da61e52 7bfb3a61fefb45e7b25738c6d167fc7a of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.search_keyword:8
+#, python-brace-format
+msgid "Each with {id, doc_key, text, metadata}."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst 261a575ff3514f8c9436bc30058db415
+#: 4bfea3ee12a94dd498a06a0dbd68776e 7d01077f6654474498e9c82d82567f8c
+#: c8529b75448e4073bfc9b036e290a20b f3c92f854f574f16adeb45d21612cff0
+msgid "Return type"
+msgstr ""
+
+#: 66f6007c3da3400880571a05d8382b8f 84fd416f838f4d23949a6c30e2cb4fc7
+#: a36387bdc537455b8e35ea15fa001706 of
+#: tooluniverse.database_setup.pipeline.search:11
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.search_keyword:9
+msgid ":class:`List[dict]`"
+msgstr ""
+
+#: 0acb682ff88b4f0f94e36d27b0b26768 a3983d50dba041cabf3faef05f6060e6 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.fetch_docs_by_ids:1
+msgid ""
+"Fetch documents by SQLite row ids limited to those mapped in `vectors` "
+"for the collection."
+msgstr ""
+
+#: c231ca78bd2f4502bd8e1279ab9eed01 f2b24e8b3108416a8f1f0cc65ba78912 of
+#: tooluniverse.database_setup.sqlite_store.SQLiteStore.close:1
+msgid "Close the underlying SQLite connection."
+msgstr ""
+
+#: 2aeeb09b3a204329a5d9dd0163a4a0ca ba65eaf217b54db2a7c2eed2752f0e29 of
+#: tooluniverse.database_setup.vector_store.VectorStore:1
+msgid ""
+"Manage FAISS indices per collection, persisted under the user cache dir "
+"(<user_cache_dir>/embeddings)."
+msgstr ""
+
+#: 59316f59a80b4e0babf5274ef44d736c 69abe1c87c6c40cbaba4965125b049ff of
+#: tooluniverse.database_setup.vector_store.VectorStore.load_index:1
+msgid ""
+"Load or create a FAISS IndexFlatIP for the collection, asserting "
+"dimension consistency. If reset=True, always create a fresh index and "
+"overwrite any existing file."
+msgstr ""
+
+#: 35481ace94944f45bdc1c6772a23c874 dc516acb35474c2c818e405baf2b6c1a of
+#: tooluniverse.database_setup.vector_store.VectorStore.save_index:1
+msgid "Persist the in-memory FAISS index for `collection` to disk."
+msgstr ""
+
+#: 3a3c862a94784e1ea87bdbf99e9e5550 f22f253011c04015bba79a6806f4980a of
+#: tooluniverse.database_setup.vector_store.VectorStore.add_embeddings:1
+msgid ""
+"Append embeddings to a collection index and record (doc_id ↔ faiss_idx) "
+"in SQLite."
+msgstr ""
+
+#: 7b34ea09296149faa4d6c1b62a7bdcdd c71b4b71f549464f8611966d41f54dae of
+#: tooluniverse.database_setup.vector_store.VectorStore.add_embeddings:3
+msgid ""
+"Expects embeddings to be float32 and L2-normalized (caller "
+"responsibility)."
+msgstr ""
+
+#: c1a1018033f04168b625460b737abca3 e033e53747b84202ae161f83a8e3a323 of
+#: tooluniverse.database_setup.vector_store.VectorStore.search_embeddings:1
+msgid ""
+"Nearest-neighbor search; returns [(doc_id, score), ...] in descending "
+"score order."
+msgstr ""
+
+#: 9cc77f3b7c9a4e4bbdbb66d185a18831 a394731f753c4f4c9f2bd0068c028992 of
+#: tooluniverse.database_setup.vector_store.VectorStore.search_embeddings:3
+msgid "Requires load_index() to have been called for the collection."
+msgstr ""
+
+#: 1efefc505dc94ff780c54906212b414c f7206c7169f4449dafbe672fc7318807 of
+#: tooluniverse.database_setup.embedder.Embedder:1
+msgid "Text embedding client with pluggable backends."
+msgstr ""
+
+#: 992759df9bb440b9aaa2c1870f3b79dd a6d165f9be9d4679af8c079c2dfa7a51 of
+#: tooluniverse.database_setup.embedder.Embedder:3
+msgid "Backend to use."
+msgstr ""
+
+#: 83b84bf8f9de412b88cdc2ae78d6a3cb c3201fda875747de8939e914217a6423 of
+#: tooluniverse.database_setup.embedder.Embedder:5
+msgid "Embedding model or deployment id (Azure uses deployment name)."
+msgstr ""
+
+#: 60b5ca2e2aba4addb2019da0cba6ded3 c4b596013d424e63a9fa1aea84b1fcff of
+#: tooluniverse.database_setup.embedder.Embedder:7
+msgid "Max texts per API/batch call."
+msgstr ""
+
+#: 29ce3de5b6b546dbad1f7fc2fcd5344e 9f68c18a8f524617a29cde705493003e of
+#: tooluniverse.database_setup.embedder.Embedder:9
+msgid "Exponential-backoff retries on transient failures."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst 7ea6a8d8c49647aabdfe5b058b9cedf6
+#: b97a305577044c58a0e6f86e2af50e81 bb8fa2183e8f4ed3b45c1f76d30ab1ac
+msgid "Raises"
+msgstr ""
+
+#: 37311c0c56a44532ad9ace90fd051f8d 9c3d688238f44d118f5b6f035195d056 of
+#: tooluniverse.database_setup.embedder.Embedder:12
+msgid "Missing credentials for the chosen provider."
+msgstr ""
+
+#: a320815ccb414523a1c4ae10f5b1ef46 f964fcccfb33429cbaa42f18430a79d6 of
+#: tooluniverse.database_setup.embedder.Embedder:13
+msgid "Unknown provider."
+msgstr ""
+
+#: 444576fafe2745f3a12e7516939ee2cb 464e45e4572e4debbe89de0f497f5181 of
+#: tooluniverse.database_setup.embedder.Embedder.embed:1
+msgid "Return embeddings for a list of UTF-8 strings."
+msgstr ""
+
+#: 2dad297dbc544f5cb9b2c01780f55935 59b6b4d10710412b8c21386d927649c7
+#: 964b01384d734e98a2ce4fb240134d80 daef5c469e064c9ab19cedd6b1f2493b of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:1
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync:1
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:1
+msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
+msgstr ""
+
+#: 7f112cd52b354268b45031e850d1566a f98bfe6e6eb84a11ba5a7a3234266cea of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:1
+msgid "Generic search tool for any embedding datastore collection."
+msgstr ""
+
+#: a2fa1cab6daf4ceaab48ac3488e10768 c763eaebc69c49a3b45f139de80d7829 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:4
+msgid "Runtime arguments"
+msgstr ""
+
+#: 36eb669562044d5a8f4ade051a4e55bc 77f2056ef2d144f480364942bee40e91 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:5
+msgid "query"
+msgstr ""
+
+#: 075b2a3a75e24d3086c31453de7c766c 2a443d5d4c4045169bc09487011ed1cb of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:-1
+msgid "str (required)"
+msgstr ""
+
+#: d04c50515dc04a44ac380bb4176cbd23 d6ef83162dac43968fe5e56fa9ede08a of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:6
+msgid "Search query text."
+msgstr ""
+
+#: 40e07b31e1fa49af83bbe00101b3abfb 87637c442b5f483ab9778ee1c74d0b72 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:7
+msgid "method"
+msgstr ""
+
+#: 58b0291c289d4cd78f692bbca34da670 e749f232f97247cf9e501d1847022e7f of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:-1
+msgid "str = \"hybrid\""
+msgstr ""
+
+#: 74300e7a5b0647cabb6edf70700f2fb4 c7327e4c38c442d4b0c3b6415023cdd2 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:8
+msgid "One of: \"keyword\", \"embedding\", \"hybrid\"."
+msgstr ""
+
+#: 8e06a55b920b4ea59b40f89003abb8b2 a0bb828c6d10437daa377a1f03d8cd06 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:9
+msgid "top_k"
+msgstr ""
+
+#: 82fb1c1fe7a8436384aefef224609aa2 c4b6e301cc784f1f858d1c796b17ffb2 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:-1
+msgid "int = 10"
+msgstr ""
+
+#: 7d4808c0ae724d7f9910f46c240ae88e f9116e72fb4f44f9ad060387ac6f7881 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:10
+msgid "Number of results to return."
+msgstr ""
+
+#: 0b88eca1aa194623b1863aa17afddc91 ab0142e512034820b3ffc16a90550474 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:11
+msgid "alpha"
+msgstr ""
+
+#: 4bb0c730dee5441bb83410adc03c04d1 59f7a7f8853c4377b793062e734b88f6 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:-1
+msgid "float = 0.5"
+msgstr ""
+
+#: d2fbd3375a2c40f1833c1f67bd0f4cd0 e98734b329b04a13b66b1441b0087dba of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:12
+msgid "Balance for hybrid search (0=keyword only, 1=embedding only)."
+msgstr ""
+
+#: 016152dc84324e79b5b4aaae29f70089 c9789a36469e44a89fe19d1bd617ddc5 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool
+msgid "returns"
+msgstr ""
+
+#: 960aa2989b3b4e0e814b363e08de8f9e dad86222c3b74274a2d2d84225ffdfd4 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:16
+msgid "doc_id"
+msgstr ""
+
+#: 86974e30bf1445e88669d7c6a510bf8e da0418a214f9405bb975d9a956445983 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:17
+msgid "doc_key"
+msgstr ""
+
+#: 1f857c525e40413bb1c64f9ca0f726b4 9fb18a0f131849c5a4aad36f319aaa8c of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:18
+msgid "text"
+msgstr ""
+
+#: 02249450ec754d799d9cc1c2445a738c 3106d45fb8264ca19253338b3b8ca944 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:19
+msgid "metadata"
+msgstr ""
+
+#: 5d2845e102b04f1fa675c67843399466 813fea0ce6374e8c9444655b0440c6c9 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:20
+msgid "score"
+msgstr ""
+
+#: cc7c07f2d15d4106b2d9c52a26f91fab df8469bb67264c4fbc3de8bd5a46b8f6 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:21
+msgid "snippet (first ~280 chars)"
+msgstr ""
+
+#: 6ee4fdd770d54895bf8ac730b9cbd5df fabb2245327446b1aff600a064953c94 of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool
+msgid "rtype"
+msgstr ""
+
+#: 8be9c3e6959047818caf275c34179849 e1514bac664d4fb08f81dadc0ac7992e of
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool:22
+msgid ":class:`List[dict] with keys`"
+msgstr ""
+
+#: a8b7eacf97fc457e932a355ec8d35f65 c5afe573bbf1421db25cd28996cc9bd0
+#: c78aad2575fe44f3a6d9b52fdd1049c8 e099c0ab86aa49b5a767894b2418c88c of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:1
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:1
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:1
+msgid "Execute the tool."
+msgstr ""
+
+#: 2cdeb4d2c81243ae8b368407c39fdf08 8d24b5fd14b94ede9233b28c0bedd091
+#: 8fb9eb2bf8c34c33b386851c749e6dfb 98cfba8721694e408c2d546627f866aa of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:3
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:3
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:3
+msgid ""
+"The default BaseTool implementation accepts an optional arguments mapping"
+" to align with most concrete tool implementations which expect a "
+"dictionary of inputs."
+msgstr ""
+
+#: 402e83f8cee04a75b3c9f342afbb2e54 57b2886a3f134e4a9db35241f29d314e
+#: d208293e0edd40f59933fbd7693cb585 e3ce35a3a08f4f6c8949e8cf72062d42 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:7
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:7
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:7
+msgid "Tool-specific arguments"
+msgstr ""
+
+#: 022707d758de418db3a4a3886353d19b 07c7791545f84c7790b997347ac45e0a
+#: 1b99cc4b5cd04a6887e824949cfee88d e90a3b12ac5f4c1c9ed261cda2451cb8 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:9
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:9
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:9
+msgid "Callback for streaming responses"
+msgstr ""
+
+#: 32d2eacdbf584997a46591cd33f1cd5c 60b4a9363cbb4faab3b3bfe6d9de93f0
+#: b186711546554deb99efe52ab2d3b13e c0bfb44e0dac4dad94881358e2cc7d12 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:11
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:11
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:11
+msgid "Whether result caching is enabled"
+msgstr ""
+
+#: 28ff2218d8274f148667ab532f666958 67617f0b1f774192842e6217f6b02654
+#: 7173760b1ab743e99cb0919c5846fb83 e619a98a63eb4c578af2aaaab719bbe1 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:13
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:13
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:13
+msgid "Whether parameter validation was performed"
+msgstr ""
+
+#: 03a8eebaa97e44a99fbb54a2623eb187 589359ffe3894626bd2a2c1d9eee4038
+#: 7ce3e9d4a561401e9e34f96287849789 9f24bc7094a14be7a9d53c1952330663 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:18
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:18
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:18
+msgid ""
+"These additional parameters (stream_callback, use_cache, validate) are "
+"passed from run_one_function() to provide context about the execution. "
+"Tools can use these for optimization or special handling."
+msgstr ""
+
+#: 5672117bd15e46aeb379f8fb5f9ce83c b4f2e75df84546fb939ac26016df3a5b
+#: bbf20a8c66104301b34ecbf58268efaf df9126180f774681ad5da608bfa9decc of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase.run:22
+#: tooluniverse.database_setup.embedding_sync.EmbeddingSync.run:22
+#: tooluniverse.database_setup.generic_embedding_search_tool.EmbeddingCollectionSearchTool.run:22
+msgid ""
+"For backward compatibility, tools that don't accept these parameters will"
+" still work - they will only receive the arguments parameter."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:10
+#: 8f0c340d8bc54dbea4d2599fedc96372
+msgid "Submodules"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:13
+#: dbb0f38ff4734e5a9c8b24e3a09e658a
+msgid "tooluniverse.database\\_setup.cli module"
+msgstr ""
+
+#: 20babc6813374f85b14a20b6d1a85546 of tooluniverse.database_setup.cli:1
+msgid ""
+"tu-datastore: CLI for building, searching, syncing, and registering "
+"embedding datastores and tools."
+msgstr ""
+
+#: 8dd96d01f9354562b9c2956edbdd847d of tooluniverse.database_setup.cli:4
+msgid "Subcommands"
+msgstr ""
+
+#: 023b48ae74cb4cf48c8f5a9176ee2cc6 of tooluniverse.database_setup.cli:5
+msgid "build"
+msgstr ""
+
+#: c2b4bb279c804890b99d101882b90d18 of tooluniverse.database_setup.cli:6
+msgid ""
+"Upsert a collection, insert documents (with de-dup), embed texts, and "
+"write FAISS."
+msgstr ""
+
+#: 5a383113c9dd46a0ace8ca571dabdcfa of tooluniverse.database_setup.cli:8
+msgid "quickbuild"
+msgstr ""
+
+#: caeca472703743ba939f39039cae962d of tooluniverse.database_setup.cli:9
+msgid "Build a collection from a folder of text files (.txt/.md)."
+msgstr ""
+
+#: 095e7ddce1ee4049a04ea26188cf1607 bcc2b00f19e349b08a47e834f668fef2 of
+#: tooluniverse.database_setup.cli:11
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:4
+msgid "search"
+msgstr ""
+
+#: 621bbb90c7ce4b3483a7f236d421b4b3 of tooluniverse.database_setup.cli:12
+msgid "Query an existing collection by keyword, embedding, or hybrid."
+msgstr ""
+
+#: c4f1ad2ef7e94af0af9e0e32b018f8b3 of tooluniverse.database_setup.cli:14
+msgid "sync-hf upload|download"
+msgstr ""
+
+#: 6ff3c6e3ed6847a29a39adc638b21d73 of tooluniverse.database_setup.cli:15
+msgid ""
+"Upload/download <collection>.db and <collection>.faiss to/from Hugging "
+"Face and (on upload) optionally include --tool-json <file1.json> "
+"[file2.json ...]."
+msgstr ""
+
+#: ec3282863e0148cfa8e97f866742db15 of tooluniverse.database_setup.cli:18
+msgid "add-tool"
+msgstr ""
+
+#: d11f9cd47c5d43b58c965107cf8dee4e of tooluniverse.database_setup.cli:19
+msgid ""
+"Copy a tool JSON into ~/.tooluniverse/data/user_tools for auto-loading by"
+" ToolUniverse and Codex. This enables users to create their own tools "
+"from local JSON definitions without modifying the ToolUniverse repo."
+msgstr ""
+
+#: 20bd31c9f5bb4ef7a38b65614b0c52d9 of tooluniverse.database_setup.cli:24
+msgid "Environment"
+msgstr ""
+
+#: dc7ab6b54db648aab129f3e191416d49 of tooluniverse.database_setup.cli:25
+msgid ""
+"Set EMBED_PROVIDER, EMBED_MODEL, and provider-specific keys (OPENAI / "
+"AZURE_* / HF_TOKEN). All datastore files default to "
+"<user_cache_dir>/embeddings/<collection>.db unless overridden."
+msgstr ""
+
+#: 20485006e15e4b78badd900156bb484e of tooluniverse.database_setup.cli:29
+msgid "Exit codes"
+msgstr ""
+
+#: 3a9394f49f204a7b9a010cf361b18212 of tooluniverse.database_setup.cli:30
+msgid "0 on success; non-zero on I/O, validation, or runtime errors."
+msgstr ""
+
+#: b96bc6d0202f4aeabe2884cfa082709d of
+#: tooluniverse.database_setup.cli.resolve_db_path:1
+msgid "Return resolved db path (user-specified or default cache dir)."
+msgstr ""
+
+#: 0ea730d12c854b2e848082a8eda152e8 of
+#: tooluniverse.database_setup.cli.resolve_provider_model:1
+msgid "Use CLI args or fall back to environment variables."
+msgstr ""
+
+#: 338f981cfc524e99b37b5719ef86a0dd of
+#: tooluniverse.database_setup.cli.add_tool:1
+msgid "Copy a tool JSON into ~/.tooluniverse/data/user_tools for auto-loading."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:21
+#: af19c84d35d041c1abbe2caf601d45d1
+msgid "tooluniverse.database\\_setup.embed\\_utils module"
+msgstr ""
+
+#: eb8b73de529f40dd861d18d5d88e1cab of
+#: tooluniverse.database_setup.embed_utils:1
+msgid "embed_utils.py — convenience wrappers around Embedder."
+msgstr ""
+
+#: 0837d9b81c194ac8bc45cb974d18c34d of
+#: tooluniverse.database_setup.embed_utils:3
+msgid ""
+"Use cases: - Get vectors from a list of strings with sane defaults. - "
+"Infer model dimension automatically for build pipelines."
+msgstr ""
+
+#: 625943b083274e9fb5a120130d90b185 of
+#: tooluniverse.database_setup.embed_utils.embed_texts:1
+msgid "Embed a list of texts with minimal config."
+msgstr ""
+
+#: b9870532cf5945f5859f52c6d36f2fba of
+#: tooluniverse.database_setup.embed_utils.embed_texts:3
+msgid "list of strings."
+msgstr ""
+
+#: 4a11c8db250645b193e52bfc9460778f of
+#: tooluniverse.database_setup.embed_utils.embed_texts:4
+msgid ""
+"\"openai\" | \"azure\" | \"huggingface\" | \"local\". Defaults from env "
+"or available credentials."
+msgstr ""
+
+#: 51acd37a3b4f4e749705f2093cc382de of
+#: tooluniverse.database_setup.embed_utils.embed_texts:6
+msgid "embedding model/deployment name. Defaults provider-wise."
+msgstr ""
+
+#: ff788495406440fea4b71d3d23c9bdd2 of
+#: tooluniverse.database_setup.embed_utils.embed_texts:7
+msgid "return L2-normalized vectors (recommended)."
+msgstr ""
+
+#: 54d529c245c74369bb64c838f15087b5 of
+#: tooluniverse.database_setup.embed_utils.embed_texts:8
+msgid "override batch size (optional)."
+msgstr ""
+
+#: 0c58d8809a2647cf87bf1f2cd74499b2 of
+#: tooluniverse.database_setup.embed_utils.embed_texts:10
+msgid "np.ndarray of shape (N, D) float32"
+msgstr ""
+
+#: 15211daf70bd4df8a95a444a444afd44 of
+#: tooluniverse.database_setup.embed_utils.get_model_dim:1
+msgid ""
+"Probe the embedding dimension for the current provider/model. Useful when"
+" you need `embed_dim` but don't want to hardcode it."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:29
+#: e8d97c080fe84e72b4348b65829c43fb
+msgid "tooluniverse.database\\_setup.embedder module"
+msgstr ""
+
+#: 51f39ce5133f4f59b8e09784d2d9d80b of tooluniverse.database_setup.embedder:1
+msgid ""
+"Embedder: pluggable text→vector interface for OpenAI, Azure OpenAI, "
+"Hugging Face, or local models."
+msgstr ""
+
+#: 3b4aa16632d14fc5b641db3713f3ebe7 of tooluniverse.database_setup.embedder:4
+msgid "Providers"
+msgstr ""
+
+#: b380695399244c5f903465d30f120dd2 of tooluniverse.database_setup.embedder:5
+msgid "\"openai\"       : OpenAI Embeddings API (model from env or argument)"
+msgstr ""
+
+#: ddcf23dd15a147059e1dc94bdbf6b790 of tooluniverse.database_setup.embedder:6
+msgid "\"azure\"        : Azure OpenAI Embeddings (endpoint/api-version from env)"
+msgstr ""
+
+#: 38de97ac1d7f41e4898cb05d620167b5 of tooluniverse.database_setup.embedder:7
+msgid "\"huggingface\"  : Hugging Face Inference API (HF_TOKEN required)"
+msgstr ""
+
+#: 818b8dd981634228846409922320a376 of tooluniverse.database_setup.embedder:8
+msgid "\"local\"        : SentenceTransformers model loaded locally"
+msgstr ""
+
+#: 6a9f52d370fc409990d0e81bfc0751f5 of tooluniverse.database_setup.embedder:11
+msgid "Behavior"
+msgstr ""
+
+#: 7f1d4ef408f747578a19c10837eb9c40 of tooluniverse.database_setup.embedder:12
+msgid ""
+"Batches input texts and retries transient failures with exponential "
+"backoff."
+msgstr ""
+
+#: 668a78e965404bb8bbb9816fa0ebe6f2 of tooluniverse.database_setup.embedder:13
+msgid ""
+"Returns float32 numpy arrays; normalization is left to callers "
+"(SearchEngine/pipeline normalize for cosine/IP)."
+msgstr ""
+
+#: 67ba1f548471420c89d2839dc505258b of tooluniverse.database_setup.embedder:14
+msgid ""
+"Does not truncate inputs: upstream caller should chunk very long texts if"
+" needed."
+msgstr ""
+
+#: 653b2137f960404cb707e93f7c8056c7 d42a4888ca6a4d8fac34deb5e1140e6b of
+#: tooluniverse.database_setup.embedder:16
+#: tooluniverse.database_setup.search:20
+msgid ":obj:`-`, :obj:`-`"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:37
+#: 4b0acf3feec3489d8d1ab2c99e7b0b9a
+msgid "tooluniverse.database\\_setup.embedding\\_database module"
+msgstr ""
+
+#: 8a776f2c796840408b9828f4f3650cd1 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:1
+msgid "Exposes actions:"
+msgstr ""
+
+#: 381af5777f32462ea5de83875d68f68a of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:2
+msgid "create_from_docs"
+msgstr ""
+
+#: 885bca079ab44187a90d592112c60875 of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:3
+msgid "add_docs"
+msgstr ""
+
+#: 79a7ce74a35a462ca661b399d3d7c14f of
+#: tooluniverse.database_setup.embedding_database.EmbeddingDatabase:5
+msgid "Backed by SQLiteStore + VectorStore + Embedder."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:45
+#: 40fc564fd236453db1e6ca28623cfd2a
+msgid "tooluniverse.database\\_setup.embedding\\_sync module"
+msgstr ""
+
+#: 169ebaad682e4f45995082781b4368d2 of
+#: tooluniverse.database_setup.embedding_sync:1
+msgid "EmbeddingSync — thin wrapper over the modular HF sync helpers."
+msgstr ""
+
+#: 511f18c4e7db49e4a3f1f374b7d02dd7 of
+#: tooluniverse.database_setup.embedding_sync:3
+msgid ""
+"Upload:   pushes <collection>.db and <collection>.faiss to a HF dataset "
+"repo Download: restores <local_name>.db and <local_name>.faiss from that "
+"repo"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:53
+#: 0f2e81c34d7c4753a41b749cbb4ac82c
+msgid "tooluniverse.database\\_setup.generic\\_embedding\\_search\\_tool module"
+msgstr ""
+
+#: 522bc4e01504431ebdf79259f3f19c6c of
+#: tooluniverse.database_setup.generic_embedding_search_tool:1
+msgid "EmbeddingCollectionSearchTool — search any datastore collection by name."
+msgstr ""
+
+#: d27b1cd655bc4e5b94abe51cd606843e of
+#: tooluniverse.database_setup.generic_embedding_search_tool:4
+msgid "Configuration (tool_config.fields)"
+msgstr ""
+
+#: dbcc0b2e0dd24d0cbeb8e4a9c9bb875c of
+#: tooluniverse.database_setup.generic_embedding_search_tool:5
+msgid "collection : str   (required)  e.g., \"my_collection\""
+msgstr ""
+
+#: cecdca00e6bc4cb984646773fa6abc02 of
+#: tooluniverse.database_setup.generic_embedding_search_tool:6
+msgid "db_path"
+msgstr ""
+
+#: c40e950e9ea54ebfad09abf70cf68c6b of
+#: tooluniverse.database_setup.generic_embedding_search_tool:-1
+msgid "str   (optional)  e.g., \"<user_cache_dir>/embeddings/my_collection.db\""
+msgstr ""
+
+#: 4c3c0886b30e49cba71dbb4a27aa1daf of
+#: tooluniverse.database_setup.generic_embedding_search_tool:7
+msgid "If omitted, defaults to: <user_cache_dir>/embeddings/<collection>.db"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:61
+#: 16459d1fbd334888b17a39ab252ca92d
+msgid "tooluniverse.database\\_setup.packager module"
+msgstr ""
+
+#: 664ae80025b840e5a53b7ba0f61db8df of tooluniverse.database_setup.packager:1
+msgid ""
+"packager.py — turn a folder of files into (doc_key, text, metadata, "
+"text_hash) tuples."
+msgstr ""
+
+#: 03e0f3019215403ab9ecb3e5799816d1 of
+#: tooluniverse.database_setup.packager.pack_folder:1
+msgid "Walk `folder` and package supported files into datastore-ready rows."
+msgstr ""
+
+#: 3e3a3b61514d4e49a70303fd9b987c5e of
+#: tooluniverse.database_setup.packager.pack_folder:3
+#, python-brace-format
+msgid ""
+"doc_key     = relative path text        = file body metadata    = "
+"{\"title\": filename, \"path\": relpath, \"source\": \"file\"} text_hash"
+"   = sha256(text)[:16]"
+msgstr ""
+
+#: 5267a27d9d5e4d2881af92e58520cb6d of
+#: tooluniverse.database_setup.packager.pack_folder:8
+msgid "list[(doc_key, text, metadata, text_hash)]"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:69
+#: a191702e6a1b43769c73e9aa105d01d2
+msgid "tooluniverse.database\\_setup.pipeline module"
+msgstr ""
+
+#: c34ed4b158034bbbbb80ea14812ca078 of tooluniverse.database_setup.pipeline:1
+msgid "High-level helpers for building and querying collections."
+msgstr ""
+
+#: 1438b672605448aeb9ef25319fc9aaa1 of tooluniverse.database_setup.pipeline:4
+msgid "Exposes"
+msgstr ""
+
+#: 989aa4536bed4f0ebf9e0c6acfbdc028 of tooluniverse.database_setup.pipeline:5
+msgid ""
+"build_collection(db_path, collection, docs, embed_provider, embed_model, "
+"overwrite=False)"
+msgstr ""
+
+#: 0eb8018827684d08897c8c32c7407b78 of tooluniverse.database_setup.pipeline:6
+msgid ""
+"Create or extend a collection, insert documents with de-dup, embed texts,"
+" and persist a FAISS index."
+msgstr ""
+
+#: a8bfe39cb443452f9181ae1b2b9920d7 of tooluniverse.database_setup.pipeline:7
+msgid ""
+"search(db_path, collection, query, method=\"hybrid\", top_k=10, "
+"alpha=0.5, embed_provider=None, embed_model=None)"
+msgstr ""
+
+#: 823d69c1859340f786a9cc475bc783e7 of tooluniverse.database_setup.pipeline:8
+msgid "Keyword/embedding/hybrid search over an existing collection."
+msgstr ""
+
+#: 77fa15911e7d4f30a1a63ab52ac9a908 of tooluniverse.database_setup.pipeline:12
+msgid "Input docs are (doc_key, text, metadata, [text_hash])."
+msgstr ""
+
+#: f901d7f4927c4c218e896f5913e0d5ae of tooluniverse.database_setup.pipeline:13
+msgid ""
+"If a collection records embedding_model=\"precomputed\", you must provide"
+" an embed provider/model at query time for embedding/hybrid searches."
+msgstr ""
+
+#: 000c2a14f60d489487a3d656de1c7cf6 of
+#: tooluniverse.database_setup.pipeline.search:1
+msgid "Search a collection using keyword, embedding, or hybrid."
+msgstr ""
+
+#: 6a4abab49a05407f9340ba5842d4b7f9 of
+#: tooluniverse.database_setup.pipeline.search:3
+msgid "Search strategy. Hybrid mixes scores via `alpha * emb + (1 - alpha) * kw`."
+msgstr ""
+
+#: 131b12d9847d43d885f15543dc682dbc 9b52e8caf1af45b88b01b36e3b7dcf69 of
+#: tooluniverse.database_setup.pipeline.search:5
+#: tooluniverse.database_setup.pipeline.search:7
+msgid "Required if the collection’s embedding_model is \"precomputed\"."
+msgstr ""
+
+#: 00877bad02bf4d4ea70bca9fa8f5f7f4 of
+#: tooluniverse.database_setup.pipeline.search:10
+#, python-brace-format
+msgid ""
+"Each hit: {doc_id, doc_key, text, metadata, score} (plus "
+"kw_score/emb_score in hybrid)."
+msgstr ""
+
+#: b0304f73db2043e091d26bfa81ef598a of
+#: tooluniverse.database_setup.pipeline.search:13
+msgid "If embedding model information is insufficient for embedding/hybrid."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:77
+#: dcb04b4fc5a441b490933e1cd35319e2
+msgid "tooluniverse.database\\_setup.provider\\_resolver module"
+msgstr ""
+
+#: ab031b59e9fc4f3791d96cb48f369e0c of
+#: tooluniverse.database_setup.provider_resolver:1
+msgid "Provider/model resolution helpers based on explicit args and environment."
+msgstr ""
+
+#: 964827ed68e04d4497b32e6b193f0922 of
+#: tooluniverse.database_setup.provider_resolver:4
+msgid "Resolution order"
+msgstr ""
+
+#: 3fff4ab28b81446289a4d1007b5f3883 of
+#: tooluniverse.database_setup.provider_resolver:5
+msgid ""
+"provider: explicit > EMBED_PROVIDER > by available creds (azure > openai "
+"> huggingface > local) model   : explicit > EMBED_MODEL > provider "
+"defaults"
+msgstr ""
+
+#: 48b72df8113e418eb394051e6dc2a006 of
+#: tooluniverse.database_setup.provider_resolver.resolve_provider:1
+msgid "Resolve an embedding provider string."
+msgstr ""
+
+#: 2713cc16b6ab485995409b9e36c16c8c of
+#: tooluniverse.database_setup.provider_resolver.resolve_provider:3
+msgid ""
+"Order: explicit → EMBED_PROVIDER → available credentials (azure > openai "
+"> huggingface > local)."
+msgstr ""
+
+#: 6c43891df3594386bcbf2ed190080376 of
+#: tooluniverse.database_setup.provider_resolver.resolve_model:1
+msgid "Resolve an embedding model/deployment id for the given provider."
+msgstr ""
+
+#: c8cdb6c9fb0147f1b4f768cf310b59e5 of
+#: tooluniverse.database_setup.provider_resolver.resolve_model:3
+msgid ""
+"Order: explicit → EMBED_MODEL → provider default (env override where "
+"applicable)."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:85
+#: b0666c3b8e904847bba8315d79efea3c
+msgid "tooluniverse.database\\_setup.search module"
+msgstr ""
+
+#: 50346644b0774ea395400620cefb4624 of tooluniverse.database_setup.search:1
+msgid ""
+"SearchEngine: unified keyword / embedding / hybrid search over a "
+"SQLite+FAISS datastore."
+msgstr ""
+
+#: 23d8bdb57df74a9babf0f7f705f931db of tooluniverse.database_setup.search:3
+msgid ""
+"Composes: - SQLiteStore.search_keyword(...) - Embedder for query-time "
+"vectors - VectorStore.search_embeddings(...) - A simple hybrid combiner "
+"to mix keyword and embedding scores"
+msgstr ""
+
+#: 6b24e8775cc84b54ac9be27c1331a0bd of tooluniverse.database_setup.search:10
+msgid "Scoring"
+msgstr ""
+
+#: 57e52d551bd447568994426221042768 of tooluniverse.database_setup.search:11
+msgid "Keyword scores are alway 1.0."
+msgstr ""
+
+#: d43f6b6aafb04f61b28108ccf961ef72 of tooluniverse.database_setup.search:12
+msgid "Embedding scores are FAISS IP (assume vectors are L2-normalized upstream)."
+msgstr ""
+
+#: b8100b67ddbe4a5e9251140bc0f5bf31 of tooluniverse.database_setup.search:13
+msgid ""
+"Hybrid: score = alpha * embed_score + (1 - alpha) * keyword_score  (alpha"
+" in [0,1])."
+msgstr ""
+
+#: 0401aa52ec1b42bfa97192371437485a of tooluniverse.database_setup.search:16
+msgid "Return shape"
+msgstr ""
+
+#: de0eb225028f46ac94f466246bd06603 of tooluniverse.database_setup.search:17
+#, python-brace-format
+msgid ""
+"Each API returns a list of dicts: { \"doc_id\", \"doc_key\", \"text\", "
+"\"metadata\", \"score\" }"
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:93
+#: 455c553ce9724abb985b56a4c0cbf5c0
+msgid "tooluniverse.database\\_setup.sqlite\\_store module"
+msgstr ""
+
+#: 56ef22c32bc841afa0baaf011c6c4250 of
+#: tooluniverse.database_setup.sqlite_store:1
+msgid ""
+"SQLiteStore: lightweight content store with FTS5 search and vector "
+"metadata."
+msgstr ""
+
+#: 495bb8008e6e40c683ba2dc9553bac17 of
+#: tooluniverse.database_setup.sqlite_store:3
+msgid "This module implements the relational half of the datastore: - Tables:"
+msgstr ""
+
+#: e331f9e9977b4d2f9b4ccc2235821c83 of
+#: tooluniverse.database_setup.sqlite_store:5
+msgid ""
+"collections(name TEXT PRIMARY KEY, description TEXT, embedding_model "
+"TEXT, embedding_dimensions INT)"
+msgstr ""
+
+#: bd5272f877e24bc8a21d0822dbf65109 of
+#: tooluniverse.database_setup.sqlite_store:6
+msgid ""
+"docs(id INTEGER PRIMARY KEY, collection TEXT, doc_key TEXT, text TEXT, "
+"text_norm TEXT, metadata JSON, text_hash TEXT)"
+msgstr ""
+
+#: 6296a82dda884513ab2fc278751cd13c of
+#: tooluniverse.database_setup.sqlite_store:7
+msgid "vectors(doc_id INT, collection TEXT, have_vector INT DEFAULT 0)"
+msgstr ""
+
+#: 35a64d398de64eb2bfe969464dc84b97 of
+#: tooluniverse.database_setup.sqlite_store:8
+msgid ""
+"Virtual table: - docs_fts(text_norm) -> FTS5 mirror of docs.text_norm for"
+" keyword search"
+msgstr ""
+
+#: 1c6ea12386974054b2bb1d73d318b944 of
+#: tooluniverse.database_setup.sqlite_store:12
+msgid "Key invariants"
+msgstr ""
+
+#: 0a86ce91a86b4121baed13a84a78de7b of
+#: tooluniverse.database_setup.sqlite_store:13
+msgid ""
+"(collection, doc_key) is unique: a document identity must be stable "
+"across rebuilds."
+msgstr ""
+
+#: 964fcf99235541a2ae1d029c83aeb1f6 of
+#: tooluniverse.database_setup.sqlite_store:14
+msgid ""
+"(collection, text_hash) is unique WHEN text_hash IS NOT NULL: prevents "
+"duplicate content in the same collection."
+msgstr ""
+
+#: f46801cad97c44a6b4db672ceafbdee3 of
+#: tooluniverse.database_setup.sqlite_store:15
+msgid "docs_fts stays in sync through triggers on insert/update/delete."
+msgstr ""
+
+#: 5bf8de2d404546bbbcce1ee8cacbf440 of
+#: tooluniverse.database_setup.sqlite_store:16
+msgid ""
+"embedding_dimensions in `collections` must match the dimensionality of "
+"vectors added for that collection."
+msgstr ""
+
+#: 88d912a1322d4b25b16cc831b2c60df0 of
+#: tooluniverse.database_setup.sqlite_store:19
+msgid "Typical flow"
+msgstr ""
+
+#: ece7a4de313a4066a64d547d4c30fd0b of
+#: tooluniverse.database_setup.sqlite_store:20
+msgid "upsert_collection(...) once"
+msgstr ""
+
+#: e0f75e5b17d349f69c235e1de8e7a77d of
+#: tooluniverse.database_setup.sqlite_store:21
+msgid ""
+"insert_docs(...): accepts (doc_key, text, metadata, [text_hash]) tuples "
+"(hash auto-computed if missing)"
+msgstr ""
+
+#: 6a7ea2b839374d5697038a3a87e81c74 of
+#: tooluniverse.database_setup.sqlite_store:22
+msgid "fetch_docs(...): returns rows for embedding/indexing or inspection"
+msgstr ""
+
+#: de0d81c674e8402d87d82ee37aedf27b of
+#: tooluniverse.database_setup.sqlite_store:23
+msgid "search_keyword(...): keyword search via FTS5 (accent/case tolerant)"
+msgstr ""
+
+#: 6d2d0f6a6b1342129ae9f042b0c21f74 of
+#: tooluniverse.database_setup.sqlite_store:24
+msgid ""
+"A separate VectorStore persists FAISS vectors; SearchEngine orchestrates "
+"hybrid search."
+msgstr ""
+
+#: 0b4460a5310d4e2592b71b69b3460a49 4604151928c048c8b4ba640c4ddff52d of
+#: tooluniverse.database_setup.sqlite_store:26
+#: tooluniverse.database_setup.vector_store:15
+msgid ":obj:`-`, :obj:`-`, :obj:`-`"
+msgstr ""
+
+#: 0fcb550fff404200b9278ddf212f57aa of
+#: tooluniverse.database_setup.sqlite_store.normalize_text:1
+msgid "Lowercase, strip accents (NFKD), and collapse whitespace."
+msgstr ""
+
+#: e0f0b8a32fdf42c3bc644193acae6ab1 of
+#: tooluniverse.database_setup.sqlite_store.safe_for_fts:1
+msgid ""
+"Sanitize a free-text query for FTS5 MATCH by removing quotes and breaking"
+" '-', ',', ':'."
+msgstr ""
+
+#: ../../api/tooluniverse.database_setup.rst:101
+#: 6f28323104494586b2cbd75f287d89bf
+msgid "tooluniverse.database\\_setup.vector\\_store module"
+msgstr ""
+
+#: 2742b89f4907463c828313fe12112bcd of
+#: tooluniverse.database_setup.vector_store:1
+msgid "VectorStore: FAISS index management for per-collection embeddings."
+msgstr ""
+
+#: fa9a18c2b1f745e8a029062280072581 of
+#: tooluniverse.database_setup.vector_store:3
+msgid ""
+"This module encapsulates a single FAISS index per collection: - Path "
+"convention: <user_cache_dir>/embeddings/<collection>.faiss (same base "
+"path as the SQLite file) - Similarity: IndexFlatIP (inner product). With "
+"L2-normalized embeddings, IP ≈ cosine similarity. - Mapping: you pass "
+"(doc_ids, vectors) in the same order; FAISS IDs are aligned to doc_ids "
+"internally."
+msgstr ""
+
+#: 85461307596344a49834c47d42b8f5b4 of
+#: tooluniverse.database_setup.vector_store:9
+msgid "Responsibilities"
+msgstr ""
+
+#: 83bc487b82d74535a9d59df96f7a59f1 of
+#: tooluniverse.database_setup.vector_store:10
+msgid "Create/load a FAISS index with the correct dimensionality."
+msgstr ""
+
+#: de79a5f9e97d40979eb4468df84f1c1e of
+#: tooluniverse.database_setup.vector_store:11
+msgid "Add new embeddings (append-only)."
+msgstr ""
+
+#: a603258527b34b2fbd5cb3af43423e09 of
+#: tooluniverse.database_setup.vector_store:12
+msgid "Query nearest neighbors given a query vector."
+msgstr ""
+
+#: 46e15c328ec8492c88e3f97c1aa374c9 of
+#: tooluniverse.database_setup.vector_store:13
+msgid "Persist the index to disk."
+msgstr ""
+

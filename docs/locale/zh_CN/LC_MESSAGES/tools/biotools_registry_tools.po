@@ -1,0 +1,321 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/biotools_registry_tools.rst:10 199586506f3a47d69cd36bc2744807e1
+msgid "Biotools Registry Tools"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:12 6249b10f57474252aab58fe5f61ad4b7
+msgid ""
+"**Configuration File**: ``biotools_registry_tools.json`` **Tool Type**: "
+"Local **Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:16 8fa56fc07e2c48de9cd66a04da2346af
+msgid ""
+"This page contains all tools defined in the "
+"``biotools_registry_tools.json`` configuration file."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:19 98aeedc4cc78440e8b639ccd138c9323
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:22 5de339f8c9f5414b9d286bc92eb39b4a
+msgid "**BioTools_get_tool** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:24 e3b0d4cdeca34f7eacd57256612eaf06
+msgid ""
+"Get detailed information about a specific bioinformatics tool from the "
+"ELIXIR Bio.tools registry ..."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst 3e464dbd539d48c49ecea54962274aab
+msgid "BioTools_get_tool tool specification"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:28
+#: ../../tools/biotools_registry_tools.rst:62
+#: ../../tools/biotools_registry_tools.rst:102
+#: ../../tools/biotools_registry_tools.rst:142
+#: ../../tools/biotools_registry_tools.rst:182 55860ac7994d4058b564fb5fa97539de
+#: cd8136860d9b4942b329505a4b8de0d4 dce79839cea54482ad282806bb7f7b2e
+#: dec54300f33c46d0964d3a8526d4c28d e5c15ade4fd94583a0d362001e269129
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:30 7b81236001e146718baaf8bf7c2f45c7
+msgid "**Name**: ``BioTools_get_tool``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:31
+#: ../../tools/biotools_registry_tools.rst:65
+#: ../../tools/biotools_registry_tools.rst:105
+#: ../../tools/biotools_registry_tools.rst:145
+#: ../../tools/biotools_registry_tools.rst:185 1dc007e4e4374ce3be37cb38932a87de
+#: 426ccff713804aad9f7b0b80fb75c68b 7240380f1aa443ed9d2ef911a962c19b
+#: 822f1db401a44a6fbce82221f797dc19 f6260cfaf97f45d18c83788a0f849e29
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:32 835dfb712547453ab7992e792fd42ee2
+msgid ""
+"**Description**: Get detailed information about a specific bioinformatics"
+" tool from the ELIXIR Bio.tools registry by its biotoolsID. Returns "
+"comprehensive metadata including name, description, homepage, tool type "
+"(command-line, web app, database, etc.), EDAM topics and operations, "
+"supported input/output data formats, programming languages, operating "
+"systems, license, documentation links, and credits. Use biotoolsID values"
+" discovered via BioTools\\_search. Example: 'samtools' for SAMtools, "
+"'blast' for NCBI BLAST."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:34
+#: ../../tools/biotools_registry_tools.rst:68
+#: ../../tools/biotools_registry_tools.rst:108
+#: ../../tools/biotools_registry_tools.rst:148
+#: ../../tools/biotools_registry_tools.rst:188 575cab7a82e34c36aeac0aa26e52e4c8
+#: 8bc13c6258a74cb9976f9737e9214212 a6f2c2b6724a44e3bed60a87467923fc
+#: ab9e39952d804beaa9076b7745aac183 e45fca91feb04a58add746b6721dc22f
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:36 43c338c94f8c4ef4ad73d947dac2abd9
+msgid ""
+"``biotoolsID`` (string) (required) The unique Bio.tools identifier for "
+"the tool. Use lowercase. Examples: 'samtools', 'blast', 'bwa', 'gatk', "
+"'star'. Find IDs using BioTools\\_search."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:39
+#: ../../tools/biotools_registry_tools.rst:79
+#: ../../tools/biotools_registry_tools.rst:119
+#: ../../tools/biotools_registry_tools.rst:159
+#: ../../tools/biotools_registry_tools.rst:202 3c44775b725c4f5cb2704b08bd5d8ccb
+#: 4cdbd14c47584814bd772221ebc73f82 6ac5b6367bf24724b1f9c2df08e24386
+#: 8306b511292c4e2f982289807471a08d ed1c0a8ed00c4c8388cbc34ed0a35319
+msgid "``format`` (string) (optional) Response format. Must be 'json'."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:42
+#: ../../tools/biotools_registry_tools.rst:82
+#: ../../tools/biotools_registry_tools.rst:122
+#: ../../tools/biotools_registry_tools.rst:162
+#: ../../tools/biotools_registry_tools.rst:205 372045b3e12d42ce866f97101f7f8e3a
+#: 71891bbb87ab42a39106858d46a4b5b0 763575e8af264e32a46b269fe3de774e
+#: bd2db2857aec48c09e8073fa4a4a2ef7 f32a3fed553845179d8968adcbf2a200
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:56 9343850e47e745508b1ff57756979b4e
+msgid "**BioTools_search** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:58 19a30a5bc97d432d8ef57d0ec5de9463
+msgid ""
+"Search the ELIXIR Bio.tools registry for bioinformatics software tools, "
+"databases, and web servic..."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst fc17666529e74fea9a71f7d061b9e476
+msgid "BioTools_search tool specification"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:64 a940f36d87e445b182229084827dbf75
+msgid "**Name**: ``BioTools_search``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:66 9ae889cff2ab4626b6bf93e11ffba509
+msgid ""
+"**Description**: Search the ELIXIR Bio.tools registry for bioinformatics "
+"software tools, databases, and web services. Bio.tools is the "
+"comprehensive registry of bioinformatics resources maintained by ELIXIR, "
+"containing 30,000+ entries. Returns tool names, descriptions, types, "
+"topics, and homepages. Use this to find software for specific "
+"bioinformatics tasks (e.g., 'sequence alignment', 'variant calling', "
+"'protein structure prediction'). Example: search 'RNA-seq' to find RNA "
+"sequencing analysis tools."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:70 069a9aa0f37343f088b559532a68f160
+msgid ""
+"``q`` (string) (required) Free-text search query. Searches across tool "
+"names, descriptions, and topics. Examples: 'blast', 'RNA-seq analysis', "
+"'protein folding', 'variant calling', 'metagenomics'."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:73 7f2ff3a0d85645c5801b4e51f22b2f09
+msgid ""
+"``page`` (integer) (optional) Page number for paginated results "
+"(1-based). Default: 1."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:76 f70cca23f413492bb63b822ccdebd5f3
+msgid ""
+"``size`` (integer) (optional) Number of results per page (1-50). Default:"
+" 10."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:96 199f9a8f40354ac4b974423f535b2387
+msgid "**BioTools_search_by_operation** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:98 265bfb8906c84d92b467c0b6a06c023f
+msgid ""
+"Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM "
+"operation (what the tool do..."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst fb2f00a43e6a469e9b121884325d16b3
+msgid "BioTools_search_by_operation tool specification"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:104 6ac25b6f7b4d4df1b076205cf12b3c7d
+msgid "**Name**: ``BioTools_search_by_operation``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:106 647edea986c64a1aa1f24d5fdd6607cb
+msgid ""
+"**Description**: Search the ELIXIR Bio.tools registry for bioinformatics "
+"tools by EDAM operation (what the tool does). Returns tools that perform "
+"a specific computational operation. Useful operations include: 'Sequence "
+"alignment', 'Structure prediction', 'Variant calling', 'Gene expression "
+"analysis', 'Phylogenetic inference', 'Protein function prediction', "
+"'Molecular docking', 'Genome annotation', 'Visualisation', 'Data "
+"retrieval', 'Statistical calculation', 'Clustering'. Use this to find "
+"software for a specific analysis task."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:110 00ac31d180004cb487257ee36feca4c2
+msgid ""
+"``operation`` (string) (required) EDAM operation name describing what the"
+" tool does. Examples: 'Sequence alignment', 'Structure prediction', "
+"'Variant calling', 'Molecular docking', 'Visualisation', 'Genome "
+"annotation'."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:113
+#: ../../tools/biotools_registry_tools.rst:153
+#: ../../tools/biotools_registry_tools.rst:196 2a2772598a9a45629ae74d5fb808b5c0
+#: 6240a515d7ea4455a0c6d6bbaf3e8431 930252bc10e545f89552ccd3253ae088
+msgid "``page`` (integer) (optional) Page number (1-based). Default: 1."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:116
+#: ../../tools/biotools_registry_tools.rst:156
+#: ../../tools/biotools_registry_tools.rst:199 06958b66f8b748a89e42a7eb98081de4
+#: bfffc028cefa4e9fa1661c161456a52f fab57f51b78a45f1b83e6ed66ee10365
+msgid "``size`` (integer) (optional) Results per page (1-50). Default: 10."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:136 cfa130ef614e4a51ae0599bba3fa4251
+msgid "**BioTools_search_by_topic** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:138 fc0ac78b834d43f28075e9c504d5c01e
+msgid ""
+"Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM "
+"scientific topic. Returns t..."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst b2ac9befe3ef48c7aef0344f4257016c
+msgid "BioTools_search_by_topic tool specification"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:144 d6738d13dfee41deb99db9919a54ed8e
+msgid "**Name**: ``BioTools_search_by_topic``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:146 f11eff43ad054c018e77e9ce33a00f38
+msgid ""
+"**Description**: Search the ELIXIR Bio.tools registry for bioinformatics "
+"tools by EDAM scientific topic. Returns tools classified under a specific"
+" research domain. Useful topics include: 'Proteomics', 'Genomics', "
+"'Transcriptomics', 'Structural biology', 'Phylogenetics', 'Metabolomics',"
+" 'Metagenomics', 'Epigenomics', 'Sequence analysis', 'Systems biology', "
+"'Machine learning', 'Molecular interactions', 'Population genetics'. Use "
+"this to discover all available software for a specific research field."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:150 96194cc623634b539202626850a67eba
+msgid ""
+"``topic`` (string) (required) EDAM topic name. Examples: 'Proteomics', "
+"'Genomics', 'Transcriptomics', 'Structural biology', 'Phylogenetics', "
+"'Metabolomics', 'Metagenomics', 'Machine learning', 'Drug discovery'."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:176 d1f73897620d44cfb7efba1fffb866df
+msgid "**BioTools_search_by_type** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:178 59394c3750394c5bb502eca80a49e28e
+msgid ""
+"Search the ELIXIR Bio.tools registry for bioinformatics resources by tool"
+" type. Returns resources..."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst 135a2f53858946b5a4637a3ac965188c
+msgid "BioTools_search_by_type tool specification"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:184 a837adb0948c4a309162494d02609c5b
+msgid "**Name**: ``BioTools_search_by_type``"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:186 c0b699d0d70d46aea3384fde541e751f
+msgid ""
+"**Description**: Search the ELIXIR Bio.tools registry for bioinformatics "
+"resources by tool type. Returns resources of a specific category. "
+"Available types: 'Command-line tool', 'Web application', 'Web API', 'Web "
+"service', 'Database portal', 'Desktop application', 'Library', 'Plug-in',"
+" 'Suite', 'Script', 'Workflow', 'Workbench', 'Ontology', 'Bioinformatics "
+"portal'. Use this to find, for example, all database portals or all web "
+"APIs for a research domain."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:190 0b87e4f3f0ca48a7b915dc7a31be93e6
+msgid ""
+"``toolType`` (string) (required) Bio.tools resource type. Examples: "
+"'Command-line tool', 'Web application', 'Web API', 'Database portal', "
+"'Library', 'Suite', 'Workflow'."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:193 87d3d3f3541749728c68fb5f29dfb876
+msgid ""
+"``q`` (string, null) (optional) Optional free-text query to further "
+"filter results. Example: 'proteomics' to find only proteomics-related "
+"tools of the specified type."
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:219 f48f873ae59d4ad99788a4a70008739d
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:221 57cd4e93b5854bc6a61c910b9c267a92
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/biotools_registry_tools.rst:222 26b65c2a40084ca58ed024aaf978417f
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

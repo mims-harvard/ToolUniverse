@@ -1,0 +1,104 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/protparam_tools.rst:10 05aad08a9bdb42619afbfc5cf8f795a7
+msgid "Protparam Tools"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:12 6858c1a2ebc84b15ba885b468bbf02c4
+msgid ""
+"**Configuration File**: ``protparam_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 1"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:16 97d98859fcfb4c90824a18a8ee7ad536
+msgid ""
+"This page contains all tools defined in the ``protparam_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:19 8d39e6770f4c46c4a1d829164239a1ca
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:22 410e7c9be52d4a4897e50a80863d11e1
+msgid "**ProtParam_calculate** (Type: ProtParamTool)"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:24 3dca938713f74167b5296c5bec0ff5d5
+msgid ""
+"Calculate physicochemical properties of a protein from its amino acid "
+"sequence (similar to ExPASy..."
+msgstr ""
+
+#: ../../tools/protparam_tools.rst 1f18e87d951f40cdb9353bf59b4698a3
+msgid "ProtParam_calculate tool specification"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:28 5b039a2ad498485b95a70432e11ef7ff
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:30 e0476977bc394add84af18fea6e7d3f0
+msgid "**Name**: ``ProtParam_calculate``"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:31 0091d75fbadd4c6c9dce4a7b39240857
+msgid "**Type**: ``ProtParamTool``"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:32 ecdc4d4356f843b0af4fa85d083d8049
+msgid ""
+"**Description**: Calculate physicochemical properties of a protein from "
+"its amino acid sequence (similar to ExPASy ProtParam). Returns molecular "
+"weight, isoelectric point (pI), amino acid composition, extinction "
+"coefficients at 280 nm, instability index, aliphatic index, and GRAVY "
+"(grand average of hydropathicity). No external API needed."
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:34 801f6d56cafe4a429e657eafd4a85804
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:36 0af33617766c43c0a5701c1df2271885
+msgid ""
+"``sequence`` (string) (required) Protein amino acid sequence in single-"
+"letter code. Example: 'MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPS' (partial "
+"TP53). Whitespace, numbers, and FASTA headers are stripped."
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:39 4a0f0ba2f670485e8e28a91e9865fd90
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:53 b3804743f817428ba21bc6c6d980f537
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:55 1a382481e1fa47e4bed284b1a34143ac
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/protparam_tools.rst:56 4b8ee390c353453fb84d80c9cd3601c5
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

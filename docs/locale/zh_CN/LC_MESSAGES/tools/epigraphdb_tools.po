@@ -1,0 +1,373 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/epigraphdb_tools.rst:10 3843b4091426487faf7a51d3582a9cdf
+msgid "Epigraphdb Tools"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:12 5fae50144dec4d0db9d8503ba839f46c
+msgid ""
+"**Configuration File**: ``epigraphdb_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 7"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:16 18e1d673d969425e862299afc370d561
+msgid ""
+"This page contains all tools defined in the ``epigraphdb_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:19 bf66b47de51344678a11f2ca7299afc4
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:22 b7e1727514ef48a788c46f490fbaf5ef
+msgid "**EpiGraphDB_get_drugs_for_trait** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:24 4f8616f4810743a09aecb717df84ddc2
+msgid ""
+"Find drugs that target genes associated with a GWAS risk factor trait. "
+"Uses genetic evidence to i..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst 1868e23ae4774a1895b429430acdef75
+msgid "EpiGraphDB_get_drugs_for_trait tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:28 ../../tools/epigraphdb_tools.rst:62
+#: ../../tools/epigraphdb_tools.rst:98 ../../tools/epigraphdb_tools.rst:132
+#: ../../tools/epigraphdb_tools.rst:170 ../../tools/epigraphdb_tools.rst:201
+#: ../../tools/epigraphdb_tools.rst:237 0bfb326d469141699bc278d5218258f9
+#: 604cccc012e643b08a878d30a015ec1a 70918d0fb2ca40fd8c6d4e94f1500909
+#: a35a517fac2c4655a6f40b2cbe6fa016 cb2db84909414a11978c011e8aecbecb
+#: e7a10bdfe19c4e31924f97e1df08b396 ea8ed9d80a694999a91d3b551cddf042
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:30 40adab507cbe442f958f681a21a9712e
+msgid "**Name**: ``EpiGraphDB_get_drugs_for_trait``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:31 ../../tools/epigraphdb_tools.rst:65
+#: ../../tools/epigraphdb_tools.rst:101 ../../tools/epigraphdb_tools.rst:135
+#: ../../tools/epigraphdb_tools.rst:173 ../../tools/epigraphdb_tools.rst:204
+#: ../../tools/epigraphdb_tools.rst:240 1788ad0241884bce8756d739198c87d0
+#: 1f08d45a417b4a80991bcb03d18fcf0f 72f123781ede40779c27da0d8a798d75
+#: 7af76d83ce7442f9b655af07f51a6032 9515f9b484ed4f43bf4ebba4c38ed5ef
+#: 9b6609fe26524d58a480ee99b64c5354 e8735798859744d8b78b26d7d7c0a7d6
+msgid "**Type**: ``EpiGraphDBTool``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:32 b7f10a39fa4e408e982473e2159d574a
+msgid ""
+"**Description**: Find drugs that target genes associated with a GWAS risk"
+" factor trait. Uses genetic evidence to identify drug repurposing "
+"candidates. Returns drugs whose target genes are significantly associated"
+" with the trait via GWAS. Example: 'LDL cholesterol' returns statins "
+"(targeting HMGCR), PCSK9 inhibitors, etc."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:34 ../../tools/epigraphdb_tools.rst:68
+#: ../../tools/epigraphdb_tools.rst:104 ../../tools/epigraphdb_tools.rst:138
+#: ../../tools/epigraphdb_tools.rst:176 ../../tools/epigraphdb_tools.rst:207
+#: ../../tools/epigraphdb_tools.rst:243 3b7d05fe86484192953ac366d78ec383
+#: 4550276d966c4f6aa77425b6bc3bfa17 69deb170469546d79771f7d3f2419d64
+#: 6d1bed750c444a47a4548c22bbb60f17 715bd4893c9a41d79fa319abed799f5d
+#: 7ffad3842921497d9c26f7785abdd4bf df22bc705a8046c6ba23f403b0020566
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:36 a40a95fff1eb4cef842b3c7d08a521a3
+msgid ""
+"``trait`` (string) (required) GWAS risk factor trait name (e.g., 'LDL "
+"cholesterol', 'Body mass index', 'C-reactive protein', 'Systolic blood "
+"pressure')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:39 c94788a1a11d422aa02eb52159dc5b4f
+msgid ""
+"``pval_threshold`` (number) (optional) GWAS p-value threshold for gene-"
+"trait associations (default 1e-4)."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:42 ../../tools/epigraphdb_tools.rst:79
+#: ../../tools/epigraphdb_tools.rst:112 ../../tools/epigraphdb_tools.rst:149
+#: ../../tools/epigraphdb_tools.rst:181 ../../tools/epigraphdb_tools.rst:218
+#: ../../tools/epigraphdb_tools.rst:248 5a02d7f7cb5646048061b580cc324c20
+#: 5a2323bcd04c4a269e35b47bd9f67489 73e29ca878814047941f8b5b3a450b8f
+#: 85042ea62e7646a299c7c91aeeafe29e 9a8572bc817a445d8625d6e42e68bdd8
+#: d3532e04077e4aaab60cfa5bc72f0663 e1218aa2a0c149a7abd50604c1fd6e47
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:56 752af382a8264c3db2dfd13c981e2cfe
+msgid "**EpiGraphDB_get_gene_drug_associations** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:58 f466e37178714d40ba4f19cf9a6dbcc5
+msgid ""
+"Get pharmacogenomics drug-gene associations from CPIC and PharmGKB "
+"databases via EpiGraphDB. Retu..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst d4f1e5ff8f70492f82eb2f5846b1a994
+msgid "EpiGraphDB_get_gene_drug_associations tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:64 b4df1a65e20349eeb86ebd72bd524a83
+msgid "**Name**: ``EpiGraphDB_get_gene_drug_associations``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:66 5c5b8564e4e5466aac1a99fc3b187ace
+msgid ""
+"**Description**: Get pharmacogenomics drug-gene associations from CPIC "
+"and PharmGKB databases via EpiGraphDB. Returns drugs associated with a "
+"gene with clinical evidence levels. Example: 'DPYD' returns fluorouracil "
+"with CPIC Level A evidence."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:70 64d568e70ba946cfa5692bdfa3a29873
+msgid ""
+"``gene_name`` (string) (optional) Gene symbol to find drug associations "
+"for (e.g., 'TP53', 'EGFR', 'DPYD', 'CYP2D6')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:73 362deb5715db4219a07d9237e6c4dcff
+msgid ""
+"``gene_symbol`` (string) (optional) Alias for gene\\_name. Gene symbol "
+"(e.g., 'CYP2D6', 'BRCA1')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:76 21717aa86e504f0f9986b337d3d2c511
+msgid "``pval_threshold`` (number) (optional) P-value threshold (default 0.05)."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:92 bf7046a6d2354ddaa63e3f27800df810
+msgid "**EpiGraphDB_get_genetic_correlations** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:94 f12bc743c2bf4d34b713e7791e82ba8f
+msgid ""
+"Get genetic correlations (rg) between a GWAS trait and all other traits "
+"in the IEU OpenGWAS datab..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst eff049adb95740b2930ec5bf00218989
+msgid "EpiGraphDB_get_genetic_correlations tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:100 dda07086bdf744a79d7d63cbaeb07d18
+msgid "**Name**: ``EpiGraphDB_get_genetic_correlations``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:102 41841531f56c4dfeabcda563af2da3f4
+msgid ""
+"**Description**: Get genetic correlations (rg) between a GWAS trait and "
+"all other traits in the IEU OpenGWAS database. Returns traits with "
+"significant genetic overlap. Useful for understanding shared genetic "
+"architecture between diseases. Example: 'Body mass index' shows high "
+"genetic correlation with waist circumference, diabetes."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:106 a17bb6deade94044a150f0e0cbbf2fd1
+msgid ""
+"``trait`` (string) (required) GWAS trait name to find genetic "
+"correlations for (e.g., 'Body mass index', 'Depression', 'Type 2 "
+"diabetes')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:109 6aefeaf0f2514097b8de61f469fffd16
+msgid ""
+"``pval_threshold`` (number) (optional) P-value threshold for genetic "
+"correlations (default 0.05)."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:126 3750461e69644d40bc8c6eca04966abd
+msgid "**EpiGraphDB_get_mendelian_randomization** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:128 4424065a017148d88db0c75e5dd0fc92
+msgid ""
+"Get Mendelian Randomization (MR) evidence for a causal relationship "
+"between an exposure trait and..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst b92330200f48426d8ba6f45bb3e65dc0
+msgid "EpiGraphDB_get_mendelian_randomization tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:134 f625ba83023a4a1693e441290b730ec9
+msgid "**Name**: ``EpiGraphDB_get_mendelian_randomization``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:136 4d6fa87b9b614aa39dd53f4a3d01abac
+msgid ""
+"**Description**: Get Mendelian Randomization (MR) evidence for a causal "
+"relationship between an exposure trait and an outcome trait using IEU "
+"OpenGWAS data. Returns MR estimates (beta, SE, p-value) from multiple "
+"instruments/methods. Example: exposure='Body mass index', "
+"outcome='Coronary heart disease' returns causal effect estimates."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:140 3c39b519eb014020b15dd5d92bca0fc5
+msgid ""
+"``exposure_trait`` (string) (required) GWAS trait name for the exposure "
+"(e.g., 'Body mass index', 'LDL cholesterol', 'Type 2 diabetes'). Use "
+"EpiGraphDB\\_search\\_opengwas to find exact trait names."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:143 443f14e8a28f41349dcc77674a03b735
+msgid ""
+"``outcome_trait`` (string) (required) GWAS trait name for the outcome "
+"(e.g., 'Coronary heart disease', 'Stroke', 'Alzheimer disease'). Use "
+"EpiGraphDB\\_search\\_opengwas to find exact trait names."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:146 40d33cb1ed3e49b1b52b52caa78b0df1
+msgid ""
+"``pval_threshold`` (number) (optional) P-value threshold for instrument "
+"selection (default 1e-5)."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:164 d562be5dce4944fba3bd0a2e0de20cce
+msgid "**EpiGraphDB_map_gwas_to_efo** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:166 662470eb7aa74ec4a0546be62f3640c9
+msgid ""
+"Map GWAS trait names to EFO (Experimental Factor Ontology) terms for "
+"standardization. Returns EFO..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst 46bdadc8fc394cb29889943d68d84e14
+msgid "EpiGraphDB_map_gwas_to_efo tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:172 e69f37d1129e4001a7e72ef0896250f5
+msgid "**Name**: ``EpiGraphDB_map_gwas_to_efo``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:174 9b69ba12c846430fabac604e8caba801
+msgid ""
+"**Description**: Map GWAS trait names to EFO (Experimental Factor "
+"Ontology) terms for standardization. Returns EFO IDs and labels "
+"corresponding to a GWAS trait. Useful for cross-database trait "
+"harmonization. Example: 'Body mass index' maps to EFO:0004340."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:178 ef599cf7604a456092b5f706b239d086
+msgid ""
+"``trait`` (string) (required) GWAS trait name to map to EFO (e.g., 'Body "
+"mass index', 'coronary artery disease', 'type 2 diabetes')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:195 8f8f099f492748bda58952c29cd49d8a
+msgid "**EpiGraphDB_search_gene** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:197 af9c56f0895f43eea3efef8dd993306b
+msgid ""
+"Search for gene information in EpiGraphDB by gene symbol or Ensembl ID. "
+"Returns gene metadata inc..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst 8fe53e8fbd0a4160a76b8ea8509b4dc1
+msgid "EpiGraphDB_search_gene tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:203 4174df5349654cfb9a83e57fec27e07d
+msgid "**Name**: ``EpiGraphDB_search_gene``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:205 6dd8a70fdc484eef9dd6f65ec1fa1471
+msgid ""
+"**Description**: Search for gene information in EpiGraphDB by gene symbol"
+" or Ensembl ID. Returns gene metadata including druggability "
+"classification, chromosomal location, and gene type. Example: 'BRCA1' "
+"returns Tier 2 druggability, chr17 location."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:209 9b828776dcbb4b51a868c5d496d0c1f1
+msgid ""
+"``gene_name`` (string, null) (optional) Gene symbol to search for (e.g., "
+"'BRCA1', 'TP53', 'EGFR'). Either gene\\_name or gene\\_id required."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:212 bea7e38c3b4f48e08bf66b56e53959b6
+msgid ""
+"``gene_id`` (string, null) (optional) Ensembl gene ID (e.g., "
+"'ENSG00000012048'). Either gene\\_name or gene\\_id required."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:215 6cf3ccde0f2c471abd9fed43ba27245e
+msgid ""
+"``limit`` (integer) (optional) Maximum results to return (default 10, max"
+" 50)."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:231 721e5916e4774528a62993be892b70f2
+msgid "**EpiGraphDB_search_opengwas** (Type: EpiGraphDBTool)"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:233 f69137da9b244316b649bc2f4a22e779
+msgid ""
+"Search the IEU OpenGWAS database for GWAS studies by trait name. Returns "
+"matching GWAS study IDs ..."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst b9428313d9fc4873b5966da2fdad6d3a
+msgid "EpiGraphDB_search_opengwas tool specification"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:239 66ff261a9b21417195e849fdd26b8e6d
+msgid "**Name**: ``EpiGraphDB_search_opengwas``"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:241 d4c535947f314c93ace8bbfa9c7d7f6f
+msgid ""
+"**Description**: Search the IEU OpenGWAS database for GWAS studies by "
+"trait name. Returns matching GWAS study IDs and trait names with "
+"similarity scores. OpenGWAS IDs (e.g., 'ieu-a-2') are needed as inputs "
+"for Mendelian Randomization analyses. Example: 'body mass index' returns "
+"'ieu-a-2', 'ieu-b-40', etc."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:245 829d7f63f0d24a98b642e2ba38e3abda
+msgid ""
+"``query`` (string) (required) Trait or phenotype name to search for in "
+"OpenGWAS (e.g., 'body mass index', 'coronary heart disease', 'type 2 "
+"diabetes', 'blood pressure')."
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:262 a77a4b978e904cbca5b31af3870b2d8a
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:264 f07c7ae807254f17a6343e3cab5fcc67
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/epigraphdb_tools.rst:265 cf96cf5562934cbf9aef22eb2028da60
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

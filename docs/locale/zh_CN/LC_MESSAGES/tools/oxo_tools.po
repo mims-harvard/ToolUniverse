@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/oxo_tools.rst:10 8152c964f2d84df19ec91aab9e37296a
+msgid "Oxo Tools"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:12 33e19f9703594191a401d0bd6bdb5393
+msgid ""
+"**Configuration File**: ``oxo_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 2"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:16 b792c77c53274f558adb20fe3d292c7a
+msgid ""
+"This page contains all tools defined in the ``oxo_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:19 86eb486ce2e14645bf4277f0684b31e6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:22 30b8f755f09146b4ad37c4c91796f037
+msgid "**OxO_get_ontology_mappings** (Type: OxOTool)"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:24 2436e31c12ad4ba4b2aea0fc3719d351
+msgid ""
+"Get cross-reference mappings between ontology terms using the EBI "
+"Ontology Xref Service (OxO). Ma..."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst 1bc38bab8aa44365b5908b4351705c1c
+msgid "OxO_get_ontology_mappings tool specification"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:28 ../../tools/oxo_tools.rst:65
+#: 0f6a5867f7a94ba8a5e692037c70debb cd9f5bc267524448bc3a7a5d695fad69
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:30 952405b7ffa244adb7dbe6a1798eda3d
+msgid "**Name**: ``OxO_get_ontology_mappings``"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:31 ../../tools/oxo_tools.rst:68
+#: 49fc390e30d2484bab24b8706bbdf4af 540fe1ae7c5f4f75972b85b9d2692a99
+msgid "**Type**: ``OxOTool``"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:32 46de98c5bee245af850b2b17e211d29c
+msgid ""
+"**Description**: Get cross-reference mappings between ontology terms "
+"using the EBI Ontology Xref Service (OxO). Maps identifiers across "
+"biomedical ontologies including Disease Ontology (DOID), HPO, MeSH, "
+"SNOMED-CT, UMLS, OMIM, ICD-10, NCIt, and more. Supports configurable "
+"mapping distance (1=direct, 2=via intermediary, 3=two hops). Example: "
+"HP:0001250 (seizures) maps to 9 terms across MeSH (D012640, D004827), "
+"SNOMED-CT (128613002, 91175000), and UMLS (C0014544). Useful for "
+"translating between terminologies in clinical and biomedical data "
+"integration."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:34 ../../tools/oxo_tools.rst:71
+#: 08a3dcfb15984b2fb594637b0ea91cbc 1d612ba0fde742d78ee3fc747544d9c0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:36 25bfc6bd8f2c4a48a1160787109121c6
+msgid ""
+"``term_id`` (string) (required) Ontology term identifier to map. Format: "
+"PREFIX:ID. Examples: 'HP:0001250' (seizures), 'DOID:9352' (type 2 "
+"diabetes), 'GO:0006915' (apoptosis), 'CHEBI:15365' (aspirin), "
+"'OMIM:114480' (breast cancer)."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:39 85c9fe9dd5c849378b94d60a21d46966
+msgid ""
+"``distance`` (integer) (optional) Maximum mapping distance. 1=direct "
+"mappings only, 2=via one intermediary, 3=via two intermediaries. Higher "
+"distance finds more mappings but may be less precise. Default: 1."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:42 9d1bb27420484cfd9239b80f7e766811
+msgid ""
+"``size`` (integer) (optional) Maximum number of mappings to return "
+"(default 20, max 100)."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:45 ../../tools/oxo_tools.rst:82
+#: 69ad62a715ff4775a79a376cfff0af76 e5105fb564bc4dce9c862816bf332648
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:59 ccd43a7cd86a4beca9ffd434a4c5102c
+msgid "**OxO_search_ontology_mappings** (Type: OxOTool)"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:61 15f9dc4f874041b0b7667c1114807c13
+msgid ""
+"Search for cross-reference mappings for multiple ontology terms at once "
+"using the EBI OxO service..."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst 407a292a90e64b37a5bcd38f3602593b
+msgid "OxO_search_ontology_mappings tool specification"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:67 786867cfae8e43d4a5ce1bfd8de1bc6e
+msgid "**Name**: ``OxO_search_ontology_mappings``"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:69 54c6b9ada3d74b3caceaf57a8fde18b8
+msgid ""
+"**Description**: Search for cross-reference mappings for multiple "
+"ontology terms at once using the EBI OxO service. Supports batch queries "
+"to map multiple terms across biomedical ontologies. Can filter by target "
+"ontology prefix (e.g., only return MeSH mappings). Example: mapping "
+"HP:0001250 and HP:0001263 simultaneously returns MeSH, SNOMED-CT, and "
+"UMLS equivalents for both seizure-related phenotypes."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:73 106188de503e476ebe4cd431c34856bd
+msgid ""
+"``term_ids`` (string) (required) Comma-separated list of ontology term "
+"IDs to map. Examples: 'HP:0001250,HP:0001263' (seizures and delayed motor"
+" development), 'DOID:9352,DOID:162' (T2DM and cancer)."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:76 be3193162dad499fb792a5eb630b5865
+msgid ""
+"``distance`` (integer) (optional) Maximum mapping distance (1-3). "
+"Default: 1."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:79 7538d99879a648ca98b7a8cb162c621a
+msgid ""
+"``target_prefix`` (string) (optional) Filter mappings to a specific "
+"ontology prefix. Examples: 'MeSH' (Medical Subject Headings), 'SNOMEDCT' "
+"(clinical terms), 'UMLS' (unified medical language), 'ICD10' (diagnostic "
+"codes), 'OMIM' (genetic disorders)."
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:96 2ae7865d672641079cf99e0702059e66
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:98 b2a632c1e120494d97a809267643adaf
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/oxo_tools.rst:99 eec6daecdb4e466dba06e70e7448453e
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

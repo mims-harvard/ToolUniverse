@@ -7,824 +7,40 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-18 22:16-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../guide/building_ai_scientists/gemini_cli.rst:2
-#: fcb6745add404869b44d59381d72bc8c
+#: 2422a4b1f4d647b5996e7095c907e856
 msgid "Gemini CLI"
 msgstr "Gemini 命令行工具"
 
 #: ../../guide/building_ai_scientists/gemini_cli.rst:4
-#: 325370d55899489f906c3bdb73fd1219
-msgid "**Building AI Scientists with Gemini CLI and ToolUniverse**"
-msgstr "**使用 Gemini CLI 和 ToolUniverse 构建 AI 科学家**"
+#: a1e3cce607de48628b6bb2a5b8e164e2
+msgid "Install: ``npm install -g @google/gemini-cli``"
+msgstr ""
+
+#: ../../guide/building_ai_scientists/gemini_cli.rst:5
+#: 7890d12dc5244df086ecbce25c5c13b7
+msgid ""
+"`Official MCP setup guide <https://google-gemini.github.io/gemini-"
+"cli/docs/tools/mcp-server.html>`_"
+msgstr ""
 
 #: ../../guide/building_ai_scientists/gemini_cli.rst:7
-#: af529370914b4fd1805377152f41805f
-msgid "Overview"
-msgstr "概述"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:9
-#: b3a9cf23350e45e68a4fbc433b837889
-msgid ""
-"Gemini CLI Integration enables powerful command-line-based scientific "
-"research through the Model Context Protocol (MCP). This approach provides a "
-"terminal-based interface for scientific research while leveraging Gemini's "
-"advanced reasoning capabilities and ToolUniverse's comprehensive scientific "
-"tools ecosystem."
+#: 48dad63df83d40e4a0522b16eb4a7cca
+msgid "To set up ToolUniverse, open Gemini CLI and run:"
 msgstr ""
-"Gemini CLI 集成通过模型上下文协议（MCP）实现了强大的基于命令行的科学研究。该方法提供了一个基于终端的科学研究界面，同时利用了 Gemini"
-" 的先进推理能力和 ToolUniverse 的全面科学工具生态系统。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:29
-#: 2457316d4dac4748b97c7c39888fb5ed
-msgid "**Benefits of Gemini CLI Integration**:"
-msgstr "**Gemini CLI 集成的优势**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:31
-#: 6da40a8ba2ec46fba92926eda29ddab1
-msgid ""
-"**Command-Line Efficiency**: Fast, scriptable scientific research workflows"
-msgstr "**命令行效率**：快速且可脚本化的科学研究工作流程"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:32
-#: 1b6172684f184ff1b2744c4989d6d31c
-msgid ""
-"**Advanced Reasoning**: Gemini's sophisticated reasoning for complex "
-"scientific problems"
-msgstr "**高级推理**：Gemini 针对复杂科学问题的高级推理能力"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:33
-#: cc677d2c7c454e7ba311d9b5e5b14eef
-msgid ""
-"**Comprehensive Tools**: Access to 1000+ scientific tools across multiple "
-"domains"
-msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:34
-#: f329ceef294c4c60a5a6e49039c8019f
-msgid ""
-"**Automated Execution**: Direct tool execution through natural language "
-"commands"
-msgstr "**自动执行**：通过自然语言命令直接执行工具"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:35
-#: a437356736c9488ba3b9af6d2dd59fc9
-msgid "**Batch Processing**: Handle multiple research tasks efficiently"
-msgstr "**批量处理**：高效处理多个研究任务"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:38
-#: 96e7387077c3441287ea835b2f2e7fe6
-msgid "Prerequisites"
-msgstr "先决条件"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:40
-#: 1925d78d8ed948e7816a69eb4795093e
-msgid "Before setting up Gemini CLI integration, ensure you have:"
-msgstr "在设置 Gemini CLI 集成之前，请确保您已具备以下条件："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:42
-#: 9be7a204a162402e88d3fdb4f251e270
-msgid "**Gemini CLI**: Installed and running on your system"
-msgstr "**Gemini CLI**：已安装并在您的系统上运行"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:43
-#: 112d9d4ab93447d1a94a482763b66f94
-msgid "**ToolUniverse**: Installed"
-msgstr "**ToolUniverse**：已安装"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:44
-#: 96d10ddb6259445284fc76b9d4d4ec2c
-msgid "**UV Package Manager**: For running the MCP server"
-msgstr "**UV 包管理器**：用于运行 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:45
-#: ee7c6f9ae7e047fc91436a2cbe01ea82
-msgid "**System Requirements**: macOS, Windows, or Linux with Python 3.10+"
-msgstr "**系统要求**：macOS、Windows 或 Linux，需安装 Python 3.10 及以上版本"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:46
-#: a8a1f048ab1f422fb0f32de482a3cbc8
-msgid ""
-"**API Keys**: Valid API keys for external services (if required by specific "
-"tools)"
-msgstr "**API 密钥**：外部服务的有效 API 密钥（如果特定工具需要）"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:49
-#: 5bc03a20e5b54fa6bc6c124a79168ad9
-msgid "Installation and Setup"
-msgstr "安装与设置"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:52
-#: d31903601ab142e6b05fb4e08cfe8b11
-msgid "Step 1: Install Gemini CLI"
-msgstr "步骤 1：安装 Gemini CLI"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:54
-#: be5466606192463aaad4ac52a04c016e
-msgid "Install Gemini CLI following the official installation Tutorial:"
-msgstr "按照官方安装教程安装 Gemini CLI："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:61
-#: ../../guide/building_ai_scientists/gemini_cli.rst:76
-#: 9618f11c7bcb404fb8df1b9d2dc74652 afc7107b6e2b4146ab78c854681a75f9
-msgid "Verify installation:"
-msgstr "验证安装："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:68
-#: fc6adeb9d4404ef08a347ee4179908dc
-msgid "Step 2: Install ToolUniverse"
-msgstr "步骤 2：安装 ToolUniverse"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:70
-#: 1509ab28f6fc4509867568e131f67fbd
-msgid "Install ToolUniverse using pip:"
-msgstr "使用 pip 安装 ToolUniverse："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:83
-#: 8e0b88578daf476ab6d35ec069566bd5
-msgid "Step 3: Locate Gemini CLI Configuration"
-msgstr "步骤三：定位 Gemini CLI 配置"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:85
-#: 1ff5d719420c457fbc137679c62e26b8
-msgid ""
-"The Gemini CLI uses configuration files to manage MCP servers. You can "
-"configure them:"
-msgstr "Gemini CLI 使用配置文件来管理 MCP 服务器。您可以配置它们："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:87
-#: 8ca2600909914a3f942320b68ce3217d
-msgid "**Globally**: In the `~/.gemini/settings.json` file"
-msgstr "**全局**：在 `~/.gemini/settings.json` 文件中"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:88
-#: 512345df5af8454d87b9080f4f794ded
-msgid "**Per project**: In your project's `.gemini/settings.json` file"
-msgstr "**每个项目**：在您项目的 `.gemini/settings.json` 文件中"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:90
-#: 81ee34c424e54df89641d6df97dba2bc
-msgid "Create or open your `settings.json` file:"
-msgstr "创建或打开您的 `settings.json` 文件："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:103
-#: 9720081157124abcbf3da202e8f47cb8
-msgid "Step 4: Configure ToolUniverse MCP Server"
-msgstr "步骤4：配置ToolUniverse MCP服务器"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:105
-#: 3474b5783e9a444591c584df5a4642a4
-msgid "Add the ToolUniverse MCP server configuration to your `settings.json`:"
-msgstr "将 ToolUniverse MCP 服务器配置添加到您的 `settings.json` 中："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:107
-#: 1bd8071dff5341d7bf245c3430001b24
-msgid "**Basic Configuration:**"
-msgstr "**基本配置：**"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:125
-#: 67d6328f6a7349f5bb5a10257f8420eb
-msgid "**Optimized Configuration for Research Users (Recommended):**"
-msgstr "**针对研究用户的优化配置（推荐）：**"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:151
-#: 8b86200569414ceea2bee62728f95cdd
-msgid "**Configuration Benefits:**"
-msgstr "**配置优势：**"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:153
-#: 5477493cfc694d9db3f02bdd366be8ef
-msgid ""
-"``--exclude-tool-types PackageTool``: Removes package management tools to "
-"save context window space if you don't have coding needs"
-msgstr "``--exclude-tool-types PackageTool``：移除包管理工具，以节省上下文窗口空间（如果您没有编码需求）。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:154
-#: 778b6090fd074901ab14e9c3d4794a8d
-msgid ""
-"``--hook-type SummarizationHook``: Provides summary of the output that is "
-"too long to fit in the context window"
-msgstr "``--hook-type SummarizationHook``：提供输出内容的摘要，用于处理超出上下文窗口长度的内容"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:155
-#: a1f4304d02b944d58962a64dae39b3e9
-msgid ""
-"``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``: Required for "
-"SummarizationHook functionality"
-msgstr ""
-"``AZURE_OPENAI_API_KEY`` 和 ``AZURE_OPENAI_ENDPOINT``：SummarizationHook 功能所需"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:157
-#: 00157f2b23fa4fd5818375ad7695be64
-msgid "**Important Configuration Notes**:"
-msgstr "**重要配置注意事项**:"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:159
-#: fd26b6a8f7a34213ab90a1ca03c5d560
-msgid ""
-"Replace `/path/to/your/gemini_running_env` with your actual absolute path to"
-" your gemini running folder"
-msgstr "将 `/path/to/your/gemini_running_env` 替换为实际的 Gemini 运行文件夹的绝对路径。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:160
-#: d828d96f9f394eb9b813471ca20bff63
-msgid ""
-"The path should point to the directory where your Gemini CLI environment is "
-"set up"
-msgstr "路径应指向设置了 Gemini CLI 环境的目录"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:161
-#: 7f909edeebba46aead33857c58306f0d
-msgid "Use absolute paths for better reliability"
-msgstr "使用绝对路径以提高可靠性"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:163
-#: 22603aa5a64e432faff519369c6d4733
-msgid "**Example Configuration**:"
-msgstr "**示例配置**:"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:182
-#: 17beede93f444e1284240aae09edaf7b
-msgid "Step 5: Configure Context File (GEMINI.md)"
-msgstr "步骤 5：配置上下文文件（GEMINI.md）"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:184
-#: 1dca18376e49484283c217801bc5dc0b
-msgid ""
-"Create a context file to provide project-specific instructions for "
-"scientific research:"
-msgstr ""
-"创建一个上下文文件，以提供针对科学研究的项目特定说明：\n"
-"\n"
-"上下文：文档"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:186
-#: 2781f7b36bbb4147b44a705a8bd62497
-msgid "**Create GEMINI.md file** in your project root: .. code-block:: bash"
-msgstr "在项目根目录中**创建 GEMINI.md 文件**： .. code-block:: bash"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:189
-#: 435b9ff51c2242f79b72d9ea784bdbad
-msgid "vim GEMINI.md"
-msgstr ""
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:191
-#: f7d638ac6f99475ea10d860857a0451c
-msgid "**Add ToolUniverse-specific context**: .. code-block:: markdown"
-msgstr ""
-"**添加 ToolUniverse 特定上下文**： .. code-block:: markdown\n"
-"\n"
-"上下文：文档"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:194
-#: 3359f2419d2b46c0896f0bb58f386f64
-msgid "# ToolUniverse Scientific Research Project"
-msgstr ""
-"# ToolUniverse 科学研究项目\n"
-"\n"
-"Context: 文档"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:196
-#: 066a850bc7b548a1ad23002a6c37c03c
-msgid "## General Instructions"
-msgstr "## 一般说明"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:198
-#: 9a969b4df3414517a670298b7b115e4e
-msgid ""
-"Leverage ToolUniverse's scientific tools ecosystem for evidence-based "
-"research"
-msgstr "利用ToolUniverse的科学工具生态系统开展基于证据的研究"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:199
-#: 96810b1aed1d4f31a00e02276288759e
-msgid "Use tools from tooluniverse mcp server first"
-msgstr "首先使用 ToolUniverse MCP 服务器中的工具"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:200
-#: abd31e6d520c466684d0bfd2ed12efb8
-msgid "Cross-validate findings across multiple tools and databases"
-msgstr "在多个工具和数据库中交叉验证结果"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:201
-#: cb9016a1d4fa411eba9ec110426c1afd
-msgid "Use appropriate scientific terminology"
-msgstr "使用恰当的科学术语"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:203
-#: d5b4a4940f444f569b012ad0459ec855
-msgid "**Verify context loading**: .. code-block:: bash"
-msgstr "**验证上下文加载**：.. code-block:: bash"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:206
-#: 08ca084bd10b4849bf29ff62ac32006d
-msgid "/memory show"
-msgstr "/memory 显示"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:208
-#: f00cfe2808a8455bb7efa1908049265d
-msgid "This will display the loaded context files and their content."
-msgstr "这将显示已加载的上下文文件及其内容。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:211
-#: 534c5a1a324e42fda7ce763f9d3177b7
-msgid "Step 6: Start Gemini CLI"
-msgstr "第6步：启动 Gemini CLI"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:213
-#: cd95ea38f3a14401ae783c065fb2a3d8
-msgid "After saving the configuration:"
-msgstr "保存配置后："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:215
-#: f88db39c7c894ca7b8215f3cee83ba79
-msgid "**Start Gemini CLI**: .. code-block:: bash"
-msgstr "**启动 Gemini CLI**: .. code-block:: bash"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:218
-#: 3adbfc09d86f4b38b9745ea6345beeee
-msgid "gemini"
-msgstr "双子座"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:220
-#: 5c2b438a58e74fe9b995c44486770c1f
-msgid "**Verify MCP Server Connection**: .. code-block:: bash"
-msgstr "**验证 MCP 服务器连接**： .. code-block:: bash"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:223
-#: 64f90113c5c141e7bdc16c44e2c24215
-msgid "/mcp"
-msgstr ""
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:225
-#: 442abb116c134bbc84f5fbda4ce0b164
-msgid ""
-"This will display: - Server connection status (`CONNECTED` or "
-"`DISCONNECTED`) - Available ToolUniverse tools - Configuration details - Any"
-" connection errors"
-msgstr ""
-"这将显示：  \n"
-"- 服务器连接状态（`CONNECTED` 或 `DISCONNECTED`）  \n"
-"- 可用的 ToolUniverse 工具  \n"
-"- 配置详情  \n"
-"- 任何连接错误"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:232
-#: 7dda3452cc3a4a729ff2dc8b280dac81
-msgid "Step 7: Verify Integration"
-msgstr "第七步：验证集成"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:234
-#: 98e1c2089bb14f35b850a76a53254d5b
-msgid "Test the integration by asking Gemini to:"
-msgstr "通过向 Gemini 提出以下请求来测试集成："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:236
-#: aca71b95b58b4985bf2c1674c91dde1d
-#, fuzzy
-msgid "**List available tools**: .. code-block::"
-msgstr "**列出可用工具**：.. code-block:: text"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:241
-#: 8bffe22f16224b829ac61ad02cea518e
-#, fuzzy
-msgid "**Execute a simple tool**: .. code-block::"
-msgstr "**执行一个简单工具**： .. code-block:: text"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:246
-#: abf2d59dcabe4ac3a2ff4dec38909c9c
-#, fuzzy
-msgid "**Perform complex research**: .. code-block::"
-msgstr "**执行复杂研究**：.. code-block:: text"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:252
-#: d7a99e8dda9c4eb3aba15306a3474362
-msgid "Scientific Research Capabilities"
-msgstr "科研能力"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:255
-#: f347eeb5dce548ddb3bcf94f4b620e0e
-msgid "Drug Discovery and Development"
-msgstr "药物发现与开发"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:257
-#: 0be7482d304440e2bf28118f2fea45b1
-msgid ""
-"Gemini CLI with ToolUniverse enables comprehensive drug discovery workflows:"
-msgstr "Gemini CLI 结合 ToolUniverse 实现全面的药物发现工作流程："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:259
-#: 5d60bfa259a940ef8e32fb92651b45ee
-msgid ""
-"**Target Identification**: - Disease analysis and EFO ID lookup - Target "
-"discovery and validation - Literature-based target assessment"
-msgstr ""
-"**靶点识别**：  \n"
-"- 疾病分析及EFO ID查询  \n"
-"- 靶点发现与验证  \n"
-"- 基于文献的靶点评估"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:264
-#: 6e67eac0dbd1412f92f4b3aae5e6dab4
-msgid ""
-"**Drug Analysis**: - Drug information retrieval from multiple databases - "
-"Safety profile analysis - Drug interaction checking - Clinical trial data "
-"access"
-msgstr ""
-"**药物分析**：  \n"
-"- 从多个数据库检索药物信息  \n"
-"- 安全性分析  \n"
-"- 药物相互作用检查  \n"
-"- 临床试验数据访问"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:270
-#: ../../guide/building_ai_scientists/gemini_cli.rst:299
-#: ../../guide/building_ai_scientists/gemini_cli.rst:329
-#: ../../guide/building_ai_scientists/gemini_cli.rst:359
-#: 18ab9d1d8ee74fed92f46bb1a554e262 24a8f34cb42c4fa2bcbdc835895edefc
-#: 65da39a659a943cb87f064ea3f6bea09 b30e4816ac3f4d48a3fd764dde28b5ae
-msgid "**Example Workflow**:"
-msgstr "**示例工作流程**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:283
-#: b776fbba3bdf4f0fb6da54e7a592bf9f
-msgid "Genomics and Molecular Biology"
-msgstr "基因组学与分子生物学"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:285
-#: e3aed0ed22044e0baf8e2b4076416d7e
-msgid "Access comprehensive genomics tools for molecular research:"
-msgstr "访问全面的基因组学工具以支持分子研究："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:287
-#: 57b827e16a8c4fd3ae0bee31f0713869
-msgid ""
-"**Gene Analysis**: - Gene information from UniProt - Protein structure "
-"analysis - Expression pattern analysis - Pathway involvement"
-msgstr ""
-"**基因分析**：  \n"
-"- 来自UniProt的基因信息  \n"
-"- 蛋白质结构分析  \n"
-"- 表达模式分析  \n"
-"- 途径参与分析"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:293
-#: 9969a6bb1c4e469bb879409c0e577aa7
-msgid ""
-"**Molecular Interactions**: - Protein-protein interactions - Drug-target "
-"interactions - Pathway analysis - Functional annotation"
-msgstr ""
-"**分子相互作用**：  \n"
-"- 蛋白质-蛋白质相互作用  \n"
-"- 药物-靶点相互作用  \n"
-"- 通路分析  \n"
-"- 功能注释"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:313
-#: 897710e200a54d47a045434e4a08424d
-msgid "Literature Research and Analysis"
-msgstr "文献调研与分析"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:315
-#: bce9aff675c04cf58e12f732ab3abd6c
-msgid "Comprehensive literature search and analysis capabilities:"
-msgstr "全面的文献检索与分析能力："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:317
-#: 9f26a3f0c94f4b58873a258ce742cb98
-msgid ""
-"**Literature Search**: - PubMed searches - Semantic Scholar integration - "
-"Europe PMC access - Citation analysis"
-msgstr ""
-"**文献检索**：  \n"
-"- PubMed 检索  \n"
-"- Semantic Scholar 集成  \n"
-"- Europe PMC 访问  \n"
-"- 引文分析"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:323
-#: 1c78e113db594888b202fbef1306b221
-msgid ""
-"**Content Analysis**: - Abstract summarization - Key finding extraction - "
-"Trend analysis - Gap identification"
-msgstr ""
-"**内容分析**：  \n"
-"- 摘要总结  \n"
-"- 关键发现提取  \n"
-"- 趋势分析  \n"
-"- 差距识别"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:343
-#: 5d248f3320524edbb24a7c2216f9409c
-msgid "Clinical Research and Trials"
-msgstr "临床研究与试验"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:345
-#: 95b04ffc023048cda6b7b8e6530bced3
-msgid "Access clinical trial data and regulatory information:"
-msgstr "访问临床试验数据和监管信息："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:347
-#: e86ead0b05a24febb76ce6d80e77c704
-msgid ""
-"**Clinical Trials**: - ClinicalTrials.gov searches - Trial status and "
-"results - Patient population analysis - Outcome assessment"
-msgstr ""
-"**临床试验**：  \n"
-"- ClinicalTrials.gov 查询  \n"
-"- 试验状态及结果  \n"
-"- 患者群体分析  \n"
-"- 结果评估"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:353
-#: 0bad6379d3114c4187b311b7bbdfb21d
-msgid ""
-"**Regulatory Information**: - FDA drug approvals - Safety warnings - "
-"Labeling information - Adverse event reports"
-msgstr ""
-"**法规信息**：  \n"
-"- FDA 药品批准  \n"
-"- 安全警示  \n"
-"- 标签信息  \n"
-"- 不良事件报告"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:373
-#: b38a66e8e15a468e98816ea9a407a882
-msgid "Multi-Step Research Workflows"
-msgstr "多步骤研究工作流程"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:375
-#: 69c029853409405cb865647651ac618f
-msgid "Gemini CLI excels at complex, multi-step research workflows:"
-msgstr "Gemini CLI 在复杂的多步骤研究工作流程中表现出色："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:377
-#: 74a001092c514e49b24bb6fd82f480ca
-msgid ""
-"**Hypothesis-Driven Research**: 1. Formulate research hypothesis 2. Design "
-"experimental approach 3. Gather supporting evidence 4. Validate findings 5. "
-"Generate conclusions"
-msgstr "**假设驱动的研究**：1. 制定研究假设 2. 设计实验方案 3. 收集支持证据 4. 验证研究结果 5. 得出结论"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:384
-#: c9f2fde2dbba46c2a6aa3ba58341b715
-msgid ""
-"**Comparative Analysis**: 1. Identify comparison targets 2. Gather data for "
-"each target 3. Perform comparative analysis 4. Identify differences and "
-"similarities 5. Draw conclusions"
-msgstr "**比较分析**：1. 确定比较对象 2. 收集各对象的数据 3. 进行比较分析 4. 识别差异与相似点 5. 得出结论"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:391
-#: 5b10d838ed144ef3bdb5d848460b2e0e
-msgid "**Example Multi-Step Workflow**:"
-msgstr "**示例多步骤工作流程**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:408
-#: 04cdd3210fdc4cee871764afef9b55fa
-msgid "Iterative Research and Refinement"
-msgstr "迭代研究与优化"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:410
-#: 7472e8a92858472f8d2048304cf4e125
-msgid "Gemini can iteratively refine research based on intermediate results:"
-msgstr "Gemini 可以基于中间结果进行迭代式研究优化："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:412
-#: 90e4a913313e4e32ab6e206decaa30a2
-msgid ""
-"**Adaptive Research**: - Start with broad search - Refine based on initial "
-"results - Focus on promising directions - Validate findings with additional "
-"tools"
-msgstr ""
-"**自适应研究**：  \n"
-"- 从广泛搜索开始  \n"
-"- 根据初步结果进行优化  \n"
-"- 聚焦有前景的方向  \n"
-"- 使用额外工具验证结果"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:418
-#: 45f5e02f103c45a79e96f55fc0e1600c
-msgid "**Example Iterative Workflow**:"
-msgstr "**示例迭代工作流程**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:432
-#: a232446ceca547e497ef6163b9060d88
-msgid "Batch Processing and Automation"
-msgstr "批处理与自动化"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:434
-#: c128fa117f364d068364f801e29c0d80
-msgid "Gemini CLI enables batch processing of multiple research tasks:"
-msgstr "Gemini CLI 支持对多个研究任务进行批量处理："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:436
-#: 97b2175465214a0a8fb93c5e52116263
-msgid ""
-"**Automated Workflows**: - Process multiple queries simultaneously - "
-"Generate comprehensive reports - Export results in various formats - "
-"Schedule recurring research tasks"
-msgstr ""
-"**自动化工作流程**：  \n"
-"- 同时处理多个查询  \n"
-"- 生成综合报告  \n"
-"- 以多种格式导出结果  \n"
-"- 计划定期研究任务"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:442
-#: 251a0b6b3ef1494caebfa5d70a8f6e8d
-msgid "**Example Batch Processing**:"
-msgstr "**示例批处理**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:455
-#: efd7afbb6388459d9fd1f06585f40af1
-msgid "Settings and Configuration"
-msgstr "设置与配置"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:458
-#: df481c877acb47f8a1c05b6c6da55fda
-msgid "Tool Selection Strategies"
-msgstr "工具选择策略"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:460
-#: 60542971cf954ad7b5b5d82b2426f79f
-msgid "Optimize tool usage for better performance:"
-msgstr "优化工具使用以提升性能："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:462
-#: 3193f81a3b1e43d8bc9e1a8fb868d637
-msgid ""
-"**Selective Tool Loading**: - Load only relevant tools for specific research"
-" domains - Reduce context window usage - Improve response times"
-msgstr ""
-"**选择性工具加载**：  \n"
-"- 仅加载特定研究领域相关的工具  \n"
-"- 减少上下文窗口的使用  \n"
-"- 提升响应速度"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:467
-#: b4b0931aeca14876b4ee6391a8f08e55
-msgid "**Example Tool Selection**:"
-msgstr "**示例工具选择**："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:491
-#: fe1516672e9044a8a791046bb52fe012
-msgid "**Custom Tool Sets**"
-msgstr "**自定义工具集**"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:493
-#: 2ca1b4fd365d4e22b3fd7310224b27ea
-msgid "Create custom tool sets for specific research domains:"
-msgstr "为特定研究领域创建自定义工具集："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:531
-#: 790657f135f3427c8575a137dd923fa8
-msgid "Multiple MCP Servers"
-msgstr "多个 MCP 服务器"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:533
-#: 4669358ca1e247b583ae7f55d5d8e1cb
-msgid "Run multiple ToolUniverse instances for different purposes:"
-msgstr "运行多个 ToolUniverse 实例以满足不同需求："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:563
-#: c505cfbba11840748157aec245329695
-msgid "Troubleshooting"
-msgstr "故障排除"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:566
-#: 2c6da0ce65f54381aad068cf56a99872
-msgid "Common Issues and Solutions"
-msgstr "常见问题及解决方案"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:568
-#: 666de4e2296f45d5916b1a0c3c1e52c1
-msgid ""
-"**MCP Server Not Loading**: - Verify ToolUniverse installation path - Check "
-"UV package manager installation - Ensure proper JSON syntax in configuration"
-" - Check Gemini CLI logs for errors"
-msgstr ""
-"**MCP 服务器未加载**：  \n"
-"- 验证 ToolUniverse 安装路径  \n"
-"- 检查 UV 包管理器安装情况  \n"
-"- 确保配置中的 JSON 语法正确  \n"
-"- 检查 Gemini CLI 日志中的错误信息"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:574
-#: a0ccf7b305f344709d89c807539f88a3
-msgid ""
-"**No Tools Discovered**: - Verify the ToolUniverse MCP server is working - "
-"Check if your `includeTools` or `excludeTools` filter is too restrictive - "
-"Ensure all ToolUniverse dependencies are installed - Review your "
-"ToolUniverse installation and configuration"
-msgstr ""
-"**未发现工具**：  \n"
-"- 验证 ToolUniverse MCP 服务器是否正常运行  \n"
-"- 检查您的 `includeTools` 或 `excludeTools` 过滤器是否过于严格  \n"
-"- 确保已安装所有 ToolUniverse 依赖项  \n"
-"- 审查您的 ToolUniverse 安装及配置情况"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:580
-#: 279b2c3353d8420d865fb31003f4889c
-msgid ""
-"**Tools Not Executing**: - Check your `env` configuration for API keys - "
-"Verify network connectivity to the required scientific APIs - Increase the "
-"`timeout` value in your configuration - Review parameter validation errors "
-"in the CLI output"
-msgstr ""
-"**工具未执行**：  \n"
-"- 检查您的 `env` 配置中的 API 密钥  \n"
-"- 验证与所需科学 API 的网络连接  \n"
-"- 增加配置中的 `timeout` 值  \n"
-"- 查看命令行输出中的参数校验错误"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:586
-#: 5aca0b3c957e4d26bc118c3e9e2a5a28
-msgid ""
-"**Performance Issues**: - Increase the `timeout` value in the configuration "
-"- Use `includeTools` to load only the necessary tools - Check network "
-"connectivity and latency to external APIs - Be mindful of potential rate "
-"limits for external services"
-msgstr ""
-"**性能问题**：  \n"
-"- 在配置中增加 `timeout` 值  \n"
-"- 使用 `includeTools` 仅加载必要的工具  \n"
-"- 检查与外部 API 的网络连接和延迟  \n"
-"- 注意外部服务的可能速率限制"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:593
-#: c3e6436b1ca64c238e763589a15ccc06
-msgid "Debug Mode"
-msgstr "调试模式"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:595
-#: 49fcc113e0884e3fa882e8961e91a97e
-msgid "Run the Gemini CLI with the `--debug` flag for detailed information:"
-msgstr "使用 `--debug` 标志运行 Gemini CLI 以获取详细信息："
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:601
-#: 95f455a0ef1a465d9b8341f0086b967b
-msgid ""
-"This provides verbose output about: - MCP server connection attempts - The "
-"tool discovery process - Tool execution details and errors"
-msgstr ""
-"这将详细输出以下内容：  \n"
-"- MCP 服务器连接尝试  \n"
-"- 工具发现过程  \n"
-"- 工具执行的详细信息及错误情况"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:608
-#: 123e2512b50f448ba9d18ad747fcffe4
-msgid "Tips"
-msgstr "提示"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:610
-#: 3b2763199e0a453c96a51e538b7541b9
-msgid ""
-"**Tool Selection**: Use `includeTools` to load only the tools you need for a"
-" specific task."
-msgstr "**工具选择**：使用 `includeTools` 仅加载特定任务所需的工具。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:612
-#: 4ad0aece5f824709b499aa48c182bb8e
-msgid ""
-"**Status Check**: Use `/mcp` to monitor server status and available tools."
-msgstr "**状态检查**：使用 `/mcp` 监控服务器状态及可用工具。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:614
-#: cddc58d8717648f4aa543d15e585c167
-msgid ""
-"**Debug Mode**: Use the `--debug` flag for verbose troubleshooting "
-"information."
-msgstr "**调试模式**：使用 `--debug` 标志以获取详细的故障排除信息。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:617
-#: fa1fe3b5457745039f324d2394c73484
-msgid ""
-"**Start with simple queries**: Begin with basic tool discovery and simple "
-"research questions to understand the integration, then progress to complex "
-"multi-step workflows as you become more familiar with the capabilities."
-msgstr ""
-"**从简单查询开始**：先从基础工具的探索和简单的研究问题入手，以了解集成方式，然后随着对功能的熟悉程度提高，逐步过渡到复杂的多步骤工作流程。"
-
-#: ../../guide/building_ai_scientists/gemini_cli.rst:620
-#: 7b4f0012ea87483ba1b4a64114ccc247
-msgid ""
-"**Command-Line Efficiency**: Gemini CLI provides a powerful command-line "
-"interface for scientific research, enabling both interactive exploration and"
-" automated batch processing of research tasks."
-msgstr "**命令行效率**：Gemini CLI 提供了一个功能强大的命令行界面，用于科学研究，既支持交互式探索，也支持研究任务的自动批处理。"
 
 #~ msgid "What scientific tools are available?"
 #~ msgstr "有哪些可用的科学工具？"
@@ -834,3 +50,615 @@ msgstr "**命令行效率**：Gemini CLI 提供了一个功能强大的命令行
 
 #~ msgid "Find recent papers about CRISPR gene editing in cancer therapy"
 #~ msgstr "查找关于癌症治疗中CRISPR基因编辑的最新论文"
+
+#~ msgid "**Building AI Scientists with Gemini CLI and ToolUniverse**"
+#~ msgstr "**使用 Gemini CLI 和 ToolUniverse 构建 AI 科学家**"
+
+#~ msgid "Overview"
+#~ msgstr "概述"
+
+#~ msgid ""
+#~ "Gemini CLI Integration enables powerful "
+#~ "command-line-based scientific research "
+#~ "through the Model Context Protocol "
+#~ "(MCP). This approach provides a "
+#~ "terminal-based interface for scientific "
+#~ "research while leveraging Gemini's advanced"
+#~ " reasoning capabilities and ToolUniverse's "
+#~ "comprehensive scientific tools ecosystem."
+#~ msgstr ""
+#~ "Gemini CLI "
+#~ "集成通过模型上下文协议（MCP）实现了强大的基于命令行的科学研究。该方法提供了一个基于终端的科学研究界面，同时利用了 "
+#~ "Gemini 的先进推理能力和 ToolUniverse 的全面科学工具生态系统。"
+
+#~ msgid "**Benefits of Gemini CLI Integration**:"
+#~ msgstr "**Gemini CLI 集成的优势**："
+
+#~ msgid ""
+#~ "**Command-Line Efficiency**: Fast, scriptable"
+#~ " scientific research workflows"
+#~ msgstr "**命令行效率**：快速且可脚本化的科学研究工作流程"
+
+#~ msgid ""
+#~ "**Advanced Reasoning**: Gemini's sophisticated "
+#~ "reasoning for complex scientific problems"
+#~ msgstr "**高级推理**：Gemini 针对复杂科学问题的高级推理能力"
+
+#~ msgid ""
+#~ "**Comprehensive Tools**: Access to 1000+ "
+#~ "scientific tools across multiple domains"
+#~ msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
+
+#~ msgid ""
+#~ "**Automated Execution**: Direct tool execution"
+#~ " through natural language commands"
+#~ msgstr "**自动执行**：通过自然语言命令直接执行工具"
+
+#~ msgid "**Batch Processing**: Handle multiple research tasks efficiently"
+#~ msgstr "**批量处理**：高效处理多个研究任务"
+
+#~ msgid "Prerequisites"
+#~ msgstr "先决条件"
+
+#~ msgid "Before setting up Gemini CLI integration, ensure you have:"
+#~ msgstr "在设置 Gemini CLI 集成之前，请确保您已具备以下条件："
+
+#~ msgid "**Gemini CLI**: Installed and running on your system"
+#~ msgstr "**Gemini CLI**：已安装并在您的系统上运行"
+
+#~ msgid "**ToolUniverse**: Installed"
+#~ msgstr "**ToolUniverse**：已安装"
+
+#~ msgid "**UV Package Manager**: For running the MCP server"
+#~ msgstr "**UV 包管理器**：用于运行 MCP 服务器"
+
+#~ msgid "**System Requirements**: macOS, Windows, or Linux with Python 3.10+"
+#~ msgstr "**系统要求**：macOS、Windows 或 Linux，需安装 Python 3.10 及以上版本"
+
+#~ msgid ""
+#~ "**API Keys**: Valid API keys for "
+#~ "external services (if required by "
+#~ "specific tools)"
+#~ msgstr "**API 密钥**：外部服务的有效 API 密钥（如果特定工具需要）"
+
+#~ msgid "Installation and Setup"
+#~ msgstr "安装与设置"
+
+#~ msgid "Step 1: Install Gemini CLI"
+#~ msgstr "步骤 1：安装 Gemini CLI"
+
+#~ msgid "Install Gemini CLI following the official installation Tutorial:"
+#~ msgstr "按照官方安装教程安装 Gemini CLI："
+
+#~ msgid "Verify installation:"
+#~ msgstr "验证安装："
+
+#~ msgid "Step 2: Install ToolUniverse"
+#~ msgstr "步骤 2：安装 ToolUniverse"
+
+#~ msgid "Install ToolUniverse using pip:"
+#~ msgstr "使用 pip 安装 ToolUniverse："
+
+#~ msgid "Step 3: Locate Gemini CLI Configuration"
+#~ msgstr "步骤三：定位 Gemini CLI 配置"
+
+#~ msgid ""
+#~ "The Gemini CLI uses configuration files"
+#~ " to manage MCP servers. You can "
+#~ "configure them:"
+#~ msgstr "Gemini CLI 使用配置文件来管理 MCP 服务器。您可以配置它们："
+
+#~ msgid "**Globally**: In the `~/.gemini/settings.json` file"
+#~ msgstr "**全局**：在 `~/.gemini/settings.json` 文件中"
+
+#~ msgid "**Per project**: In your project's `.gemini/settings.json` file"
+#~ msgstr "**每个项目**：在您项目的 `.gemini/settings.json` 文件中"
+
+#~ msgid "Create or open your `settings.json` file:"
+#~ msgstr "创建或打开您的 `settings.json` 文件："
+
+#~ msgid "Step 4: Configure ToolUniverse MCP Server"
+#~ msgstr "步骤4：配置ToolUniverse MCP服务器"
+
+#~ msgid "Add the ToolUniverse MCP server configuration to your `settings.json`:"
+#~ msgstr "将 ToolUniverse MCP 服务器配置添加到您的 `settings.json` 中："
+
+#~ msgid "**Basic Configuration:**"
+#~ msgstr "**基本配置：**"
+
+#~ msgid "**Optimized Configuration for Research Users (Recommended):**"
+#~ msgstr "**针对研究用户的优化配置（推荐）：**"
+
+#~ msgid "**Configuration Benefits:**"
+#~ msgstr "**配置优势：**"
+
+#~ msgid ""
+#~ "``--exclude-tool-types PackageTool``: Removes"
+#~ " package management tools to save "
+#~ "context window space if you don't "
+#~ "have coding needs"
+#~ msgstr "``--exclude-tool-types PackageTool``：移除包管理工具，以节省上下文窗口空间（如果您没有编码需求）。"
+
+#~ msgid ""
+#~ "``--hook-type SummarizationHook``: Provides "
+#~ "summary of the output that is too"
+#~ " long to fit in the context "
+#~ "window"
+#~ msgstr "``--hook-type SummarizationHook``：提供输出内容的摘要，用于处理超出上下文窗口长度的内容"
+
+#~ msgid ""
+#~ "``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``:"
+#~ " Required for SummarizationHook functionality"
+#~ msgstr ""
+#~ "``AZURE_OPENAI_API_KEY`` 和 "
+#~ "``AZURE_OPENAI_ENDPOINT``：SummarizationHook 功能所需"
+
+#~ msgid "**Important Configuration Notes**:"
+#~ msgstr "**重要配置注意事项**:"
+
+#~ msgid ""
+#~ "Replace `/path/to/your/gemini_running_env` with your"
+#~ " actual absolute path to your gemini"
+#~ " running folder"
+#~ msgstr "将 `/path/to/your/gemini_running_env` 替换为实际的 Gemini 运行文件夹的绝对路径。"
+
+#~ msgid ""
+#~ "The path should point to the "
+#~ "directory where your Gemini CLI "
+#~ "environment is set up"
+#~ msgstr "路径应指向设置了 Gemini CLI 环境的目录"
+
+#~ msgid "Use absolute paths for better reliability"
+#~ msgstr "使用绝对路径以提高可靠性"
+
+#~ msgid "**Example Configuration**:"
+#~ msgstr "**示例配置**:"
+
+#~ msgid "Step 5: Configure Context File (GEMINI.md)"
+#~ msgstr "步骤 5：配置上下文文件（GEMINI.md）"
+
+#~ msgid ""
+#~ "Create a context file to provide "
+#~ "project-specific instructions for scientific "
+#~ "research:"
+#~ msgstr ""
+#~ "创建一个上下文文件，以提供针对科学研究的项目特定说明：\n"
+#~ "\n"
+#~ "上下文：文档"
+
+#~ msgid "**Create GEMINI.md file** in your project root: .. code-block:: bash"
+#~ msgstr "在项目根目录中**创建 GEMINI.md 文件**： .. code-block:: bash"
+
+#~ msgid "vim GEMINI.md"
+#~ msgstr ""
+
+#~ msgid "**Add ToolUniverse-specific context**: .. code-block:: markdown"
+#~ msgstr ""
+#~ "**添加 ToolUniverse 特定上下文**： .. code-block:: markdown\n"
+#~ "\n"
+#~ "上下文：文档"
+
+#~ msgid "# ToolUniverse Scientific Research Project"
+#~ msgstr ""
+#~ "# ToolUniverse 科学研究项目\n"
+#~ "\n"
+#~ "Context: 文档"
+
+#~ msgid "## General Instructions"
+#~ msgstr "## 一般说明"
+
+#~ msgid ""
+#~ "Leverage ToolUniverse's scientific tools "
+#~ "ecosystem for evidence-based research"
+#~ msgstr "利用ToolUniverse的科学工具生态系统开展基于证据的研究"
+
+#~ msgid "Use tools from tooluniverse mcp server first"
+#~ msgstr "首先使用 ToolUniverse MCP 服务器中的工具"
+
+#~ msgid "Cross-validate findings across multiple tools and databases"
+#~ msgstr "在多个工具和数据库中交叉验证结果"
+
+#~ msgid "Use appropriate scientific terminology"
+#~ msgstr "使用恰当的科学术语"
+
+#~ msgid "**Verify context loading**: .. code-block:: bash"
+#~ msgstr "**验证上下文加载**：.. code-block:: bash"
+
+#~ msgid "/memory show"
+#~ msgstr "/memory 显示"
+
+#~ msgid "This will display the loaded context files and their content."
+#~ msgstr "这将显示已加载的上下文文件及其内容。"
+
+#~ msgid "Step 6: Start Gemini CLI"
+#~ msgstr "第6步：启动 Gemini CLI"
+
+#~ msgid "After saving the configuration:"
+#~ msgstr "保存配置后："
+
+#~ msgid "**Start Gemini CLI**: .. code-block:: bash"
+#~ msgstr "**启动 Gemini CLI**: .. code-block:: bash"
+
+#~ msgid "gemini"
+#~ msgstr "双子座"
+
+#~ msgid "**Verify MCP Server Connection**: .. code-block:: bash"
+#~ msgstr "**验证 MCP 服务器连接**： .. code-block:: bash"
+
+#~ msgid "/mcp"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This will display: - Server connection"
+#~ " status (`CONNECTED` or `DISCONNECTED`) -"
+#~ " Available ToolUniverse tools - "
+#~ "Configuration details - Any connection "
+#~ "errors"
+#~ msgstr ""
+#~ "这将显示：  \n"
+#~ "- 服务器连接状态（`CONNECTED` 或 `DISCONNECTED`）  \n"
+#~ "- 可用的 ToolUniverse 工具  \n"
+#~ "- 配置详情  \n"
+#~ "- 任何连接错误"
+
+#~ msgid "Step 7: Verify Integration"
+#~ msgstr "第七步：验证集成"
+
+#~ msgid "Test the integration by asking Gemini to:"
+#~ msgstr "通过向 Gemini 提出以下请求来测试集成："
+
+#~ msgid "**List available tools**: .. code-block::"
+#~ msgstr "**列出可用工具**：.. code-block:: text"
+
+#~ msgid "**Execute a simple tool**: .. code-block::"
+#~ msgstr "**执行一个简单工具**： .. code-block:: text"
+
+#~ msgid "**Perform complex research**: .. code-block::"
+#~ msgstr "**执行复杂研究**：.. code-block:: text"
+
+#~ msgid "Scientific Research Capabilities"
+#~ msgstr "科研能力"
+
+#~ msgid "Drug Discovery and Development"
+#~ msgstr "药物发现与开发"
+
+#~ msgid ""
+#~ "Gemini CLI with ToolUniverse enables "
+#~ "comprehensive drug discovery workflows:"
+#~ msgstr "Gemini CLI 结合 ToolUniverse 实现全面的药物发现工作流程："
+
+#~ msgid ""
+#~ "**Target Identification**: - Disease analysis"
+#~ " and EFO ID lookup - Target "
+#~ "discovery and validation - Literature-"
+#~ "based target assessment"
+#~ msgstr ""
+#~ "**靶点识别**：  \n"
+#~ "- 疾病分析及EFO ID查询  \n"
+#~ "- 靶点发现与验证  \n"
+#~ "- 基于文献的靶点评估"
+
+#~ msgid ""
+#~ "**Drug Analysis**: - Drug information "
+#~ "retrieval from multiple databases - "
+#~ "Safety profile analysis - Drug "
+#~ "interaction checking - Clinical trial "
+#~ "data access"
+#~ msgstr ""
+#~ "**药物分析**：  \n"
+#~ "- 从多个数据库检索药物信息  \n"
+#~ "- 安全性分析  \n"
+#~ "- 药物相互作用检查  \n"
+#~ "- 临床试验数据访问"
+
+#~ msgid "**Example Workflow**:"
+#~ msgstr "**示例工作流程**："
+
+#~ msgid "Genomics and Molecular Biology"
+#~ msgstr "基因组学与分子生物学"
+
+#~ msgid "Access comprehensive genomics tools for molecular research:"
+#~ msgstr "访问全面的基因组学工具以支持分子研究："
+
+#~ msgid ""
+#~ "**Gene Analysis**: - Gene information "
+#~ "from UniProt - Protein structure "
+#~ "analysis - Expression pattern analysis -"
+#~ " Pathway involvement"
+#~ msgstr ""
+#~ "**基因分析**：  \n"
+#~ "- 来自UniProt的基因信息  \n"
+#~ "- 蛋白质结构分析  \n"
+#~ "- 表达模式分析  \n"
+#~ "- 途径参与分析"
+
+#~ msgid ""
+#~ "**Molecular Interactions**: - Protein-protein"
+#~ " interactions - Drug-target interactions"
+#~ " - Pathway analysis - Functional "
+#~ "annotation"
+#~ msgstr ""
+#~ "**分子相互作用**：  \n"
+#~ "- 蛋白质-蛋白质相互作用  \n"
+#~ "- 药物-靶点相互作用  \n"
+#~ "- 通路分析  \n"
+#~ "- 功能注释"
+
+#~ msgid "Literature Research and Analysis"
+#~ msgstr "文献调研与分析"
+
+#~ msgid "Comprehensive literature search and analysis capabilities:"
+#~ msgstr "全面的文献检索与分析能力："
+
+#~ msgid ""
+#~ "**Literature Search**: - PubMed searches "
+#~ "- Semantic Scholar integration - Europe"
+#~ " PMC access - Citation analysis"
+#~ msgstr ""
+#~ "**文献检索**：  \n"
+#~ "- PubMed 检索  \n"
+#~ "- Semantic Scholar 集成  \n"
+#~ "- Europe PMC 访问  \n"
+#~ "- 引文分析"
+
+#~ msgid ""
+#~ "**Content Analysis**: - Abstract summarization"
+#~ " - Key finding extraction - Trend "
+#~ "analysis - Gap identification"
+#~ msgstr ""
+#~ "**内容分析**：  \n"
+#~ "- 摘要总结  \n"
+#~ "- 关键发现提取  \n"
+#~ "- 趋势分析  \n"
+#~ "- 差距识别"
+
+#~ msgid "Clinical Research and Trials"
+#~ msgstr "临床研究与试验"
+
+#~ msgid "Access clinical trial data and regulatory information:"
+#~ msgstr "访问临床试验数据和监管信息："
+
+#~ msgid ""
+#~ "**Clinical Trials**: - ClinicalTrials.gov "
+#~ "searches - Trial status and results "
+#~ "- Patient population analysis - Outcome"
+#~ " assessment"
+#~ msgstr ""
+#~ "**临床试验**：  \n"
+#~ "- ClinicalTrials.gov 查询  \n"
+#~ "- 试验状态及结果  \n"
+#~ "- 患者群体分析  \n"
+#~ "- 结果评估"
+
+#~ msgid ""
+#~ "**Regulatory Information**: - FDA drug "
+#~ "approvals - Safety warnings - Labeling"
+#~ " information - Adverse event reports"
+#~ msgstr ""
+#~ "**法规信息**：  \n"
+#~ "- FDA 药品批准  \n"
+#~ "- 安全警示  \n"
+#~ "- 标签信息  \n"
+#~ "- 不良事件报告"
+
+#~ msgid "Multi-Step Research Workflows"
+#~ msgstr "多步骤研究工作流程"
+
+#~ msgid "Gemini CLI excels at complex, multi-step research workflows:"
+#~ msgstr "Gemini CLI 在复杂的多步骤研究工作流程中表现出色："
+
+#~ msgid ""
+#~ "**Hypothesis-Driven Research**: 1. Formulate"
+#~ " research hypothesis 2. Design experimental"
+#~ " approach 3. Gather supporting evidence "
+#~ "4. Validate findings 5. Generate "
+#~ "conclusions"
+#~ msgstr "**假设驱动的研究**：1. 制定研究假设 2. 设计实验方案 3. 收集支持证据 4. 验证研究结果 5. 得出结论"
+
+#~ msgid ""
+#~ "**Comparative Analysis**: 1. Identify "
+#~ "comparison targets 2. Gather data for"
+#~ " each target 3. Perform comparative "
+#~ "analysis 4. Identify differences and "
+#~ "similarities 5. Draw conclusions"
+#~ msgstr "**比较分析**：1. 确定比较对象 2. 收集各对象的数据 3. 进行比较分析 4. 识别差异与相似点 5. 得出结论"
+
+#~ msgid "**Example Multi-Step Workflow**:"
+#~ msgstr "**示例多步骤工作流程**："
+
+#~ msgid "Iterative Research and Refinement"
+#~ msgstr "迭代研究与优化"
+
+#~ msgid "Gemini can iteratively refine research based on intermediate results:"
+#~ msgstr "Gemini 可以基于中间结果进行迭代式研究优化："
+
+#~ msgid ""
+#~ "**Adaptive Research**: - Start with "
+#~ "broad search - Refine based on "
+#~ "initial results - Focus on promising "
+#~ "directions - Validate findings with "
+#~ "additional tools"
+#~ msgstr ""
+#~ "**自适应研究**：  \n"
+#~ "- 从广泛搜索开始  \n"
+#~ "- 根据初步结果进行优化  \n"
+#~ "- 聚焦有前景的方向  \n"
+#~ "- 使用额外工具验证结果"
+
+#~ msgid "**Example Iterative Workflow**:"
+#~ msgstr "**示例迭代工作流程**："
+
+#~ msgid "Batch Processing and Automation"
+#~ msgstr "批处理与自动化"
+
+#~ msgid "Gemini CLI enables batch processing of multiple research tasks:"
+#~ msgstr "Gemini CLI 支持对多个研究任务进行批量处理："
+
+#~ msgid ""
+#~ "**Automated Workflows**: - Process multiple"
+#~ " queries simultaneously - Generate "
+#~ "comprehensive reports - Export results "
+#~ "in various formats - Schedule recurring"
+#~ " research tasks"
+#~ msgstr ""
+#~ "**自动化工作流程**：  \n"
+#~ "- 同时处理多个查询  \n"
+#~ "- 生成综合报告  \n"
+#~ "- 以多种格式导出结果  \n"
+#~ "- 计划定期研究任务"
+
+#~ msgid "**Example Batch Processing**:"
+#~ msgstr "**示例批处理**："
+
+#~ msgid "Settings and Configuration"
+#~ msgstr "设置与配置"
+
+#~ msgid "Tool Selection Strategies"
+#~ msgstr "工具选择策略"
+
+#~ msgid "Optimize tool usage for better performance:"
+#~ msgstr "优化工具使用以提升性能："
+
+#~ msgid ""
+#~ "**Selective Tool Loading**: - Load only"
+#~ " relevant tools for specific research "
+#~ "domains - Reduce context window usage"
+#~ " - Improve response times"
+#~ msgstr ""
+#~ "**选择性工具加载**：  \n"
+#~ "- 仅加载特定研究领域相关的工具  \n"
+#~ "- 减少上下文窗口的使用  \n"
+#~ "- 提升响应速度"
+
+#~ msgid "**Example Tool Selection**:"
+#~ msgstr "**示例工具选择**："
+
+#~ msgid "**Custom Tool Sets**"
+#~ msgstr "**自定义工具集**"
+
+#~ msgid "Create custom tool sets for specific research domains:"
+#~ msgstr "为特定研究领域创建自定义工具集："
+
+#~ msgid "Multiple MCP Servers"
+#~ msgstr "多个 MCP 服务器"
+
+#~ msgid "Run multiple ToolUniverse instances for different purposes:"
+#~ msgstr "运行多个 ToolUniverse 实例以满足不同需求："
+
+#~ msgid "Troubleshooting"
+#~ msgstr "故障排除"
+
+#~ msgid "Common Issues and Solutions"
+#~ msgstr "常见问题及解决方案"
+
+#~ msgid ""
+#~ "**MCP Server Not Loading**: - Verify "
+#~ "ToolUniverse installation path - Check "
+#~ "UV package manager installation - Ensure"
+#~ " proper JSON syntax in configuration "
+#~ "- Check Gemini CLI logs for errors"
+#~ msgstr ""
+#~ "**MCP 服务器未加载**：  \n"
+#~ "- 验证 ToolUniverse 安装路径  \n"
+#~ "- 检查 UV 包管理器安装情况  \n"
+#~ "- 确保配置中的 JSON 语法正确  \n"
+#~ "- 检查 Gemini CLI 日志中的错误信息"
+
+#~ msgid ""
+#~ "**No Tools Discovered**: - Verify the"
+#~ " ToolUniverse MCP server is working -"
+#~ " Check if your `includeTools` or "
+#~ "`excludeTools` filter is too restrictive "
+#~ "- Ensure all ToolUniverse dependencies "
+#~ "are installed - Review your ToolUniverse"
+#~ " installation and configuration"
+#~ msgstr ""
+#~ "**未发现工具**：  \n"
+#~ "- 验证 ToolUniverse MCP 服务器是否正常运行  \n"
+#~ "- 检查您的 `includeTools` 或 `excludeTools` 过滤器是否过于严格  \n"
+#~ "- 确保已安装所有 ToolUniverse 依赖项  \n"
+#~ "- 审查您的 ToolUniverse 安装及配置情况"
+
+#~ msgid ""
+#~ "**Tools Not Executing**: - Check your"
+#~ " `env` configuration for API keys -"
+#~ " Verify network connectivity to the "
+#~ "required scientific APIs - Increase the"
+#~ " `timeout` value in your configuration "
+#~ "- Review parameter validation errors in"
+#~ " the CLI output"
+#~ msgstr ""
+#~ "**工具未执行**：  \n"
+#~ "- 检查您的 `env` 配置中的 API 密钥  \n"
+#~ "- 验证与所需科学 API 的网络连接  \n"
+#~ "- 增加配置中的 `timeout` 值  \n"
+#~ "- 查看命令行输出中的参数校验错误"
+
+#~ msgid ""
+#~ "**Performance Issues**: - Increase the "
+#~ "`timeout` value in the configuration -"
+#~ " Use `includeTools` to load only the"
+#~ " necessary tools - Check network "
+#~ "connectivity and latency to external "
+#~ "APIs - Be mindful of potential "
+#~ "rate limits for external services"
+#~ msgstr ""
+#~ "**性能问题**：  \n"
+#~ "- 在配置中增加 `timeout` 值  \n"
+#~ "- 使用 `includeTools` 仅加载必要的工具  \n"
+#~ "- 检查与外部 API 的网络连接和延迟  \n"
+#~ "- 注意外部服务的可能速率限制"
+
+#~ msgid "Debug Mode"
+#~ msgstr "调试模式"
+
+#~ msgid "Run the Gemini CLI with the `--debug` flag for detailed information:"
+#~ msgstr "使用 `--debug` 标志运行 Gemini CLI 以获取详细信息："
+
+#~ msgid ""
+#~ "This provides verbose output about: -"
+#~ " MCP server connection attempts - The"
+#~ " tool discovery process - Tool "
+#~ "execution details and errors"
+#~ msgstr ""
+#~ "这将详细输出以下内容：  \n"
+#~ "- MCP 服务器连接尝试  \n"
+#~ "- 工具发现过程  \n"
+#~ "- 工具执行的详细信息及错误情况"
+
+#~ msgid "Tips"
+#~ msgstr "提示"
+
+#~ msgid ""
+#~ "**Tool Selection**: Use `includeTools` to "
+#~ "load only the tools you need for"
+#~ " a specific task."
+#~ msgstr "**工具选择**：使用 `includeTools` 仅加载特定任务所需的工具。"
+
+#~ msgid ""
+#~ "**Status Check**: Use `/mcp` to monitor"
+#~ " server status and available tools."
+#~ msgstr "**状态检查**：使用 `/mcp` 监控服务器状态及可用工具。"
+
+#~ msgid ""
+#~ "**Debug Mode**: Use the `--debug` flag"
+#~ " for verbose troubleshooting information."
+#~ msgstr "**调试模式**：使用 `--debug` 标志以获取详细的故障排除信息。"
+
+#~ msgid ""
+#~ "**Start with simple queries**: Begin "
+#~ "with basic tool discovery and simple "
+#~ "research questions to understand the "
+#~ "integration, then progress to complex "
+#~ "multi-step workflows as you become "
+#~ "more familiar with the capabilities."
+#~ msgstr "**从简单查询开始**：先从基础工具的探索和简单的研究问题入手，以了解集成方式，然后随着对功能的熟悉程度提高，逐步过渡到复杂的多步骤工作流程。"
+
+#~ msgid ""
+#~ "**Command-Line Efficiency**: Gemini CLI "
+#~ "provides a powerful command-line "
+#~ "interface for scientific research, enabling"
+#~ " both interactive exploration and automated"
+#~ " batch processing of research tasks."
+#~ msgstr "**命令行效率**：Gemini CLI 提供了一个功能强大的命令行界面，用于科学研究，既支持交互式探索，也支持研究任务的自动批处理。"
+

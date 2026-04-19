@@ -7,432 +7,483 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse\n"
+"Project-Id-Version:  ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 10:37-0400\n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: zh_CN <LL@li.org>\n"
 "Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../help/faq.rst:2 c0584c386b9a40f88ab3667fc0cef377
-msgid "FAQ - Frequently Asked Questions"
-msgstr "常见问题解答"
+#: ../../help/faq.rst:2 21b776f68017433aad7fe586b2626b3b
+msgid "Comprehensive FAQ"
+msgstr ""
 
-#: ../../help/faq.rst:4 84413163fd784e5b8327de9cd0b1a6dd
+#: ../../help/faq.rst:4 59f6c022949749b3bbac5ba1aeb71933
+#, fuzzy
 msgid ""
-"This page contains answers to the most frequently asked questions about "
+"This page contains detailed answers to frequently asked questions about "
 "ToolUniverse."
 msgstr "本页面包含有关 ToolUniverse 的常见问题解答。"
 
-#: ../../help/faq.rst:7 ff95bc41a55c49b68c48127080c309ce
+#: ../../help/faq.rst:7 727801a911db44a1a2e900080dc0632f
+msgid "**Need a quick answer?**"
+msgstr ""
+
+#: ../../help/faq.rst:9 f290b1dfef1c45049267a0c5d9421d4c
+msgid ""
+"For brief answers to the most common questions, see :doc:`faq`. This page"
+" provides comprehensive information with detailed explanations, "
+"troubleshooting tips, and advanced topics."
+msgstr ""
+
+#: ../../help/faq.rst:12 015ac72229f1451eba4312e42e91bc87
 msgid "General Questions"
 msgstr "常见问题"
 
-#: ../../help/faq.rst:10 2024dbd8cfca4eb6bb84625db612f7a2
+#: ../../help/faq.rst:15 b39ff501ee14470db10af33bc2e9e431
 msgid "What is ToolUniverse?"
 msgstr "什么是 ToolUniverse？"
 
-#: ../../help/faq.rst:12 1a19152f13724e949fbec5113d7a239b
+#: ../../help/faq.rst:17 f6e91a90e61a421ab9216a33274d8f14
 msgid ""
-"ToolUniverse is a comprehensive collection of scientific tools for Agentic "
-"AI, offering integration with various scientific databases and services. It "
-"provides a unified interface to access data from FDA, OpenTargets, ChEMBL, "
-"PubTator, and many other sources."
+"ToolUniverse is a comprehensive collection of scientific tools for "
+"Agentic AI, offering integration with various scientific databases and "
+"services. It provides a unified interface to access data from FDA, "
+"OpenTargets, ChEMBL, PubTator, and many other sources."
 msgstr ""
 "ToolUniverse 是一个面向自主智能体的综合科学工具集合，支持与多种科学数据库和服务的集成。它提供统一的界面，便于访问 "
 "FDA、OpenTargets、ChEMBL、PubTator 及众多其他来源的数据。"
 
-#: ../../help/faq.rst:16 84f97518f4a7454eb49afe7173d26678
+#: ../../help/faq.rst:21 f33797ae200f4d5d8e45e4f1428b814b
 msgid "Python SDK"
 msgstr "Python 软件开发工具包 (SDK)"
 
-#: ../../help/faq.rst:18 787e1aa5af4c4201a7538492502416cf
+#: ../../help/faq.rst:23 b70fd98c3f6e49ef9e0585feb34e3562
 msgid "Use ToolUniverse as a Python library:"
 msgstr "将 ToolUniverse 作为 Python 库使用："
 
-#: ../../help/faq.rst:26 a783b659a6424a73b2816717ed60b60b
+#: ../../help/faq.rst:31 b11efd9e52f746f0aeed14d7037c64ec
 msgid "MCP Server"
 msgstr "MCP 服务器"
 
-#: ../../help/faq.rst:28 bce8c6c8114d45d79146ca71e5f74e84
+#: ../../help/faq.rst:33 83afee303ecc4c9dbbef785790bbe8d5
 msgid "Use ToolUniverse with AI assistants via MCP:"
 msgstr "通过MCP使用配备AI助手的ToolUniverse："
 
-#: ../../help/faq.rst:34 3e5d53134f374080adafb9fabd89777f
+#: ../../help/faq.rst:39 2633363a3dbd42e59e081c66ecb6afa3
 msgid "Command Line"
 msgstr "命令行"
 
-#: ../../help/faq.rst:36 bf07577234944ec89b815803eb6013dd
+#: ../../help/faq.rst:41 28c53845309f4bdca1180098b26c2cc0
 msgid "Direct tool execution:"
 msgstr "直接工具执行："
 
-#: ../../help/faq.rst:43 bd3272eeb376465b9cea00232cae81fe
+#: ../../help/faq.rst:48 91e4f6362a7a479696e47e25a2cac2c1
 msgid "What databases are supported?"
 msgstr "支持哪些数据库？"
 
-#: ../../help/faq.rst:45 22c96dccd4e8489c9a8e3777bdb9d3be
+#: ../../help/faq.rst:50 c81b56fd6dfd4d49a9cadbb26c6faa65
 msgid "ToolUniverse integrates with 20+ scientific databases:"
 msgstr "ToolUniverse 集成了20多个科学数据库："
 
-#: ../../help/faq.rst:47 6531b9d1a8444c8498e2ac2334b074b9
+#: ../../help/faq.rst:52 ef9cd0e75fab4d43b75a2acb1fb7671f
 msgid "**Drug Information**: FDA FAERS, ChEMBL, PubChem, DrugBank"
 msgstr "**药物信息**：FDA FAERS、ChEMBL、PubChem、DrugBank"
 
-#: ../../help/faq.rst:48 0854515ab1264499bf03f840b14adb0b
+#: ../../help/faq.rst:53 7ebd9606b7144bd1ba2f08ec6e0a0e44
 msgid "**Gene/Protein Data**: UniProt, Ensembl, Human Protein Atlas"
 msgstr "**基因/蛋白质数据**：UniProt、Ensembl、Human Protein Atlas"
 
-#: ../../help/faq.rst:49 546a6086475a4331b18ddf96580a01c4
+#: ../../help/faq.rst:54 d90374d6b11c445aaf9d38eb4461c114
 msgid "**Disease Information**: OpenTargets, DisGeNET, OMIM"
 msgstr "**疾病信息**：OpenTargets、DisGeNET、OMIM"
 
-#: ../../help/faq.rst:50 96c59b49266e4678b78f74bea2a211af
+#: ../../help/faq.rst:55 e1299a73094b4532b23c333023464fac
 msgid "**Literature**: PubMed, PubTator"
 msgstr "**文献**：PubMed，PubTator"
 
-#: ../../help/faq.rst:51 c7cdcb04cc58492ebaddff1e87c55738
+#: ../../help/faq.rst:56 4e7c0781432f43d28de5539b603e8952
 msgid "**Clinical Data**: ClinicalTrials.gov, UK Biobank"
 msgstr "**临床数据**：ClinicalTrials.gov，英国生物银行"
 
-#: ../../help/faq.rst:52 8e56d045cf87499dabceebbd4b1ad411
+#: ../../help/faq.rst:57 07ff78e32ce44d46bec70eaee6706176
 msgid "**Pathway Analysis**: Enrichr, KEGG, Reactome"
 msgstr "**路径分析**：Enrichr、KEGG、Reactome"
 
-#: ../../help/faq.rst:55 db5e5db866e84be5958b650401b3ab0a
+#: ../../help/faq.rst:60 9bdc46172a3a4da7a1568083daa8f59c
 msgid "Installation & Setup"
 msgstr "安装与设置"
 
-#: ../../help/faq.rst:58 bf52beaa38a649599462016d0c335ce0
+#: ../../help/faq.rst:63 43a839ac65284ecb9b21b0016182dd5e
 msgid "How do I install ToolUniverse?"
 msgstr "如何安装ToolUniverse？"
 
-#: ../../help/faq.rst:62 42660a6484f2427fb2019a1c58320d75
+#: ../../help/faq.rst:67 17ee7648284641aca96db53e7e990912
 msgid "Basic Installation"
 msgstr "基础安装"
 
-#: ../../help/faq.rst:68 3c4cf0ee8e544c9ba86a33f0c2b5b30e
+#: ../../help/faq.rst:73 0cdc627ad6e74cddaec1fb460ee4af66
 msgid "Development Installation"
 msgstr "开发安装"
 
-#: ../../help/faq.rst:76 764bb6e7550046768f73ea4ec75c06f9
+#: ../../help/faq.rst:81 6ec33611fc5a4727bda57444b0d41421
 msgid "With Optional Dependencies"
 msgstr "包含可选依赖项"
 
-#: ../../help/faq.rst:83 d9431dfb46bc40aeb61dea7177bcd3d7
+#: ../../help/faq.rst:88 2641212b875a4b579e7e04a896c3206d
 msgid "Do I need API keys?"
 msgstr "我是否需要 API 密钥？"
 
-#: ../../help/faq.rst:85 358f25e9a2d34bd4b77d2d4efd2212ee
-msgid "Some tools require API keys for accessing external services:"
-msgstr "某些工具需要使用API密钥来访问外部服务："
-
-#: ../../help/faq.rst:87 875d71eef35a4eee826c563ab5228602
+#: ../../help/faq.rst:90 7861a5b47a7d447e9ba0d5e4ca870b08
 msgid ""
-"**Required API Keys:** - OpenTargets Platform API key (free registration) - "
-"NCBI E-utilities API key (optional but recommended)"
+"Most tools work without API keys! However, some tools require "
+"authentication or provide higher rate limits with API keys."
 msgstr ""
-"**所需 API 密钥：**  \n"
-"- OpenTargets 平台 API 密钥（免费注册）  \n"
-"- NCBI E-utilities API 密钥（可选但推荐）"
 
-#: ../../help/faq.rst:91 577d98eddcf0496abcb8e26cbeb15e70
-msgid "**How to set API keys:**"
-msgstr "**如何设置API密钥：**"
+#: ../../help/faq.rst:92 ef4937d7055744fea89b7fec0fda1665
+msgid "**Quick answer:**"
+msgstr ""
 
-#: ../../help/faq.rst:100 ae63f1ecdf79416f801f447c696b692b
+#: ../../help/faq.rst:94 3e9b8e678ee145328470a966a15c13a6
+msgid ""
+"**No API keys needed** for most tools (PubMed, UniProt, ChEMBL, "
+"OpenTargets, etc.)"
+msgstr ""
+
+#: ../../help/faq.rst:95 8a08d7db37914093b50284fbaeea3b4f
+msgid ""
+"**Recommended for better performance**: NCBI, FDA (3-10x faster rate "
+"limits)"
+msgstr ""
+
+#: ../../help/faq.rst:96 6b3243430b1b49d887418825ca55e201
+msgid ""
+"**Required for specific features**: NVIDIA NIM (structure prediction), "
+"USPTO (patents), DisGeNET, OMIM"
+msgstr ""
+
+#: ../../help/faq.rst:98 8e923b5b11d74021aff04bcb2daf282e
+msgid ""
+"**For complete details**, see :doc:`../guide/api_keys` which covers all "
+"API keys, how to obtain them, rate limits, and configuration methods."
+msgstr ""
+
+#: ../../help/faq.rst:101 94b31f9a136a438cada90507c966f118
 msgid "Common Issues"
 msgstr "常见问题"
 
-#: ../../help/faq.rst:103 e203098d19ef42e287da1d9819cbde82
+#: ../../help/faq.rst:104 83c8691e4ece431f9fdd28b6ffd157e9
 msgid "Why am I getting rate limit errors?"
 msgstr "为什么会出现速率限制错误？"
 
-#: ../../help/faq.rst:105 0430a09f4ed2400ca6a9ce8dc5f80f0e
+#: ../../help/faq.rst:106 1b67b95d26a146c3aeada15c70b7f3bb
 msgid ""
 "Many scientific APIs have rate limits. ToolUniverse implements automatic "
 "rate limiting, but you may still encounter limits:"
 msgstr "许多科学API设有速率限制。ToolUniverse 实现了自动速率限制，但您仍可能遇到限制："
 
-#: ../../help/faq.rst:109 2c468b36823347c3aded147fd278b244
+#: ../../help/faq.rst:110 024eb06d79614a5b9eec3cb1530e5535
 msgid "Solution 1: API Keys"
 msgstr "方案一：API 密钥"
 
-#: ../../help/faq.rst:111 98d24bd200814bd0acf80e60586519cb
+#: ../../help/faq.rst:112 433d0973a7164d44bee37421ffd22f8e
 msgid "Register for API keys to get higher rate limits:"
 msgstr "注册 API 密钥以获取更高的访问速率限制："
 
-#: ../../help/faq.rst:118 bf7637c0e0534223ad9fd796971c90b6
+#: ../../help/faq.rst:119 800c1b54212d4416bccacd1d54771f0b
 msgid "Solution 2: Batch Requests"
 msgstr "方案二：批量请求"
 
-#: ../../help/faq.rst:120 128df1c583d04adead2dec856d23f4df
+#: ../../help/faq.rst:121 fb1ce321676a4575bf4f2d0fffdb0ab8
 msgid "Use batch processing for multiple queries:"
 msgstr "使用批处理处理多个查询："
 
-#: ../../help/faq.rst:129 945b74a81b514952bf7de327efb0d9ea
+#: ../../help/faq.rst:130 af58bbc855854b41abaa339474c745bc
 msgid "Solution 3: Caching"
 msgstr "方案三：缓存"
 
-#: ../../help/faq.rst:131 1dc9a48c92e04ff9b69ae2a75ccd1b53
+#: ../../help/faq.rst:132 e67a98ddd6b144b1a4144995df0b810c
 msgid "Enable caching to avoid repeated requests:"
 msgstr "启用缓存以避免重复请求："
 
-#: ../../help/faq.rst:138 5ab0527b255e4788b516bc463b48742c
+#: ../../help/faq.rst:141 5caf76c6ba9049efbf7b3d03d86d26ff
 msgid "Tool returns empty results?"
 msgstr "工具返回空结果？"
 
-#: ../../help/faq.rst:140 8e1cb8dc579643f6bc9811d1a7ece74b
+#: ../../help/faq.rst:143 3ae3e0c53b374267a98679b4b1721c4d
 msgid "**Check these common issues:**"
 msgstr "**检查以下常见问题：**"
 
-#: ../../help/faq.rst:142 42d002e412ce4e84908969b189c6c938
+#: ../../help/faq.rst:145 0e61d9147f0d4818ac311a2980ad924f
 msgid "**Correct identifiers**: Ensure you're using the right ID format"
 msgstr "**正确的标识符**：确保您使用的是正确的 ID 格式"
 
-#: ../../help/faq.rst:143 eda56993bb64446383965cdadf477ed1
+#: ../../help/faq.rst:146 533b640f0e424b5a95b03d9a50513811
 msgid "**API connectivity**: Test your internet connection"
 msgstr "**API 连接性**：测试您的互联网连接"
 
-#: ../../help/faq.rst:144 ec95c40bbbc8410dbe90e41006c8f6d8
+#: ../../help/faq.rst:147 45cdaf3bb4ed4d62b8d4701dc47e9362
 msgid "**Service status**: Check if the external service is available"
 msgstr "**服务状态**：检查外部服务是否可用"
 
-#: ../../help/faq.rst:145 0548e0a4d37542f1a14b07609c825d83
+#: ../../help/faq.rst:148 ad7029576ca14cfc874ae72b94c35706
 msgid "**Query parameters**: Verify your search parameters are valid"
 msgstr "**查询参数**：请确认您的搜索参数有效"
 
-#: ../../help/faq.rst:156 457d40c4d2ac4e3389d0994dc4339161
+#: ../../help/faq.rst:159 02e0ddad6b2847b2aab3696657d09795
 msgid "MCP Integration"
 msgstr "MCP 集成"
 
-#: ../../help/faq.rst:159 b3f0e8a9fb4f4b81a008e5385c34324b
+#: ../../help/faq.rst:162 c8b08940096240c286ea8eaa586707e7
 msgid "How do I use ToolUniverse with Claude?"
 msgstr "我如何将 ToolUniverse 与 Claude 一起使用？"
 
-#: ../../help/faq.rst:161 ffd30d2a86ad4592a51330ccb5ed01ea
+#: ../../help/faq.rst:164 2ab3c69a39d54aefbfe72ad19a6189be
 msgid "**Start MCP Server:**"
 msgstr "**启动 MCP 服务器：**"
 
-#: ../../help/faq.rst:167 e0314b1d2c644d0ca8cdb58273d2f265
+#: ../../help/faq.rst:170 54f3b2e922f94d4e8fad3aac34a034f8
 msgid "**Configure Claude Desktop:**"
 msgstr "**配置 Claude 桌面版：**"
 
-#: ../../help/faq.rst:169 16fdbfa473e84d62bded2ad4884f746d
+#: ../../help/faq.rst:172 f53bc504d08e4e28af190871a07d41ec
 msgid "Add to your Claude configuration:"
 msgstr "将以下内容添加到您的 Claude 配置中："
 
-#: ../../help/faq.rst:182 f7ac569d887b4e00983bfc08510e30de
+#: ../../help/faq.rst:185 1007807baf6f400dafdd140439b969c8
 msgid "**Test the connection:**"
 msgstr "**测试连接：**"
 
-#: ../../help/faq.rst:184 9e033da8146846aeaf167319f01f350f
+#: ../../help/faq.rst:187 81f40e2c917b451f9d221373eeebe873
 msgid "Ask Claude: \"What tools are available from ToolUniverse?\""
 msgstr "询问 Claude：“ToolUniverse 提供了哪些工具？”"
 
-#: ../../help/faq.rst:187 39510725844446e2af100ef98a2d725e
+#: ../../help/faq.rst:190 9b918abe0634453395dfd9b8b6d4a68b
 msgid "Can I use multiple MCP servers?"
 msgstr "我可以使用多个 MCP 服务器吗？"
 
-#: ../../help/faq.rst:189 77012dfb6d584aa9865ce32ce0925830
+#: ../../help/faq.rst:192 06c0cfd30cc6477792741b263876ef60
 msgid ""
-"Yes! You can run multiple ToolUniverse instances or combine with other MCP "
-"servers:"
+"Yes! You can run multiple ToolUniverse instances or combine with other "
+"MCP servers:"
 msgstr "是的！您可以运行多个 ToolUniverse 实例，或与其他 MCP 服务器结合使用："
 
-#: ../../help/faq.rst:207 a70d8bddb4bb4dc18a888194618b27f2
+#: ../../help/faq.rst:210 aced87b1535f430c9cdced6423ae9f82
 msgid "Development"
 msgstr "开发"
 
-#: ../../help/faq.rst:210 4f94bf1f8c474f92a8bd1cbdf3427a90
+#: ../../help/faq.rst:213 1eca15bd61604e46984dcc747dd6d77c
 msgid "How do I add a new tool?"
 msgstr "如何添加新工具？"
 
-#: ../../help/faq.rst:212 ba6d293112984b2eaed844a2cdc39841
+#: ../../help/faq.rst:215 e786ee996235453991cb5a3612d3477d
 msgid "**Create tool class:**"
 msgstr "**创建工具类：**"
 
-#: ../../help/faq.rst:229 127eaee6ecbb4f0d84f98d73c7b1ecfc
+#: ../../help/faq.rst:232 a4031022e9674856a4257c9724c97780
 msgid "**Register the tool:**"
 msgstr "**注册工具：**"
 
-#: ../../help/faq.rst:238 6c249539d99442a6b691398704560d58
+#: ../../help/faq.rst:241 dcf967e7a44f4181b0a40e8d9dca7ba4
 msgid "**Add tests:**"
 msgstr "**添加测试：**"
 
-#: ../../help/faq.rst:248 f56266f1600e4ada8bdb3f31f6d1f9fe
+#: ../../help/faq.rst:251 c7bfa7e4d8b34b4cae0dc68f55015c3e
 msgid "How do I contribute?"
 msgstr "我如何贡献？"
 
-#: ../../help/faq.rst:250 fd90c82802284c54952e9755aca05d94
+#: ../../help/faq.rst:253 a37f40ddc11e436fb6bc8224fd25d45d
 msgid "Fork the repository"
 msgstr "派生该代码库"
 
-#: ../../help/faq.rst:251 a4b1fcc82dec4d398aa94c3e68963f94
+#: ../../help/faq.rst:254 e7bf8b9f82ab4e659096a1f912ff4a27
 msgid "Create a feature branch"
 msgstr "创建功能分支"
 
-#: ../../help/faq.rst:252 55a076f8f0614bfaafff2836996ca5c7
+#: ../../help/faq.rst:255 be28e160c04f46f78542deab82d80b06
 msgid "Add your changes with tests"
 msgstr "添加带有测试的更改"
 
-#: ../../help/faq.rst:253 ff95755835fc4567b22b9d87f72a3f75
+#: ../../help/faq.rst:256 9485aae5e6cb4afc8fb4fe269c61baee
 msgid "Submit a pull request"
 msgstr "提交拉取请求"
 
-#: ../../help/faq.rst:255 39fd2f9a99074e5a880fb9d936b53dd0
-msgid "See our :doc:`about/contributing` Tutorial for detailed instructions."
+#: ../../help/faq.rst:258 12ec600ed4f941cca49b7e7d8c3b40ac
+#, fuzzy
+msgid "See our :doc:`../about/contributing` Tutorial for detailed instructions."
 msgstr "请参阅我们的 :doc:`about/contributing` 教程，了解详细说明。"
 
-#: ../../help/faq.rst:258 6ba0a03eb3234505b159070f638e59e8
+#: ../../help/faq.rst:261 f616518ad71841998e372eaf7da54519
 msgid "Performance"
 msgstr "性能"
 
-#: ../../help/faq.rst:261 01d523a2a073413b91e5adb84d85db67
+#: ../../help/faq.rst:264 cc8189d76a35423f8d3d6a998ef03aa8
 msgid "How can I speed up queries?"
 msgstr "如何加快查询速度？"
 
-#: ../../help/faq.rst:265 9e568d42e6884d3f9af2ee0a4caede8e
+#: ../../help/faq.rst:268 61aae8d658ea469c907dbe3dd4037bdc
 msgid "Enable Caching"
 msgstr "启用缓存"
 
-#: ../../help/faq.rst:271 897e3fbfa4484e8c957f881e28439621
+#: ../../help/faq.rst:277 58ae6bc077464af18d697317aad7962c
 msgid "Batch Processing"
 msgstr "批处理"
 
-#: ../../help/faq.rst:282 45995b8461544e4d8e99e5c2e1925ec5
+#: ../../help/faq.rst:288 ca2bed23b9424bd0b8bc2aa8b8010113
 msgid "Async Operations"
 msgstr "异步操作"
 
-#: ../../help/faq.rst:294 4f37767b03c449c0b1fe3c5fba5d2194
+#: ../../help/faq.rst:300 69d5c9c0dd8041dda339b93f367fb644
 msgid "Why is the first query slow?"
 msgstr "为什么第一次查询速度较慢？"
 
-#: ../../help/faq.rst:296 383e8a6c0be34db28e12ea666714bffb
+#: ../../help/faq.rst:302 66a3eed20d49437e8026de2b7787b1e5
 msgid "The first query often takes longer because:"
 msgstr "第一次查询通常耗时较长，原因如下："
 
-#: ../../help/faq.rst:298 10ee5180793c488ca5939c994a540b52
+#: ../../help/faq.rst:304 276ae342dbc14e73bf23f118f8ee9a48
 msgid "**Tool loading**: Tools are loaded on first use"
 msgstr "**工具加载**：工具在首次使用时加载"
 
-#: ../../help/faq.rst:299 3e1f5318423045b7b2b1197ac6c18f29
+#: ../../help/faq.rst:305 05f536fc1eda4138b040afa17a5f7dd8
 msgid "**API connection**: Initial connection setup"
 msgstr "**API 连接**：初始连接设置"
 
-#: ../../help/faq.rst:300 fd8e71d1772a4099af47fd38b33d9794
+#: ../../help/faq.rst:306 42dbae8631c44072abcfb80583d0465d
 msgid "**Authentication**: API key validation"
 msgstr "**认证**：API 密钥验证"
 
-#: ../../help/faq.rst:302 a496c71d56a54042bf12b9121c3e3f3b
+#: ../../help/faq.rst:308 e13b4617d3eb40f2819c5b1d3f58c73e
 msgid "Subsequent queries will be much faster."
 msgstr "后续查询将大幅加快。"
 
-#: ../../help/faq.rst:305 1aedeb6b786c4bb7ac1138a732afecba
+#: ../../help/faq.rst:311 0db6b8f8b523439e979732ff8c42c6a4
 msgid "Troubleshooting"
 msgstr "故障排除"
 
-#: ../../help/faq.rst:308 fa30df5514b74ec4b026858d0874d4f8
+#: ../../help/faq.rst:314 8db041fca2164bcd862c86426663a7b9
 msgid "Getting import errors?"
 msgstr "遇到导入错误？"
 
-#: ../../help/faq.rst:310 41bb685aad0040318dcf8881f4f3aa1d
+#: ../../help/faq.rst:316 64a605e53c614661b257d9c8b518a385
 msgid "**Common solutions:**"
 msgstr "**常见解决方案：**"
 
-#: ../../help/faq.rst:314 f70afd64596d40f087d110f44dff67db
+#: ../../help/faq.rst:320 5c20ab7e98ac4d4e9eceacfed55718a2
 msgid "Missing Dependencies"
 msgstr "缺失的依赖项"
 
-#: ../../help/faq.rst:320 5f2ed671e6894eb69fc6e423425a10b5
+#: ../../help/faq.rst:326 462f0df6b5964730821599c6a0c9cdfb
 msgid "Python Version"
 msgstr "Python 版本"
 
-#: ../../help/faq.rst:322 19b3c9cc2abd4b91a2cd7949c84ae601
+#: ../../help/faq.rst:328 8b9f02938f634bf4b02b8baab76354c2
 msgid "Ensure Python 3.8+ is installed:"
 msgstr "确保已安装 Python 3.8 及以上版本："
 
-#: ../../help/faq.rst:328 6e09c4392332423ab01fe5d439b8a122
+#: ../../help/faq.rst:334 60346db44f7448049d8d2da024303ddf
 msgid "Virtual Environment"
 msgstr "虚拟环境"
 
-#: ../../help/faq.rst:330 e2e291b5a95e48cc9f030022d4689d92
+#: ../../help/faq.rst:336 2e89f8ae1b404a2696888c2afbae669e
 msgid "Use a clean virtual environment:"
 msgstr "使用干净的虚拟环境："
 
-#: ../../help/faq.rst:341 45020f1ef8044cfd9bb435113a88eb59
+#: ../../help/faq.rst:347 f77716d9227a4e64b614ecaf64d880bc
 msgid "Network connectivity issues?"
 msgstr "网络连接问题？"
 
-#: ../../help/faq.rst:343 da256d128d994653809f8435d44bdc6e
+#: ../../help/faq.rst:349 1db20b0dacfe415fbe27efdaaa93205c
 msgid "**Check internet connection**"
 msgstr "**检查互联网连接**"
 
-#: ../../help/faq.rst:344 e138e47a15014099a7500205ddb12410
+#: ../../help/faq.rst:350 d91095765bf849918e3c825ccf00190e
 msgid "**Verify proxy settings** if behind corporate firewall"
 msgstr "**如果处于企业防火墙后，请验证智能体设置**"
 
-#: ../../help/faq.rst:345 dfe4a7b22c6441ac809c9c152014ffab
+#: ../../help/faq.rst:351 a68e3475c7934762828eafe2b0d47f01
 msgid "**Test specific endpoints:**"
 msgstr "**测试特定端点：**"
 
-#: ../../help/faq.rst:353 f585bd2d7a9541d3a1ad4800e4feee09
+#: ../../help/faq.rst:359 4deacc0c434a4d34b07a4f31ec8faae2
 msgid "**Configure timeouts:**"
 msgstr "**配置超时：**"
 
-#: ../../help/faq.rst:360 671e04637632479a9d0ff0651fecc8b6
+#: ../../help/faq.rst:366 84d6fcf241c64136a2ad5b55059da193
 msgid "Still Having Issues?"
 msgstr "仍然遇到问题？"
 
-#: ../../help/faq.rst:362 fac4f247ba0e4c1b9904a96637ea9f88
+#: ../../help/faq.rst:368 87a30f0de259454fb5b6724defa35384
 msgid "If you can't find the answer here:"
 msgstr "如果您在此处找不到答案："
 
-#: ../../help/faq.rst:364 2ff548ea7a68454598fe6b8fe20e12be
-msgid "**Check the documentation**: :doc:`user_guide/index`"
+#: ../../help/faq.rst:370 44d443b86dd9411db627eb667831a1fa
+#, fuzzy
+msgid "**Check the documentation**: :doc:`../guide/index`"
 msgstr "**查看文档**：:doc:`user_guide/index`"
 
-#: ../../help/faq.rst:365 969822d872d9465e8ece452dade68957
+#: ../../help/faq.rst:371 3115597696954fd48c92483047bdcb36
 msgid ""
-"**Search existing issues**: `GitHub Issues "
-"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
+"**Search existing issues**: `GitHub Issues <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
 msgstr ""
-"**搜索现有问题**：`GitHub Issues "
-"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
+"**搜索现有问题**：`GitHub Issues <https://github.com/mims-"
+"harvard/ToolUniverse/issues>`_"
 
-#: ../../help/faq.rst:366 d0c90635e5164cdbafd623830467685c
+#: ../../help/faq.rst:372 926940c3a3f04bcebfc939ac972ebb5a
 msgid "**Ask the community**: Join our Discord server"
 msgstr "**向社区提问**：加入我们的 Discord 服务器"
 
-#: ../../help/faq.rst:367 7e151756d2c84b3b9330a5889190472f
+#: ../../help/faq.rst:373 78455bfad9a24206963ff0cac0177187
 msgid "**Report a bug**: Create a new GitHub issue with details"
 msgstr "**报告错误**：创建一个包含详细信息的新 GitHub 问题单"
 
-#: ../../help/faq.rst:370 f6876a27fab04a03a8b9eb13623da33e
+#: ../../help/faq.rst:376 065307a6ea3447fda1ce80d187ac41f6
 msgid "When reporting issues, please include:"
 msgstr "报告问题时，请包括："
 
-#: ../../help/faq.rst:372 4ea3988fbd6a4bc895eb5983c0ccac12
+#: ../../help/faq.rst:378 af5ebd8fcd4d438db7712ab7ade28271
 msgid "ToolUniverse version"
 msgstr "ToolUniverse 版本"
 
-#: ../../help/faq.rst:373 dc7a2d49b4be4b99bd3c30a39bc397d1
+#: ../../help/faq.rst:379 daf4c015c12c40649f7da6d31cc2b264
 msgid "Python version"
 msgstr "Python 版本"
 
-#: ../../help/faq.rst:374 baeaae7d853a454ea803c9b66392f8c7
+#: ../../help/faq.rst:380 beabb292830b4259953f3fc1fde23819
 msgid "Operating system"
 msgstr "操作系统"
 
-#: ../../help/faq.rst:375 a9077db8c50749ac9746867958a92ff1
+#: ../../help/faq.rst:381 b1d315b271274cfd81a26317621124c7
 msgid "Full error message"
 msgstr "完整错误信息"
 
-#: ../../help/faq.rst:376 1ca68a6a08c043a68b418516f44f40e0
+#: ../../help/faq.rst:382 f6887f4fdc6247ba8bca45f84b8e9278
 msgid "Minimal code example"
 msgstr "最简代码示例"
+
+#~ msgid "FAQ - Frequently Asked Questions"
+#~ msgstr "常见问题解答"
+
+#~ msgid "Some tools require API keys for accessing external services:"
+#~ msgstr "某些工具需要使用API密钥来访问外部服务："
+
+#~ msgid ""
+#~ "**Required API Keys:** - OpenTargets "
+#~ "Platform API key (free registration) -"
+#~ " NCBI E-utilities API key (optional "
+#~ "but recommended)"
+#~ msgstr ""
+#~ "**所需 API 密钥：**  \n"
+#~ "- OpenTargets 平台 API 密钥（免费注册）  \n"
+#~ "- NCBI E-utilities API 密钥（可选但推荐）"
+
+#~ msgid "**How to set API keys:**"
+#~ msgstr "**如何设置API密钥：**"
+

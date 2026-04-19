@@ -1,0 +1,308 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/glygen_tools.rst:10 3136ed0502f94406b74d9578e2ab447d
+msgid "Glygen Tools"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:12 048d516c40264368bcdbbd41aa2bd939
+msgid ""
+"**Configuration File**: ``glygen_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:16 e3d3b706716445aebc2265d8e2725c2d
+msgid ""
+"This page contains all tools defined in the ``glygen_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:19 4d54a952224441f38017c7e4eab8a8b5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:22 5cf2e8a56e304c079ef556dc6a56af1e
+msgid "**GlyGen_get_glycan** (Type: GlyGenTool)"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:24 1e82239bfefa480bb545cc4970684fa5
+msgid ""
+"Get detailed glycan structure information from GlyGen by GlyTouCan "
+"accession. Returns mass, monos..."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst 5358ac887e144fc9b13c768061e23b67
+msgid "GlyGen_get_glycan tool specification"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:28 ../../tools/glygen_tools.rst:59
+#: ../../tools/glygen_tools.rst:90 ../../tools/glygen_tools.rst:121
+#: ../../tools/glygen_tools.rst:169 18d5c321eb234eb2a4ff84d7dd41c620
+#: 489d95325eee4785835e069e4ec686e5 a855b942a61049ba81aadb0278a0c1aa
+#: bcf9a012cebe40c08abecd0be4fe1a24 d0f4fb5e741b4344ade358e093aafcb4
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:30 e4566e455e5c43f685f68b94c10e6f7b
+msgid "**Name**: ``GlyGen_get_glycan``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:31 ../../tools/glygen_tools.rst:62
+#: ../../tools/glygen_tools.rst:93 ../../tools/glygen_tools.rst:124
+#: ../../tools/glygen_tools.rst:172 5d148e84e63343d6aa5289f0a0e6dffc
+#: 7bff033e9037414a9f1f71e3d1b214f6 bca31481aac647adb18c6c9c0cad9c58
+#: bfadcb48895142d19225c593e85f3c91 febf13f63cf54936a0843be81ef1ab77
+msgid "**Type**: ``GlyGenTool``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:32 2f7766367a3a47528ac9d665cff2bb01
+msgid ""
+"**Description**: Get detailed glycan structure information from GlyGen by"
+" GlyTouCan accession. Returns mass, monosaccharide count, IUPAC/WURCS "
+"representations, species, glycoprotein associations, and publications. "
+"Essential for glycomics research. Example: G17689DH returns a "
+"12-monosaccharide biantennary N-glycan found in human and hamster."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:34 ../../tools/glygen_tools.rst:65
+#: ../../tools/glygen_tools.rst:96 ../../tools/glygen_tools.rst:127
+#: ../../tools/glygen_tools.rst:175 022940091d834667a90a6e78a633c563
+#: 4779bf3266cd451496cfe851cee34d46 60357880ed1d48118f5d9d6ec5bd7f8a
+#: b09466ec1a7d4200a192400bc4849284 bc45208d9bea4815b81976b68c5087e2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:36 4a1c275080c24ffcae2a990a7290bda4
+msgid ""
+"``glytoucan_ac`` (string) (required) GlyTouCan accession ID for the "
+"glycan. Examples: 'G17689DH', 'G62765YT', 'G00055MO'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:39 ../../tools/glygen_tools.rst:70
+#: ../../tools/glygen_tools.rst:101 ../../tools/glygen_tools.rst:150
+#: ../../tools/glygen_tools.rst:198 6cebaab2be694ec4b3e7d9b24904ce79
+#: ad704c25aaef448686fe349f26e4cb41 c7bd6769d6614c13976df6c53999c46b
+#: cdf2de800a134a3da54b1202e764e983 f68718cdbf45478e8ede32a2fcd9edef
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:53 d55ba1cd3aaa45b480e1c2a715cd1812
+msgid "**GlyGen_get_glycoprotein** (Type: GlyGenTool)"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:55 773b6e4b97284eed87831d899858c38b
+msgid ""
+"Get detailed glycoprotein information from GlyGen by UniProt accession. "
+"Returns protein name, gly..."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst a81b883d7bad4c03bc5a1d0e971e632d
+msgid "GlyGen_get_glycoprotein tool specification"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:61 3623a73d2e3b40808c618324a3c4a2ad
+msgid "**Name**: ``GlyGen_get_glycoprotein``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:63 b2e67e071cee4cb0b829f3ae8192ebed
+msgid ""
+"**Description**: Get detailed glycoprotein information from GlyGen by "
+"UniProt accession. Returns protein name, glycosylation sites (N-linked, "
+"O-linked), site positions, attached glycan structures, and associated "
+"diseases/pathways. Essential for studying protein glycosylation. Example:"
+" P14210 (Hepatocyte Growth Factor) has 77 glycosylation annotations."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:67 f6e5ce46b25f49c385bb3dfbe35735f3
+msgid ""
+"``uniprot_ac`` (string) (required) UniProt accession ID. Examples: "
+"'P14210' (HGF), 'P02724' (Glycophorin A), 'P01857' (IgG1)."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:84 65d2f525ed4b4e0da5b8160fa11ae160
+msgid "**GlyGen_get_site** (Type: GlyGenTool)"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:86 25ee0223268d403d8d59500ec5046d63
+msgid ""
+"Get detailed information about a specific glycosylation site from GlyGen."
+" Returns the amino acid ..."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst 75a52b77d27d49ff9668a5c7ca250707
+msgid "GlyGen_get_site tool specification"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:92 677950c949a6455e98e6c4e9abeefcad
+msgid "**Name**: ``GlyGen_get_site``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:94 4edb678e7afb4644adcbff27572e952b
+msgid ""
+"**Description**: Get detailed information about a specific glycosylation "
+"site from GlyGen. Returns the amino acid position, flanking sequences, "
+"attached glycans, SNVs at the site, phosphorylation, and mutagenesis "
+"data. Useful for studying site-specific glycosylation and its biological "
+"consequences."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:98 c1a67e30717a45439e4ab2fe70f5dabb
+msgid ""
+"``site_id`` (string) (required) Glycosylation site identifier in format "
+"UniProtAC.start\\_pos.end\\_pos. Examples: 'P02724-1.52.52', "
+"'P14210-1.294.294'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:115 a8d011da6d0c4e0d974c34b4a5a51fd2
+msgid "**GlyGen_search_glycans** (Type: GlyGenTool)"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:117 7019293b8cbd49e499d12207c11faec9
+msgid ""
+"Search GlyGen for glycans by mass range, monosaccharide count, organism, "
+"or glycan type. Returns ..."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst e249ab3688494a21a28beaacfabfef15
+msgid "GlyGen_search_glycans tool specification"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:123 f636f0306d8147118d3e371bdc15a1f9
+msgid "**Name**: ``GlyGen_search_glycans``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:125 5e052dd9393b47589d2b080ffd07bf14
+msgid ""
+"**Description**: Search GlyGen for glycans by mass range, monosaccharide "
+"count, organism, or glycan type. Returns matching glycan accessions with "
+"mass, protein counts, and relevance scores. Use for finding glycans "
+"within specific structural or biological criteria."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:129 0a0173ba38f248bba665bf41f62b48e2
+msgid ""
+"``mass_min`` (number) (optional) Minimum molecular mass in Daltons. "
+"Example: 1000."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:132 76984db018384c638909cc03aadb8ebb
+msgid ""
+"``mass_max`` (number) (optional) Maximum molecular mass in Daltons. "
+"Example: 3000."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:135 f8a84c4f794244209f770d4019b2e3d3
+msgid ""
+"``monosaccharide_min`` (integer) (optional) Minimum number of "
+"monosaccharide residues."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:138 143f5b1540e04df7a7b8c5a3e90d73b9
+msgid ""
+"``monosaccharide_max`` (integer) (optional) Maximum number of "
+"monosaccharide residues."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:141 b8e4bd99c64a410692bc327c632da862
+msgid ""
+"``glycan_type`` (string) (optional) Glycan type filter. Examples: "
+"'N-linked', 'O-linked'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:144 ../../tools/glygen_tools.rst:192
+#: 97fe0d5fc7284a688e71bb8359b35328 a98975cc0b2e4c43933133de432298de
+msgid ""
+"``limit`` (integer) (optional) Maximum results to return (default 20, max"
+" 50)."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:147 ../../tools/glygen_tools.rst:195
+#: 32ecba0260f04f2d9abba444529533cd 75a8578fff6f4ffd92ee3a672216104c
+msgid "``offset`` (integer) (optional) Pagination offset (1-indexed, default 1)."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:163 b76e8cdcd8034ea9b7ffa745fa2f0982
+msgid "**GlyGen_search_glycoproteins** (Type: GlyGenTool)"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:165 c698a1381f1649c9bbed6b7055658907
+msgid ""
+"Search GlyGen for glycoproteins by organism, glycosylation evidence type,"
+" protein name, or gene n..."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst dc7d741972b947d38ec61e88de5ede95
+msgid "GlyGen_search_glycoproteins tool specification"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:171 af3fc9bedef74c4fb93a95b1e7917546
+msgid "**Name**: ``GlyGen_search_glycoproteins``"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:173 0311e353c01346249aa70b3d8e2a45b6
+msgid ""
+"**Description**: Search GlyGen for glycoproteins by organism, "
+"glycosylation evidence type, protein name, or gene name. Returns matching"
+" proteins with glycosylation site counts and relevance scores. Useful for"
+" finding glycosylated proteins in specific organisms or pathways."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:177 fa3689fd6bbb4385bc8294abf7fbacf3
+msgid ""
+"``organism_id`` (integer) (optional) NCBI taxonomy ID. Examples: 9606 "
+"(human), 10090 (mouse), 10029 (Chinese hamster)."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:180 c928c921867c4134a7830d6f9d6279ec
+msgid ""
+"``glycosylation_evidence`` (string) (optional) Evidence level filter. "
+"Options: 'reported' (experimentally confirmed)."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:183 2d421ff2ab1d4bf4950d869847fdef01
+msgid ""
+"``glycosylation_type`` (string) (optional) Type of glycosylation. "
+"Examples: 'N-linked', 'O-linked'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:186 5c3f6ae1e0f24760af898ca79ca7d777
+msgid ""
+"``protein_name`` (string) (optional) Protein name to search. Example: "
+"'transferrin'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:189 fc51700c90b7417ca64851b4e0bc30fa
+msgid "``gene_name`` (string) (optional) Gene name to search. Example: 'EGFR'."
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:211 e9e07fbc6865402ab95f66bdec2dd677
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:213 898362f7b94d4e68be8727d4926023ba
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/glygen_tools.rst:214 8be08cebade743dc982a08a024ae247b
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

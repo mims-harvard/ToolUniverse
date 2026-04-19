@@ -1,0 +1,363 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/encode_tools.rst:10 95da93186d9e4d3f838c03e84c4db26a
+msgid "Encode Tools"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:12 f3a756b4c5454b208f73e41af28543e8
+msgid ""
+"**Configuration File**: ``encode_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:16 387d34fe443b44ab849caa3ec46b1497
+msgid ""
+"This page contains all tools defined in the ``encode_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:19 aa672c60b3414fa0b39607dac5d607e6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:22 2d8480a5e4824912b7474e53bfade385
+msgid "**ENCODE_get_biosample** (Type: ENCODERESTTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:24 35ea47741bee48d68dd3a5ce24c0882d
+msgid ""
+"Get detailed metadata for a specific ENCODE biosample by its accession "
+"ID. Returns comprehensive ..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst 05e2d06fd9cf421397cb67139fa0a8c4
+msgid "ENCODE_get_biosample tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:28 ../../tools/encode_tools.rst:59
+#: ../../tools/encode_tools.rst:90 ../../tools/encode_tools.rst:121
+#: ../../tools/encode_tools.rst:157 ../../tools/encode_tools.rst:196
+#: 559332fb0a1e4e339ead0f58cdde4058 6a8fc3708a0e4421afd7a92a2d1a661c
+#: be2789b5c2ec4c8ebc8fed83636ec86c cea66a2fd2fc4d77a4cb4b06eecfbd6c
+#: dcf64b5ef4944b7c987510e44a407b12 fa56fc1d332d4fbdb9765cf4ac66dd6e
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:30 313af6eca1054744821cc4e0a0873e81
+msgid "**Name**: ``ENCODE_get_biosample``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:31 ../../tools/encode_tools.rst:62
+#: ../../tools/encode_tools.rst:93 0b69063d9632448494933b985c57f4ad
+#: 111e21f7848e40ecadf96cff172bb729 29afaf785a3e4dd4ae8f6ce71413e95d
+msgid "**Type**: ``ENCODERESTTool``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:32 299de0919fb348cba1c2e716e8c9084c
+msgid ""
+"**Description**: Get detailed metadata for a specific ENCODE biosample by"
+" its accession ID. Returns comprehensive information including biosample "
+"type, organism, life stage, age, sex, tissue/cell line name, donor "
+"information, treatments, genetic modifications, culture conditions, and "
+"characterizations. Essential for understanding sample provenance, "
+"experimental conditions, and biological context of ENCODE datasets. Find "
+"biosample accessions using ENCODE\\_search\\_biosamples (format: "
+"ENCBS######)."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:34 ../../tools/encode_tools.rst:65
+#: ../../tools/encode_tools.rst:96 ../../tools/encode_tools.rst:127
+#: ../../tools/encode_tools.rst:163 ../../tools/encode_tools.rst:202
+#: 321e618b74f944dfb422fca766000b22 3f3a2f560cb44d778c46ffc96e08f0fd
+#: 9ff5b624d4e14d0285a996aa38cf53dd d0cc76a7d0544ceeb349d76e0673f15b
+#: eed61acf383d4951af5c50f4055f1c5b f368931c4be746c3b6549260394c2652
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:36 9d0e6566020b4a6693eb775bbb106f31
+msgid ""
+"``accession`` (string) (required) ENCODE biosample accession identifier "
+"(format: ENCBS######, e.g., 'ENCBS000AAA', 'ENCBS130ENC'). Find "
+"accessions using ENCODE\\_search\\_biosamples or from experiment "
+"metadata."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:39 ../../tools/encode_tools.rst:70
+#: ../../tools/encode_tools.rst:101 ../../tools/encode_tools.rst:138
+#: ../../tools/encode_tools.rst:177 ../../tools/encode_tools.rst:219
+#: 453894fdabdb4ff5b455dae5b3e3cb35 a1b6d4286ba94bb198b1a23f883cdaea
+#: ad4f3f1260d84c889523b0dd887a112e c358912229ea47528532244b49bfde2b
+#: d37dc1533d174ed6a2775cbcd115888c df21b7378e154c99ae3f8e8c003e985c
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:53 365381c3c4214ed2b63bae57d9d1eaf5
+msgid "**ENCODE_get_experiment** (Type: ENCODERESTTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:55 3d28d7c530334ff7a2f277efb176ac86
+msgid ""
+"Get comprehensive metadata for a specific ENCODE experiment by its "
+"accession ID. Returns detailed..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst 1a44715557dc46acad064452695960ee
+msgid "ENCODE_get_experiment tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:61 04c6d97f1e6640dd9fb020b2dd320282
+msgid "**Name**: ``ENCODE_get_experiment``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:63 ef50b2e1e23d497792d5c993356c5037
+msgid ""
+"**Description**: Get comprehensive metadata for a specific ENCODE "
+"experiment by its accession ID. Returns detailed information including "
+"assay type, target protein, biosample details, replicates, files, quality"
+" metrics, analysis pipeline, lab, award, and publication references. Use "
+"this to understand experimental design, data quality, and available files"
+" before downloading. Find experiment accessions using "
+"ENCODE\\_search\\_experiments (format: ENCSR######)."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:67 3094d37eb5cc46969f87ea5b85175d25
+msgid ""
+"``accession`` (string) (required) ENCODE experiment accession identifier "
+"(format: ENCSR######, e.g., 'ENCSR000AKS', 'ENCSR000CAG'). Find "
+"accessions using ENCODE\\_search\\_experiments."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:84 844d171129a745579b1b66c26c6b8558
+msgid "**ENCODE_get_file** (Type: ENCODERESTTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:86 7f1eae5536694c7ca3d74d57b9174b58
+msgid ""
+"Get detailed metadata for a specific ENCODE file by its accession ID. "
+"Returns comprehensive file ..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst 220a8cb1fcfd47b99b7539c3f0cab904
+msgid "ENCODE_get_file tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:92 204f4785dfd946f79a53e2c477dd15f8
+msgid "**Name**: ``ENCODE_get_file``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:94 19f502a4c85c4ab0a555e94c8444cac3
+msgid ""
+"**Description**: Get detailed metadata for a specific ENCODE file by its "
+"accession ID. Returns comprehensive file information including file "
+"format, output type, dataset accession, biological/technical replicate "
+"numbers, file size, MD5 checksum, download URL (href), genome assembly, "
+"quality metrics, and processing status. Essential for accessing download "
+"URLs, verifying file integrity, and understanding file provenance. Find "
+"file accessions using ENCODE\\_list\\_files (format: ENCFF######)."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:98 95bd79fb7a9b4b8f8b0b4643cb140e7a
+msgid ""
+"``accession`` (string) (required) ENCODE file accession identifier "
+"(format: ENCFF######, e.g., 'ENCFF001JXO'). Find accessions using "
+"ENCODE\\_list\\_files."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:115 b871f4376aaf4e88bc5d4dca98cdf7f3
+msgid "**ENCODE_list_files** (Type: ENCODEFilesTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:117 982137c6435942b4b937c0fa4be144a8
+msgid ""
+"List ENCODE data files with filters by file format, output type, or "
+"assay. Returns file metadata ..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst ca838231998f455483a818592e512b32
+msgid "ENCODE_list_files tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:123 eb397429a4f34926ad5492a3db1ab6d3
+msgid "**Name**: ``ENCODE_list_files``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:124 eb83ec63effe4bbcb8a0659c17f986b8
+msgid "**Type**: ``ENCODEFilesTool``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:125 14656e7b61a9407e94269c1ce521001c
+msgid ""
+"**Description**: List ENCODE data files with filters by file format, "
+"output type, or assay. Returns file metadata including accessions, "
+"formats (FASTQ, BAM, bigWig), output types (alignments, peaks, signal), "
+"and file sizes. Use this to programmatically discover downloadable "
+"artifacts for specific experiments or data types. Find file accessions to"
+" use with ENCODE\\_get\\_file for detailed file information and download "
+"URLs."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:129 8cb7a45735694ef0955df35a49728733
+msgid ""
+"``file_type`` (string) (optional) File format filter (e.g., 'fastq', "
+"'bam', 'bigWig', 'bed'). Common formats: fastq (raw reads), bam "
+"(alignments), bigWig (coverage), bed (peaks/regions)."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:132 b166a85b5c2c498294ec513856bffbd4
+msgid ""
+"``assay_title`` (string) (optional) Assay filter (e.g., 'ChIP-seq', 'RNA-"
+"seq'). Filters files by the experimental assay that generated them."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:135 ../../tools/encode_tools.rst:174
+#: ../../tools/encode_tools.rst:216 883168d4ac7e42829b73c4636acd81ac
+#: c7fd74fb1ac742f5a5fdba8c3fe463b4 e9247999590045228a4e346dbe57a7d4
+msgid ""
+"``limit`` (integer) (optional) Maximum number of results to return "
+"(1–100)."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:151 d2d1017a9da84e7182f307e93a30a3e1
+msgid "**ENCODE_search_biosamples** (Type: ENCODESearchBiosamplesTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:153 1197188d9dfb4282ae329b093a864546
+msgid ""
+"Search ENCODE biosamples (cell lines, tissues, primary cells) by "
+"organism, biosample type, or tre..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst 94923d1c84634d299ecf22ffe3e64364
+msgid "ENCODE_search_biosamples tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:159 ec7276ea6a4745819be7d4b61c43b007
+msgid "**Name**: ``ENCODE_search_biosamples``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:160 a144f8f238df4b23bd8407d3a6bce7b6
+msgid "**Type**: ``ENCODESearchBiosamplesTool``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:161 dee5651170814412932723e8a1383c68
+msgid ""
+"**Description**: Search ENCODE biosamples (cell lines, tissues, primary "
+"cells) by organism, biosample type, or treatment. Returns biosample "
+"accessions, types, organism, life stage, and descriptions. Use this to "
+"discover biological samples used in ENCODE experiments, find cell lines "
+"or tissues of interest, or identify treated vs. control samples. Find "
+"biosample accessions to use with ENCODE\\_get\\_biosample for detailed "
+"characterization data."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:165 4283c9eddec04f23bd92f7239ed0154d
+msgid ""
+"``organism`` (string) (optional) Organism filter (e.g., 'Homo sapiens', "
+"'Mus musculus')."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:168 be01ad98908248f18fca32c1dc889a10
+msgid ""
+"``biosample_type`` (string) (optional) Biosample classification filter — "
+"maps to ENCODE's biosample\\_ontology.classification field (e.g., 'cell "
+"line', 'tissue', 'primary cell', 'in vitro differentiated cells')."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:171 e7c88da338724111831975f8d1f457a8
+msgid ""
+"``treatment`` (string) (optional) Treatment filter (e.g., 'interferon "
+"gamma', 'ethanol'). Use '\\*' to find any treated samples."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:190 8d2ac6ce58e24337a05038ac79388de3
+msgid "**ENCODE_search_experiments** (Type: ENCODESearchTool)"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:192 62ef35928d174d6aae48c708df73ce8e
+msgid ""
+"Search ENCODE functional genomics experiments (e.g., ChIP-seq, ATAC-seq, "
+"RNA-seq) by assay type, ..."
+msgstr ""
+
+#: ../../tools/encode_tools.rst 800b7c6021a148c2bc348b53f76272e0
+msgid "ENCODE_search_experiments tool specification"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:198 bb68ad3d850a4418b31f9ae4797fe805
+msgid "**Name**: ``ENCODE_search_experiments``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:199 c2c3af70f3e14cb383440673dd33315f
+msgid "**Type**: ``ENCODESearchTool``"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:200 32e666a0e8bf48cc880957107a27c879
+msgid ""
+"**Description**: Search ENCODE functional genomics experiments (e.g., "
+"ChIP-seq, ATAC-seq, RNA-seq) by assay type, target protein, organism, or "
+"status. Returns experiment accessions, descriptions, and metadata. Use "
+"this to discover datasets for specific assays, transcription factors, or "
+"cell types. Find experiment accessions to use with "
+"ENCODE\\_get\\_experiment for detailed information or "
+"ENCODE\\_list\\_files for downloading data files."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:204 bd3134b438f442ffa110ab4157003cec
+msgid ""
+"``assay_title`` (string) (optional) Assay name filter (e.g., 'TF ChIP-"
+"seq', 'Histone ChIP-seq', 'ATAC-seq', 'RNA-seq', 'Hi-C'). Leave empty to "
+"search all assays. Use 'TF ChIP-seq' for transcription factor binding "
+"experiments."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:207 bd23f2ca7861431a819f4fece00b95b7
+msgid ""
+"``target`` (string) (optional) Target protein/factor filter (e.g., "
+"'CTCF', 'H3K4me3', 'POLR2A'). Use for TF ChIP-seq experiments."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:210 d2c8839387b74baa8d475aadefd4a6af
+msgid ""
+"``organism`` (string) (optional) Organism filter — maps to ENCODE's "
+"organism scientific name field (e.g., 'Homo sapiens', 'Mus musculus', "
+"'Drosophila melanogaster')."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:213 fd236965d3074278affafbea3f69363b
+msgid ""
+"``status`` (string) (optional) Record status filter. Use 'released' for "
+"public data (default), 'archived' for older data."
+msgstr ""
+
+#: ../../tools/encode_tools.rst:232 444db865e5f14f4abaf82cb5fd9f82af
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:234 65ac2eb365134603aaa788ea5aeeec58
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/encode_tools.rst:235 1969dce900a544019ad01b93957ca0c2
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

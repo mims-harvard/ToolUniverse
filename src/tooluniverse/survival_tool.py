@@ -84,15 +84,19 @@ class SurvivalTool(BaseTool):
         All returned lists have the same length (N+1), with index 0 representing
         the baseline (t=0, S=1, all subjects at risk, zero events/censored).
 
-        95% confidence intervals use the log-log (complementary log-log) transformation,
-        the default in R survfit() and recommended by Collett (2015):
-            Greenwood sum G = sum_j( d_j / (n_j * (n_j - d_j)) )
-            U        = log(-log(S(t)))              (complementary log-log)
-            SE_U     = sqrt(G) / |log(S(t))|        (delta method)
-            CI       = [S(t)^exp(+1.96*SE_U), S(t)^exp(-1.96*SE_U)]
-        Result is naturally in (0, 1) without clamping.
-        Edge cases: S=1 → CI=[1,1]; S=0 → CI=[0,0];
-        |log(S)| < 1e-10 → plain linear fallback to avoid numerical blow-up.
+        95% confidence intervals use the log-log (complementary log-log)
+        transformation, the default in R ``survfit()`` and recommended by
+        Collett (2015)::
+
+            Greenwood sum G = sum_j(d_j / (n_j * (n_j - d_j)))
+            U = log(-log(S(t)))
+            SE_U = sqrt(G) / abs(log(S(t)))
+            CI = [S(t)^exp(+1.96*SE_U), S(t)^exp(-1.96*SE_U)]
+
+        Result is naturally in ``(0, 1)`` without clamping. Edge cases:
+        ``S=1`` gives ``CI=[1,1]``; ``S=0`` gives ``CI=[0,0]``; and
+        ``abs(log(S)) < 1e-10`` uses a plain linear fallback to avoid
+        numerical blow-up.
 
         References: Collett (2015) Modelling Survival Data in Medical Research, §2.3;
                     Kalbfleisch & Prentice (2002) §1.3.

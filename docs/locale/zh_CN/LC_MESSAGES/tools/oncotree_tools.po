@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/oncotree_tools.rst:10 28b0708dbef94d0d833eb34ebe10e969
+msgid "Oncotree Tools"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:12 c0217284e8d74a51a9428a28d9168aac
+msgid ""
+"**Configuration File**: ``oncotree_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 3"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:16 5a69dd6fc6cf44f9bac6c654cf983145
+msgid ""
+"This page contains all tools defined in the ``oncotree_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:19 985ee51e28df40a18aa68aeb304a71b5
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:22 fa21958d621a4b32a86f640109954f1b
+msgid "**OncoTree_get_type** (Type: OncoTreeGetTypeTool)"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:24 9c5c8292d03241b5a24c8d06b903584f
+msgid ""
+"Get detailed information about a specific OncoTree cancer type by its "
+"exact code (e.g. 'BRCA', 'L..."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst 5f3bf7afe7d541c98aa50bbb6ab40b6a
+msgid "OncoTree_get_type tool specification"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:28 ../../tools/oncotree_tools.rst:62
+#: ../../tools/oncotree_tools.rst:92 16405922554343a19c21e989a8163ca2
+#: 88703d3453bf4056b2ca577b36246c39 aeb174f664d6493db4600e95e068010d
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:30 e7768205a57f4c86801863df9a956896
+msgid "**Name**: ``OncoTree_get_type``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:31 5f11b04378b848cabf35576f4b2a42be
+msgid "**Type**: ``OncoTreeGetTypeTool``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:32 7adf0d686351422ba31f58ef2c93772a
+msgid ""
+"**Description**: Get detailed information about a specific OncoTree "
+"cancer type by its exact code (e.g. 'BRCA', 'LUAD', 'GBM'). Returns the "
+"cancer name, main type, tissue, parent node in the hierarchy, hierarchy "
+"level, color used in MSK visualizations, revision history, and cross-"
+"references to UMLS and NCI Thesaurus. Use after OncoTree\\_search to get "
+"complete details for a known code."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:34 ../../tools/oncotree_tools.rst:68
+#: ../../tools/oncotree_tools.rst:98 711544f9f5f14927aa4b2559b4f7419a
+#: 9bdf3d66e3934dfdb9bed9242b7a9c8b fd966298c50f4dc3aac76a920ce238a2
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:36 d22994cb8aaa427b9e6d90b2b9d7135c
+msgid ""
+"``code`` (string) (required) OncoTree cancer type code (case-"
+"insensitive). Examples: 'BRCA' (Invasive Breast Carcinoma), 'LUAD' (Lung "
+"Adenocarcinoma), 'GBM' (Glioblastoma Multiforme), 'PAAD' (Pancreatic "
+"Adenocarcinoma)."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:39 ../../tools/oncotree_tools.rst:70
+#: 0b552aacc8a5465abb5efc3b79640cdc 8624f6aac3254c5c85a58ec4951930a8
+msgid ""
+"``version`` (string) (optional) OncoTree version. Default: "
+"'oncotree\\_latest\\_stable'."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:42 ../../tools/oncotree_tools.rst:73
+#: ../../tools/oncotree_tools.rst:112 6c7863af646a48e89a9bbfe66ff08dff
+#: 7befbecb7a2445eeb21cea04e7ac34fb 8d6f050c3167482a974ae462a109d435
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:56 9a10137f9e574cbbae7d3b9a15cffeb3
+msgid "**OncoTree_list_tissues** (Type: OncoTreeListTissuesTool)"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:58 77584e15ae0d4bcdac4d77e861e168b5
+msgid ""
+"List all tissue categories in the OncoTree hierarchy. Returns the unique "
+"set of tissue/organ name..."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst 7df80cf96e794913ab35c44200ddc5b8
+msgid "OncoTree_list_tissues tool specification"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:64 14e455e801344dbea000ea1b58fe32fc
+msgid "**Name**: ``OncoTree_list_tissues``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:65 501c7020390b4fc58172d13ca78708cc
+msgid "**Type**: ``OncoTreeListTissuesTool``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:66 24201612af7d4e45baaa7d39c5cd586f
+msgid ""
+"**Description**: List all tissue categories in the OncoTree hierarchy. "
+"Returns the unique set of tissue/organ names used as top-level groupings "
+"(e.g. 'Breast', 'Lung', 'Brain/CNS', 'Bladder/Urinary Tract'). Use to "
+"discover what tissues are represented in OncoTree before searching by "
+"tissue, or to enumerate all supported cancer tissue origins."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:86 6666c6349ef341fea86af2486f8436f5
+msgid "**OncoTree_search** (Type: OncoTreeSearchTool)"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:88 d2f777b3855141f8bb30b5ba983992e6
+msgid ""
+"Search the OncoTree cancer type ontology by name, code, main type, or "
+"tissue. OncoTree is a hiera..."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst 0cff339d4f8f420a87757643559273ea
+msgid "OncoTree_search tool specification"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:94 2022488bfee6488191dc4441f01848cf
+msgid "**Name**: ``OncoTree_search``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:95 b2b388dc17644e04b3c067c2481a8ddd
+msgid "**Type**: ``OncoTreeSearchTool``"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:96 0e8b9b37d8e84356b71a5c31c883bf87
+msgid ""
+"**Description**: Search the OncoTree cancer type ontology by name, code, "
+"main type, or tissue. OncoTree is a hierarchical cancer classification "
+"system developed at Memorial Sloan Kettering with 897+ cancer types. "
+"Returns standardized cancer type codes with UMLS and NCI Thesaurus cross-"
+"references. Use to identify the correct OncoTree code for a cancer type, "
+"find all cancer subtypes under a tissue, or map free-text cancer names to"
+" structured identifiers."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:100 86aed96c3209415ca6fe51c40477cdb4
+msgid ""
+"``query`` (string) (required) Search term. Interpreted according to the "
+"'field' parameter. Examples: 'breast cancer', 'BRCA', 'Lung', 'Non-Small "
+"Cell Lung Cancer'."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:103 d24dba061d5f470580eb70f285acc920
+msgid ""
+"``field`` (string) (optional) Field to search in. One of: 'name' (cancer "
+"type name), 'code' (OncoTree code), 'main\\_type' (main cancer category),"
+" 'tissue' (tissue of origin). Default: 'name'."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:106 7430ba9deb0043bd8dc0c6fe5032386a
+msgid ""
+"``exact_match`` (boolean) (optional) If true, requires exact match. If "
+"false (default), performs substring/prefix matching."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:109 b366e90b2b1540c5a72a5bd34bc0d68b
+msgid ""
+"``version`` (string) (optional) OncoTree version identifier. Use "
+"'oncotree\\_latest\\_stable' (default) for the current production "
+"version."
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:126 5f6c6d655e444d19941ec98d674331bb
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:128 12b31e6af72a44b89e77e136cd1747fe
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/oncotree_tools.rst:129 bcbfa0ac2be0454587f587370a619c79
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

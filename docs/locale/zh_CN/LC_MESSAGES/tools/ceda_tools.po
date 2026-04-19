@@ -1,0 +1,116 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/ceda_tools.rst:10 7a8ee4fa833b421cbca9408c1ddacdc8
+msgid "Ceda Tools"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:12 dd3d7f2a97d14f63981bfa1958804faa
+msgid ""
+"**Configuration File**: ``ceda_tools.json`` **Tool Type**: Local **Tools "
+"Count**: 1"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:16 9388dc70ec934e3ea29a79f12802736e
+msgid ""
+"This page contains all tools defined in the ``ceda_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:19 03d53fef1597473cbf06a04b5803cde6
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:22 a8357586bf6b464d953f499e494d8149
+msgid "**CEDA_search_datasets** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:24 1e465ecb5b0546c69fd39a6570c6767f
+msgid ""
+"Search the CEDA (Centre for Environmental Data Analysis) data catalogue "
+"for UK and global environ..."
+msgstr ""
+
+#: ../../tools/ceda_tools.rst 741d7c84051a4153841c3d5ab9fdc9af
+msgid "CEDA_search_datasets tool specification"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:28 0fd61853fa3e4d25a731be588626cb77
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:30 4295b2f710da4e35b122cdf62289b655
+msgid "**Name**: ``CEDA_search_datasets``"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:31 a2c95c594f884882b8565259cd0aa6e9
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:32 c44a4f50c22e4ca98350988097ebc270
+msgid ""
+"**Description**: Search the CEDA (Centre for Environmental Data Analysis)"
+" data catalogue for UK and global environmental, climate, and atmospheric"
+" science datasets. CEDA archives over 450TB of data from atmospheric, "
+"earth observation, and climate science research. Returns dataset records "
+"with titles, abstracts, time periods, geographic extents, and access "
+"information. Essential for finding atmospheric measurements, climate "
+"model outputs, satellite data, and Earth observation datasets."
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:34 5eee932e84f84d0b9ae04ee5c2a79d64
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:36 3e0cb36574554d28a95daedbea84611e
+msgid ""
+"``q`` (string, null) (optional) Search query for datasets. Examples: "
+"'climate model', 'sea surface temperature', 'atmospheric CO2', 'soil "
+"moisture', 'ozone'"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:39 d41e7f3211db472baf9ddc3f0c22760c
+msgid ""
+"``limit`` (integer, null) (optional) Number of results to return (default"
+" 10, max 100)"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:42 50e7334bb4074fb5aa4053d8b76e468d
+msgid "``offset`` (integer, null) (optional) Offset for pagination"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:45 9369ff9e350b4ffea3b061c028b645ee
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:58 0d5aef257cd1474994823629dd163b78
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:60 1ff460dfd8a94ce49f2e825c8b28cbcd
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/ceda_tools.rst:61 b4794829a8894ea4b563b0b56edd5a1c
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

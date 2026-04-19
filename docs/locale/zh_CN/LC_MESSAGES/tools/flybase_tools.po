@@ -1,0 +1,340 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/flybase_tools.rst:10 81de3b9c5574457fba5c782e6b07ca82
+msgid "Flybase Tools"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:12 1b53222e50b3471e847f0ca4d50345d8
+msgid ""
+"**Configuration File**: ``flybase_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 6"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:16 188225b622bc4f148dca5a64f5de760d
+msgid ""
+"This page contains all tools defined in the ``flybase_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:19 00d9cdee696c4fc2959512a821bf6b98
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:22 8a8822c990604c25bc8d7c4b5e0f0083
+msgid "**FlyBase_get_gene** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:24 e680e4e6cbd24b5683f1dbf52f3aab8a
+msgid ""
+"Get detailed Drosophila melanogaster (fruit fly) gene information from "
+"FlyBase via the Alliance o..."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst a39e1176d4744a8198c67140a8a0b0b8
+msgid "FlyBase_get_gene tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:28 ../../tools/flybase_tools.rst:59
+#: ../../tools/flybase_tools.rst:96 ../../tools/flybase_tools.rst:133
+#: ../../tools/flybase_tools.rst:164 ../../tools/flybase_tools.rst:204
+#: 679e09f66b6f4a0dbdea4f175f44e93d 6989291dbac748f5971e3aef36b7a8f4
+#: 8d71359227fe48c69d8005425481dcfb a77025824dc240d29560d66051536cf4
+#: b4747b67c8e24ba98110e00a3ccf5e1f db4034f094c64f5882c3c0a395df5ba8
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:30 2fe3b4e8ab71433b9a6421f9d10ae1ac
+msgid "**Name**: ``FlyBase_get_gene``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:31 ../../tools/flybase_tools.rst:62
+#: ../../tools/flybase_tools.rst:99 ../../tools/flybase_tools.rst:136
+#: ../../tools/flybase_tools.rst:167 ../../tools/flybase_tools.rst:207
+#: 3f9ff136c5994e4eb1309c6587d8ffd9 445e0306c57042d2ae0c10e4063761d4
+#: 80a4e2532fd94043ab5169cdb646c942 ce1ed73bb3fd4072bfbc8dde4040f15c
+#: ecc963c4e3094450b787579293bef71f f117af7f57fb40fb85776e912fe9a6cc
+msgid "**Type**: ``AllianceGenomeTool``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:32 1feb182f8d684173ba53d84c2a099455
+msgid ""
+"**Description**: Get detailed Drosophila melanogaster (fruit fly) gene "
+"information from FlyBase via the Alliance of Genome Resources. Returns "
+"gene symbol, name, synopsis, genomic location, synonyms, and cross-"
+"references. FlyBase is the primary database for Drosophila genetics. "
+"Example: 'FB:FBgn0003996' returns the white (w) gene with its function as"
+" an ABCG2-class transporter."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:34 ../../tools/flybase_tools.rst:65
+#: ../../tools/flybase_tools.rst:102 ../../tools/flybase_tools.rst:139
+#: ../../tools/flybase_tools.rst:170 ../../tools/flybase_tools.rst:210
+#: 415ad0e02b6c4c3bb9e5ca6b0ad95408 64c42e8976544786a791a406ab0ef677
+#: 804c323214d941f1a1daea149ef139fb bcb1ecc11885456186d0152807cd731c
+#: e084ddb64787452fb342934840a81b3c e6199937841044dba889cd3b56eb3d50
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:36 54b40a650fa84cfcba33f404818a6ac3
+msgid ""
+"``gene_id`` (string) (required) FlyBase gene ID with 'FB:' prefix. "
+"Examples: 'FB:FBgn0003996' (white/w), 'FB:FBgn0000490' "
+"(decapentaplegic/dpp), 'FB:FBgn0004647' (Notch/N), 'FB:FBgn0000546' "
+"(eyeless/ey), 'FB:FBgn0003731' (hedgehog/hh)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:39 ../../tools/flybase_tools.rst:76
+#: ../../tools/flybase_tools.rst:113 ../../tools/flybase_tools.rst:144
+#: ../../tools/flybase_tools.rst:184 ../../tools/flybase_tools.rst:224
+#: 006a0e99ca5841788bb61991aa358931 0ab9e67992294c1cb7ed0e615c0fe639
+#: 12f246a059c54675819a11ccd4783037 4210db6397b14d978a489dd94b33d37d
+#: bcd2c20b2e2b4a93b35dbfed9640f8ef bf1888af02564384a35151b442d0e8c2
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:53 8b17de8531a34b71b2c1f93530156b2d
+msgid "**FlyBase_get_gene_alleles** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:55 24d5a97c137c484aae59dd197f635f38
+msgid ""
+"Get alleles and variants for a Drosophila gene from FlyBase via the "
+"Alliance of Genome Resources...."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst d86d1ef7aa9f47cab9c5f5a1f3cb334a
+msgid "FlyBase_get_gene_alleles tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:61 92519baf202d4d3080745d9e2be96dc1
+msgid "**Name**: ``FlyBase_get_gene_alleles``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:63 7033cbe103c641a089abdeffc7927c9e
+msgid ""
+"**Description**: Get alleles and variants for a Drosophila gene from "
+"FlyBase via the Alliance of Genome Resources. Returns allele symbols, "
+"categories (insertion, point mutation, etc.), associated phenotypes, "
+"disease annotations, and variant details including genomic coordinates. "
+"Example: 'FB:FBgn0000490' (dpp) returns alleles like dpp[MI03752] with "
+"variant location and molecular consequence."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:67 ../../tools/flybase_tools.rst:172
+#: ba73cdbce1884539a63f4f1930b24630 d13be361d8eb4c59a997426757ad719e
+msgid ""
+"``gene_id`` (string) (required) FlyBase gene ID with 'FB:' prefix. "
+"Examples: 'FB:FBgn0003996' (white/w), 'FB:FBgn0000490' (dpp), "
+"'FB:FBgn0004647' (Notch/N)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:70 9c77fcfd9ff143d8ad834a8db29b19d5
+msgid ""
+"``limit`` (integer) (optional) Maximum number of alleles to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:73 ../../tools/flybase_tools.rst:110
+#: ../../tools/flybase_tools.rst:181 ../../tools/flybase_tools.rst:218
+#: 0227a70a54504733a26cc6e3b019a0c0 3b31cca6562c45eebfa8e2d884da1b1d
+#: 640ac4166d784e29aa9a5dd7d34e0262 b41009dd5b3f437ca7f9f8f3f8091492
+msgid "``page`` (integer) (optional) Page number for pagination. Default: 1."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:90 9722a6779dd546bfb6e2239fec7dd4ae
+msgid "**FlyBase_get_gene_disease_models** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:92 570306f0d1454763aed3b563797ec6df
+msgid ""
+"Get disease models involving a Drosophila gene from the Alliance of "
+"Genome Resources. Drosophila ..."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst 9b38f35722b14620a5b626bdc1e3c2a9
+msgid "FlyBase_get_gene_disease_models tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:98 d6228a082e94495aa2c254830e6bad67
+msgid "**Name**: ``FlyBase_get_gene_disease_models``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:100 77c3e8f0ba364bf58672eebcf3c0fb11
+msgid ""
+"**Description**: Get disease models involving a Drosophila gene from the "
+"Alliance of Genome Resources. Drosophila is a powerful model organism for"
+" human disease research. Returns genotype-based disease models with "
+"associated human disease names and Disease Ontology IDs. Example: "
+"'FB:FBgn0000490' (dpp) has 946 disease model entries including models for"
+" ALS, Parkinson's disease, and other neurodegenerative conditions."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:104 eaf22951be4e48538f4e726c52d280f7
+msgid ""
+"``gene_id`` (string) (required) FlyBase gene ID with 'FB:' prefix. "
+"Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0004647' (Notch/N), "
+"'FB:FBgn0003996' (white/w)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:107 b7268896166b45f58f8d29551270f2a5
+msgid ""
+"``limit`` (integer) (optional) Maximum number of disease models to return"
+" (1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:127 4e03631934f945468939902c0acda695
+msgid "**FlyBase_get_gene_expression** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:129 0aeff6dcce42481493e89f1d581126ce
+msgid ""
+"Get expression summary for a Drosophila gene from the Alliance of Genome "
+"Resources. Returns a rib..."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst 6b49507fb8824a28a848f00aff0201a2
+msgid "FlyBase_get_gene_expression tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:135 dc199114813645549d40276af8e304ec
+msgid "**Name**: ``FlyBase_get_gene_expression``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:137 b881150493a74b8dbf972096c79fd98c
+msgid ""
+"**Description**: Get expression summary for a Drosophila gene from the "
+"Alliance of Genome Resources. Returns a ribbon summary of expression "
+"across anatomical systems (nervous system, integumental system, "
+"reproductive system, etc.) with annotation counts. Useful for "
+"understanding where a fly gene is expressed. Example: 'FB:FBgn0000490' "
+"(dpp) shows expression in alimentary system (43 annotations), "
+"integumental system (56), respiratory system (32)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:141 93c775f74be94fad853c8e7e1700c847
+msgid ""
+"``gene_id`` (string) (required) FlyBase gene ID with 'FB:' prefix. "
+"Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0003996' (white/w), "
+"'FB:FBgn0004647' (Notch/N)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:158 d34dae9f3dbd463ab8bbe843fd88a71c
+msgid "**FlyBase_get_gene_interactions** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:160 dc068c54c2ff43e38fb23e4fff2a092d
+msgid ""
+"Get molecular or genetic interactions for a Drosophila gene from the "
+"Alliance of Genome Resources..."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst 65a841a29d564cf8a24e4327b0d2d5b0
+msgid "FlyBase_get_gene_interactions tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:166 9fb9ab2779a04c15b38f880590da3e7e
+msgid "**Name**: ``FlyBase_get_gene_interactions``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:168 4ce38db42e184b41afc47c7353e9b920
+msgid ""
+"**Description**: Get molecular or genetic interactions for a Drosophila "
+"gene from the Alliance of Genome Resources. Molecular interactions are "
+"physical protein-protein interactions. Genetic interactions are "
+"phenotype-based (suppression, enhancement, etc.). Returns interacting "
+"gene pairs with species and interaction type. Example: 'FB:FBgn0000490' "
+"(dpp) has 169 genetic interactions including genetic suppression with "
+"anchor."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:175 227a4df2b1424655817f10c91b9b1113
+msgid ""
+"``interaction_type`` (string) (optional) Type of interaction: 'molecular'"
+" (physical PPI) or 'genetic' (phenotype-based). Default: 'molecular'."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:178 4e19175c74874812b7e4268462620a7f
+msgid ""
+"``limit`` (integer) (optional) Maximum number of interactions to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:198 79ae98d3fa17402884a1bc8a45176f41
+msgid "**FlyBase_get_gene_orthologs** (Type: AllianceGenomeTool)"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:200 84dbd87e2b6b4bb89e65597a532d64bc
+msgid ""
+"Get orthologs of a Drosophila gene across other species from the Alliance"
+" of Genome Resources. Re..."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst 00ec4bf0d0bd46a1b16b309e1191c3f4
+msgid "FlyBase_get_gene_orthologs tool specification"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:206 baedfe9061f145e8bd64205c502671f9
+msgid "**Name**: ``FlyBase_get_gene_orthologs``"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:208 38e099291387486cb3e4f391eadae3a2
+msgid ""
+"**Description**: Get orthologs of a Drosophila gene across other species "
+"from the Alliance of Genome Resources. Returns orthologous genes in "
+"human, mouse, zebrafish, worm, yeast, and other model organisms with "
+"prediction method details and best-score indicators. Essential for "
+"translational research from fly models to human disease genes. Example: "
+"'FB:FBgn0004647' (Notch) returns orthologs including human NOTCH1-4."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:212 08a7e087d1994986a9fe13caf1fb1b10
+msgid ""
+"``gene_id`` (string) (required) FlyBase gene ID with 'FB:' prefix. "
+"Examples: 'FB:FBgn0004647' (Notch/N), 'FB:FBgn0003996' (white/w), "
+"'FB:FBgn0000546' (eyeless/ey)."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:215 d38bac9b5ca34188929aa7ba570b9703
+msgid ""
+"``limit`` (integer) (optional) Maximum number of orthologs to return "
+"(1-100). Default: 20."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:221 c74daf2e3ba141b6be458b1d7e778e3f
+msgid ""
+"``stringency`` (string) (optional) Stringency filter for orthology calls:"
+" 'stringent' (high confidence) or 'moderate'. Default: 'stringent'."
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:238 83d31965b094410785110473ab460d26
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:240 c8adf34d9a3e41748686cf0c115cd911
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/flybase_tools.rst:241 6b7a2454d4c24a77941d99e4cf6250f9
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+

@@ -1,0 +1,274 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Shanghua Gao
+# This file is distributed under the same license as the ToolUniverse
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ToolUniverse \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 11:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../tools/pdbe_graph_tools.rst:10 2a735bcd715e40049a48e5f93092c47a
+msgid "Pdbe Graph Tools"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:12 1f7112a7069b4240ae45fa9956b21fdb
+msgid ""
+"**Configuration File**: ``pdbe_graph_tools.json`` **Tool Type**: Local "
+"**Tools Count**: 5"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:16 582b68350b2946f1a6ee1e884a39ebd0
+msgid ""
+"This page contains all tools defined in the ``pdbe_graph_tools.json`` "
+"configuration file."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:19 8e1008397f3e4f68a09b6a877e10c0f2
+msgid "Available Tools"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:22 5b02e1c9e31444168a25da0fd3048fdb
+msgid "**PDBe_get_bound_molecules** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:24 ffd2ca0804b645a4b1022e83b2b11114
+msgid ""
+"Get all bound molecules (ligands, cofactors, drugs) in a PDB structure "
+"from the PDBe Graph API. R..."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst 3d1784cb69b047118225b15d51cde0fd
+msgid "PDBe_get_bound_molecules tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:28 ../../tools/pdbe_graph_tools.rst:59
+#: ../../tools/pdbe_graph_tools.rst:90 ../../tools/pdbe_graph_tools.rst:121
+#: ../../tools/pdbe_graph_tools.rst:152 4b067aee0aa845fda19230d7ebe75684
+#: 8479850f4e8d4cc688b7db33dbd66dfb af3808fb963c4beda2876483d41bc408
+#: e37a73cf4b664608bb9ef2203e09a2be ed01322bb9a94925a913930611022f91
+msgid "**Tool Information:**"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:30 a0f37df5493f43f3b86b83e9223cc1c7
+msgid "**Name**: ``PDBe_get_bound_molecules``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:31 ../../tools/pdbe_graph_tools.rst:62
+#: ../../tools/pdbe_graph_tools.rst:93 ../../tools/pdbe_graph_tools.rst:124
+#: ../../tools/pdbe_graph_tools.rst:155 5a88c2403b6b49029276fba84036a3b6
+#: 8ae01418edc845e8b9b9e26d910fdf8c adb2a0b9dab24c118f85af04e2900c98
+#: dadd293838754c1ebd28511c9dd4ce22 dcf7ddb26f334af08722f049fb18c5bd
+msgid "**Type**: ``BaseRESTTool``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:32 2f96879469f94ef2ba8f894332c4a61d
+msgid ""
+"**Description**: Get all bound molecules (ligands, cofactors, drugs) in a"
+" PDB structure from the PDBe Graph API. Returns each bound molecule group"
+" with its chemical component ID (e.g., HEM for heme, ATP for adenosine "
+"triphosphate, REA for retinoic acid), chain location, and entity "
+"information. Essential for identifying what small molecules co-"
+"crystallized with a protein. Use this to discover ligands in a structure "
+"before analyzing binding sites. Example: 4HHB returns 6 bound molecules "
+"(4 HEM groups + 2 PO4 groups); 1CBS returns REA (retinoic acid)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:34 ../../tools/pdbe_graph_tools.rst:65
+#: ../../tools/pdbe_graph_tools.rst:96 ../../tools/pdbe_graph_tools.rst:127
+#: ../../tools/pdbe_graph_tools.rst:158 4715bd1248184a529bd806355a7e6014
+#: 4d0382fdf3e344cfa04a7ea63db33657 5e7c9dd066f54652ba093cfd71df9782
+#: 699e996bcada47a7b9a588e9d139a4bb 757a5a6667a94413b8dfa26e38ac13c0
+msgid "**Parameters:**"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:36 e358a1e8fd20487d9caa5777f0d7c46e
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (4-character code, case-"
+"insensitive). Examples: '4hhb' (hemoglobin with heme), '1cbs' (CRABP2 "
+"with retinoic acid), '6lu7' (SARS-CoV-2 Mpro with inhibitor), '3hyd' "
+"(kinase with ATP analog)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:39 ../../tools/pdbe_graph_tools.rst:70
+#: ../../tools/pdbe_graph_tools.rst:101 ../../tools/pdbe_graph_tools.rst:132
+#: ../../tools/pdbe_graph_tools.rst:163 2433fb13c3fd47c48834cfbcf044cc58
+#: 3996824b2aae4aa9aa1f11d135710619 72e2909980d04094a73ae968d66b9fee
+#: 900730758ae348319b8d3586176404de b123962a59e044c580c40d86d564cf98
+msgid "**Example Usage:**"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:53 175da76dd36b49fd86618a83e97ed7f5
+msgid "**PDBe_get_compound_details** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:55 bbba2f86b8dd453ea09add3040fc4513
+msgid ""
+"Get detailed chemical compound information from the PDBe Graph API by "
+"chemical component ID (3-le..."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst 54083eecdc1045c994f074e9c3c70eb5
+msgid "PDBe_get_compound_details tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:61 cc4afd5c33db4c9c959b8b694f0f3138
+msgid "**Name**: ``PDBe_get_compound_details``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:63 a137e7e6097b4bffad5a7fcae48d2591
+msgid ""
+"**Description**: Get detailed chemical compound information from the PDBe"
+" Graph API by chemical component ID (3-letter code). Returns chemical "
+"formula, molecular weight, SMILES, InChI, InChIKey, systematic names, "
+"cross-references to DrugBank/PubChem/ClinicalTrials, and stereoisomer "
+"information. More comprehensive than compound name search. Example: 'ATP'"
+" returns adenosine-5'-triphosphate with formula C10H16N5O13P3, weight "
+"507.181, DrugBank DB00171, PubChem 5957."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:67 3f856f4e19df4054bdc69cde68dd8e86
+msgid ""
+"``comp_id`` (string) (required) Chemical component identifier (3-letter "
+"PDB ligand code, uppercase). Examples: 'ATP' (adenosine triphosphate), "
+"'HEM' (protoporphyrin IX containing FE), 'NAD' (nicotinamide-adenine-"
+"dinucleotide), 'FAD' (flavin-adenine dinucleotide), 'REA' (retinoic "
+"acid)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:84 11c9708572ce4dadbfedfc860ac40452
+msgid "**PDBe_get_funpdbe_annotations** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:86 2d6ba402781b4babb300a24567908b4f
+msgid ""
+"Get functional annotations from the FunPDBe consortium for a PDB "
+"structure. FunPDBe aggregates re..."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst 75f3d891c2d94081991a94df96b4a970
+msgid "PDBe_get_funpdbe_annotations tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:92 6e92f6440d5a4c31acf04f58978df8ef
+msgid "**Name**: ``PDBe_get_funpdbe_annotations``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:94 51dbf2c9809f45d49e2b2f5ebb84fbfc
+msgid ""
+"**Description**: Get functional annotations from the FunPDBe consortium "
+"for a PDB structure. FunPDBe aggregates residue-level functional data "
+"from external resources including residue depth (DEPTH), dynamic cross-"
+"correlation (DynaMine), conservation scores, binding site predictions, "
+"and more. Returns per-residue annotations with confidence scores and "
+"classifications. Not all structures have FunPDBe data. Example: 4HHB "
+"returns depth annotations for all residues across chains A-D with "
+"confidence classifications (high/medium/low)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:98 de05ecf7cce54e00aa4ac44dc5743702
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (4-character code). "
+"Examples: '4hhb' (hemoglobin, has depth annotations), '1cbs' (CRABP2), "
+"'6lu7' (SARS-CoV-2 main protease)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:115 58ce3eb38b4b45b288f51bfc2bf2210a
+msgid "**PDBe_get_uniprot_mappings** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:117 455dea23c7844f53bcb08f865a45b406
+msgid ""
+"Get UniProt-to-PDB chain mappings for a PDB structure from the PDBe Graph"
+" API. For each UniProt a..."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst 0e2bbee204bd47199bb42cefb4c6886a
+msgid "PDBe_get_uniprot_mappings tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:123 b5797619bb894ea282390671acb30960
+msgid "**Name**: ``PDBe_get_uniprot_mappings``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:125 54867de23649481eab7366c9bf35da5b
+msgid ""
+"**Description**: Get UniProt-to-PDB chain mappings for a PDB structure "
+"from the PDBe Graph API. For each UniProt accession represented in the "
+"structure, returns all chain mappings with residue-level alignment "
+"(UniProt start/end, PDB start/end, identity, coverage). Essential for "
+"understanding which proteins are in a crystal structure and how they map "
+"to UniProt reference sequences. Example: 4HHB returns P69905 "
+"(HBA\\_HUMAN) mapped to chains A,C and P68871 (HBB\\_HUMAN) mapped to "
+"chains B,D."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:129 2b360ed21efe4eef94c513e47c7178e2
+msgid ""
+"``pdb_id`` (string) (required) PDB identifier (4-character code). "
+"Examples: '4hhb' (hemoglobin), '1cbs' (CRABP2), '6lu7' (SARS-CoV-2 main "
+"protease)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:146 52b31d3b7c5e4cb2bc8921de0428355c
+msgid "**PDBe_get_uniprot_structure_coverage** (Type: BaseRESTTool)"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:148 4db4226e10734b1aa57920547fff6950
+msgid ""
+"Get all PDB structures mapped to a UniProt protein, ranked by quality and"
+" coverage, from the PDBe..."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst 0e0af70a3f01424190cc761542ea94a7
+msgid "PDBe_get_uniprot_structure_coverage tool specification"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:154 362009f3360541d3af921e4f679aaee7
+msgid "**Name**: ``PDBe_get_uniprot_structure_coverage``"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:156 e665a2fd60914fdfb9521a0bba82ccc1
+msgid ""
+"**Description**: Get all PDB structures mapped to a UniProt protein, "
+"ranked by quality and coverage, from the PDBe Graph API. For each "
+"structure, shows residue coverage on the UniProt sequence, resolution, "
+"experimental method, mutations present, and ligands bound. Returns the "
+"best chain per PDB entry. Essential for finding the best structural "
+"coverage for a protein of interest and identifying which regions have "
+"experimental structures vs predicted models. Example: P04637 (TP53) "
+"returns 100+ structures covering different domains (DNA-binding domain "
+"93-292, tetramerization domain 319-360, etc.)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:160 b7bd6915204544409afed700082419d8
+msgid ""
+"``uniprot_id`` (string) (required) UniProt accession. Examples: 'P04637' "
+"(TP53, many structures), 'P00533' (EGFR), 'P69905' (hemoglobin alpha), "
+"'P01308' (insulin)."
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:177 7ca5c37db6114800b925cd2094fc3206
+msgid "Navigation"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:179 70fa2d1d99a34b3faf867291b13a0426
+msgid ":doc:`tools_config_index` - Back to Tools Overview"
+msgstr ""
+
+#: ../../tools/pdbe_graph_tools.rst:180 9fb0d728d0b8482f9ec821fadccd8450
+msgid ":doc:`../guide/loading_tools` - Loading Local Tools"
+msgstr ""
+
