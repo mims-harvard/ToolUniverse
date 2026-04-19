@@ -112,7 +112,7 @@
 .install-showcase .sd-tab-set {
     margin: 1rem 0 0;
     padding: 0.75rem;
-    background: color-mix(in srgb, var(--sy-c-light) 80%, white);
+    background: rgba(255, 255, 255, 0.94);
     border-radius: 0.9rem;
     border: 1px solid var(--tu-console-line);
 }
@@ -200,6 +200,11 @@
     color: var(--sy-c-text);
 }
 
+.verify-kicker {
+    padding: 0.38rem 0.72rem;
+    border-radius: 0.65rem;
+}
+
 .verify-console {
     padding-top: 0.85rem;
 }
@@ -248,7 +253,7 @@ html.dark .verify-console {
 }
 
 html.dark .install-showcase .sd-tab-set {
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(15, 23, 42, 0.78);
 }
 
 html.dark .install-showcase .highlight,
@@ -597,7 +602,7 @@ a.reference.internal img {
 }
 
 .admonition.important {
-    background: color-mix(in srgb, var(--tu-warning) 14%, var(--sy-c-background));
+    background: color-mix(in srgb, var(--tu-warning) 8%, var(--sy-c-background));
     border-color: var(--tu-warning);
 }
 
@@ -800,7 +805,7 @@ html.dark .step-card.pending::before {
 
 /* Remove green background from important admonition in skills showcase */
 .admonition.important {
-    background-color: var(--sy-c-light) !important;
+    background-color: color-mix(in srgb, var(--tu-warning) 8%, var(--sy-c-background)) !important;
     border-left: 4px solid var(--tu-accent) !important;
 }
 
