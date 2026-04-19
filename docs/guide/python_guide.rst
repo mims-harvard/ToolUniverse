@@ -6,57 +6,84 @@ Python Guide
 Installation
 ------------
 
-Choose your preferred installation method:
+.. container:: install-showcase
 
-.. tab-set::
+   .. container:: install-kicker
 
-   .. tab-item:: pip
-      :sync: pip
+      Installation Workspace
 
-      Standard installation with pip:
+   Choose your preferred installation method:
 
-      .. code-block:: bash
+   .. tab-set::
 
-         pip install tooluniverse
+      .. tab-item:: pip
+         :sync: pip
 
-   .. tab-item:: uv (Recommended)
-      :sync: uv
+         .. container:: install-panel-copy
 
-      Fast, modern package manager:
+            Standard installation with pip.
 
-      .. code-block:: bash
+         .. code-block:: bash
 
-         uv pip install tooluniverse
+            pip install tooluniverse
 
-   .. tab-item:: Development
-      :sync: dev
+      .. tab-item:: uv (Recommended)
+         :sync: uv
 
-      For contributors and custom modifications:
+         .. container:: install-panel-copy
 
-      .. code-block:: bash
+            Fast, modern package manager.
 
-         git clone https://github.com/mims-harvard/ToolUniverse.git
-         cd ToolUniverse
-         uv sync  # or: pip install -e .[dev]
+         .. code-block:: bash
 
-.. tip:: **Pro Tip**
- 
- Use ``uv`` for faster installations and better dependency management. Install it with: ``curl -LsSf https://astral.sh/uv/install.sh | sh``
+            uv pip install tooluniverse
+
+      .. tab-item:: Development
+         :sync: dev
+
+         .. container:: install-panel-copy
+
+            For contributors and custom modifications.
+
+         .. code-block:: bash
+
+            git clone https://github.com/mims-harvard/ToolUniverse.git
+            cd ToolUniverse
+            uv sync  # or: pip install -e .[dev]
+
+   .. container:: install-tip-band
+
+      .. container:: install-tip-label
+
+         Pro Tip
+
+      Use ``uv`` for faster installations and better dependency management.
+      Install it with ``curl -LsSf https://astral.sh/uv/install.sh | sh``.
 
 Verify Installation
 ~~~~~~~~~~~~~~~~~~~
 
-Check that ToolUniverse is installed correctly:
+.. container:: verify-console
 
-.. code-block:: python
+   .. container:: verify-kicker
 
-   import tooluniverse
-   print(f"ToolUniverse version: {tooluniverse.__version__}")
-   print("✅ Installation successful!")
+      Verify Installation
 
-.. success:: **Installation Complete**
+   Check that ToolUniverse is installed correctly:
 
-   You're ready to start using ToolUniverse!
+   .. code-block:: python
+
+      import tooluniverse
+      print(f"ToolUniverse version: {tooluniverse.__version__}")
+      print("✅ Installation successful!")
+
+   .. container:: verify-status
+
+      .. container:: verify-status-label
+
+         Installation Complete
+
+      You're ready to start using ToolUniverse.
 
 Quick Start
 -----------
