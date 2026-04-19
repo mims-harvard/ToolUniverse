@@ -99,7 +99,7 @@ def grade_answer(
                 low, high = high, low
             for raw in re.findall(
                 r"-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][+-]?\d+)?",
-                predicted,
+                predicted_normalized,
             ):
                 clean = raw.replace(",", "")
                 try:
@@ -133,7 +133,7 @@ def grade_answer(
     # Also check bold/quoted segments from the prediction individually
     # (e.g., "**CD14 Mono**" extracted as "CD14 Mono")
     if not normalized_match:
-        for seg in re.findall(r"\*\*([^*]+)\*\*|\"([^\"]+)\"|'([^']+)'", predicted):
+        for seg in re.findall(r"\*\*([^*]+)\*\*|\"([^\"]+)\"|'([^']+)'", predicted_normalized):
             segment = next(s for s in seg if s)
             seg_norm = re.sub(r"[^a-z0-9]", "", segment.lower())
             if len(seg_norm) >= 4 and (
@@ -153,7 +153,7 @@ def grade_answer(
     if gt_num_match:
         try:
             gt_num = float(gt_num_match.group(1).replace(",", ""))
-            for pred_num in _extract_numbers(predicted):
+            for pred_num in _extract_numbers(predicted_normalized):
                 if gt_num == 0:
                     if pred_num == 0:
                         numeric_match = True
