@@ -31,14 +31,14 @@
 
 /* Code blocks */
 .rst-content .highlight {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: var(--sy-c-light);
+    border: 1px solid var(--sy-c-border);
     border-radius: 0.375rem;
 }
 
 .rst-content .highlight pre {
     background: transparent;
-    color: #495057;
+    color: var(--sy-c-text);
 }
 
 /* API documentation styling */
@@ -162,8 +162,8 @@
 
 /* Docstring styling */
 .docstring {
-    background-color: #f9f9f9;
-    border: 1px solid #e1e4e5;
+    background-color: var(--sy-c-light);
+    border: 1px solid var(--sy-c-border);
     border-radius: 4px;
     padding: 12px;
     margin: 12px 0;
@@ -176,7 +176,7 @@
 
 .field-list dt {
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--sy-c-heading);
 }
 
 .field-list dd {
@@ -224,7 +224,7 @@
 }
 
 .example-code {
-    background-color: #f8f9fa;
+    background-color: var(--sy-c-light);
     border: none;
     margin: 0;
     padding: 12px;
@@ -232,8 +232,8 @@
 
 /* Function signature improvements */
 .sig {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background-color: var(--sy-c-light);
+    border: 1px solid var(--sy-c-border);
     border-radius: 4px;
     padding: 8px 12px;
     font-family: 'Monaco', 'Consolas', 'Courier New', monospace;

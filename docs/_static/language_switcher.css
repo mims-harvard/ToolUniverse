@@ -4,7 +4,8 @@
     bottom: 20px;
     right: 20px;
     z-index: 9999;
-    background: white;
+    background: var(--sy-c-background);
+    border: 1px solid var(--sy-c-border);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     padding: 8px;
@@ -14,8 +15,8 @@
     padding: 8px 12px;
     border: 2px solid #667eea;
     border-radius: 6px;
-    background: white;
-    color: #333;
+    background: var(--sy-c-background);
+    color: var(--sy-c-text);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -24,7 +25,7 @@
 }
 
 .language-switcher select:hover {
-    background: #f8f9fa;
+    background: var(--sy-c-light);
     border-color: #764ba2;
 }
 
@@ -33,19 +34,17 @@
     box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
 }
 
-/* 暗色模式适配 */
-@media (prefers-color-scheme: dark) {
-    .language-switcher {
-        background: #1e1e1e;
-    }
-    
-    .language-switcher select {
-        background: #2d2d2d;
-        color: #e0e0e0;
-        border-color: #667eea;
-    }
-    
-    .language-switcher select:hover {
-        background: #3d3d3d;
-    }
+/* 兼容主题切换器使用的 html.dark 类 */
+html.dark .language-switcher {
+    background: var(--sy-c-background);
+}
+
+html.dark .language-switcher select {
+    background: var(--sy-c-background);
+    color: var(--sy-c-text);
+    border-color: #818cf8;
+}
+
+html.dark .language-switcher select:hover {
+    background: var(--sy-c-light);
 }

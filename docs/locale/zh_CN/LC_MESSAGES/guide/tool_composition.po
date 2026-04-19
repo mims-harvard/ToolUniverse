@@ -22,11 +22,11 @@ msgstr ""
 
 #: ../../guide/tool_composition.rst:2 24b8c88a388f48cea2f8a6791bc0a12c
 msgid "Tool Composition Tutorial"
-msgstr "工具组成教程"
+msgstr "工具编排教程"
 
 #: ../../guide/tool_composition.rst:4 ed337ad7050644e59ab4d497aa25dadd
 msgid "**Chain ToolUniverse's 1000+ tools into powerful scientific workflows**"
-msgstr "**将ToolUniverse的600多种工具整合为强大的科学工作流**"
+msgstr "**将 ToolUniverse 的 1000+ 个工具串联成强大的科学工作流**"
 
 #: ../../guide/tool_composition.rst:7 b010153f58b24fdd9db15bb3f1e52ff5
 msgid "Overview"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: ../../guide/tool_composition.rst:33 04bd3bd7cfd143189c0a5cd8ee58a014
 msgid "Tool Composer Architecture"
-msgstr "工具编写器架构"
+msgstr "工具编排器架构"
 
 #: ../../guide/tool_composition.rst:35 86d2a488107b4ba99a53111228529337
 msgid ""
@@ -81,7 +81,7 @@ msgstr ""
 
 #: ../../guide/tool_composition.rst:37 4d2364549bb04395b8665223fb062e4c
 msgid "**Container Function Components**:"
-msgstr "**容器功能组件**:"
+msgstr "**容器函数组成部分：**"
 
 #: ../../guide/tool_composition.rst:39 abd860411a2e4a969cf27e88bc6b1bca
 msgid ""
@@ -116,28 +116,7 @@ msgstr ""
 
 #: ../../guide/tool_composition.rst:49 3bae900c9bee4a07b69b2fb463274673
 msgid "How Tool Composition Works"
-msgstr ""
-"工具组成原理\n"
-"\n"
-"工具组成是指将多个工具模块组合在一起以实现特定功能的过程。这些模块可以是独立的组件，也可以是相互依赖的子系统。工具组成的核心在于模块之间的接口设计和数据流的有效管理。"
-"\n"
-"\n"
-"<h2>模块化设计</h2>\n"
-"模块化设计允许开发者根据需求选择和组合不同的功能模块。这种设计方式不仅提高了系统的灵活性，还简化了维护和升级过程。\n"
-"\n"
-"<h2>接口和数据流</h2>\n"
-"模块之间通过定义明确的接口进行通信。接口设计需要确保数据的完整性和兼容性，同时避免信息丢失或误传。数据流管理则负责协调模块之间的数据交换，确保系统的高效运行。"
-"\n"
-"\n"
-"<h2>工具组成的优势</h2>\n"
-"工具组成的主要优势包括：\n"
-"<ul>\n"
-"  <li>提高开发效率</li>\n"
-"  <li>增强系统扩展性</li>\n"
-"  <li>简化故障排查</li>\n"
-"</ul>\n"
-"\n"
-"通过合理的工具组成设计，开发者可以构建功能强大且易于维护的系统，从而满足复杂的业务需求。"
+msgstr "工具编排如何工作"
 
 #: ../../guide/tool_composition.rst:51 8c81395d6e01413f9392f0851630f46f
 msgid ""
@@ -191,7 +170,7 @@ msgstr "将以下配置添加到 `src/tooluniverse/data/compose_tools.json` 中�
 
 #: ../../guide/tool_composition.rst:125 bb4a30fcc70a49a69dd2c762518fbbaf
 msgid "Step 3: Use Your Compose Tool"
-msgstr "步骤 3：使用撰写工具"
+msgstr "步骤 3：使用你的 Compose 工具"
 
 #: ../../guide/tool_composition.rst:127 7594eede0a4143f1b7ee2befdb13f4e1
 msgid ""
@@ -253,7 +232,7 @@ msgstr "**required_tools**：必须具备的工具名称列表"
 
 #: ../../guide/tool_composition.rst:165 8500f0b47dc84355a7b9e6d6d8e27105
 msgid "Compose Function Signature"
-msgstr "函数签名组合"
+msgstr "Compose 函数签名"
 
 #: ../../guide/tool_composition.rst:167 e316cda6a30c42dc842e578104bc5350
 msgid "Your compose function must follow this exact signature:"
@@ -920,4 +899,3 @@ msgstr ""
 #~ "**Best Practices**: :doc:`best_practices` - "
 #~ "Production workflow optimization"
 #~ msgstr "**最佳实践**：:doc:`best_practices` - 生产流程优化"
-

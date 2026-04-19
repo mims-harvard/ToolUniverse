@@ -22,44 +22,44 @@ msgstr ""
 
 #: ../../guide/api_keys.rst:2 aa7df24f597b4d5ea95aaf407a5cb291
 msgid "API Keys and Authentication"
-msgstr ""
+msgstr "API 密钥与身份认证"
 
 #: ../../guide/api_keys.rst:5 f8f9215f5fe34700b5d1e97ab499bc19
 msgid "**Looking for other environment variables?**"
-msgstr ""
+msgstr "**想查看其他环境变量？**"
 
 #: ../../guide/api_keys.rst:7 484ebb7523af42f8b371b6af5a197c7e
 msgid ""
 "This page covers API keys only. For cache, logging, LLM, and other "
 "configuration options, see :doc:`../reference/environment_variables`."
-msgstr ""
+msgstr "本页只介绍 API 密钥。关于缓存、日志、LLM 以及其他配置项，请参见 :doc:`../reference/environment_variables`。"
 
 #: ../../guide/api_keys.rst:10 e95a1bbfbc6b494b80b4e9dfb9cfbd87
 msgid "Overview"
-msgstr ""
+msgstr "概览"
 
 #: ../../guide/api_keys.rst:12 5a4f2b76501846b6857a71a1373e12db
 msgid ""
 "ToolUniverse provides access to 1000+ scientific tools across various "
 "domains. Many tools work without API keys, but some require "
 "authentication for full functionality or enhanced rate limits."
-msgstr ""
+msgstr "ToolUniverse 提供对多个领域 1000+ 科学工具的访问。很多工具无需 API 密钥也能使用，但部分工具需要认证后才能获得完整功能或更高的速率限制。"
 
 #: ../../guide/api_keys.rst:15 56eff4eaa48c44219f3c596e7e924af9
 msgid "API Key Categories"
-msgstr ""
+msgstr "API 密钥分类"
 
 #: ../../guide/api_keys.rst:18 a0f7b91a025b4fb7b1eda0fcd4fd0df4
 msgid "Required API Keys (Essential Features)"
-msgstr ""
+msgstr "必需的 API 密钥（核心功能）"
 
 #: ../../guide/api_keys.rst:20 36eb6ea1c1144174a03470d399516d7a
 msgid "These API keys are required for specific tool categories to function:"
-msgstr ""
+msgstr "以下 API 密钥是某些工具类别正常工作的前提："
 
 #: ../../guide/api_keys.rst:22 cc26d522d0dd40e885af4db3112c0f1a
 msgid "**NVIDIA NIM Healthcare APIs**"
-msgstr ""
+msgstr "**NVIDIA NIM Healthcare APIs**"
 
 #: ../../guide/api_keys.rst 18cac5d9afdf4a5c8d492735f8fb5802
 #: 3db3e359856148e69feca9d901d82e96 4ad5b74aad1f49eba936d1d15a7aeb46
@@ -69,7 +69,7 @@ msgstr ""
 #: c06760e5d1c0417ba059e64e0a0f73af e7a1bed1d6464ed1829e8aa469b37ebd
 #: ed1758fc6a8649e5bbf51a207857ced9 fc30043abcbd4135b5efb13139738e37
 msgid "API Key"
-msgstr ""
+msgstr "API 密钥"
 
 #: ../../guide/api_keys.rst:24 2101d1db859b4ed58745ae4e16cdee8c
 msgid "``NVIDIA_API_KEY``"
@@ -88,7 +88,7 @@ msgstr ""
 #: ce7dcc46ac124e658a884195eefa3a99 d25905acde5e499591c82385caa01724
 #: e4856fb1ef214dbcb60b9ec3ccf0065b
 msgid "Required For"
-msgstr ""
+msgstr "用途"
 
 #: ../../guide/api_keys.rst:25 7010b225f20b4ff3a132ad72ac5c0b4e
 msgid ""
@@ -96,7 +96,7 @@ msgid ""
 "molecular docking (DiffDock), protein design (ProteinMPNN, RFdiffusion), "
 "genomics tools (Evo2-40B, MSA-Search, ESM2-650M), medical imaging (MAISI,"
 " Vista3D)"
-msgstr ""
+msgstr "蛋白结构预测（AlphaFold2、ESMFold、OpenFold2、Boltz2）、分子对接（DiffDock）、蛋白设计（ProteinMPNN、RFdiffusion）、基因组学工具（Evo2-40B、MSA-Search、ESM2-650M）、医学影像（MAISI、Vista3D）"
 
 #: ../../guide/api_keys.rst 0f935030185a471583324f9ffe86de70
 #: 10d70a2152f74e92bc2832853043b8d4 11bc68b20cee42279eefa90d985739f6
@@ -106,13 +106,13 @@ msgstr ""
 #: 8f7dd255c5b14337a0a4327fbd87700c 9b7731a8b5e74998bec51dc056fb1d7f
 #: a22ecb12af5c4a689db9dfb242392e9f f306bf3a523e46f9b8385a5ac67c5d41
 msgid "How to Get"
-msgstr ""
+msgstr "获取方式"
 
 #: ../../guide/api_keys.rst:26 b83bd7eadd4e42efbfc4835758729930
 msgid ""
 "Visit https://build.nvidia.com and sign up for a free account. Navigate "
 "to your API keys section to generate a key."
-msgstr ""
+msgstr "访问 https://build.nvidia.com 并注册免费账号，然后进入 API keys 页面生成密钥。"
 
 #: ../../guide/api_keys.rst 141e3937bee54f0db4dd9e8da37a06d0
 #: 1fe9fe6fb5364202badfbc7ec5136b2f 2f6b67fda2d94979af11bdeec1679041
@@ -121,11 +121,11 @@ msgstr ""
 #: 9bb0d5ce578648e6ba984f9fb592a10b c72452d333b943e896554035eebbe2ca
 #: d28949ed318041c2b6527bfce366949e e0a4210e4ae74befae894e6410259180
 msgid "Rate Limits"
-msgstr ""
+msgstr "速率限制"
 
 #: ../../guide/api_keys.rst:27 c3a07c4b8dfa4acb9694dbc1c31f8170
 msgid "40 requests per minute (free tier)"
-msgstr ""
+msgstr "每分钟 40 次请求（免费层）"
 
 #: ../../guide/api_keys.rst 00ebd51f387a49ea94bc61a0978f7aa4
 #: 026b1cd91bf44a998eebabc2d2fcb2ef 06dd3021e5664d68849397cf8201823d
@@ -138,7 +138,7 @@ msgstr ""
 #: e048b913b468460db9a028632be131af eb590185eb7e449e9785c5f7fe862f9f
 #: ff28360c68db46058a143a1eafa83aa0
 msgid "Tool Categories"
-msgstr ""
+msgstr "工具类别"
 
 #: ../../guide/api_keys.rst:28 99cc27ee76e740fd95c9d78ebd56867b
 msgid "``nvidia_nim``"
@@ -146,13 +146,13 @@ msgstr ""
 
 #: ../../guide/api_keys.rst:31 4ede931b55eb4c35ba10295e2980177a
 msgid "Recommended API Keys (Enhanced Performance)"
-msgstr ""
+msgstr "推荐的 API 密钥（增强性能）"
 
 #: ../../guide/api_keys.rst:33 17b50af3b68a42ec95b46d65a3f906ad
 msgid ""
 "These API keys are optional but provide better performance, higher rate "
 "limits, or additional features:"
-msgstr ""
+msgstr "以下 API 密钥不是必需的，但能够提供更好的性能、更高的速率限制或额外能力："
 
 #: ../../guide/api_keys.rst:35 c11f7ac8c9b14f93aabdfb2332cc4d86
 msgid "**USPTO Patent API**"
@@ -1207,4 +1207,3 @@ msgstr ""
 #: ../../guide/api_keys.rst:576 10c05b1c2952410fb9c0eaec5bf3b292
 msgid ":doc:`hooks/hook_configuration` - Advanced hook configuration"
 msgstr ""
-

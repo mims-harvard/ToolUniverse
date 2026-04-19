@@ -37,76 +37,76 @@ msgstr ""
 #: ../../guide/cache_system.rst:10 f778915d5e6f4a17b330e06f6398a4b6
 #, fuzzy
 msgid "Why Use Caching?"
-msgstr "结果缓存"
+msgstr "为什么要使用缓存？"
 
 #: ../../guide/cache_system.rst:12 4435488a0fe54f58a22543e12649582d
 msgid "**The Problem**: Scientific API calls can be slow and rate-limited:"
-msgstr ""
+msgstr "**问题**：科学 API 调用通常较慢，而且受到速率限制："
 
 #: ../../guide/cache_system.rst:14 12b4e689e64945e5bac5a38c739222de
 msgid "PubMed searches: 0.3-2 seconds per query"
-msgstr ""
+msgstr "PubMed 检索：每次查询 0.3 到 2 秒"
 
 #: ../../guide/cache_system.rst:15 d75a2823366c4cea916ee78e5cc3ae78
 msgid "UniProt lookups: 0.5-1 second per protein"
-msgstr ""
+msgstr "UniProt 查询：每个蛋白 0.5 到 1 秒"
 
 #: ../../guide/cache_system.rst:16 5193073bcdc242d78447540f214b64b6
 msgid "ChEMBL queries: 1-3 seconds per compound"
-msgstr ""
+msgstr "ChEMBL 查询：每个化合物 1 到 3 秒"
 
 #: ../../guide/cache_system.rst:17 d0ef8eca01ed498abfb56e2dbbca4115
 msgid "Rate limits: 3-10 requests/second (even with API keys)"
-msgstr ""
+msgstr "速率限制：每秒 3 到 10 次请求（即使配置了 API 密钥）"
 
 #: ../../guide/cache_system.rst:19 edbaf23256c2452c9882aeabc87809de
 msgid "**The Solution**: Cache results to avoid redundant API calls."
-msgstr ""
+msgstr "**解决方案**：缓存结果，避免重复调用 API。"
 
 #: ../../guide/cache_system.rst:21 6b97980f851649fe82570a27776823dd
 msgid "**Benefits**:"
-msgstr ""
+msgstr "**收益**："
 
 #: ../../guide/cache_system.rst:23 cb12f66c78d849fa934a637cc58d4144
 msgid "**Speed**: Cached queries return in <1ms (vs 0.3-3 seconds)"
-msgstr ""
+msgstr "**速度**：命中缓存时可在 <1ms 返回（对比 0.3 到 3 秒）"
 
 #: ../../guide/cache_system.rst:24 54ee6de1d5be46529e74446e3f50d6a1
 msgid "**Rate limit protection**: Avoid hitting API limits in batch workflows"
-msgstr ""
+msgstr "**速率保护**：在批量工作流中避免触发 API 限流"
 
 #: ../../guide/cache_system.rst:25 eb4f537ec9084e73bc08211ce931dca7
 msgid ""
 "**Reproducibility**: Same query always returns same result (until source "
 "data changes)"
-msgstr ""
+msgstr "**可复现性**：相同查询总是返回相同结果（直到源数据发生变化）"
 
 #: ../../guide/cache_system.rst:26 8ca023c7a9bf4fb793f870364740932a
 msgid "**Cost savings**: Fewer API calls = lower costs for paid services"
-msgstr ""
+msgstr "**成本节省**：更少的 API 调用意味着更低的付费服务成本"
 
 #: ../../guide/cache_system.rst:27 9c14bb43062042a8ae1bddf5c7e6e129
 msgid "**Offline work**: Previously cached data available without internet"
-msgstr ""
+msgstr "**离线可用**：之前缓存的数据在无网络时仍可访问"
 
 #: ../../guide/cache_system.rst:29 393d73482771489681c3ca20f1eac07b
 msgid "**Example Impact**: A 1000-protein batch analysis:"
-msgstr ""
+msgstr "**示例效果**：一个 1000 蛋白的批量分析："
 
 #: ../../guide/cache_system.rst:31 a618036b21794048bbbb2b9e1262c4f0
 msgid "Without cache: 1000 API calls × 0.5s = **8.3 minutes**"
-msgstr ""
+msgstr "无缓存：1000 次 API 调用 × 0.5 秒 = **8.3 分钟**"
 
 #: ../../guide/cache_system.rst:32 12b6d67d6301419a85b5884d779792a3
 #, python-format
 msgid ""
 "With cache (90% hit rate): 100 API calls × 0.5s + 900 cached × 0.001s = "
 "**51 seconds**"
-msgstr ""
+msgstr "使用缓存（90% 命中率）：100 次 API 调用 × 0.5 秒 + 900 次缓存命中 × 0.001 秒 = **51 秒**"
 
 #: ../../guide/cache_system.rst:33 1c6ec19fad04444ab1f7443d9d9c68aa
 msgid "**10x faster** with caching!"
-msgstr ""
+msgstr "使用缓存可**提速 10 倍**！"
 
 #: ../../guide/cache_system.rst:36 b92bacec6ee2429d88cacc52f5220484
 msgid "Overview"
@@ -200,11 +200,11 @@ msgstr "在创建 ``ToolUniverse`` 实例之前，请使用环境变量调整缓
 
 #: ../../guide/cache_system.rst:112 9f70991b193d4b10a3021b93cfa1c134
 msgid "Variable"
-msgstr ""
+msgstr "变量"
 
 #: ../../guide/cache_system.rst:113 a92d650f21ec4682acf444d2dea8280c
 msgid "Description"
-msgstr ""
+msgstr "说明"
 
 #: ../../guide/cache_system.rst:114 72f5af5b40ab4a8cada6df9fdde009b2
 msgid "``TOOLUNIVERSE_CACHE_ENABLED``"
@@ -212,7 +212,7 @@ msgstr ""
 
 #: ../../guide/cache_system.rst:115 e2e5a12248e64628b68ee5429e418010
 msgid "Turn caching on/off (``true`` by default)"
-msgstr ""
+msgstr "开启或关闭缓存（默认 ``true``）"
 
 #: ../../guide/cache_system.rst:116 576bf40c6939438c8452df7b84c3751e
 msgid "``TOOLUNIVERSE_CACHE_PERSIST``"
@@ -220,7 +220,7 @@ msgstr ""
 
 #: ../../guide/cache_system.rst:117 61e0bbaafde0401aa24427ad59898768
 msgid "Enable SQLite persistence (``true`` by default)"
-msgstr ""
+msgstr "启用 SQLite 持久化（默认 ``true``）"
 
 #: ../../guide/cache_system.rst:118 15f1c335af8045d9a56da6f7226901d3
 msgid "``TOOLUNIVERSE_CACHE_PATH``"
@@ -228,7 +228,7 @@ msgstr ""
 
 #: ../../guide/cache_system.rst:119 ebb17acff0544608a05115b39ebdbfcb
 msgid "Full path to the SQLite file"
-msgstr ""
+msgstr "SQLite 文件的完整路径"
 
 #: ../../guide/cache_system.rst:120 900e0fab32b64f418c22c59675ffc26c
 msgid "``TOOLUNIVERSE_CACHE_DIR``"
@@ -238,7 +238,7 @@ msgstr ""
 msgid ""
 "Directory for the SQLite file. Defaults to ``~/.tooluniverse`` if "
 "``CACHE_PATH`` is unset."
-msgstr ""
+msgstr "SQLite 文件所在目录。如果未设置 ``CACHE_PATH``，默认使用 ``~/.tooluniverse``。"
 
 #: ../../guide/cache_system.rst:122 cb896ae539fb4db98490dbdf25587186
 msgid "``TOOLUNIVERSE_CACHE_MEMORY_SIZE``"
@@ -246,7 +246,7 @@ msgstr ""
 
 #: ../../guide/cache_system.rst:123 30086429b9f642fdbd940f36c90cb721
 msgid "Max entries in the in-memory LRU (default 256)"
-msgstr ""
+msgstr "内存 LRU 的最大条目数（默认 256）"
 
 #: ../../guide/cache_system.rst:124 f9ace047210740878b74e303b54aa285
 msgid "``TOOLUNIVERSE_CACHE_DEFAULT_TTL``"
@@ -254,7 +254,7 @@ msgstr ""
 
 #: ../../guide/cache_system.rst:125 05254707f4ad486da515116b6869e837
 msgid "Expiration in seconds (``None`` disables TTL)"
-msgstr ""
+msgstr "过期时间，单位为秒（``None`` 表示禁用 TTL）"
 
 #: ../../guide/cache_system.rst:126 293377ed3550480599435411e1b619e4
 msgid "``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``"
@@ -384,4 +384,3 @@ msgstr ""
 #: ../../guide/cache_system.rst:217 7a3fa2cdd7f9482db7dee71f550072f9
 msgid "}"
 msgstr "请提供需要翻译的具体英文文本，我将为您进行翻译。"
-

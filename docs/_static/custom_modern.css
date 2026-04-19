@@ -2,6 +2,15 @@
    ToolUniverse Modern Documentation Styles
    ============================================ */
 
+:root {
+    --tu-accent: #667eea;
+    --tu-accent-strong: #5568d3;
+    --tu-success: #10b981;
+    --tu-warning: #f59e0b;
+    --tu-danger: #ef4444;
+    --tu-info: #3b82f6;
+}
+
 /* Disable background logo images */
 *[style*="background-image"][style*="logo.png"] {
     background-image: none !important;
@@ -192,9 +201,9 @@ a.reference.internal img {
 .sd-tab-set {
     margin: 1.5rem 0;
     padding: 0.5rem;
-    background: #f8fafc;
+    background: var(--sy-c-light);
     border-radius: 0.75rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--sy-c-border);
 }
 
 .sd-tab-set > input[type="radio"] + label {
@@ -204,32 +213,33 @@ a.reference.internal img {
     border-radius: 0.5rem;
     transition: all 0.2s ease;
     background: transparent;
-    color: #64748b;
+    color: var(--sy-c-text);
 }
 
 .sd-tab-set > input[type="radio"]:checked + label {
-    background: #667eea;
+    background: var(--tu-accent);
     color: white !important;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--tu-accent) 30%, transparent);
 }
 
 .sd-tab-set > input[type="radio"] + label:hover {
-    background: #e2e8f0;
-    color: #334155;
+    background: color-mix(in srgb, var(--sy-c-light) 65%, var(--sy-c-border));
+    color: var(--sy-c-heading);
     cursor: pointer;
 }
 
 .sd-tab-set > input[type="radio"]:checked + label:hover {
-    background: #5568d3;
+    background: var(--tu-accent-strong);
     color: white !important;
 }
 
 .sd-tab-content {
     padding: 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--sy-c-border);
     border-top: none;
     border-radius: 0 0 0.5rem 0.5rem;
-    background: white;
+    background: var(--sy-c-background);
+    color: var(--sy-c-text);
 }
 
 /* Dropdown Enhancements */
@@ -240,21 +250,23 @@ a.reference.internal img {
 .sd-dropdown-title {
     font-weight: 600;
     padding: 1rem 1.5rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--sy-c-light);
+    border: 1px solid var(--sy-c-border);
     border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
+    color: var(--sy-c-heading);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .sd-dropdown-title:hover {
-    background: #f1f5f9;
+    background: color-mix(in srgb, var(--sy-c-light) 65%, var(--sy-c-border));
 }
 
 .sd-dropdown-body {
     padding: 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--sy-c-border);
     border-top: none;
     border-radius: 0 0 0.5rem 0.5rem;
+    background: var(--sy-c-background);
 }
 
 /* Card Image Styling */
@@ -293,32 +305,39 @@ a.reference.internal img {
     margin: 1.5rem 0;
     border-radius: 0.5rem;
     border-left: 4px solid;
+    color: var(--sy-c-text);
 }
 
 .admonition.tip {
-    background: #ecfdf5;
-    border-color: #10b981;
+    background: color-mix(in srgb, var(--tu-success) 12%, var(--sy-c-background));
+    border-color: var(--tu-success);
 }
 
 .admonition.important {
-    background: #fef3c7;
-    border-color: #f59e0b;
+    background: color-mix(in srgb, var(--tu-warning) 14%, var(--sy-c-background));
+    border-color: var(--tu-warning);
 }
 
 .admonition.warning {
-    background: #fef2f2;
-    border-color: #ef4444;
+    background: color-mix(in srgb, var(--tu-danger) 12%, var(--sy-c-background));
+    border-color: var(--tu-danger);
 }
 
 .admonition.note {
-    background: #eff6ff;
-    border-color: #3b82f6;
+    background: color-mix(in srgb, var(--tu-info) 12%, var(--sy-c-background));
+    border-color: var(--tu-info);
+}
+
+.admonition .admonition-title {
+    color: var(--sy-c-heading);
 }
 
 /* Code Block Enhancements */
 .highlight {
     border-radius: 0.5rem;
     margin: 1.5rem 0;
+    background: var(--sy-c-light);
+    border: 1px solid var(--sy-c-border);
 }
 
 .highlight pre {
@@ -439,25 +458,13 @@ a.reference.internal img {
     display: none;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-    .platform-card {
-        border-color: #334155;
-    }
-    
-    .step-card.pending::before {
-        background: #334155;
-        border-color: #475569;
-    }
-    
-    .sd-dropdown-title {
-        background: #1e293b;
-        border-color: #334155;
-    }
-    
-    .sd-dropdown-title:hover {
-        background: #334155;
-    }
+html.dark .platform-card {
+    border-color: var(--sy-c-border);
+}
+
+html.dark .step-card.pending::before {
+    background: #334155;
+    border-color: #475569;
 }
 
 /* ============================================
@@ -504,24 +511,21 @@ a.reference.internal img {
 
 /* Remove green background from important admonition in skills showcase */
 .admonition.important {
-    background-color: #f8f9fa !important;
-    border-left: 4px solid #667eea !important;
+    background-color: var(--sy-c-light) !important;
+    border-left: 4px solid var(--tu-accent) !important;
 }
 
 .admonition.important .admonition-title {
     background-color: transparent !important;
-    color: #667eea !important;
+    color: var(--tu-accent) !important;
     font-weight: 600;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .admonition.important {
-        background-color: #1e293b !important;
-        border-left: 4px solid #818cf8 !important;
-    }
-    
-    .admonition.important .admonition-title {
-        color: #818cf8 !important;
-    }
+html.dark .admonition.important {
+    background-color: color-mix(in srgb, var(--tu-accent) 12%, var(--sy-c-background)) !important;
+    border-left: 4px solid #818cf8 !important;
+}
+
+html.dark .admonition.important .admonition-title {
+    color: #a5b4fc !important;
 }

@@ -22,34 +22,34 @@ msgstr ""
 
 #: ../../guide/examples.rst:2 304002bbe0574695b02491bad171e5a9
 msgid "Examples"
-msgstr ""
+msgstr "示例"
 
 #: ../../guide/examples.rst:4 aa6eb6d4c5b543c7ae80c5ff2891aba3
 msgid ""
 "The fastest way to explore ToolUniverse is through the Python guide, "
 "which includes copy-paste examples for installation, tool loading, "
 "running queries, and finding tools:"
-msgstr ""
+msgstr "最快的上手方式是阅读 Python 指南，其中包含可直接复制运行的安装、工具加载、查询执行和工具查找示例："
 
 #: ../../guide/examples.rst:6 ae6e35f5da1040ae8d440ec9fd2e4457
 msgid "Python Guide with Examples"
-msgstr ""
+msgstr "带示例的 Python 指南"
 
 #: ../../guide/examples.rst:13 013e42c92b4f41e0969d710315af322a
 msgid "For complete research workflow examples using AI agents, see:"
-msgstr ""
+msgstr "如需查看基于 AI 代理的完整研究工作流示例，请参见："
 
 #: ../../guide/examples.rst:15 ce0b42f38cd5425b94dcc0592d224d2f
 #, fuzzy
 msgid "Scientific Workflows"
-msgstr "🔬 中级工作流程"
+msgstr "科学工作流"
 
 #: ../../guide/examples.rst:22 0a46ad7898e942de85fa405d89af511e
 msgid ""
 "For real-world end-to-end examples combining multiple tools, see the "
 ":doc:`skills_showcase` — each skill entry links to its GitHub source with"
 " implementation details."
-msgstr ""
+msgstr "如需查看结合多个工具的真实端到端示例，请参见 :doc:`skills_showcase`。其中每个 skill 条目都链接到了包含实现细节的 GitHub 源码。"
 
 #~ msgid "Examples & Code Samples"
 #~ msgstr "示例与代码样本"
@@ -221,4 +221,3 @@ msgstr ""
 #~ " or drug names to explore data "
 #~ "relevant to your work!"
 #~ msgstr "**实践建议**：尝试将上述示例替换为您自己的研究兴趣。更改基因名称、疾病或药物名称，以探索与您工作相关的数据！"
-

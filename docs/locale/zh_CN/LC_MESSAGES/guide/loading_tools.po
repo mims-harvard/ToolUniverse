@@ -53,13 +53,12 @@ msgid ""
 "**For complete Python API documentation**, see :doc:`../api/modules` for "
 "the full API reference."
 msgstr ""
-"**完整的 Python API 文档**请参阅 :doc:`../api_quick_reference` 以了解常用的类和方法，或查看 "
-":doc:`../api_comprehensive` 获取完整的 API 参考。"
+"**完整的 Python API 文档**，请参见 :doc:`../api/modules` 获取完整 API 参考。"
 
 #: e858a856237e40eb84687e8ef86ee978 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:1
 msgid "Load tools into the instance, with optional filtering."
-msgstr ""
+msgstr "将工具加载到实例中，并支持可选过滤。"
 
 #: ../../guide/loading_tools.rst 35c9fe4a67714474ba6ae1d03a240ec5
 msgid "Parameters"
@@ -70,24 +69,24 @@ msgstr "参数"
 msgid ""
 "Tool category names to load. If None, all categories are loaded. Use "
 "``list_categories()`` to see available names."
-msgstr ""
+msgstr "要加载的工具类别名称。如果为 None，则加载所有类别。可使用 ``list_categories()`` 查看可用名称。"
 
 #: 639c43113de84296b9c1f5d41f6e0be5 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:6
 msgid "Deprecated alias for ``categories``."
-msgstr ""
+msgstr "``categories`` 的已弃用别名。"
 
 #: 98ae69bb7abf46a2a1654be547618b88 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:8
 msgid ""
 "Tool names to exclude. Supports glob patterns (e.g. "
 "``[\"EuropePMC_*\"]``)."
-msgstr ""
+msgstr "要排除的工具名称。支持 glob 模式（例如 ``[\"EuropePMC_*\"]``）。"
 
 #: 9fdad05b48c14f6b9b57b1c573661c1b of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:11
 msgid "Category names to skip entirely."
-msgstr ""
+msgstr "需要完全跳过的类别名称。"
 
 #: e79cd22fbd8040a6ac831a7399d590b2 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:13
@@ -95,7 +94,7 @@ msgid ""
 "Only load these tools. Supports glob patterns (e.g. ``[\"EuropePMC_*\", "
 "\"ChEMBL_*\"]``). Pass a file path string to read names from a text file "
 "(one per line)."
-msgstr ""
+msgstr "仅加载这些工具。支持 glob 模式（例如 ``[\"EuropePMC_*\", \"ChEMBL_*\"]``）。也可以传入文件路径字符串，从文本文件中逐行读取工具名。"
 
 #: dc13aca0805e4af2adeb42dcd2d11058 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:17
@@ -103,12 +102,12 @@ msgstr ""
 msgid ""
 "Extra JSON config files to load. Format: ``{\"category_name\": "
 "\"/path/to/config.json\"}``."
-msgstr "要加载的其他工具配置文件。格式：{\"category_name\": \"/path/to/config.json\"}"
+msgstr "要加载的额外 JSON 配置文件。格式：``{\"category_name\": \"/path/to/config.json\"}``。"
 
 #: 59b57d7eb5034258af76339bb926e6f7 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:20
 msgid "Deprecated. Pass a file path to ``include_tools`` instead."
-msgstr ""
+msgstr "已弃用。请改为向 ``include_tools`` 传入文件路径。"
 
 #: 1e0bc0393e0b498ebfb79e4950bf7a51 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:23
@@ -116,26 +115,26 @@ msgid ""
 "List of Python file paths (str or Path) to import as user tools. Each "
 "file should contain ``@register_tool``-decorated classes. Example: "
 "``python_files=[\"/path/to/my_tool.py\"]``."
-msgstr ""
+msgstr "要作为用户工具导入的 Python 文件路径列表（str 或 Path）。每个文件都应包含使用 ``@register_tool`` 装饰的类。例如：``python_files=[\"/path/to/my_tool.py\"]``。"
 
 #: bfeb1a2d2df141d891b81ac7ba50e648 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:27
 msgid ""
 "Only load tools whose ``type`` field is in this list (e.g. "
 "``[\"RESTTool\", \"GraphQLTool\"]``)."
-msgstr ""
+msgstr "仅加载 ``type`` 字段位于此列表中的工具（例如 ``[\"RESTTool\", \"GraphQLTool\"]``）。"
 
 #: 1e8eff6d58714498a84bdf8f962d9ef1 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:30
 msgid "Skip tools whose ``type`` field is in this list."
-msgstr ""
+msgstr "跳过 ``type`` 字段位于此列表中的工具。"
 
 #: 08b0183488b5451c8fd117abc729b09d of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:33
 msgid ""
 "Suppress missing-API-key warnings and ``.env.template`` generation. "
 "Default ``True``. Pass ``False`` to see which keys are missing."
-msgstr ""
+msgstr "抑制缺失 API 密钥的警告以及 ``.env.template`` 的生成。默认值为 ``True``。传入 ``False`` 可查看缺失了哪些密钥。"
 
 #: c2af9fcdebb346bd98e6f3da33b2aa16 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:38
@@ -145,14 +144,14 @@ msgstr "示例"
 #: f4cc5565c0134d85af422593a5233d41 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:40
 msgid "# Load everything (default) tu.load_tools()"
-msgstr ""
+msgstr "# 加载全部工具（默认） tu.load_tools()"
 
 #: 4b9444b8f338401aae0c65c1e4168f05 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:43
 msgid ""
 "# Load only two categories tu.load_tools(categories=[\"ChEMBL\", "
 "\"EuropePMC\"])"
-msgstr ""
+msgstr "# 仅加载两个类别 tu.load_tools(categories=[\"ChEMBL\", \"EuropePMC\"])"
 
 #: 661a461652b240f28b4f5943394a31f5 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:46
@@ -161,26 +160,24 @@ msgid ""
 "# Load tools by name with glob wildcards "
 "tu.load_tools(include_tools=[\"EuropePMC_*\", \"ChEMBL_get_molecule_*\"])"
 msgstr ""
-"# 通过名称加载特定工具 "
-"tu.load_tools(include_tools=[\"UniProt_get_entry_by_accession\", "
-"\"ChEMBL_get_molecule_by_chembl_id\"])"
+"# 通过名称和 glob 通配符加载工具 tu.load_tools(include_tools=[\"EuropePMC_*\", \"ChEMBL_get_molecule_*\"])"
 
 #: 2b747d461a104f98953421af91e21525 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:49
 msgid "# Combine: exclude one category, exclude specific tools tu.load_tools("
-msgstr ""
+msgstr "# 组合使用：排除一个类别，并排除指定工具 tu.load_tools("
 
 #: c72b59c46fd14d60b8ce4f2c97825642 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:51
 msgid ""
 "exclude_categories=[\"tool_finder\"], "
 "exclude_tools=[\"EuropePMC_slow_tool\"],"
-msgstr ""
+msgstr "exclude_categories=[\"tool_finder\"], exclude_tools=[\"EuropePMC_slow_tool\"],"
 
 #: 33d196b4a629475387c212a11b98b144 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:53
 msgid ")"
-msgstr "请提供需要翻译的具体英文文本内容，我将为您翻译成自然流畅且专业的中文。"
+msgstr ")"
 
 #: ../../guide/loading_tools.rst:20 8f69dd74fabd447d9ac54a671a4ab72f
 msgid "Basic Usage"
@@ -257,7 +254,7 @@ msgstr "ToolUniverse 提供两种主要的 MCP 服务器功能，以满足不同
 msgid ""
 "For a comprehensive MCP overview, detailed configuration, best practices,"
 " and troubleshooting, see :doc:`building_ai_scientists/mcp_support`."
-msgstr "要全面了解MCP概述、详细配置、最佳实践和故障排除，请参阅:doc:`mcp_support`。"
+msgstr "关于 MCP 的完整概览、详细配置、最佳实践和故障排查，请参见 :doc:`building_ai_scientists/mcp_support`。"
 
 #: ../../guide/loading_tools.rst:132 f6ee44e0a77049888caedc56188c6f6b
 #, fuzzy
@@ -549,4 +546,3 @@ msgstr "创建一个文本文件，每行填写一个工具名称："
 #~ "tool_type=[\"uniprot\", "
 #~ "\"ChEMBL\"]，exclude_tools=[\"problematic_tool\"]，exclude_tool_types=[\"Unknown\"]，tool_config_files={\"custom\":"
 #~ " \"/path/to/custom.json\"}"
-

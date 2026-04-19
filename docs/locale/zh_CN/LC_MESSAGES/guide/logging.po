@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../guide/logging.rst:2 2c5d1c7fc8164ddf993dfd48a2a409f9
 msgid "Logging Tutorial"
-msgstr "<h1>日志记录教程</h1>"
+msgstr "日志教程"
 
 #: ../../guide/logging.rst:4 e101ed677a9d4073a54471e8c323d239
 msgid "**Configure and use ToolUniverse's comprehensive logging system**"
@@ -34,13 +34,12 @@ msgid ""
 "ToolUniverse provides a robust logging system to help you monitor tool "
 "execution, debug issues, and track research workflows."
 msgstr ""
-"ToolUniverse "
-"提供了一个强大的日志系统，帮助您监控工具执行情况、调试问题以及跟踪研究工作流程。本教程涵盖所有日志级别、配置方法以及最佳实践。"
+"ToolUniverse 提供了健壮的日志系统，帮助你监控工具执行、排查问题，并跟踪研究工作流。"
 
 #: ../../guide/logging.rst:8 a0f9b2b07f914c56a9cf6ab567d13022
 #, fuzzy
 msgid "Logging Overview"
-msgstr "🎯 日志概述"
+msgstr "日志概览"
 
 #: ../../guide/logging.rst:11 94a2c19ce27a4f91a50e4c9ff7c08fcc
 msgid ""
@@ -69,7 +68,7 @@ msgstr "**灵活配置**：环境变量、编程设置和按实例控制"
 #: ../../guide/logging.rst:18 d83ee47591c746be8faefe5bebb5ca1f
 #, fuzzy
 msgid "Log Levels Explained"
-msgstr "📊 日志级别解析"
+msgstr "日志级别说明"
 
 #: ../../guide/logging.rst:21 deecc9dc351c4207a7b37e27e3d8043b
 msgid "Understanding when to use each log level:"
@@ -106,7 +105,7 @@ msgstr "参数验证步骤"
 #: 83989b92cf8c492cbadfd5e451331382 986833a986f546059cf736ec7596913e
 #: ce2042a4a9af4f79a2758cb33bb93cee d91f0e81e3964b79b3af31325bfd4b4c
 msgid "**Example output**:"
-msgstr "请提供您需要翻译的具体文本，我将根据您的要求进行翻译。"
+msgstr "**示例输出：**"
 
 #: ../../guide/logging.rst:55 724ac8327b7e44b684d2bd26de6e6da5
 msgid "INFO Level (Default)"
@@ -223,7 +222,7 @@ msgstr "资源耗尽"
 #: ../../guide/logging.rst:167 7411f9e3c42e48b09b386a9338af8199
 #, fuzzy
 msgid "️ Configuration Methods"
-msgstr "⚙️ 配置方法"
+msgstr "配置方法"
 
 #: ../../guide/logging.rst:170 2bc9de7761f94bc48a8c22b40c23092d
 msgid "Method 1: Environment Variable (Recommended)"
@@ -403,4 +402,3 @@ msgstr ""
 #~ "**⚡ Best Practices** → :doc:`best_practices`"
 #~ " - Production-ready logging strategies"
 #~ msgstr "**⚡ 最佳实践** → :doc:`best_practices` - 适用于生产环境的日志记录策略"
-

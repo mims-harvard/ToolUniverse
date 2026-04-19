@@ -22,17 +22,17 @@ msgstr ""
 
 #: ../../guide/finding_tools.rst:3 e7fe7b2960c149a7bf3d1abe5afa2b1b
 msgid "Tool Finder Tutorial"
-msgstr ""
+msgstr "工具查找器教程"
 
 #: ../../guide/finding_tools.rst:5 4bfdcbf82d3a454cb8f54011f4d2f9f3
 msgid ""
 "**Complete Tutorial to using ToolUniverse's three built-in tool discovery"
 " methods**"
-msgstr ""
+msgstr "**完整教程：使用 ToolUniverse 内置的三种工具发现方式**"
 
 #: ../../guide/finding_tools.rst:8 9d415ce45a934b03b85b21c7cc4fa39b
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../guide/finding_tools.rst:10 2d7e2bad0a5449ebbc62fed0ac278a30
 msgid ""
@@ -40,25 +40,25 @@ msgid ""
 "To help you quickly find the right tools for your research tasks, "
 "ToolUniverse provides three sophisticated tool finder methods, each "
 "optimized for different use cases and computational requirements."
-msgstr ""
+msgstr "ToolUniverse 提供了一个包含 1000+ 科学工具的大型仓库。为了帮助你更快地为研究任务找到合适的工具，ToolUniverse 提供了三种工具查找方式，分别针对不同使用场景和计算资源需求进行了优化。"
 
 #: ../../guide/finding_tools.rst:13 38e04fa09e334a0c8aceeff56e1da547
 msgid "Why Use Tool Finders?"
-msgstr ""
+msgstr "为什么使用工具查找器？"
 
 #: ../../guide/finding_tools.rst:15 ab6b5975c19d4daa87c5fccfd88a8b13
 msgid ""
 "**The Challenge**: With hundreds of available tools across domains like "
 "bioinformatics, chemistry, literature search, and data analysis, manually"
 " browsing through tool lists is time-consuming and inefficient."
-msgstr ""
+msgstr "**挑战**：面对生物信息学、化学、文献检索、数据分析等多个领域的数百个工具，手动浏览工具列表既耗时又低效。"
 
 #: ../../guide/finding_tools.rst:17 9570976d7e704debb9c2006b84e46378
 msgid ""
 "**The Solution**: ToolUniverse's tool finders allow you to describe your "
 "research task in natural language and automatically discover the most "
 "relevant tools."
-msgstr ""
+msgstr "**解决方案**：ToolUniverse 的工具查找器允许你用自然语言描述研究任务，并自动发现最相关的工具。"
 
 #: ../../guide/finding_tools.rst:19 f68a58d8de0c4a2190639878925c2197
 msgid ""
@@ -66,102 +66,102 @@ msgid ""
 "efficient - **LLM Search**: Intelligent, context-aware, handles complex "
 "queries - **Embedding Search**: Semantic understanding, scalable, "
 "similarity-based"
-msgstr ""
+msgstr "**三种方式**：- **关键词搜索**：快速、精确、资源消耗低 - **LLM 搜索**：更智能、具备上下文理解能力、适合复杂查询 - **Embedding 搜索**：基于语义理解、可扩展、按相似度匹配"
 
 #: ../../guide/finding_tools.rst:25 6c38d773b45647728d5e654bdb65d658
 msgid "Overview of Tool Finder Methods"
-msgstr ""
+msgstr "工具查找方式总览"
 
 #: ../../guide/finding_tools.rst:28 99c2af467a634cf891cfad2de66c7c29
 msgid "Strategic Trade-offs"
-msgstr ""
+msgstr "策略权衡"
 
 #: ../../guide/finding_tools.rst:30 ecbb2b689e644071a9aae522d16705b2
 msgid "Each method offers different advantages:"
-msgstr ""
+msgstr "每种方式都有不同的优势："
 
 #: ../../guide/finding_tools.rst:32 5cc3d1c97d784b1abc4f1ec995377771
 msgid "Tool Finder Comparison"
-msgstr ""
+msgstr "工具查找方式对比"
 
 #: ../../guide/finding_tools.rst:36 76da36377680432b8e297185ad1371f0
 msgid "Method"
-msgstr ""
+msgstr "方式"
 
 #: ../../guide/finding_tools.rst:37 f90219a8be8149dea40d6260ed7a18d0
 msgid "Speed"
-msgstr ""
+msgstr "速度"
 
 #: ../../guide/finding_tools.rst:38 024afaf4a14f43b09616e7d17df1b248
 msgid "Semantic Understanding"
-msgstr ""
+msgstr "语义理解"
 
 #: ../../guide/finding_tools.rst:39 bda5dd9f359843f9b586cbbc80424ceb
 msgid "Resource Usage"
-msgstr ""
+msgstr "资源占用"
 
 #: ../../guide/finding_tools.rst:40 b904bf73afda4fb9ba609598a7277e45
 msgid "**Keyword Search**"
-msgstr ""
+msgstr "**关键词搜索**"
 
 #: ../../guide/finding_tools.rst:41 23286b7dd35143498fdc27c66606f863
 msgid "Very Fast"
-msgstr ""
+msgstr "非常快"
 
 #: ../../guide/finding_tools.rst:42 535ae563a6644ff7b5224329032082d8
 msgid "Basic"
-msgstr ""
+msgstr "基础"
 
 #: ../../guide/finding_tools.rst:43 2bd63db5e17b4ab180255fe2d0e0a853
 msgid "Very Low"
-msgstr ""
+msgstr "非常低"
 
 #: ../../guide/finding_tools.rst:44 43c3085ade0f4fd3b867f28ecc1725c8
 msgid "**LLM Search**"
-msgstr ""
+msgstr "**LLM 搜索**"
 
 #: ../../guide/finding_tools.rst:45 ../../guide/finding_tools.rst:51
 #: 36544b942fad4337902eef98f44b48fd cb7f5fb8cf584965a1c8f9705f1478b8
 msgid "Moderate"
-msgstr ""
+msgstr "中等"
 
 #: ../../guide/finding_tools.rst:46 a2a274cd318b4b5592f48f7fa7900aab
 msgid "Excellent"
-msgstr ""
+msgstr "优秀"
 
 #: ../../guide/finding_tools.rst:47 80575208d4694df4bc5274969228bb07
 msgid "High"
-msgstr ""
+msgstr "高"
 
 #: ../../guide/finding_tools.rst:48 9a1a2d1ea30d456d8e2201aaf3896654
 msgid "**Embedding Search**"
-msgstr ""
+msgstr "**Embedding 搜索**"
 
 #: ../../guide/finding_tools.rst:49 48d580e2d6984c4297938caa40feadc4
 msgid "Fast"
-msgstr ""
+msgstr "快"
 
 #: ../../guide/finding_tools.rst:50 ce851c089b614f6a993573888aef35a4
 msgid "Good"
-msgstr ""
+msgstr "良好"
 
 #: ../../guide/finding_tools.rst:54 bfc8a85cdab244a0a2aca250a2e5e5c2
 msgid "When to Use Each Method"
-msgstr ""
+msgstr "何时使用不同方式"
 
 #: ../../guide/finding_tools.rst:56 0aa1824b053d4dd3a2fc3aef1a7e79cd
 msgid ""
 "** Keyword Search** - Use when: - You know specific technical terms - You"
 " need fast results - Working with limited computational resources - "
 "Looking for tools with specific names or exact terminology"
-msgstr ""
+msgstr "**关键词搜索** - 适用于：- 你已经知道明确的专业术语 - 你需要快速结果 - 计算资源有限 - 你要查找具有特定名称或精确术语的工具"
 
 #: ../../guide/finding_tools.rst:62 8e43f2ea9e164414836590572d506306
 msgid ""
 "** LLM Search** - Use when: - You have complex, multi-step research "
 "questions - Need intelligent interpretation of abstract goals - Want tool"
 " sequence recommendations - Have access to LLM APIs"
-msgstr ""
+msgstr "**LLM 搜索** - 适用于：- 你的研究问题复杂且包含多步骤 - 需要对抽象目标做智能解释 - 希望获得工具组合或调用顺序建议 - 你已具备 LLM API 访问能力"
 
 #: ../../guide/finding_tools.rst:68 c2b7d1c850f34c308bebcf2c1bcf310c
 msgid ""
@@ -169,19 +169,19 @@ msgid ""
 " - Need scalable search across large tool sets - Looking for conceptually"
 " similar tools - Want to find tools based on research intent rather than "
 "exact keywords"
-msgstr ""
+msgstr "**Embedding 搜索** - 适用于：- 你需要语义相似度匹配 - 需要在大型工具集合中进行可扩展搜索 - 希望找到概念上相近的工具 - 想按研究意图而不是精确关键词来查找工具"
 
 #: ../../guide/finding_tools.rst:75 708f64e4df3c49219529254c31a9c633
 msgid "Method 1: Keyword Search"
-msgstr ""
+msgstr "方式 1：关键词搜索"
 
 #: ../../guide/finding_tools.rst:78 dcbdb1f5e32a443ab27b5984cac7f4c1
 msgid "How Keyword Search Works"
-msgstr ""
+msgstr "关键词搜索的工作原理"
 
 #: ../../guide/finding_tools.rst:80 7f13d4225778498ea798c0776960012a
 msgid "Keyword search uses a sophisticated text processing pipeline:"
-msgstr ""
+msgstr "关键词搜索使用了一套较完整的文本处理流程："
 
 #: ../../guide/finding_tools.rst:82 e28549fa0d124038bc85a51537b4c682
 msgid "**Query Processing**:"
@@ -466,4 +466,3 @@ msgstr ""
 #: ../../guide/finding_tools.rst:519 f162654c7cbf4367888dca68ad1e5c8b
 msgid ":doc:`../help/troubleshooting` - Common issues and solutions"
 msgstr ""
-

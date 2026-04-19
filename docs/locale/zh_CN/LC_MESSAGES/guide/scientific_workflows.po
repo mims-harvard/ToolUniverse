@@ -29,42 +29,42 @@ msgid ""
 "The best way to run scientific workflows with ToolUniverse is through AI "
 "agent skills — pre-built, interactive research workflows that combine "
 "1000+ tools."
-msgstr ""
+msgstr "使用 ToolUniverse 运行科学工作流的最佳方式，是借助 AI agent skills。这些是预构建、可交互的研究工作流，能够组合 1000+ 个工具。"
 
 #: ../../guide/scientific_workflows.rst:6 fefe109196f4484b9c365f9a9175550a
 msgid ""
 "Use the skills catalog to find workflows for drug discovery, target "
 "analysis, disease research, genomics, literature review, and more:"
-msgstr ""
+msgstr "你可以通过 skills 目录查找适用于药物发现、靶点分析、疾病研究、基因组学、文献综述等任务的工作流："
 
 #: ../../guide/scientific_workflows.rst:8 5f17f54e7ff44c409d9cd0f2e30d29f5
 #, fuzzy
 msgid "View All Research Skills"
-msgstr "🧪 临床研究工作流程"
+msgstr "查看全部研究技能"
 
 #: ../../guide/scientific_workflows.rst:16 a7cdeb7d351448b7b85d78aceb11459a
 msgid "Quick Start"
-msgstr ""
+msgstr "快速开始"
 
 #: ../../guide/scientific_workflows.rst:18 18be4ccc83f342e8b9225a973ac0a8a9
 msgid "Open your AI agent and ask it to run a skill directly. Examples:"
-msgstr ""
+msgstr "打开你的 AI 代理，直接让它执行某个 skill。例如："
 
 #: ../../guide/scientific_workflows.rst:36 089e3269d2c847e2b651a901f54f73ca
 msgid ""
 "Each request automatically selects the right tools and databases for the "
 "task."
-msgstr ""
+msgstr "每个请求都会自动为任务选择合适的工具和数据库。"
 
 #: ../../guide/scientific_workflows.rst:39 56dd10aa05be45b7bd1a843082d90e7f
 msgid "Python API"
-msgstr ""
+msgstr "Python API"
 
 #: ../../guide/scientific_workflows.rst:41 029e58f40ffe4ec6a91b1add079bc947
 msgid ""
 "To build workflows programmatically, see the :doc:`../guide/python_guide`"
 " and :doc:`tool_composition` pages."
-msgstr ""
+msgstr "如果要以编程方式构建工作流，请参见 :doc:`../guide/python_guide` 和 :doc:`tool_composition`。"
 
 #~ msgid ""
 #~ "**Build comprehensive research workflows using"
@@ -403,4 +403,3 @@ msgstr ""
 #~ msgstr ""
 #~ "**异构集成**：ToolUniverse 擅长整合来自不同科学数据库和 API "
 #~ "的工具。利用此能力构建全面的研究流程，这在单一工具下是无法实现的。"
-

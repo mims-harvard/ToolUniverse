@@ -22,392 +22,393 @@ msgstr ""
 
 #: ../../guide/python_guide.rst:2 1ba950ff7a6d4e709e13c2521c7e3990
 msgid "Python Guide"
-msgstr ""
+msgstr "Python 指南"
 
 #: ../../guide/python_guide.rst:4 807c14f7a9a3422b9d0558e4b60eabf6
 msgid "**Complete guide for using ToolUniverse with Python**"
-msgstr ""
+msgstr "**使用 Python 操作 ToolUniverse 的完整指南**"
 
 #: ../../guide/python_guide.rst:7 5809d8fedd8540fbab74b2348638dc66
 msgid "Installation"
-msgstr ""
+msgstr "安装"
 
 #: ../../guide/python_guide.rst:9 0651769f48e9491a8fcd6fb7e5b5ccf3
 msgid "Choose your preferred installation method:"
-msgstr ""
+msgstr "选择你偏好的安装方式："
 
 #: ../../guide/python_guide.rst 30eedc6ab7d04dbba2930d8b8b7fa21e
 msgid "pip"
-msgstr ""
+msgstr "pip"
 
 #: ../../guide/python_guide.rst:16 ec44d8fbbcb74677a43e3cdbef83c714
 msgid "Standard installation with pip:"
-msgstr ""
+msgstr "使用 pip 的标准安装方式："
 
 #: ../../guide/python_guide.rst 9d44f48fded744968441d3e12b42a212
 msgid "uv (Recommended)"
-msgstr ""
+msgstr "uv（推荐）"
 
 #: ../../guide/python_guide.rst:25 7de58e11c0834cf0b3323bd808dd7392
 msgid "Fast, modern package manager:"
-msgstr ""
+msgstr "更快、更现代的包管理器："
 
 #: ../../guide/python_guide.rst 1128d76d2e4348bfb48354e146ced954
 msgid "Development"
-msgstr ""
+msgstr "开发环境"
 
 #: ../../guide/python_guide.rst:34 52b4a82d56e948afb4b32a660e569032
 msgid "For contributors and custom modifications:"
-msgstr ""
+msgstr "适用于贡献者和自定义修改："
 
 #: ../../guide/python_guide.rst:42 5f3f195f82894af2a620e521a1399a2c
 msgid "**Pro Tip**"
-msgstr ""
+msgstr "**实用提示**"
 
 #: ../../guide/python_guide.rst:44 38dd18cb891b4a07966029a0d7202382
 msgid ""
 "Use ``uv`` for faster installations and better dependency management. "
 "Install it with: ``curl -LsSf https://astral.sh/uv/install.sh | sh``"
 msgstr ""
+"使用 ``uv`` 可以获得更快的安装速度和更好的依赖管理。安装命令：``curl "
+"-LsSf https://astral.sh/uv/install.sh | sh``"
 
 #: ../../guide/python_guide.rst:47 0c8361f34dc548ffa9833da067cd73a1
 msgid "Verify Installation"
-msgstr ""
+msgstr "验证安装"
 
 #: ../../guide/python_guide.rst:49 aaefdefc9266460a9c9dbbdbdc441beb
 msgid "Check that ToolUniverse is installed correctly:"
-msgstr ""
+msgstr "检查 ToolUniverse 是否已正确安装："
 
 #: ../../guide/python_guide.rst:-1 d469f230cfc142e99c7697bc8448f544
 msgid "**Installation Complete**"
-msgstr ""
+msgstr "**安装完成**"
 
 #: ../../guide/python_guide.rst:59 3d23eedf1ba541e3b93bc69ca76029b6
 msgid "You're ready to start using ToolUniverse!"
-msgstr ""
+msgstr "现在可以开始使用 ToolUniverse 了！"
 
 #: ../../guide/python_guide.rst:62 2df87d417ec6405da6f981cb765c3369
 msgid "Quick Start"
-msgstr ""
+msgstr "快速开始"
 
 #: ../../guide/python_guide.rst:64 013d3e4b24804e328153047fd6de8603
 msgid "Get your first scientific query running in 5 minutes:"
-msgstr ""
+msgstr "在 5 分钟内跑通你的第一个科学查询："
 
 #: ../../guide/python_guide.rst:66 18f1b6a40268450581631da1d74486cf
 msgid "Step 1: Initialize ToolUniverse"
-msgstr ""
+msgstr "步骤 1：初始化 ToolUniverse"
 
 #: ../../guide/python_guide.rst:69 a951ff77c13a42b1b8aa844493a807ee
 msgid "Create a ToolUniverse instance:"
-msgstr ""
+msgstr "创建一个 ToolUniverse 实例："
 
 #: ../../guide/python_guide.rst:78 c6c2b0d237a64560b6bfde6159f30d4e
 msgid "Step 2: Load Tools   :class-card: step-card completed"
-msgstr ""
+msgstr "步骤 2：加载工具   :class-card: step-card completed"
 
 #: ../../guide/python_guide.rst:81 f25a7c745e004842907964090d0f11df
 msgid "Load the scientific tools ecosystem:"
-msgstr ""
+msgstr "加载科学工具生态："
 
 #: ../../guide/python_guide.rst 6cc8adcb55f846f1a038ef9b737dac89
 msgid "💡 Advanced: Load Specific Tools"
-msgstr ""
+msgstr "💡 进阶：加载指定工具"
 
 #: ../../guide/python_guide.rst:94 e4445498146f4e29a525ed121e46bbc5
 msgid "For faster loading, specify tool categories:"
-msgstr ""
+msgstr "如果想提升加载速度，可以指定工具类别："
 
 #: ../../guide/python_guide.rst:101 5090ca7cf0a345dfa70231490d265b4e
 msgid "Step 3: Execute Your First Tool"
-msgstr ""
+msgstr "步骤 3：执行你的第一个工具"
 
 #: ../../guide/python_guide.rst:104 eca96790e78c464b848563df359f392f
 msgid "Query scientific databases:"
-msgstr ""
+msgstr "查询科学数据库："
 
 #: ../../guide/python_guide.rst:116 6d484a65a3f642b18ad92ee1fa1fbf53
 msgid "**Success!**"
-msgstr ""
+msgstr "**成功！**"
 
 #: ../../guide/python_guide.rst:118 71c5de5c7dbb4a36b07633bcc8169fe2
 msgid ""
 "You now have access to 1000+ scientific tools for drug discovery, protein"
 " analysis, literature search, and more!"
-msgstr ""
+msgstr "你现在已经可以使用 1000+ 个科学工具，用于药物发现、蛋白分析、文献检索等任务！"
 
 #: ../../guide/python_guide.rst:121 30e1b96c4baa4458bb47d503159b9bc6
 msgid "Tool Execution"
-msgstr ""
+msgstr "工具执行"
 
 #: ../../guide/python_guide.rst:123 f53993f4ff59450ebb4a338444a41b7d
 msgid "All tools follow a **consistent structure**:"
-msgstr ""
+msgstr "所有工具都遵循**统一的结构**："
 
 #: ../../guide/python_guide.rst:138 503bacb4d2ec4667828b751d4f672299
 msgid "**Two execution methods:**"
-msgstr ""
+msgstr "**两种执行方式：**"
 
 #: ../../guide/python_guide.rst efa23afbc25a4f3da64684a9f86bf488
 msgid "Dictionary API"
-msgstr ""
+msgstr "字典 API"
 
 #: ../../guide/python_guide.rst:144 13ce625cd0c8499189ab5414211fbda3
 msgid "Explicit and clear:"
-msgstr ""
+msgstr "显式且清晰："
 
 #: ../../guide/python_guide.rst 39f212e2c11646c786767a850cd80482
 msgid "Direct Import"
-msgstr ""
+msgstr "直接导入"
 
 #: ../../guide/python_guide.rst:156 7d9b5ab3f2b24e93bebaa0c322374d13
 msgid "Convenient shorthand:"
-msgstr ""
+msgstr "更方便的简写方式："
 
 #: ../../guide/python_guide.rst:169 cb7c917144fd4f89bbaded637039778b
 msgid "Tool Finders"
-msgstr ""
+msgstr "工具查找器"
 
 #: ../../guide/python_guide.rst:171 a484745c76c44202a0e47f6ab38aa01a
 msgid ""
 "ToolUniverse has **three ways** to find tools. Don't browse 1000+ tools "
 "manually—use Tool Finder!"
-msgstr ""
+msgstr "ToolUniverse 提供了**三种方式**来查找工具。不要再手动翻 1000+ 个工具，直接使用 Tool Finder。"
 
 #: ../../guide/python_guide.rst:176 d8049c0385d7478facdc20c8853fdfc1
 msgid "Keyword Search"
-msgstr ""
+msgstr "关键词搜索"
 
 #: ../../guide/python_guide.rst:180 725f879d9d0149f98c0855d56ccb21d6
 msgid "**Fast text matching**"
-msgstr ""
+msgstr "**快速文本匹配**"
 
 #: ../../guide/python_guide.rst:182 f44c35184b624120a02c1394f770d768
 msgid "Best for: Exact terms you know"
-msgstr ""
+msgstr "适合：你已经知道的精确术语"
 
 #: ../../guide/python_guide.rst:194 20712fb37523486dbcbbac8ce000c8c0
 msgid "🤖 LLM Search"
-msgstr ""
+msgstr "🤖 LLM 搜索"
 
 #: ../../guide/python_guide.rst:198 4958dd588643417b986d794f9941584b
 msgid "**Natural language (LLM API required)**"
-msgstr ""
+msgstr "**自然语言搜索（需要 LLM API）**"
 
 #: ../../guide/python_guide.rst:200 40939124a9604ff4aa53b58d12a03be6
 msgid "Best for: Descriptive queries"
-msgstr ""
+msgstr "适合：描述性查询"
 
 #: ../../guide/python_guide.rst:212 5535080ad7444eee8c0518ea38212f6d
 msgid "🧠 Semantic Search"
-msgstr ""
+msgstr "🧠 语义搜索"
 
 #: ../../guide/python_guide.rst:216 e74c4e33b2e54e708b6ef3086ff7c492
 msgid "**Embedding-based (GPU required)**"
-msgstr ""
+msgstr "**基于 Embedding（需要 GPU）**"
 
 #: ../../guide/python_guide.rst:218 5b1d2805c8a74caaa37d60b8bca24e95
 msgid "Best for: Conceptual matches"
-msgstr ""
+msgstr "适合：概念级匹配"
 
 #: ../../guide/python_guide.rst:230 dadb94b386d24d8fbd6115b31f54a714
 msgid "📋 Browse by Category"
-msgstr ""
+msgstr "📋 按类别浏览"
 
 #: ../../guide/python_guide.rst:234 58d42d30cd0247b4953b07ebd89421e4
 msgid "**Organized view**"
-msgstr ""
+msgstr "**结构化视图**"
 
 #: ../../guide/python_guide.rst:236 a31421ea7b914405b325203eee73d9ec
 msgid "Best for: Exploring tool types"
-msgstr ""
+msgstr "适合：浏览工具类型"
 
 #: ../../guide/python_guide.rst:247 f7e11cbab5ef410fabc72c81d4465d4b
 msgid "For detailed guide on finding tools, see :doc:`finding_tools`"
-msgstr ""
+msgstr "关于工具查找的详细说明，请参见 :doc:`finding_tools`"
 
 #: ../../guide/python_guide.rst:250 229091f568164d5b930f1dfedde26643
 msgid "Common Examples"
-msgstr ""
+msgstr "常见示例"
 
 #: ../../guide/python_guide.rst:252 db6306bac66a478d8e962e19beb33a74
 msgid "**Protein & Gene Information**"
-msgstr ""
+msgstr "**蛋白与基因信息**"
 
 #: ../../guide/python_guide.rst:262 38c1fb1226504a95b9deb7f11d003486
 msgid "**Drug Safety Analysis**"
-msgstr ""
+msgstr "**药物安全分析**"
 
 #: ../../guide/python_guide.rst:272 5f7ab9bbe140492f9dbf38fc028f3028
 msgid "**Disease-Target Relationships**"
-msgstr ""
+msgstr "**疾病与靶点关系**"
 
 #: ../../guide/python_guide.rst:282 ca069a5d72f045b5b1bd509096c36d5e
 msgid "**Literature Search**"
-msgstr ""
+msgstr "**文献检索**"
 
 #: ../../guide/python_guide.rst:296 ff6c37a8eebb4231911b5b93fa088c27
 msgid "Tool Specifications"
-msgstr ""
+msgstr "工具规格"
 
 #: ../../guide/python_guide.rst:298 cf0a9cbfc41240f6974c9cc4ec7f51c6
 msgid "Inspect tool details before execution:"
-msgstr ""
+msgstr "执行前先查看工具详情："
 
 #: ../../guide/python_guide.rst:318 1b98408e17a64ba5920fe74edcca50e6
 msgid "For AI-Tool Interaction Protocol details, see :doc:`interaction_protocol`"
-msgstr ""
+msgstr "关于 AI 与工具交互协议的详情，请参见 :doc:`interaction_protocol`"
 
 #: ../../guide/python_guide.rst:321 e4c52addb0da429b86ae8bb93f0bf279
 msgid "Building Workflows"
-msgstr ""
+msgstr "构建工作流"
 
 #: ../../guide/python_guide.rst:323 d5afa820849a4f7ebc2412c2e809f7a3
 msgid "Chain tools for complex research tasks:"
-msgstr ""
+msgstr "把工具串联起来完成复杂研究任务："
 
 #: ../../guide/python_guide.rst:326 a03c1766be914d5fb306172c3783330c
 msgid "Multi-Step Pipeline"
-msgstr ""
+msgstr "多步骤流水线"
 
 #: ../../guide/python_guide.rst:359 ff3a30f22885482b8cd56df31a5b76fe
 msgid "Batch Execution"
-msgstr ""
+msgstr "批量执行"
 
 #: ../../guide/python_guide.rst:361 689d3438158d4a1a89336bf3c9133a36
 msgid "Execute multiple tools in parallel:"
-msgstr ""
+msgstr "并行执行多个工具："
 
 #: ../../guide/python_guide.rst:376 ffcafb95b7474c6ebd12c1fe2daa959d
 msgid ":doc:`tool_composition` - Advanced tool chaining patterns"
-msgstr ""
+msgstr ":doc:`tool_composition` - 高级工具串联模式"
 
 #: ../../guide/python_guide.rst:377 f110a6d1954e4b3cba7cd931e69b9cc4
 msgid ":doc:`scientific_workflows` - Real-world research scenarios"
-msgstr ""
+msgstr ":doc:`scientific_workflows` - 真实研究场景"
 
 #: ../../guide/python_guide.rst:378 9adfac9a665a48de8b48b789c9d7386c
 msgid ":doc:`tooluniverse_case_study` - End-to-end drug discovery example"
-msgstr ""
+msgstr ":doc:`tooluniverse_case_study` - 端到端药物发现示例"
 
 #: ../../guide/python_guide.rst:381 16e86827165e4795b0961155c48550a8
 msgid "Configuration"
-msgstr ""
+msgstr "配置"
 
 #: ../../guide/python_guide.rst:384 93f884a8960b40ab81df1d8fa710f4c6
 msgid "API Keys"
-msgstr ""
+msgstr "API 密钥"
 
 #: ../../guide/python_guide.rst:386 d54c1498179142518c542504eae15366
 msgid "Some tools require API keys for enhanced performance:"
-msgstr ""
+msgstr "部分工具需要配置 API 密钥才能获得更好的性能："
 
 #: ../../guide/python_guide.rst 39074a93d4e6431883b58dc74cadf5d7
 msgid "Setting Up API Keys"
-msgstr ""
+msgstr "配置 API 密钥"
 
 #: ../../guide/python_guide.rst:392 aadc0a270c304c3f963067e099fcff7e
 msgid "**Environment Variables** (Recommended)"
-msgstr ""
+msgstr "**环境变量**（推荐）"
 
 #: ../../guide/python_guide.rst:405 73b0a3b6d606479fa4052c2a11d21c0a
 msgid "**Using .env File**"
-msgstr ""
+msgstr "**使用 .env 文件**"
 
 #: ../../guide/python_guide.rst:415 b073bbd356014671bc8c747f17448a5a
 msgid "**See detailed guide:** :doc:`api_keys`"
-msgstr ""
+msgstr "**查看详细指南：** :doc:`api_keys`"
 
 #: ../../guide/python_guide.rst:418 6ae423a24760410c8cd86fbde340caab
 msgid "Tool Loading Options"
-msgstr ""
+msgstr "工具加载选项"
 
 #: ../../guide/python_guide.rst:432 13809071eff24acbaa39e10813663637
 msgid "Logging"
-msgstr ""
+msgstr "日志"
 
 #: ../../guide/python_guide.rst:434 d993ae83afae4c5ba68cd768feac4c9c
 msgid "Configure logging for debugging:"
-msgstr ""
+msgstr "为调试配置日志："
 
 #: ../../guide/python_guide.rst:448 2557ad9e84a742a6a0af200a01c30097
 msgid "For comprehensive logging configuration, see :doc:`logging`"
-msgstr ""
+msgstr "完整日志配置请参见 :doc:`logging`"
 
 #: ../../guide/python_guide.rst:451 f215cc7806324fc2ab0bd7a0a68b61c5
 msgid "Advanced Features"
-msgstr ""
+msgstr "高级特性"
 
 #: ../../guide/python_guide.rst:456 484cf8bf0389481d91fc56ae4fdc6b00
 msgid "Tool Composition"
-msgstr ""
+msgstr "工具编排"
 
 #: ../../guide/python_guide.rst:462 c3a16c48e3e449ad9c15f864511129fe
 msgid "Chain multiple tools into scientific workflows"
-msgstr ""
+msgstr "将多个工具串联成科学工作流"
 
 #: ../../guide/python_guide.rst:464 6af5b93305654954bd10d6185c69f541
 msgid "Hooks System"
-msgstr ""
+msgstr "Hooks 系统"
 
 #: ../../guide/python_guide.rst:470 646fd67ba5a243ebb69d0cdb18c1455b
 msgid "Intelligent output processing and summarization"
-msgstr ""
+msgstr "智能输出处理与摘要"
 
 #: ../../guide/python_guide.rst:472 24ade4ed290c4f2da6a6a44c9900c62a
 msgid "Cache System"
-msgstr ""
+msgstr "缓存系统"
 
 #: ../../guide/python_guide.rst:478 d3838528c30045788db9c99bba7a761b
 msgid "Optimize performance with smart caching"
-msgstr ""
+msgstr "通过智能缓存优化性能"
 
 #: ../../guide/python_guide.rst:480 f3a359ccc26a419e81e1889ff0456292
 msgid "HTTP API"
-msgstr ""
+msgstr "HTTP API"
 
 #: ../../guide/python_guide.rst:486 c67ef50d9d16495a98495e9ae66a4d42
 msgid "Deploy ToolUniverse as a remote service"
-msgstr ""
+msgstr "将 ToolUniverse 部署为远程服务"
 
 #: ../../guide/python_guide.rst:488 93a441e61ecd43ae9fbf0ff8082a143d
 msgid "ChatGPT API"
-msgstr ""
+msgstr "ChatGPT API"
 
 #: ../../guide/python_guide.rst:494 211ff42af14546b7afebd6fca632419c
 msgid "Use ToolUniverse tools as OpenAI function calls"
-msgstr ""
+msgstr "将 ToolUniverse 工具作为 OpenAI 函数调用使用"
 
 #: ../../guide/python_guide.rst:496 075d782f3fea450289672ce14762b9fb
 msgid "Complete Case Study: Drug discovery workflow with Gemini 2.5 Pro"
-msgstr ""
+msgstr "完整案例研究：使用 Gemini 2.5 Pro 的药物发现工作流"
 
 #: ../../guide/python_guide.rst:503 d9a8bcb0c9ae4225bf0613359d36db85
 msgid "API Reference: Detailed Python API documentation"
-msgstr ""
+msgstr "API 参考：详细的 Python API 文档"
 
 #: ../../guide/python_guide.rst:529 f08b1bf18b3848a1b1336193ac0d5b17
 msgid "Need Help?"
-msgstr ""
+msgstr "需要帮助？"
 
 #: ../../guide/python_guide.rst:531 9ff2afe87b4348e1ac51b3f93102cd47
 msgid "**Documentation**: :doc:`../index`"
-msgstr ""
+msgstr "**文档**：:doc:`../index`"
 
 #: ../../guide/python_guide.rst:532 d3c5fbe0aace4fbcb4ba4869ce6aded1
 msgid ""
 "**Issues**: `GitHub Issues <https://github.com/mims-"
 "harvard/ToolUniverse/issues>`_"
-msgstr ""
+msgstr "**问题反馈**：`GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_"
 
 #: ../../guide/python_guide.rst:533 bf363c3372c64baf8674a68567260010
 msgid ""
 "**Community**: `Slack Channel "
 "<https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-"
 "5xxoJch7TLNibNQn5_AREQ>`_"
-msgstr ""
+msgstr "**社区**：`Slack 频道 <https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_"
 
 #: ../../guide/python_guide.rst:534 c89e46b530e643e988ca01df797cc781
 msgid "**FAQ**: :doc:`../help/faq`"
-msgstr ""
-
+msgstr "**常见问题**：:doc:`../help/faq`"
