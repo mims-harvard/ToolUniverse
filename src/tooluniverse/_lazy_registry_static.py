@@ -90,6 +90,8 @@ STATIC_LAZY_REGISTRY = {
     "MSigDBTool": "msigdb_tool",
     "CompoundGeneDiseaseAssociationTool": "compound_gene_disease_tool",
     "CompoundVariantAnnotationTool": "compound_variant_tool",
+    "PhyKITTool": "phykit_tool",
+    "DESeq2Tool": "deseq2_tool",
     "CorePDFSnippetsTool": "core_tool",
     "CoreTool": "core_tool",
     "CrossrefRESTTool": "crossref_tool",

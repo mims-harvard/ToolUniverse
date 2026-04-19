@@ -1,0 +1,98 @@
+[
+  {
+    "type": "DESeq2Tool",
+    "name": "run_deseq2_analysis",
+    "description": "Run R DESeq2 differential expression analysis on a count matrix + metadata. Returns gene counts, significance stats, and dispersion estimates. Uses actual R DESeq2 (not pydeseq2) for maximum accuracy. Supports custom design formulas, contrasts, reference levels, LFC shrinkage, and refit_cooks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["deseq2", "enrichgo"],
+          "description": "deseq2: differential expression, enrichgo: GO enrichment with clusterProfiler::simplify"
+        },
+        "counts_file": {
+          "type": "string",
+          "description": "Path to CSV count matrix (genes x samples, first column = gene IDs)"
+        },
+        "metadata_file": {
+          "type": "string",
+          "description": "Path to CSV metadata (samples x variables, must include design variables)"
+        },
+        "design": {
+          "type": "string",
+          "description": "R formula string (e.g., '~ condition', '~ Replicate + Media + Strain')"
+        },
+        "contrast": {
+          "type": ["string", "null"],
+          "description": "Contrast specification: 'variable, level, reference' (e.g., 'Strain, 97, 1')"
+        },
+        "ref_level": {
+          "type": ["string", "null"],
+          "description": "Reference level: 'variable, level' (e.g., 'condition, Control')"
+        },
+        "alpha": {
+          "type": "number",
+          "description": "Significance threshold (default: 0.05)"
+        },
+        "lfc_threshold": {
+          "type": "number",
+          "description": "Log2 fold change threshold for filtering (default: 0 = no filter)"
+        },
+        "lfc_shrinkage": {
+          "type": "boolean",
+          "description": "Apply apeglm LFC shrinkage (default: false)"
+        },
+        "refit_cooks": {
+          "type": "boolean",
+          "description": "Refit Cook's outliers (default: false)"
+        },
+        "gene_list_file": {
+          "type": ["string", "null"],
+          "description": "For enrichgo: path to file with one gene ID per line"
+        },
+        "background_file": {
+          "type": ["string", "null"],
+          "description": "For enrichgo: path to background gene list file"
+        },
+        "ontology": {
+          "type": "string",
+          "description": "For enrichgo: GO ontology (BP, CC, MF). Default: BP"
+        },
+        "simplify_cutoff": {
+          "type": "number",
+          "description": "For enrichgo: simplify similarity cutoff (default: 0.7)"
+        },
+        "id_type": {
+          "type": "string",
+          "description": "Gene ID type (ENSEMBL, ENTREZID, SYMBOL). Default: ENSEMBL"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism annotation DB (org.Hs.eg.db, org.Mm.eg.db). Default: org.Hs.eg.db"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {"type": "object"}
+          }
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"operation": "deseq2", "counts_file": "/tmp/counts.csv", "metadata_file": "/tmp/meta.csv", "design": "~ condition"}
+    ]
+  }
+]

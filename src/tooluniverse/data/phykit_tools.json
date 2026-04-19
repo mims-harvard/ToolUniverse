@@ -1,0 +1,78 @@
+[
+  {
+    "type": "PhyKITTool",
+    "name": "phykit_batch_analysis",
+    "description": "Run PhyKIT phylogenetics functions (treeness, saturation, dvmc, long_branch_score, total_tree_length, parsimony_informative) on a directory of tree/alignment files. Returns summary statistics (mean, median, min, max). For long_branch_score, aggregates per-taxon values within each tree before cross-tree summary. Use for batch phylogenetic analyses comparing gene trees across organism groups.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["single", "batch", "gap_percentage"],
+          "description": "single: one file, batch: all files in directory, gap_percentage: compute gap % across alignments"
+        },
+        "function": {
+          "type": "string",
+          "enum": ["treeness", "saturation", "dvmc", "long_branch_score", "total_tree_length", "parsimony_informative"],
+          "description": "PhyKIT function to run"
+        },
+        "file": {
+          "type": ["string", "null"],
+          "description": "Path to single tree/alignment file (for operation=single)"
+        },
+        "directory": {
+          "type": ["string", "null"],
+          "description": "Directory containing tree/alignment files (for operation=batch or gap_percentage)"
+        },
+        "extension": {
+          "type": "string",
+          "description": "File extension to match (default: .treefile for trees, .fa for alignments)"
+        },
+        "tree_directory": {
+          "type": ["string", "null"],
+          "description": "Directory with paired tree files (for saturation function)"
+        },
+        "tree_extension": {
+          "type": "string",
+          "description": "Tree file extension (default: .treefile)"
+        },
+        "per_tree_stat": {
+          "type": "string",
+          "enum": ["mean", "median"],
+          "description": "How to summarize per-tree values for long_branch_score (default: mean)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "function": {"type": "string"},
+                "n_files": {"type": "integer"},
+                "mean": {"type": "number"},
+                "median": {"type": "number"},
+                "min": {"type": "number"},
+                "max": {"type": "number"}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"operation": "single", "function": "treeness", "file": "/tmp/test.treefile"}
+    ]
+  }
+]
