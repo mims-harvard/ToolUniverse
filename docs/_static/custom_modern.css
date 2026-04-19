@@ -24,6 +24,27 @@
     --tu-console-rim: linear-gradient(135deg, rgba(102, 126, 234, 0.28), rgba(16, 185, 129, 0.18));
 }
 
+/* Use a near-white / near-black code surface across common content containers */
+:is(
+    .yue,
+    .sd-card,
+    .sd-card-body,
+    .sd-tab-content,
+    .sd-dropdown,
+    .sd-dropdown-body,
+    .admonition,
+    .sd-summary-content,
+    .sd-grid-item,
+    .step-card
+) {
+    --tu-code-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.992), rgba(250, 251, 253, 0.978));
+    --tu-code-border: rgba(148, 163, 184, 0.2);
+    --tu-code-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.94),
+        0 12px 26px rgba(15, 23, 42, 0.04);
+    --tu-code-text: #0f172a;
+}
+
 /* Python guide installation and verification redesign */
 .install-showcase,
 .verify-console {
@@ -35,7 +56,7 @@
     --tu-code-text: var(--tu-console-ink);
     position: relative;
     margin: 1.75rem 0 2rem;
-    padding: 1.25rem;
+    padding: 0.95rem 1.1rem;
     border-radius: 1rem;
     background:
         radial-gradient(circle at top right, color-mix(in srgb, var(--tu-accent) 16%, transparent), transparent 38%),
@@ -70,7 +91,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     padding: 0.35rem 0.7rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--tu-accent) 14%, var(--sy-c-background));
@@ -83,6 +104,7 @@
 
 .install-showcase > p,
 .verify-console > p {
+    margin-bottom: 0.7rem;
     margin-top: 0;
     color: var(--tu-console-soft);
 }
@@ -179,7 +201,7 @@
 }
 
 .verify-console {
-    padding-top: 1.1rem;
+    padding-top: 0.85rem;
 }
 
 html.dark {
@@ -196,6 +218,26 @@ html.dark {
     --tu-console-line: rgba(148, 163, 184, 0.18);
     --tu-console-surface: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.98));
     --tu-console-rim: linear-gradient(135deg, rgba(129, 140, 248, 0.5), rgba(45, 212, 191, 0.22));
+}
+
+html.dark :is(
+    .yue,
+    .sd-card,
+    .sd-card-body,
+    .sd-tab-content,
+    .sd-dropdown,
+    .sd-dropdown-body,
+    .admonition,
+    .sd-summary-content,
+    .sd-grid-item,
+    .step-card
+) {
+    --tu-code-bg: linear-gradient(180deg, rgba(3, 7, 18, 0.992), rgba(10, 15, 28, 0.972));
+    --tu-code-border: rgba(71, 85, 105, 0.68);
+    --tu-code-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 16px 32px rgba(2, 6, 23, 0.28);
+    --tu-code-text: #e2e8f0;
 }
 
 html.dark .install-showcase,
@@ -220,7 +262,7 @@ html.dark .verify-console .highlight {
 @media (max-width: 768px) {
     .install-showcase,
     .verify-console {
-        padding: 1rem;
+        padding: 0.8rem 0.9rem;
         border-radius: 0.9rem;
     }
 
