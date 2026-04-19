@@ -31,14 +31,15 @@
 
 /* Code blocks */
 .rst-content .highlight {
-    background: var(--sy-c-light);
-    border: 1px solid var(--sy-c-border);
-    border-radius: 0.375rem;
+    background: var(--tu-code-bg, var(--sy-c-light));
+    border: 1px solid var(--tu-code-border, var(--sy-c-border));
+    border-radius: 0.9rem;
+    box-shadow: var(--tu-code-shadow, none);
 }
 
 .rst-content .highlight pre {
     background: transparent;
-    color: var(--sy-c-text);
+    color: var(--tu-code-text, var(--sy-c-text));
 }
 
 /* API documentation styling */

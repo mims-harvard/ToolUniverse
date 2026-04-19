@@ -9,6 +9,14 @@
     --tu-warning: #f59e0b;
     --tu-danger: #ef4444;
     --tu-info: #3b82f6;
+    --tu-code-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.985), rgba(247, 249, 252, 0.97));
+    --tu-code-border: rgba(148, 163, 184, 0.22);
+    --tu-code-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 12px 28px rgba(15, 23, 42, 0.045);
+    --tu-code-text: #0f172a;
+    --tu-code-copy-bg: rgba(255, 255, 255, 0.86);
+    --tu-code-copy-border: rgba(148, 163, 184, 0.24);
     --tu-console-ink: #0f172a;
     --tu-console-soft: #475569;
     --tu-console-line: rgba(15, 23, 42, 0.08);
@@ -19,6 +27,12 @@
 /* Python guide installation and verification redesign */
 .install-showcase,
 .verify-console {
+    --tu-code-bg:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0)),
+        var(--sy-c-background);
+    --tu-code-border: color-mix(in srgb, var(--tu-accent) 14%, var(--sy-c-border));
+    --tu-code-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    --tu-code-text: var(--tu-console-ink);
     position: relative;
     margin: 1.75rem 0 2rem;
     padding: 1.25rem;
@@ -112,11 +126,9 @@
     position: relative;
     margin: 0;
     border-radius: 0.85rem;
-    border: 1px solid color-mix(in srgb, var(--tu-accent) 14%, var(--sy-c-border));
-    background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0)),
-        var(--sy-c-background);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--tu-code-border);
+    background: var(--tu-code-bg);
+    box-shadow: var(--tu-code-shadow);
 }
 
 .install-showcase .highlight::before,
@@ -135,7 +147,7 @@
 .install-showcase .highlight pre,
 .verify-console .highlight pre {
     padding: 1rem 1.25rem 1.15rem;
-    color: var(--tu-console-ink);
+    color: var(--tu-code-text);
 }
 
 .install-showcase .copybtn,
@@ -171,6 +183,14 @@
 }
 
 html.dark {
+    --tu-code-bg: linear-gradient(180deg, rgba(4, 8, 20, 0.985), rgba(11, 18, 32, 0.96));
+    --tu-code-border: rgba(71, 85, 105, 0.72);
+    --tu-code-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 16px 34px rgba(2, 6, 23, 0.3);
+    --tu-code-text: #e2e8f0;
+    --tu-code-copy-bg: rgba(15, 23, 42, 0.9);
+    --tu-code-copy-border: rgba(100, 116, 139, 0.34);
     --tu-console-ink: #e2e8f0;
     --tu-console-soft: #94a3b8;
     --tu-console-line: rgba(148, 163, 184, 0.18);
@@ -191,10 +211,10 @@ html.dark .install-showcase .sd-tab-set {
 
 html.dark .install-showcase .highlight,
 html.dark .verify-console .highlight {
-    background:
+    --tu-code-bg:
         linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
         rgba(2, 6, 23, 0.6);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    --tu-code-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 @media (max-width: 768px) {
@@ -316,16 +336,6 @@ a.reference.internal img {
 .step-card .highlight {
     margin: 0.9rem 0 0;
     border-radius: 0.9rem;
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.88),
-        0 10px 24px rgba(15, 23, 42, 0.04);
-}
-
-.step-card .highlight pre {
-    color: #0f172a;
 }
 
 .step-card.completed::before {
@@ -565,21 +575,27 @@ a.reference.internal img {
 
 /* Code Block Enhancements */
 .highlight {
-    border-radius: 0.5rem;
+    border-radius: 0.9rem;
     margin: 1.5rem 0;
-    background: var(--sy-c-light);
-    border: 1px solid var(--sy-c-border);
+    background: var(--tu-code-bg);
+    border: 1px solid var(--tu-code-border);
+    box-shadow: var(--tu-code-shadow);
+    overflow: hidden;
 }
 
 .highlight pre {
-    border-radius: 0.5rem;
-    padding: 1.5rem;
+    border-radius: inherit;
+    padding: 1.2rem 1.35rem;
+    color: var(--tu-code-text);
 }
 
 /* Copy Button Styling */
 .copybtn {
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    background: var(--tu-code-copy-bg);
+    border: 1px solid var(--tu-code-copy-border);
+    border-radius: 0.55rem;
 }
 
 .copybtn:hover {
@@ -696,19 +712,6 @@ html.dark .platform-card {
 html.dark .step-card.pending::before {
     background: #334155;
     border-color: #475569;
-}
-
-html.dark .step-card .highlight {
-    border-color: rgba(71, 85, 105, 0.72);
-    background:
-        linear-gradient(180deg, rgba(3, 7, 18, 0.96), rgba(15, 23, 42, 0.92));
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 14px 30px rgba(2, 6, 23, 0.3);
-}
-
-html.dark .step-card .highlight pre {
-    color: #e2e8f0;
 }
 
 /* ============================================
