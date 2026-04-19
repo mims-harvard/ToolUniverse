@@ -137,7 +137,6 @@ html_css_files = [
 html_js_files = [
     "language_switcher.js",
     "sidebar_control.js",  # Custom per-section sidebar expansion control
-    "theme_toggle_fix.js",
 ]
 
 # -- Autodoc configuration ---------------------------------------------------
