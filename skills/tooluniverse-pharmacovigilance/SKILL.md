@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-pharmacovigilance
 description: "Drug safety and adverse events: FAERS reports, FDA warnings, signal detection, risk factors."
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-metagenomics-analysis
 description: Analyze microbiome and metagenomics data using MGnify, GTDB, ENA, and literature tools.
+disable-model-invocation: true
 ---
 
 # Metagenomics & Microbiome Analysis

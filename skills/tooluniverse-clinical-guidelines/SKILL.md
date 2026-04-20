@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-clinical-guidelines
 description: Search and retrieve clinical practice guidelines across 12+ authoritative sources including NICE, WHO, ADA, AHA/ACC,.
+disable-model-invocation: true
 ---
 
 # Clinical Guidelines Search & Retrieval

@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-dataset-discovery
 description: Find and evaluate research datasets for any scientific question.
+disable-model-invocation: true
 ---
 
 # Dataset Discovery

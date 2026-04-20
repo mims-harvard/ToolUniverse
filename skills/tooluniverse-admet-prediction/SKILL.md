@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-admet-prediction
 description: Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) profiling of drug candidates using.
+disable-model-invocation: true
 ---
 
 # ADMET Prediction & Drug Candidate Profiling

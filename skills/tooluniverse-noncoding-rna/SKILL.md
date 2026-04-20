@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-noncoding-rna
 description: Analyze non-coding RNAs (miRNAs, lncRNAs, circRNAs) using miRBase, LNCipedia, RNAcentral, Rfam, and target prediction.
+disable-model-invocation: true
 ---
 
 # Non-Coding RNA Analysis

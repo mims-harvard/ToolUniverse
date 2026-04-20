@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-model-organism-genetics
 description: Cross-species genetic analysis using model organism databases.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

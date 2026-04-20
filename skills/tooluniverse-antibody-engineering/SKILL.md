@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-antibody-engineering
 description: Comprehensive antibody engineering and optimization for therapeutic development.
+disable-model-invocation: true
 ---
 
 # Antibody Engineering & Optimization

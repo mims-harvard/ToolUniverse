@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-immune-repertoire-analysis
 description: Comprehensive immune repertoire analysis for T-cell and B-cell receptor sequencing data.
+disable-model-invocation: true
 ---
 
 # ToolUniverse Immune Repertoire Analysis

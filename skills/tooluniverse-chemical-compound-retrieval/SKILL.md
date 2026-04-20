@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-chemical-compound-retrieval
 description: Retrieves chemical compound information from PubChem and ChEMBL with disambiguation, cross-referencing, and quality.
+disable-model-invocation: true
 ---
 
 # Chemical Compound Information Retrieval

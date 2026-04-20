@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-toxicology
 description: Assess chemical and drug toxicity via adverse outcome pathways, real-world adverse event signals, and toxicogenomic.
+disable-model-invocation: true
 ---
 
 # Toxicology Assessment via Adverse Outcome Pathways & Signal Detection

@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-polygenic-risk-score
 description: Build and interpret polygenic risk scores (PRS) for complex diseases using GWAS summary statistics.
+disable-model-invocation: true
 ---
 
 # Polygenic Risk Score (PRS) Builder

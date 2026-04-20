@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-sdk
 description: Build AI scientist systems using ToolUniverse Python SDK for scientific research.
+disable-model-invocation: true
 ---
 
 # ToolUniverse Python SDK

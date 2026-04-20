@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-immunotherapy-response-prediction
 description: Predict patient response to immune checkpoint inhibitors (ICIs) using multi-biomarker integration.
+disable-model-invocation: true
 ---
 
 # Immunotherapy Response Prediction

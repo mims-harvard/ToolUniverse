@@ -4,6 +4,7 @@ description: KEGG-based disease-drug-variant research using KEGG Disease, Drug, 
 triggers:
   - keywords: [KEGG disease, KEGG drug, KEGG network, KEGG variant, disease genes, drug targets]
   - patterns: ["KEGG .* disease", "KEGG .* drug", "disease.*drug.*variant", "KEGG network"]
+disable-model-invocation: true
 ---
 
 # KEGG Disease-Drug-Variant Research

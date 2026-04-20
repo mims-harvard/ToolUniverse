@@ -1,6 +1,7 @@
 ---
 name: Protein Interaction Network Analysis
 description: Analyze protein-protein interaction networks using STRING, BioGRID, and SASBDB databases.
+disable-model-invocation: true
 ---
 
 # Protein Interaction Network Analysis

@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-gwas-finemapping
 description: Identify and prioritize causal variants at GWAS loci using statistical fine-mapping and locus-to-gene predictions.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

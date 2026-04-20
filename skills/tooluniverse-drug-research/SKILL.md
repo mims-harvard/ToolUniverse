@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-drug-research
 description: "Comprehensive drug profiling: mechanisms, targets, interactions, clinical status, adverse events."
+disable-model-invocation: true
 ---
 
 # Drug Research Strategy

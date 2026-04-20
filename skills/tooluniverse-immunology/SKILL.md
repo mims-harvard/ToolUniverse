@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-immunology
 description: Immunology research workflows using ToolUniverse tools.
+disable-model-invocation: true
 ---
 
 # Immunology Research Skill

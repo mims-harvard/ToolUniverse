@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-data-wrangling
 description: Universal data access reference for scientific research.
+disable-model-invocation: true
 ---
 
 # Data Wrangling: Universal Access Patterns

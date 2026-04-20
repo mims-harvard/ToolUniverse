@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-variant-to-mechanism
 description: "End-to-end variant-to-mechanism analysis: given a genetic variant (rsID or coordinates), trace its functional impact."
+disable-model-invocation: true
 ---
 
 # Variant-to-Mechanism Analysis Skill

@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-precision-medicine-stratification
 description: Comprehensive patient stratification for precision medicine by integrating genomic, clinical, and therapeutic data.
+disable-model-invocation: true
 ---
 
 # Precision Medicine Patient Stratification

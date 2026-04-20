@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-cancer-variant-interpretation
 description: Provide comprehensive clinical interpretation of somatic mutations in cancer.
+disable-model-invocation: true
 ---
 
 # Cancer Variant Interpretation for Precision Oncology

@@ -4,6 +4,7 @@ description: Population genetics research using the 1000 Genomes Project (IGSR) 
 triggers:
   - keywords: [1000 Genomes, IGSR, population, superpopulation, AFR, AMR, EAS, EUR, SAS, YRI, GBR, CHB, population stratification, ancestry, admixture, allele frequency, population genetics]
   - patterns: ["population code", "population stratification", "ancestral population", "1000 Genomes sample", "continental ancestry", "superpopulation filter"]
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

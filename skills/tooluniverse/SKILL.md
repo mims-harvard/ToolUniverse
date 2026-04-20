@@ -1,6 +1,6 @@
 ---
 name: tooluniverse
-description: Router skill for ToolUniverse tasks. First checks if specialized tooluniverse skills (105+ skills covering disease/drug/target research, gene-disease associations, clinical decision support, genomics, epigenomics, proteomics, comparative genomics, chemical safety, toxicology, systems biology, and more) can solve the problem, then falls back to general strategies for using 2300+ scientific tools. Covers tool discovery, multi-hop queries, comprehensive research workflows, disambiguation, evidence grading, and report generation. Use when users need to research any scientific topic, find biological data, or explore drug/target/disease relationships. ALSO USE for any biology, medicine, chemistry, pharmacology, or life science question — even simple factoid questions like "how many X in protein Y", "what drug interacts with Z", "what gene causes disease W", or "translate this sequence". These questions benefit from database lookups (UniProt, PubMed, ChEMBL, ClinVar, GWAS Catalog, etc.) rather than answering from memory alone. When in doubt about a scientific fact, USE THIS SKILL to verify against real databases.
+description: "Scientific research with 1000+ database tools and 114 specialized skills. Use for ANY biology, chemistry, medicine, genomics, drug discovery, clinical, or data analysis question. Also use for local data files: RNA-seq, DESeq2, VCF, phylogenetics, ANOVA, enrichment, CRISPR screens, single-cell."
 ---
 
 # ToolUniverse Router
@@ -178,7 +178,7 @@ When answering scientific questions:
 |----------|--------|
 | "**CRISPR screen**", "genetic screen", "screen hits", "essential genes" | `Skill(skill="tooluniverse-crispr-screen-analysis")` |
 | "**drug-drug interaction**", "DDI", "drug combination", "polypharmacy" | `Skill(skill="tooluniverse-drug-drug-interaction")` |
-| "**differential expression**", "DESeq2", "RNA-seq analysis", "DE genes", "fold change" | `Skill(skill="tooluniverse-rnaseq-deseq2")` |
+| "**differential expression**", "DESeq2", "RNA-seq analysis", "DE genes", "fold change", "differentially expressed", "log2FC", "count matrix", "dispersion" | `Skill(skill="tooluniverse-rnaseq-deseq2")` |
 | "**proteomics**", "mass spectrometry", "protein quantification", "TMT", "iTRAQ", "label-free" | `Skill(skill="tooluniverse-proteomics-analysis")` |
 | "**immune repertoire**", "TCR", "BCR", "T-cell receptor", "B-cell receptor", "clonotype" | `Skill(skill="tooluniverse-immune-repertoire-analysis")` |
 | "**spatial transcriptomics**", "Visium", "MERFISH", "seqFISH", "Slide-seq", "spatial gene expression" | `Skill(skill="tooluniverse-spatial-transcriptomics")` |
@@ -187,8 +187,8 @@ When answering scientific questions:
 | "**electron microscopy**", "cryo-EM", "TEM", "SEM", "EMPIAR", "EMDB" | `Skill(skill="tooluniverse-electron-microscopy")` |
 | "**cell line**", "cell line profiling", "DepMap", "CCLE", "cell line sensitivity" | `Skill(skill="tooluniverse-cell-line-profiling")` |
 | "**clinical data integration**", "clinical phenotype", "EHR analysis", "clinical cohort" | `Skill(skill="tooluniverse-clinical-data-integration")` |
-| "**phylogenetics**", "phylogenetic tree", "sequence alignment", "evolutionary analysis" | `Skill(skill="tooluniverse-phylogenetics")` |
-| "**statistical modeling**", "regression analysis", "logistic regression", "survival analysis", "Cox" | `Skill(skill="tooluniverse-statistical-modeling")` |
+| "**phylogenetics**", "phylogenetic tree", "sequence alignment", "evolutionary analysis", "treeness", "saturation", "parsimony", "PhyKIT", "DVMC", "long branch", "tree length", "MAFFT", "gap percentage" | `Skill(skill="tooluniverse-phylogenetics")` |
+| "**statistical modeling**", "regression analysis", "logistic regression", "survival analysis", "Cox", "ANOVA", "F-statistic", "chi-square", "spline", "odds ratio", "Cohen's d", "p-value", "clinical trial data" | `Skill(skill="tooluniverse-statistical-modeling")` |
 | "**metabolomics analysis**", "LC-MS analysis", "metabolite quantification", "metabolic flux" | `Skill(skill="tooluniverse-metabolomics-analysis")` |
 | "**functional genomics screen**", "CRISPR library", "shRNA screen", "barcode screen" | `Skill(skill="tooluniverse-functional-genomics-screens")` |
 | "**proteomics data**", "PRIDE", "MassIVE", "ProteomeXchange", "proteomics dataset" | `Skill(skill="tooluniverse-proteomics-data-retrieval")` |

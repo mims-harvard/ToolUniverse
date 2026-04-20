@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-structural-proteomics
 description: Integrate structural biology data with proteomics for drug target validation.
+disable-model-invocation: true
 ---
 
 # Structural Proteomics for Drug Target Validation

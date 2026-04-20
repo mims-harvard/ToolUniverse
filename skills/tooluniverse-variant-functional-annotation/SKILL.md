@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-variant-functional-annotation
 description: Comprehensive functional annotation of protein variants — pathogenicity, population frequency, structural context, and.
+disable-model-invocation: true
 ---
 
 # Protein Variant Functional Annotation

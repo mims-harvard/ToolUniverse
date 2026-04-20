@@ -4,6 +4,7 @@ description: Drug mechanism of action investigation -- systematic strategy to tr
 triggers:
   - keywords: [mechanism of action, drug target, pharmacology, pathway, pharmacogenomics, drug interaction, DailyMed, CPIC, MOA, off-target]
   - patterns: ["how does .* work", "mechanism of action", "drug target", "pathway context", "clinical pharmacology", "drug-drug interaction", "pharmacogenomic", "off-target effect"]
+disable-model-invocation: true
 ---
 
 # Drug Mechanism of Action Investigation

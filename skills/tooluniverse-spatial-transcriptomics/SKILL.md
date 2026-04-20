@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-spatial-transcriptomics
 description: Analyze spatial transcriptomics data to map gene expression in tissue architecture.
+disable-model-invocation: true
 ---
 
 # Spatial Transcriptomics Analysis

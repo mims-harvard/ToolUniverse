@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-pharmacogenomics
 description: Guide pharmacogenomics (PGx) research -- drug-gene interaction lookup, CPIC guideline retrieval, variant-drug.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

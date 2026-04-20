@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-protein-modification-analysis
 description: Analyze post-translational modifications (PTMs) of proteins — modification sites, types, proteoforms, functional.
+disable-model-invocation: true
 ---
 
 # Protein Post-Translational Modification Analysis

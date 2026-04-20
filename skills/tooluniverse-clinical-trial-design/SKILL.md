@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-clinical-trial-design
 description: Strategic clinical trial design feasibility assessment using ToolUniverse.
+disable-model-invocation: true
 ---
 
 # Clinical Trial Design Feasibility Assessment

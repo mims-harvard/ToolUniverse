@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-binder-discovery
 description: Discover novel small molecule binders for protein targets using structure-based and ligand-based approaches.
+disable-model-invocation: true
 ---
 
 # Small Molecule Binder Discovery Strategy

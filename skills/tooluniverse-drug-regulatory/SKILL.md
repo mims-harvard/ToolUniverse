@@ -4,6 +4,7 @@ description: Drug regulatory and approval research -- FDA substance registry loo
 triggers:
   - keywords: [FDA, Orange Book, generic drug, UNII, RxClass, ATC code, drug class, NDA, ANDA, patent, exclusivity, DailyMed, drug label, adverse reactions, regulatory, approval]
   - patterns: ["FDA approved", "generic available", "patent expiration", "drug class", "ATC code", "Orange Book", "DailyMed", "drug labeling", "UNII"]
+disable-model-invocation: true
 ---
 
 # Drug Regulatory Research

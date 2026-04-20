@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-data-integration-analysis
 description: Integrate statistical analysis results with biological knowledge from ToolUniverse tools.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

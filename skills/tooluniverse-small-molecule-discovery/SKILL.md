@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-small-molecule-discovery
 description: Find, characterize, and source small molecules for chemical biology and drug discovery.
+disable-model-invocation: true
 ---
 
 # Small Molecule Discovery Skill

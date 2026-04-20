@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-clinical-trial-matching
 description: AI-driven patient-to-trial matching for precision medicine and oncology.
+disable-model-invocation: true
 ---
 
 # Clinical Trial Matching for Precision Medicine

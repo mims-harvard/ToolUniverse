@@ -1,6 +1,7 @@
 ---
 name: tooluniverse-target-research
 description: "Comprehensive target profile: expression, pathways, interactions, variants, druggability."
+disable-model-invocation: true
 ---
 
 # Comprehensive Target Intelligence Gatherer
