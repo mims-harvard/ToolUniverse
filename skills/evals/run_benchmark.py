@@ -107,20 +107,76 @@ def _load_bixbench_skill_snippets():
     )
 
 
+def _categorize_for_skill(question_text: str) -> str | None:
+    """Determine which skill should handle this question (simulates auto-matching)."""
+    q = question_text.lower()
+    if "deseq2" in q or "differential expression" in q or "differentially expressed" in q or "fold change" in q or "log2" in q or "deg " in q:
+        return "tooluniverse-rnaseq-deseq2"
+    if "enrichgo" in q or "enrichment" in q or "go " in q or "kegg" in q or "gseapy" in q:
+        return "tooluniverse-gene-enrichment"
+    if "anova" in q or "regression" in q or "chi-square" in q or "spline" in q or "cohen" in q or "f-statistic" in q or "odds ratio" in q:
+        return "tooluniverse-statistical-modeling"
+    if "phylo" in q or "treeness" in q or "parsimony" in q or "phykit" in q or "saturation" in q or "dvmc" in q or "tree length" in q or "long branch" in q or ("alignment" in q and ("gap" in q or "mafft" in q)):
+        return "tooluniverse-phylogenetics"
+    if "variant" in q or "vcf" in q or "vaf" in q or "snp" in q:
+        return "tooluniverse-variant-analysis"
+    if "crispr" in q or "mageck" in q or "sgrna" in q:
+        return "tooluniverse-crispr-screen-analysis"
+    if "scanpy" in q or "single-cell" in q or "h5ad" in q:
+        return "tooluniverse-single-cell"
+    return None
+
+
+def _load_full_skill(skill_name: str) -> str:
+    """Load the full SKILL.md content (simulates what happens when skill auto-invokes)."""
+    skill_md = Path(PLUGIN_DIR) / "skills" / skill_name / "SKILL.md"
+    if not skill_md.exists():
+        return ""
+    text = skill_md.read_text()
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 3:
+            text = parts[2]
+    return text.strip()
+
+
 _PLUGIN_GUIDANCE = None
 
 
-def get_plugin_guidance(include_bixbench_skills: bool = True):
+_SKILL_ROUTING_GUIDANCE = """## CRITICAL: Invoke the matching skill BEFORE answering
+
+You MUST invoke the appropriate skill via the Skill tool before writing any analysis code.
+Do NOT answer from memory or write your own code first — the skill contains exact tool
+references and computational procedures that produce correct results.
+
+| If the question involves… | Invoke FIRST |
+|---|---|
+| DESeq2, differential expression, gene counts, dispersion, fold change | Skill('tooluniverse-rnaseq-deseq2') |
+| GO enrichment, KEGG, pathway, clusterProfiler, gseapy | Skill('tooluniverse-gene-enrichment') |
+| ANOVA, regression, chi-square, spline, Cohen's d, clinical trials | Skill('tooluniverse-statistical-modeling') |
+| Phylogenetics, treeness, saturation, parsimony, PhyKIT, tree length | Skill('tooluniverse-phylogenetics') |
+| VCF, variants, VAF, SNP, mutation classification | Skill('tooluniverse-variant-analysis') |
+| CRISPR screen, MAGeCK, sgRNA, pathway GSEA on screen data | Skill('tooluniverse-crispr-screen-analysis') |
+| scRNA-seq, scanpy, h5ad, UMAP, clustering | Skill('tooluniverse-single-cell') |
+
+After invoking the skill, follow its instructions exactly — especially any MANDATORY tool usage directives.
+"""
+
+
+def get_plugin_guidance(include_bixbench_skills: bool = True, skill_routing_mode: bool = False):
     """Cache and return the plugin guidance text.
 
-    For the bixbench benchmark, augment research.md with each relevant skill's
-    'BixBench-verified conventions' section so the agent has the domain rules
-    inline without relying on it to call the Skill tool mid-run.
+    If skill_routing_mode is True, uses minimal guidance that forces the agent
+    to invoke skills via the Skill tool instead of pre-injecting conventions.
+    This tests whether active skill invocation produces better results than
+    passive convention injection.
     """
     global _PLUGIN_GUIDANCE
     if _PLUGIN_GUIDANCE is None:
         research = _load_plugin_guidance()
-        if include_bixbench_skills:
+        if skill_routing_mode:
+            _PLUGIN_GUIDANCE = research + "\n\n" + _SKILL_ROUTING_GUIDANCE
+        elif include_bixbench_skills:
             extras = _load_bixbench_skill_snippets()
             _PLUGIN_GUIDANCE = research + "\n\n" + extras if extras else research
         else:
@@ -128,17 +184,65 @@ def get_plugin_guidance(include_bixbench_skills: bool = True):
     return _PLUGIN_GUIDANCE
 
 
-def run_claude(prompt: str, with_plugin: bool, max_turns: int = 60, timeout: int = 600):
+def run_claude(
+    prompt: str,
+    with_plugin: bool,
+    max_turns: int = 60,
+    timeout: int = 600,
+    skill_routing: bool = False,
+    full_skill_injection: bool = False,
+    question_text: str = "",
+):
     """Run a prompt through Claude Code, optionally with the ToolUniverse plugin.
 
     When with_plugin is True, prepends the research.md guidance so the agent
     knows about execution strategies, fail-fast rules, tool quick-reference,
     and computational analysis patterns.
+
+    When skill_routing is True, uses minimal guidance that forces the agent
+    to invoke skills via the Skill tool before answering.
+
+    When full_skill_injection is True, auto-detects the matching skill from the
+    question text and injects its FULL content — simulating the interactive
+    experience where Claude auto-invokes a matching skill. This is the most
+    realistic simulation of how the plugin works for real users.
     """
     if with_plugin:
-        guidance = get_plugin_guidance()
-        if guidance:
-            prompt = f"{guidance}\n\n---\n\n{prompt}"
+        if full_skill_injection and question_text:
+            # Simulate interactive skill auto-invocation:
+            # 1. Detect which skill matches
+            # 2. Load its full SKILL.md content
+            # 3. Inject as if the skill was invoked
+            skill_name = _categorize_for_skill(question_text)
+            if skill_name:
+                skill_content = _load_full_skill(skill_name)
+                if skill_content:
+                    prompt = (
+                        f"The following skill has been loaded for this question:\n\n"
+                        f"# Skill: {skill_name}\n\n"
+                        f"{skill_content}\n\n"
+                        f"---\n\n"
+                        f"Follow the skill's instructions above to answer this question.\n\n"
+                        f"{prompt}"
+                    )
+                else:
+                    guidance = get_plugin_guidance()
+                    if guidance:
+                        prompt = f"{guidance}\n\n---\n\n{prompt}"
+            else:
+                guidance = get_plugin_guidance()
+                if guidance:
+                    prompt = f"{guidance}\n\n---\n\n{prompt}"
+        elif skill_routing:
+            guidance = get_plugin_guidance(
+                include_bixbench_skills=False, skill_routing_mode=True
+            )
+            if guidance:
+                prompt = f"{guidance}\n\n---\n\n{prompt}"
+        else:
+            guidance = get_plugin_guidance()
+            if guidance:
+                prompt = f"{guidance}\n\n---\n\n{prompt}"
 
     cmd = ["claude", "-p", prompt, "--max-turns", str(max_turns), "--output-format", "json"]
 
