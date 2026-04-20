@@ -159,17 +159,71 @@ The analyzer maps each question category to the skill responsible for handling i
 - 40 wrong answers, 4 timeouts
 - Weakest categories: spline_fitting (57%), epigenomics (60%), single_cell/functional_genomics (67%)
 
+## Step 4: FIX — Route to the Right devtu Skill
+
+After `--diagnose` identifies the failing skill and failure type, invoke the appropriate devtu skill to fix it. **Do not fix manually** — use the devtu skills so fixes follow established patterns and include tests.
+
+### Fix routing table
+
+| Diagnosis | What to do | Invoke |
+|-----------|-----------|--------|
+| Tool returns wrong data (schema, endpoint, params) | Fix tool Python code + JSON config | `Skill('devtu-fix-tool')` with the tool name and error |
+| No tool exists for this computation | Create a new ToolUniverse tool | `Skill('devtu-create-tool')` with the API/computation spec |
+| Skill gives wrong guidance (wrong convention) | Update SKILL.md BixBench conventions | `Skill('devtu-optimize-skills')` with the skill name + failure details |
+| Agent doesn't follow skill guidance | Strengthen wording, add code examples, add bundled script | `Skill('devtu-optimize-skills')` Pattern 15 (computational procedures) |
+| Grader false negative (correct answer marked wrong) | Fix grader in `grade_answers.py` | Direct code fix (no devtu skill needed) |
+| Multiple skills/tools need coordinated changes | Full self-evolve cycle | `Skill('devtu-self-evolve')` |
+
+### Fix workflow
+
+```
+1. Run: python analyze_results.py --results X.json --questions questions.json --diagnose
+2. For each recommendation:
+   a. Identify fix type from the routing table above
+   b. Invoke the appropriate devtu skill:
+      - Skill('devtu-fix-tool') — pass tool name + error message
+      - Skill('devtu-create-tool') — pass computation description
+      - Skill('devtu-optimize-skills') — pass skill name + failing question details
+   c. The devtu skill handles: diagnosis, implementation, testing, validation
+3. Rebuild dist: bash scripts/build-plugin.sh
+4. Retest: python run_eval.py --retest failures.json
+```
+
+### Example fix flow
+
+```
+Diagnosis: "bix-36-q1 ANOVA wrong_answer → tooluniverse-statistical-modeling"
+  → Invoke: Skill('devtu-optimize-skills')
+  → Tell it: "The statistical-modeling skill's ANOVA guidance produces wrong F-statistics
+     for per-gene expression ANOVA. The agent aggregates at sample level instead of gene
+     level. Add a BixBench convention with the correct aggregation pattern."
+  → The skill handles: read current SKILL.md, identify gap, add convention, verify no
+     memorization, rebuild dist, suggest retest.
+
+Diagnosis: "bix-4-q1 timeout → tooluniverse-phylogenetics, needs PhyKIT DVMC"
+  → Invoke: Skill('devtu-create-tool')
+  → Tell it: "Create a ToolUniverse tool wrapping PhyKIT's DVMC function for batch
+     processing on directories of tree files."
+  → The skill handles: tool class, JSON config, register, test, validate.
+```
+
 ## Integration with devtu-self-evolve
 
-Insert as **Phase 3.5** between Testing and Fix. If any category regresses vs previous round, prioritize fixing that skill/tool in Phase 4.
+Insert as **Phase 3.5** between Testing and Fix:
+```
+Phase 3 (Testing) → Phase 3.5 (Benchmark) → Phase 4 (Fix via devtu skills) → Phase 5 (Retest)
+```
+If any category regresses vs previous round, prioritize fixing that skill/tool in Phase 4 using the routing table above.
 
 ## Known Failure Patterns
 
 These patterns were identified from benchmark debugging. The `--diagnose` flag references them:
 
-- **DESeq2 wrong_answer**: pydeseq2 vs R DESeq2 disagreement, wrong strain mapping, inclusive vs exclusive set ops
-- **ANOVA wrong_answer**: F-statistic vs p-value confusion, wrong grouping variable
-- **spline_fitting wrong_answer**: Python patsy.cr() ≠ R ns(); endpoint inclusion depends on model type
-- **regression timeout**: Agent loops trying different model specs instead of committing
-- **variant_analysis wrong_answer**: Multi-row Excel headers, coding vs all denominator
-- **fold_change wrong_answer**: Wrong contrast direction, gene symbol mapping
+- **DESeq2 wrong_answer**: pydeseq2 vs R DESeq2 disagreement, wrong strain mapping, inclusive vs exclusive set ops → `devtu-optimize-skills` on rnaseq-deseq2 or `devtu-create-tool` for R DESeq2 tool
+- **ANOVA wrong_answer**: F-statistic vs p-value confusion, wrong grouping variable → `devtu-optimize-skills` on statistical-modeling
+- **spline_fitting wrong_answer**: Python patsy.cr() ≠ R ns(); endpoint inclusion depends on model type → `devtu-optimize-skills` on statistical-modeling
+- **regression timeout**: Agent loops trying different model specs → `devtu-optimize-skills` (add "commit to first approach" rule)
+- **variant_analysis wrong_answer**: Multi-row Excel headers, coding vs all denominator → `devtu-optimize-skills` on variant-analysis
+- **fold_change wrong_answer**: Wrong contrast direction, gene symbol mapping → `devtu-optimize-skills` on rnaseq-deseq2
+- **phylogenetics wrong_answer**: PhyKIT batch computation errors → `devtu-fix-tool` on phykit_batch_analysis or `devtu-optimize-skills` on phylogenetics
+- **enrichGO wrong_answer**: R clusterProfiler version sensitivity → `devtu-fix-tool` on run_deseq2_analysis enrichgo operation

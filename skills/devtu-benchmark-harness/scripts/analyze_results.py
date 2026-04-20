@@ -47,43 +47,58 @@ CATEGORY_TO_SKILL = {
 }
 
 # Known patterns that cause failures, keyed by (category, failure_type)
+# Known patterns: (category, failure_type) → (diagnosis, devtu_skill_to_invoke)
 KNOWN_FAILURE_PATTERNS = {
     ("DESeq2", "wrong_answer"): (
-        "Common causes: pydeseq2 vs R DESeq2 disagreement on dispersion/shrinkage; "
-        "wrong strain identity mapping; inclusive vs exclusive set operations. "
-        "Fix: add BixBench convention to rnaseq-deseq2 skill with exact parameters."
+        "pydeseq2 vs R DESeq2 disagreement; wrong strain mapping; wrong set operations. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-rnaseq-deseq2, or "
+        "Skill('devtu-fix-tool') on run_deseq2_analysis if tool exists but returns wrong values."
     ),
     ("regression", "wrong_answer"): (
-        "Common causes: wrong cohort selection (pre-filtering AEs); wrong denominator; "
-        "ordinal logistic vs proportional-odds confusion. "
-        "Fix: check statistical-modeling BixBench conventions for AE cohort rules."
+        "Wrong cohort selection (pre-filtering AEs); wrong denominator; model confusion. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-statistical-modeling."
     ),
     ("regression", "timeout"): (
-        "Agent loops trying different model specs. "
-        "Fix: add 'attempt once, report result' rule to skill."
+        "Agent loops trying different model specs instead of committing. "
+        "Action: Skill('devtu-optimize-skills') — add 'commit to first approach' rule."
     ),
     ("ANOVA", "wrong_answer"): (
-        "Common causes: F-statistic vs p-value confusion; wrong grouping variable; "
-        "total expression vs per-miRNA expression. "
-        "Fix: add explicit F vs p guidance to statistical-modeling skill."
+        "F-statistic vs p-value confusion; wrong grouping; wrong aggregation level. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-statistical-modeling."
     ),
     ("spline_fitting", "wrong_answer"): (
-        "Common causes: Python patsy.cr() vs R ns() produce different results; "
-        "including/excluding pure-strain endpoints changes cubic R². "
-        "Fix: use Rscript for ns() models; only include endpoints for spline, not cubic."
+        "Python patsy.cr() ≠ R ns(); endpoint inclusion depends on model type. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-statistical-modeling."
     ),
     ("phylogenetics", "wrong_answer"): (
-        "Common causes: gap-only column handling; taxa count for parsimony. "
-        "Fix: check phylogenetics skill for gap exclusion rules."
+        "PhyKIT batch computation errors; gap handling; taxa count. "
+        "Action: Skill('devtu-fix-tool') on phykit_batch_analysis, or "
+        "Skill('devtu-optimize-skills') on tooluniverse-phylogenetics."
     ),
     ("variant_analysis", "wrong_answer"): (
-        "Common causes: multi-row Excel headers; coding vs all variant denominator. "
-        "Fix: check variant-analysis skill for header parsing and denominator rules."
+        "Multi-row Excel headers; coding vs all variant denominator. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-variant-analysis."
     ),
     ("fold_change", "wrong_answer"): (
-        "Common causes: wrong contrast (strain A vs B instead of A vs ref); "
-        "gene symbol mapping error. "
-        "Fix: verify strain identity in rnaseq-deseq2 skill conventions."
+        "Wrong contrast direction; gene symbol mapping error. "
+        "Action: Skill('devtu-optimize-skills') on tooluniverse-rnaseq-deseq2."
+    ),
+    ("pathway_enrichment", "wrong_answer"): (
+        "Wrong GO term after simplify; R clusterProfiler version sensitivity. "
+        "Action: Skill('devtu-fix-tool') on run_deseq2_analysis enrichgo operation, or "
+        "Skill('devtu-optimize-skills') on tooluniverse-gene-enrichment."
+    ),
+    ("pathway_enrichment", "timeout"): (
+        "R enrichGO takes too long on large gene lists. "
+        "Action: Skill('devtu-fix-tool') on run_deseq2_analysis — increase timeout or optimize R code."
+    ),
+    ("data_counting", "timeout"): (
+        "Complex multi-step data pipeline times out. "
+        "Action: Skill('devtu-create-tool') — bundle the computation as a ToolUniverse tool."
+    ),
+    ("data_counting", "wrong_answer"): (
+        "Wrong filter, wrong denominator, or wrong aggregation. "
+        "Action: Skill('devtu-optimize-skills') on the responsible skill."
     ),
 }
 
