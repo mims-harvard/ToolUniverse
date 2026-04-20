@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-neuroscience
-description: Neuroscience research and reasoning workflows using ToolUniverse tools. Covers computational neuroscience (rate models, integrate-and-fire neurons, synaptic plasticity, network dynamics), neuroanatomy (cortical regions, basal ganglia, cerebellum, brainstem, model organism connectomes), neurophysiology (ion channels, action potentials, synaptic transmission), neural circuits (E/I balance, oscillations, central pattern generators), synaptic dynamics (STDP, short-term plasticity, neuromodulation), neurodegenerative diseases (Alzheimer's, Parkinson's, ALS, Huntington's), and clinical neurology (cranial nerves, stroke localization, neuromuscular disorders). Use when researchers ask about brain regions, neural computation, firing rates, synaptic plasticity, connectomics, neurodegeneration, or clinical neurological questions.
+description: Neuroscience research and reasoning workflows using ToolUniverse tools.
 ---
 
 # Neuroscience Research Skill

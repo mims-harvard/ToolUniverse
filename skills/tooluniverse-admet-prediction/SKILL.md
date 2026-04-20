@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-admet-prediction
-description: Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) profiling of drug candidates using ADMETAI predictions, SwissADME drug-likeness, PubChemTox experimental toxicity, ChEMBL clinical data, and PubChem properties. Generates a structured ADMET scorecard with pass/fail verdicts per category. Use when asked about drug-likeness, ADMET properties, bioavailability, toxicity prediction, BBB penetration, CYP interactions, pharmacokinetic profiling, Lipinski rule of five, or ADME/PK assessment of a compound.
+description: Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) profiling of drug candidates using.
 ---
 
 # ADMET Prediction & Drug Candidate Profiling

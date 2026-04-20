@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-systems-biology
-description: Comprehensive systems biology and pathway analysis using multiple pathway databases (Reactome, KEGG, WikiPathways, Pathway Commons, BioModels). Performs pathway enrichment, protein-pathway mapping, keyword searches, and systems-level analysis. Use when analyzing gene sets, exploring biological pathways, or investigating systems-level biology.
+description: Comprehensive systems biology and pathway analysis using multiple pathway databases (Reactome, KEGG, WikiPathways,.
 ---
 
 # Systems Biology & Pathway Analysis

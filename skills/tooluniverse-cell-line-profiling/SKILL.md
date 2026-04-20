@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-cell-line-profiling
-description: Help researchers select and characterize cancer cell lines for experiments. Given a cancer type, gene of interest, or cell line name, profiles molecular features (mutations, expression, CNV), gene dependencies (CRISPR screens), drug sensitivities (IC50/AUC), and genetic backgrounds using DepMap, Cellosaurus, PharmacoDB, COSMIC, CellMarker, CLUE, and SYNERGxDB. Generates a decision-support report for cell line selection. Use when researchers ask about which cell line to use, cell line characterization, DepMap dependencies, drug sensitivity profiles, or cancer model selection.
+description: Help researchers select and characterize cancer cell lines for experiments.
 ---
 
 # Cancer Cell Line Profiling and Selection

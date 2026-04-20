@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-computational-biophysics
-description: Solve quantitative problems in biophysics, pharmacokinetics, epidemiology, toxicology, population genetics, and statistical mechanics. Provides reasoning strategies and Python templates for calculations alongside ToolUniverse data lookups. Use when users ask about drug dosing, half-life decay, radioactive tracers, R0, herd immunity, diffusion, Hardy-Weinberg, binding equilibria, or any computation-heavy biology/chemistry question.
+description: Solve quantitative problems in biophysics, pharmacokinetics, epidemiology, toxicology, population genetics, and.
 ---
 
 # Computational Biophysics & Quantitative Biology Skill

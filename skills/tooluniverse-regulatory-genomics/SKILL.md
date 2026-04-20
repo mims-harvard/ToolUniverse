@@ -1,10 +1,6 @@
 ---
 name: tooluniverse-regulatory-genomics
-description: >
-  Investigate transcription factor binding, cis-regulatory elements, chromatin
-  accessibility, and regulatory variant annotation. Use when asked about TF binding
-  sites, enhancers, promoters, ChIP-seq data, ATAC-seq signals, candidate cis-regulatory
-  elements (cCREs), or the regulatory impact of genomic variants.
+description: Investigate transcription factor binding, cis-regulatory elements, chromatin accessibility, and regulatory variant.
 ---
 
 # Regulatory Genomics Research Skill

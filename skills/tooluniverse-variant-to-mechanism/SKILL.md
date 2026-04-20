@@ -1,13 +1,6 @@
 ---
 name: tooluniverse-variant-to-mechanism
-description: >
-  End-to-end variant-to-mechanism analysis: given a genetic variant (rsID or coordinates),
-  trace its functional impact from regulatory context (GWAS, eQTL, RegulomeDB, ENCODE) through
-  target gene identification (GTEx, OpenTargets L2G) to downstream pathway and disease biology
-  (STRING, Reactome, GO enrichment, disease associations). Produces an evidence-graded
-  mechanistic narrative linking genotype to phenotype. Use when asked "how does this variant
-  cause disease?", "what is the mechanism of rs7903146?", "trace variant to pathway", or
-  "connect this GWAS hit to biology".
+description: "End-to-end variant-to-mechanism analysis: given a genetic variant (rsID or coordinates), trace its functional impact."
 ---
 
 # Variant-to-Mechanism Analysis Skill

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-immune-repertoire-analysis
-description: Comprehensive immune repertoire analysis for T-cell and B-cell receptor sequencing data. Analyze TCR/BCR repertoires to assess clonality, diversity, V(D)J gene usage, CDR3 characteristics, convergence, and predict epitope specificity. Integrate with single-cell data for clonotype-phenotype associations. Use for adaptive immune response profiling, cancer immunotherapy research, vaccine response assessment, autoimmune disease studies, or repertoire diversity analysis in immunology research.
+description: Comprehensive immune repertoire analysis for T-cell and B-cell receptor sequencing data.
 ---
 
 # ToolUniverse Immune Repertoire Analysis

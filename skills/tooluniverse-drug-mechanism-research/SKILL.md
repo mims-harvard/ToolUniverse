@@ -1,9 +1,6 @@
 ---
 name: tooluniverse-drug-mechanism-research
-description: >
-  Drug mechanism of action investigation -- systematic strategy to trace a drug from its primary target
-  through pathways to clinical outcomes, identify off-target effects, and combine regulatory labels with
-  literature evidence for a complete mechanism picture.
+description: Drug mechanism of action investigation -- systematic strategy to trace a drug from its primary target through pathways.
 triggers:
   - keywords: [mechanism of action, drug target, pharmacology, pathway, pharmacogenomics, drug interaction, DailyMed, CPIC, MOA, off-target]
   - patterns: ["how does .* work", "mechanism of action", "drug target", "pathway context", "clinical pharmacology", "drug-drug interaction", "pharmacogenomic", "off-target effect"]

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-electron-microscopy
-description: Search and analyze cryo-EM maps, single particle structures, tomography datasets, and raw micrograph data from EMDB, EMPIAR, and CryoET Data Portal. Cross-reference with PDB structures and AlphaFold predictions. Use for cryo-EM map discovery, structure fitting analysis, raw data access, and tomography exploration.
+description: Search and analyze cryo-EM maps, single particle structures, tomography datasets, and raw micrograph data from EMDB,.
 ---
 
 # Electron Microscopy Structure Analysis

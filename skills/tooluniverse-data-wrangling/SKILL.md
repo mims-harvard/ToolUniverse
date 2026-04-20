@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-data-wrangling
-description: Universal data access reference for scientific research. Teaches how to download bulk data, parse any scientific file format (VCF, h5ad, mzML, PDB, FASTA, XPT, NIfTI, and 30+ more), paginate REST APIs, and handle authentication. Covers 24 domain API patterns across ALL life science data sources — genomics, proteomics, clinical, imaging, ecology, and more. Use this skill whenever you need to download raw data, parse a file format, access a bulk API, write a multi-step data retrieval workflow, or when a ToolUniverse tool returns metadata but you need the actual data. Also use when the data source has no ToolUniverse tool at all. Even if the user doesn't say "data wrangling" — if their task requires getting data from a scientific database or parsing a scientific file format, this is the skill to use.
+description: Universal data access reference for scientific research.
 ---
 
 # Data Wrangling: Universal Access Patterns

@@ -1,12 +1,6 @@
 ---
 name: tooluniverse-rare-disease-genomics
-description: >
-  Rare disease genomics research -- disease identification via Orphanet, causative gene discovery,
-  gene-disease validity assessment via GenCC, pathogenic variant lookup via ClinVar, HPO phenotype
-  mapping, epidemiology and prevalence data, clinical trial search, and literature review.
-  Use when users ask about rare diseases, orphan diseases, genetic causes of rare conditions,
-  Orphanet codes, HPO phenotypes, gene-disease validity, rare disease prevalence, or treatment options
-  for rare genetic disorders.
+description: Rare disease genomics research -- disease identification via Orphanet, causative gene discovery, gene-disease validity.
 triggers:
   - keywords: [rare disease, orphan disease, Orphanet, ORPHA, HPO, phenotype, genetic disorder, inborn error, GenCC, gene-disease validity, rare genetic, congenital, inherited disorder]
   - patterns: ["rare disease", "orphan disease", "genetic cause of", "what genes cause", "prevalence of", "clinical features of", "HPO phenotypes for", "pathogenic variants in"]

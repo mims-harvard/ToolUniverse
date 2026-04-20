@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-aging-senescence
-description: Research aging biology, cellular senescence, and longevity using ToolUniverse. Covers senescence markers and pathways, age-related disease genetics, telomere biology, senolytic drug discovery, epigenetic aging clocks, and longevity gene analysis. Integrates GWAS data, gene expression (GTEx age effects), pathway databases, drug repurposing, and literature. Use when asked about aging mechanisms, senescence, senolytics, longevity genes, age-related diseases, or epigenetic clocks.
+description: Research aging biology, cellular senescence, and longevity using ToolUniverse.
 ---
 
 # Aging & Cellular Senescence Research

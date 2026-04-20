@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-statistical-modeling
-description: Perform statistical modeling and regression analysis on biomedical datasets. Supports linear regression, logistic regression (binary/ordinal/multinomial), mixed-effects models, Cox proportional hazards survival analysis, Kaplan-Meier estimation, and comprehensive model diagnostics. Extracts odds ratios, hazard ratios, confidence intervals, p-values, and effect sizes. Designed to solve BixBench statistical reasoning questions involving clinical/experimental data. Use when asked to fit regression models, compute odds ratios, perform survival analysis, run statistical tests, or interpret model coefficients from provided data.
+description: "Statistical modeling: regression, ANOVA, chi-square, spline fits, odds ratios, clinical trial analysis."
 ---
 
 # Statistical Modeling for Biomedical Data Analysis

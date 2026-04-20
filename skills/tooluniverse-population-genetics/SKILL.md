@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-population-genetics
-description: Population genetics analysis — allele frequencies, Hardy-Weinberg equilibrium, Fst, GWAS associations, linkage disequilibrium, and evolutionary constraints. Use when users ask about population-level genetic variation, selection, or allele frequency calculations.
+description: Population genetics analysis — allele frequencies, Hardy-Weinberg equilibrium, Fst, GWAS associations, linkage.
 ---
 
 # Population Genetics Analysis

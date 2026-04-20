@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-disease-research
-description: Generate comprehensive disease research reports using 100+ ToolUniverse tools. Creates a detailed markdown report file and progressively updates it with findings from 10 research dimensions. All information includes source references. Use when users ask about diseases, syndromes, or need systematic disease analysis.
+description: "Disease overview: genetics, pathways, drugs, clinical trials, epidemiology, phenotypes."
 ---
 
 # ToolUniverse Disease Research

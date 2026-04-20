@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-sdk
-description: Build AI scientist systems using ToolUniverse Python SDK for scientific research. Use when users need to access 1000++ scientific tools through Python code, create scientific workflows, perform drug discovery, protein analysis, genomics analysis, literature research, or any computational biology task. Triggers include requests to use scientific tools programmatically, build research pipelines, analyze biological data, search literature, predict drug properties, or create AI-powered scientific workflows.
+description: Build AI scientist systems using ToolUniverse Python SDK for scientific research.
 ---
 
 # ToolUniverse Python SDK

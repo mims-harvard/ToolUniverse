@@ -1,11 +1,6 @@
 ---
 name: tooluniverse-adverse-outcome-pathway
-description: >
-  Map environmental/industrial chemicals to mechanistic adverse outcome pathways (AOPs) using
-  AOPWiki, quantify toxicological hazard (PubChemTox GHS/carcinogen classification, LD50 values),
-  and link chemical stressors to gene targets and disease endpoints via CTD for regulatory risk
-  assessment. Use when asked about AOP stressor mapping, GHS hazard categories, LD50 data,
-  IARC carcinogen classification, or mechanism-based risk assessment for non-drug chemicals.
+description: Map environmental/industrial chemicals to mechanistic adverse outcome pathways (AOPs) using AOPWiki, quantify.
 ---
 
 # Adverse Outcome Pathway & Regulatory Risk Assessment

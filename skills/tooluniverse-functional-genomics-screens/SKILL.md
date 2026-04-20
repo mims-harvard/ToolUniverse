@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-functional-genomics-screens
-description: Interpret results from CRISPR/shRNA genetic screens using DepMap essentiality data, constraint scores, pathway enrichment, protein networks, druggability assessment, and clinical evidence. Use for screen hit validation, gene essentiality analysis, DepMap exploration, functional genomics interpretation, and screen-to-target prioritization.
+description: Interpret results from CRISPR/shRNA genetic screens using DepMap essentiality data, constraint scores, pathway.
 ---
 
 # Functional Genomics Screen Interpretation

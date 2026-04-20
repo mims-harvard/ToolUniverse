@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-immunology
-description: Immunology research workflows using ToolUniverse tools. Covers antibody-antigen structural analysis (SAbDab, TheraSAbDab), immune protein interactions (IntAct, BioGRID), epitope and T-cell/B-cell assay data (IEDB), immunoglobulin gene databases (IMGT), cytokine/receptor signaling (OpenTargets, GWAS), clinical safety data for immune diseases (FAERS, clinical trials), autoimmune disease genetics (Orphanet), and immune pathway analysis (KEGG, Reactome). Use when researchers ask about antibody targets, immune signaling networks, autoimmune genetics, immunotherapy safety, epitope discovery, or immune pathway enrichment.
+description: Immunology research workflows using ToolUniverse tools.
 ---
 
 # Immunology Research Skill

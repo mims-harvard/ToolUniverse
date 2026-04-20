@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-comparative-genomics
-description: Cross-species gene and sequence comparison, ortholog analysis, and evolutionary conservation assessment using ToolUniverse tools. Use when comparing genes across species, finding orthologs, analyzing evolutionary conservation, or performing comparative functional annotation.
+description: Cross-species gene and sequence comparison, ortholog analysis, and evolutionary conservation assessment using.
 ---
 
 # Comparative Genomics & Ortholog Analysis

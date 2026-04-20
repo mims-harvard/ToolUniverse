@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gene-regulatory-networks
-description: Gene regulatory network analysis — TF-target inference, ChIP-seq binding, motif analysis, eQTL integration. Use when users ask about transcription factor regulation, gene regulatory networks, or TF binding evidence.
+description: Gene regulatory network analysis — TF-target inference, ChIP-seq binding, motif analysis, eQTL integration.
 ---
 
 # Gene Regulatory Network Analysis

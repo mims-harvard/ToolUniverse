@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-trial-design
-description: Strategic clinical trial design feasibility assessment using ToolUniverse. Evaluates patient population sizing, biomarker prevalence, endpoint selection, comparator analysis, safety monitoring, and regulatory pathways. Creates comprehensive feasibility reports with evidence grading, enrollment projections, and trial design recommendations. Use when planning Phase 1/2 trials, assessing trial feasibility, or designing biomarker-driven studies.
+description: Strategic clinical trial design feasibility assessment using ToolUniverse.
 ---
 
 # Clinical Trial Design Feasibility Assessment

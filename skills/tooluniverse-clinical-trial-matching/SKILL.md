@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-trial-matching
-description: AI-driven patient-to-trial matching for precision medicine and oncology. Given a patient profile (disease, molecular alterations, stage, prior treatments), discovers and ranks clinical trials from ClinicalTrials.gov using multi-dimensional matching across molecular eligibility, clinical criteria, drug-biomarker alignment, evidence strength, and geographic feasibility. Produces a quantitative Trial Match Score (0-100) per trial with tiered recommendations and a comprehensive markdown report. Use when oncologists, molecular tumor boards, or patients ask about clinical trial options for specific cancer types, biomarker profiles, or post-progression scenarios.
+description: AI-driven patient-to-trial matching for precision medicine and oncology.
 ---
 
 # Clinical Trial Matching for Precision Medicine

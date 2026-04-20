@@ -1,13 +1,6 @@
 ---
 name: tooluniverse-variant-functional-annotation
-description: >
-  Comprehensive functional annotation of protein variants — pathogenicity, population frequency,
-  structural context, and clinical significance. Integrates ProtVar (map_variant, get_function,
-  get_population) for protein-level mapping and structural context, ClinVar for clinical classifications,
-  gnomAD for population frequency with ancestry data, CADD for deleteriousness scores, and ClinGen
-  for gene-disease validity. Produces a structured variant annotation report with evidence grading.
-  Use when asked about protein variant impact, missense variant pathogenicity, ProtVar annotation,
-  variant functional context, or combining population and structural evidence for a variant.
+description: Comprehensive functional annotation of protein variants — pathogenicity, population frequency, structural context, and.
 ---
 
 # Protein Variant Functional Annotation

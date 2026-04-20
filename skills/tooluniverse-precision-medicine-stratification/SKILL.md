@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-precision-medicine-stratification
-description: Comprehensive patient stratification for precision medicine by integrating genomic, clinical, and therapeutic data. Given a disease/condition, genomic data (germline variants, somatic mutations, expression), and optional clinical parameters, performs multi-phase analysis covering disease disambiguation, genetic risk assessment, disease-specific molecular stratification, pharmacogenomic profiling, comorbidity/DDI risk, pathway analysis, clinical evidence and guideline mapping, clinical trial matching, and integrated outcome prediction. Generates a quantitative Precision Medicine Risk Score (0-100) with risk tier assignment, treatment algorithm, pharmacogenomic guidance, clinical trial matches, and monitoring plan.
+description: Comprehensive patient stratification for precision medicine by integrating genomic, clinical, and therapeutic data.
 ---
 
 # Precision Medicine Patient Stratification

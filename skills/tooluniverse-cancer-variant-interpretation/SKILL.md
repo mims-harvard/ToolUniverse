@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-cancer-variant-interpretation
-description: Provide comprehensive clinical interpretation of somatic mutations in cancer. Given a gene symbol + variant (e.g., EGFR L858R, BRAF V600E) and optional cancer type, performs multi-database analysis covering clinical evidence (CIViC), mutation prevalence (cBioPortal), therapeutic associations (OpenTargets, ChEMBL, FDA), resistance mechanisms, clinical trials, prognostic impact, and pathway context. Generates an evidence-graded markdown report with actionable recommendations for precision oncology. Use when oncologists, molecular tumor boards, or researchers ask about treatment options for specific cancer mutations, resistance mechanisms, or clinical trial matching.
+description: Provide comprehensive clinical interpretation of somatic mutations in cancer.
 ---
 
 # Cancer Variant Interpretation for Precision Oncology

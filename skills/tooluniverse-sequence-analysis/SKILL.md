@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-sequence-analysis
-description: Retrieve and analyze biological sequences -- gene/protein sequences from NCBI, Ensembl, and UniProt. Search nucleotide databases, fetch by accession, find orthologs, get gene summaries. Use when users ask about DNA/RNA/protein sequences, gene lookups, ortholog searches, or sequence retrieval.
+description: Retrieve and analyze biological sequences -- gene/protein sequences from NCBI, Ensembl, and UniProt.
 ---
 
 # Biological Sequence Analysis

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-stem-cell-organoid
-description: Research stem cells, iPSCs, organoids, and cell differentiation using ToolUniverse tools. Covers pluripotency marker identification, differentiation pathway analysis, organoid model characterization, cell type annotation, and disease modeling. Integrates CellxGene/HCA for single-cell atlas data, CellMarker for cell type markers, GEO for stem cell datasets, and pathway tools for differentiation signaling. Use when asked about stem cells, iPSCs, organoids, cell reprogramming, pluripotency, differentiation protocols, or 3D culture models.
+description: Research stem cells, iPSCs, organoids, and cell differentiation using ToolUniverse tools.
 ---
 
 # Stem Cell & Organoid Research

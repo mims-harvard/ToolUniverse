@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-proteomics-analysis
-description: Analyze mass spectrometry proteomics data including protein quantification, differential expression, post-translational modifications (PTMs), and protein-protein interactions. Processes MaxQuant, Spectronaut, DIA-NN, and other MS platform outputs. Performs normalization, statistical analysis, pathway enrichment, and integration with transcriptomics. Use when analyzing proteomics data, comparing protein abundance between conditions, identifying PTM changes, studying protein complexes, integrating protein and RNA data, discovering protein biomarkers, or conducting quantitative proteomics experiments.
+description: Analyze mass spectrometry proteomics data including protein quantification, differential expression, post-translational.
 ---
 
 # Proteomics Analysis

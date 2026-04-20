@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-vaccine-design
-description: Design and evaluate vaccine candidates using computational immunology tools. Covers epitope prediction (MHC-I/II binding via IEDB), population coverage analysis, antigen selection, adjuvant matching, and immunogenicity assessment. Integrates IEDB for epitope prediction, UniProt for antigen sequences, PDB/AlphaFold for structural epitopes, BVBRC for pathogen proteomes, and literature for clinical precedent. Use when asked about vaccine design, epitope prediction, immunogenicity, MHC binding, T-cell epitopes, B-cell epitopes, or population coverage for vaccine candidates.
+description: Design and evaluate vaccine candidates using computational immunology tools.
 ---
 
 # Vaccine Design

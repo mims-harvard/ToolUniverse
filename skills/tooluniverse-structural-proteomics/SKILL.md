@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-structural-proteomics
-description: Integrate structural biology data with proteomics for drug target validation. Retrieves protein structures from PDB (RCSB, PDBe), AlphaFold predictions, antibody structures (SAbDab), GPCR data (GPCRdb), binding pocket analysis (ProteinsPlus), and ligand interactions (BindingDB). Use when asked to find structures for a drug target, identify binding site ligands, cross-validate drug binding with structural data, assess structural druggability, or compare experimental vs predicted structures.
+description: Integrate structural biology data with proteomics for drug target validation.
 ---
 
 # Structural Proteomics for Drug Target Validation

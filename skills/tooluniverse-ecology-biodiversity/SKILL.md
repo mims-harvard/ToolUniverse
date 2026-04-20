@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-ecology-biodiversity
-description: Ecology, biodiversity, and conservation biology research — species identification, invasive species assessment, pollinator ecology, population dynamics, food webs, trophic interactions, community ecology, island biogeography. Use for ANY ecology question including species distributions, invasive impacts, pollination biology, predator-prey dynamics, or conservation assessment.
+description: Ecology, biodiversity, and conservation biology research — species identification, invasive species assessment,.
 ---
 
 # Ecology & Biodiversity Research

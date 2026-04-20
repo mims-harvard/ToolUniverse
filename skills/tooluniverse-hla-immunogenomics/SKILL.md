@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-hla-immunogenomics
-description: Analyze HLA genes, MHC binding, epitope-MHC associations, and immunogenomics for transplant compatibility, vaccine design, and immunotherapy. Integrates IMGT, IEDB, BVBRC, UniProt, and DGIdb. Use for HLA typing interpretation, antigen presentation analysis, MHC restriction, neoantigen prediction context, and transplant immunology.
+description: Analyze HLA genes, MHC binding, epitope-MHC associations, and immunogenomics for transplant compatibility, vaccine.
 ---
 
 # HLA & Immunogenomics Analysis

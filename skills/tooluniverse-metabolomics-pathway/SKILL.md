@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-metabolomics-pathway
-description: Metabolomics pathway analysis -- metabolite identification, pathway mapping, disease associations, cross-database enrichment, and enzyme/gene linkage. Connects PubChem, HMDB, MetaCyc, CTD, KEGG, Reactome, MetabolomicsWorkbench, and BridgeDb. Use when users ask about metabolite identification, metabolic pathways, metabolite-disease links, metabolomics data interpretation, or pathway enrichment from metabolite lists.
+description: Metabolomics pathway analysis -- metabolite identification, pathway mapping, disease associations, cross-database.
 ---
 
 # Metabolomics Pathway Analysis

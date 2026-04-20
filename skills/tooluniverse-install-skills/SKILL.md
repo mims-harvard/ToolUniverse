@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-install-skills
-description: Detect and auto-install missing ToolUniverse research skills by checking common client skill directories and cloning from GitHub if absent. Use when ToolUniverse specialized skills are not installed, when setting up a new project, or when the tooluniverse router skill needs to bootstrap its sub-skills before routing.
+description: Detect and auto-install missing ToolUniverse research skills by checking common client skill directories and cloning.
 ---
 
 # ToolUniverse Install Skills

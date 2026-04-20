@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-crispr-screen-analysis
-description: Comprehensive CRISPR screen analysis for functional genomics. Analyze pooled or arrayed CRISPR screens (knockout, activation, interference) to identify essential genes, synthetic lethal interactions, and drug targets. Perform sgRNA count processing, gene-level scoring (MAGeCK, BAGEL), quality control, pathway enrichment, and drug target prioritization. Use for CRISPR screen analysis, gene essentiality studies, synthetic lethality detection, functional genomics, drug target validation, or identifying genetic vulnerabilities.
+description: "CRISPR screen analysis: MAGeCK, sgRNA counts, gene-level scores, replicate QC, pathway GSEA on screen data."
 ---
 
 # ToolUniverse CRISPR Screen Analysis

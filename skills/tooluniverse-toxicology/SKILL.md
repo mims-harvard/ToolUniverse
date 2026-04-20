@@ -1,12 +1,6 @@
 ---
 name: tooluniverse-toxicology
-description: >
-  Assess chemical and drug toxicity via adverse outcome pathways, real-world adverse event signals,
-  and toxicogenomic evidence. Integrates AOPWiki (AOPWiki_list_aops, AOPWiki_get_aop) for mechanism-
-  level pathway tracing, FAERS for post-market adverse event quantification, OpenFDA for label mining,
-  and CTD for chemical-gene-disease evidence. Produces structured toxicity reports with evidence
-  grading (T1-T4). Use when asked about toxicity mechanisms, adverse outcome pathways, AOP mapping,
-  FAERS signal detection, or chemical-disease relationships for drugs or environmental chemicals.
+description: Assess chemical and drug toxicity via adverse outcome pathways, real-world adverse event signals, and toxicogenomic.
 ---
 
 # Toxicology Assessment via Adverse Outcome Pathways & Signal Detection

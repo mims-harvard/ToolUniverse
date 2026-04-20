@@ -1,6 +1,6 @@
 ---
 name: Microbiome Research
-description: Analyze microbiome and metagenomics data using MGnify, GTDB, ENA, and literature tools. Search studies by biome/keyword, retrieve taxonomic profiles and functional annotations, classify genomes with GTDB taxonomy, and find related publications. Use for human gut microbiome, soil/ocean metagenomics, and environmental microbiology research.
+description: Analyze microbiome and metagenomics data using MGnify, GTDB, ENA, and literature tools.
 ---
 
 # Microbiome Research with ToolUniverse

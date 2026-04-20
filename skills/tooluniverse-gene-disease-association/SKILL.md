@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gene-disease-association
-description: Find and compare gene-disease associations across multiple databases (DisGeNET, OpenTargets, Monarch Initiative, OMIM, GenCC, Orphanet, ClinVar). Produces a unified evidence table with confidence levels and cross-database concordance. Use when users ask about gene-disease links, disease genes, genetic basis of disease, or want to compare association evidence across sources.
+description: Find and compare gene-disease associations across multiple databases (DisGeNET, OpenTargets, Monarch Initiative, OMIM,.
 ---
 
 # Gene-Disease Association Analysis

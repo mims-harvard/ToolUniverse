@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-plant-genomics
-description: Research plant genes, pathways, and species using PlantReactome, Ensembl Plants, POWO, UniProt, KEGG, and literature tools. Covers plant pathway analysis, gene function annotation, species identification, crop genomics, and comparative plant biology. Use when asked about plant genes, Arabidopsis, crop improvement, plant pathways, plant metabolism, photosynthesis, plant development, or plant species identification.
+description: Research plant genes, pathways, and species using PlantReactome, Ensembl Plants, POWO, UniProt, KEGG, and literature.
 ---
 
 # Plant Genomics & Biology

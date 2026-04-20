@@ -1,12 +1,6 @@
 ---
 name: tooluniverse-epigenomics-chromatin
-description: >
-  Epigenomics and chromatin accessibility research -- histone modification ChIP-seq data from ENCODE,
-  CTCF binding and chromatin architecture, eQTL analysis connecting variants to gene regulation,
-  gene expression correlation with chromatin marks, regulatory element identification via SCREEN/UCSC cCREs,
-  transcription factor binding motifs via JASPAR/ReMap, and variant regulatory scoring via RegulomeDB.
-  Use when users ask about histone marks, chromatin states, CTCF binding, eQTLs, cis-regulatory elements,
-  enhancer/promoter annotation, or chromatin accessibility in specific cell types.
+description: Epigenomics and chromatin accessibility research -- histone modification ChIP-seq data from ENCODE, CTCF binding and.
 triggers:
   - keywords: [histone, ChIP-seq, chromatin, ENCODE, eQTL, CTCF, enhancer, promoter, cCRE, H3K27ac, H3K4me3, H3K4me1, chromatin state, ATAC-seq, regulatory element, RegulomeDB]
   - patterns: ["histone modification", "chromatin accessibility", "chromatin architecture", "gene regulation", "regulatory variant", "expression QTL", "cis-regulatory"]

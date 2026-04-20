@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-multiomic-disease-characterization
-description: Comprehensive multi-omics disease characterization integrating genomics, transcriptomics, proteomics, pathway, and therapeutic layers for systems-level understanding. Produces a detailed multi-omics report with quantitative confidence scoring (0-100), cross-layer gene concordance analysis, biomarker candidates, therapeutic opportunities, and mechanistic hypotheses. Uses 80+ ToolUniverse tools across 8 analysis layers. Use when users ask about disease mechanisms, multi-omics analysis, systems biology of disease, biomarker discovery, or therapeutic target identification from a disease perspective.
+description: Comprehensive multi-omics disease characterization integrating genomics, transcriptomics, proteomics, pathway, and.
 ---
 
 # Multi-Omics Disease Characterization Pipeline

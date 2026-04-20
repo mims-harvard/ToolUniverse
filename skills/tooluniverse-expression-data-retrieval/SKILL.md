@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-expression-data-retrieval
-description: Retrieves gene expression and omics datasets from ArrayExpress and BioStudies with gene disambiguation, experiment quality assessment, and structured reports. Creates comprehensive dataset profiles with metadata, sample information, and download links. Use when users need expression data, omics datasets, or mention ArrayExpress (E-MTAB, E-GEOD) or BioStudies (S-BSST) accessions.
+description: Retrieves gene expression and omics datasets from ArrayExpress and BioStudies with gene disambiguation, experiment.
 ---
 
 # Gene Expression & Omics Data Retrieval

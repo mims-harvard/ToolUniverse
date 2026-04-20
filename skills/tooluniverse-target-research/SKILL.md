@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-target-research
-description: Gather comprehensive biological target intelligence from 9 parallel research paths covering protein info, structure, interactions, pathways, expression, variants, drug interactions, and literature. Features collision-aware searches, evidence grading (T1-T4), explicit Open Targets coverage, and mandatory completeness auditing. Use when users ask about drug targets, proteins, genes, or need target validation, druggability assessment, or comprehensive target profiling.
+description: "Comprehensive target profile: expression, pathways, interactions, variants, druggability."
 ---
 
 # Comprehensive Target Intelligence Gatherer

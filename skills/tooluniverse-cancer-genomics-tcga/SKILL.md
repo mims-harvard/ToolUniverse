@@ -1,11 +1,6 @@
 ---
 name: tooluniverse-cancer-genomics-tcga
-description: >
-  TCGA/GDC cancer genomics analysis -- cohort construction, clinical metadata retrieval,
-  somatic mutation profiling, copy number variation analysis, survival analysis, and
-  clinical variant interpretation. Use when users ask about TCGA data, GDC cancer cohorts,
-  somatic mutation frequencies, Kaplan-Meier survival, CNV profiles in cancer, or OncoKB
-  interpretation of cancer variants.
+description: TCGA/GDC cancer genomics analysis -- cohort construction, clinical metadata retrieval, somatic mutation profiling, copy.
 triggers:
   - keywords: [TCGA, GDC, cancer cohort, somatic mutation, Kaplan-Meier, survival analysis, CNV, copy number variation, Progenetix, OncoKB, tumor, cancer genomics, mutation frequency]
   - patterns: ["TCGA-", "survival analysis for", "mutation frequency in", "copy number", "GDC project", "cancer cases", "overall survival"]

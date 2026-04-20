@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-dataset-discovery
-description: Find and evaluate research datasets for any scientific question. Teaches how to reason about data needs, search across public repositories, evaluate dataset fitness, and identify access requirements. Use whenever users ask to find data, search for datasets, identify cohort studies, or need data for analysis. Also use when users ask about a specific survey or cohort (NHANES, HRS, UK Biobank, TCGA, etc.), when they want to know what data exists for a research question, or when they need to compare available data sources. If the user mentions "where can I get data" or "is there a dataset for X", this is the right skill.
+description: Find and evaluate research datasets for any scientific question.
 ---
 
 # Dataset Discovery

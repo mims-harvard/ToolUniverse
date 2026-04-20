@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-organic-chemistry
-description: Teaches reasoning strategies for organic chemistry problems — reaction product prediction, spectroscopy interpretation, stereochemistry, and quantitative calculations. Use when users ask about reaction products, spectra, mechanisms, stereochemistry, or molecular formulas.
+description: Teaches reasoning strategies for organic chemistry problems — reaction product prediction, spectroscopy interpretation,.
 ---
 
 # Organic Chemistry Reasoning Guide

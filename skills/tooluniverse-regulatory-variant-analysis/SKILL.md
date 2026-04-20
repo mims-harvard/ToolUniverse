@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-regulatory-variant-analysis
-description: Regulatory variant interpretation -- GWAS association lookup, eQTL analysis, chromatin state annotation, regulatory element overlap, and trait ontology resolution. Connects GWAS Catalog, GTEx, ENCODE, RegulomeDB, OpenTargets, OLS ontology, and Ensembl regulatory features. Use when users ask about non-coding variants, GWAS hits, eQTLs, regulatory elements, enhancer/promoter variants, or trait-associated SNPs.
+description: Regulatory variant interpretation -- GWAS association lookup, eQTL analysis, chromatin state annotation, regulatory.
 ---
 
 ## COMPUTE, DON'T DESCRIBE

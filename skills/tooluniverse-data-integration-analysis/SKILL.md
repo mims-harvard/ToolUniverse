@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-data-integration-analysis
-description: Integrate statistical analysis results with biological knowledge from ToolUniverse tools. After computing associations or differential expression, use pathway analysis, literature search, drug-target databases, and variant annotation to interpret findings biologically. Use when statistical results need biological context, when users want to go beyond p-values to understand mechanisms, or when combining data analysis with literature evidence.
+description: Integrate statistical analysis results with biological knowledge from ToolUniverse tools.
 ---
 
 ## COMPUTE, DON'T DESCRIBE

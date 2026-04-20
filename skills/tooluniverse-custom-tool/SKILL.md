@@ -1,13 +1,6 @@
 ---
 name: tooluniverse-custom-tool
-description: >
-  Add custom local tools to ToolUniverse and use them alongside the 1000+ built-in tools.
-  Use this skill when a user wants to: create their own tool for a private or custom API,
-  add a local tool to their workspace, integrate an internal service with ToolUniverse,
-  or use a custom tool via the MCP server or Python API. Covers both the JSON config
-  approach (easiest, no Python needed) and the Python class approach (full control).
-  Also covers how to verify tools loaded correctly and how to call them.
-  Also covers the plugin package approach for reusable, shareable, pip-installable tool sets.
+description: Add custom local tools to ToolUniverse and use them alongside the 1000+ built-in tools.
 ---
 
 # Adding Custom Tools to ToolUniverse

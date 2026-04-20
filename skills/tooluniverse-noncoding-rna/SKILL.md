@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-noncoding-rna
-description: Analyze non-coding RNAs (miRNAs, lncRNAs, circRNAs) using miRBase, LNCipedia, RNAcentral, Rfam, and target prediction databases. Covers ncRNA identification, target prediction, disease associations, expression profiling, and functional annotation. Use when asked about microRNAs, long non-coding RNAs, RNA interference, miRNA targets, lncRNA function, or ncRNA-disease associations.
+description: Analyze non-coding RNAs (miRNAs, lncRNAs, circRNAs) using miRBase, LNCipedia, RNAcentral, Rfam, and target prediction.
 ---
 
 # Non-Coding RNA Analysis

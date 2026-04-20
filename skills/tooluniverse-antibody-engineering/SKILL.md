@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-antibody-engineering
-description: Comprehensive antibody engineering and optimization for therapeutic development. Covers humanization, affinity maturation, developability assessment, and immunogenicity prediction. Use when asked to optimize antibodies, humanize sequences, or engineer therapeutic antibodies from lead to clinical candidate.
+description: Comprehensive antibody engineering and optimization for therapeutic development.
 ---
 
 # Antibody Engineering & Optimization

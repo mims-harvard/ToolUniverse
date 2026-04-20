@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-precision-oncology
-description: Provide actionable treatment recommendations for cancer patients based on molecular profile. Interprets tumor mutations, identifies FDA-approved therapies, finds resistance mechanisms, matches clinical trials. Use when oncologist asks about treatment options for specific mutations (EGFR, KRAS, BRAF, etc.), therapy resistance, or clinical trial eligibility.
+description: "Cancer treatment recommendations from molecular profile: mutations, therapies, resistance, clinical trials."
 ---
 
 # Precision Oncology Treatment Advisor

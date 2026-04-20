@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-rnaseq-deseq2
-description: Production-ready RNA-seq differential expression analysis using PyDESeq2. Performs DESeq2 normalization, dispersion estimation, Wald testing, LFC shrinkage, and result filtering. Handles multi-factor designs, multiple contrasts, batch effects, and integrates with gene enrichment (gseapy) and ToolUniverse annotation tools (UniProt, Ensembl, OpenTargets). Supports CSV/TSV/H5AD input formats and any organism. Use when analyzing RNA-seq count matrices, identifying DEGs, performing differential expression with statistical rigor, or answering questions about gene expression changes.
+description: RNA-seq differential expression analysis with DESeq2. Use for DEG lists, fold changes, dispersion, count matrices.
 ---
 
 # RNA-seq Differential Expression Analysis (DESeq2)

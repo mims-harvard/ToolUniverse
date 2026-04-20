@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-acmg-variant-classification
-description: Systematic ACMG/AMP variant classification using ToolUniverse tools. Given a genetic variant (HGVS, rsID, or gene+change), applies all 28 ACMG criteria (PVS1, PS1-4, PM1-6, PP1-5, BA1, BS1-4, BP1-7) through automated database queries and computational predictions. Produces a final 5-tier classification (Pathogenic / Likely Pathogenic / VUS / Likely Benign / Benign) with evidence summary. Use when asked to classify a variant, interpret a VUS, apply ACMG criteria, assess pathogenicity, or determine clinical significance of a germline variant.
+description: Systematic ACMG/AMP variant classification using ToolUniverse tools.
 ---
 
 # ACMG/AMP Variant Classification
