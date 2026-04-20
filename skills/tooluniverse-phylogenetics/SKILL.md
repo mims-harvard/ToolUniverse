@@ -180,11 +180,23 @@ python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
   --dir alignments --function gap_percentage --ext .fa
 ```
 
+**Preferred: use the `phykit_batch_analysis` ToolUniverse tool** instead of running PhyKIT manually:
+```bash
+# Via CLI
+tu run phykit_batch_analysis '{"operation":"batch","function":"treeness","directory":"/path/to/trees","extension":".treefile"}'
+
+# Via SDK
+tu.run_one_function({"name": "phykit_batch_analysis", "arguments": {"operation": "batch", "function": "saturation", "directory": "/path/to/alignments", "extension": ".fa", "tree_directory": "/path/to/trees"}})
+
+# Gap percentage
+tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"/path/to/alignments","extension":".fa"}'
+```
+
 Key rules:
-1. **Process ALL files** — don't stop at a subset. The script handles this automatically
+1. **Process ALL files** — don't stop at a subset. The tool handles this automatically
 2. **Gap percentage**: total gaps / total positions across all alignments (not per-file average)
-3. **Long branch score**: each tree produces per-taxon scores → summarize per tree (mean) → then summarize across trees (median)
-4. **Fungi vs animal comparisons**: match genes by ortholog ID (filename stem), not by file order
+3. **Long branch score**: each tree produces per-taxon scores → summarize per tree (mean) → then summarize across trees (median). Use `"per_tree_stat":"mean"`
+4. **Fungi vs animal comparisons**: match genes by ortholog ID (filename stem), not by file order. Run the tool on each organism's directory separately, then compare medians
 
 ## References
 

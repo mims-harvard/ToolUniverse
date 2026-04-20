@@ -64,6 +64,20 @@ tu run MSigDB_check_gene_in_set '{"gene_set_name":"ZNF549_TARGET_GENES","gene":"
 tu run MSigDB_get_gene_set_members '{"gene_set_name":"ESC_V6.5_UP_EARLY.V1_DN"}'
 ```
 
+## Analysis Tools (local computation via ToolUniverse)
+
+```bash
+# DESeq2 differential expression (runs R DESeq2, not pydeseq2)
+tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"counts.csv","metadata_file":"meta.csv","design":"~ condition","ref_level":"condition, Control"}'
+
+# GO enrichment with clusterProfiler::simplify (runs R)
+tu run run_deseq2_analysis '{"operation":"enrichgo","gene_list_file":"sig_genes.txt","background_file":"bg_genes.txt","simplify_cutoff":0.7}'
+
+# PhyKIT batch phylogenetics (treeness, saturation, dvmc, LB score)
+tu run phykit_batch_analysis '{"operation":"batch","function":"treeness","directory":"./trees","extension":".treefile"}'
+tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"./alignments","extension":".fa"}'
+```
+
 ## Compound Tools (multi-database, one call)
 
 For questions that need data from multiple databases, use compound tools instead of calling each database separately:

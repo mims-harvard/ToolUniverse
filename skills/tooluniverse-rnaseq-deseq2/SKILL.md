@@ -182,19 +182,18 @@ Before running DESeq2 yourself, `ls` the dataset folder. If you see `run_*.py`, 
 ### R DESeq2 vs pydeseq2
 The two libraries can disagree on edge cases (e.g., sig gene counts at the same alpha often differ by ~2%). **Match whatever the authoritative script uses.** If no script is present, prefer R DESeq2 — its behavior is more widely referenced in published papers.
 
+**Preferred: use the `run_deseq2_analysis` ToolUniverse tool** which runs R DESeq2 via Rscript:
 ```bash
-Rscript -e '
-library(DESeq2)
-counts <- read.csv("raw_counts.csv", row.names=1)
-meta <- read.csv("metadata.csv")
-meta$condition <- relevel(factor(meta$condition), ref="control")
-dds <- DESeqDataSetFromMatrix(round(counts), meta, ~condition)
-dds <- DESeq(dds)
-res <- results(dds)
-write.csv(as.data.frame(res), "/tmp/deseq2_results.csv")
-cat("Total DE (padj<0.05):", sum(res$padj < 0.05, na.rm=TRUE), "\n")
-'
+# Basic DESeq2
+tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"raw_counts.csv","metadata_file":"metadata.csv","design":"~ condition","ref_level":"condition, Control"}'
+
+# With contrast + LFC shrinkage + refit_cooks
+tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"raw_counts.csv","metadata_file":"metadata.csv","design":"~ Replicate + Media + Strain","contrast":"Strain, 97, 1","refit_cooks":true,"lfc_shrinkage":true}'
+
+# enrichGO + simplify (after saving DEG list to file)
+tu run run_deseq2_analysis '{"operation":"enrichgo","gene_list_file":"sig_genes.txt","background_file":"all_genes.txt","simplify_cutoff":0.7}'
 ```
+This avoids pydeseq2 vs R DESeq2 discrepancies. The tool returns sig gene counts, dispersion estimates, and a results CSV path for further analysis.
 
 ### Strain identity pinning
 When a question names strains by number AND describes their biology (e.g., knockout genotypes), pin the mapping from the question text or the experiment metadata, not from numeric order. Read the metadata CSV to confirm which strain number corresponds to which genotype before running DESeq2.

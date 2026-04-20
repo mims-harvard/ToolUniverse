@@ -272,7 +272,13 @@ Helper scripts:
 - **Prefer R clusterProfiler** (via `Rscript -e 'library(clusterProfiler); ...'`) when the dataset folder contains an `analysis.R` / `find_*.R` script — match whatever the authoritative script uses.
 - `gseapy` is a fine fallback for pure-Python workflows, but `enrichGO + clusterProfiler::simplify(cutoff=0.7)` is not faithfully reproduced by gseapy alone.
 
-**Required R packages**: `clusterProfiler`, `org.Hs.eg.db`, `enrichplot`, `DESeq2`. Install via:
+**Preferred: use the `run_deseq2_analysis` tool with `operation=enrichgo`**:
+```bash
+tu run run_deseq2_analysis '{"operation":"enrichgo","gene_list_file":"sig_ensembl.txt","background_file":"bg_ensembl.txt","simplify_cutoff":0.7,"ontology":"BP"}'
+```
+This runs R clusterProfiler + simplify directly. Falls back to manual Rscript if the tool is unavailable.
+
+Required R packages: `clusterProfiler`, `org.Hs.eg.db`, `enrichplot`, `DESeq2`. Install via:
 ```bash
 Rscript skills/evals/install_r_packages.R
 ```
