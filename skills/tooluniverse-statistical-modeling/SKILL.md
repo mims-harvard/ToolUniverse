@@ -341,7 +341,20 @@ See `TOOLS_REFERENCE.md` for complete tool catalog.
 
 ## BixBench-verified conventions
 
-These conventions were validated by reverse-engineering BixBench ground truths. Apply when the dataset/question matches.
+These conventions were validated against benchmark ground truths. Apply when the dataset/question matches.
+
+### MANDATORY: Use bundled script for expression ANOVA / fold change
+For per-gene ANOVA or median log2FC questions, use the bundled script:
+```bash
+python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py \
+  --counts counts.csv --meta meta.csv --group-col cell_type \
+  --exclude-groups PBMC --mode anova
+
+python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py \
+  --counts counts.csv --meta meta.csv --group-col cell_type \
+  --group-a CD14 --group-b CD19 --mode fold_change
+```
+Do NOT write your own pandas ANOVA — the aggregation level (per-gene, not per-sample) is critical and easy to get wrong.
 
 ### CSV encoding
 Clinical-trial exports (SDTM) are often latin1. If `pd.read_csv()` fails with `UnicodeDecodeError`, retry with `encoding='latin1'`.

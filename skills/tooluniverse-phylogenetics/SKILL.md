@@ -137,6 +137,15 @@ All files identified; group structure detected; correct PhyKIT function; ALL gen
 
 ## BixBench-verified conventions
 
+### MANDATORY: Use `phykit_batch_analysis` tool for batch computations
+For ANY question asking for statistics across multiple trees/alignments (median treeness, mean saturation, DVMC percentage, gap percentage, long branch scores), use the ToolUniverse tool:
+```bash
+tu run phykit_batch_analysis '{"operation":"batch","function":"treeness","directory":"./trees","extension":".treefile"}'
+tu run phykit_batch_analysis '{"operation":"batch","function":"saturation","directory":"./alignments","extension":".fa","tree_directory":"./trees","tree_extension":".treefile"}'
+tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"./alignments","extension":".fa"}'
+```
+Do NOT run phykit manually in a loop — the tool handles all files and returns correct summary statistics.
+
 ### Parsimony informative sites
 - Exclude **gap-only columns** before counting — a column that is all gaps is not informative.
 - A site is parsimony informative when ≥2 different non-gap characters each appear in ≥2 taxa.
