@@ -5,80 +5,18 @@ description: "Scientific research with 1000+ database tools and 114 specialized 
 
 # ToolUniverse Router
 
-Route user questions to specialized skills. If no skill matches, use general strategies from [references/general-strategies.md](references/general-strategies.md).
+## FIRST ACTION: Route to a Specialized Skill
 
-## General Reasoning Protocols
+**BEFORE doing anything else** — before reading data, before writing code, before answering — scan the routing table below and invoke the matching skill. The specialized skill contains critical domain conventions that you will get wrong without loading.
 
-When answering scientific questions:
+**How to route:**
+1. Find the matching keyword row in the Routing Table
+2. Call `Skill(skill="<skill-name>")` immediately
+3. Follow the loaded skill's instructions to answer the question
 
-1. **Look up, don't guess**: Use ToolUniverse tools to verify facts before answering.
-2. **Compute, don't estimate**: Write and run Python code (via Bash) for any calculation. Never do mental math.
-3. **Analyze, don't just retrieve**: When a question requires data analysis, download the data and run the analysis — don't just describe what you would do.
-4. **Route to specialized skills**: Use the Routing Table below to find domain-specific reasoning protocols.
+**If no keyword matches** → use general strategies below.
 
-**You have full code execution.** For any analysis task (statistics, data wrangling, visualization), write Python and execute it. ToolUniverse tools find data and metadata; Python code does the analysis.
-
-## Routing Workflow
-
-1. **Extract keywords** from user's question
-2. **Scan routing table** below for keyword matches
-3. **Take action**:
-   - **1 clear match** → invoke that skill NOW using the Skill tool
-   - **Multiple matches** → ask user which they prefer (AskUserQuestion)
-   - **No match** → use general strategies (load [references/general-strategies.md](references/general-strategies.md))
-4. **If ambiguous** (e.g., "Tell me about aspirin") → ask user to clarify intent
-
-**CRITICAL**: Actually INVOKE skills — don't describe them or show the routing table to the user.
-
-**LOOK UP, DON'T GUESS**: If you are not confident about a factual claim, SEARCH for it. Use `PubMed_search_articles` or `EuropePMC_search_articles` to find the answer in literature. Use `UniProt_search` / `proteins_api_search` for protein facts. Use `NCBI_search_gene` for gene facts. Use `GBIF_search_species` for taxonomy. Use `PubChem_get_compound_by_name` for chemical facts. A tool-verified answer is always better than a guess from memory. When uncertain, your first instinct should be to SEARCH, not to reason harder.
-**Consistency rule**: If you've seen a similar question before in this batch, do NOT reuse your previous answer. Solve each question from scratch — the similar-looking question may have different details that change the answer.
-
-**For MC questions**: Before eliminating options, check if the question asks about a SPECIFIC fact (protein name, gene function, species behavior, experimental result). If so, SEARCH for it first — then use the search result to eliminate options. This is faster and more reliable than reasoning from memory.
-
-**NEVER REFUSE**: If a question is hard, attempt it anyway. First try to look up the answer. If tools don't help, use reasoning strategies from the skill. A wrong answer is better than "this requires further analysis."
-
-**COMPUTE, DON'T ESTIMATE**: When a problem gives numerical values and asks for a numerical answer, WRITE AND RUN Python code. Do not attempt mental arithmetic on multi-step problems.
-
-**MULTIPLE CHOICE STRATEGY**: When the question has answer choices (A, B, C, D...):
-1. Read the question CAREFULLY — identify exactly what is being asked
-2. Read ALL answer choices before reasoning — don't stop at the first plausible one
-3. ELIMINATE clearly wrong options first (usually 2-3 can be ruled out immediately)
-4. For the remaining options, reason through each: WHY would this be correct? WHY would this be wrong?
-5. If you have two similar-sounding options, look for the KEY DIFFERENCE between them
-6. Your final answer MUST be a single letter — nothing else
-7. COMMON ERROR: reasoning correctly but reporting the wrong letter. After choosing, re-read your choice letter and verify it matches your reasoning.
-8. **MC traps**: "All/None of the above" is correct only ~25% of the time — don't default to it. Options with absolute language ("always", "never", "only") are usually wrong. The longest/most detailed option is correct more often. When two options are opposites, one of them is usually correct.
-9. **Quantitative MC**: When an MC question involves a number, COMPUTE the answer first (use Python), THEN match to the closest option. Do not let the listed choices bias your calculation.
-10. For scored MC questions, run `mc_analyzer.py` (in `skills/tooluniverse-computational-biophysics/scripts/`) to enforce systematic elimination before committing to an answer.
-
-**CRITICAL FOR BATCH PROCESSING**: When answering multiple MC questions in sequence, do NOT rush. Apply the FULL elimination process to EVERY question. Common batch error: answering based on first impression without elimination. For each MC question, you MUST:
-- Write out at least 2 eliminated options with reasons BEFORE selecting your answer
-- If you cannot eliminate any options, that's a sign you need to LOOK UP information
-
-**VERIFY BEFORE ANSWERING**: Before giving your final answer, run these checks:
-- If your answer is a number: does it have the right order of magnitude? (A drug dose of 500 kg is wrong. A pH of 15 is wrong. A percentage > 100% is wrong.)
-- If your answer is a letter choice: re-read the question and ALL choices. Are you sure your reasoning matches the choice letter you picked? A common error is reasoning correctly but picking the wrong letter.
-- If your answer involves a protein or gene: did you look up the CORRECT one? (GABRA1 ≠ GABRR1. BRCA1 ≠ BRCA2. TP53 ≠ TP63.)
-- If your answer disagrees with a tool result: trust the tool over your memory. Databases are updated; your training data has a cutoff.
-- If answering MC in a batch: SLOW DOWN. Apply elimination to each question individually. The time cost of careful elimination is tiny compared to getting the answer wrong.
-
-**BATCH PROCESSING PROTOCOL** — when answering multiple questions in sequence:
-1. For EACH question independently: read the question, identify the domain, invoke the relevant skill
-2. NEVER carry assumptions from one question to the next
-3. For EVERY MC question: write "Eliminating: [letter] because [reason]" for at least 2 options BEFORE giving your answer
-4. For EVERY numerical question: write and execute Python code — report the computed result, not a mental estimate
-5. For EVERY "what protein/gene/species" question: search a database FIRST, then answer
-6. Between questions: mentally reset. Each question is independent.
-
-**Answer Format Rules** (numerical answers):
-- If the question says "find the number", give JUST the number — no units unless asked.
-- Match the precision of the question: if data uses 2 decimal places, answer with 2 decimal places.
-- For large numbers (>10^6): use scientific notation. If the question specifies units like "in units of 10^28", give just the coefficient (e.g., 1.86).
-- For small numbers: match the format shown in the question (e.g., "1.776 × 10^-3" not "1.8e-3").
-- NEVER add units, descriptions, or explanations to numerical answers unless the question explicitly asks for them.
-- When a question asks for a pure number (e.g., "how many days"), give ONLY the number (e.g., "350" not "350 days").
-
-**Language**: If the user writes in a non-English language, extract keywords for routing but respond in their language. All tool calls use English terms.
+**DO NOT skip routing.** Even if you think you know the answer, the skill has conventions (e.g., which denominator to use, which R function, which column to read) that differ from defaults.
 
 ---
 
@@ -371,3 +309,12 @@ Examples:
 **No match**: "How can I find all tools related to proteomics?" → General strategies: run find_tools queries
 
 **Domain + setup keyword**: "help me understand BRCA1 variants" → `Skill(skill="tooluniverse-variant-interpretation", args="BRCA1")`
+
+---
+
+## General Protocols (apply after routing)
+
+- **Look up, don't guess**: Use ToolUniverse tools to verify facts before answering.
+- **Compute, don't estimate**: Write and run Python/R code for any calculation.
+- **Analyze, don't just retrieve**: For data analysis tasks, execute code and report results.
+- **Trust tools over memory**: If a tool result disagrees with your knowledge, trust the tool.

@@ -6,7 +6,12 @@ disable-model-invocation: true
 
 # Variant Analysis and Annotation
 
-Production-ready VCF processing and variant annotation skill combining local bioinformatics computation with ToolUniverse database integration. Designed to answer bioinformatics analysis questions about VCF data, mutation classification, variant filtering, and clinical annotation.
+## CRITICAL — Read before writing any code
+
+1. **"Fraction of variants annotated as X"**: Denominator is **coding variants only** (synonymous, missense, stop_gained, frameshift, etc.), NOT all variants. Exclude intronic/UTR/intergenic records.
+2. **Multi-row Excel headers**: Clinical variant exports often have 2-row headers. Use `pd.read_excel(path, header=[0,1])` and address columns as tuples.
+
+---
 
 ## Domain Reasoning
 

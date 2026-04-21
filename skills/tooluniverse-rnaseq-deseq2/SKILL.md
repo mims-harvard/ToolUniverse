@@ -6,9 +6,17 @@ disable-model-invocation: true
 
 # RNA-seq Differential Expression Analysis (DESeq2)
 
-Differential expression analysis of RNA-seq count data using PyDESeq2, with enrichment analysis (gseapy) and gene annotation via ToolUniverse.
+## CRITICAL — Read before writing any code
 
-**BixBench Coverage**: Validated on 53 BixBench questions across 15 computational biology projects.
+1. **Use R DESeq2, not pydeseq2**: They disagree on edge cases. Run via `Rscript` or `tu run run_deseq2_analysis`.
+2. **Check for authoritative scripts first**: `ls` the data folder for `run_*.py`, `analysis.R`. If found, use their exact parameters.
+3. **"Also DE in strain X"** = simple intersection `A ∩ B`. Do NOT add exclusion conditions.
+4. **"Uniquely DE in A or B"** = exclusive: `(A-B-C) ∪ (B-A-C)`, not inclusive `(A∪B)-C`.
+5. **Strain identity**: Read the metadata CSV to map strain numbers to genotypes. Do not assume from numbering.
+
+---
+
+Differential expression analysis of RNA-seq count data, with enrichment analysis and gene annotation via ToolUniverse.
 
 ## Domain Reasoning
 

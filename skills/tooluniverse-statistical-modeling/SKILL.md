@@ -6,7 +6,14 @@ disable-model-invocation: true
 
 # Statistical Modeling for Biomedical Data Analysis
 
-Comprehensive statistical modeling skill for fitting regression models, survival models, and mixed-effects models to biomedical data. Produces publication-quality statistical summaries with odds ratios, hazard ratios, confidence intervals, and p-values.
+## CRITICAL — Read before writing any code
+
+1. **Clinical trial AE analysis**: Fit on ALL AEs (inner join to demographics), NOT pre-filtered by condition. Use `max(AESEV)` per subject across all AE records. Pre-filtering by AEPT changes results drastically.
+2. **Expression ANOVA**: Each gene is one observation per group. Do NOT sum genes per sample. Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py`
+3. **Spline models**: Use R `ns()` via Rscript, not Python patsy. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
+4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
+
+---
 
 ## COMPUTE, DON'T DESCRIBE
 Write and run Python code (via Bash) for every statistical analysis. Never describe what you "would do" — do it. Use pandas for data wrangling, statsmodels for regression, scipy for tests, and matplotlib for plots. Execute the code and report actual numbers (β, p-value, CI, N).
