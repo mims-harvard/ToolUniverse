@@ -207,6 +207,26 @@ Diagnosis: "bix-4-q1 timeout → tooluniverse-phylogenetics, needs PhyKIT DVMC"
   → The skill handles: tool class, JSON config, register, test, validate.
 ```
 
+## Plugin Architecture
+
+The ToolUniverse plugin uses a **router-only** skill matching architecture:
+
+```
+Budget: 294 chars / 10K (2.9%)
+├── tooluniverse (router) ← ONLY auto-matchable skill
+│   └── Routing table (113 entries)
+│       ├── "DESeq2", "differentially expressed" → Skill('tooluniverse-rnaseq-deseq2')
+│       ├── "treeness", "PhyKIT", "saturation" → Skill('tooluniverse-phylogenetics')
+│       ├── "ANOVA", "chi-square", "spline" → Skill('tooluniverse-statistical-modeling')
+│       └── ... (110 more entries)
+└── 113 sub-skills (disable-model-invocation: true)
+    └── Only loaded when router dispatches via Skill('name')
+```
+
+**Why**: Claude Code has a character budget for skill descriptions (~1% of context). With 114 skills × 500 chars = 57K — most descriptions get dropped and the agent never sees them. With 1 router × 294 chars, the agent always sees it and routes correctly.
+
+**Benchmark simulation**: In `-p` mode skills don't auto-match. The `full_skill_injection` mode simulates the real flow by programmatically detecting the matching skill and injecting its full SKILL.md content.
+
 ## Integration with devtu-self-evolve
 
 Insert as **Phase 3.5** between Testing and Fix:
