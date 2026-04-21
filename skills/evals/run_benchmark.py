@@ -208,62 +208,43 @@ def run_claude(
     3. Default: Injects research.md + BixBench convention snippets from each skill.
        This is the legacy mode — convention text without full skill context.
     """
-    if with_plugin:
-        if full_skill_injection and question_text:
-            # Simulate the real plugin flow:
-            # 1. Router skill auto-matches (always matches science questions)
-            # 2. Router's routing table dispatches to specific sub-skill
-            # 3. Sub-skill's full content loads into context
-            #
-            # In simulation: we skip injecting the 35K router content (it's
-            # only needed for routing decisions, which we do programmatically
-            # via _categorize_for_skill). We inject ONLY the matched sub-skill.
-            skill_name = _categorize_for_skill(question_text)
-            sub_skill_content = ""
-            if skill_name:
-                sub_skill_content = _load_full_skill(skill_name)
-
-            if sub_skill_content:
-                prompt = (
-                    f"# Skill loaded: {skill_name}\n\n"
-                    f"The ToolUniverse router matched your question to this "
-                    f"specialized skill. Follow its instructions — especially "
-                    f"any MANDATORY tool or script directives.\n\n"
-                    f"{sub_skill_content}\n\n"
-                    f"---\n\n{prompt}"
-                )
-            else:
-                guidance = get_plugin_guidance()
-                if guidance:
-                    prompt = f"{guidance}\n\n---\n\n{prompt}"
-        elif skill_routing:
-            guidance = get_plugin_guidance(
-                include_bixbench_skills=False, skill_routing_mode=True
-            )
-            if guidance:
-                prompt = f"{guidance}\n\n---\n\n{prompt}"
-        else:
-            guidance = get_plugin_guidance()
-            if guidance:
-                prompt = f"{guidance}\n\n---\n\n{prompt}"
-
-    cmd = ["claude", "-p", prompt, "--max-turns", str(max_turns), "--output-format", "json"]
+    # In plugin mode (interactive), the plugin's skill system handles
+    # routing — no guidance injection needed. The router skill auto-matches,
+    # dispatches to the right sub-skill, and the sub-skill loads.
+    #
+    # In baseline mode (no plugin), no guidance is injected.
+    # The agent uses only Bash/Read/Write to answer from scratch.
 
     if with_plugin:
-        cmd.extend(["--plugin-dir", PLUGIN_DIR])
-        cmd.extend([
-            "--allowedTools",
-            "mcp__tooluniverse__find_tools,mcp__tooluniverse__execute_tool,"
-            "mcp__tooluniverse__list_tools,mcp__tooluniverse__get_tool_info,"
-            "mcp__tooluniverse__grep_tools,Bash,Read,Write,Skill",
-        ])
+        # Interactive mode: pipe question via stdin so skills auto-match.
+        # This is how real users experience the plugin — the router skill
+        # auto-invokes, reads the routing table, and dispatches to the
+        # correct sub-skill. No manual guidance injection needed.
+        cmd = [
+            "claude",
+            "--plugin-dir", PLUGIN_DIR,
+            "--output-format", "json",
+            "--max-turns", str(max_turns),
+        ]
     else:
-        cmd.extend(["--allowedTools", "Bash,Read,Write"])
+        # Baseline: headless mode, no plugin, limited tools
+        cmd = [
+            "claude", "-p", prompt,
+            "--output-format", "json",
+            "--max-turns", str(max_turns),
+            "--allowedTools", "Bash,Read,Write",
+        ]
 
     try:
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=timeout
-        )
+        if with_plugin:
+            # Pipe question via stdin for interactive mode
+            result = subprocess.run(
+                cmd, input=prompt, capture_output=True, text=True, timeout=timeout
+            )
+        else:
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=timeout
+            )
         if result.returncode == 0:
             try:
                 return json.loads(result.stdout)
