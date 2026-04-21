@@ -1,249 +1,199 @@
 ---
 name: devtu-benchmark-harness
-description: Run benchmarks to measure ToolUniverse plugin performance on lab-bench (bio MCQ), BixBench (computational bioinformatics), and custom research questions. Produces structured reports with per-category accuracy, failure-to-skill mapping, and improvement recommendations. Use after skill optimization, tool additions, or as regression check. Integrates with devtu-self-evolve Phase 3.5.
+description: "Continuous improvement system for ToolUniverse tools, skills, and plugin. Run benchmarks, diagnose failures, route fixes to devtu skills, retest. Use after skill optimization, tool additions, or as regression check."
 ---
 
-# Benchmark Harness for ToolUniverse Plugin
+# Benchmark Harness — Continuous Improvement System
 
-Measure plugin performance, diagnose failures, map them to specific skills/tools, and generate targeted improvement recommendations.
+A 5-step feedback loop for improving ToolUniverse tools, skills, and plugin quality.
 
 ## The Feedback Loop
 
 ```
-1. RUN benchmark → 2. ANALYZE results → 3. DIAGNOSE failures → 4. FIX skill/tool → 5. RETEST failures → repeat
+1. RUN benchmark → 2. ANALYZE results → 3. DIAGNOSE failures → 4. FIX via devtu skill → 5. RETEST → repeat
 ```
 
-This is NOT a one-shot eval. The harness exists to continuously improve the system by identifying exactly which skill or tool is responsible for each failure.
-
-## Quick Start: Full Cycle
+## Step 1: RUN — Execute Benchmark
 
 ```bash
-# 1. Rebuild plugin dist with latest skills
-bash scripts/build-plugin.sh
+bash scripts/build-plugin.sh   # rebuild plugin with latest skills
 
-# 2. Run benchmark (BixBench, all 61 questions, plugin-only)
 python skills/devtu-benchmark-harness/scripts/run_eval.py \
-  --benchmark bixbench --mode plugin-only --n 61 --timeout 600
-
-# 3. Analyze + diagnose
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results skills/evals/bixbench/results_XXXXXXXX_XXXXXX.json \
-  --benchmark bixbench --diagnose
-
-# 4. Extract failed question IDs for retesting
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results skills/evals/bixbench/results_XXXXXXXX_XXXXXX.json \
-  --extract-failures /tmp/failures.json
-
-# 5. After fixing the skill/tool, retest ONLY the failures
-python skills/devtu-benchmark-harness/scripts/run_eval.py \
-  --benchmark bixbench --mode plugin-only \
-  --retest /tmp/failures.json --timeout 600
+  --benchmark bixbench \        # bixbench | lab-bench | custom
+  --mode plugin-only \          # plugin-only | baseline-only | comparison
+  --n 205 \                     # number of questions
+  --timeout 1800 \              # seconds per question
+  --max-turns 30                # agent turns per question
 ```
 
-## Benchmarks
+Options: `--category DESeq2` (filter), `--resume results.json` (skip done), `--guidance path.md` (inject custom).
+
+### Benchmark setup (first time only)
+```bash
+Rscript skills/evals/install_r_packages.R                  # R packages
+python3 skills/evals/bixbench/download_capsules.py         # BixBench data (~5 GB)
+```
+
+### Available benchmarks
 
 | Benchmark | Questions | Tests | Data |
 |-----------|----------|-------|------|
 | lab-bench | 20 MCQ | Database lookup accuracy | `skills/evals/lab-bench/questions.json` |
 | bixbench | 205 computational | Data analysis + statistics | `skills/evals/bixbench/questions.json` + capsule data |
-| custom | User-defined | Research synthesis quality | Custom JSON file |
+| custom | User-defined | Any | Custom JSON file |
 
-### BixBench setup
-```bash
-# 1. Install R packages (DESeq2, clusterProfiler, org.Hs.eg.db, etc.)
-Rscript skills/evals/install_r_packages.R
-
-# 2. Download capsule data (~5 GB) — only needed once
-python3 skills/evals/bixbench/download_capsules.py
-```
-
-## Scripts
-
-### `run_eval.py` — Run evaluation
+## Step 2: ANALYZE — Map Failures to Skills
 
 ```bash
-python skills/devtu-benchmark-harness/scripts/run_eval.py \
-  --benchmark bixbench \
-  --mode plugin-only \       # plugin-only | baseline-only | comparison
-  --n 61 \                   # number of questions
-  --timeout 600 \            # seconds per question
-  --max-turns 20 \           # agent turns per question
-  --category DESeq2 \        # filter questions by category keyword
-  --guidance path/to/x.md \  # custom guidance to inject
-  --resume results.json      # skip already-answered questions
+python skills/devtu-benchmark-harness/scripts/analyze_results.py \
+  --results results.json \
+  --questions skills/evals/bixbench/questions.json \
+  --benchmark bixbench
 ```
 
-### `grade_answers.py` — Grade answers
-
-```bash
-python skills/devtu-benchmark-harness/scripts/grade_answers.py \
-  --results results.json --output graded.json
-```
-
-Strategies (applied in order): exact match, MC letter, range (lo,hi), normalized, numeric 5%, LLM verifier.
-
-### `analyze_results.py` — Analyze + diagnose
-
-```bash
-# Basic analysis
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results results.json --benchmark bixbench
-
-# With improvement recommendations
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results results.json --benchmark bixbench --diagnose
-
-# Extract failures for retesting
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results results.json --extract-failures failures.json
-
-# JSON output (pipe to jq or other tools)
-python skills/devtu-benchmark-harness/scripts/analyze_results.py \
-  --results results.json --json --diagnose
-```
-
-Output includes:
-- **By skill**: Which skills have the lowest accuracy (fix those first)
-- **By category**: DESeq2, ANOVA, spline_fitting, phylogenetics, etc.
+Output:
+- **By skill**: which skills have lowest accuracy (fix those first)
+- **By category**: DESeq2, ANOVA, phylogenetics, variant_analysis, etc.
 - **Failure types**: timeout, wrong_answer, tool_error, api_key_missing
-- **Recommendations**: For each (category, failure_type) pair, what to fix and where
 
-### `generate_report.py` — Markdown report
+### Category → Skill mapping
+
+| Category | Skill |
+|----------|-------|
+| DESeq2, fold_change | tooluniverse-rnaseq-deseq2 |
+| ANOVA, regression, chi_square, spline_fitting | tooluniverse-statistical-modeling |
+| pathway_enrichment, DESeq2+enrichGO | tooluniverse-gene-enrichment |
+| phylogenetics | tooluniverse-phylogenetics |
+| variant_analysis, epigenomics | tooluniverse-variant-analysis |
+| crispr_screen, functional_genomics | tooluniverse-crispr-screen-analysis |
+| single_cell | tooluniverse-single-cell |
+
+## Step 3: DIAGNOSE — Get Improvement Recommendations
 
 ```bash
-python skills/devtu-benchmark-harness/scripts/generate_report.py \
-  --results results.json --output BENCHMARK_REPORT.md
+python skills/devtu-benchmark-harness/scripts/analyze_results.py \
+  --results results.json \
+  --questions skills/evals/bixbench/questions.json \
+  --diagnose
 ```
 
-## Category → Skill Mapping
+Each recommendation includes the failing category, responsible skill, failure type, and which devtu skill to invoke for the fix.
 
-The analyzer maps each question category to the skill responsible for handling it:
+### Root cause investigation
 
-| Category | Skill | Notes |
-|----------|-------|-------|
-| DESeq2 | tooluniverse-rnaseq-deseq2 | Differential expression |
-| DESeq2+enrichGO | tooluniverse-gene-enrichment | GO enrichment after DEG |
-| ANOVA | tooluniverse-statistical-modeling | F-test, group comparison |
-| regression | tooluniverse-statistical-modeling | Logistic, ordinal, linear |
-| chi_square | tooluniverse-statistical-modeling | Contingency tables |
-| spline_fitting | tooluniverse-statistical-modeling | ns(), cubic, polynomial |
-| imaging | tooluniverse-statistical-modeling | Cohen's d, NeuN counts |
-| data_counting | tooluniverse-statistical-modeling | Percentages, counts |
-| fold_change | tooluniverse-rnaseq-deseq2 | log2FC per gene |
-| phylogenetics | tooluniverse-phylogenetics | Trees, parsimony sites |
-| variant_analysis | tooluniverse-variant-analysis | VCF, VAF, coding variant |
-| crispr_screen | tooluniverse-crispr-screen-analysis | MAGeCK, sgRNA |
-| single_cell | tooluniverse-single-cell | scanpy, h5ad |
-| pathway_enrichment | tooluniverse-gene-enrichment | GSEA, Reactome |
-
-## Current Baselines (2026-04-17)
-
-| Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 18) | Target |
-|-----------|-----------------|-----------------|-----------------|--------|
-| lab-bench (20 MCQ) | 50% | 85% | 85% | 90% |
-| bixbench (205 comp) | ~50% | 60.7% (37/61) | **89.3% (183/205)** | 85% ✅ |
-
-### BixBench by skill (Apr 18, full 205q, decontaminated skills):
-| Skill | Questions | Accuracy |
-|-------|-----------|----------|
-| tooluniverse-single-cell | 3 | 67% |
-| tooluniverse-crispr-screen-analysis | 3 | 67% |
-| tooluniverse-variant-analysis | 27 | 74% |
-| tooluniverse-rnaseq-deseq2 | 59 | 78% |
-| tooluniverse-phylogenetics | 51 | 80% |
-| tooluniverse-statistical-modeling | 46 | 80% |
-| tooluniverse-gene-enrichment | 16 | 81% |
-
-### Failure breakdown (44/205):
-- 40 wrong answers, 4 timeouts
-- Weakest categories: spline_fitting (57%), epigenomics (60%), single_cell/functional_genomics (67%)
+For each failure, verify whether it's an agent error or a GT (ground truth) issue:
+1. Find the capsule data: `temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-{uuid}/`
+2. Look for authoritative scripts: `*.py`, `*.R`, `analysis.R`, `run_*.py`
+3. Run the script yourself — does it reproduce the GT value?
+4. If your computation matches the agent (not the GT), it's a **GT issue**, not an agent error
 
 ## Step 4: FIX — Route to the Right devtu Skill
 
-After `--diagnose` identifies the failing skill and failure type, invoke the appropriate devtu skill to fix it. **Do not fix manually** — use the devtu skills so fixes follow established patterns and include tests.
-
-### Fix routing table
+**Do not fix manually** — use devtu skills so fixes follow established patterns and include tests.
 
 | Diagnosis | What to do | Invoke |
 |-----------|-----------|--------|
-| Tool returns wrong data (schema, endpoint, params) | Fix tool Python code + JSON config | `Skill('devtu-fix-tool')` with the tool name and error |
-| No tool exists for this computation | Create a new ToolUniverse tool | `Skill('devtu-create-tool')` with the API/computation spec |
-| Skill gives wrong guidance (wrong convention) | Update SKILL.md BixBench conventions | `Skill('devtu-optimize-skills')` with the skill name + failure details |
-| Agent doesn't follow skill guidance | Strengthen wording, add code examples, add bundled script | `Skill('devtu-optimize-skills')` Pattern 15 (computational procedures) |
-| Grader false negative (correct answer marked wrong) | Fix grader in `grade_answers.py` | Direct code fix (no devtu skill needed) |
-| Multiple skills/tools need coordinated changes | Full self-evolve cycle | `Skill('devtu-self-evolve')` |
+| Tool returns wrong data | Fix tool code + JSON config | `Skill('devtu-fix-tool')` |
+| No tool exists for this computation | Create new ToolUniverse tool | `Skill('devtu-create-tool')` |
+| Skill gives wrong guidance | Update SKILL.md conventions | `Skill('devtu-optimize-skills')` |
+| Agent needs bundled script | Add script to skill's scripts/ dir | `Skill('devtu-optimize-skills')` Pattern 15 |
+| Grader false negative | Fix `grade_answers.py` | Direct code fix |
+| Multiple coordinated changes | Full cycle | `Skill('devtu-self-evolve')` |
 
 ### Fix workflow
 
 ```
-1. Run: python analyze_results.py --results X.json --questions questions.json --diagnose
-2. For each recommendation:
-   a. Identify fix type from the routing table above
-   b. Invoke the appropriate devtu skill:
-      - Skill('devtu-fix-tool') — pass tool name + error message
-      - Skill('devtu-create-tool') — pass computation description
-      - Skill('devtu-optimize-skills') — pass skill name + failing question details
-   c. The devtu skill handles: diagnosis, implementation, testing, validation
-3. Rebuild dist: bash scripts/build-plugin.sh
-4. Retest: python run_eval.py --retest failures.json
+1. analyze_results.py --diagnose → get recommendations
+2. For each recommendation → invoke the appropriate devtu skill
+3. bash scripts/build-plugin.sh → rebuild dist
+4. run_eval.py --retest failures.json → verify fix
 ```
 
-### Example fix flow
+### Example
 
 ```
-Diagnosis: "bix-36-q1 ANOVA wrong_answer → tooluniverse-statistical-modeling"
+Diagnosis: "ANOVA wrong_answer → tooluniverse-statistical-modeling"
   → Invoke: Skill('devtu-optimize-skills')
-  → Tell it: "The statistical-modeling skill's ANOVA guidance produces wrong F-statistics
-     for per-gene expression ANOVA. The agent aggregates at sample level instead of gene
-     level. Add a BixBench convention with the correct aggregation pattern."
-  → The skill handles: read current SKILL.md, identify gap, add convention, verify no
-     memorization, rebuild dist, suggest retest.
+  → Tell it: "statistical-modeling skill produces wrong F-statistics for
+     per-gene expression ANOVA. Agent aggregates at sample level instead
+     of gene level."
+  → The skill handles: read SKILL.md, add convention, verify no
+     memorization, rebuild, suggest retest.
+```
 
-Diagnosis: "bix-4-q1 timeout → tooluniverse-phylogenetics, needs PhyKIT DVMC"
-  → Invoke: Skill('devtu-create-tool')
-  → Tell it: "Create a ToolUniverse tool wrapping PhyKIT's DVMC function for batch
-     processing on directories of tree files."
-  → The skill handles: tool class, JSON config, register, test, validate.
+## Step 5: RETEST — Verify Fixes
+
+```bash
+# Extract failed question IDs
+python skills/devtu-benchmark-harness/scripts/analyze_results.py \
+  --results results.json --extract-failures /tmp/failures.json
+
+# Retest only failures
+python skills/devtu-benchmark-harness/scripts/run_eval.py \
+  --benchmark bixbench --mode plugin-only --retest /tmp/failures.json
+```
+
+Compare: how many flipped from wrong to correct? Update baseline if improved.
+
+## Grader
+
+`grade_answers.py` applies 7 strategies in order:
+
+1. **Exact match** — GT substring in prediction
+2. **MC match** — letter answer detection (A/B/C/D)
+3. **Range match** — numeric value within (low, high) with rounding tolerance
+4. **Normalized match** — strip punctuation, bidirectional substring + bold-segment extraction
+5. **Numeric proximity** — within 5% tolerance
+6. **Synonym match** — scientific term equivalences
+7. **LLM verifier** — Claude judges semantic correctness (for eval_mode=llm_verifier)
+
+Unicode normalization: minus signs (U+2212), superscript exponents (10⁻²⁶ → e-26).
+
+```bash
+# Re-grade with LLM
+python skills/devtu-benchmark-harness/scripts/grade_answers.py \
+  --results results.json --output graded.json --llm
 ```
 
 ## Plugin Architecture
 
-The ToolUniverse plugin uses a **router-only** skill matching architecture:
+The ToolUniverse plugin uses **router-only** skill matching:
 
 ```
-Budget: 294 chars / 10K (2.9%)
-├── tooluniverse (router) ← ONLY auto-matchable skill
-│   └── Routing table (113 entries)
-│       ├── "DESeq2", "differentially expressed" → Skill('tooluniverse-rnaseq-deseq2')
-│       ├── "treeness", "PhyKIT", "saturation" → Skill('tooluniverse-phylogenetics')
-│       ├── "ANOVA", "chi-square", "spline" → Skill('tooluniverse-statistical-modeling')
-│       └── ... (110 more entries)
-└── 113 sub-skills (disable-model-invocation: true)
-    └── Only loaded when router dispatches via Skill('name')
+1 auto-matchable skill: "tooluniverse" (router, ~300 chars)
+  └── Routing table → 113 sub-skills (all disable-model-invocation: true)
 ```
 
-**Why**: Claude Code has a character budget for skill descriptions (~1% of context). With 114 skills × 500 chars = 57K — most descriptions get dropped and the agent never sees them. With 1 router × 294 chars, the agent always sees it and routes correctly.
+Why: Claude Code has a character budget for skill descriptions (~1% of context). 114 skills × 500 chars = 57K exceeds budget → descriptions get dropped. With 1 router, the agent always sees it and routes correctly.
 
-**Benchmark simulation**: In `-p` mode skills don't auto-match. The `full_skill_injection` mode simulates the real flow by programmatically detecting the matching skill and injecting its full SKILL.md content.
+In `-p` mode, skills don't auto-match. The benchmark runner simulates interactive behavior via `full_skill_injection` mode: programmatically detects matching skill, injects its full SKILL.md content.
 
 ## Integration with devtu-self-evolve
 
 Insert as **Phase 3.5** between Testing and Fix:
 ```
-Phase 3 (Testing) → Phase 3.5 (Benchmark) → Phase 4 (Fix via devtu skills) → Phase 5 (Retest)
+Phase 3 (Test) → Phase 3.5 (Benchmark) → Phase 4 (Fix via devtu) → Phase 5 (Retest)
 ```
-If any category regresses vs previous round, prioritize fixing that skill/tool in Phase 4 using the routing table above.
 
 ## Known Failure Patterns
 
-These patterns were identified from benchmark debugging. The `--diagnose` flag references them:
+The `--diagnose` flag references these patterns:
 
-- **DESeq2 wrong_answer**: pydeseq2 vs R DESeq2 disagreement, wrong strain mapping, inclusive vs exclusive set ops → `devtu-optimize-skills` on rnaseq-deseq2 or `devtu-create-tool` for R DESeq2 tool
-- **ANOVA wrong_answer**: F-statistic vs p-value confusion, wrong grouping variable → `devtu-optimize-skills` on statistical-modeling
-- **spline_fitting wrong_answer**: Python patsy.cr() ≠ R ns(); endpoint inclusion depends on model type → `devtu-optimize-skills` on statistical-modeling
-- **regression timeout**: Agent loops trying different model specs → `devtu-optimize-skills` (add "commit to first approach" rule)
-- **variant_analysis wrong_answer**: Multi-row Excel headers, coding vs all denominator → `devtu-optimize-skills` on variant-analysis
-- **fold_change wrong_answer**: Wrong contrast direction, gene symbol mapping → `devtu-optimize-skills` on rnaseq-deseq2
-- **phylogenetics wrong_answer**: PhyKIT batch computation errors → `devtu-fix-tool` on phykit_batch_analysis or `devtu-optimize-skills` on phylogenetics
-- **enrichGO wrong_answer**: R clusterProfiler version sensitivity → `devtu-fix-tool` on run_deseq2_analysis enrichgo operation
+| Pattern | Root cause | Fix action |
+|---------|-----------|------------|
+| DESeq2 wrong_answer | pydeseq2 vs R disagreement, wrong set operations | `devtu-optimize-skills` on rnaseq-deseq2 |
+| ANOVA wrong_answer | F-stat vs p-value confusion, wrong aggregation | `devtu-optimize-skills` on statistical-modeling |
+| spline wrong_answer | R ns() ≠ Python patsy; endpoint inclusion varies | `devtu-optimize-skills` on statistical-modeling |
+| phylogenetics wrong_answer | PhyKIT output column selection, file pairing | `devtu-fix-tool` on phykit_batch_analysis |
+| variant wrong_answer | Multi-row Excel headers, coding-variant denominator | `devtu-optimize-skills` on variant-analysis |
+| enrichGO wrong_answer | R clusterProfiler version sensitivity | `devtu-fix-tool` on run_deseq2_analysis |
+| timeout | Pipeline >30 min (Trimmomatic, GATK) | `devtu-create-tool` to wrap pipeline |
+| GT issue | Ground truth unreproducible with current tools | Document in results, exclude from score |
+
+### Skill convention rules
+
+When adding conventions to skills from benchmark findings:
+- **General knowledge only** — no dataset-specific values, no memorized answers
+- **Principles over examples** — "per-gene ANOVA not per-sample" rather than "F=0.77 on this dataset"
+- **Tool preferences** — "use R DESeq2 for dispersion" rather than "R gives 4, pydeseq2 gives 2"
+- **Verify no contamination** — grep for dataset names, specific numeric answers in the convention text
