@@ -417,7 +417,7 @@ When fitting models on strain co-culture frequency data:
 
 2. **Pure-strain endpoints**: Whether to include pure-strain data (freq=0 and freq=1) depends on the model type:
    - **Cubic/polynomial models**: Fit on co-culture rows ONLY (exclude pure strains). The cubic model captures the mixed-population response curve; pure strains are fundamentally different biological regimes and including them typically lowers R².
-   - **Natural spline models (`ns(freq, df=4)`)**: Include pure-strain endpoints as anchor points. Splines need boundary data to interpolate correctly near the extremes, and including them typically raises R².
+   - **Natural spline models (`ns(freq, df=4)`)**: Include the pure-strain endpoint for the **focal strain** (the one whose frequency the model predicts) but exclude the non-focal pure strain. For example, when modeling "frequency of ΔrhlI to total population", include pure ΔrhlI (freq=1.0) but exclude pure ΔlasI (freq=0.0). This anchors the spline at the high end where the focal strain dominates.
 
 3. **R vs Python splines**: R's `ns()` (from the `splines` package) and Python's `patsy.cr()` or `scipy BSpline` produce DIFFERENT knot placements and boundary conditions. If the question references R's `lm(y ~ ns(x, df=4))`, use `Rscript` directly:
    ```r

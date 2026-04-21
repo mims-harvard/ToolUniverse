@@ -151,7 +151,12 @@ class PhyKITTool(BaseTool):
                     values.extend(taxon_values)
             else:
                 try:
-                    val = float(output.split("\n")[0].split("\t")[0])
+                    parts = output.split("\n")[0].split("\t")
+                    # Saturation outputs slope<TAB>1-slope; use 1-slope (col 1)
+                    if function == "saturation" and len(parts) >= 2:
+                        val = float(parts[1])
+                    else:
+                        val = float(parts[0])
                     values.append(val)
                 except (ValueError, IndexError):
                     errors += 1

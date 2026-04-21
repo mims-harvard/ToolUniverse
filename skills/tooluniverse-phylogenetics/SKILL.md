@@ -147,6 +147,9 @@ tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"./align
 ```
 Do NOT run phykit manually in a loop — the tool handles all files and returns correct summary statistics.
 
+### PhyKIT saturation output has TWO columns
+`phykit saturation -a alignment -t tree` outputs `slope<TAB>1-slope`. The **saturation value** reported in papers is typically `1-slope` (the SECOND column), NOT the slope itself. If the question asks for "saturation value", use the second column. The slope (first column) is the regression coefficient of uncorrected vs patristic distances; 1-slope is the proportion of saturation.
+
 ### Parsimony informative sites
 - Exclude **gap-only columns** before counting — a column that is all gaps is not informative.
 - A site is parsimony informative when ≥2 different non-gap characters each appear in ≥2 taxa.
