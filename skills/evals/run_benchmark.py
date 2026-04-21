@@ -195,40 +195,43 @@ def run_claude(
 ):
     """Run a prompt through Claude Code, optionally with the ToolUniverse plugin.
 
-    When with_plugin is True, prepends the research.md guidance so the agent
-    knows about execution strategies, fail-fast rules, tool quick-reference,
-    and computational analysis patterns.
+    Injection modes (in priority order):
 
-    When skill_routing is True, uses minimal guidance that forces the agent
-    to invoke skills via the Skill tool before answering.
+    1. full_skill_injection (recommended): Simulates the real interactive plugin
+       experience. Injects the router skill (tooluniverse) which auto-matches
+       any science question, PLUS the matched sub-skill's full content. This is
+       what a real user sees: router loads → routes to sub-skill → sub-skill loads.
 
-    When full_skill_injection is True, auto-detects the matching skill from the
-    question text and injects its FULL content — simulating the interactive
-    experience where Claude auto-invokes a matching skill. This is the most
-    realistic simulation of how the plugin works for real users.
+    2. skill_routing: Minimal guidance that tells the agent to invoke skills via
+       the Skill tool. Agent must actively call Skill('name').
+
+    3. Default: Injects research.md + BixBench convention snippets from each skill.
+       This is the legacy mode — convention text without full skill context.
     """
     if with_plugin:
         if full_skill_injection and question_text:
-            # Simulate interactive skill auto-invocation:
-            # 1. Detect which skill matches
-            # 2. Load its full SKILL.md content
-            # 3. Inject as if the skill was invoked
+            # Simulate the real plugin flow:
+            # 1. Router skill auto-matches (always matches science questions)
+            # 2. Router's routing table dispatches to specific sub-skill
+            # 3. Sub-skill's full content loads into context
+            #
+            # In simulation: we skip injecting the 35K router content (it's
+            # only needed for routing decisions, which we do programmatically
+            # via _categorize_for_skill). We inject ONLY the matched sub-skill.
             skill_name = _categorize_for_skill(question_text)
+            sub_skill_content = ""
             if skill_name:
-                skill_content = _load_full_skill(skill_name)
-                if skill_content:
-                    prompt = (
-                        f"The following skill has been loaded for this question:\n\n"
-                        f"# Skill: {skill_name}\n\n"
-                        f"{skill_content}\n\n"
-                        f"---\n\n"
-                        f"Follow the skill's instructions above to answer this question.\n\n"
-                        f"{prompt}"
-                    )
-                else:
-                    guidance = get_plugin_guidance()
-                    if guidance:
-                        prompt = f"{guidance}\n\n---\n\n{prompt}"
+                sub_skill_content = _load_full_skill(skill_name)
+
+            if sub_skill_content:
+                prompt = (
+                    f"# Skill loaded: {skill_name}\n\n"
+                    f"The ToolUniverse router matched your question to this "
+                    f"specialized skill. Follow its instructions — especially "
+                    f"any MANDATORY tool or script directives.\n\n"
+                    f"{sub_skill_content}\n\n"
+                    f"---\n\n{prompt}"
+                )
             else:
                 guidance = get_plugin_guidance()
                 if guidance:
