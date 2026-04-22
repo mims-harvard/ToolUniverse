@@ -2,7 +2,6 @@
 name: tooluniverse-drug-drug-interaction
 description: "Drug-drug interactions: CYP metabolism, transporters, clinical significance, alternatives."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Drug-Drug Interaction Prediction & Risk Assessment

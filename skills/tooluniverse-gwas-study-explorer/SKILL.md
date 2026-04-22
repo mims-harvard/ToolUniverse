@@ -2,7 +2,6 @@
 name: tooluniverse-gwas-study-explorer
 description: Compare GWAS studies, perform meta-analyses, and assess replication across cohorts.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 

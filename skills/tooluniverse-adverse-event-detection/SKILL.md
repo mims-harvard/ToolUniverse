@@ -2,7 +2,6 @@
 name: tooluniverse-adverse-event-detection
 description: Detect and analyze adverse drug event signals using FDA FAERS data, drug labels, disproportionality analysis (PRR, ROR,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

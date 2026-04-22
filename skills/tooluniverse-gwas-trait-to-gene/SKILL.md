@@ -2,7 +2,6 @@
 name: tooluniverse-gwas-trait-to-gene
 description: Discover genes associated with diseases and traits using GWAS data from the GWAS Catalog (500,000+ associations) and.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # GWAS Trait-to-Gene Discovery

@@ -2,7 +2,6 @@
 name: tooluniverse-computational-biophysics
 description: Solve quantitative problems in biophysics, pharmacokinetics, epidemiology, toxicology, population genetics, and.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Computational Biophysics & Quantitative Biology Skill

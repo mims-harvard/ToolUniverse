@@ -2,7 +2,6 @@
 name: tooluniverse-multi-omics-integration
 description: Integrate and analyze multiple omics datasets (transcriptomics, proteomics, epigenomics, genomics, metabolomics) for.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Multi-Omics Integration

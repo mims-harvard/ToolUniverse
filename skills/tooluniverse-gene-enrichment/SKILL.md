@@ -2,7 +2,6 @@
 name: tooluniverse-gene-enrichment
 description: GO/KEGG/Reactome pathway enrichment analysis. Use for enrichGO, clusterProfiler, gseapy, ORA, GSEA.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

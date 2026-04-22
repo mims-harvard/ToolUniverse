@@ -2,7 +2,6 @@
 name: tooluniverse-metabolomics-analysis
 description: Analyze metabolomics data including metabolite identification, quantification, pathway analysis, and metabolic flux.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Metabolomics Analysis

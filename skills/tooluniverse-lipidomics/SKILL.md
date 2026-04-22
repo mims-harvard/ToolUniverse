@@ -2,7 +2,6 @@
 name: tooluniverse-lipidomics
 description: Analyze lipids, lipid metabolism, and lipid-disease associations using LIPID MAPS, HMDB, PubChem, KEGG, and CTD.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Lipidomics Analysis

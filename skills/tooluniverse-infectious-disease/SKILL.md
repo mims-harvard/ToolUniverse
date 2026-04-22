@@ -2,7 +2,6 @@
 name: tooluniverse-infectious-disease
 description: Rapid pathogen characterization and drug repurposing analysis for infectious disease outbreaks.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

@@ -2,7 +2,6 @@
 name: tooluniverse-adverse-outcome-pathway
 description: Map environmental/industrial chemicals to mechanistic adverse outcome pathways (AOPs) using AOPWiki, quantify.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Adverse Outcome Pathway & Regulatory Risk Assessment

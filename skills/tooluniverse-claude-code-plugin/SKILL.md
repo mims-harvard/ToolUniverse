@@ -2,7 +2,6 @@
 name: tooluniverse-claude-code-plugin
 description: Install the ToolUniverse Claude Code plugin — 1000+ scientific tools, 114 research skills, MCP server, and slash.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Install the ToolUniverse Plugin for Claude Code

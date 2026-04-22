@@ -2,7 +2,6 @@
 name: tooluniverse-rare-disease-diagnosis
 description: "Rare disease differential diagnosis from phenotypes: HPO matching, gene panels, variant interpretation."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Rare Disease Diagnosis Advisor

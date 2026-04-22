@@ -2,7 +2,6 @@
 name: tooluniverse-expression-data-retrieval
 description: Retrieves gene expression and omics datasets from ArrayExpress and BioStudies with gene disambiguation, experiment.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Gene Expression & Omics Data Retrieval

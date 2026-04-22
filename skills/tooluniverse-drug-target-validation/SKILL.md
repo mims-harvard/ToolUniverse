@@ -2,7 +2,6 @@
 name: tooluniverse-drug-target-validation
 description: "Evaluate gene as drug target: druggability, selectivity, safety, ADMET, structural analysis."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Drug Target Validation Pipeline

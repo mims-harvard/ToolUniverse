@@ -2,7 +2,6 @@
 name: tooluniverse-multiomic-disease-characterization
 description: Comprehensive multi-omics disease characterization integrating genomics, transcriptomics, proteomics, pathway, and.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Multi-Omics Disease Characterization Pipeline

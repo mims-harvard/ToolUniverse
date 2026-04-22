@@ -2,7 +2,6 @@
 name: tooluniverse-hla-immunogenomics
 description: Analyze HLA genes, MHC binding, epitope-MHC associations, and immunogenomics for transplant compatibility, vaccine.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # HLA & Immunogenomics Analysis

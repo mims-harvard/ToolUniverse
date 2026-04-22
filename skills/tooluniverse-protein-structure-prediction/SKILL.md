@@ -2,7 +2,6 @@
 name: tooluniverse-protein-structure-prediction
 description: Predict and analyze protein 3D structure from amino acid sequence using ESMFold and AlphaFold.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Protein Structure Prediction and Analysis

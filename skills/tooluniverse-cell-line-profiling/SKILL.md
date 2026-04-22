@@ -2,7 +2,6 @@
 name: tooluniverse-cell-line-profiling
 description: Help researchers select and characterize cancer cell lines for experiments.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Cancer Cell Line Profiling and Selection

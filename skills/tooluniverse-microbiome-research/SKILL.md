@@ -2,7 +2,6 @@
 name: Microbiome Research
 description: Analyze microbiome and metagenomics data using MGnify, GTDB, ENA, and literature tools.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Microbiome Research with ToolUniverse

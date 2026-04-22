@@ -2,7 +2,6 @@
 name: tooluniverse-comparative-genomics
 description: Cross-species gene and sequence comparison, ortholog analysis, and evolutionary conservation assessment using.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Comparative Genomics & Ortholog Analysis

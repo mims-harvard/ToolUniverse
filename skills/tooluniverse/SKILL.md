@@ -1,6 +1,8 @@
 ---
 name: tooluniverse
-description: "MUST USE for analyzing local data files (CSV, Excel, VCF, FASTA, h5ad). Contains critical analysis conventions that prevent wrong answers. Also for scientific research questions using 1000+ database tools. Covers: RNA-seq, DESeq2, clinical trials, ANOVA, regression, chi-square, variants, VAF, phylogenetics, enrichment, CRISPR, single-cell."
+description: "Analyze local data files and answer scientific research questions using 1000+ database tools. Use when analyzing CSV, Excel, VCF, FASTA, or h5ad files. Use for RNA-seq, DESeq2, clinical trials, ANOVA, regression, variants, phylogenetics, enrichment, or any biology/chemistry/medicine question."
+when_to_use: "Activate when the user provides data files to analyze, asks about differential expression, runs statistical tests on clinical data, performs variant analysis, does pathway enrichment, builds phylogenetic trees, or asks any scientific research question."
+paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 ---
 
 # ToolUniverse Router

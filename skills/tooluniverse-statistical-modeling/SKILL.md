@@ -2,7 +2,6 @@
 name: tooluniverse-statistical-modeling
 description: "Statistical modeling: regression, ANOVA, chi-square, spline fits, odds ratios, clinical trial analysis."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Statistical Modeling for Biomedical Data Analysis

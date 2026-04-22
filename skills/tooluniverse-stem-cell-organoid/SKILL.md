@@ -2,7 +2,6 @@
 name: tooluniverse-stem-cell-organoid
 description: Research stem cells, iPSCs, organoids, and cell differentiation using ToolUniverse tools.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Stem Cell & Organoid Research

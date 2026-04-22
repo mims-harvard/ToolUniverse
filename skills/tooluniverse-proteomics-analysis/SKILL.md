@@ -2,7 +2,6 @@
 name: tooluniverse-proteomics-analysis
 description: Analyze mass spectrometry proteomics data including protein quantification, differential expression, post-translational.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Proteomics Analysis

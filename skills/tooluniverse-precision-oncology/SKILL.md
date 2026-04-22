@@ -2,7 +2,6 @@
 name: tooluniverse-precision-oncology
 description: "Cancer treatment recommendations from molecular profile: mutations, therapies, resistance, clinical trials."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Precision Oncology Treatment Advisor

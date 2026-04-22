@@ -2,7 +2,6 @@
 name: tooluniverse-organic-chemistry
 description: Teaches reasoning strategies for organic chemistry problems — reaction product prediction, spectroscopy interpretation,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Organic Chemistry Reasoning Guide

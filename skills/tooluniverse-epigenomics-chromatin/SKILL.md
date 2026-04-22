@@ -5,7 +5,6 @@ triggers:
   - keywords: [histone, ChIP-seq, chromatin, ENCODE, eQTL, CTCF, enhancer, promoter, cCRE, H3K27ac, H3K4me3, H3K4me1, chromatin state, ATAC-seq, regulatory element, RegulomeDB]
   - patterns: ["histone modification", "chromatin accessibility", "chromatin architecture", "gene regulation", "regulatory variant", "expression QTL", "cis-regulatory"]
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Epigenomics and Chromatin Accessibility Research

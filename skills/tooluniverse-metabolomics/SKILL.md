@@ -2,7 +2,6 @@
 name: tooluniverse-metabolomics
 description: Comprehensive metabolomics research skill for identifying metabolites, analyzing studies, and searching metabolomics.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Metabolomics Research

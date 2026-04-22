@@ -2,7 +2,6 @@
 name: tooluniverse-clinical-data-integration
 description: Comprehensive drug safety review integrating FDA labels, FAERS adverse event reports, disproportionality analysis,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Clinical Data Integration for Drug Safety

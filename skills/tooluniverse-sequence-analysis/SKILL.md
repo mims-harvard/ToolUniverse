@@ -2,7 +2,6 @@
 name: tooluniverse-sequence-analysis
 description: Retrieve and analyze biological sequences -- gene/protein sequences from NCBI, Ensembl, and UniProt.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Biological Sequence Analysis

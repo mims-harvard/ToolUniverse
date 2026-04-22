@@ -2,7 +2,6 @@
 name: tooluniverse-network-pharmacology
 description: Construct and analyze compound-target-disease networks for drug repurposing, polypharmacology discovery, and systems.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

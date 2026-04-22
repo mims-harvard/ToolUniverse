@@ -2,7 +2,6 @@
 name: tooluniverse-gwas-drug-discovery
 description: Transform GWAS signals into actionable drug targets and repurposing opportunities.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # GWAS-to-Drug Target Discovery

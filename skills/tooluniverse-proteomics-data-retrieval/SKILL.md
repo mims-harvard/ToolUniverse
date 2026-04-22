@@ -2,7 +2,6 @@
 name: tooluniverse-proteomics-data-retrieval
 description: Find and retrieve proteomics datasets from public repositories including MassIVE and ProteomeXchange (which aggregates.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Proteomics Data Retrieval

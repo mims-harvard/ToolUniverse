@@ -2,7 +2,6 @@
 name: tooluniverse-chemical-safety
 description: Comprehensive chemical safety and toxicology assessment integrating ADMET-AI predictions, CTD toxicogenomics, FDA label.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Chemical Safety & Toxicology Assessment

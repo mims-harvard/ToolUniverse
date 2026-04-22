@@ -2,7 +2,6 @@
 name: tooluniverse-electron-microscopy
 description: Search and analyze cryo-EM maps, single particle structures, tomography datasets, and raw micrograph data from EMDB,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Electron Microscopy Structure Analysis

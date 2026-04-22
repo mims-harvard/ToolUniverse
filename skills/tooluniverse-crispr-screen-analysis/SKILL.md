@@ -2,7 +2,6 @@
 name: tooluniverse-crispr-screen-analysis
 description: "CRISPR screen analysis: MAGeCK, sgRNA counts, gene-level scores, replicate QC, pathway GSEA on screen data."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # ToolUniverse CRISPR Screen Analysis

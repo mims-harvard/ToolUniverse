@@ -2,7 +2,6 @@
 name: tooluniverse-protein-structure-retrieval
 description: Retrieves protein structure data from RCSB PDB, PDBe, and AlphaFold with protein disambiguation, quality assessment,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Protein Structure Data Retrieval

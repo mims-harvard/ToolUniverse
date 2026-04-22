@@ -2,7 +2,6 @@
 name: tooluniverse-structural-variant-analysis
 description: Comprehensive structural variant (SV) analysis skill for clinical genomics.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

@@ -2,7 +2,6 @@
 name: tooluniverse-sequence-retrieval
 description: Retrieves biological sequences (DNA, RNA, protein) from NCBI and ENA with gene disambiguation, accession type handling,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Biological Sequence Retrieval

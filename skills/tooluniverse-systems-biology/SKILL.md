@@ -2,7 +2,6 @@
 name: tooluniverse-systems-biology
 description: Comprehensive systems biology and pathway analysis using multiple pathway databases (Reactome, KEGG, WikiPathways,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Systems Biology & Pathway Analysis

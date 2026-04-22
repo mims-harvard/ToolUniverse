@@ -2,7 +2,6 @@
 name: tooluniverse-gwas-snp-interpretation
 description: Interpret genetic variants (SNPs) from GWAS studies by aggregating evidence from multiple databases (GWAS Catalog, Open.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # GWAS SNP Interpretation Skill

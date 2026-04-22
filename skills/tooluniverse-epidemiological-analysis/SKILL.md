@@ -2,7 +2,6 @@
 name: tooluniverse-epidemiological-analysis
 description: End-to-end epidemiological data analysis — from research question to statistical report.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Epidemiological Data Analysis

@@ -2,7 +2,6 @@
 name: tooluniverse-custom-tool
 description: Add custom local tools to ToolUniverse and use them alongside the 1000+ built-in tools.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Adding Custom Tools to ToolUniverse

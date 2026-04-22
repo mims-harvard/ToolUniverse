@@ -2,7 +2,6 @@
 name: tooluniverse-variant-analysis
 description: "VCF variant analysis: parsing, annotation, classification, VAF filtering, coding vs non-coding, multi-sample."
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Variant Analysis and Annotation

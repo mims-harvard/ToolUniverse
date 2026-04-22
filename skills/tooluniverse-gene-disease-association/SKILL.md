@@ -2,7 +2,6 @@
 name: tooluniverse-gene-disease-association
 description: Find and compare gene-disease associations across multiple databases (DisGeNET, OpenTargets, Monarch Initiative, OMIM,.
 disable-model-invocation: true
-user-invocable: false
 ---
 
 # Gene-Disease Association Analysis
