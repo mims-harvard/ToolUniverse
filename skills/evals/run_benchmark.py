@@ -217,25 +217,14 @@ def run_claude(
 
     if with_plugin:
         # Interactive mode: pipe question via stdin with plugin loaded.
-        # Inject a compact system prompt with critical analysis conventions
-        # that the agent needs for data analysis questions. This simulates
-        # what a user would get if they have CLAUDE.md with these rules.
+        # The router skill auto-matches and contains the critical analysis
+        # conventions. No --append-system-prompt needed — the plugin
+        # handles everything through the skill system.
         cmd = [
             "claude",
             "--plugin-dir", PLUGIN_DIR,
             "--output-format", "json",
             "--max-turns", str(max_turns),
-            "--append-system-prompt",
-            "When analyzing local data files, invoke the matching ToolUniverse skill "
-            "FIRST via Skill('skill-name') before writing code. "
-            "Critical conventions: "
-            "(1) Clinical trial AE analysis: use ALL AEs, max(AESEV) per subject, "
-            "do NOT filter by condition name. Use encoding='latin1'. "
-            "(2) Variant fraction: denominator is coding variants only, not all variants. "
-            "(3) DESeq2: prefer R DESeq2 over pydeseq2. Check for authoritative scripts first. "
-            "(4) Expression ANOVA: per-gene values, not per-sample totals. "
-            "(5) Spline models: use R ns(), include focal-strain endpoint only. "
-            "(6) PhyKIT saturation: use 1-slope (second column), not slope.",
         ]
     else:
         # Baseline: headless mode, no plugin, limited tools

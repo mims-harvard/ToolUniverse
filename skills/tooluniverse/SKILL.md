@@ -18,6 +18,18 @@ description: "Scientific research with 1000+ tools and 114 skills. Use for ANY b
 
 **DO NOT skip routing.** Even if you think you know the answer, the skill has conventions (e.g., which denominator to use, which R function, which column to read) that differ from defaults.
 
+## Critical Analysis Conventions
+
+Apply these rules when analyzing local data files. They override defaults:
+
+1. **Clinical trial AE severity**: Use ALL AE records. `max(AESEV)` per subject. Do NOT filter by condition name (AEPT). Use `encoding='latin1'` for CSV.
+2. **Variant fraction denominator**: Coding variants only (synonymous, missense, stop_gained, frameshift). Exclude intronic/UTR/intergenic.
+3. **DESeq2**: Prefer R DESeq2 over pydeseq2. Check for authoritative scripts (`run_*.py`, `analysis.R`) first — copy their exact parameters.
+4. **Expression ANOVA / fold change**: Per-gene values (each gene = one observation per group). Do NOT sum genes per sample.
+5. **Spline models**: Use R `ns()` via Rscript. Include focal-strain pure endpoint only (exclude non-focal pure strain).
+6. **PhyKIT saturation**: Use 1-slope (second column output), not slope (first column).
+7. **"Also DE in X"**: Simple intersection `A ∩ B`. Do NOT add exclusion conditions.
+
 ---
 
 ## Routing Table
