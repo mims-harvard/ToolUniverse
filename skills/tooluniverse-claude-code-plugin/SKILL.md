@@ -27,6 +27,20 @@ claude plugin install tooluniverse@tooluniverse
 
 That's it. Restart Claude Code. The MCP server auto-starts via `uvx tooluniverse` on first use (~30 s cold start, instant after).
 
+### Important: Remove global skills if previously installed
+
+If you previously installed ToolUniverse skills globally (via `tooluniverse-install-skills` or manual copy), **remove them**. The plugin includes all skills — global copies interfere with the plugin's skill routing.
+
+```bash
+# Check for global skills
+ls ~/.claude/skills/tooluniverse-* 2>/dev/null | wc -l
+
+# Remove them (the plugin replaces them)
+rm -rf ~/.claude/skills/tooluniverse-*
+rm -rf ~/.claude/skills/create-tooluniverse-skill
+rm -rf ~/.claude/skills/setup-tooluniverse
+```
+
 ### Pin to a version (optional)
 
 ```bash
