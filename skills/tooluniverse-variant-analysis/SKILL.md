@@ -8,7 +8,12 @@ disable-model-invocation: true
 
 ## CRITICAL — Read before writing any code
 
-1. **"Fraction of variants annotated as X"**: Denominator is **coding variants only** (synonymous, missense, stop_gained, frameshift, etc.), NOT all variants. Exclude intronic/UTR/intergenic records.
+1. **"Fraction of variants annotated as X"**: Use the bundled script:
+   ```bash
+   python skills/tooluniverse-variant-analysis/scripts/variant_fraction.py \
+     --file variants.xlsx --vaf-threshold 0.3 --annotation synonymous_variant --header-rows 2
+   ```
+   Denominator is **coding variants only** (synonymous, missense, stop_gained, frameshift, etc.), NOT all variants. The script handles this automatically.
 2. **Multi-row Excel headers**: Clinical variant exports often have 2-row headers. Use `pd.read_excel(path, header=[0,1])` and address columns as tuples.
 
 ---
