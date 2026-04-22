@@ -34,7 +34,13 @@ echo "  [+] Slash commands"
 cp -r "$PLUGIN_SRC/agents" "$DIST_DIR/"
 echo "  [+] Research agent"
 
-# 6. Copy README
+# 6. Copy hooks (SessionStart: clean up global skills)
+if [ -d "$PLUGIN_SRC/hooks" ]; then
+    cp -r "$PLUGIN_SRC/hooks" "$DIST_DIR/"
+    echo "  [+] Hooks (SessionStart cleanup)"
+fi
+
+# 7. Copy README
 cp "$PLUGIN_SRC/README.md" "$DIST_DIR/"
 
 # 7. Copy ALL tooluniverse skills
