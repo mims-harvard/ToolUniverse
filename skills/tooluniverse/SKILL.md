@@ -126,7 +126,7 @@ description: "Scientific research with 1000+ tools and 114 skills. Use for ANY b
 | "**cell line**", "cell line profiling", "DepMap", "CCLE", "cell line sensitivity" | `Skill(skill="tooluniverse-cell-line-profiling")` |
 | "**clinical data integration**", "clinical phenotype", "EHR analysis", "clinical cohort" | `Skill(skill="tooluniverse-clinical-data-integration")` |
 | "**phylogenetics**", "phylogenetic tree", "sequence alignment", "evolutionary analysis", "treeness", "saturation", "parsimony", "PhyKIT", "DVMC", "long branch", "tree length", "MAFFT", "gap percentage" | `Skill(skill="tooluniverse-phylogenetics")` |
-| "**statistical modeling**", "regression analysis", "logistic regression", "survival analysis", "Cox", "ANOVA", "F-statistic", "chi-square", "spline", "odds ratio", "Cohen's d", "p-value", "clinical trial data" | `Skill(skill="tooluniverse-statistical-modeling")` |
+| "**statistical modeling**", "regression analysis", "logistic regression", "survival analysis", "Cox", "ANOVA", "F-statistic", "chi-square", "spline", "odds ratio", "Cohen's d", "p-value", "clinical trial data", "**ordinal**", "**severity**", "**vaccination**", "SDTM", "DM.csv", "AE.csv", "adverse event severity" | `Skill(skill="tooluniverse-statistical-modeling")` |
 | "**metabolomics analysis**", "LC-MS analysis", "metabolite quantification", "metabolic flux" | `Skill(skill="tooluniverse-metabolomics-analysis")` |
 | "**functional genomics screen**", "CRISPR library", "shRNA screen", "barcode screen" | `Skill(skill="tooluniverse-functional-genomics-screens")` |
 | "**proteomics data**", "PRIDE", "MassIVE", "ProteomeXchange", "proteomics dataset" | `Skill(skill="tooluniverse-proteomics-data-retrieval")` |
