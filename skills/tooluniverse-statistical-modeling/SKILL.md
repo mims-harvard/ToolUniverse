@@ -8,11 +8,21 @@ disable-model-invocation: true
 
 ## CRITICAL — Read before writing any code
 
-1. **Clinical trial AE analysis** (applies to regression, chi-square, AND any severity test): Use ALL AE records (inner join to demographics), NOT pre-filtered by condition name. Compute `max(AESEV)` per subject across ALL AE records regardless of AEPT. Do NOT filter to specific conditions like "COVID-19" even if the question mentions them. Code pattern:
-   ```python
-   sev = ae.groupby('USUBJID')['AESEV'].max().reset_index()
-   df = dm.merge(sev, on='USUBJID', how='inner')
+1. **Clinical trial AE analysis** (regression, chi-square, ANY severity test): Use the bundled script:
+   ```bash
+   # Chi-square on vaccination × severity
+   python skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py \
+     --dm DM.csv --ae AE.csv --test chi-square --group TRTGRP
+
+   # With subgroup filter
+   python scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv \
+     --subgroup "expect_interact=Yes" --test chi-square --group TRTGRP
+
+   # Ordinal logistic regression
+   python scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv \
+     --test ordinal --group TRTGRP --covariates "covar1,covar2"
    ```
+   The script handles: latin1 encoding, max(AESEV) per subject across ALL AEs (no AEPT filtering), inner join. Do NOT write your own merge — the AE cohort convention is easy to get wrong.
 2. **Expression ANOVA**: Each gene is one observation per group. Do NOT sum genes per sample. Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py`
 3. **Spline models**: Use R `ns()` via Rscript, not Python patsy. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
 4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
