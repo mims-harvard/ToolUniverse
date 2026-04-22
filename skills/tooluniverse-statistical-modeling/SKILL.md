@@ -8,7 +8,11 @@ disable-model-invocation: true
 
 ## CRITICAL — Read before writing any code
 
-1. **Clinical trial AE analysis**: Fit on ALL AEs (inner join to demographics), NOT pre-filtered by condition. Use `max(AESEV)` per subject across all AE records. Pre-filtering by AEPT changes results drastically.
+1. **Clinical trial AE analysis** (applies to regression, chi-square, AND any severity test): Use ALL AE records (inner join to demographics), NOT pre-filtered by condition name. Compute `max(AESEV)` per subject across ALL AE records regardless of AEPT. Do NOT filter to specific conditions like "COVID-19" even if the question mentions them. Code pattern:
+   ```python
+   sev = ae.groupby('USUBJID')['AESEV'].max().reset_index()
+   df = dm.merge(sev, on='USUBJID', how='inner')
+   ```
 2. **Expression ANOVA**: Each gene is one observation per group. Do NOT sum genes per sample. Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py`
 3. **Spline models**: Use R `ns()` via Rscript, not Python patsy. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
 4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
