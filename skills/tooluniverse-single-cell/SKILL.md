@@ -2,6 +2,7 @@
 name: tooluniverse-single-cell
 description: "Single-cell RNA-seq: scanpy, h5ad, UMAP, clustering, marker genes, cell-type annotation, pseudotime."
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Single-Cell Genomics and Expression Matrix Analysis

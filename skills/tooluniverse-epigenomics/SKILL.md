@@ -2,6 +2,7 @@
 name: tooluniverse-epigenomics
 description: Production-ready genomics and epigenomics data processing for BixBench questions.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Genomics and Epigenomics Data Processing

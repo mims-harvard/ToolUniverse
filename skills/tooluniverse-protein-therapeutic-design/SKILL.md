@@ -2,6 +2,7 @@
 name: tooluniverse-protein-therapeutic-design
 description: Design novel protein therapeutics (binders, enzymes, scaffolds) using AI-guided de novo design.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Therapeutic Protein Designer

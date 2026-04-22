@@ -2,6 +2,7 @@
 name: tooluniverse-regulatory-genomics
 description: Investigate transcription factor binding, cis-regulatory elements, chromatin accessibility, and regulatory variant.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Regulatory Genomics Research Skill

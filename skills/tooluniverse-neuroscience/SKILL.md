@@ -2,6 +2,7 @@
 name: tooluniverse-neuroscience
 description: Neuroscience research and reasoning workflows using ToolUniverse tools.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Neuroscience Research Skill

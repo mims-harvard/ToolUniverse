@@ -2,6 +2,7 @@
 name: tooluniverse-population-genetics
 description: Population genetics analysis — allele frequencies, Hardy-Weinberg equilibrium, Fst, GWAS associations, linkage.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Population Genetics Analysis

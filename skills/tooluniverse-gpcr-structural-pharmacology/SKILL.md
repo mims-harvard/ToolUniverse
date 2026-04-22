@@ -2,6 +2,7 @@
 name: tooluniverse-gpcr-structural-pharmacology
 description: Research GPCR receptors, antibody structures, and protein interface analysis using GPCRdb, SAbDab, and PDBePISA.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # GPCR and Structural Pharmacology Research

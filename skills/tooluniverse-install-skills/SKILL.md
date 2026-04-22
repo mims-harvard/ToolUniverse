@@ -2,6 +2,7 @@
 name: tooluniverse-install-skills
 description: Detect and auto-install missing ToolUniverse research skills by checking common client skill directories and cloning.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # ToolUniverse Install Skills

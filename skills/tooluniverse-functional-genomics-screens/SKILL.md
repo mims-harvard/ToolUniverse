@@ -2,6 +2,7 @@
 name: tooluniverse-functional-genomics-screens
 description: Interpret results from CRISPR/shRNA genetic screens using DepMap essentiality data, constraint scores, pathway.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Functional Genomics Screen Interpretation

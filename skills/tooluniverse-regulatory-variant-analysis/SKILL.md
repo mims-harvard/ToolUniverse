@@ -2,6 +2,7 @@
 name: tooluniverse-regulatory-variant-analysis
 description: Regulatory variant interpretation -- GWAS association lookup, eQTL analysis, chromatin state annotation, regulatory.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

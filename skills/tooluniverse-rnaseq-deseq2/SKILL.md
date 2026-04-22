@@ -2,6 +2,7 @@
 name: tooluniverse-rnaseq-deseq2
 description: RNA-seq differential expression analysis with DESeq2. Use for DEG lists, fold changes, dispersion, count matrices.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # RNA-seq Differential Expression Analysis (DESeq2)

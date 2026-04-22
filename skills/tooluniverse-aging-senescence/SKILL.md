@@ -2,6 +2,7 @@
 name: tooluniverse-aging-senescence
 description: Research aging biology, cellular senescence, and longevity using ToolUniverse.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Aging & Cellular Senescence Research

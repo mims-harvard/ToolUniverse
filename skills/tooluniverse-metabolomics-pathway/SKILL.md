@@ -2,6 +2,7 @@
 name: tooluniverse-metabolomics-pathway
 description: Metabolomics pathway analysis -- metabolite identification, pathway mapping, disease associations, cross-database.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Metabolomics Pathway Analysis

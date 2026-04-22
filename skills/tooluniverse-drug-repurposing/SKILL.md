@@ -2,6 +2,7 @@
 name: tooluniverse-drug-repurposing
 description: Identify drug repurposing candidates using ToolUniverse for target-based, compound-based, and disease-driven strategies.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Drug Repurposing with ToolUniverse

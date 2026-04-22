@@ -2,6 +2,7 @@
 name: tooluniverse-variant-interpretation
 description: Systematic clinical variant interpretation from raw variant calls to ACMG-classified recommendations with structural.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Clinical Variant Interpreter

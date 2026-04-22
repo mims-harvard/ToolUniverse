@@ -2,6 +2,7 @@
 name: tooluniverse-spatial-omics-analysis
 description: Computational analysis framework for spatial multi-omics data integration.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Spatial Multi-Omics Analysis Pipeline

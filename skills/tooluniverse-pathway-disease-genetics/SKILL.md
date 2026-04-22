@@ -2,6 +2,7 @@
 name: tooluniverse-pathway-disease-genetics
 description: Connect GWAS variants to biological pathways for drug target discovery.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

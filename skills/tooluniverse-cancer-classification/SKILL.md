@@ -2,6 +2,7 @@
 name: tooluniverse-cancer-classification
 description: Translate free-text tumor descriptions to OncoTree codes, look up cancer subtypes and tissue hierarchies, resolve.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Cancer Classification via OncoTree

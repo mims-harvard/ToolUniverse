@@ -2,6 +2,7 @@
 name: tooluniverse-phylogenetics
 description: "Phylogenetics: tree analysis, treeness, saturation, parsimony sites, PhyKIT, DVMC, alignment gaps, MAFFT."
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Phylogenetics and Sequence Analysis

@@ -5,6 +5,7 @@ triggers:
   - keywords: [rare disease, orphan disease, Orphanet, ORPHA, HPO, phenotype, genetic disorder, inborn error, GenCC, gene-disease validity, rare genetic, congenital, inherited disorder]
   - patterns: ["rare disease", "orphan disease", "genetic cause of", "what genes cause", "prevalence of", "clinical features of", "HPO phenotypes for", "pathogenic variants in"]
 disable-model-invocation: true
+user-invocable: false
 ---
 
 ## COMPUTE, DON'T DESCRIBE

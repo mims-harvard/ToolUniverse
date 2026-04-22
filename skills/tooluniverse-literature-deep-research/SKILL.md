@@ -2,6 +2,7 @@
 name: tooluniverse-literature-deep-research
 description: "Deep literature review: PubMed, preprints, citation networks, evidence synthesis."
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Literature Deep Research

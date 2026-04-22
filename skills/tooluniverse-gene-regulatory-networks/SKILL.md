@@ -2,6 +2,7 @@
 name: tooluniverse-gene-regulatory-networks
 description: Gene regulatory network analysis — TF-target inference, ChIP-seq binding, motif analysis, eQTL integration.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Gene Regulatory Network Analysis

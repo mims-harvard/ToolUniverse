@@ -2,6 +2,7 @@
 name: tooluniverse-acmg-variant-classification
 description: Systematic ACMG/AMP variant classification using ToolUniverse tools.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # ACMG/AMP Variant Classification

@@ -2,6 +2,7 @@
 name: tooluniverse-vaccine-design
 description: Design and evaluate vaccine candidates using computational immunology tools.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Vaccine Design

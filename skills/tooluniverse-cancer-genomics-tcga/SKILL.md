@@ -5,6 +5,7 @@ triggers:
   - keywords: [TCGA, GDC, cancer cohort, somatic mutation, Kaplan-Meier, survival analysis, CNV, copy number variation, Progenetix, OncoKB, tumor, cancer genomics, mutation frequency]
   - patterns: ["TCGA-", "survival analysis for", "mutation frequency in", "copy number", "GDC project", "cancer cases", "overall survival"]
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Cancer Genomics / TCGA Analysis

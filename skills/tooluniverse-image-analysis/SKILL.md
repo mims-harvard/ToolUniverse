@@ -2,6 +2,7 @@
 name: tooluniverse-image-analysis
 description: Production-ready microscopy image analysis and quantitative imaging data skill for colony morphometry, cell counting,.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Microscopy Image Analysis and Quantitative Imaging Data

@@ -2,6 +2,7 @@
 name: tooluniverse-chemical-sourcing
 description: Find commercial sources for chemical compounds using ZINC, Enamine, eMolecules, and Mcule.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Chemical Compound Sourcing & Procurement

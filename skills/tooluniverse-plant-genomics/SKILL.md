@@ -2,6 +2,7 @@
 name: tooluniverse-plant-genomics
 description: Research plant genes, pathways, and species using PlantReactome, Ensembl Plants, POWO, UniProt, KEGG, and literature.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Plant Genomics & Biology

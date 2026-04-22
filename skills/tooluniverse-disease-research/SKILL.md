@@ -2,6 +2,7 @@
 name: tooluniverse-disease-research
 description: "Disease overview: genetics, pathways, drugs, clinical trials, epidemiology, phenotypes."
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # ToolUniverse Disease Research

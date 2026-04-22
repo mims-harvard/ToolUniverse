@@ -2,6 +2,7 @@
 name: tooluniverse-ecology-biodiversity
 description: Ecology, biodiversity, and conservation biology research — species identification, invasive species assessment,.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Ecology & Biodiversity Research

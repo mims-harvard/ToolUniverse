@@ -2,6 +2,7 @@
 name: tooluniverse-inorganic-physical-chemistry
 description: Inorganic chemistry, physical chemistry, and materials science — crystal structures, coordination chemistry, bonding.
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # Inorganic & Physical Chemistry

@@ -5,6 +5,7 @@ triggers:
   - keywords: [KEGG disease, KEGG drug, KEGG network, KEGG variant, disease genes, drug targets]
   - patterns: ["KEGG .* disease", "KEGG .* drug", "disease.*drug.*variant", "KEGG network"]
 disable-model-invocation: true
+user-invocable: false
 ---
 
 # KEGG Disease-Drug-Variant Research
