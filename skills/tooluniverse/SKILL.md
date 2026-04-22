@@ -1,6 +1,6 @@
 ---
 name: tooluniverse
-description: "Scientific research with 1000+ tools and 114 skills. Use for ANY biology, chemistry, medicine, genomics, drug, clinical, or data analysis question. Local data: RNA-seq, DESeq2, VCF, variants, VAF, phylogenetics, ANOVA, regression, chi-square, enrichment, CRISPR, single-cell, clinical trials."
+description: "MUST USE for analyzing local data files (CSV, Excel, VCF, FASTA, h5ad). Contains critical analysis conventions that prevent wrong answers. Also for scientific research questions using 1000+ database tools. Covers: RNA-seq, DESeq2, clinical trials, ANOVA, regression, chi-square, variants, VAF, phylogenetics, enrichment, CRISPR, single-cell."
 ---
 
 # ToolUniverse Router
