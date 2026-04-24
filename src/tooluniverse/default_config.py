@@ -192,6 +192,22 @@ default_tool_files = {
     "compose": os.path.join(current_dir, "data", "compose_tools.json"),
     # PhyKIT — phylogenetics batch analysis (treeness, saturation, dvmc, LB score)
     "phykit": os.path.join(current_dir, "data", "phykit_tools.json"),
+    # Clinical trial AE severity testing (chi-square / ordinal) — wraps skill script
+    "clinical_trial_stats": os.path.join(
+        current_dir, "data", "clinical_trial_stats_tools.json"
+    ),
+    # Per-gene expression ANOVA / fold-change — wraps skill script
+    "expression_anova": os.path.join(
+        current_dir, "data", "expression_anova_tools.json"
+    ),
+    # Coding variant fraction (CODING denominator, VAF threshold) — wraps skill script
+    "variant_fraction": os.path.join(
+        current_dir, "data", "variant_fraction_tools.json"
+    ),
+    # Executed notebook reader — surface authoritative analysis outputs
+    "executed_notebook": os.path.join(
+        current_dir, "data", "executed_notebook_tools.json"
+    ),
     # DESeq2 — R-based differential expression + enrichGO
     "deseq2": os.path.join(current_dir, "data", "deseq2_tools.json"),
     # Compound tools — multi-database queries in a single call

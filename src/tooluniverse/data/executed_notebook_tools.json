@@ -1,0 +1,84 @@
+[
+  {
+    "type": "ExecutedNotebookTool",
+    "name": "read_executed_notebook",
+    "description": "Read a pre-executed Jupyter notebook (.ipynb, often named '*_executed.ipynb') and return its cells with printed outputs as structured JSON. Use this BEFORE reimplementing an analysis when the data folder ships with an executed notebook — the notebook already ran the authoritative pipeline with the exact package versions, filters, and thresholds that match the reference answers. Reimplementing with pydeseq2/scanpy/etc. produces different numbers. Accepts either a folder (auto-discovers the notebook) or a direct path. Optionally filters cells by a comma-separated search term list or a regex so the agent sees only the cells relevant to its question.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "data_folder": {
+          "type": ["string", "null"],
+          "description": "Directory to search (recursively) for a .ipynb file. Prefers *_executed.ipynb over regular .ipynb. Provide either this OR notebook_path."
+        },
+        "notebook_path": {
+          "type": ["string", "null"],
+          "description": "Direct path to a specific .ipynb file. Provide either this OR data_folder."
+        },
+        "search": {
+          "type": "string",
+          "description": "Optional: comma-separated terms (or regex if regex=true). Cells whose source or output contains any term are returned in 'matching_cells'. Case-insensitive. Example: 'upregulated,log2FoldChange' or 'padj.*0\\.05'"
+        },
+        "regex": {
+          "type": "boolean",
+          "description": "Treat 'search' as a Python regex instead of a comma-separated term list (default: false)"
+        },
+        "max_output_chars": {
+          "type": "integer",
+          "description": "Truncate each cell source/output to this many characters (default 400)"
+        },
+        "include_source": {
+          "type": "boolean",
+          "description": "Include cell source code in the response (default true). Set false to halve response size when you only need outputs."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "notebook_path": {"type": "string"},
+                "total_cells": {"type": "integer"},
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "idx": {"type": "integer"},
+                      "type": {"type": "string"},
+                      "source": {"type": "string"},
+                      "output": {"type": "string"}
+                    }
+                  }
+                },
+                "search": {"type": "string"},
+                "matching_cells": {"type": "array"},
+                "n_matches": {"type": "integer"}
+              },
+              "required": ["notebook_path", "total_cells", "cells"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "data_folder": "/Users/shgao/logs/25.05.28tooluniverse/codes/ToolUniverse-auto/temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-4ef3fcd8-1c35-466f-9d93-49b92f4ea760",
+        "search": "upregulated,log2FoldChange",
+        "max_output_chars": 300
+      }
+    ]
+  }
+]

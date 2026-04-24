@@ -1,0 +1,86 @@
+[
+  {
+    "type": "CodingVariantFractionTool",
+    "name": "coding_variant_fraction",
+    "description": "Compute the fraction of CODING variants in an Excel/CSV variant table that match a given Sequence Ontology annotation and fall below a VAF threshold. Uses the CODING-only denominator convention (synonymous_variant, missense_variant, splice_region_variant, stop_gained, stop_lost, start_lost, frameshift_variant, inframe_insertion, inframe_deletion) - intronic, UTR, intergenic, and up/downstream records are excluded. Auto-detects 'variant allele frequency'/'VAF' and 'Sequence Ontology' columns if not specified. Supports flat headers (header_rows=1) and MultiIndex headers (header_rows=2) common in cancer variant reports. Returns the fraction with coding denominator plus the 'naive' fraction (over all VAF-filtered records) for comparison.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Path to variant Excel (.xlsx) or CSV file."
+        },
+        "vaf_threshold": {
+          "type": "number",
+          "description": "Keep variants with VAF strictly less than this value. Default 0.3."
+        },
+        "annotation": {
+          "type": "string",
+          "description": "Sequence Ontology term to count in numerator. Default 'synonymous_variant'."
+        },
+        "header_rows": {
+          "type": "integer",
+          "enum": [1, 2],
+          "description": "1 for flat headers, 2 for MultiIndex (common in Excel variant reports). Default 1."
+        },
+        "vaf_col": {
+          "type": ["string", "null"],
+          "description": "Explicit VAF column name. If empty, auto-detect from 'variant allele freq' or 'vaf'."
+        },
+        "so_col": {
+          "type": ["string", "null"],
+          "description": "Explicit Sequence Ontology column name. If empty, auto-detect from 'sequence ontology'."
+        }
+      },
+      "required": ["file"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_variants": {"type": "integer"},
+                "vaf_filtered": {"type": "integer"},
+                "coding_variants_below_vaf": {"type": "integer"},
+                "matching_annotation": {"type": "integer"},
+                "fraction": {"type": "number"},
+                "naive_fraction": {"type": "number"},
+                "vaf_column": {"type": "string"},
+                "so_column": {"type": "string"},
+                "vaf_threshold": {"type": "number"},
+                "annotation": {"type": "string"}
+              },
+              "required": ["total_variants", "coding_variants_below_vaf", "matching_annotation", "fraction"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-30b33e47-92d8-4372-a9f6-da32896493d0/CapsuleData-30b33e47-92d8-4372-a9f6-da32896493d0/CHIP_DP10_GQ20_PASS/230209_Exome_GRCh38_CHIP_502-P1.xlsx",
+        "vaf_threshold": 0.3,
+        "annotation": "synonymous_variant",
+        "header_rows": 2
+      },
+      {
+        "file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-30b33e47-92d8-4372-a9f6-da32896493d0/CapsuleData-30b33e47-92d8-4372-a9f6-da32896493d0/CHIP_DP10_GQ20_PASS/230209_Exome_GRCh38_CHIP_502-P1.xlsx",
+        "vaf_threshold": 0.3,
+        "annotation": "missense_variant",
+        "header_rows": 2
+      }
+    ]
+  }
+]

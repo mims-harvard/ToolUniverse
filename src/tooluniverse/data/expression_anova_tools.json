@@ -1,0 +1,94 @@
+[
+  {
+    "type": "ExpressionANOVAPerGeneTool",
+    "name": "expression_anova_per_gene",
+    "description": "Per-gene ANOVA or log2 fold-change on a gene x sample expression matrix. Each gene contributes one value per group (its mean expression across group samples), then mode='anova' runs one-way ANOVA (f_oneway) across K groups of N gene-level means; mode='fold_change' computes per-gene log2((mean_a+1)/(mean_b+1)) between two groups and returns median/mean across genes. Use for gene-level comparisons across experimental conditions where each gene is treated as one observation (e.g. comparing strains, cell types, or treatments). Accepts CSV counts matrix (rows=genes, cols=samples) and CSV metadata (rows=samples with group_col). Auto-aligns by overlapping sample IDs (transposes counts if needed).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "counts_file": {
+          "type": "string",
+          "description": "Path to CSV count matrix (genes x samples, first column = gene IDs)."
+        },
+        "meta_file": {
+          "type": "string",
+          "description": "Path to CSV metadata (rows=samples, contains group_col)."
+        },
+        "group_col": {
+          "type": "string",
+          "description": "Metadata column identifying groups (e.g. 'Strain', 'cell_type')."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["anova", "fold_change"],
+          "description": "'anova': one-way ANOVA across groups. 'fold_change': median per-gene log2FC between group_a and group_b."
+        },
+        "exclude_groups": {
+          "type": ["array", "null"],
+          "items": {"type": "string"},
+          "description": "Groups in group_col to exclude before analysis."
+        },
+        "group_a": {
+          "type": ["string", "null"],
+          "description": "Numerator group for fold_change mode."
+        },
+        "group_b": {
+          "type": ["string", "null"],
+          "description": "Denominator group for fold_change mode."
+        }
+      },
+      "required": ["counts_file", "meta_file", "group_col", "mode"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "f_statistic": {"type": "number"},
+                "p_value": {"type": "number"},
+                "n_genes": {"type": "integer"},
+                "n_samples": {"type": "integer"},
+                "groups": {"type": "array", "items": {"type": "string"}},
+                "median_log2fc": {"type": "number"},
+                "mean_log2fc": {"type": "number"},
+                "group_a": {"type": "string"},
+                "group_b": {"type": "string"},
+                "n_samples_a": {"type": "integer"},
+                "n_samples_b": {"type": "integer"},
+                "n_abs_log2fc_gt_1": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "counts_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-1d54e4a7-8b0f-4224-bd31-efcfded0d46c/raw_counts.csv",
+        "meta_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-1d54e4a7-8b0f-4224-bd31-efcfded0d46c/experiment_metadata.csv",
+        "group_col": "Strain",
+        "mode": "anova"
+      },
+      {
+        "counts_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-1d54e4a7-8b0f-4224-bd31-efcfded0d46c/raw_counts.csv",
+        "meta_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-1d54e4a7-8b0f-4224-bd31-efcfded0d46c/experiment_metadata.csv",
+        "group_col": "Strain",
+        "mode": "fold_change",
+        "group_a": "1",
+        "group_b": "99"
+      }
+    ]
+  }
+]

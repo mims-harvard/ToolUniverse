@@ -56,7 +56,7 @@ def prepare_cohort(dm_path: str, ae_path: str, subgroup: str = "") -> pd.DataFra
 
 
 def run_chi_square(df: pd.DataFrame, group_col: str):
-    """Run chi-square test on group × AESEV."""
+    """Run chi-square test on group × AESEV. Returns (chi2, p, dof, ct_dict)."""
     from scipy import stats
 
     ct = pd.crosstab(df[group_col], df["AESEV"])
@@ -64,15 +64,18 @@ def run_chi_square(df: pd.DataFrame, group_col: str):
     print(ct)
     chi2, p, dof, _ = stats.chi2_contingency(ct)
     print(f"\nChi-square = {chi2:.4f}, p = {p:.6f}, dof = {dof}")
+    # ct_dict: nested dict keyed by group then AESEV level
+    ct_dict = {str(k): {str(k2): int(v2) for k2, v2 in row.items()} for k, row in ct.to_dict(orient="index").items()}
+    return float(chi2), float(p), int(dof), ct_dict
 
 
 def run_ordinal(df: pd.DataFrame, group_col: str, covariates: list):
-    """Run ordinal logistic regression."""
+    """Run ordinal logistic regression. Returns dict with OR results and model summary."""
     try:
         from statsmodels.miscmodels.ordinal_model import OrderedModel
     except ImportError:
         print("statsmodels required: pip install statsmodels")
-        return
+        return None
 
     import numpy as np
 
@@ -89,14 +92,30 @@ def run_ordinal(df: pd.DataFrame, group_col: str, covariates: list):
     print("\nOrdinal logistic regression:")
     print(result.summary())
 
-    # Extract odds ratios
+    # Extract odds ratios (with 95% CI from conf_int)
     print("\nOdds ratios:")
+    conf = result.conf_int()
+    ors = {}
     for var in formula_vars:
         idx = list(X.columns).index(var)
-        coef = result.params[idx]
-        or_val = np.exp(coef)
-        p_val = result.pvalues[idx]
+        coef = float(result.params[idx])
+        or_val = float(np.exp(coef))
+        p_val = float(result.pvalues[idx])
+        ci_low = float(np.exp(conf.iloc[idx, 0]))
+        ci_high = float(np.exp(conf.iloc[idx, 1]))
         print(f"  {var}: OR = {or_val:.4f}, p = {p_val:.6f}")
+        ors[var] = {
+            "coef": coef,
+            "or": or_val,
+            "ci_lower": ci_low,
+            "ci_upper": ci_high,
+            "p_value": p_val,
+        }
+    return {
+        "odds_ratios": ors,
+        "model_summary": str(result.summary()),
+        "primary_var": group_col,
+    }
 
 
 def main():

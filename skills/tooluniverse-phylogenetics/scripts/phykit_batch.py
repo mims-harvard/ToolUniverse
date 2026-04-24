@@ -33,6 +33,35 @@ def run_phykit(function: str, filepath: str, tree_path: str = "") -> str | None:
         return None
 
 
+def _parse_tsv_last_column(output: str) -> list[float]:
+    """Parse per-row numeric values from phykit tab-separated output."""
+    lines = [l for l in output.split("\n") if l.strip()]
+    try:
+        return [float(l.split("\t")[-1]) for l in lines if "\t" in l]
+    except (ValueError, IndexError):
+        return []
+
+
+def _median(sorted_values: list[float]) -> float:
+    n = len(sorted_values)
+    if n % 2:
+        return sorted_values[n // 2]
+    return (sorted_values[n // 2 - 1] + sorted_values[n // 2]) / 2
+
+
+def _summarize_per_tree(values_in: list[float], stat: str) -> float | None:
+    """Apply per-tree summary (mean/median/sum). Returns None if unsupported."""
+    if not values_in:
+        return None
+    if stat == "mean":
+        return sum(values_in) / len(values_in)
+    if stat == "median":
+        return _median(sorted(values_in))
+    if stat == "sum":
+        return sum(values_in)
+    return None
+
+
 def compute_gap_percentage(alignment_dir: str, ext: str) -> dict:
     """Compute total gap percentage across all alignments."""
     total_gaps = 0
@@ -77,6 +106,7 @@ def main():
         choices=[
             "treeness", "saturation", "dvmc", "long_branch_score",
             "total_tree_length", "parsimony_informative", "gap_percentage",
+            "evolutionary_rate", "patristic_distances",
         ],
     )
     parser.add_argument("--ext", default=".treefile", help="File extension to match")
@@ -124,30 +154,29 @@ def main():
         if output is None:
             continue
 
-        if args.function == "long_branch_score":
-            # LB score outputs one value per taxon; summarize per tree
-            lines = [l for l in output.split("\n") if l.strip()]
-            try:
-                taxon_values = [float(l.split("\t")[-1]) for l in lines if "\t" in l]
-            except (ValueError, IndexError):
-                taxon_values = []
+        if args.function == "patristic_distances":
+            # Output: one distance per pair of taxa; summarize per tree.
+            # Default is mean (standard interpretation of "mean patristic distance").
+            pair_values = _parse_tsv_last_column(output)
+            if not pair_values:
+                continue
+            stat = args.per_tree_stat or "mean"
+            summary = _summarize_per_tree(pair_values, stat)
+            if summary is not None:
+                values.append(summary)
+        elif args.function == "long_branch_score":
+            # LB score outputs one value per taxon; summarize per tree.
+            # Default (empty per_tree_stat) flattens all taxa into the global pool.
+            taxon_values = _parse_tsv_last_column(output)
             if not taxon_values:
+                lines = [l for l in output.split("\n") if l.strip()]
                 try:
                     taxon_values = [float(lines[0])]
                 except (ValueError, IndexError):
                     continue
-            if args.per_tree_stat == "mean":
-                values.append(sum(taxon_values) / len(taxon_values))
-            elif args.per_tree_stat == "median":
-                taxon_values.sort()
-                n = len(taxon_values)
-                values.append(
-                    taxon_values[n // 2]
-                    if n % 2
-                    else (taxon_values[n // 2 - 1] + taxon_values[n // 2]) / 2
-                )
-            elif args.per_tree_stat == "sum":
-                values.append(sum(taxon_values))
+            summary = _summarize_per_tree(taxon_values, args.per_tree_stat)
+            if summary is not None:
+                values.append(summary)
             else:
                 values.extend(taxon_values)
         else:
@@ -165,7 +194,7 @@ def main():
     values.sort()
     n = len(values)
     mean = sum(values) / n
-    median = values[n // 2] if n % 2 else (values[n // 2 - 1] + values[n // 2]) / 2
+    median = _median(values)
 
     print(f"N: {n}")
     print(f"Mean: {mean:.6f}")

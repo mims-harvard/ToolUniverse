@@ -1,0 +1,91 @@
+[
+  {
+    "type": "ClinicalTrialAESeverityTestTool",
+    "name": "clinical_trial_ae_severity_test",
+    "description": "Merge clinical trial demographics (DM) and adverse-events (AE) CSVs and run a statistical test on AE severity (AESEV) across treatment groups. Uses the correct convention: max(AESEV) per subject across ALL AE records (no AEPT pre-filtering), inner-joined to DM on USUBJID. Supports three tests: 'prepare' (merge only, returns n_subjects and AESEV distribution), 'chi-square' (group x AESEV contingency test, returns chi2/p/dof/contingency_table), and 'ordinal' (ordinal logistic regression with optional covariates, returns odds ratio, 95% CI, p-value, and model summary). Use for clinical trial safety signal analyses comparing AE severity by treatment arm or subgroup.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dm_file": {
+          "type": "string",
+          "description": "Path to demographics CSV. Must contain USUBJID and the group_col."
+        },
+        "ae_file": {
+          "type": "string",
+          "description": "Path to adverse-events CSV. Must contain USUBJID and AESEV."
+        },
+        "test": {
+          "type": "string",
+          "enum": ["chi-square", "ordinal", "prepare"],
+          "description": "Statistical test to run. 'prepare' returns only the merged cohort stats."
+        },
+        "group_col": {
+          "type": "string",
+          "description": "Column in DM identifying treatment/exposure group. Default: TRTGRP."
+        },
+        "subgroup": {
+          "type": ["string", "null"],
+          "description": "Optional filter expression 'col=value' (e.g. 'expect_interact=Yes')."
+        },
+        "covariates": {
+          "type": ["string", "null"],
+          "description": "Comma-separated covariate column names for ordinal regression (e.g. 'patients_seen_cat,expect_interact_cat')."
+        }
+      },
+      "required": ["dm_file", "ae_file", "test"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_subjects": {"type": "integer"},
+                "group_col": {"type": "string"},
+                "subgroup": {"type": "string"},
+                "aesev_distribution": {"type": "object"},
+                "test": {"type": "string"},
+                "test_statistic": {"type": "number"},
+                "p_value": {"type": "number"},
+                "dof": {"type": "integer"},
+                "contingency_table": {"type": "object"},
+                "or": {"type": ["number", "null"]},
+                "ci_lower": {"type": ["number", "null"]},
+                "ci_upper": {"type": ["number", "null"]},
+                "odds_ratios": {"type": "object"},
+                "covariates": {"type": "array", "items": {"type": "string"}},
+                "model_summary": {"type": "string"}
+              },
+              "required": ["n_subjects", "group_col", "aesev_distribution"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "dm_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-fbe0e950-76f2-4eb7-a216-a2d377970922/TASK008_BCG-CORONA_DM.csv",
+        "ae_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-fbe0e950-76f2-4eb7-a216-a2d377970922/TASK008_BCG-CORONA_AE.csv",
+        "test": "chi-square",
+        "group_col": "TRTGRP"
+      },
+      {
+        "dm_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-fbe0e950-76f2-4eb7-a216-a2d377970922/TASK008_BCG-CORONA_DM.csv",
+        "ae_file": "temp_docs_and_tests/bixbench/bixbench/data/CapsuleFolder-fbe0e950-76f2-4eb7-a216-a2d377970922/TASK008_BCG-CORONA_AE.csv",
+        "test": "prepare",
+        "group_col": "TRTGRP"
+      }
+    ]
+  }
+]

@@ -29,12 +29,19 @@ def load_data(counts_path: str, meta_path: str, group_col: str, exclude_groups: 
     counts = pd.read_csv(counts_path, index_col=0)
     meta = pd.read_csv(meta_path)
 
-    # Try to match columns
+    # Try to match columns: search each meta column for overlap with counts columns
     if meta.index.name is None and len(meta.columns) > 0:
-        # Try first column as sample ID
-        first_col = meta.columns[0]
-        if set(meta[first_col].astype(str)).intersection(set(counts.columns)):
-            meta = meta.set_index(first_col)
+        for col in meta.columns:
+            if set(meta[col].astype(str)).intersection(set(counts.columns)):
+                meta = meta.set_index(col)
+                break
+        else:
+            # No meta column overlaps counts columns — try counts rows (after transpose)
+            counts_t_cols = set(counts.index.astype(str))
+            for col in meta.columns:
+                if set(meta[col].astype(str)).intersection(counts_t_cols):
+                    meta = meta.set_index(col)
+                    break
 
     # Align
     common = counts.columns.intersection(meta.index)
@@ -60,6 +67,8 @@ def per_gene_anova(counts, meta, group_col, groups):
 
     For each gene, compute its mean expression in each group.
     Then run f_oneway across the K groups of N gene-level means.
+
+    Returns dict: {f_statistic, p_value, n_genes, n_samples, groups}.
     """
     # Compute per-gene mean in each group
     group_means = {}
@@ -75,11 +84,21 @@ def per_gene_anova(counts, meta, group_col, groups):
     print(f"Genes: {len(counts)}")
     print(f"F-statistic: {f_stat:.4f}")
     print(f"p-value: {p_val:.6f}")
-    return f_stat, p_val
+    return {
+        "f_statistic": float(f_stat),
+        "p_value": float(p_val),
+        "n_genes": int(len(counts)),
+        "n_samples": int(counts.shape[1]),
+        "groups": [str(g) for g in groups],
+    }
 
 
 def per_gene_fold_change(counts, meta, group_col, group_a, group_b):
-    """Compute per-gene log2 fold change between two groups, then median."""
+    """Compute per-gene log2 fold change between two groups, then median.
+
+    Returns dict: {median_log2fc, mean_log2fc, n_genes, group_a, group_b,
+    n_samples_a, n_samples_b, n_abs_fc_gt_1}.
+    """
     samples_a = meta[meta[group_col] == group_a].index
     samples_b = meta[meta[group_col] == group_b].index
 
@@ -92,14 +111,24 @@ def per_gene_fold_change(counts, meta, group_col, group_a, group_b):
 
     median_fc = np.median(log2fc)
     mean_fc = np.mean(log2fc)
+    n_big = int((np.abs(log2fc) > 1).sum())
 
     print(f"Group A ({group_a}): {len(samples_a)} samples")
     print(f"Group B ({group_b}): {len(samples_b)} samples")
     print(f"Genes: {len(log2fc)}")
     print(f"Median log2FC: {median_fc:.4f}")
     print(f"Mean log2FC: {mean_fc:.4f}")
-    print(f"Genes with |log2FC| > 1: {(np.abs(log2fc) > 1).sum()}")
-    return median_fc
+    print(f"Genes with |log2FC| > 1: {n_big}")
+    return {
+        "median_log2fc": float(median_fc),
+        "mean_log2fc": float(mean_fc),
+        "n_genes": int(len(log2fc)),
+        "group_a": str(group_a),
+        "group_b": str(group_b),
+        "n_samples_a": int(len(samples_a)),
+        "n_samples_b": int(len(samples_b)),
+        "n_abs_log2fc_gt_1": n_big,
+    }
 
 
 def main():
