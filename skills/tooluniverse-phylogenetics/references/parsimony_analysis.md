@@ -331,7 +331,7 @@ print(f"Median ratio: {paired['median_ratio']:.4f}")
 
 ## Complete Workflow Examples
 
-### Example 1: DVMC Comparison (BixBench bix-4)
+### Example 1: DVMC Comparison
 
 ```python
 # Question: "What is the median DVMC for fungi, and the Mann-Whitney U statistic comparing fungi vs animals?"
@@ -366,7 +366,7 @@ print(f"P-value: {p_value:.4e}")
 # Answer: fungi_median (rounded to 4 decimals), u_stat (integer)
 ```
 
-### Example 2: Treeness with Filtering (BixBench bix-25)
+### Example 2: Treeness with Filtering
 
 ```python
 # Question: "What is the median treeness/RCV for alignments with <5% gaps?"
@@ -400,7 +400,7 @@ print(f"Median treeness/RCV: {median_ratio:.4f}")
 # Answer: median_ratio (rounded to 4 decimals)
 ```
 
-### Example 3: Parsimony Sites Comparison (BixBench bix-12)
+### Example 3: Parsimony Sites Comparison
 
 ```python
 # Question: "What is the ratio of minimum PI sites (fungi / animals)?"
@@ -427,7 +427,7 @@ print(f"Ratio: {ratio:.4f}")
 # Answer: ratio (rounded to 4 decimals)
 ```
 
-### Example 4: Percentage Above Threshold (BixBench bix-11)
+### Example 4: Percentage Above Threshold
 
 ```python
 # Question: "What percentage of animal genes have treeness > 0.45?"
@@ -449,7 +449,7 @@ print(f"Percentage: {percentage:.2f}%")
 # Answer: percentage (rounded to 2 decimals if question asks for "XX.XX%")
 ```
 
-### Example 5: Specific Gene Lookup (BixBench bix-35)
+### Example 5: Specific Gene Lookup
 
 ```python
 # Question: "What is the evolutionary rate for gene ENSG00000141510?"

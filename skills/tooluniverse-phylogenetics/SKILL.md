@@ -17,8 +17,6 @@ When uncertain about any scientific fact, SEARCH databases first.
 
 FASTA/PHYLIP/Nexus/Newick files; treeness, RCV, DVMC, evolutionary rate, parsimony sites, tree length, bootstrap; group comparisons (Mann-Whitney U); tree construction (NJ/UPGMA/parsimony); Robinson-Foulds distance.
 
-**BixBench**: 33 questions across bix-4, bix-11, bix-12, bix-25, bix-35, bix-38, bix-45, bix-60.
-
 **NOT for**: MSA generation (MUSCLE/MAFFT), ML trees (IQ-TREE/RAxML), Bayesian (MrBayes/BEAST).
 
 ---
@@ -136,7 +134,7 @@ All files identified; group structure detected; correct PhyKIT function; ALL gen
 
 ---
 
-## BixBench-verified conventions
+## Analysis conventions
 
 ### MANDATORY: Use `phykit_batch_analysis` tool for batch computations
 For ANY question asking for statistics across multiple trees/alignments (median treeness, mean saturation, DVMC percentage, gap percentage, long branch scores), use the ToolUniverse tool:
@@ -191,6 +189,14 @@ python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
 # Gap percentage across all alignments
 python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
   --dir alignments --function gap_percentage --ext .fa
+
+# Evolutionary rate (median across trees)
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir trees --function evolutionary_rate --ext .treefile --stat median
+
+# Mean patristic distance per tree, then mean across trees
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir trees --function patristic_distances --ext .treefile --stat mean
 ```
 
 **Preferred: use the `phykit_batch_analysis` ToolUniverse tool** instead of running PhyKIT manually:

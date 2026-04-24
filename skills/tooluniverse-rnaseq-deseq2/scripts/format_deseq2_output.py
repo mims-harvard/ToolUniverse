@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Output formatters for DESeq2 results to match BixBench expected formats."""
+"""Output formatters for DESeq2 results."""
 
 import pandas as pd
 import numpy as np

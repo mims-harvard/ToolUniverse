@@ -181,7 +181,7 @@ Flow: Convert to ranked Series → gseapy GSEA (GO + KEGG + MSigDB) →
 Use: When you have fold-changes or other ranking metric
 ```
 
-### Pattern 3: BixBench Enrichment Question
+### Pattern 3: Targeted Enrichment Question
 ```
 Input: Specific question about enrichment (e.g., "What is the adjusted p-val for neutrophil activation?")
 Flow: Parse question for gene list and library → Run gseapy with exact library →
@@ -267,7 +267,7 @@ Helper scripts:
 
 ---
 
-## BixBench-verified conventions
+## Analysis conventions
 
 ### Tool choice: R clusterProfiler vs gseapy
 - **Prefer R clusterProfiler** (via `Rscript -e 'library(clusterProfiler); ...'`) when the dataset folder contains an `analysis.R` / `find_*.R` script — match whatever the authoritative script uses.

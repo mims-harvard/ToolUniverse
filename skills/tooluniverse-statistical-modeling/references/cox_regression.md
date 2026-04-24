@@ -431,7 +431,7 @@ print(f"  Test statistic: {lr.test_statistic:.4f}")
 print(f"  p-value: {lr.p_value:.6f}")
 ```
 
-## BixBench Question Pattern
+## Common Question Pattern
 
 **Typical question**: "What is the hazard ratio for treatment in a Cox proportional hazards model?"
 

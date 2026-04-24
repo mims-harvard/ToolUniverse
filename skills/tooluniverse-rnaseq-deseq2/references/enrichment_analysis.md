@@ -356,7 +356,7 @@ if 'immune response' in question.lower():
         print(f"\nImmune response adjusted p-value: {answer}")
 ```
 
-## Common BixBench Enrichment Patterns
+## Common Enrichment Patterns
 
 ### Pattern 1: Extract adjusted p-value for specific pathway
 

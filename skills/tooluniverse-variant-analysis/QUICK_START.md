@@ -173,7 +173,7 @@ annotations = batch_annotate_variants(tu, vcf_data.variants[:50])
 | `chromosomes` | list | No | Include only: "1", "7", "17", etc. |
 | `sample` | string | No | Sample name for multi-sample VCFs |
 
-### BixBench Question Functions
+### Common Question Functions
 
 | Function | Parameters | Returns |
 |----------|-----------|---------|

@@ -205,9 +205,9 @@ Common issues and solutions for microscopy image analysis.
 
 ---
 
-### Problem: Can't Reproduce BixBench Answer
+### Problem: Can't Reproduce Expected Answer
 
-**Symptoms**: Your answer differs from expected BixBench answer
+**Symptoms**: Your answer differs from the expected answer
 
 **Check these**:
 1. **Data loading** - Correct file? All rows loaded?

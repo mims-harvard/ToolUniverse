@@ -103,12 +103,11 @@ if target_features:
 | **Use case** | Global effect size | Gene/biomarker discovery |
 | **Common in** | Rarely used | **Genomics, proteomics, metabolomics** |
 
-## Real-World Example (BixBench bix-36-q1)
+## Real-World Example
 
 - Question: "What is the F-statistic comparing miRNA expression across immune cell types?"
-- Expected: 0.76-0.78
-- Method A (aggregate): 153.836 -- WRONG
-- Method B (per-miRNA): Found 2 miRNAs with F in [0.76, 0.78] -- CORRECT
+- Method A (aggregate ANOVA): Very large F-statistic (e.g., 153.8) -- WRONG
+- Method B (per-miRNA ANOVA): Individual F-statistics per gene -- CORRECT
 
 **Default assumption for gene expression data**: Use **Method B (per-feature)**.
 

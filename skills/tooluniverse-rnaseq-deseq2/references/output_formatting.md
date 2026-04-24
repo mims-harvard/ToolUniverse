@@ -116,7 +116,7 @@ def to_markdown_table(df):
     return "\n".join(lines)
 ```
 
-## Common BixBench Formats
+## Common Answer Formats
 
 ### Count (integer)
 

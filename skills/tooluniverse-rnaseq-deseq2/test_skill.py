@@ -905,7 +905,7 @@ def test_14_mirna_de():
         record("miRNA multiple testing", False, str(e))
 
     try:
-        # Ratio calculation (BixBench bix-30-q3 pattern)
+        # Ratio calculation (Bonferroni : BH correction ratio)
         ratio_str = f"{n_bonf}:{n_by}"
         record("correction ratio format", ':' in ratio_str, f"Ratio: {ratio_str}")
     except Exception as e:

@@ -639,11 +639,11 @@ def compare_regression_models(models_dict):
 
 ## Answer Extraction Patterns
 
-### BixBench-specific formatting
+### Answer formatting
 
 ```python
 def format_answer(value, question_type):
-    """Format answer according to BixBench expectations.
+    """Format answer for reporting.
 
     Args:
         value: Numeric value to format
@@ -678,7 +678,7 @@ def format_answer(value, question_type):
 
 ---
 
-## Complete Example: bix-54 Workflow
+## Complete Example: Spline Regression Workflow
 
 ```python
 import pandas as pd

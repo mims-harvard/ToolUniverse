@@ -109,7 +109,7 @@ Use ToolUniverse for ID conversion and gene context only. See [output_formatting
 | 4 | Set ops | `degs_A - degs_B` for unique DEGs |
 | 5 | Dispersion | `(dds.var['genewise_dispersions'] < thr).sum()` |
 
-See [bixbench_examples.md](references/bixbench_examples.md) for all 10 patterns with examples.
+See [worked_examples.md](references/worked_examples.md) for all 10 patterns with examples.
 
 ## Error Quick Reference
 
@@ -168,7 +168,7 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 - [dispersion_analysis.md](references/dispersion_analysis.md) - Dispersion diagnostics
 - [enrichment_analysis.md](references/enrichment_analysis.md) - GO/KEGG/Reactome workflows
 - [output_formatting.md](references/output_formatting.md) - Format answers correctly
-- [bixbench_examples.md](references/bixbench_examples.md) - All 10 question patterns
+- [worked_examples.md](references/worked_examples.md) - All 10 question patterns
 - [troubleshooting.md](references/troubleshooting.md) - Common issues and debugging
 - [r_clusterprofiler_guide.md](references/r_clusterprofiler_guide.md) - R clusterProfiler via rpy2
 
@@ -177,7 +177,7 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 - [format_deseq2_output.py](scripts/format_deseq2_output.py) - Output formatters
 - [load_count_matrix.py](scripts/load_count_matrix.py) - Data loading utilities
 
-## BixBench-verified conventions
+## Analysis conventions
 
 ### MANDATORY: Use R DESeq2 (not pydeseq2) for all DE analysis
 For ANY question about differential expression counts, dispersion, or gene set overlaps, use R DESeq2 via the ToolUniverse tool or Rscript. Do NOT use pydeseq2 — it gives different results.

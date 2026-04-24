@@ -5,7 +5,7 @@ description: Production-ready microscopy image analysis and quantitative imaging
 
 # Microscopy Image Analysis and Quantitative Imaging Data
 
-Production-ready skill for analyzing microscopy-derived measurement data using pandas, numpy, scipy, statsmodels, and scikit-image. Designed for BixBench imaging questions covering colony morphometry, cell counting, fluorescence quantification, regression modeling, and statistical comparisons.
+Production-ready skill for analyzing microscopy-derived measurement data using pandas, numpy, scipy, statsmodels, and scikit-image. Designed for imaging questions covering colony morphometry, cell counting, fluorescence quantification, regression modeling, and statistical comparisons.
 
 **KEY PRINCIPLES**:
 1. **Data-first approach** - Load and inspect all CSV/TSV measurement data before analysis
@@ -35,7 +35,7 @@ Apply when users:
 - Need fluorescence intensity quantification or colocalization analysis
 - Ask about image segmentation results (counts, areas, shapes)
 
-**BixBench Coverage**: 21 questions across 4 projects (bix-18, bix-19, bix-41, bix-54)
+**Coverage**: 21 questions across 4 analysis categories
 
 **NOT for** (use other skills instead):
 - Raw image segmentation from scratch -> requires cellpose/StarDist pipeline
@@ -203,7 +203,7 @@ def relative_proportion(df, group_col, measure_col, numerator_group, denominator
     return (num_mean / den_mean) * 100
 ```
 
-### 1.3 Colony Morphometry (bix-18 pattern)
+### 1.3 Colony Morphometry
 
 ```python
 def colony_morphometry_analysis(df, genotype_col='Genotype', area_col='Area', circ_col='Circularity'):
@@ -397,7 +397,7 @@ def dunnetts_test(df, group_col, value_col, control_group, alpha=0.05):
         # For Dunnett's test, use two-sided p-value from t-distribution
         # Then apply Bonferroni-like correction (conservative approximation)
         # More accurate: use multivariate t (Dunnett's distribution)
-        # For practical BixBench matching, use individual t-test p-values
+        # For practical matching, use individual t-test p-values
         # with Dunnett correction
         p_value = 2 * stats.t.sf(abs(t_stat), df_within)
 
@@ -758,7 +758,7 @@ def compare_regression_models(models_dict):
 
 ## Phase 5: Image Processing (For Raw Image Input)
 
-**NOTE**: Most BixBench imaging questions work with pre-quantified data (CSV from ImageJ).
+**NOTE**: Most imaging questions work with pre-quantified data (CSV from ImageJ).
 This phase is for when raw images are provided.
 
 ### 5.1 Image Loading
@@ -985,7 +985,7 @@ def manders_coefficients(channel1, channel2, threshold1=0, threshold2=0):
 
 ## Phase 7: Answer Extraction
 
-### 7.1 BixBench Answer Patterns for Imaging Questions
+### 7.1 Common Answer Patterns for Imaging Questions
 
 | Question Pattern | Extraction Method |
 |-----------------|-------------------|
@@ -1024,27 +1024,27 @@ def manders_coefficients(channel1, channel2, threshold1=0, threshold2=0):
 
 ---
 
-## BixBench Question Coverage
+## Question Coverage
 
-### bix-18: Colony Morphometry (5 questions)
+### Colony Morphometry (5 questions)
 - **Data**: Swarm_1.csv - 15 rows, 5 genotypes (Wildtype, rhlR-, lasR, rhlI, lasI)
 - **Measures**: Area, Circularity, Round
 - **Questions**: Mean circularity of max-area genotype, wildtype mean area, percent reduction, SEM, relative proportion
 - **Methods**: groupby -> mean/SEM/std, percentage calculations
 
-### bix-19: NeuN Cell Counting Statistics (5 questions)
+### NeuN Cell Counting Statistics (5 questions)
 - **Data**: NeuN_quantification.csv - 16 rows, KD vs CTRL hemisphere, Male/Female
 - **Measures**: NeuN counts per sample
 - **Questions**: Cohen's d, Shapiro-Wilk, two-way ANOVA interaction, power analysis, sample size
 - **Methods**: scipy.stats.shapiro, Cohen's d with pooled SD, statsmodels ANOVA, TTestIndPower
 
-### bix-41: Co-culture Dunnett's Analysis (4 questions)
+### Co-culture Dunnett's Analysis (4 questions)
 - **Data**: Swarm_2.csv - 45 rows, multiple strain ratios (287_98 at various ratios)
 - **Measures**: Area, Circularity
 - **Questions**: Dunnett's equivalent count, raw difference, different count, most similar ratio
 - **Methods**: scipy.stats.dunnett, Euclidean similarity matching
 
-### bix-54: Regression Modeling (7 questions)
+### Regression Modeling (7 questions)
 - **Data**: Swarm_2.csv - 45 rows, co-culture frequency ratios
 - **Measures**: Area vs Frequency_rhlI
 - **Questions**: Peak frequency, R-squared, CI bounds, F-statistic p-value, optimal ratio, max area
@@ -1078,12 +1078,12 @@ def manders_coefficients(channel1, channel2, threshold1=0, threshold2=0):
 ## Important Implementation Notes
 
 ### Matching R's Dunnett's Test Output
-The original analyses (bix-41) use R's `multcomp::glht()` with `mcp(Strain_Ratio = "Dunnett")`.
+The original analyses use R's `multcomp::glht()` with `mcp(Strain_Ratio = "Dunnett")`.
 Python's `scipy.stats.dunnett` (available since scipy 1.10) uses the same Dunnett distribution.
 **CRITICAL**: The group labeling must match. In the R analysis, groups are labeled as `StrainNumber_Ratio` (e.g., `287_98_5:1`). Ensure the Python implementation uses the same grouping.
 
 ### Matching R's Natural Spline Output
-The original analyses (bix-54) use R's `ns(x, df=4)` from the `splines` package.
+The original analyses use R's `ns(x, df=4)` from the `splines` package.
 Python's `patsy.cr()` (natural cubic regression spline) is the closest match.
 **CRITICAL**: patsy's `cr(x, df=4)` does NOT place knots at the same locations as R's `ns(x, df=4)` by default. R places `df-1` internal knots at equally-spaced quantiles (25th, 50th, 75th for df=4). You MUST use explicit knots:
 ```python
@@ -1093,11 +1093,11 @@ formula = f"cr(x_col, knots=[{knot_str}]) - 1"
 ```
 This gives R-squared = 0.8062 matching R exactly (vs 0.7431 with default cr(df=4)).
 
-### Data Preparation for bix-54
-The bix-54 analysis filters out pure strains (StrainNumber "1" and "98") and uses only the co-culture data (StrainNumber "287_98"). The Ratio column is split into frequency: `Frequency_rhlI = rhlI / (rhlI + lasI)`.
+### Data Preparation for Regression
+The regression analysis filters out pure strains (StrainNumber "1" and "98") and uses only the co-culture data (StrainNumber "287_98"). The Ratio column is split into frequency: `Frequency_rhlI = rhlI / (rhlI + lasI)`.
 
-### Creating Group Labels for bix-41
-For Dunnett's test in bix-41, each row needs a combined `Strain_Ratio` label (e.g., "1_1:0" for Strain 1 at ratio 1:0). The control group is "1_1:0" (wildtype/Strain 1).
+### Creating Group Labels for Dunnett's Test
+For Dunnett's test, each row needs a combined `Strain_Ratio` label (e.g., "1_1:0" for Strain 1 at ratio 1:0). The control group is "1_1:0" (wildtype/Strain 1).
 
 ---
 
@@ -1117,4 +1117,4 @@ Before returning your answer, verify:
 - [ ] Double-checked direction of comparisons (reduction vs increase, KD vs CTRL)
 - [ ] For Cohen's d: used pandas .std() (ddof=1) for pooled SD
 - [ ] For ANOVA: used Type II sum of squares
-- [ ] Verified answer falls within expected range from BixBench distractors
+- [ ] Verified answer falls within expected range

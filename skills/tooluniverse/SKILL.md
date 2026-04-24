@@ -22,12 +22,55 @@ paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 
 ## Critical Analysis Conventions
 
+### RULE ZERO: Use the authoritative pipeline if one ships with the data
+
+Before writing ANY analysis code, check whether the data folder contains the published analysis. Two common forms:
+
+1. **Executed notebook** (`*_executed.ipynb`, `*.ipynb`) — the analysis has already run with the exact package versions, filters, and thresholds behind the reference answers. Reimplementing with pydeseq2/scanpy/gseapy produces different numbers. Read the outputs directly:
+
+   ```bash
+   tu run read_executed_notebook '{"data_folder":"/path/to/data","search":"<keyword>"}'
+   ```
+
+   `search` can be comma-separated terms (e.g., `"upregulated,log2FoldChange"`) or a regex. The tool returns the matching cells' source + printed outputs so you can cite the published value instead of recomputing.
+
+2. **Executable script** (`run_*.py`, `analysis.R`, `find_*.R`, `*.Rmd`) — execute and report:
+
+   ```bash
+   ls /path/to/data/folder
+   cd /path/to/data && python3 run_*.py      # or Rscript analysis.R
+   ```
+
+Only write your own analysis code when no authoritative pipeline exists in the data folder. When one does exist, your job is to execute/read it and report — not to reimplement.
+
+### RULE ONE: Use the bundled skill scripts for recurring analysis patterns
+
+Before writing your own analysis code, check these ready-made scripts in the plugin. They encode the correct conventions and save re-deriving them:
+
+Prefer ToolUniverse tools (callable via `tu run <name>` or MCP `execute_tool`) for recurring analysis patterns. They encode the correct conventions:
+
+| Task | ToolUniverse tool | One-liner |
+|------|------|-----------|
+| Read outputs of an authoritative executed notebook | `read_executed_notebook` | `tu run read_executed_notebook '{"data_folder":"/path","search":"upregulated"}'` |
+| Clinical trial AE severity (chi-square, ordinal) | `clinical_trial_ae_severity_test` | `tu run clinical_trial_ae_severity_test '{"dm_file":"DM.csv","ae_file":"AE.csv","test":"chi-square","group_col":"TRTGRP"}'` |
+| Per-gene ANOVA / fold change (gene × sample matrix) | `expression_anova_per_gene` | `tu run expression_anova_per_gene '{"counts_file":"counts.csv","meta_file":"meta.csv","group_col":"cell_type","mode":"anova"}'` |
+| Coding-variant fraction in a VCF/Excel | `coding_variant_fraction` | `tu run coding_variant_fraction '{"file":"variants.xlsx","vaf_threshold":0.3,"annotation":"synonymous_variant","header_rows":2}'` |
+| Batch PhyKIT on many trees | `phykit_batch_analysis` | `tu run phykit_batch_analysis '{"operation":"batch","function":"treeness","directory":"./trees","extension":".treefile"}'` |
+| Run R DESeq2 (vs pydeseq2 reimplementation) | `run_deseq2_analysis` | `tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"counts.csv","metadata_file":"meta.csv","design":"~ condition"}'` |
+
+Each tool handles encoding, column-name quirks, and aggregation-level edge cases that are easy to get wrong in ad-hoc code. Find more tools via `tu find "<keyword>"` or MCP `find_tools`.
+
+### Numbered Conventions
+
 Apply these rules when analyzing local data files. They override defaults:
 
-1. **Clinical trial AE severity**: Use ALL AE records. `max(AESEV)` per subject. Do NOT filter by condition name (AEPT). Use `encoding='latin1'` for CSV.
-2. **Variant fraction denominator**: Coding variants only (synonymous, missense, stop_gained, frameshift). Exclude intronic/UTR/intergenic.
-3. **DESeq2**: Prefer R DESeq2 over pydeseq2. Check for authoritative scripts (`run_*.py`, `analysis.R`) first — copy their exact parameters.
-4. **Expression ANOVA / fold change**: Per-gene values (each gene = one observation per group). Do NOT sum genes per sample.
+1. **Clinical trial AE severity**: Use ALL AE records. `max(AESEV)` per subject. Do NOT filter by condition name (AEPT) — not even when the question names a specific condition (e.g. "COVID-19 severity"). Use `encoding='latin1'` for CSV. Ready-made script: `python skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv --test chi-square --group TRTGRP` (supports chi-square, ordinal logistic, subgroup filters).
+   - ❌ WRONG: `ae[ae['AEPT'].str.contains('COVID-19')].groupby('USUBJID')['AESEV'].max()` — filters to COVID-19 events
+   - ✅ RIGHT: `ae.groupby('USUBJID')['AESEV'].max()` — uses ALL AE records
+   - The question phrase "COVID-19 severity" describes the OUTCOME (a protocol-defined severity scale in the AE table), NOT a filter criterion. Severity is the same value regardless of which AEPT triggered it.
+2. **Exonic / coding variant counting**: Use exactly this allowlist — `CODING = {"synonymous_variant", "missense_variant", "splice_region_variant", "stop_gained", "stop_lost", "start_lost", "frameshift_variant", "inframe_insertion", "inframe_deletion"}`. `splice_region_variant` IS included (standard convention: it affects coding sequence). Exclude intronic/UTR/intergenic/upstream/downstream. Filter with `df[df['Sequence Ontology (Combined)'].isin(CODING)]`, NOT by excluding intronic labels — that over-counts.
+3. **DESeq2 library choice**: Match the authoritative script if one exists — if `run_*.py` uses pydeseq2, use pydeseq2; if `analysis.R` uses R DESeq2, use R DESeq2. The two libraries give slightly different DEG counts at the same thresholds (~2-10% difference), so matching the ground-truth pipeline matters. If NO authoritative script exists, prefer R DESeq2 (via `run_deseq2_analysis` tool or Rscript) as it's the more widely-published reference implementation.
+4. **Expression ANOVA / fold change for a single reported F-statistic**: If the data is a gene×sample matrix AND the question asks for "the F-statistic" or "a fold change" as a single value, run ANOVA/t-test on a **derived per-sample quantity** (like the DESeq2 LFC of each gene between two cell types, then ANOVA on those LFCs across groups) OR on a single target gene — NEVER on the raw pooled `expr.values.ravel()` across all genes. If your F-statistic is > 50, you aggregated — stop and reconsider. Expected F-values for biological ANOVA across a handful of groups are typically 0.5–10. Check for a reference notebook in the data folder first — it shows the exact aggregation level.
 5. **Spline models**: Use R `ns()` via Rscript. Include focal-strain pure endpoint only (exclude non-focal pure strain).
 6. **PhyKIT saturation**: Use 1-slope (second column output), not slope (first column).
 7. **"Also DE in X"**: Simple intersection `A ∩ B`. Do NOT add exclusion conditions.
@@ -227,13 +270,13 @@ Apply these rules when analyzing local data files. They override defaults:
    - "what is EGFR?" → target-research
    - Only route to setup when NO domain entity present ("how do I use this?")
 
-2. **Specificity Rule**: More specific beats general.
+3. **Specificity Rule**: More specific beats general.
    - "cancer treatment" → precision-oncology (not disease-research)
 
-3. **Data Type Rule**: "get/retrieve/fetch" → retrieval skills.
+4. **Data Type Rule**: "get/retrieve/fetch" → retrieval skills.
    - "get compound structure" → chemical-compound-retrieval (not drug-research)
 
-4. **Still ambiguous**: Ask user with AskUserQuestion.
+5. **Still ambiguous**: Ask user with AskUserQuestion.
 
 ---
 

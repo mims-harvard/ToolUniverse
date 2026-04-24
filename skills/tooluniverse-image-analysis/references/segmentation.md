@@ -417,14 +417,12 @@ def batch_analyze_swarming(image_info_df, pixel_size_um=1.0):
     return combined
 ```
 
-### Colony Morphometry Statistics (BixBench Pattern)
+### Colony Morphometry Statistics
 
 ```python
 def colony_morphometry_analysis(df, genotype_col='Genotype',
                                area_col='Area', circ_col='Circularity'):
     """Full colony morphometry analysis for swarming assays.
-
-    Reproduces BixBench bix-18 analysis pattern.
 
     Args:
         df: DataFrame with colony measurements
@@ -473,7 +471,7 @@ def colony_morphometry_analysis(df, genotype_col='Genotype',
     }
 
 
-# Example usage (BixBench bix-18 pattern)
+# Example usage (colony morphometry)
 df = pd.read_csv("Swarm_1.csv")
 result = colony_morphometry_analysis(df, 'Genotype', 'Area', 'Circularity')
 print(f"Genotype with largest area: {result['max_area_genotype']}")

@@ -498,7 +498,7 @@ dvmc = phykit_dvmc("iqtree_output.treefile")
 
 ---
 
-## BixBench Patterns
+## Common Patterns
 
 ### Pattern: Median Treeness
 

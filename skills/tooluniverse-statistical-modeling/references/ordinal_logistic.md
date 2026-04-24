@@ -315,7 +315,7 @@ for i, var in enumerate(X.columns):
     print()
 ```
 
-## BixBench Question Pattern
+## Common Question Pattern
 
 **Typical question**: "What is the odds ratio of COVID-19 severity associated with BCG vaccination in ordinal logistic regression?"
 

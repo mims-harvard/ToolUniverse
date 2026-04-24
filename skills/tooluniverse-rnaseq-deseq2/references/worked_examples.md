@@ -1,6 +1,6 @@
-# BixBench Question Patterns
+# DESeq2 Question Patterns
 
-All 10 common question patterns with examples from BixBench validation.
+All 10 common question patterns with worked examples.
 
 ## Pattern 1: Basic DEG Count
 

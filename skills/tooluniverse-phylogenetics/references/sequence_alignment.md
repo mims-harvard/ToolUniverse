@@ -337,7 +337,7 @@ print(f"Genes passing filters: {len(valid_genes)}/{len(gene_files)}")
 
 ---
 
-## BixBench Patterns
+## Common Patterns
 
 ### Pattern: Median Parsimony Sites
 

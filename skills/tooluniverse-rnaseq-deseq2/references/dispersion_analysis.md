@@ -57,7 +57,7 @@ def get_dispersion_data(dds):
 def dispersion_diagnostics(dds, threshold=1e-5):
     """Analyze dispersion estimates for diagnostics.
 
-    Common BixBench question: "How many genes have a dispersion estimate
+    Common question: "How many genes have a dispersion estimate
     below 1e-05 prior to dispersion fitting?"
 
     Answer: Count genewise_dispersions < threshold
@@ -311,7 +311,7 @@ conv = check_dispersion_convergence(dds)
 print(f"\nDispersion fitting convergence: {'OK' if conv['converged'] else 'FAILED'}")
 ```
 
-## BixBench Pattern Examples
+## Worked Examples
 
 ### Pattern: Count below threshold prior to fitting
 

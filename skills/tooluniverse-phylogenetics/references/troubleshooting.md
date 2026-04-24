@@ -470,11 +470,11 @@ results = batch_compute_with_progress(gene_files, phykit_treeness)
 
 ---
 
-## BixBench-Specific Issues
+## Common Issues
 
 ### Answer Format Mismatch
 
-**Symptoms**: Answer rejected by BixBench
+**Symptoms**: Answer doesn't match expected format
 
 **Causes**:
 1. Wrong type (float vs int)
@@ -484,7 +484,7 @@ results = batch_compute_with_progress(gene_files, phykit_treeness)
 **Solutions**:
 
 ```python
-# Common BixBench answer formats
+# Common answer formats
 
 # Integer (U statistic, counts)
 answer = int(round(value))

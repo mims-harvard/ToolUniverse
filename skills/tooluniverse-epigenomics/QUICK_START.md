@@ -2,7 +2,7 @@
 
 ## Overview
 
-This skill processes epigenomics data files (methylation arrays, ChIP-seq peaks, ATAC-seq data) and answers quantitative questions using pure Python (pandas, scipy, statsmodels) plus ToolUniverse annotation tools. Designed for BixBench-style questions about CpG sites, differential methylation, chromatin accessibility, and multi-omics integration.
+This skill processes epigenomics data files (methylation arrays, ChIP-seq peaks, ATAC-seq data) and answers quantitative questions using pure Python (pandas, scipy, statsmodels) plus ToolUniverse annotation tools. Designed for questions about CpG sites, differential methylation, chromatin accessibility, and multi-omics integration.
 
 ---
 

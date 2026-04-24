@@ -2,7 +2,7 @@
 
 ## Example 1: Ordinal Logistic Regression - BCG Vaccination and COVID-19 Severity
 
-**BixBench Pattern**: "What is the odds ratio of COVID-19 severity associated with BCG vaccination in ordinal logistic regression?"
+**Pattern**: "What is the odds ratio of COVID-19 severity associated with BCG vaccination in ordinal logistic regression?"
 
 ### Setup
 
@@ -56,7 +56,7 @@ print(f"P-value: {fit.pvalues['bcg_vaccinated']:.6f}")
 
 ## Example 2: Binary Logistic Regression - Treatment Response
 
-**BixBench Pattern**: "What is the odds ratio of treatment response associated with biomarker positivity?"
+**Pattern**: "What is the odds ratio of treatment response associated with biomarker positivity?"
 
 ```python
 import statsmodels.formula.api as smf
@@ -82,7 +82,7 @@ print(results.round(4))
 
 ## Example 3: Percentage Reduction in Odds Ratio (Confounding Assessment)
 
-**BixBench Pattern**: "What is the percentage reduction in odds ratio for higher severity after adjusting for confounders?"
+**Pattern**: "What is the percentage reduction in odds ratio for higher severity after adjusting for confounders?"
 
 ```python
 import statsmodels.formula.api as smf
@@ -110,7 +110,7 @@ print(f"suggesting {'substantial' if abs(pct_reduction) > 10 else 'minimal'} con
 
 ## Example 4: Interaction Effect in Ordered Logit
 
-**BixBench Pattern**: "What is the odds ratio associated with patient interaction using ordered logit model?"
+**Pattern**: "What is the odds ratio associated with patient interaction using ordered logit model?"
 
 ```python
 import pandas as pd
@@ -142,7 +142,7 @@ print(f"P-value: {fit.pvalues['treatment_x_comorbidity']:.6f}")
 
 ## Example 5: Cox Proportional Hazards Survival Analysis
 
-**BixBench Pattern**: "What is the hazard ratio for drug treatment in a Cox regression model?"
+**Pattern**: "What is the hazard ratio for drug treatment in a Cox regression model?"
 
 ```python
 import pandas as pd
@@ -177,7 +177,7 @@ cph.check_assumptions(df[['time', 'event', 'treatment', 'age', 'stage']],
 
 ## Example 6: Kaplan-Meier with Group Comparison
 
-**BixBench Pattern**: "What is the median survival time for treatment vs control group?"
+**Pattern**: "What is the median survival time for treatment vs control group?"
 
 ```python
 import pandas as pd
@@ -216,7 +216,7 @@ print(f"\nLog-rank test: chi2={lr.test_statistic:.4f}, p={lr.p_value:.6f}")
 
 ## Example 7: Linear Mixed-Effects Model
 
-**BixBench Pattern**: "What is the treatment effect in a mixed-effects model with random intercepts per site?"
+**Pattern**: "What is the treatment effect in a mixed-effects model with random intercepts per site?"
 
 ```python
 import statsmodels.formula.api as smf
@@ -244,9 +244,9 @@ print(f"ICC: {icc:.4f}")
 
 ---
 
-## Example 8: Complete Analysis Pipeline (BixBench Style)
+## Example 8: Complete Analysis Pipeline
 
-**BixBench Pattern**: Full statistical analysis from data loading to reporting.
+**Pattern**: Full statistical analysis from data loading to reporting.
 
 ```python
 import pandas as pd

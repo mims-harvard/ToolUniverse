@@ -98,7 +98,7 @@ result = hierarchical_clustering(expr_df, n_clusters=3, method='ward')
 
 ## Bootstrap Consensus Clustering
 
-Robust clustering with logistic regression prediction (BixBench pattern).
+Robust clustering with logistic regression prediction.
 
 ```python
 from sklearn.linear_model import LogisticRegression
@@ -214,7 +214,7 @@ print(f"Answer: {result['consistent_count']} samples consistently classified")
 
 ## PCA for Clustering
 
-Perform PCA on expression matrix for BixBench questions.
+Perform PCA on expression matrix.
 
 ```python
 from sklearn.decomposition import PCA

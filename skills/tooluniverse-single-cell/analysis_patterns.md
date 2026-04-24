@@ -1,14 +1,12 @@
 # Single-Cell Analysis Patterns
 
-Detailed code patterns for common BixBench analysis types.
+Detailed code patterns for common single-cell analysis types.
 
 ---
 
 ## Pattern 1: Per-Cell-Type Differential Expression
 
 **Question**: "Which immune cell type has the most DEGs after treatment?"
-**BixBench**: bix-33
-
 ```python
 import scanpy as sc
 
@@ -43,8 +41,6 @@ print(f"Answer: {top_ct} ({de_results[top_ct]['n_sig']} DEGs)")
 ## Pattern 2: Gene Property vs Expression Correlation
 
 **Question**: "What is the Pearson correlation between gene length and expression in CD4 T cells?"
-**BixBench**: bix-22
-
 ```python
 import scanpy as sc
 import pandas as pd
@@ -77,8 +73,6 @@ for ct in cell_types:
 ## Pattern 3: PCA on Expression Matrix
 
 **Question**: "What percentage of variance is explained by PC1 after log10 transform?"
-**BixBench**: bix-27
-
 ```python
 import pandas as pd
 import numpy as np
@@ -103,8 +97,6 @@ print(f"Top 10 PCs: {sum(pca.explained_variance_ratio_[:10])*100:.2f}%")
 ## Pattern 4: Statistical Comparison Between Cell Types
 
 **Question**: "What is the t-statistic comparing LFCs between CD4/CD8 and other cell types?"
-**BixBench**: bix-31
-
 ```python
 from scipy import stats
 import numpy as np
@@ -129,8 +121,6 @@ print(f"p-value: {p_val:.4e}")
 ## Pattern 5: ANOVA Across Cell Types
 
 **Question**: "What is the F-statistic for miRNA expression across immune cell types?"
-**BixBench**: bix-36
-
 ```python
 import pandas as pd
 from scipy import stats

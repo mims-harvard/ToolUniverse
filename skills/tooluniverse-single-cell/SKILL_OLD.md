@@ -37,8 +37,6 @@ Apply when users:
 - Questions involve immune cell types (CD4, CD8, CD14, CD19, monocytes, etc.)
 - Need hierarchical clustering of expression data with bootstrap consensus
 
-**BixBench Coverage**: 18+ questions across 5 projects (bix-22, bix-27, bix-31, bix-33, bix-36)
-
 **NOT for** (use other skills instead):
 - Bulk RNA-seq DESeq2 analysis only -> Use `tooluniverse-rnaseq-deseq2`
 - Gene enrichment only (no expression data) -> Use `tooluniverse-gene-enrichment`
@@ -252,7 +250,7 @@ def load_metadata(adata, metadata_path, sep=None):
 
 ### 1.4 Load Gene Annotations
 
-Many BixBench questions require gene metadata (gene length, biotype, chromosome).
+Many analysis questions require gene metadata (gene length, biotype, chromosome).
 
 ```python
 def load_gene_annotations(adata, gene_info_path=None, sep=None):
@@ -442,7 +440,7 @@ def normalize_and_scale(adata, target_sum=1e4, log_transform=True,
 def run_pca(adata, n_comps=50, use_highly_variable=True):
     """Run PCA on expression data.
 
-    For BixBench questions about PCA:
+    For questions about PCA:
     - Variance explained: adata.uns['pca']['variance_ratio']
     - PC loadings: adata.varm['PCs']
     - PC coordinates: adata.obsm['X_pca']
@@ -462,9 +460,9 @@ def run_pca(adata, n_comps=50, use_highly_variable=True):
     return adata
 ```
 
-### 3.1b Manual PCA (for BixBench questions requiring specific transforms)
+### 3.1b Manual PCA (for questions requiring specific transforms)
 
-Some BixBench questions specify exact PCA parameters (e.g., log10 with pseudocount).
+Some questions specify exact PCA parameters (e.g., log10 with pseudocount).
 
 ```python
 def manual_pca(expression_df, log_transform='log10', pseudocount=1):
@@ -608,7 +606,7 @@ def hierarchical_clustering(expression_df, n_clusters=3, method='ward',
 
 ### 3.5 Bootstrap Consensus Clustering
 
-For BixBench questions asking about consensus clustering with bootstrap.
+For questions asking about consensus clustering with bootstrap.
 
 ```python
 def bootstrap_consensus_clustering(expression_df, n_clusters=3, n_iterations=50,
@@ -812,7 +810,7 @@ def run_de_scanpy(adata, groupby, groups='all', reference='rest',
 
 ### 5.2 Per-Cell-Type DE Between Conditions
 
-This is the most common pattern in BixBench single-cell questions: comparing conditions within each cell type.
+This is the most common pattern in single-cell analysis: comparing conditions within each cell type.
 
 ```python
 def per_celltype_de(adata, celltype_col, condition_col,
@@ -974,7 +972,7 @@ def pseudobulk_deseq2(adata, celltype_col, condition_col, sample_col,
 
 ### 6.1 Gene-Expression Correlation Analysis
 
-For BixBench questions about correlation between gene properties and expression.
+For questions about correlation between gene properties and expression.
 
 ```python
 def gene_expression_correlation(adata, gene_property_col, expression_values=None,
@@ -2014,7 +2012,7 @@ with open('cell_communication_report.md', 'w') as f:
 Input: h5ad file with cell type annotations + two conditions
 Workflow: Load -> Subset by cell type -> DE per cell type -> Report
 Output: Table of DEGs per cell type, counts, top genes
-Example: bix-33 (immune cell types with most DEGs after treatment)
+Example: immune cell types with most DEGs after treatment
 ```
 
 ### Pattern 2: Gene Property vs Expression Correlation by Cell Type
@@ -2022,7 +2020,7 @@ Example: bix-33 (immune cell types with most DEGs after treatment)
 Input: Expression data + gene annotations (gene length, biotype)
 Workflow: Load -> Filter genes -> Per-cell-type mean expression -> Correlate
 Output: Correlation coefficients and p-values per cell type
-Example: bix-22 (gene length vs expression by immune cell type)
+Example: gene length vs expression by immune cell type
 ```
 
 ### Pattern 3: Cell-Type Comparison Statistics
@@ -2030,7 +2028,7 @@ Example: bix-22 (gene length vs expression by immune cell type)
 Input: DE results per cell type
 Workflow: Run DE -> Extract LFCs per cell type -> t-test/ANOVA between groups
 Output: t-statistic, F-statistic, p-value
-Example: bix-31 (t-test comparing LFCs between CD4/CD8 and other cell types)
+Example: t-test comparing LFCs between CD4/CD8 and other cell types
 ```
 
 ### Pattern 4: Expression Clustering and PCA
@@ -2038,7 +2036,7 @@ Example: bix-31 (t-test comparing LFCs between CD4/CD8 and other cell types)
 Input: Expression matrix (samples x genes)
 Workflow: Transform -> PCA -> Variance explained / Clustering -> Enrichment
 Output: PC variance, cluster assignments, enriched pathways per cluster
-Example: bix-27 (PCA variance explained, bootstrap consensus clustering)
+Example: PCA variance explained, bootstrap consensus clustering
 ```
 
 ### Pattern 5: miRNA / Small RNA Analysis
@@ -2046,7 +2044,7 @@ Example: bix-27 (PCA variance explained, bootstrap consensus clustering)
 Input: miRNA expression matrix + cell type metadata
 Workflow: Load -> Fold changes -> ANOVA/t-test across cell types -> Corrections
 Output: F-statistics, p-values, fold change distributions
-Example: bix-36 (ANOVA comparing miRNA expression across immune cell types)
+Example: ANOVA comparing miRNA expression across immune cell types
 ```
 
 ### Pattern 6: Full scRNA-seq Pipeline
@@ -2113,8 +2111,6 @@ Output: Annotated clusters, marker genes, DEGs
 7. Cell type annotation (marker-based + ToolUniverse databases)
 8. Batch correction (Harmony, ComBat)
 9. **NEW: Cell-cell communication analysis** (ligand-receptor interactions, signaling cascades, OmniPath/CellPhoneDB/CellChatDB integration)
-
-**BixBench Coverage**: 18+ questions across 5 projects (bix-22, bix-27, bix-31, bix-33, bix-36)
 
 **Outputs**: Direct answers to specific questions + comprehensive markdown reports
 

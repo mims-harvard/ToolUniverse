@@ -1,6 +1,6 @@
-# BixBench Question Patterns
+# Statistical Question Patterns
 
-Common BixBench statistical question patterns with solutions.
+Common statistical question patterns with solutions.
 
 ## Pattern 1: Odds Ratio from Binary Logistic Regression
 

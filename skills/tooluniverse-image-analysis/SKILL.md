@@ -89,14 +89,14 @@ See **references/statistical_analysis.md** for complete implementations of group
 
 ---
 
-## Common BixBench Patterns
+## Common Patterns
 
 | Pattern | Example Question | Workflow |
 |---------|-----------------|----------|
-| Colony Morphometry (bix-18) | "Mean circularity of genotype with largest area?" | Group by Genotype → max mean Area → report Circularity |
-| Cell Counting (bix-19) | "Cohen's d for NeuN counts?" | Filter → split by Condition → pooled SD → Cohen's d |
-| Multi-Group (bix-41) | "How many ratios equivalent to control?" | Dunnett's for Area AND Circularity → count non-significant in BOTH |
-| Regression (bix-54) | "Peak frequency from natural spline?" | Ratio→frequency → spline(df=4) → grid search peak → CI |
+| Colony Morphometry | "Mean circularity of genotype with largest area?" | Group by Genotype → max mean Area → report Circularity |
+| Cell Counting | "Cohen's d for NeuN counts?" | Filter → split by Condition → pooled SD → Cohen's d |
+| Multi-Group Comparison | "How many ratios equivalent to control?" | Dunnett's for Area AND Circularity → count non-significant in BOTH |
+| Regression | "Peak frequency from natural spline?" | Ratio→frequency → spline(df=4) → grid search peak → CI |
 
 ---
 

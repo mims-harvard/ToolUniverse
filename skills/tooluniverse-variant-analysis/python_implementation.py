@@ -5,7 +5,7 @@ Variant Analysis and Annotation - Python SDK Implementation
 Production-ready VCF processing, variant annotation, and mutation analysis
 using local bioinformatics libraries + ToolUniverse databases.
 
-Designed to solve BixBench-style variant analysis questions:
+Designed to solve common variant analysis questions:
 - VAF filtering and mutation type classification
 - Variant annotation with consequence, impact, clinical significance
 - Population frequency filtering (gnomAD, dbSNP)
@@ -1726,7 +1726,7 @@ def variant_analysis_pipeline(
 
 
 # ---------------------------------------------------------------------------
-# Convenience functions for BixBench-style questions
+# Convenience functions for common question patterns
 # ---------------------------------------------------------------------------
 
 def answer_vaf_mutation_fraction(

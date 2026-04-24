@@ -24,7 +24,7 @@ Apply when users:
 - Ask about enrichGO, gseapy, clusterProfiler-style analyses
 - Want to compare enrichment across multiple gene lists
 - Need to convert between gene ID types before enrichment
-- Ask specific BixBench-style questions about enrichment p-values, adjusted p-values, top terms
+- Ask specific questions about enrichment p-values, adjusted p-values, top terms
 
 **NOT for** (use other skills instead):
 - Network pharmacology / drug repurposing -> Use `tooluniverse-network-pharmacology`
@@ -997,7 +997,7 @@ Flow:
 5. Compare positive vs negative NES (up- vs down-regulated pathways)
 ```
 
-### Pattern 3: BixBench Enrichment Question
+### Pattern 3: Targeted Enrichment Question
 ```
 Input: Specific question about enrichment (e.g., "What is the adjusted p-val for neutrophil activation?")
 Context: Gene list and specific library/method

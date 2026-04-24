@@ -175,9 +175,9 @@ See `references/troubleshooting.md` for diagnostic code and common issues.
 
 **Goal**: Generate publication-quality summary.
 
-For every result, report: effect size (OR/HR/coefficient), 95% CI, p-value, and model fit statistic. See `bixbench_patterns_summary.md` for common question-answer patterns.
+For every result, report: effect size (OR/HR/coefficient), 95% CI, p-value, and model fit statistic. See `common_patterns_summary.md` for common question-answer patterns.
 
-## Common BixBench Patterns
+## Common Patterns
 
 | Pattern | Question Type | Key Steps |
 |---------|--------------|-----------|
@@ -187,8 +187,8 @@ For every result, report: effect size (OR/HR/coefficient), 95% CI, p-value, and 
 | 4 | Hazard ratio | Cox PH model, exp(coef) |
 | 5 | Multi-feature ANOVA | Per-feature F-stats (not aggregate) |
 
-See `bixbench_patterns_summary.md` for solution code for each pattern.
-See `references/bixbench_patterns.md` for 15+ detailed question patterns.
+See `common_patterns_summary.md` for solution code for each pattern.
+See `references/common_patterns.md` for 15+ detailed question patterns.
 
 ## Statsmodels vs Scikit-learn
 
@@ -200,7 +200,7 @@ See `references/bixbench_patterns.md` for 15+ detailed question patterns.
 | **Regularization** (LASSO, Ridge) | **scikit-learn** | Better optimization |
 | **Survival analysis** | **lifelines** | Specialized library |
 
-**General rule**: Use statsmodels for BixBench questions (they ask for p-values, ORs, HRs).
+**General rule**: Use statsmodels for statistical inference questions (p-values, ORs, HRs).
 
 ## Python Package Requirements
 
@@ -326,14 +326,14 @@ tooluniverse-statistical-modeling/
 +-- EXAMPLES.md                       # Legacy examples
 +-- TOOLS_REFERENCE.md                # ToolUniverse tool catalog
 +-- anova_and_tests.md                # ANOVA decision tree and code
-+-- bixbench_patterns_summary.md      # Common BixBench solution patterns
++-- common_patterns_summary.md         # Common solution patterns
 +-- test_skill.py                     # Test suite
 +-- references/
 |   +-- logistic_regression.md        # Detailed logistic examples
 |   +-- ordinal_logistic.md           # Ordinal logit guide
 |   +-- cox_regression.md             # Survival analysis guide
 |   +-- linear_models.md              # OLS and mixed-effects
-|   +-- bixbench_patterns.md          # 15+ question patterns
+|   +-- common_patterns.md            # 15+ question patterns
 |   +-- troubleshooting.md            # Diagnostic issues
 +-- scripts/
     +-- stat_tests.py                 # Chi-square, Fisher's exact, linear regression (stdlib)
@@ -361,9 +361,9 @@ See `TOOLS_REFERENCE.md` for complete tool catalog.
 - **scikit-learn**: https://scikit-learn.org/
 - **Ordinal models**: statsmodels.miscmodels.ordinal_model.OrderedModel
 
-## BixBench-verified conventions
+## Analysis conventions
 
-These conventions were validated against benchmark ground truths. Apply when the dataset/question matches.
+These conventions are validated best practices. Apply when the dataset/question matches.
 
 ### MANDATORY: Use bundled script for expression ANOVA / fold change
 For per-gene ANOVA or median log2FC questions, use the bundled script:
@@ -458,6 +458,6 @@ For detailed examples and troubleshooting:
 - **Ordinal models**: `references/ordinal_logistic.md`
 - **Survival analysis**: `references/cox_regression.md`
 - **Linear/mixed models**: `references/linear_models.md`
-- **BixBench patterns**: `references/bixbench_patterns.md`
+- **Common patterns**: `references/common_patterns.md`
 - **ANOVA and tests**: `anova_and_tests.md`
 - **Diagnostics**: `references/troubleshooting.md`

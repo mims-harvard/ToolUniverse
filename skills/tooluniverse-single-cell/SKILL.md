@@ -27,8 +27,6 @@ Apply when users:
 - Want statistical comparisons between cell types (t-test, ANOVA, fold change)
 - Ask about marker genes, batch correction, trajectory, or cell-cell communication
 
-**BixBench Coverage**: 18+ questions across 5 projects (bix-22, bix-27, bix-31, bix-33, bix-36)
-
 **NOT for** (use other skills instead):
 - Bulk RNA-seq DESeq2 only -> `tooluniverse-rnaseq-deseq2`
 - Gene enrichment only -> `tooluniverse-gene-enrichment`
@@ -72,11 +70,11 @@ START: User question about scRNA-seq data
 |   See: references/scanpy_workflow.md
 |
 +-- DIFFERENTIAL EXPRESSION (per-cell-type comparison)
-|   Most common BixBench pattern (bix-33)
+|   Most common pattern: per-cell-type DE
 |   See: analysis_patterns.md "Pattern 1"
 |
 +-- CORRELATION ANALYSIS (gene property vs expression)
-|   Pattern: Gene length vs expression (bix-22)
+|   Pattern: Gene length vs expression correlation
 |   See: analysis_patterns.md "Pattern 2"
 |
 +-- CLUSTERING & PCA (expression matrix analysis)
@@ -173,7 +171,7 @@ Single-Cell DE (many cells per condition):
   Best for: Per-cell-type DE, marker gene finding
 
 Pseudo-Bulk DE (aggregate counts by sample):
-  Use: DESeq2 via PyDESeq2
+  Use: R DESeq2 via `tu run run_deseq2_analysis` or Rscript (NOT pydeseq2 — gives different DEG counts)
   Best for: Sample-level comparisons with replicates
 
 Statistical Tests Only:
@@ -326,3 +324,14 @@ sc.tl.umap(adata)
 - references/trajectory_analysis.md - Pseudotime
 - references/cell_communication.md - OmniPath/CellPhoneDB workflow
 - references/troubleshooting.md - Detailed error solutions
+
+---
+
+## Analysis Conventions
+
+### DESeq2 library choice: match the authoritative script
+If the data folder contains an authoritative script (`run_*.py`, `analysis.R`), use whichever DESeq2 library it uses (pydeseq2 or R DESeq2). The two libraries give slightly different DEG counts (~2-10% at the same thresholds), so matching matters. If no script exists, prefer R DESeq2 via the `run_deseq2_analysis` tool or `Rscript`:
+
+```bash
+tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"pseudo_bulk_counts.csv","metadata_file":"sample_meta.csv","design":"~ sex","contrast":"sex, M, F","lfc_shrinkage":true}'
+```

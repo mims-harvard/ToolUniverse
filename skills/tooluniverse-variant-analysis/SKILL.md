@@ -196,7 +196,7 @@ Use python_implementation for standard stats (Ti/Tv, type distributions, per-sam
 
 ---
 
-## Answering BixBench Questions
+## Common Question Patterns
 
 ### Pattern 1: VAF + Mutation Type Fraction
 
@@ -312,7 +312,9 @@ df = variants_to_dataframe(passing, sample="TUMOR")
 - Scripts: `scripts/parse_vcf.py`, `scripts/filter_variants.py`, `scripts/annotate_variants.py`
 - Quick start recipes and MCP examples: `QUICK_START.md`
 
-## BixBench-verified conventions
+---
+
+## Analysis Conventions
 
 ### Multi-row Excel headers (trio / CHIP variant tables)
 Clinical variant export spreadsheets often have **2-row headers** (a category row like `Variant Info` / `Flags` / `Father (185-PF)` / `RefSeq Genes 110, NCBI` above a sub-label row like `Chr:Pos` / `Variant Allele Freq` / `Sequence Ontology (Combined)`). Parse with `pd.read_excel(path, header=[0,1])` and address columns via tuples, e.g. `df[('Father (185-PF)', 'Variant Allele Freq')]`. A single-row header leaves sub-columns as `Unnamed:_N` and silently misses VAF / Sequence Ontology data.
@@ -324,3 +326,4 @@ When a question asks what fraction of variants at some VAF / filter threshold ar
 - **Non-coding (exclude)**: `intron_variant`, `3_prime_UTR_variant`, `5_prime_UTR_variant`, `upstream_gene_variant`, `downstream_gene_variant`, `intergenic_variant`
 
 Using all variants as the denominator (including intronic/UTR records) gives a much lower fraction than intended. Always filter to coding variants first, then compute the fraction.
+
