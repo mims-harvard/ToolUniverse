@@ -7,11 +7,35 @@ description: "Continuous improvement system for ToolUniverse tools, skills, and 
 
 A 5-step feedback loop for improving ToolUniverse tools, skills, and plugin quality.
 
+**Note**: This skill is dataset-agnostic. Per-benchmark score history, known-failing question IDs, and dataset-specific investigations belong in `temp_docs_and_tests/benchmark_tracking/` (gitignored workfolder), NOT in this skill directory.
+
 ## The Feedback Loop
 
 ```
 1. RUN benchmark → 2. ANALYZE results → 3. DIAGNOSE failures → 4. FIX via devtu skill → 5. RETEST → repeat
 ```
+
+## Orchestrated runner (preferred)
+
+One command does steps 0 (memorization audit), 1 (build), 2 (run), 3 (analyze), 4 (diagnose + extract failures):
+
+```bash
+bash skills/devtu-benchmark-harness/scripts/run_harness_loop.sh --benchmark bixbench --n 20 --seed 42
+# After reviewing diagnose.log and applying devtu skill fixes:
+bash skills/devtu-benchmark-harness/scripts/run_harness_loop.sh --retest /path/to/failures.json
+```
+
+The script creates `temp_docs_and_tests/benchmark_tracking/run_<TS>/` with results.json, analysis.log, diagnose.log, failures.json. Diagnose output lists each failure with the exact devtu skill to invoke — do NOT fix manually.
+
+## Anti-memorization guard
+
+Before accepting any skill edit (from `devtu-optimize-skills` or manual), run:
+
+```bash
+python3 skills/devtu-benchmark-harness/scripts/check_memorization.py --all
+```
+
+Fails if any skill contains benchmark names, capsule UUIDs, `bix-N` question IDs, or known-to-be-GT specific numeric answers. This prevents overfitting the plugin to a single benchmark's answer key. Run in `--strict` mode to also flag specific gene names and dataset filenames (softer signal).
 
 ## Step 1: RUN — Execute Benchmark
 
@@ -27,6 +51,15 @@ python skills/devtu-benchmark-harness/scripts/run_eval.py \
 ```
 
 Options: `--category DESeq2` (filter), `--resume results.json` (skip done), `--guidance path.md` (inject custom).
+
+### Reliability mode: APPEND_CONVENTIONS env var
+Skill auto-matching in interactive mode is variable — sometimes Claude reads the skill description but starts writing code before loading the skill body. To force the router's critical conventions into every request's system prompt (more reliable, measures the plugin's conventions as-designed rather than skill-routing-as-implemented):
+
+```bash
+APPEND_CONVENTIONS=1 python skills/evals/run_benchmark.py --benchmark bixbench --plugin-only
+```
+
+Use this mode when measuring the CORRECTNESS of the conventions (are they the right rules?). Use default mode when measuring the RELIABILITY of skill routing (does Claude actually invoke the skill?). The gap between these two numbers is the routing-reliability problem.
 
 ### Benchmark setup (first time only)
 ```bash

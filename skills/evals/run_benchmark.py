@@ -48,7 +48,40 @@ def _load_plugin_guidance():
     return text.strip()
 
 
-# Skills whose BixBench-verified conventions we always want loaded for data-analysis Qs.
+def _load_critical_conventions():
+    """Load the Critical Analysis Conventions block from the router skill.
+
+    Returns the section as a standalone string. Used in append-system-prompt mode
+    to guarantee conventions are in every request's context (plugin's skill
+    auto-matching is variable — skill descriptions get read but the skill body
+    doesn't always get loaded before the agent starts writing code)."""
+    router_md = Path(PLUGIN_DIR) / "skills" / "tooluniverse" / "SKILL.md"
+    if not router_md.exists():
+        return ""
+    text = router_md.read_text()
+    # Strip YAML frontmatter
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 3:
+            text = parts[2]
+    # Extract just the Critical Analysis Conventions section
+    lines = text.splitlines()
+    start = None
+    for i, ln in enumerate(lines):
+        if ln.strip().startswith("## Critical Analysis Conventions"):
+            start = i
+            break
+    if start is None:
+        return ""
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        if lines[j].startswith("## ") and "Critical" not in lines[j]:
+            end = j
+            break
+    return "\n".join(lines[start:end]).strip()
+
+
+# Skills whose analysis conventions we always want loaded for data-analysis Qs.
 _BIXBENCH_SKILL_NAMES = [
     "tooluniverse-statistical-modeling",
     "tooluniverse-rnaseq-deseq2",
@@ -60,14 +93,14 @@ _BIXBENCH_SKILL_NAMES = [
 ]
 
 
-def _extract_bixbench_section(skill_md_text: str) -> str:
-    """Return only the 'BixBench-verified conventions' section of a SKILL.md,
+def _extract_conventions_section(skill_md_text: str) -> str:
+    """Return only the 'Analysis conventions' section of a SKILL.md,
     or empty string if absent. Keeps prompt size manageable while delivering
     the dataset-specific rules the benchmark needs."""
     lines = skill_md_text.splitlines()
     start = None
     for i, ln in enumerate(lines):
-        if ln.strip().startswith("## BixBench-verified conventions"):
+        if ln.strip().startswith("## Analysis conventions"):
             start = i
             break
     if start is None:
@@ -75,14 +108,14 @@ def _extract_bixbench_section(skill_md_text: str) -> str:
     end = len(lines)
     for j in range(start + 1, len(lines)):
         s = lines[j].strip()
-        if s.startswith("## ") and not s.startswith("## BixBench-verified"):
+        if s.startswith("## ") and not s.startswith("## Analysis conventions"):
             end = j
             break
     return "\n".join(lines[start:end]).strip()
 
 
-def _load_bixbench_skill_snippets():
-    """Concatenate each skill's BixBench-verified conventions section."""
+def _load_skill_convention_snippets():
+    """Concatenate each skill's Analysis conventions section."""
     chunks = []
     for name in _BIXBENCH_SKILL_NAMES:
         skill_md = Path(PLUGIN_DIR) / "skills" / name / "SKILL.md"
@@ -94,13 +127,13 @@ def _load_bixbench_skill_snippets():
             parts = text.split("---", 2)
             if len(parts) >= 3:
                 text = parts[2]
-        section = _extract_bixbench_section(text)
+        section = _extract_conventions_section(text)
         if section:
             chunks.append(f"### From skill: {name}\n\n{section}")
     if not chunks:
         return ""
     return (
-        "## Pre-loaded skill conventions (BixBench-verified)\n\n"
+        "## Pre-loaded skill conventions\n\n"
         "These rules come from the matching specialized skills. Apply them directly "
         "rather than reinventing data-handling conventions.\n\n"
         + "\n\n".join(chunks)
@@ -163,7 +196,7 @@ After invoking the skill, follow its instructions exactly — especially any MAN
 """
 
 
-def get_plugin_guidance(include_bixbench_skills: bool = True, skill_routing_mode: bool = False):
+def get_plugin_guidance(include_skill_conventions: bool = True, skill_routing_mode: bool = False):
     """Cache and return the plugin guidance text.
 
     If skill_routing_mode is True, uses minimal guidance that forces the agent
@@ -176,8 +209,8 @@ def get_plugin_guidance(include_bixbench_skills: bool = True, skill_routing_mode
         research = _load_plugin_guidance()
         if skill_routing_mode:
             _PLUGIN_GUIDANCE = research + "\n\n" + _SKILL_ROUTING_GUIDANCE
-        elif include_bixbench_skills:
-            extras = _load_bixbench_skill_snippets()
+        elif include_skill_conventions:
+            extras = _load_skill_convention_snippets()
             _PLUGIN_GUIDANCE = research + "\n\n" + extras if extras else research
         else:
             _PLUGIN_GUIDANCE = research
@@ -205,7 +238,7 @@ def run_claude(
     2. skill_routing: Minimal guidance that tells the agent to invoke skills via
        the Skill tool. Agent must actively call Skill('name').
 
-    3. Default: Injects research.md + BixBench convention snippets from each skill.
+    3. Default: Injects research.md + analysis convention snippets from each skill.
        This is the legacy mode — convention text without full skill context.
     """
     # In plugin mode (interactive), the plugin's skill system handles
@@ -217,15 +250,20 @@ def run_claude(
 
     if with_plugin:
         # Interactive mode: pipe question via stdin with plugin loaded.
-        # The router skill auto-matches and contains the critical analysis
-        # conventions. No --append-system-prompt needed — the plugin
-        # handles everything through the skill system.
+        # If APPEND_CONVENTIONS env var is set, the critical conventions are
+        # injected via --append-system-prompt for reliability (skill auto-match
+        # is variable in interactive mode).
         cmd = [
             "claude",
             "--plugin-dir", PLUGIN_DIR,
             "--output-format", "json",
             "--max-turns", str(max_turns),
         ]
+        if os.environ.get("APPEND_CONVENTIONS"):
+            conv = _load_critical_conventions()
+            if conv:
+                cmd += ["--append-system-prompt", conv]
+        stdin_input = prompt
     else:
         # Baseline: headless mode, no plugin, limited tools
         cmd = [
@@ -234,26 +272,27 @@ def run_claude(
             "--max-turns", str(max_turns),
             "--allowedTools", "Bash,Read,Write",
         ]
+        stdin_input = None
 
-    try:
-        if with_plugin:
-            # Pipe question via stdin for interactive mode
+    for attempt in range(2):
+        try:
             result = subprocess.run(
-                cmd, input=prompt, capture_output=True, text=True, timeout=timeout
+                cmd, input=stdin_input, capture_output=True, text=True, timeout=timeout
             )
-        else:
-            result = subprocess.run(
-                cmd, capture_output=True, text=True, timeout=timeout
-            )
-        if result.returncode == 0:
-            try:
-                return json.loads(result.stdout)
-            except json.JSONDecodeError:
-                return {"result": result.stdout, "raw": True}
-        else:
+            if result.returncode == 0:
+                try:
+                    return json.loads(result.stdout)
+                except json.JSONDecodeError:
+                    return {"result": result.stdout, "raw": True}
+            # Retry once if subprocess died with empty stderr — transient CLI
+            # state bug can surface as fast failures (<10s) OR long runs that
+            # die silently after spending all the work
+            if attempt == 0 and not (result.stderr or "").strip():
+                time.sleep(5)
+                continue
             return {"error": result.stderr[:500], "returncode": result.returncode}
-    except subprocess.TimeoutExpired:
-        return {"error": f"Timeout after {timeout}s"}
+        except subprocess.TimeoutExpired:
+            return {"error": f"Timeout after {timeout}s"}
 
 
 def extract_answer(response: dict) -> str:

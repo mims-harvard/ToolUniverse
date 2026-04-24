@@ -144,15 +144,16 @@ def grade_answer(
                     range_match = True
                     break
                 # Rounding tolerance: if predicted was rounded to N decimals,
-                # accept if ±0.5 ULP at that precision overlaps [low, high]
+                # accept if ±0.5 ULP at that precision overlaps [low, high].
+                # Only applies when the predicted value has explicit decimals —
+                # bare integers from prose ("1. Filter", "n=565") should NOT
+                # match small decimal ranges like (0.76, 0.78).
                 if "." in clean and "e" not in clean.lower():
                     dp = len(clean.split(".")[1])
-                else:
-                    dp = 0
-                half_ulp = 0.5 * (10 ** (-dp)) if dp > 0 else 0.5
-                if val - half_ulp <= high and val + half_ulp >= low:
-                    range_match = True
-                    break
+                    half_ulp = 0.5 * (10 ** (-dp))
+                    if val - half_ulp <= high and val + half_ulp >= low:
+                        range_match = True
+                        break
         except (ValueError, IndexError):
             pass
 
