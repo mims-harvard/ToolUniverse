@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_search_datasets(
-    operation: Optional[str] = 'search_datasets',
+    operation: Optional[str] = "search_datasets",
     antigen: Optional[str] = None,
     cell_type: Optional[str] = None,
-    genome: Optional[str] = 'hg38',
+    genome: Optional[str] = "hg38",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +24,7 @@ def ChIPAtlas_search_datasets(
     Parameters
     ----------
     operation : str
-        
+
     antigen : str
         Search by antigen/protein name (e.g., 'CTCF', 'H3K27ac')
     cell_type : str
@@ -45,12 +45,16 @@ def ChIPAtlas_search_datasets(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "operation": operation,
-                "antigen": antigen,
-                "cell_type": cell_type,
-                "genome": genome
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "antigen": antigen,
+            "cell_type": cell_type,
+            "genome": genome,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ChIPAtlas_search_datasets",
@@ -58,7 +62,7 @@ def ChIPAtlas_search_datasets(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

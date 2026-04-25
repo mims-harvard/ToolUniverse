@@ -18,7 +18,7 @@ def BVBRC_search_genome_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes...
 
@@ -43,18 +43,22 @@ def BVBRC_search_genome_features(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "gene": gene,
-                "product": product,
-                "genome_id": genome_id,
-                "limit": limit,
-                "keyword": keyword
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "gene": gene,
+            "product": product,
+            "genome_id": genome_id,
+            "limit": limit,
+            "keyword": keyword,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "BVBRC_search_genome_features",
@@ -62,7 +66,7 @@ def BVBRC_search_genome_features(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

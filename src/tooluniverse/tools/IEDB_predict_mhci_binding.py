@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def IEDB_predict_mhci_binding(
     sequence: str,
-    allele: Optional[str] = 'HLA-A*02:01',
-    method: Optional[str] = 'netmhcpan_el',
+    allele: Optional[str] = "HLA-A*02:01",
+    method: Optional[str] = "netmhcpan_el",
     length: Optional[int] = 9,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,12 +45,16 @@ def IEDB_predict_mhci_binding(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "sequence": sequence,
-                "allele": allele,
-                "method": method,
-                "length": length
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "sequence": sequence,
+            "allele": allele,
+            "method": method,
+            "length": length,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "IEDB_predict_mhci_binding",
@@ -58,7 +62,7 @@ def IEDB_predict_mhci_binding(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

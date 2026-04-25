@@ -15,7 +15,7 @@ def EnzymeKinetics_calculate(
     velocities_no_inhibitor: Optional[list[Any] | Any] = None,
     velocities_with_inhibitor: Optional[list[Any] | Any] = None,
     inhibitor_conc: Optional[float | Any] = None,
-    inhibition_type: Optional[str | Any] = 'competitive',
+    inhibition_type: Optional[str | Any] = "competitive",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -54,15 +54,19 @@ def EnzymeKinetics_calculate(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "operation": operation,
-                "substrate_concs": substrate_concs,
-                "velocities": velocities,
-                "velocities_no_inhibitor": velocities_no_inhibitor,
-                "velocities_with_inhibitor": velocities_with_inhibitor,
-                "inhibitor_conc": inhibitor_conc,
-                "inhibition_type": inhibition_type
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "substrate_concs": substrate_concs,
+            "velocities": velocities,
+            "velocities_no_inhibitor": velocities_no_inhibitor,
+            "velocities_with_inhibitor": velocities_with_inhibitor,
+            "inhibitor_conc": inhibitor_conc,
+            "inhibition_type": inhibition_type,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "EnzymeKinetics_calculate",
@@ -70,7 +74,7 @@ def EnzymeKinetics_calculate(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

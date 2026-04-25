@@ -1,7 +1,7 @@
 """
 DataQuality_assess
 
-Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column s...
+Assess the quality of a tabular dataset (CSV file or JSON array of records).
 """
 
 from typing import Any, Optional, Callable
@@ -9,21 +9,21 @@ from ._shared_client import get_shared_client
 
 
 def DataQuality_assess(
-    data: list[Any] | str,
-    columns: Optional[list[str] | Any] = None,
+    data: list[dict] | str,
     *,
+    columns: list[str] | None = None,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
-    Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column s...
+    Assess the quality of a tabular dataset.
 
     Parameters
     ----------
-    data : list[Any] | str
-        Input dataset: either a JSON array of records (list of dicts) or an absolute ...
-    columns : list[str] | Any
+    data : list[dict] | str
+        JSON array of records (list of dicts) or absolute path to a CSV file.
+    columns : list[str] | None, optional
         List of column names to assess. Default: all columns.
     stream_callback : Callable, optional
         Callback for streaming output
@@ -34,15 +34,11 @@ def DataQuality_assess(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
-    # Handle mutable defaults to avoid B006 linting error
-
-    # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "data": data,
-                "columns": columns
-    }.items() if v is not None}
+    _args = {
+        k: v for k, v in {"data": data, "columns": columns}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DataQuality_assess",
@@ -50,7 +46,7 @@ def DataQuality_assess(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

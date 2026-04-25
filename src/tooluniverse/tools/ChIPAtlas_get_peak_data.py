@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def ChIPAtlas_get_peak_data(
     experiment_id: str,
-    operation: Optional[str] = 'get_peak_data',
-    genome: Optional[str] = 'hg38',
-    format: Optional[str] = 'bigwig',
-    threshold: Optional[str] = '05',
+    operation: Optional[str] = "get_peak_data",
+    genome: Optional[str] = "hg38",
+    format: Optional[str] = "bigwig",
+    threshold: Optional[str] = "05",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,7 +25,7 @@ def ChIPAtlas_get_peak_data(
     Parameters
     ----------
     operation : str
-        
+
     experiment_id : str
         Experiment ID (SRX/ERX/DRX format, required)
     genome : str
@@ -48,13 +48,17 @@ def ChIPAtlas_get_peak_data(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "operation": operation,
-                "experiment_id": experiment_id,
-                "genome": genome,
-                "format": format,
-                "threshold": threshold
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "experiment_id": experiment_id,
+            "genome": genome,
+            "format": format,
+            "threshold": threshold,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ChIPAtlas_get_peak_data",
@@ -62,7 +66,7 @@ def ChIPAtlas_get_peak_data(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

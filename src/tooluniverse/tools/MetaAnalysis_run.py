@@ -1,7 +1,7 @@
 """
 MetaAnalysis_run
 
-Run a fixed-effects or random-effects meta-analysis from a set of effect sizes and standard error...
+Run a fixed-effects or random-effects meta-analysis from effect sizes.
 """
 
 from typing import Any, Optional, Callable
@@ -9,22 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def MetaAnalysis_run(
-    studies: list[Any],
-    method: Optional[str | Any] = None,
+    studies: list[dict],
     *,
+    method: str | None = None,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
-    Run a fixed-effects or random-effects meta-analysis from a set of effect sizes and standard error...
+    Run a meta-analysis from a set of effect sizes and standard errors.
 
     Parameters
     ----------
-    studies : list[Any]
+    studies : list[dict]
         List of studies, each with name, effect_size, se, and optional n.
-    method : str | Any
-        Meta-analysis method: 'fixed' for fixed-effects (inverse-variance), 'random' ...
+    method : str | None, optional
+        'fixed' or 'random' (default: 'random').
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,15 +34,11 @@ def MetaAnalysis_run(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
-    # Handle mutable defaults to avoid B006 linting error
-
-    # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "studies": studies,
-                "method": method
-    }.items() if v is not None}
+    _args = {
+        k: v for k, v in {"studies": studies, "method": method}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "MetaAnalysis_run",
@@ -50,7 +46,7 @@ def MetaAnalysis_run(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 

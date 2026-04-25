@@ -14,11 +14,11 @@ def DegreesOfUnsaturation_calculate(
     C: Optional[int] = None,
     H: Optional[int] = None,
     N: Optional[int] = None,
+    oxygen: Optional[int] = None,
     S: Optional[int] = None,
     F: Optional[int] = None,
     Cl: Optional[int] = None,
     Br: Optional[int] = None,
-    oxygen: Optional[int] = None,
     iodine: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -40,6 +40,8 @@ def DegreesOfUnsaturation_calculate(
         Number of hydrogen atoms (use if formula not provided)
     N : int
         Number of nitrogen atoms (default 0)
+    oxygen : int
+        Number of oxygen atoms (does not affect DoU, tracked for formula display)
     S : int
         Number of sulfur atoms (does not affect DoU)
     F : int
@@ -48,8 +50,6 @@ def DegreesOfUnsaturation_calculate(
         Number of chlorine atoms
     Br : int
         Number of bromine atoms
-    oxygen : int
-        Number of oxygen atoms (does not affect DoU, tracked for formula display)
     iodine : int
         Number of iodine atoms
     stream_callback : Callable, optional
@@ -66,19 +66,23 @@ def DegreesOfUnsaturation_calculate(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {
-        "operation": operation,
-                "formula": formula,
-                "C": C,
-                "H": H,
-                "N": N,
-                "S": S,
-                "F": F,
-                "Cl": Cl,
-                "Br": Br,
-                "oxygen": oxygen,
-                "iodine": iodine
-    }.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "formula": formula,
+            "C": C,
+            "H": H,
+            "N": N,
+            "O": oxygen,
+            "S": S,
+            "F": F,
+            "Cl": Cl,
+            "Br": Br,
+            "I": iodine,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DegreesOfUnsaturation_calculate",
@@ -86,7 +90,7 @@ def DegreesOfUnsaturation_calculate(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate
+        validate=validate,
     )
 
 
