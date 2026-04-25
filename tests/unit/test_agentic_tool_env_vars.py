@@ -8,11 +8,10 @@ This test module verifies that:
 
 Note on supported API types:
 Commit 5e226192 ("refactor: comment out OpenRouter, Gemini, VLLM — no keys loaded")
-removed CHATGPT, GEMINI, VLLM, and OPENROUTER from API_KEY_ENV_VARS, leaving only
-CLAUDE_CLI and OLLAMA. Tests that used the removed types as fixtures have been
-updated to use CLAUDE_CLI / OLLAMA — the behavior under test (priority modes,
-env var reading, config overrides) is identical regardless of which concrete
-type is supplied, so long as the type is currently supported.
+removed CHATGPT, GEMINI, and VLLM from API_KEY_ENV_VARS. OPENROUTER support has
+since been restored, alongside CLAUDE_CLI and OLLAMA. Tests still use the
+lightest supported types for most fixtures unless a provider-specific behavior
+is under test.
 """
 
 import os
@@ -39,6 +38,7 @@ class TestAgenticToolEnvironmentVariables:
             "GEMINI_MODEL_ID",
             "AGENTIC_TOOL_FALLBACK_CHAIN",
             "VLLM_SERVER_URL",
+            "OPENROUTER_API_KEY",
         ]
         for var in env_vars_to_clear:
             if var in os.environ:
@@ -247,6 +247,41 @@ class TestAgenticToolEnvironmentVariables:
 
             # Verify the original Gemini model ID was correctly read
             assert tool._gemini_model_id == "gemini-1.5-pro"
+
+    def test_openrouter_primary_falls_back_to_claude_cli(self):
+        """Missing OPENROUTER_API_KEY should use configured Claude fallback."""
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "configs": {
+                "api_type": "OPENROUTER",
+                "model_id": "openai/gpt-5",
+                "validate_api_key": True,
+                "fallback_api_type": "CLAUDE_CLI",
+                "fallback_model_id": "sonnet",
+                "use_global_fallback": False,
+            },
+        }
+
+        with (
+            patch("tooluniverse.agentic_tool.OpenRouterClient") as mock_openrouter,
+            patch("tooluniverse.agentic_tool.ClaudeCliClient") as mock_claude,
+        ):
+            mock_openrouter.side_effect = ValueError("OPENROUTER_API_KEY not set")
+            mock_claude_client = MagicMock()
+            mock_claude.return_value = mock_claude_client
+
+            tool = AgenticTool(tool_config)
+
+            assert tool._is_available is True
+            assert tool._current_api_type == "CLAUDE_CLI"
+            assert tool._current_model_id == "sonnet"
 
     def test_original_agentic_tool_fallback_chain_env_var(self):
         """Test that original AGENTIC_TOOL_FALLBACK_CHAIN environment variable still works."""

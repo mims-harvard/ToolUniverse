@@ -12,8 +12,8 @@ from .llm_clients import (
     BaseLLMClient,
     ClaudeCliClient,
     # GeminiClient,       # no GEMINI_API_KEY
+    OpenRouterClient,
     OllamaClient,
-    # OpenRouterClient,   # no OPENROUTER_API_KEY
     # VLLMClient,         # no VLLM_SERVER_URL
 )
 
@@ -28,8 +28,8 @@ DEFAULT_FALLBACK_CHAIN = [
 API_KEY_ENV_VARS = {
     "CLAUDE_CLI": [],
     "OLLAMA": [],
+    "OPENROUTER": ["OPENROUTER_API_KEY"],
     # "VLLM": ["VLLM_SERVER_URL"],
-    # "OPENROUTER": ["OPENROUTER_API_KEY"],
     # "GEMINI": ["GEMINI_API_KEY"],
 }
 
@@ -283,14 +283,14 @@ class AgenticTool(BaseTool):
                 if not server_url:
                     server_url = os.getenv("OLLAMA_SERVER_URL")
                 self._llm_client = OllamaClient(model_id, server_url, self.logger)
+            elif api_type == "OPENROUTER":
+                self._llm_client = OpenRouterClient(model_id, self.logger)
             # elif api_type == "VLLM":
             #     if not server_url:
             #         server_url = os.getenv("VLLM_SERVER_URL")
             #     if not server_url:
             #         raise ValueError("VLLM_SERVER_URL environment variable not set")
             #     self._llm_client = VLLMClient(model_id, server_url, self.logger)
-            # elif api_type == "OPENROUTER":
-            #     self._llm_client = OpenRouterClient(model_id, self.logger)
             # elif api_type == "GEMINI":
             #     self._llm_client = GeminiClient(model_id, self.logger)
             else:
@@ -632,13 +632,13 @@ class AgenticTool(BaseTool):
             elif self._api_type == "OLLAMA":
                 server_url = os.getenv("OLLAMA_SERVER_URL")
                 self._llm_client = OllamaClient(self._model_id, server_url, self.logger)
+            elif self._api_type == "OPENROUTER":
+                self._llm_client = OpenRouterClient(self._model_id, self.logger)
             # elif self._api_type == "VLLM":
             #     server_url = os.getenv("VLLM_SERVER_URL")
             #     if not server_url:
             #         raise ValueError("VLLM_SERVER_URL environment variable not set")
             #     self._llm_client = VLLMClient(self._model_id, server_url, self.logger)
-            # elif self._api_type == "OPENROUTER":
-            #     self._llm_client = OpenRouterClient(self._model_id, self.logger)
             # elif self._api_type == "GEMINI":
             #     self._llm_client = GeminiClient(self._gemini_model_id, self.logger)
             else:

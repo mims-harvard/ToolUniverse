@@ -58,6 +58,10 @@ class ToolFinderLLM(BaseTool):
         self.model_id = configs.get("model_id", "gpt-4o-1120")
         self.temperature = configs.get("temperature", 0.1)
         self.return_json = configs.get("return_json", True)
+        self.validate_api_key = configs.get("validate_api_key", True)
+        self.max_retries = configs.get("max_retries", 5)
+        self.retry_delay = configs.get("retry_delay", 5)
+        self.use_global_fallback = configs.get("use_global_fallback", True)
 
         # Tool filtering settings
         self.exclude_tools = tool_config.get(
@@ -75,16 +79,16 @@ class ToolFinderLLM(BaseTool):
             "return_list_only", False
         )
 
+        # Store fallback config for query-time failover
+        self._fallback_api_type = configs.get("fallback_api_type")
+        self._fallback_model_id = configs.get("fallback_model_id")
+
         # Initialize the underlying AgenticTool for LLM operations
         self._init_agentic_tool()
 
         # Cache for tool descriptions
         self._tool_cache = None
         self._cache_timestamp = None
-
-        # Store fallback config for query-time failover
-        self._fallback_api_type = configs.get("fallback_api_type")
-        self._fallback_model_id = configs.get("fallback_model_id")
         self._fallback_agentic = None
 
     @staticmethod
@@ -92,8 +96,13 @@ class ToolFinderLLM(BaseTool):
         """Extract text content from AgenticTool result."""
         if result is None:
             return None
-        if isinstance(result, dict) and "result" in result:
-            return result["result"]
+        if isinstance(result, dict):
+            if result.get("result") is not None:
+                return result["result"]
+            if result.get("status") == "error" or result.get("success") is False:
+                return None
+            if "error" in result:
+                return None
         return result
 
     def _try_query_fallback(self, agentic_args):
@@ -185,6 +194,12 @@ class ToolFinderLLM(BaseTool):
                 "temperature": self.temperature,
                 "return_json": self.return_json,
                 "return_metadata": False,
+                "validate_api_key": self.validate_api_key,
+                "max_retries": self.max_retries,
+                "retry_delay": self.retry_delay,
+                "fallback_api_type": self._fallback_api_type,
+                "fallback_model_id": self._fallback_model_id,
+                "use_global_fallback": self.use_global_fallback,
             },
         }
         try:

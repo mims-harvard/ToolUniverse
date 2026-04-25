@@ -77,7 +77,21 @@ class TestToolFinderLLMErrors:
         finder._tool_cache = None
         finder._cache_timestamp = None
         finder._cache_ttl = 300
+        finder._fallback_api_type = None
+        finder._fallback_model_id = None
         return finder
+
+    def test_extract_llm_response_structured_error_returns_none(self):
+        """Structured AgenticTool errors must trigger fallback logic."""
+        finder = self._make_finder()
+        result = finder._extract_llm_response(
+            {
+                "status": "error",
+                "error": "All LLM backends returned empty",
+                "error_type": "LLMBackendFailure",
+            }
+        )
+        assert result is None
 
     def test_get_available_tools_no_tooluniverse(self):
         """_get_available_tools with tooluniverse=None must return structured error."""
@@ -95,6 +109,85 @@ class TestToolFinderLLMErrors:
         result = finder._get_available_tools()
         assert _is_structured_error(result), (
             f"Expected structured error, got {type(result)}: {result}"
+        )
+
+    def test_find_tools_llm_structured_error_falls_back_to_keyword_ranking(self):
+        """Structured LLM failures must degrade to keyword-ranked tool selection."""
+        finder = self._make_finder()
+        finder.agentic_tool = MagicMock()
+        finder.agentic_tool.run.return_value = {
+            "status": "error",
+            "error": "All LLM backends returned empty",
+            "error_type": "LLMBackendFailure",
+        }
+        finder.tooluniverse = MagicMock()
+        finder.tooluniverse.all_tool_dict = {
+            "PubMed_search_articles": {},
+            "ClinicalTrials_search_studies": {},
+        }
+        finder.tooluniverse.get_tool_specification_by_names.return_value = [
+            {"name": "PubMed_search_articles"},
+            {"name": "ClinicalTrials_search_studies"},
+        ]
+        finder.tooluniverse.prepare_tool_prompts.return_value = [
+            {"name": "PubMed_search_articles"},
+            {"name": "ClinicalTrials_search_studies"},
+        ]
+        finder._get_available_tools = MagicMock(
+            return_value=[
+                {
+                    "name": "PubMed_search_articles",
+                    "description": "Search PubMed for biomedical literature articles",
+                },
+                {
+                    "name": "ClinicalTrials_search_studies",
+                    "description": "Search clinical trials by condition and sponsor",
+                },
+            ]
+        )
+
+        result = finder.find_tools_llm("pubmed cancer biomarkers", limit=2)
+
+        assert result["success"] is True
+        assert result["fallback"] == "keyword_ranking"
+        assert result["selected_tools"] == [
+            "PubMed_search_articles",
+            "ClinicalTrials_search_studies",
+        ]
+
+
+class TestClaudeCliClientErrors:
+    def test_infer_logs_stdout_error_when_stderr_empty(self):
+        """Claude CLI stdout-only failures must be surfaced in logs."""
+        from tooluniverse.llm_clients import ClaudeCliClient
+
+        logger = MagicMock()
+        client = object.__new__(ClaudeCliClient)
+        client._subprocess = MagicMock()
+        client._claude_path = "claude"
+        client.model_name = "sonnet"
+        client.logger = logger
+        client.timeout = 1
+        client.budget = "0.10"
+        client._strip_markdown_fences = lambda text: text
+        client._subprocess.run.return_value = MagicMock(
+            returncode=1,
+            stdout='{"error":{"message":"usage capped until 2026-05-01"}}',
+            stderr="",
+        )
+
+        result = client.infer(
+            [{"role": "user", "content": "ping"}],
+            temperature=0,
+            max_tokens=8,
+            return_json=False,
+            max_retries=1,
+            retry_delay=0,
+        )
+
+        assert result is None
+        logger.error.assert_any_call(
+            "claude CLI error: usage capped until 2026-05-01"
         )
 
 
