@@ -45,16 +45,12 @@ def PopGen_hwe_test(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "obs_AA": obs_AA,
-            "obs_Aa": obs_Aa,
-            "obs_aa": obs_aa,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "obs_AA": obs_AA,
+                "obs_Aa": obs_Aa,
+                "obs_aa": obs_aa
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "PopGen_hwe_test",
@@ -62,7 +58,7 @@ def PopGen_hwe_test(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

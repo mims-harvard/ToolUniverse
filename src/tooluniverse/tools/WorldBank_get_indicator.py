@@ -45,16 +45,12 @@ def WorldBank_get_indicator(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "country": country,
-            "indicator": indicator,
-            "mrv": mrv,
-            "date": date,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "country": country,
+                "indicator": indicator,
+                "mrv": mrv,
+                "date": date
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "WorldBank_get_indicator",
@@ -62,7 +58,7 @@ def WorldBank_get_indicator(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

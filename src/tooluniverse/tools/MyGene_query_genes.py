@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def MyGene_query_genes(
     query: str,
-    species: Optional[str] = "human",
-    fields: Optional[str] = "symbol,name,entrezgene,ensembl.gene,summary",
+    species: Optional[str] = 'human',
+    fields: Optional[str] = 'symbol,name,entrezgene,ensembl.gene,summary',
     size: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def MyGene_query_genes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "species": species,
-            "fields": fields,
-            "size": size,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "species": species,
+                "fields": fields,
+                "size": size
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MyGene_query_genes",
@@ -62,7 +58,7 @@ def MyGene_query_genes(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

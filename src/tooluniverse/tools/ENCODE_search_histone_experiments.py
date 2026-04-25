@@ -13,7 +13,7 @@ def ENCODE_search_histone_experiments(
     target: Optional[str | Any] = None,
     biosample_term_name: Optional[str | Any] = None,
     biosample: Optional[str | Any] = None,
-    organism: Optional[str] = "Homo sapiens",
+    organism: Optional[str] = 'Homo sapiens',
     limit: Optional[int] = 25,
     biosample_term: Optional[str | Any] = None,
     cell_type: Optional[str | Any] = None,
@@ -60,21 +60,17 @@ def ENCODE_search_histone_experiments(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "histone_mark": histone_mark,
-            "target": target,
-            "biosample_term_name": biosample_term_name,
-            "biosample": biosample,
-            "organism": organism,
-            "limit": limit,
-            "biosample_term": biosample_term,
-            "cell_type": cell_type,
-            "tissue": tissue,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "histone_mark": histone_mark,
+                "target": target,
+                "biosample_term_name": biosample_term_name,
+                "biosample": biosample,
+                "organism": organism,
+                "limit": limit,
+                "biosample_term": biosample_term,
+                "cell_type": cell_type,
+                "tissue": tissue
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ENCODE_search_histone_experiments",
@@ -82,7 +78,7 @@ def ENCODE_search_histone_experiments(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

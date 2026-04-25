@@ -12,7 +12,7 @@ def IMGT_search_genes(
     operation: Optional[str] = None,
     query: Optional[str] = None,
     gene_type: Optional[str] = None,
-    species: Optional[str] = "Homo sapiens",
+    species: Optional[str] = 'Homo sapiens',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +24,7 @@ def IMGT_search_genes(
     Parameters
     ----------
     operation : str
-
+        
     query : str
         Search query (gene name)
     gene_type : str
@@ -45,16 +45,12 @@ def IMGT_search_genes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "query": query,
-            "gene_type": gene_type,
-            "species": species,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "query": query,
+                "gene_type": gene_type,
+                "species": species
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "IMGT_search_genes",
@@ -62,7 +58,7 @@ def IMGT_search_genes(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

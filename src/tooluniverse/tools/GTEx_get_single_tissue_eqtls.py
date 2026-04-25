@@ -13,7 +13,7 @@ def GTEx_get_single_tissue_eqtls(
     gencode_id: Optional[list[str]] = None,
     variant_id: Optional[list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
-    dataset_id: Optional[str] = "gtex_v8",
+    dataset_id: Optional[str] = 'gtex_v8',
     page: Optional[int] = 0,
     items_per_page: Optional[int] = 250,
     *,
@@ -35,11 +35,11 @@ def GTEx_get_single_tissue_eqtls(
     tissue_site_detail_id : list[str]
         Optional: Tissue ID(s) to filter. At least one of gencode_id, variant_id, or ...
     dataset_id : str
-
+        
     page : int
-
+        
     items_per_page : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -54,19 +54,15 @@ def GTEx_get_single_tissue_eqtls(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "gencode_id": gencode_id,
-            "variant_id": variant_id,
-            "tissue_site_detail_id": tissue_site_detail_id,
-            "dataset_id": dataset_id,
-            "page": page,
-            "items_per_page": items_per_page,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "gencode_id": gencode_id,
+                "variant_id": variant_id,
+                "tissue_site_detail_id": tissue_site_detail_id,
+                "dataset_id": dataset_id,
+                "page": page,
+                "items_per_page": items_per_page
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GTEx_get_single_tissue_eqtls",
@@ -74,7 +70,7 @@ def GTEx_get_single_tissue_eqtls(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

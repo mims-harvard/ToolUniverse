@@ -49,17 +49,13 @@ def NvidiaNIM_proteinmpnn(
     if sampling_temp is None:
         sampling_temp = [0.1]
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "input_pdb": input_pdb,
-            "ca_only": ca_only,
-            "use_soluble_model": use_soluble_model,
-            "sampling_temp": sampling_temp,
-            "num_seq_per_target": num_seq_per_target,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "input_pdb": input_pdb,
+                "ca_only": ca_only,
+                "use_soluble_model": use_soluble_model,
+                "sampling_temp": sampling_temp,
+                "num_seq_per_target": num_seq_per_target
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_proteinmpnn",
@@ -67,7 +63,7 @@ def NvidiaNIM_proteinmpnn(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

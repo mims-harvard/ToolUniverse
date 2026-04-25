@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def MGnify_get_taxonomy(
     analysis_id: str,
-    rna_type: Optional[str] = "ssu",
+    rna_type: Optional[str] = 'ssu',
     page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -42,15 +42,11 @@ def MGnify_get_taxonomy(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "analysis_id": analysis_id,
-            "rna_type": rna_type,
-            "page_size": page_size,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "analysis_id": analysis_id,
+                "rna_type": rna_type,
+                "page_size": page_size
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MGnify_get_taxonomy",
@@ -58,7 +54,7 @@ def MGnify_get_taxonomy(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

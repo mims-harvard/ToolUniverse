@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def AdvancedCodeQualityAnalyzer(
     source_code: str,
-    language: Optional[str] = "python",
-    analysis_depth: Optional[str] = "comprehensive",
+    language: Optional[str] = 'python',
+    analysis_depth: Optional[str] = 'comprehensive',
     domain_context: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def AdvancedCodeQualityAnalyzer(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "source_code": source_code,
-            "language": language,
-            "analysis_depth": analysis_depth,
-            "domain_context": domain_context,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "source_code": source_code,
+                "language": language,
+                "analysis_depth": analysis_depth,
+                "domain_context": domain_context
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "AdvancedCodeQualityAnalyzer",
@@ -62,7 +58,7 @@ def AdvancedCodeQualityAnalyzer(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

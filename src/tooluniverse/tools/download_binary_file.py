@@ -45,16 +45,12 @@ def download_binary_file(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "url": url,
-            "output_path": output_path,
-            "chunk_size": chunk_size,
-            "timeout": timeout,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "url": url,
+                "output_path": output_path,
+                "chunk_size": chunk_size,
+                "timeout": timeout
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "download_binary_file",
@@ -62,7 +58,7 @@ def download_binary_file(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

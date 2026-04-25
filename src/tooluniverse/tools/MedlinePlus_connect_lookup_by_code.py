@@ -11,9 +11,9 @@ from ._shared_client import get_shared_client
 def MedlinePlus_connect_lookup_by_code(
     cs: str,
     c: str,
-    dn: Optional[str] = "",
-    language: Optional[str] = "en",
-    format: Optional[str] = "application/json",
+    dn: Optional[str] = '',
+    language: Optional[str] = 'en',
+    format: Optional[str] = 'application/json',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def MedlinePlus_connect_lookup_by_code(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "cs": cs,
-            "c": c,
-            "dn": dn,
-            "language": language,
-            "format": format,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "cs": cs,
+                "c": c,
+                "dn": dn,
+                "language": language,
+                "format": format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MedlinePlus_connect_lookup_by_code",
@@ -66,7 +62,7 @@ def MedlinePlus_connect_lookup_by_code(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

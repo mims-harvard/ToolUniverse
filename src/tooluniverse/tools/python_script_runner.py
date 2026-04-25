@@ -57,20 +57,16 @@ def python_script_runner(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "script_path": script_path,
-            "script_args": script_args,
-            "timeout": timeout,
-            "working_directory": working_directory,
-            "env_vars": env_vars,
-            "dependencies": dependencies,
-            "auto_install_dependencies": auto_install_dependencies,
-            "require_confirmation": require_confirmation,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "script_path": script_path,
+                "script_args": script_args,
+                "timeout": timeout,
+                "working_directory": working_directory,
+                "env_vars": env_vars,
+                "dependencies": dependencies,
+                "auto_install_dependencies": auto_install_dependencies,
+                "require_confirmation": require_confirmation
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "python_script_runner",
@@ -78,7 +74,7 @@ def python_script_runner(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

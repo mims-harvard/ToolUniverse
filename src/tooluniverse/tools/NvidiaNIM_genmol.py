@@ -14,7 +14,7 @@ def NvidiaNIM_genmol(
     temperature: Optional[float] = 2.0,
     noise: Optional[float] = 1.0,
     step_size: Optional[int] = 1,
-    scoring: Optional[str] = "QED",
+    scoring: Optional[str] = 'QED',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -51,18 +51,14 @@ def NvidiaNIM_genmol(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "smiles": smiles,
-            "num_molecules": num_molecules,
-            "temperature": temperature,
-            "noise": noise,
-            "step_size": step_size,
-            "scoring": scoring,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "smiles": smiles,
+                "num_molecules": num_molecules,
+                "temperature": temperature,
+                "noise": noise,
+                "step_size": step_size,
+                "scoring": scoring
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_genmol",
@@ -70,7 +66,7 @@ def NvidiaNIM_genmol(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

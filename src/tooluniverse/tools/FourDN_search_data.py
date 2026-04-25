@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def FourDN_search_data(
     operation: str,
-    query: Optional[str] = "*",
-    item_type: Optional[str] = "File",
+    query: Optional[str] = '*',
+    item_type: Optional[str] = 'File',
     file_type: Optional[str] = None,
     assay_title: Optional[str] = None,
     biosource_name: Optional[str] = None,
@@ -27,7 +27,7 @@ def FourDN_search_data(
     Parameters
     ----------
     operation : str
-
+        
     query : str
         Search query (default: '*' for all)
     item_type : str
@@ -54,19 +54,15 @@ def FourDN_search_data(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "query": query,
-            "item_type": item_type,
-            "file_type": file_type,
-            "assay_title": assay_title,
-            "biosource_name": biosource_name,
-            "limit": limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "query": query,
+                "item_type": item_type,
+                "file_type": file_type,
+                "assay_title": assay_title,
+                "biosource_name": biosource_name,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "FourDN_search_data",
@@ -74,7 +70,7 @@ def FourDN_search_data(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def UniProt_search_uniref(
     query: str,
-    cluster_type: Optional[str] = "UniRef50",
+    cluster_type: Optional[str] = 'UniRef50',
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -42,15 +42,11 @@ def UniProt_search_uniref(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "cluster_type": cluster_type,
-            "limit": limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "cluster_type": cluster_type,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "UniProt_search_uniref",
@@ -58,7 +54,7 @@ def UniProt_search_uniref(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

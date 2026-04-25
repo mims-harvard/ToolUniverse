@@ -37,9 +37,9 @@ def ChEMBL_search_targets(
     fields : list[str]
         Optional list of ChEMBL target fields to include in each returned target obje...
     limit : int
-
+        
     offset : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -54,19 +54,15 @@ def ChEMBL_search_targets(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "target_chembl_id": target_chembl_id,
-            "pref_name__contains": pref_name__contains,
-            "organism": organism,
-            "target_type": target_type,
-            "fields": fields,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "target_chembl_id": target_chembl_id,
+                "pref_name__contains": pref_name__contains,
+                "organism": organism,
+                "target_type": target_type,
+                "fields": fields,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_search_targets",
@@ -74,7 +70,7 @@ def ChEMBL_search_targets(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

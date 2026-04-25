@@ -12,8 +12,8 @@ def VariantValidator_gene2transcripts(
     gene_symbol: str,
     gene: Optional[str] = None,
     gene_name: Optional[str] = None,
-    transcript_set: Optional[str] = "mane",
-    genome_build: Optional[str] = "GRCh38",
+    transcript_set: Optional[str] = 'mane',
+    genome_build: Optional[str] = 'GRCh38',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def VariantValidator_gene2transcripts(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "gene_symbol": gene_symbol,
-            "gene": gene,
-            "gene_name": gene_name,
-            "transcript_set": transcript_set,
-            "genome_build": genome_build,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_symbol": gene_symbol,
+                "gene": gene,
+                "gene_name": gene_name,
+                "transcript_set": transcript_set,
+                "genome_build": genome_build
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "VariantValidator_gene2transcripts",
@@ -66,7 +62,7 @@ def VariantValidator_gene2transcripts(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

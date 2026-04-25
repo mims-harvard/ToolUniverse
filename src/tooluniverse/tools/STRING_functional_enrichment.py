@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def STRING_functional_enrichment(
     protein_ids: list[str],
     species: Optional[int] = 9606,
-    category: Optional[str] = "Process",
+    category: Optional[str] = 'Process',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def STRING_functional_enrichment(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "protein_ids": protein_ids,
-            "species": species,
-            "category": category,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "protein_ids": protein_ids,
+                "species": species,
+                "category": category
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "STRING_functional_enrichment",
@@ -58,7 +54,7 @@ def STRING_functional_enrichment(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

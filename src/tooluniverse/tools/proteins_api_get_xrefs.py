@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def proteins_api_get_xrefs(
     accession: str | list[Any],
-    format: Optional[str] = "json",
+    format: Optional[str] = 'json',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,11 +39,10 @@ def proteins_api_get_xrefs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"accession": accession, "format": format}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "accession": accession,
+                "format": format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "proteins_api_get_xrefs",
@@ -51,7 +50,7 @@ def proteins_api_get_xrefs(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

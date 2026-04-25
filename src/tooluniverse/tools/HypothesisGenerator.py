@@ -12,7 +12,7 @@ def HypothesisGenerator(
     context: str,
     domain: str,
     number_of_hypotheses: str,
-    hypothesis_format: Optional[str] = "concise declarative sentences",
+    hypothesis_format: Optional[str] = 'concise declarative sentences',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def HypothesisGenerator(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "context": context,
-            "domain": domain,
-            "number_of_hypotheses": number_of_hypotheses,
-            "hypothesis_format": hypothesis_format,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "context": context,
+                "domain": domain,
+                "number_of_hypotheses": number_of_hypotheses,
+                "hypothesis_format": hypothesis_format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "HypothesisGenerator",
@@ -62,7 +58,7 @@ def HypothesisGenerator(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

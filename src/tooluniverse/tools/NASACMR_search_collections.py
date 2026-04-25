@@ -45,16 +45,12 @@ def NASACMR_search_collections(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "keyword": keyword,
-            "page_size": page_size,
-            "data_center": data_center,
-            "platform": platform,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "keyword": keyword,
+                "page_size": page_size,
+                "data_center": data_center,
+                "platform": platform
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NASACMR_search_collections",
@@ -62,7 +58,7 @@ def NASACMR_search_collections(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

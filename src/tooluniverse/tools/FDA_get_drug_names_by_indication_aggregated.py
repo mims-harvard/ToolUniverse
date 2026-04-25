@@ -36,7 +36,9 @@ def FDA_get_drug_names_by_indication_aggregated(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"indication": indication}.items() if v is not None}
+    _args = {k: v for k, v in {
+        "indication": indication
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "FDA_get_drug_names_by_indication_aggregated",
@@ -44,7 +46,7 @@ def FDA_get_drug_names_by_indication_aggregated(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

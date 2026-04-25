@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def ToolGraphGenerationPipeline(
     tool_configs: list[Any],
     max_tools: Optional[int] = None,
-    output_path: Optional[str] = "./tool_relationship_graph.json",
+    output_path: Optional[str] = './tool_relationship_graph.json',
     save_intermediate_every: Optional[int] = 5000,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def ToolGraphGenerationPipeline(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "tool_configs": tool_configs,
-            "max_tools": max_tools,
-            "output_path": output_path,
-            "save_intermediate_every": save_intermediate_every,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "tool_configs": tool_configs,
+                "max_tools": max_tools,
+                "output_path": output_path,
+                "save_intermediate_every": save_intermediate_every
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ToolGraphGenerationPipeline",
@@ -62,7 +58,7 @@ def ToolGraphGenerationPipeline(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

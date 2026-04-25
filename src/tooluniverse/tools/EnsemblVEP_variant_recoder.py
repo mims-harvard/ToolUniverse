@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def EnsemblVEP_variant_recoder(
     variant_id: str,
-    species: Optional[str] = "human",
+    species: Optional[str] = 'human',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,11 +39,10 @@ def EnsemblVEP_variant_recoder(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"variant_id": variant_id, "species": species}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "variant_id": variant_id,
+                "species": species
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "EnsemblVEP_variant_recoder",
@@ -51,7 +50,7 @@ def EnsemblVEP_variant_recoder(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -42,15 +42,11 @@ def get_joint_associated_diseases_by_HPO_ID_list(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "HPO_ID_list": HPO_ID_list,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "HPO_ID_list": HPO_ID_list,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "get_joint_associated_diseases_by_HPO_ID_list",
@@ -58,7 +54,7 @@ def get_joint_associated_diseases_by_HPO_ID_list(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

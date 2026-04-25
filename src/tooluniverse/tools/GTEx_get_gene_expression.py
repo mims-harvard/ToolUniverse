@@ -13,7 +13,7 @@ def GTEx_get_gene_expression(
     operation: Optional[str] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
     attribute_subset: Optional[str] = None,
-    dataset_id: Optional[str] = "gtex_v8",
+    dataset_id: Optional[str] = 'gtex_v8',
     page: Optional[int] = 0,
     items_per_page: Optional[int] = 250,
     *,
@@ -35,11 +35,11 @@ def GTEx_get_gene_expression(
     attribute_subset : str
         Optional: Subset by donor sex or age bracket
     dataset_id : str
-
+        
     page : int
-
+        
     items_per_page : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -54,19 +54,15 @@ def GTEx_get_gene_expression(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "gencode_id": gencode_id,
-            "tissue_site_detail_id": tissue_site_detail_id,
-            "attribute_subset": attribute_subset,
-            "dataset_id": dataset_id,
-            "page": page,
-            "items_per_page": items_per_page,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "gencode_id": gencode_id,
+                "tissue_site_detail_id": tissue_site_detail_id,
+                "attribute_subset": attribute_subset,
+                "dataset_id": dataset_id,
+                "page": page,
+                "items_per_page": items_per_page
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GTEx_get_gene_expression",
@@ -74,7 +70,7 @@ def GTEx_get_gene_expression(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

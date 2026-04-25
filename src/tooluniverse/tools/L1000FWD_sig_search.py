@@ -13,7 +13,7 @@ def L1000FWD_sig_search(
     up_genes: list[str],
     down_genes: list[str],
     n_results: Optional[int] = 10,
-    mode: Optional[str] = "similar",
+    mode: Optional[str] = 'similar',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def L1000FWD_sig_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "up_genes": up_genes,
-            "down_genes": down_genes,
-            "n_results": n_results,
-            "mode": mode,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "up_genes": up_genes,
+                "down_genes": down_genes,
+                "n_results": n_results,
+                "mode": mode
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "L1000FWD_sig_search",
@@ -66,7 +62,7 @@ def L1000FWD_sig_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

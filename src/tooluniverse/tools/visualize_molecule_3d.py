@@ -12,8 +12,8 @@ def visualize_molecule_3d(
     smiles: Optional[str] = None,
     mol_content: Optional[str] = None,
     sdf_content: Optional[str] = None,
-    style: Optional[str] = "stick",
-    color_scheme: Optional[str] = "default",
+    style: Optional[str] = 'stick',
+    color_scheme: Optional[str] = 'default',
     width: Optional[int] = 800,
     height: Optional[int] = 600,
     show_hydrogens: Optional[bool] = True,
@@ -66,23 +66,19 @@ def visualize_molecule_3d(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "smiles": smiles,
-            "mol_content": mol_content,
-            "sdf_content": sdf_content,
-            "style": style,
-            "color_scheme": color_scheme,
-            "width": width,
-            "height": height,
-            "show_hydrogens": show_hydrogens,
-            "show_surface": show_surface,
-            "generate_conformers": generate_conformers,
-            "conformer_count": conformer_count,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "smiles": smiles,
+                "mol_content": mol_content,
+                "sdf_content": sdf_content,
+                "style": style,
+                "color_scheme": color_scheme,
+                "width": width,
+                "height": height,
+                "show_hydrogens": show_hydrogens,
+                "show_surface": show_surface,
+                "generate_conformers": generate_conformers,
+                "conformer_count": conformer_count
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "visualize_molecule_3d",
@@ -90,7 +86,7 @@ def visualize_molecule_3d(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

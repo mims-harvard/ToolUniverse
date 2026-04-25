@@ -12,8 +12,8 @@ def gnomad_get_region(
     chrom: str,
     start: int,
     stop: int,
-    reference_genome: Optional[str] = "GRCh38",
-    dataset: Optional[str] = "gnomad_r3",
+    reference_genome: Optional[str] = 'GRCh38',
+    dataset: Optional[str] = 'gnomad_r3',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def gnomad_get_region(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "chrom": chrom,
-            "start": start,
-            "stop": stop,
-            "reference_genome": reference_genome,
-            "dataset": dataset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "chrom": chrom,
+                "start": start,
+                "stop": stop,
+                "reference_genome": reference_genome,
+                "dataset": dataset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "gnomad_get_region",
@@ -66,7 +62,7 @@ def gnomad_get_region(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

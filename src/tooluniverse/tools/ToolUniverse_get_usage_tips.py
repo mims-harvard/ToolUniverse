@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ToolUniverse_get_usage_tips(
-    topic: Optional[str] = "all",
+    topic: Optional[str] = 'all',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -36,7 +36,9 @@ def ToolUniverse_get_usage_tips(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"topic": topic}.items() if v is not None}
+    _args = {k: v for k, v in {
+        "topic": topic
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ToolUniverse_get_usage_tips",
@@ -44,7 +46,7 @@ def ToolUniverse_get_usage_tips(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -13,7 +13,7 @@ def EuropePMC_get_fulltext(
     pmcid: Optional[str] = None,
     source_db: Optional[str] = None,
     article_id: Optional[str] = None,
-    output_format: Optional[str] = "text",
+    output_format: Optional[str] = 'text',
     include_raw: Optional[bool] = False,
     max_chars: Optional[int] = 200000,
     max_raw_chars: Optional[int] = 200000,
@@ -60,21 +60,17 @@ def EuropePMC_get_fulltext(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "fulltext_xml_url": fulltext_xml_url,
-            "pmcid": pmcid,
-            "source_db": source_db,
-            "article_id": article_id,
-            "output_format": output_format,
-            "include_raw": include_raw,
-            "max_chars": max_chars,
-            "max_raw_chars": max_raw_chars,
-            "timeout": timeout,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "fulltext_xml_url": fulltext_xml_url,
+                "pmcid": pmcid,
+                "source_db": source_db,
+                "article_id": article_id,
+                "output_format": output_format,
+                "include_raw": include_raw,
+                "max_chars": max_chars,
+                "max_raw_chars": max_raw_chars,
+                "timeout": timeout
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "EuropePMC_get_fulltext",
@@ -82,7 +78,7 @@ def EuropePMC_get_fulltext(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

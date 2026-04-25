@@ -42,15 +42,11 @@ def EuropePMC_get_full_text(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "pmcid": pmcid,
-            "pmid": pmid,
-            "max_section_chars": max_section_chars,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "pmcid": pmcid,
+                "pmid": pmid,
+                "max_section_chars": max_section_chars
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "EuropePMC_get_full_text",
@@ -58,7 +54,7 @@ def EuropePMC_get_full_text(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

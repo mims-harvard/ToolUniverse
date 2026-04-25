@@ -51,18 +51,14 @@ def iedb_get_epitope_references(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "structure_id": structure_id,
-            "limit": limit,
-            "offset": offset,
-            "order": order,
-            "select": select,
-            "filters": filters,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "structure_id": structure_id,
+                "limit": limit,
+                "offset": offset,
+                "order": order,
+                "select": select,
+                "filters": filters
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "iedb_get_epitope_references",
@@ -70,7 +66,7 @@ def iedb_get_epitope_references(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

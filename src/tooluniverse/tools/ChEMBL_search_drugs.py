@@ -29,9 +29,9 @@ def ChEMBL_search_drugs(
     max_phase : int
         Filter by maximum development phase (0-4)
     limit : int
-
+        
     offset : int
-
+        
     molecule_chembl_id : str
         Filter by ChEMBL molecule ID (e.g., "CHEMBL1201581" for adalimumab).
     stream_callback : Callable, optional
@@ -48,17 +48,13 @@ def ChEMBL_search_drugs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "max_phase": max_phase,
-            "limit": limit,
-            "offset": offset,
-            "molecule_chembl_id": molecule_chembl_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "max_phase": max_phase,
+                "limit": limit,
+                "offset": offset,
+                "molecule_chembl_id": molecule_chembl_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_search_drugs",
@@ -66,7 +62,7 @@ def ChEMBL_search_drugs(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

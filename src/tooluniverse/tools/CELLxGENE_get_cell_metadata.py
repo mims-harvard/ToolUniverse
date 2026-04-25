@@ -11,9 +11,9 @@ from ._shared_client import get_shared_client
 def CELLxGENE_get_cell_metadata(
     operation: str,
     obs_value_filter: str,
-    organism: Optional[str] = "Homo sapiens",
+    organism: Optional[str] = 'Homo sapiens',
     column_names: Optional[list[str]] = None,
-    census_version: Optional[str] = "stable",
+    census_version: Optional[str] = 'stable',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def CELLxGENE_get_cell_metadata(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "organism": organism,
-            "obs_value_filter": obs_value_filter,
-            "column_names": column_names,
-            "census_version": census_version,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "organism": organism,
+                "obs_value_filter": obs_value_filter,
+                "column_names": column_names,
+                "census_version": census_version
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CELLxGENE_get_cell_metadata",
@@ -66,7 +62,7 @@ def CELLxGENE_get_cell_metadata(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

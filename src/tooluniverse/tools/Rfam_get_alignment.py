@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Rfam_get_alignment(
     operation: str,
     family_id: str,
-    format: Optional[str] = "stockholm",
+    format: Optional[str] = 'stockholm',
     gzip: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def Rfam_get_alignment(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "family_id": family_id,
-            "format": format,
-            "gzip": gzip,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "family_id": family_id,
+                "format": format,
+                "gzip": gzip
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Rfam_get_alignment",
@@ -62,7 +58,7 @@ def Rfam_get_alignment(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

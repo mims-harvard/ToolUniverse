@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Orphanet_get_classification(
     operation: Optional[str] = None,
     orpha_code: Optional[str | int] = None,
-    lang: Optional[str] = "en",
+    lang: Optional[str] = 'en',
     orphacode: Optional[int | str] = None,
     orpha_id: Optional[int | str] = None,
     *,
@@ -48,17 +48,13 @@ def Orphanet_get_classification(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "orpha_code": orpha_code,
-            "lang": lang,
-            "orphacode": orphacode,
-            "orpha_id": orpha_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "orpha_code": orpha_code,
+                "lang": lang,
+                "orphacode": orphacode,
+                "orpha_id": orpha_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Orphanet_get_classification",
@@ -66,7 +62,7 @@ def Orphanet_get_classification(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

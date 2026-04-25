@@ -22,7 +22,7 @@ def FourDN_get_download_url(
     Parameters
     ----------
     operation : str
-
+        
     file_accession : str
         4DN file accession (e.g., '4DNFIIA7E3HL'). Obtain by searching with FourDN_se...
     stream_callback : Callable, optional
@@ -39,11 +39,10 @@ def FourDN_get_download_url(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"operation": operation, "file_accession": file_accession}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "file_accession": file_accession
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "FourDN_get_download_url",
@@ -51,7 +50,7 @@ def FourDN_get_download_url(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

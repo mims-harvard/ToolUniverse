@@ -12,7 +12,7 @@ def Orphanet_search_diseases(
     query: str,
     operation: Optional[str] = None,
     limit: Optional[int] = 20,
-    lang: Optional[str] = "en",
+    lang: Optional[str] = 'en',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def Orphanet_search_diseases(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "query": query,
-            "limit": limit,
-            "lang": lang,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "query": query,
+                "limit": limit,
+                "lang": lang
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Orphanet_search_diseases",
@@ -62,7 +58,7 @@ def Orphanet_search_diseases(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -20,37 +20,37 @@ def ols_get_efo_term_children(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-        List children of an EFO term (ontology hierarchy). Provide `iri` or `obo_id`.
+    List children of an EFO term (ontology hierarchy). Provide `iri` or `obo_id`.
 
-    Tip: use `ols_sear...
+Tip: use `ols_sear...
 
-        Parameters
-        ----------
-        iri : str
-            Term IRI returned by `ols_search_efo_terms`.
-        obo_id : str
-            OBO ID like 'EFO:0000400' (will be converted to an EFO IRI).
-        size : int
-            Maximum number of children to return.
-        stream_callback : Callable, optional
-            Callback for streaming output
-        use_cache : bool, default False
-            Enable caching
-        validate : bool, default True
-            Validate parameters
+    Parameters
+    ----------
+    iri : str
+        Term IRI returned by `ols_search_efo_terms`.
+    obo_id : str
+        OBO ID like 'EFO:0000400' (will be converted to an EFO IRI).
+    size : int
+        Maximum number of children to return.
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
 
-        Returns
-        -------
-        dict[str, Any]
+    Returns
+    -------
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"iri": iri, "obo_id": obo_id, "size": size}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "iri": iri,
+                "obo_id": obo_id,
+                "size": size
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ols_get_efo_term_children",
@@ -58,7 +58,7 @@ def ols_get_efo_term_children(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -45,16 +45,12 @@ def Pfam_get_family_proteins(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "pfam_accession": pfam_accession,
-            "max_results": max_results,
-            "reviewed_only": reviewed_only,
-            "tax_id": tax_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "pfam_accession": pfam_accession,
+                "max_results": max_results,
+                "reviewed_only": reviewed_only,
+                "tax_id": tax_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Pfam_get_family_proteins",
@@ -62,7 +58,7 @@ def Pfam_get_family_proteins(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def DNA_translate_sequence(
     operation: str,
     sequence: str,
-    codon_table: Optional[str | Any] = "standard",
+    codon_table: Optional[str | Any] = 'standard',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def DNA_translate_sequence(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "sequence": sequence,
-            "codon_table": codon_table,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "sequence": sequence,
+                "codon_table": codon_table
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "DNA_translate_sequence",
@@ -58,7 +54,7 @@ def DNA_translate_sequence(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

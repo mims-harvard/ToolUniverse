@@ -45,11 +45,12 @@ def CoL_search_species(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"q": q, "rank": rank, "limit": limit, "offset": offset}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "q": q,
+                "rank": rank,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CoL_search_species",
@@ -57,7 +58,7 @@ def CoL_search_species(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

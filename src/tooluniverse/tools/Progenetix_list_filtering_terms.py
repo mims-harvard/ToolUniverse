@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Progenetix_list_filtering_terms(
-    prefixes: Optional[str] = "NCIT",
+    prefixes: Optional[str] = 'NCIT',
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -39,9 +39,10 @@ def Progenetix_list_filtering_terms(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"prefixes": prefixes, "limit": limit}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "prefixes": prefixes,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Progenetix_list_filtering_terms",
@@ -49,7 +50,7 @@ def Progenetix_list_filtering_terms(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -23,7 +23,7 @@ def SAbDab_get_structure(
     Parameters
     ----------
     operation : str
-
+        
     pdb_id : str
         4-character PDB ID (e.g., 1IGT, 6W41). Alias: pdb_code.
     pdb_code : str
@@ -42,15 +42,11 @@ def SAbDab_get_structure(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "pdb_id": pdb_id,
-            "pdb_code": pdb_code,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "pdb_id": pdb_id,
+                "pdb_code": pdb_code
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "SAbDab_get_structure",
@@ -58,7 +54,7 @@ def SAbDab_get_structure(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

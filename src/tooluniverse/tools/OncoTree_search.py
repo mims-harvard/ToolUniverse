@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def OncoTree_search(
     query: str,
-    field: Optional[str] = "name",
+    field: Optional[str] = 'name',
     exact_match: Optional[bool] = False,
-    version: Optional[str] = "oncotree_latest_stable",
+    version: Optional[str] = 'oncotree_latest_stable',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def OncoTree_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "field": field,
-            "exact_match": exact_match,
-            "version": version,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "field": field,
+                "exact_match": exact_match,
+                "version": version
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OncoTree_search",
@@ -62,7 +58,7 @@ def OncoTree_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

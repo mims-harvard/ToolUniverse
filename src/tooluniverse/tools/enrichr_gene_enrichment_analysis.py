@@ -38,17 +38,12 @@ def enrichr_gene_enrichment_analysis(
     """
     # Handle mutable defaults to avoid B006 linting error
     if libs is None:
-        libs = [
-            "WikiPathways_2024_Human",
-            "Reactome_Pathways_2024",
-            "MSigDB_Hallmark_2020",
-            "GO_Molecular_Function_2023",
-            "GO_Biological_Process_2023",
-        ]
+        libs = ['WikiPathways_2024_Human', 'Reactome_Pathways_2024', 'MSigDB_Hallmark_2020', 'GO_Molecular_Function_2023', 'GO_Biological_Process_2023']
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"gene_list": gene_list, "libs": libs}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_list": gene_list,
+                "libs": libs
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "enrichr_gene_enrichment_analysis",
@@ -56,7 +51,7 @@ def enrichr_gene_enrichment_analysis(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

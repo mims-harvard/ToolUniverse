@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def MetabolomicsWorkbench_search_by_mz(
     mz_value: float,
-    adduct: Optional[str] = "M+H",
+    adduct: Optional[str] = 'M+H',
     tolerance: Optional[float] = 0.1,
-    database: Optional[str] = "MB",
+    database: Optional[str] = 'MB',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def MetabolomicsWorkbench_search_by_mz(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "mz_value": mz_value,
-            "adduct": adduct,
-            "tolerance": tolerance,
-            "database": database,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "mz_value": mz_value,
+                "adduct": adduct,
+                "tolerance": tolerance,
+                "database": database
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MetabolomicsWorkbench_search_by_mz",
@@ -62,7 +58,7 @@ def MetabolomicsWorkbench_search_by_mz(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

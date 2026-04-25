@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def DrugInteractionAnalyzerAgent(
     compounds: str,
-    patient_context: Optional[str] = "General adult population",
+    patient_context: Optional[str] = 'General adult population',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,11 +39,10 @@ def DrugInteractionAnalyzerAgent(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"compounds": compounds, "patient_context": patient_context}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "compounds": compounds,
+                "patient_context": patient_context
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "DrugInteractionAnalyzerAgent",
@@ -51,7 +50,7 @@ def DrugInteractionAnalyzerAgent(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

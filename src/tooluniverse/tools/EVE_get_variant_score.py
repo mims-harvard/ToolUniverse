@@ -14,7 +14,7 @@ def EVE_get_variant_score(
     pos: Optional[int] = None,
     ref: Optional[str] = None,
     alt: Optional[str] = None,
-    species: Optional[str] = "human",
+    species: Optional[str] = 'human',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -51,18 +51,14 @@ def EVE_get_variant_score(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "variant": variant,
-            "chrom": chrom,
-            "pos": pos,
-            "ref": ref,
-            "alt": alt,
-            "species": species,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "variant": variant,
+                "chrom": chrom,
+                "pos": pos,
+                "ref": ref,
+                "alt": alt,
+                "species": species
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "EVE_get_variant_score",
@@ -70,7 +66,7 @@ def EVE_get_variant_score(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def OncoTree_list_tissues(
-    version: Optional[str] = "oncotree_latest_stable",
+    version: Optional[str] = 'oncotree_latest_stable',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -36,7 +36,9 @@ def OncoTree_list_tissues(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"version": version}.items() if v is not None}
+    _args = {k: v for k, v in {
+        "version": version
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OncoTree_list_tissues",
@@ -44,7 +46,7 @@ def OncoTree_list_tissues(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

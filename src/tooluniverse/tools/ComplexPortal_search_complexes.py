@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ComplexPortal_search_complexes(
     query: str,
-    species: Optional[str] = "9606",
+    species: Optional[str] = '9606',
     number: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -42,11 +42,11 @@ def ComplexPortal_search_complexes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"query": query, "species": species, "number": number}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "species": species,
+                "number": number
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ComplexPortal_search_complexes",
@@ -54,7 +54,7 @@ def ComplexPortal_search_complexes(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -13,7 +13,7 @@ def CADD_get_variant_score(
     pos: int,
     ref: str,
     alt: str,
-    version: Optional[str] = "GRCh38-v1.7",
+    version: Optional[str] = 'GRCh38-v1.7',
     include_annotations: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -51,18 +51,14 @@ def CADD_get_variant_score(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "chrom": chrom,
-            "pos": pos,
-            "ref": ref,
-            "alt": alt,
-            "version": version,
-            "include_annotations": include_annotations,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "chrom": chrom,
+                "pos": pos,
+                "ref": ref,
+                "alt": alt,
+                "version": version,
+                "include_annotations": include_annotations
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CADD_get_variant_score",
@@ -70,7 +66,7 @@ def CADD_get_variant_score(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

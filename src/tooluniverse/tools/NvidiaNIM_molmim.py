@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def NvidiaNIM_molmim(
     smi: str,
     num_molecules: Optional[int] = 10,
-    algorithm: Optional[str] = "CMA-ES",
+    algorithm: Optional[str] = 'CMA-ES',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def NvidiaNIM_molmim(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "smi": smi,
-            "num_molecules": num_molecules,
-            "algorithm": algorithm,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "smi": smi,
+                "num_molecules": num_molecules,
+                "algorithm": algorithm
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_molmim",
@@ -58,7 +54,7 @@ def NvidiaNIM_molmim(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

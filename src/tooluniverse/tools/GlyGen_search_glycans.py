@@ -54,19 +54,15 @@ def GlyGen_search_glycans(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "mass_min": mass_min,
-            "mass_max": mass_max,
-            "monosaccharide_min": monosaccharide_min,
-            "monosaccharide_max": monosaccharide_max,
-            "glycan_type": glycan_type,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "mass_min": mass_min,
+                "mass_max": mass_max,
+                "monosaccharide_min": monosaccharide_min,
+                "monosaccharide_max": monosaccharide_max,
+                "glycan_type": glycan_type,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GlyGen_search_glycans",
@@ -74,7 +70,7 @@ def GlyGen_search_glycans(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

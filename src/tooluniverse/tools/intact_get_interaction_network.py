@@ -17,7 +17,7 @@ def intact_get_interaction_network(
     depth: Optional[int] = 1,
     limit: Optional[int] = 50,
     size: Optional[int] = 50,
-    format: Optional[str] = "json",
+    format: Optional[str] = 'json',
     protein_name: Optional[str] = None,
     protein: Optional[str] = None,
     *,
@@ -47,7 +47,7 @@ def intact_get_interaction_network(
     size : int
         Alias for limit. Maximum number of interactions to return (default: 50).
     format : str
-
+        
     protein_name : str
         Alias for gene_symbol/identifier. Common protein name (e.g., MDM2, TP53).
     protein : str
@@ -66,23 +66,19 @@ def intact_get_interaction_network(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "identifier": identifier,
-            "uniprot_id": uniprot_id,
-            "protein_id": protein_id,
-            "gene_symbol": gene_symbol,
-            "gene_name": gene_name,
-            "depth": depth,
-            "limit": limit,
-            "size": size,
-            "format": format,
-            "protein_name": protein_name,
-            "protein": protein,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "identifier": identifier,
+                "uniprot_id": uniprot_id,
+                "protein_id": protein_id,
+                "gene_symbol": gene_symbol,
+                "gene_name": gene_name,
+                "depth": depth,
+                "limit": limit,
+                "size": size,
+                "format": format,
+                "protein_name": protein_name,
+                "protein": protein
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "intact_get_interaction_network",
@@ -90,7 +86,7 @@ def intact_get_interaction_network(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

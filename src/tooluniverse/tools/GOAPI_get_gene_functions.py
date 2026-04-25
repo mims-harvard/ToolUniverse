@@ -42,11 +42,11 @@ def GOAPI_get_gene_functions(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"gene_id": gene_id, "rows": rows, "aspect": aspect}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_id": gene_id,
+                "rows": rows,
+                "aspect": aspect
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GOAPI_get_gene_functions",
@@ -54,7 +54,7 @@ def GOAPI_get_gene_functions(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def get_tool_info(
     tool_names: str | list[str],
-    detail_level: Optional[str] = "full",
+    detail_level: Optional[str] = 'full',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,11 +39,10 @@ def get_tool_info(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"tool_names": tool_names, "detail_level": detail_level}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "tool_names": tool_names,
+                "detail_level": detail_level
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "get_tool_info",
@@ -51,7 +50,7 @@ def get_tool_info(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

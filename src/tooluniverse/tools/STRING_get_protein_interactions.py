@@ -13,7 +13,7 @@ def STRING_get_protein_interactions(
     species: Optional[int] = 9606,
     confidence_score: Optional[float] = 0.4,
     limit: Optional[int] = 50,
-    network_type: Optional[str] = "full",
+    network_type: Optional[str] = 'full',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def STRING_get_protein_interactions(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "protein_ids": protein_ids,
-            "species": species,
-            "confidence_score": confidence_score,
-            "limit": limit,
-            "network_type": network_type,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "protein_ids": protein_ids,
+                "species": species,
+                "confidence_score": confidence_score,
+                "limit": limit,
+                "network_type": network_type
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "STRING_get_protein_interactions",
@@ -66,7 +62,7 @@ def STRING_get_protein_interactions(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -12,7 +12,7 @@ def EnsemblReg_get_regulatory_elements(
     chrom: str,
     start: int,
     end: int,
-    species: Optional[str] = "homo_sapiens",
+    species: Optional[str] = 'homo_sapiens',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def EnsemblReg_get_regulatory_elements(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "species": species,
-            "chrom": chrom,
-            "start": start,
-            "end": end,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "species": species,
+                "chrom": chrom,
+                "start": start,
+                "end": end
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "EnsemblReg_get_regulatory_elements",
@@ -62,7 +58,7 @@ def EnsemblReg_get_regulatory_elements(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

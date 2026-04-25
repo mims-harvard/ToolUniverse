@@ -51,18 +51,14 @@ def FPbase_search_by_spectrum(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "name__icontains": name__icontains,
-            "agg_exc_max__gte": agg_exc_max__gte,
-            "agg_exc_max__lte": agg_exc_max__lte,
-            "agg_em_max__gte": agg_em_max__gte,
-            "agg_em_max__lte": agg_em_max__lte,
-            "switch_type": switch_type,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "name__icontains": name__icontains,
+                "agg_exc_max__gte": agg_exc_max__gte,
+                "agg_exc_max__lte": agg_exc_max__lte,
+                "agg_em_max__gte": agg_em_max__gte,
+                "agg_em_max__lte": agg_em_max__lte,
+                "switch_type": switch_type
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "FPbase_search_by_spectrum",
@@ -70,7 +66,7 @@ def FPbase_search_by_spectrum(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

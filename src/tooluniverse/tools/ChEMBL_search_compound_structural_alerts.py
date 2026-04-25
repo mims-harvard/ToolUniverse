@@ -28,9 +28,9 @@ def ChEMBL_search_compound_structural_alerts(
     alert_name__contains : str
         Filter by alert name (contains)
     limit : int
-
+        
     offset : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -45,16 +45,12 @@ def ChEMBL_search_compound_structural_alerts(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "molecule_chembl_id": molecule_chembl_id,
-            "alert_name__contains": alert_name__contains,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "molecule_chembl_id": molecule_chembl_id,
+                "alert_name__contains": alert_name__contains,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_search_compound_structural_alerts",
@@ -62,7 +58,7 @@ def ChEMBL_search_compound_structural_alerts(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

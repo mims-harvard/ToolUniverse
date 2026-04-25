@@ -146,16 +146,16 @@
       "required": ["description"]
     },
     "configs": {
-      "api_type": "CLAUDE_CLI",
-      "model_id": "sonnet",
+      "api_type": "OPENROUTER",
+      "model_id": "openai/gpt-5",
       "temperature": 0.1,
       "return_json": true,
       "return_list_only": true,
-      "validate_api_key": false,
+      "validate_api_key": true,
       "max_retries": 2,
       "retry_delay": 2,
-      "fallback_api_type": "OLLAMA",
-      "fallback_model_id": "qwen2.5-coder:32b",
+      "fallback_api_type": "CLAUDE_CLI",
+      "fallback_model_id": "sonnet",
       "use_global_fallback": false,
       "exclude_tools": [
         "Tool_RAG",

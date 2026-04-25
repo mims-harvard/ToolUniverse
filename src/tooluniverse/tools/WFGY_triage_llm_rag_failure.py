@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def WFGY_triage_llm_rag_failure(
     bug_description: str,
-    audience: Optional[str] = "engineer",
+    audience: Optional[str] = 'engineer',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,11 +39,10 @@ def WFGY_triage_llm_rag_failure(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"bug_description": bug_description, "audience": audience}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "bug_description": bug_description,
+                "audience": audience
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "WFGY_triage_llm_rag_failure",
@@ -51,7 +50,7 @@ def WFGY_triage_llm_rag_failure(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

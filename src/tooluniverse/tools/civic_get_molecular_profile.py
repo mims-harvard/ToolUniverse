@@ -39,14 +39,10 @@ def civic_get_molecular_profile(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "molecular_profile_id": molecular_profile_id,
-            "evidence_limit": evidence_limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "molecular_profile_id": molecular_profile_id,
+                "evidence_limit": evidence_limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "civic_get_molecular_profile",
@@ -54,7 +50,7 @@ def civic_get_molecular_profile(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

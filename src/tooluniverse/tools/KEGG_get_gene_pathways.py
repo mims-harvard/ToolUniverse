@@ -12,7 +12,7 @@ def KEGG_get_gene_pathways(
     gene_id: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     gene: Optional[str] = None,
-    organism: Optional[str] = "hsa",
+    organism: Optional[str] = 'hsa',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -45,16 +45,12 @@ def KEGG_get_gene_pathways(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "gene_id": gene_id,
-            "gene_symbol": gene_symbol,
-            "gene": gene,
-            "organism": organism,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_id": gene_id,
+                "gene_symbol": gene_symbol,
+                "gene": gene,
+                "organism": organism
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "KEGG_get_gene_pathways",
@@ -62,7 +58,7 @@ def KEGG_get_gene_pathways(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

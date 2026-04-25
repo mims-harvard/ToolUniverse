@@ -12,7 +12,7 @@ def intact_get_interactions_by_complex(
     complex_id: str,
     size: Optional[int] = 25,
     first: Optional[int] = 0,
-    format: Optional[str] = "json",
+    format: Optional[str] = 'json',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +30,7 @@ def intact_get_interactions_by_complex(
     first : int
         First result index for pagination (default: 0)
     format : str
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -45,16 +45,12 @@ def intact_get_interactions_by_complex(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "complex_id": complex_id,
-            "size": size,
-            "first": first,
-            "format": format,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "complex_id": complex_id,
+                "size": size,
+                "first": first,
+                "format": format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "intact_get_interactions_by_complex",
@@ -62,7 +58,7 @@ def intact_get_interactions_by_complex(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

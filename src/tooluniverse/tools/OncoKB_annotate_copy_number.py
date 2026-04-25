@@ -48,17 +48,13 @@ def OncoKB_annotate_copy_number(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "gene": gene,
-            "copy_number_type": copy_number_type,
-            "tumor_type": tumor_type,
-            "copy_number_alteration": copy_number_alteration,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "gene": gene,
+                "copy_number_type": copy_number_type,
+                "tumor_type": tumor_type,
+                "copy_number_alteration": copy_number_alteration
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OncoKB_annotate_copy_number",
@@ -66,7 +62,7 @@ def OncoKB_annotate_copy_number(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

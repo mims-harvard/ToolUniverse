@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def IGSR_search_samples(
-    operation: Optional[str] = "search_samples",
+    operation: Optional[str] = 'search_samples',
     population: Optional[str | Any] = None,
     data_collection: Optional[str | Any] = None,
     sample_name: Optional[str | Any] = None,
@@ -48,17 +48,13 @@ def IGSR_search_samples(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "population": population,
-            "data_collection": data_collection,
-            "sample_name": sample_name,
-            "limit": limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "population": population,
+                "data_collection": data_collection,
+                "sample_name": sample_name,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "IGSR_search_samples",
@@ -66,7 +62,7 @@ def IGSR_search_samples(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

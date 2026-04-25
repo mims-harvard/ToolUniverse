@@ -14,7 +14,7 @@ def MEME_discover_motifs(
     nmotifs: Optional[int | Any] = 3,
     minw: Optional[int | Any] = 6,
     maxw: Optional[int | Any] = 50,
-    distribution: Optional[str | Any] = "zoops",
+    distribution: Optional[str | Any] = 'zoops',
     scan_rc: Optional[bool | Any] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -54,19 +54,15 @@ def MEME_discover_motifs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "sequences": sequences,
-            "nmotifs": nmotifs,
-            "minw": minw,
-            "maxw": maxw,
-            "distribution": distribution,
-            "scan_rc": scan_rc,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "sequences": sequences,
+                "nmotifs": nmotifs,
+                "minw": minw,
+                "maxw": maxw,
+                "distribution": distribution,
+                "scan_rc": scan_rc
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MEME_discover_motifs",
@@ -74,7 +70,7 @@ def MEME_discover_motifs(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

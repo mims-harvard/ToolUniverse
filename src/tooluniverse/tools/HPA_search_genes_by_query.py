@@ -36,7 +36,9 @@ def HPA_search_genes_by_query(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"search_query": search_query}.items() if v is not None}
+    _args = {k: v for k, v in {
+        "search_query": search_query
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "HPA_search_genes_by_query",
@@ -44,7 +46,7 @@ def HPA_search_genes_by_query(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

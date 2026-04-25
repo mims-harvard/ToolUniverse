@@ -12,8 +12,8 @@ def Progenetix_cnv_search(
     reference_name: str,
     start: int,
     end: int,
-    variant_type: Optional[str] = "",
-    filters: Optional[str] = "",
+    variant_type: Optional[str] = '',
+    filters: Optional[str] = '',
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -51,18 +51,14 @@ def Progenetix_cnv_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "reference_name": reference_name,
-            "start": start,
-            "end": end,
-            "variant_type": variant_type,
-            "filters": filters,
-            "limit": limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "reference_name": reference_name,
+                "start": start,
+                "end": end,
+                "variant_type": variant_type,
+                "filters": filters,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Progenetix_cnv_search",
@@ -70,7 +66,7 @@ def Progenetix_cnv_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

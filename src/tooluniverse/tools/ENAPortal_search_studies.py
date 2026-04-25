@@ -16,7 +16,7 @@ def ENAPortal_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search the European Nucleotide Archive (ENA) for sequencing studies using text queries or taxonom...
 
@@ -37,16 +37,16 @@ def ENAPortal_search_studies(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"query": query, "limit": limit, "fields": fields}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "limit": limit,
+                "fields": fields
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ENAPortal_search_studies",
@@ -54,7 +54,7 @@ def ENAPortal_search_studies(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

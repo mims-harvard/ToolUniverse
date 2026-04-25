@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def APPRIS_get_functional_annotations(
     gene_id: str,
-    species: Optional[str] = "homo_sapiens",
+    species: Optional[str] = 'homo_sapiens',
     methods: Optional[str] = None,
     transcript_id: Optional[str] = None,
     *,
@@ -45,16 +45,12 @@ def APPRIS_get_functional_annotations(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "gene_id": gene_id,
-            "species": species,
-            "methods": methods,
-            "transcript_id": transcript_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_id": gene_id,
+                "species": species,
+                "methods": methods,
+                "transcript_id": transcript_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "APPRIS_get_functional_annotations",
@@ -62,7 +58,7 @@ def APPRIS_get_functional_annotations(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

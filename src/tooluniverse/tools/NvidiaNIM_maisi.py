@@ -15,9 +15,9 @@ def NvidiaNIM_maisi(
     controllable_anatomy_size: Optional[list[Any]] = None,
     output_size: Optional[list[Any]] = None,
     spacing: Optional[list[Any]] = None,
-    image_output_ext: Optional[str] = ".nii.gz",
-    label_output_ext: Optional[str] = ".nii.gz",
-    pre_signed_url: Optional[str] = "",
+    image_output_ext: Optional[str] = '.nii.gz',
+    label_output_ext: Optional[str] = '.nii.gz',
+    pre_signed_url: Optional[str] = '',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -63,21 +63,17 @@ def NvidiaNIM_maisi(
     if spacing is None:
         spacing = [1.0, 1.0, 1.0]
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "num_output_samples": num_output_samples,
-            "body_region": body_region,
-            "anatomy_list": anatomy_list,
-            "controllable_anatomy_size": controllable_anatomy_size,
-            "output_size": output_size,
-            "spacing": spacing,
-            "image_output_ext": image_output_ext,
-            "label_output_ext": label_output_ext,
-            "pre_signed_url": pre_signed_url,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "num_output_samples": num_output_samples,
+                "body_region": body_region,
+                "anatomy_list": anatomy_list,
+                "controllable_anatomy_size": controllable_anatomy_size,
+                "output_size": output_size,
+                "spacing": spacing,
+                "image_output_ext": image_output_ext,
+                "label_output_ext": label_output_ext,
+                "pre_signed_url": pre_signed_url
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_maisi",
@@ -85,7 +81,7 @@ def NvidiaNIM_maisi(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -11,8 +11,8 @@ from ._shared_client import get_shared_client
 def Orphanet_get_icd_mapping(
     operation: Optional[str] = None,
     orpha_code: Optional[str | int] = None,
-    coding_system: Optional[str] = "all",
-    lang: Optional[str] = "en",
+    coding_system: Optional[str] = 'all',
+    lang: Optional[str] = 'en',
     orphacode: Optional[int | str] = None,
     orpha_id: Optional[int | str] = None,
     *,
@@ -51,18 +51,14 @@ def Orphanet_get_icd_mapping(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "orpha_code": orpha_code,
-            "coding_system": coding_system,
-            "lang": lang,
-            "orphacode": orphacode,
-            "orpha_id": orpha_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "orpha_code": orpha_code,
+                "coding_system": coding_system,
+                "lang": lang,
+                "orphacode": orphacode,
+                "orpha_id": orpha_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Orphanet_get_icd_mapping",
@@ -70,7 +66,7 @@ def Orphanet_get_icd_mapping(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

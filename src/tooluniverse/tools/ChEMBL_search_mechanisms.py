@@ -31,9 +31,9 @@ def ChEMBL_search_mechanisms(
     mechanism_of_action__contains : str
         Filter by mechanism description (contains)
     limit : int
-
+        
     offset : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,17 +48,13 @@ def ChEMBL_search_mechanisms(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "drug_chembl_id": drug_chembl_id,
-            "target_chembl_id": target_chembl_id,
-            "mechanism_of_action__contains": mechanism_of_action__contains,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "drug_chembl_id": drug_chembl_id,
+                "target_chembl_id": target_chembl_id,
+                "mechanism_of_action__contains": mechanism_of_action__contains,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_search_mechanisms",
@@ -66,7 +62,7 @@ def ChEMBL_search_mechanisms(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

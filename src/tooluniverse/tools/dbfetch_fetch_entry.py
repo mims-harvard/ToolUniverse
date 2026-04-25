@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def dbfetch_fetch_entry(
     db: str,
     id: str,
-    format: Optional[str] = "fasta",
+    format: Optional[str] = 'fasta',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,9 +42,11 @@ def dbfetch_fetch_entry(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"db": db, "id": id, "format": format}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "db": db,
+                "id": id,
+                "format": format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "dbfetch_fetch_entry",
@@ -52,7 +54,7 @@ def dbfetch_fetch_entry(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

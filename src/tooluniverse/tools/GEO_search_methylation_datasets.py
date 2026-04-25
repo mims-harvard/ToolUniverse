@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GEO_search_methylation_datasets(
     query: str,
-    organism: Optional[str] = "Homo sapiens",
+    organism: Optional[str] = 'Homo sapiens',
     limit: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -42,11 +42,11 @@ def GEO_search_methylation_datasets(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"query": query, "organism": organism, "limit": limit}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "organism": organism,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GEO_search_methylation_datasets",
@@ -54,7 +54,7 @@ def GEO_search_methylation_datasets(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

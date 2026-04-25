@@ -42,9 +42,11 @@ def SunriseSunset_get_times(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"lat": lat, "lng": lng, "date": date}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "lat": lat,
+                "lng": lng,
+                "date": date
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "SunriseSunset_get_times",
@@ -52,7 +54,7 @@ def SunriseSunset_get_times(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

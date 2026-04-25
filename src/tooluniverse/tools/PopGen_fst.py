@@ -48,17 +48,13 @@ def PopGen_fst(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "p1": p1,
-            "p2": p2,
-            "n1": n1,
-            "n2": n2,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "p1": p1,
+                "p2": p2,
+                "n1": n1,
+                "n2": n2
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "PopGen_fst",
@@ -66,7 +62,7 @@ def PopGen_fst(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

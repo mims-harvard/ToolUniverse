@@ -63,22 +63,18 @@ def iDigBio_search_records(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "scientificname": scientificname,
-            "kingdom": kingdom,
-            "phylum": phylum,
-            "family": family,
-            "genus": genus,
-            "country": country,
-            "stateprovince": stateprovince,
-            "institutioncode": institutioncode,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "scientificname": scientificname,
+                "kingdom": kingdom,
+                "phylum": phylum,
+                "family": family,
+                "genus": genus,
+                "country": country,
+                "stateprovince": stateprovince,
+                "institutioncode": institutioncode,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "iDigBio_search_records",
@@ -86,7 +82,7 @@ def iDigBio_search_records(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

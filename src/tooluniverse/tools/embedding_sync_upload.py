@@ -12,9 +12,9 @@ def embedding_sync_upload(
     database_name: str,
     repository: str,
     action: Optional[str] = None,
-    description: Optional[str] = "",
+    description: Optional[str] = '',
     private: Optional[bool] = False,
-    commit_message: Optional[str] = "Upload datastore",
+    commit_message: Optional[str] = 'Upload datastore',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def embedding_sync_upload(
     Parameters
     ----------
     action : str
-
+        
     database_name : str
         Collection/database name to upload (expects <name>.db and <name>.faiss under ...
     repository : str
@@ -51,18 +51,14 @@ def embedding_sync_upload(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "action": action,
-            "database_name": database_name,
-            "repository": repository,
-            "description": description,
-            "private": private,
-            "commit_message": commit_message,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "action": action,
+                "database_name": database_name,
+                "repository": repository,
+                "description": description,
+                "private": private,
+                "commit_message": commit_message
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "embedding_sync_upload",
@@ -70,7 +66,7 @@ def embedding_sync_upload(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

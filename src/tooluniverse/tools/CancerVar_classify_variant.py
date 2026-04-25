@@ -13,7 +13,7 @@ def CancerVar_classify_variant(
     pos: int,
     ref: str,
     alt: str,
-    build: Optional[str] = "hg19",
+    build: Optional[str] = 'hg19',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -48,17 +48,13 @@ def CancerVar_classify_variant(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "chrom": chrom,
-            "pos": pos,
-            "ref": ref,
-            "alt": alt,
-            "build": build,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "chrom": chrom,
+                "pos": pos,
+                "ref": ref,
+                "alt": alt,
+                "build": build
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CancerVar_classify_variant",
@@ -66,7 +62,7 @@ def CancerVar_classify_variant(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

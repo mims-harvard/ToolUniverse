@@ -16,7 +16,6 @@ def iedb_search_epitopes(
     order: Optional[str] = None,
     select: Optional[str] = None,
     filters: Optional[dict[str, Any]] = None,
-    antigen_uniprot: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -41,8 +40,6 @@ def iedb_search_epitopes(
         Optional projection list to reduce payload size. Provide a comma-separated st...
     filters : dict[str, Any]
         Advanced PostgREST filters mapping column -> filter expression (e.g., {"linea...
-    antigen_uniprot : str
-        UniProt accession of the source antigen. Example: 'Q15116' for PD-1 (PDCD1), ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -57,20 +54,15 @@ def iedb_search_epitopes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "sequence_contains": sequence_contains,
-            "structure_type": structure_type,
-            "limit": limit,
-            "offset": offset,
-            "order": order,
-            "select": select,
-            "filters": filters,
-            "antigen_uniprot": antigen_uniprot,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "sequence_contains": sequence_contains,
+                "structure_type": structure_type,
+                "limit": limit,
+                "offset": offset,
+                "order": order,
+                "select": select,
+                "filters": filters
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "iedb_search_epitopes",
@@ -78,7 +70,7 @@ def iedb_search_epitopes(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

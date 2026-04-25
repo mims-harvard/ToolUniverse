@@ -24,7 +24,7 @@ def embedding_sync_download(
     Parameters
     ----------
     action : str
-
+        
     repository : str
         HF dataset repo to download from (e.g., 'user/repo')
     local_name : str
@@ -45,16 +45,12 @@ def embedding_sync_download(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "action": action,
-            "repository": repository,
-            "local_name": local_name,
-            "overwrite": overwrite,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "action": action,
+                "repository": repository,
+                "local_name": local_name,
+                "overwrite": overwrite
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "embedding_sync_download",
@@ -62,7 +58,7 @@ def embedding_sync_download(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

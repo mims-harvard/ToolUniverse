@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def NvidiaNIM_diffdock(
     protein: str,
     ligand: str,
-    ligand_file_type: Optional[str] = "sdf",
+    ligand_file_type: Optional[str] = 'sdf',
     num_poses: Optional[int] = 10,
     time_divisions: Optional[int] = 20,
     steps: Optional[int] = 18,
@@ -57,20 +57,16 @@ def NvidiaNIM_diffdock(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "protein": protein,
-            "ligand": ligand,
-            "ligand_file_type": ligand_file_type,
-            "num_poses": num_poses,
-            "time_divisions": time_divisions,
-            "steps": steps,
-            "save_trajectory": save_trajectory,
-            "is_staged": is_staged,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "protein": protein,
+                "ligand": ligand,
+                "ligand_file_type": ligand_file_type,
+                "num_poses": num_poses,
+                "time_divisions": time_divisions,
+                "steps": steps,
+                "save_trajectory": save_trajectory,
+                "is_staged": is_staged
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_diffdock",
@@ -78,7 +74,7 @@ def NvidiaNIM_diffdock(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

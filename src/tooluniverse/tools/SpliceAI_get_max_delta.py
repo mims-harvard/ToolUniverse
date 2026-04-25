@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def SpliceAI_get_max_delta(
     variant: str,
-    genome: Optional[str] = "38",
+    genome: Optional[str] = '38',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,9 +39,10 @@ def SpliceAI_get_max_delta(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"variant": variant, "genome": genome}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "variant": variant,
+                "genome": genome
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "SpliceAI_get_max_delta",
@@ -49,7 +50,7 @@ def SpliceAI_get_max_delta(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

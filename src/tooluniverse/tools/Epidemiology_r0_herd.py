@@ -45,16 +45,12 @@ def Epidemiology_r0_herd(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "R0": R0,
-            "VE": VE,
-            "coverage": coverage,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "R0": R0,
+                "VE": VE,
+                "coverage": coverage
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Epidemiology_r0_herd",
@@ -62,7 +58,7 @@ def Epidemiology_r0_herd(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

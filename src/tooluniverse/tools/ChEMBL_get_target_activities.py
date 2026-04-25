@@ -26,9 +26,9 @@ def ChEMBL_get_target_activities(
     target_chembl_id__exact : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     limit : int
-
+        
     offset : int
-
+        
     target_chembl_id : str
         Alias for target_chembl_id__exact. ChEMBL target ID (e.g., CHEMBL213).
     stream_callback : Callable, optional
@@ -45,16 +45,12 @@ def ChEMBL_get_target_activities(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "target_chembl_id__exact": target_chembl_id__exact,
-            "limit": limit,
-            "offset": offset,
-            "target_chembl_id": target_chembl_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "target_chembl_id__exact": target_chembl_id__exact,
+                "limit": limit,
+                "offset": offset,
+                "target_chembl_id": target_chembl_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_get_target_activities",
@@ -62,7 +58,7 @@ def ChEMBL_get_target_activities(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -45,16 +45,12 @@ def HPA_get_comprehensive_gene_details_by_ensembl_id(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "ensembl_id": ensembl_id,
-            "include_images": include_images,
-            "include_antibodies": include_antibodies,
-            "include_expression": include_expression,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "ensembl_id": ensembl_id,
+                "include_images": include_images,
+                "include_antibodies": include_antibodies,
+                "include_expression": include_expression
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "HPA_get_comprehensive_gene_details_by_ensembl_id",
@@ -62,7 +58,7 @@ def HPA_get_comprehensive_gene_details_by_ensembl_id(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

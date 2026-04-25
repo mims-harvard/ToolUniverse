@@ -5,15 +5,32 @@ This directory contains documentation for TxAgent and guides on integrating with
 ## Available Documentation
 
 ### �️ [Adding Tools Tutorial](Adding_Tools_Tutorial.md)
+
 **NEW!** Complete Tutorial for adding custom tools to ToolUniverse:
+
 - Decorator-based auto-registration system
 - Step-by-step examples with real code
 - Configuration best practices
 - Troubleshooting and testing guides
 - Multiple registration methods
 
-### � [MCP Server Tutorial](MCP_Server_Tutorial.md)
+### [Embedding Search](Embedding_Search.md)
+
+How `find_tools` works: HuggingFace sentence embeddings, cosine
+similarity, caching, auto-refresh. How another codebase or Claude Code
+session queries the embeddings to discover tools by natural language.
+
+### [Tool Registration Chain](Tool_Registration_Chain.md)
+
+The 6-link chain that makes a tool loadable via MCP. Covers every file
+that must be created or updated when adding a new tool: JSON definition,
+Python implementation, lazy registry, category config, wrapper stub,
+and `__init__.py` import. Includes debugging guide for silent load failures.
+
+### [MCP Server Tutorial](MCP_Server_Tutorial.md)
+
 A comprehensive Tutorial that covers:
+
 - Converting your Python program into an MCP server
 - Creating ToolUniverse configuration files
 - Integration best practices
@@ -32,16 +49,19 @@ A comprehensive Tutorial that covers:
 ## Key Components
 
 ### MCP Server
+
 - **Purpose**: Standardized way to expose AI tools and functions
 - **Protocol**: HTTP-based communication
 - **Benefits**: Remote access, scalability, standardization
 
 ### ToolUniverse Integration
+
 - **Auto-discovery**: Automatically finds and registers MCP tools
 - **Unified Interface**: Single API for multiple tool types
 - **Configuration**: JSON-based tool definitions
 
 ### FastMCP Framework
+
 - **Library**: Python framework for creating MCP servers
 - **Features**: Easy decorator-based tool definition
 - **Transport**: HTTP and other protocols supported
@@ -55,6 +75,7 @@ A comprehensive Tutorial that covers:
 ## Example Files
 
 In the parent directory, you'll find:
+
 - `run_mcp.py` - TxAgent MCP server implementation
 - `tooluni_client.py` - Example of using TxAgent through ToolUniverse
 - `txagent_client_tools.json` - ToolUniverse configuration for TxAgent
@@ -78,6 +99,7 @@ In the parent directory, you'll find:
 ## Support
 
 If you encounter issues:
+
 1. Check the troubleshooting sections in the tutorials
 2. Verify your configuration matches the examples
 3. Ensure all dependencies are properly installed
@@ -86,6 +108,7 @@ If you encounter issues:
 ## Contributing
 
 When adding new documentation:
+
 1. Follow the existing markdown structure
 2. Include practical examples
 3. Test all code snippets

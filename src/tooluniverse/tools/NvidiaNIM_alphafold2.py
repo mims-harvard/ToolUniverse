@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def NvidiaNIM_alphafold2(
     sequence: str,
-    algorithm: Optional[str] = "mmseqs2",
+    algorithm: Optional[str] = 'mmseqs2',
     databases: Optional[list[str]] = None,
     e_value: Optional[float] = 0.0001,
     iterations: Optional[int] = 1,
@@ -53,21 +53,17 @@ def NvidiaNIM_alphafold2(
     """
     # Handle mutable defaults to avoid B006 linting error
     if databases is None:
-        databases = ["small_bfd"]
+        databases = ['small_bfd']
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "sequence": sequence,
-            "algorithm": algorithm,
-            "databases": databases,
-            "e_value": e_value,
-            "iterations": iterations,
-            "relax_prediction": relax_prediction,
-            "skip_template_search": skip_template_search,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "sequence": sequence,
+                "algorithm": algorithm,
+                "databases": databases,
+                "e_value": e_value,
+                "iterations": iterations,
+                "relax_prediction": relax_prediction,
+                "skip_template_search": skip_template_search
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_alphafold2",
@@ -75,7 +71,7 @@ def NvidiaNIM_alphafold2(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

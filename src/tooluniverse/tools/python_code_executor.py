@@ -12,7 +12,7 @@ def python_code_executor(
     code: str,
     arguments: Optional[dict[str, Any]] = None,
     timeout: Optional[int] = 30,
-    return_variable: Optional[str] = "result",
+    return_variable: Optional[str] = 'result',
     allowed_imports: Optional[list[str]] = None,
     dependencies: Optional[list[str]] = None,
     auto_install_dependencies: Optional[bool] = False,
@@ -57,20 +57,16 @@ def python_code_executor(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "code": code,
-            "arguments": arguments,
-            "timeout": timeout,
-            "return_variable": return_variable,
-            "allowed_imports": allowed_imports,
-            "dependencies": dependencies,
-            "auto_install_dependencies": auto_install_dependencies,
-            "require_confirmation": require_confirmation,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "code": code,
+                "arguments": arguments,
+                "timeout": timeout,
+                "return_variable": return_variable,
+                "allowed_imports": allowed_imports,
+                "dependencies": dependencies,
+                "auto_install_dependencies": auto_install_dependencies,
+                "require_confirmation": require_confirmation
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "python_code_executor",
@@ -78,7 +74,7 @@ def python_code_executor(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

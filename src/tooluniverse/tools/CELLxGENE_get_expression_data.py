@@ -10,12 +10,12 @@ from ._shared_client import get_shared_client
 
 def CELLxGENE_get_expression_data(
     operation: str,
-    organism: Optional[str] = "Homo sapiens",
+    organism: Optional[str] = 'Homo sapiens',
     obs_value_filter: Optional[str] = None,
     var_value_filter: Optional[str] = None,
     obs_column_names: Optional[list[str]] = None,
     var_column_names: Optional[list[str]] = None,
-    census_version: Optional[str] = "stable",
+    census_version: Optional[str] = 'stable',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -54,19 +54,15 @@ def CELLxGENE_get_expression_data(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "organism": organism,
-            "obs_value_filter": obs_value_filter,
-            "var_value_filter": var_value_filter,
-            "obs_column_names": obs_column_names,
-            "var_column_names": var_column_names,
-            "census_version": census_version,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "organism": organism,
+                "obs_value_filter": obs_value_filter,
+                "var_value_filter": var_value_filter,
+                "obs_column_names": obs_column_names,
+                "var_column_names": var_column_names,
+                "census_version": census_version
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CELLxGENE_get_expression_data",
@@ -74,7 +70,7 @@ def CELLxGENE_get_expression_data(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

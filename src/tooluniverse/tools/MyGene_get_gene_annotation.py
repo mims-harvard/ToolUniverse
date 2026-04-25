@@ -10,9 +10,7 @@ from ._shared_client import get_shared_client
 
 def MyGene_get_gene_annotation(
     gene_id: str,
-    fields: Optional[
-        str
-    ] = "symbol,name,entrezgene,ensembl,summary,go,pathway,interpro",
+    fields: Optional[str] = 'symbol,name,entrezgene,ensembl,summary,go,pathway,interpro',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -41,9 +39,10 @@ def MyGene_get_gene_annotation(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"gene_id": gene_id, "fields": fields}.items() if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_id": gene_id,
+                "fields": fields
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MyGene_get_gene_annotation",
@@ -51,7 +50,7 @@ def MyGene_get_gene_annotation(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

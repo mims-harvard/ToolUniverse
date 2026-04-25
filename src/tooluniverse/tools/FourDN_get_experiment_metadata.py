@@ -23,7 +23,7 @@ def FourDN_get_experiment_metadata(
     Parameters
     ----------
     operation : str
-
+        
     experiment_accession : str
         4DN experiment accession (e.g., '4DNEXHVF8WA9'). Obtain by searching with Fou...
     include_full_metadata : bool
@@ -42,15 +42,11 @@ def FourDN_get_experiment_metadata(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "experiment_accession": experiment_accession,
-            "include_full_metadata": include_full_metadata,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "experiment_accession": experiment_accession,
+                "include_full_metadata": include_full_metadata
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "FourDN_get_experiment_metadata",
@@ -58,7 +54,7 @@ def FourDN_get_experiment_metadata(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

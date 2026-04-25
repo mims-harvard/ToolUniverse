@@ -14,7 +14,7 @@ def NvidiaNIM_boltz2(
     recycling_steps: Optional[int] = 3,
     sampling_steps: Optional[int] = 50,
     diffusion_samples: Optional[int] = 1,
-    output_format: Optional[str] = "mmcif",
+    output_format: Optional[str] = 'mmcif',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -36,7 +36,7 @@ def NvidiaNIM_boltz2(
     diffusion_samples : int
         Number of structure samples (1-5)
     output_format : str
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -51,18 +51,14 @@ def NvidiaNIM_boltz2(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "polymers": polymers,
-            "ligands": ligands,
-            "recycling_steps": recycling_steps,
-            "sampling_steps": sampling_steps,
-            "diffusion_samples": diffusion_samples,
-            "output_format": output_format,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "polymers": polymers,
+                "ligands": ligands,
+                "recycling_steps": recycling_steps,
+                "sampling_steps": sampling_steps,
+                "diffusion_samples": diffusion_samples,
+                "output_format": output_format
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_boltz2",
@@ -70,7 +66,7 @@ def NvidiaNIM_boltz2(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

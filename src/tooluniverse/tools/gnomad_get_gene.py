@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def gnomad_get_gene(
     gene_symbol: Optional[str] = None,
     gene_id: Optional[str] = None,
-    reference_genome: Optional[str] = "GRCh38",
+    reference_genome: Optional[str] = 'GRCh38',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def gnomad_get_gene(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "gene_symbol": gene_symbol,
-            "gene_id": gene_id,
-            "reference_genome": reference_genome,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "gene_symbol": gene_symbol,
+                "gene_id": gene_id,
+                "reference_genome": reference_genome
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "gnomad_get_gene",
@@ -58,7 +54,7 @@ def gnomad_get_gene(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

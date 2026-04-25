@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Enamine_search_catalog(
     query: str,
     operation: Optional[str] = None,
-    catalog: Optional[str] = "all",
+    catalog: Optional[str] = 'all',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def Enamine_search_catalog(
     Parameters
     ----------
     operation : str
-
+        
     query : str
         Search query - compound name or keyword
     catalog : str
@@ -42,11 +42,11 @@ def Enamine_search_catalog(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"operation": operation, "query": query, "catalog": catalog}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "query": query,
+                "catalog": catalog
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Enamine_search_catalog",
@@ -54,7 +54,7 @@ def Enamine_search_catalog(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

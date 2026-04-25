@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def LiteratureSynthesisAgent(
     topic: str,
     literature_data: str,
-    focus_area: Optional[str] = "General",
+    focus_area: Optional[str] = 'General',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def LiteratureSynthesisAgent(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "topic": topic,
-            "literature_data": literature_data,
-            "focus_area": focus_area,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "topic": topic,
+                "literature_data": literature_data,
+                "focus_area": focus_area
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "LiteratureSynthesisAgent",
@@ -58,7 +54,7 @@ def LiteratureSynthesisAgent(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

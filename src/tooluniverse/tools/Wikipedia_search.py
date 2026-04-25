@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Wikipedia_search(
     query: str,
     limit: Optional[int] = 10,
-    language: Optional[str] = "en",
+    language: Optional[str] = 'en',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,11 +42,11 @@ def Wikipedia_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"query": query, "limit": limit, "language": language}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "limit": limit,
+                "language": language
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "Wikipedia_search",
@@ -54,7 +54,7 @@ def Wikipedia_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

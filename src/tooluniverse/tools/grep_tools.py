@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def grep_tools(
     pattern: str,
-    field: Optional[str] = "name",
-    search_mode: Optional[str] = "text",
+    field: Optional[str] = 'name',
+    search_mode: Optional[str] = 'text',
     limit: Optional[int] = 100,
     offset: Optional[int] = 0,
     categories: Optional[list[str]] = None,
@@ -51,18 +51,14 @@ def grep_tools(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "pattern": pattern,
-            "field": field,
-            "search_mode": search_mode,
-            "limit": limit,
-            "offset": offset,
-            "categories": categories,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "pattern": pattern,
+                "field": field,
+                "search_mode": search_mode,
+                "limit": limit,
+                "offset": offset,
+                "categories": categories
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "grep_tools",
@@ -70,7 +66,7 @@ def grep_tools(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -25,9 +25,9 @@ def ChEMBL_get_target_assays(
     target_chembl_id__exact : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     limit : int
-
+        
     offset : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -42,15 +42,11 @@ def ChEMBL_get_target_assays(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "target_chembl_id__exact": target_chembl_id__exact,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "target_chembl_id__exact": target_chembl_id__exact,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_get_target_assays",
@@ -58,7 +54,7 @@ def ChEMBL_get_target_assays(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

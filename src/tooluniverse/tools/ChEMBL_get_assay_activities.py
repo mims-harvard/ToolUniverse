@@ -25,9 +25,9 @@ def ChEMBL_get_assay_activities(
     assay_chembl_id__exact : str
         ChEMBL assay ID (e.g., 'CHEMBL615117'). To find an assay ID, use ChEMBL_searc...
     limit : int
-
+        
     offset : int
-
+        
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -42,15 +42,11 @@ def ChEMBL_get_assay_activities(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "assay_chembl_id__exact": assay_chembl_id__exact,
-            "limit": limit,
-            "offset": offset,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "assay_chembl_id__exact": assay_chembl_id__exact,
+                "limit": limit,
+                "offset": offset
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChEMBL_get_assay_activities",
@@ -58,7 +54,7 @@ def ChEMBL_get_assay_activities(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

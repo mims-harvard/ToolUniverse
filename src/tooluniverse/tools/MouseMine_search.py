@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def MouseMine_search(
     q: str,
     size: Optional[int] = 10,
-    format: Optional[str] = "json",
+    format: Optional[str] = 'json',
     facet_Category: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def MouseMine_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "q": q,
-            "size": size,
-            "format": format,
-            "facet_Category": facet_Category,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "q": q,
+                "size": size,
+                "format": format,
+                "facet_Category": facet_Category
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MouseMine_search",
@@ -62,7 +58,7 @@ def MouseMine_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

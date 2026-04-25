@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def MetabolomicsWorkbench_search_compound_by_name(
     input_value: Optional[str] = None,
     compound_name: Optional[str] = None,
-    output_item: Optional[str] = "all",
+    output_item: Optional[str] = 'all',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,15 +42,11 @@ def MetabolomicsWorkbench_search_compound_by_name(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "input_value": input_value,
-            "compound_name": compound_name,
-            "output_item": output_item,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "input_value": input_value,
+                "compound_name": compound_name,
+                "output_item": output_item
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "MetabolomicsWorkbench_search_compound_by_name",
@@ -58,7 +54,7 @@ def MetabolomicsWorkbench_search_compound_by_name(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

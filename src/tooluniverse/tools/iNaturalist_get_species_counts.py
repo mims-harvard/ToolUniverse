@@ -45,16 +45,12 @@ def iNaturalist_get_species_counts(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "taxon_id": taxon_id,
-            "place_id": place_id,
-            "quality_grade": quality_grade,
-            "per_page": per_page,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "taxon_id": taxon_id,
+                "place_id": place_id,
+                "quality_grade": quality_grade,
+                "per_page": per_page
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "iNaturalist_get_species_counts",
@@ -62,7 +58,7 @@ def iNaturalist_get_species_counts(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

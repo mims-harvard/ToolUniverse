@@ -57,20 +57,16 @@ def VDJDB_get_antigen_specificity(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "epitope": epitope,
-            "species": species,
-            "gene": gene,
-            "mhc_class": mhc_class,
-            "min_score": min_score,
-            "page": page,
-            "page_size": page_size,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "epitope": epitope,
+                "species": species,
+                "gene": gene,
+                "mhc_class": mhc_class,
+                "min_score": min_score,
+                "page": page,
+                "page_size": page_size
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "VDJDB_get_antigen_specificity",
@@ -78,7 +74,7 @@ def VDJDB_get_antigen_specificity(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_enrichment_analysis(
-    operation: Optional[str] = "enrichment_analysis",
+    operation: Optional[str] = 'enrichment_analysis',
     bed_data: Optional[str] = None,
     motif: Optional[str] = None,
     gene_list: Optional[list[str] | str] = None,
-    genome: Optional[str] = "hg38",
+    genome: Optional[str] = 'hg38',
     antigen_class: Optional[str] = None,
     cell_type_class: Optional[str] = None,
-    threshold: Optional[str] = "05",
-    distance: Optional[str] = "5000",
+    threshold: Optional[str] = '05',
+    distance: Optional[str] = '5000',
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,7 +29,7 @@ def ChIPAtlas_enrichment_analysis(
     Parameters
     ----------
     operation : str
-
+        
     bed_data : str
         **Option 1**: BED format genomic regions (tab-separated: chr, start, end). Fo...
     motif : str
@@ -60,21 +60,17 @@ def ChIPAtlas_enrichment_analysis(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "bed_data": bed_data,
-            "motif": motif,
-            "gene_list": gene_list,
-            "genome": genome,
-            "antigen_class": antigen_class,
-            "cell_type_class": cell_type_class,
-            "threshold": threshold,
-            "distance": distance,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "bed_data": bed_data,
+                "motif": motif,
+                "gene_list": gene_list,
+                "genome": genome,
+                "antigen_class": antigen_class,
+                "cell_type_class": cell_type_class,
+                "threshold": threshold,
+                "distance": distance
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ChIPAtlas_enrichment_analysis",
@@ -82,7 +78,7 @@ def ChIPAtlas_enrichment_analysis(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -11,8 +11,8 @@ from ._shared_client import get_shared_client
 def ArXiv_search_papers(
     query: str,
     limit: Optional[int] = 10,
-    sort_by: Optional[str] = "relevance",
-    sort_order: Optional[str] = "descending",
+    sort_by: Optional[str] = 'relevance',
+    sort_order: Optional[str] = 'descending',
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     *,
@@ -51,18 +51,14 @@ def ArXiv_search_papers(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "limit": limit,
-            "sort_by": sort_by,
-            "sort_order": sort_order,
-            "date_from": date_from,
-            "date_to": date_to,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "limit": limit,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+                "date_from": date_from,
+                "date_to": date_to
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ArXiv_search_papers",
@@ -70,7 +66,7 @@ def ArXiv_search_papers(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

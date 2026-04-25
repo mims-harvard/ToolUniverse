@@ -63,22 +63,18 @@ def ZINC_search_by_properties(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "mwt_min": mwt_min,
-            "mwt_max": mwt_max,
-            "logp_min": logp_min,
-            "logp_max": logp_max,
-            "hbd_max": hbd_max,
-            "hba_max": hba_max,
-            "rb_max": rb_max,
-            "purchasability": purchasability,
-            "count": count,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "mwt_min": mwt_min,
+                "mwt_max": mwt_max,
+                "logp_min": logp_min,
+                "logp_max": logp_max,
+                "hbd_max": hbd_max,
+                "hba_max": hba_max,
+                "rb_max": rb_max,
+                "purchasability": purchasability,
+                "count": count
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ZINC_search_by_properties",
@@ -86,7 +82,7 @@ def ZINC_search_by_properties(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

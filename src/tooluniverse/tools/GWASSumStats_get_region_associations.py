@@ -51,18 +51,14 @@ def GWASSumStats_get_region_associations(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "chromosome": chromosome,
-            "bp_lower": bp_lower,
-            "bp_upper": bp_upper,
-            "p_upper": p_upper,
-            "study_accession": study_accession,
-            "size": size,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "chromosome": chromosome,
+                "bp_lower": bp_lower,
+                "bp_upper": bp_upper,
+                "p_upper": p_upper,
+                "study_accession": study_accession,
+                "size": size
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GWASSumStats_get_region_associations",
@@ -70,7 +66,7 @@ def GWASSumStats_get_region_associations(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

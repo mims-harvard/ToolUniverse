@@ -13,7 +13,7 @@ def PubMed_search_articles(
     limit: Optional[int] = 10,
     mindate: Optional[str] = None,
     maxdate: Optional[str] = None,
-    datetype: Optional[str] = "pdat",
+    datetype: Optional[str] = 'pdat',
     include_abstract: Optional[bool] = False,
     sort: Optional[str] = None,
     max_results: Optional[int] = None,
@@ -57,20 +57,16 @@ def PubMed_search_articles(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "limit": limit,
-            "mindate": mindate,
-            "maxdate": maxdate,
-            "datetype": datetype,
-            "include_abstract": include_abstract,
-            "sort": sort,
-            "max_results": max_results,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "limit": limit,
+                "mindate": mindate,
+                "maxdate": maxdate,
+                "datetype": datetype,
+                "include_abstract": include_abstract,
+                "sort": sort,
+                "max_results": max_results
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "PubMed_search_articles",
@@ -78,7 +74,7 @@ def PubMed_search_articles(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

@@ -47,19 +47,15 @@ def drugbank_full_search(
     """
     # Handle mutable defaults to avoid B006 linting error
     if search_fields is None:
-        search_fields = ["drugbank_id", "name", "synonyms"]
+        search_fields = ['drugbank_id', 'name', 'synonyms']
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "query": query,
-            "search_fields": search_fields,
-            "case_sensitive": case_sensitive,
-            "exact_match": exact_match,
-            "limit": limit,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "query": query,
+                "search_fields": search_fields,
+                "case_sensitive": case_sensitive,
+                "exact_match": exact_match,
+                "limit": limit
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "drugbank_full_search",
@@ -67,7 +63,7 @@ def drugbank_full_search(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

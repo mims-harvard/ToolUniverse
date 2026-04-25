@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def UniProtIDMap_convert_ids(
     ids: str,
     from_db: str,
-    to_db: Optional[str] = "UniProtKB",
+    to_db: Optional[str] = 'UniProtKB',
     tax_id: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -45,16 +45,12 @@ def UniProtIDMap_convert_ids(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "ids": ids,
-            "from_db": from_db,
-            "to_db": to_db,
-            "tax_id": tax_id,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "ids": ids,
+                "from_db": from_db,
+                "to_db": to_db,
+                "tax_id": tax_id
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "UniProtIDMap_convert_ids",
@@ -62,7 +58,7 @@ def UniProtIDMap_convert_ids(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 

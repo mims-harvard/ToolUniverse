@@ -48,17 +48,13 @@ def CancerPrognosis_get_survival_data(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {
-            "operation": operation,
-            "cancer": cancer,
-            "cancer_type": cancer_type,
-            "study_id": study_id,
-            "max_patients": max_patients,
-        }.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {
+        "operation": operation,
+                "cancer": cancer,
+                "cancer_type": cancer_type,
+                "study_id": study_id,
+                "max_patients": max_patients
+    }.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "CancerPrognosis_get_survival_data",
@@ -66,7 +62,7 @@ def CancerPrognosis_get_survival_data(
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
-        validate=validate,
+        validate=validate
     )
 
 
