@@ -151,15 +151,18 @@ class ToolFinderEmbedding(BaseTool):
                 "Install it with: pip install tooluniverse[embedding] or pip install tooluniverse[ml]"
             ) from e
 
-        # Determine device: use GPU if available, otherwise CPU
+        # Determine device: CUDA > MPS > CPU
         if torch.cuda.is_available():
             device = "cuda"
             logger.info(f"CUDA is available. GPU count: {torch.cuda.device_count()}")
             logger.info(f"Current CUDA device: {torch.cuda.current_device()}")
             logger.info(f"GPU name: {torch.cuda.get_device_name(0)}")
+        elif torch.backends.mps.is_available():
+            device = "mps"
+            logger.info("MPS (Apple Silicon GPU) is available.")
         else:
             device = "cpu"
-            logger.warning("CUDA is not available. Using CPU.")
+            logger.warning("No GPU available. Using CPU.")
 
         # Load model on the appropriate device
         logger.info(f"Loading SentenceTransformer model on device: {device}")
@@ -173,10 +176,12 @@ class ToolFinderEmbedding(BaseTool):
         # Log device information
         if torch.cuda.is_available():
             logger.info(
-                f"Tool_RAG model loaded on GPU: {torch.cuda.get_device_name(0)}"
+                f"Tool_RAG model loaded on CUDA GPU: {torch.cuda.get_device_name(0)}"
             )
+        elif torch.backends.mps.is_available():
+            logger.info("Tool_RAG model loaded on MPS (Apple Silicon GPU)")
         else:
-            logger.warning("Tool_RAG model loaded on CPU (GPU not available)")
+            logger.warning("Tool_RAG model loaded on CPU (no GPU available)")
 
     def load_tool_desc_embedding(
         self,
@@ -244,7 +249,12 @@ class ToolFinderEmbedding(BaseTool):
         if hasattr(self.rag_model, "device"):
             target_device = self.rag_model.device
         else:
-            target_device = "cuda" if torch.cuda.is_available() else "cpu"
+            if torch.cuda.is_available():
+                target_device = "cuda"
+            elif torch.backends.mps.is_available():
+                target_device = "mps"
+            else:
+                target_device = "cpu"
 
         logger.info(f"Loading embeddings to device: {target_device}")
 
