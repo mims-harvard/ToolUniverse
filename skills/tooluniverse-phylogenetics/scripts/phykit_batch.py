@@ -24,6 +24,10 @@ def run_phykit(function: str, filepath: str, tree_path: str = "") -> str | None:
     cmd = ["phykit", function, filepath]
     if tree_path and function == "saturation":
         cmd.extend(["-t", tree_path])
+    # long_branch_score / patristic_distances default to labeled summary stats;
+    # -v emits one value per taxon/pair so we can compute our own summary.
+    if function in ("long_branch_score", "patristic_distances"):
+        cmd.append("-v")
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         if r.returncode == 0:
@@ -180,9 +184,19 @@ def main():
             else:
                 values.extend(taxon_values)
         else:
-            # Single-value output
+            # Single-value output. `phykit saturation` outputs `slope<TAB>1-slope`;
+            # papers typically report 1-slope as "the saturation value", so take
+            # the second column when available. Other single-value functions
+            # (treeness, dvmc, total_tree_length, evolutionary_rate,
+            # parsimony_informative) emit only one column, so first-column
+            # extraction is also correct for them.
+            first_line = output.split("\n")[0]
+            cols = first_line.split("\t")
             try:
-                val = float(output.split("\n")[0].split("\t")[0])
+                if args.function == "saturation" and len(cols) >= 2:
+                    val = float(cols[1])
+                else:
+                    val = float(cols[0])
                 values.append(val)
             except (ValueError, IndexError):
                 continue

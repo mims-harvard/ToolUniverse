@@ -145,8 +145,27 @@ tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"./align
 ```
 Do NOT run phykit manually in a loop — the tool handles all files and returns correct summary statistics.
 
-### PhyKIT saturation output has TWO columns
-`phykit saturation -a alignment -t tree` outputs `slope<TAB>1-slope`. The **saturation value** reported in papers is typically `1-slope` (the SECOND column), NOT the slope itself. If the question asks for "saturation value", use the second column. The slope (first column) is the regression coefficient of uncorrected vs patristic distances; 1-slope is the proportion of saturation.
+### PhyKIT saturation output has TWO columns — this is the #1 mistake
+
+`phykit saturation -a alignment -t tree` emits `slope<TAB>1-slope` (two tab-separated numbers, one line per alignment). The **saturation value** reported in papers is `1-slope` — the SECOND column. `1-slope` is the proportion of evolutionary signal lost to multiple substitutions. The first column (`slope`) is the raw regression coefficient and is NOT what "saturation" refers to.
+
+Preferred: don't parse phykit output by hand — call the `phykit_batch_analysis` tool, which already returns `1-slope` for saturation:
+
+```bash
+tu run phykit_batch_analysis '{"operation":"batch","function":"saturation","directory":"./alignments","extension":".fa","tree_directory":"./trees","tree_extension":".treefile"}'
+```
+
+If you must run `phykit saturation` directly and parse the output, take column 2 (`cut -f2` / `line.split("\t")[1]`). If your median saturation is less than ~0.4 for biological trees, you likely picked column 1 — retry with column 2.
+
+### Single-copy orthologs across species — comparison set + intersection
+
+Two-step rule when counting across BUSCO `single_copy_busco_sequences/` data:
+
+1. **Find the comparison set first.** If a `target_orthologs.txt` (or similar named subset list) exists in the data folder, that file IS the comparison set — restrict to those ortholog IDs only. Do not enumerate every BUSCO single-copy file across species. Do not assume "all" means the whole BUSCO output when a target list is provided.
+
+2. **Then apply the intersection rule.** "Single-copy ortholog" across species means single-copy in EVERY species in the comparison set. If an ortholog is missing from one species' `single_copy_busco_sequences/`, exclude it from the count entirely — do not partially count the species that do have it.
+
+Sanity check: if any species shows a much smaller per-ortholog count than others (e.g., one species at ~600 aa while others are 4000+ aa for the same ortholog set), the missing-from-some orthologs are inflating the per-ortholog average — drop them first.
 
 ### Parsimony informative sites
 - Exclude **gap-only columns** before counting — a column that is all gaps is not informative.

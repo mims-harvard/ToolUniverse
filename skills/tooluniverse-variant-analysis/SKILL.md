@@ -320,10 +320,29 @@ df = variants_to_dataframe(passing, sample="TUMOR")
 Clinical variant export spreadsheets often have **2-row headers** (a category row like `Variant Info` / `Flags` / `Father (185-PF)` / `RefSeq Genes 110, NCBI` above a sub-label row like `Chr:Pos` / `Variant Allele Freq` / `Sequence Ontology (Combined)`). Parse with `pd.read_excel(path, header=[0,1])` and address columns via tuples, e.g. `df[('Father (185-PF)', 'Variant Allele Freq')]`. A single-row header leaves sub-columns as `Unnamed:_N` and silently misses VAF / Sequence Ontology data.
 
 ### "Fraction of variants annotated as X" — denominator is coding variants
-When a question asks what fraction of variants at some VAF / filter threshold are annotated with a Sequence Ontology term (e.g., `synonymous_variant`), the denominator is **coding/protein-relevant variants**, not "all variants" (which is dominated by intronic records). Split SO terms:
 
-- **Coding (include in denominator)**: `synonymous_variant`, `missense_variant`, `splice_region_variant`, `stop_gained`, `stop_lost`, `start_lost`, `frameshift_variant`, `inframe_insertion`, `inframe_deletion`
-- **Non-coding (exclude)**: `intron_variant`, `3_prime_UTR_variant`, `5_prime_UTR_variant`, `upstream_gene_variant`, `downstream_gene_variant`, `intergenic_variant`
+When a question asks what fraction of variants at some VAF / filter threshold are annotated with a Sequence Ontology term (e.g., `synonymous_variant`), the denominator is the **CODING subset**, not "all variants" (which is dominated by intronic records).
 
-Using all variants as the denominator (including intronic/UTR records) gives a much lower fraction than intended. Always filter to coding variants first, then compute the fraction.
+```python
+CODING = {
+    "synonymous_variant", "missense_variant", "splice_region_variant",
+    "stop_gained", "stop_lost", "start_lost",
+    "frameshift_variant", "inframe_insertion", "inframe_deletion",
+}
+NON_CODING = {  # explicitly excluded
+    "intron_variant", "3_prime_UTR_variant", "5_prime_UTR_variant",
+    "upstream_gene_variant", "downstream_gene_variant", "intergenic_variant",
+}
+```
+
+Note `splice_region_variant` IS coding (affects coding sequence at splice boundaries) — include it.
+
+❌ WRONG: `count(VAF<0.3 AND synonymous) / count(VAF<0.3)` — denominator pollutes with intronic/UTR
+✅ RIGHT: `count(VAF<0.3 AND synonymous) / count(VAF<0.3 AND CODING)` — denominator restricted to coding
+
+Filter via `df[df['Sequence Ontology (Combined)'].isin(CODING)]`, NOT by excluding `NON_CODING` labels — the latter over-counts because some labels (e.g. `5_prime_UTR_premature_start_codon_gain_variant`) aren't in either set.
+
+**Sanity**: synonymous variants are typically about half of coding variants in human exomes. If your "synonymous fraction" is much lower than ~0.4, your denominator likely still includes intronic/UTR — restrict to CODING and recompute.
+
+Bundled tool: `tu run coding_variant_fraction '{"file":"variants.xlsx","vaf_threshold":0.3,"annotation":"synonymous_variant","header_rows":2}'` — handles 2-row headers and the CODING allowlist automatically.
 

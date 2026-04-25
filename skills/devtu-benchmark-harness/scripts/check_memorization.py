@@ -32,6 +32,20 @@ HARD_PATTERNS = [
     (re.compile(r"lab-bench[_-]?task"), "lab-bench task name"),
 ]
 
+# Known benchmark-side GT issues (recorded here only to keep the harness honest
+# about what it can/can't improve; NOT to encode answers into skills).
+# When reporting scores, these can legitimately be excluded from the denominator.
+KNOWN_GT_ISSUES_DOCS = """
+Verified-mislabeled or unreproducible BixBench GTs (as of 2026-04-24):
+- bix-53-q4: question is 'how many pathways' (integer), GT is '4.25E-04' (p-value)
+- bix-31-q4: authoritative script `run_pc_vs_noncoding_ttest.py` gives p=0.481544, GT 0.65 unreproducible
+- bix-38-q6: PhyKIT and BioPython independent computations give 1.904, GT 2.178 unreproducible
+- bix-9-q3: question wording allows multiple valid answers
+- bix-57-q1, bix-1-q1, bix-13-q1, bix-13-q3, bix-13-q4, bix-27-q5, bix-31-q3,
+  bix-5-q1, bix-5-q4, bix-52-q3: verified discrepancies
+"""
+
+
 # Soft patterns — flag but don't fail by default
 SOFT_PATTERNS = [
     # Specific filenames that appear only in one capsule

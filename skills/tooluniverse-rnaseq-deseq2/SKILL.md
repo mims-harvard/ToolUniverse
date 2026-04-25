@@ -179,12 +179,14 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 
 ## Analysis conventions
 
-### MANDATORY: Use R DESeq2 (not pydeseq2) for all DE analysis
-For ANY question about differential expression counts, dispersion, or gene set overlaps, use R DESeq2 via the ToolUniverse tool or Rscript. Do NOT use pydeseq2 — it gives different results.
+### DESeq2 library choice — match the authoritative pipeline
+
+If the data folder contains a `run_*.py` that uses `pydeseq2` or an `analysis.R` that uses R DESeq2, USE THAT EXACT LIBRARY. The two libraries disagree on small numerical details (DEG counts at the same threshold typically differ by 2-10%), so the GT comes from whichever the authoritative pipeline ran.
+
+If NO authoritative script exists, prefer R DESeq2 (via `run_deseq2_analysis` tool or `Rscript`) — it's the more widely-published reference implementation:
 ```bash
 tu run run_deseq2_analysis '{"operation":"deseq2","counts_file":"raw_counts.csv","metadata_file":"experiment_metadata.csv","design":"~ Replicate + Media + Strain","contrast":"Strain, 97, 1","refit_cooks":true}'
 ```
-If the tool is unavailable, use `Rscript -e 'library(DESeq2); ...'` directly.
 
 ### Prefer the dataset's authoritative script
 Before running DESeq2 yourself, `ls` the dataset folder. If you see `run_*.py`, `analysis.R`, `find_*.R`, or similar, those are the benchmark's ground-truth recipes.

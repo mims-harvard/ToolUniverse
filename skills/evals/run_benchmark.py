@@ -220,8 +220,8 @@ def get_plugin_guidance(include_skill_conventions: bool = True, skill_routing_mo
 def run_claude(
     prompt: str,
     with_plugin: bool,
-    max_turns: int = 60,
-    timeout: int = 600,
+    max_turns: int = 200,
+    timeout: int = 1800,
     skill_routing: bool = False,
     full_skill_injection: bool = False,
     question_text: str = "",
@@ -445,7 +445,7 @@ def main():
     parser.add_argument("--subset", default="DbQA", help="Subset name for lab-bench")
     parser.add_argument("--n", type=int, default=10, help="Number of questions to run")
     parser.add_argument(
-        "--max-turns", type=int, default=60, help="Max turns per question"
+        "--max-turns", type=int, default=200, help="Max turns per question (real users have no cap; 200 is generous)"
     )
     parser.add_argument(
         "--timeout", type=int, default=1800, help="Timeout per question (seconds)"

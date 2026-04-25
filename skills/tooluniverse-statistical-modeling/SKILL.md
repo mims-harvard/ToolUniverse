@@ -8,23 +8,36 @@ disable-model-invocation: true
 
 ## CRITICAL — Read before writing any code
 
-1. **Clinical trial AE analysis** (regression, chi-square, ANY severity test): Use the bundled script:
+1. **Clinical trial AE analysis** (regression, chi-square, ANY severity test): Use the bundled script (or the `clinical_trial_ae_severity_test` ToolUniverse tool which wraps it):
    ```bash
-   # Chi-square on vaccination × severity
+   tu run clinical_trial_ae_severity_test '{"dm_file":"DM.csv","ae_file":"AE.csv","test":"chi-square","group_col":"TRTGRP"}'
+
+   # Or directly:
    python skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py \
-     --dm DM.csv --ae AE.csv --test chi-square --group TRTGRP
-
-   # With subgroup filter
-   python scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv \
-     --subgroup "expect_interact=Yes" --test chi-square --group TRTGRP
-
-   # Ordinal logistic regression
-   python scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv \
-     --test ordinal --group TRTGRP --covariates "covar1,covar2"
+     --dm DM.csv --ae AE.csv --test chi-square --group TRTGRP \
+     --subgroup "expect_interact=Yes"   # optional
    ```
-   The script handles: latin1 encoding, max(AESEV) per subject across ALL AEs (no AEPT filtering), inner join. Do NOT write your own merge — the AE cohort convention is easy to get wrong.
-2. **Expression ANOVA**: Each gene is one observation per group. Do NOT sum genes per sample. Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py`
-3. **Spline models**: Use R `ns()` via Rscript, not Python patsy. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
+   The script/tool handles: `encoding='latin1'` for SDTM CSVs, `max(AESEV)` per subject across ALL AEs (no AEPT filtering), inner join with DM, optional subgroup filter, optional ordinal-logistic with covariates.
+
+   **Why no AEPT filter** — AESEV is a protocol-defined severity scale on the AE table. Filtering AE by AEPT (e.g. keeping only `AEPT == "COVID-19"`) drops subjects whose worst severity was recorded under a different AEPT label, drastically changes the contingency table, and can flip the test result. The phrase "COVID-19 severity" describes the OUTCOME, NOT a filter criterion.
+
+   - ❌ WRONG: `ae[ae['AEPT'].str.contains('COVID-19')].groupby('USUBJID')['AESEV'].max()` — filters to COVID-19 events
+   - ✅ RIGHT: `ae.groupby('USUBJID')['AESEV'].max()` — uses ALL AE records
+
+2. **Expression ANOVA / fold change with multi-feature data** (gene × sample matrix):
+   For "the F-statistic" or "a fold change" as a single value, run per-gene then summarize — NEVER pool `expr.values.ravel()` across all genes.
+   - For **F-statistic**: derive a per-sample quantity (like DESeq2 LFC of each gene between two cell types, then ANOVA on those LFCs across groups) OR run on a single target gene.
+   - For **median/mean log2 fold change** between two groups: run DESeq2 with `design=~<group>`, extract per-gene `log2FoldChange` (with shrinkage if the pipeline uses it), then take median/mean across genes.
+
+   ❌ WRONG (aggregate): `log2(sum_counts_groupA / sum_counts_groupB)` per sample then summarize — gives ratio of totals, dominated by high-expression genes.
+   ✅ RIGHT (per-gene): DESeq2 → `results_df['log2FoldChange'].median()`.
+
+   **Sanity heuristics**: F > 50 for biological ANOVA across a few groups means you aggregated (typical biological F is 0.5–10). |median LFC| > 2 between similar groups means you aggregated (typical |median| < 1).
+
+   Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py` (or the `expression_anova_per_gene` ToolUniverse tool).
+
+3. **Spline models**: Use R `ns()` via Rscript, not Python `patsy.cr()` — they give different fits. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
+
 4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
 
 ---

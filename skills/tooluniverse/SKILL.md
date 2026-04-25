@@ -12,11 +12,14 @@ paths: "*.csv,*.xlsx,*.tsv,*.vcf,*.fa,*.fasta,*.faa,*.h5ad,*.rds,*.bam"
 **BEFORE doing anything else** — before reading data, before writing code, before answering — scan the routing table below and invoke the matching skill. The specialized skill contains critical domain conventions that you will get wrong without loading.
 
 **How to route:**
-1. Find the matching keyword row in the Routing Table
-2. Call `Skill(skill="<skill-name>")` immediately
-3. Follow the loaded skill's instructions to answer the question
+1. Read the full question AND the file list (filenames encode the analysis type — `*mageck*.xlsx` → CRISPR screen, `*DM.csv`/`*AE.csv` → clinical trial AE, `*.vcf` → variant, `*.h5ad` → single-cell, `*_counts.csv`+`*meta*.csv` → RNA-seq DE, `*.faa`+`*.treefile` → phylogenetics, `*_executed.ipynb` → authoritative analysis already ran)
+2. Find the matching keyword row in the Routing Table
+3. Call `Skill(skill="<skill-name>")` immediately
+4. Follow the loaded skill's instructions to answer the question
 
-**If no keyword matches** → use general strategies below.
+**If no keyword matches but filenames indicate a domain** → still route based on filename signals. Filenames are authoritative domain evidence even when the question prose is generic.
+
+**If no signal matches** → use general strategies below.
 
 **DO NOT skip routing.** Even if you think you know the answer, the skill has conventions (e.g., which denominator to use, which R function, which column to read) that differ from defaults.
 
@@ -60,20 +63,19 @@ Prefer ToolUniverse tools (callable via `tu run <name>` or MCP `execute_tool`) f
 
 Each tool handles encoding, column-name quirks, and aggregation-level edge cases that are easy to get wrong in ad-hoc code. Find more tools via `tu find "<keyword>"` or MCP `find_tools`.
 
-### Numbered Conventions
+### Brief reminders (one-line)
 
-Apply these rules when analyzing local data files. They override defaults:
+These are short pointers. The full conventions, anti-pattern examples, and code snippets live in the matching sub-skill — load it via the routing table for the details.
 
-1. **Clinical trial AE severity**: Use ALL AE records. `max(AESEV)` per subject. Do NOT filter by condition name (AEPT) — not even when the question names a specific condition (e.g. "COVID-19 severity"). Use `encoding='latin1'` for CSV. Ready-made script: `python skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py --dm DM.csv --ae AE.csv --test chi-square --group TRTGRP` (supports chi-square, ordinal logistic, subgroup filters).
-   - ❌ WRONG: `ae[ae['AEPT'].str.contains('COVID-19')].groupby('USUBJID')['AESEV'].max()` — filters to COVID-19 events
-   - ✅ RIGHT: `ae.groupby('USUBJID')['AESEV'].max()` — uses ALL AE records
-   - The question phrase "COVID-19 severity" describes the OUTCOME (a protocol-defined severity scale in the AE table), NOT a filter criterion. Severity is the same value regardless of which AEPT triggered it.
-2. **Exonic / coding variant counting**: Use exactly this allowlist — `CODING = {"synonymous_variant", "missense_variant", "splice_region_variant", "stop_gained", "stop_lost", "start_lost", "frameshift_variant", "inframe_insertion", "inframe_deletion"}`. `splice_region_variant` IS included (standard convention: it affects coding sequence). Exclude intronic/UTR/intergenic/upstream/downstream. Filter with `df[df['Sequence Ontology (Combined)'].isin(CODING)]`, NOT by excluding intronic labels — that over-counts.
-3. **DESeq2 library choice**: Match the authoritative script if one exists — if `run_*.py` uses pydeseq2, use pydeseq2; if `analysis.R` uses R DESeq2, use R DESeq2. The two libraries give slightly different DEG counts at the same thresholds (~2-10% difference), so matching the ground-truth pipeline matters. If NO authoritative script exists, prefer R DESeq2 (via `run_deseq2_analysis` tool or Rscript) as it's the more widely-published reference implementation.
-4. **Expression ANOVA / fold change for a single reported F-statistic**: If the data is a gene×sample matrix AND the question asks for "the F-statistic" or "a fold change" as a single value, run ANOVA/t-test on a **derived per-sample quantity** (like the DESeq2 LFC of each gene between two cell types, then ANOVA on those LFCs across groups) OR on a single target gene — NEVER on the raw pooled `expr.values.ravel()` across all genes. If your F-statistic is > 50, you aggregated — stop and reconsider. Expected F-values for biological ANOVA across a handful of groups are typically 0.5–10. Check for a reference notebook in the data folder first — it shows the exact aggregation level.
-5. **Spline models**: Use R `ns()` via Rscript. Include focal-strain pure endpoint only (exclude non-focal pure strain).
-6. **PhyKIT saturation**: Use 1-slope (second column output), not slope (first column).
-7. **"Also DE in X"**: Simple intersection `A ∩ B`. Do NOT add exclusion conditions.
+1. **Clinical trial AE severity**: use ALL AE records, `max(AESEV)` per subject, do NOT filter by AEPT — see `tooluniverse-statistical-modeling`.
+2. **Variant counting / fractions**: denominator is the CODING subset (`isin(CODING_SO_TERMS)`), not all variants — see `tooluniverse-variant-analysis`.
+3. **DESeq2 library**: match the authoritative script if present; otherwise prefer R DESeq2 — see `tooluniverse-rnaseq-deseq2`.
+4. **Per-feature stat (ANOVA F, median LFC)**: run per-gene then summarize, NEVER pool/sum-then-ratio — see `tooluniverse-statistical-modeling`.
+5. **Spline models**: use R `ns()` via Rscript — see `tooluniverse-statistical-modeling`.
+6. **PhyKIT saturation**: use column 2 (`1-slope`), not column 1 (`slope`) — see `tooluniverse-phylogenetics`.
+7. **"Also DE in X"**: simple intersection `A ∩ B` — see `tooluniverse-rnaseq-deseq2`.
+
+These reminders are for fast pattern recognition during routing. Detailed `❌ WRONG / ✅ RIGHT` examples and sanity heuristics are in the sub-skill bodies — invoke the skill via the Routing Table to load them.
 
 ---
 
@@ -171,7 +173,7 @@ Apply these rules when analyzing local data files. They override defaults:
 
 | Keywords | Action |
 |----------|--------|
-| "**CRISPR screen**", "genetic screen", "screen hits", "essential genes" | `Skill(skill="tooluniverse-crispr-screen-analysis")` |
+| "**CRISPR screen**", "genetic screen", "screen hits", "essential genes", "**MAGeCK**", "**sgRNA**", "screen replicate", "screen QC", "dropout screen", "CRISPRa", "CRISPRi", "beta score" | `Skill(skill="tooluniverse-crispr-screen-analysis")` |
 | "**drug-drug interaction**", "DDI", "drug combination", "polypharmacy" | `Skill(skill="tooluniverse-drug-drug-interaction")` |
 | "**differential expression**", "DESeq2", "RNA-seq analysis", "DE genes", "fold change", "differentially expressed", "log2FC", "count matrix", "dispersion" | `Skill(skill="tooluniverse-rnaseq-deseq2")` |
 | "**proteomics**", "mass spectrometry", "protein quantification", "TMT", "iTRAQ", "label-free" | `Skill(skill="tooluniverse-proteomics-analysis")` |

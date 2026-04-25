@@ -130,16 +130,32 @@ def grade_answer(
             low, high = float(low), float(high)
             if low > high:
                 low, high = high, low
+
+            candidates: list[float] = []
+            # Bare numbers (with optional thousand-separators / scientific exponent).
             for raw in re.findall(
                 r"-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][+-]?\d+)?",
                 predicted_normalized,
             ):
                 clean = raw.replace(",", "")
                 try:
-                    val = float(clean)
+                    candidates.append(float(clean))
                 except ValueError:
                     continue
-                # Direct range check
+            # `A:B` ratio expressions (e.g. "10:1") — convert to fraction
+            # A/(A+B). Keeps range-matching robust to ratio-vs-fraction format
+            # differences when the question asks for "frequency ratio of A:B"
+            # but GT is given as the fraction.
+            for a_str, b_str in re.findall(r"\b(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)\b", predicted_normalized):
+                try:
+                    a, b = float(a_str), float(b_str)
+                    if a + b > 0:
+                        candidates.append(a / (a + b))
+                        candidates.append(b / (a + b))
+                except ValueError:
+                    continue
+
+            for val in candidates:
                 if low <= val <= high:
                     range_match = True
                     break
@@ -148,8 +164,9 @@ def grade_answer(
                 # Only applies when the predicted value has explicit decimals —
                 # bare integers from prose ("1. Filter", "n=565") should NOT
                 # match small decimal ranges like (0.76, 0.78).
-                if "." in clean and "e" not in clean.lower():
-                    dp = len(clean.split(".")[1])
+                s = repr(val)
+                if "." in s and "e" not in s.lower():
+                    dp = len(s.split(".")[1])
                     half_ulp = 0.5 * (10 ** (-dp))
                     if val - half_ulp <= high and val + half_ulp >= low:
                         range_match = True

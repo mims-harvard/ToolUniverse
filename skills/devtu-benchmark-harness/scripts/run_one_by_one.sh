@@ -35,11 +35,18 @@ s = json.load(open('$SAMPLE'))
 json.dump([s[$i]], open('$OUT.in.json', 'w'))
 "
     echo "[$((i + 1))/$N] $QID — running..."
+    # Snapshot the latest results file BEFORE running so we can tell if a
+    # fresh one was produced. Portable across macOS BSD find / GNU find
+    # (which differ on `-newermt "@timestamp"` — BSD silently returns empty).
+    PREV_LATEST=$(ls -t "$REPO_ROOT/skills/evals/bixbench/"results_*.json 2>/dev/null | head -1 || true)
     START=$(date +%s)
     python3 "$RUNNER" --benchmark bixbench --data-file "$OUT.in.json" --n 1 --plugin-only \
         > "$OUT.stdout.log" 2>&1 || true
-    # Find the most recent results file
-    LATEST=$(ls -t "$REPO_ROOT/skills/evals/bixbench/"results_*.json | head -1)
+    LATEST=$(ls -t "$REPO_ROOT/skills/evals/bixbench/"results_*.json 2>/dev/null | head -1 || true)
+    if [[ -z "$LATEST" || "$LATEST" = "$PREV_LATEST" ]]; then
+        echo "  (runner produced no new result file — skipping)"
+        continue
+    fi
     cp "$LATEST" "$OUT.result.json"
     ELAPSED=$(($(date +%s) - START))
     # Quick status print
