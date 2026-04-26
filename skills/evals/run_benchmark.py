@@ -393,6 +393,20 @@ def run_benchmark(
                     capsule_path = candidate
                     break
             if capsule_path:
+                # Auto-extract any missing CapsuleNotebook from the source zip.
+                # Many capsules ship a zip alongside the extracted dir; older
+                # extracts dropped the notebook subdir, leaving questions
+                # falsely "no-notebook" and unsolvable. Fix transparently.
+                zip_candidate = capsule_path.parent / f"{capsule_dir_name}.zip"
+                has_nb = any(capsule_path.rglob("*_executed.ipynb"))
+                if not has_nb and zip_candidate.exists():
+                    import zipfile, contextlib
+                    with contextlib.suppress(Exception):
+                        with zipfile.ZipFile(zip_candidate) as zf:
+                            uuid = capsule_dir_name.replace("CapsuleFolder-", "")
+                            for name in zf.namelist():
+                                if name.startswith(f"CapsuleNotebook-{uuid}"):
+                                    zf.extract(name, capsule_path)
                 data_files = [f.name for f in capsule_path.iterdir() if f.is_file()]
                 subdirs = [f.name + "/" for f in capsule_path.iterdir() if f.is_dir()]
                 # Detect executed notebooks anywhere in the capsule (top or nested)
