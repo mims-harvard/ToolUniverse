@@ -108,7 +108,13 @@ def grade_answer(
     pred_lower = predicted_normalized.lower()
 
     # --- Strategy 1: Exact match ---
-    exact_match = gt_lower in pred_lower
+    # For short numeric GTs ("3", "29", "100"), naive substring match yields
+    # false positives ("3" matches inside "0.523"). Use word-boundary regex so
+    # the GT must appear as a token, not embedded inside a larger number.
+    if re.fullmatch(r"-?\d+(?:\.\d+)?", gt_lower):
+        exact_match = bool(re.search(rf"(?<![\d.]){re.escape(gt_lower)}(?![\d.])", pred_lower))
+    else:
+        exact_match = gt_lower in pred_lower
 
     # --- Strategy 2: MC match (short answers like A, B, Yes, No) ---
     mc_match = False

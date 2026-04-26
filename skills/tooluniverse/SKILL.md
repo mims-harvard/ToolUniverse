@@ -44,6 +44,8 @@ Before writing ANY analysis code, check whether the data folder contains the pub
    cd /path/to/data && python3 run_*.py      # or Rscript analysis.R
    ```
 
+   **Canonical vs scratch scripts**: when a folder has many `.R`/`.py` files, prefer ones with canonical names (`analysis.R`, `main.R`, `run.R`, `run_<question_topic>.R`) over scratch-named ones (`try_*.R`, `check_*.R`, `inspect_*.R`, `verify_*.R`, `*_v2.R`, `*2.R`, `*3.R`). Scratch-named scripts are usually leftovers from prior agent attempts that may not have converged on the published answer — treat their outputs as advisory, not authoritative.
+
 Only write your own analysis code when no authoritative pipeline exists in the data folder. When one does exist, your job is to execute/read it and report — not to reimplement.
 
 ### RULE ONE: Use the bundled skill scripts for recurring analysis patterns
@@ -67,7 +69,7 @@ Each tool handles encoding, column-name quirks, and aggregation-level edge cases
 
 These are short pointers. The full conventions, anti-pattern examples, and code snippets live in the matching sub-skill — load it via the routing table for the details.
 
-1. **Clinical trial AE severity**: use ALL AE records, `max(AESEV)` per subject, do NOT filter by AEPT — see `tooluniverse-statistical-modeling`.
+1. **Clinical trial AE severity** (chi-square OR ordinal/logistic regression): use ALL AE records, `max(AESEV)` per subject, do NOT filter by AEPT — even when the question names a specific condition like "COVID-19 severity" or "infection severity", AESEV IS the universal outcome, not a subset filter. See `tooluniverse-statistical-modeling`.
 2. **Variant counting / fractions**: denominator is the CODING subset (`isin(CODING_SO_TERMS)`), not all variants — see `tooluniverse-variant-analysis`.
 3. **DESeq2 library**: match the authoritative script if present; otherwise prefer R DESeq2 — see `tooluniverse-rnaseq-deseq2`.
 4. **Per-feature stat (ANOVA F, median LFC)**: run per-gene then summarize, NEVER pool/sum-then-ratio — see `tooluniverse-statistical-modeling`.
