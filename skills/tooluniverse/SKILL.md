@@ -70,7 +70,7 @@ Each tool handles encoding, column-name quirks, and aggregation-level edge cases
 These are short pointers. The full conventions, anti-pattern examples, and code snippets live in the matching sub-skill — load it via the routing table for the details.
 
 1. **Clinical trial AE severity** (chi-square OR ordinal/logistic regression): use ALL AE records, `max(AESEV)` per subject, do NOT filter by AEPT — even when the question names a specific condition like "COVID-19 severity" or "infection severity", AESEV IS the universal outcome, not a subset filter. See `tooluniverse-statistical-modeling`.
-2. **Variant counting / fractions**: denominator is the CODING subset (`isin(CODING_SO_TERMS)`), not all variants — see `tooluniverse-variant-analysis`.
+2. **Variant counting / fractions** (synonymous %, missense %, "fraction of X variants", etc.): denominator is the CODING subset only (synonymous + missense + splice_region + stop_gained/lost + start_lost + frameshift + inframe_ins/del). EXCLUDE intron, intergenic, UTR, splice_donor/acceptor, regulatory, non_coding. The CODING-only denominator applies even when the question doesn't say "coding" explicitly — use `coding_variant_fraction` tool. See `tooluniverse-variant-analysis`.
 3. **DESeq2 library**: match the authoritative script if present; otherwise prefer R DESeq2 — see `tooluniverse-rnaseq-deseq2`.
 4. **Per-feature stat (ANOVA F, median LFC)**: run per-gene then summarize, NEVER pool/sum-then-ratio — see `tooluniverse-statistical-modeling`.
 5. **Spline models**: use R `ns()` via Rscript — see `tooluniverse-statistical-modeling`.
