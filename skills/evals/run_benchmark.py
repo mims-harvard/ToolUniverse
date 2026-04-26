@@ -394,9 +394,24 @@ def run_benchmark(
                     break
             if capsule_path:
                 data_files = [f.name for f in capsule_path.iterdir() if f.is_file()]
+                subdirs = [f.name + "/" for f in capsule_path.iterdir() if f.is_dir()]
+                # Detect executed notebooks anywhere in the capsule (top or nested)
+                executed_nbs = []
+                for nb in capsule_path.rglob("*_executed.ipynb"):
+                    rel = nb.relative_to(capsule_path)
+                    executed_nbs.append(str(rel))
+                listing = data_files + subdirs
+                hint = ""
+                if executed_nbs:
+                    hint = (
+                        f"\nAuthoritative executed notebook(s) detected: "
+                        f"{', '.join(executed_nbs)}. Per RULE ZERO, read these "
+                        f"first via `tu run read_executed_notebook` before "
+                        f"reimplementing any analysis."
+                    )
                 question_text = (
                     f"Data files are located at: {capsule_path}\n"
-                    f"Files available: {', '.join(data_files)}\n\n"
+                    f"Files available: {', '.join(listing)}{hint}\n\n"
                     f"{question_text}\n\n"
                     f"Give your final answer as a single value."
                 )
