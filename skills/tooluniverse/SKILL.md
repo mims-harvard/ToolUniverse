@@ -76,6 +76,7 @@ These are short pointers. The full conventions, anti-pattern examples, and code 
 5. **Spline models**: use R `ns()` via Rscript — see `tooluniverse-statistical-modeling`.
 6. **PhyKIT saturation**: use column 2 (`1-slope`), not column 1 (`slope`) — see `tooluniverse-phylogenetics`.
 7. **"Also DE in X"**: simple intersection `A ∩ B` — see `tooluniverse-rnaseq-deseq2`.
+8. **Ratio "between A and B"**: ALWAYS state BOTH `A/B = X` AND `B/A = 1/X` in the final answer. English "ratio between A and B" is direction-ambiguous; reporting both ensures the correct value is in your response. Example output: "Ratio (W to 1) = 1.52, equivalently (1 to W) = 0.66".
 
 These reminders are for fast pattern recognition during routing. Detailed `❌ WRONG / ✅ RIGHT` examples and sanity heuristics are in the sub-skill bodies — invoke the skill via the Routing Table to load them.
 
