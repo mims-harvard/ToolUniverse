@@ -264,3 +264,10 @@ When asked for the log2FC of gene X in mutant Y, verify that your DESeq2 `result
 - `results(dds, contrast=c("Strain", "97", "1"))` → log2FC for strain 97 vs ref
 - The sign matters: negative log2FC = downregulated in mutant vs reference
 - If your value has the wrong sign or magnitude, check if you accidentally used the wrong strain coefficient
+
+## Density / per-chromosome calculation conventions
+
+When a question asks for "average chromosomal density", "genome-wide average density", or similar:
+- "Average chromosomal density" = `mean(per_chromosome_density)` where `per_chromosome_density = n_features / chromosome_length` for each chromosome separately, then averaged across chromosomes (UNWEIGHTED mean).
+- This is DIFFERENT from `total_features / total_length` (which is the WEIGHTED mean / "expected density under uniform distribution"). The latter is typically used as the chi-square test's expected value, not as the "average chromosomal density" being asked about.
+- Example: in bird genomes with chromosomes ranging 6-120 Mb, mean(per_chrom_density) is ~2× larger than total/total because shorter chromosomes have proportionally more events per bp.
