@@ -48,6 +48,8 @@ Before writing ANY analysis code, check whether the data folder contains the pub
 
 Only write your own analysis code when no authoritative pipeline exists in the data folder. When one does exist, your job is to execute/read it and report — not to reimplement.
 
+**RULE ZERO sub-rule — Cite-the-cell-output**: If the notebook has a cell whose output IS the answer to the question (e.g., `len(sigs) = 197`, `mean p-value: 0.0254`, `top hit: GENE_X`), copy that output value directly. Do NOT recompute with your own filters. The notebook may apply slightly-different filters than the question text describes (e.g., the question lists `padj<0.05, |LFC|>0.5, baseMean>10` but the notebook's filter line has `& (baseMean>=10)` commented out). The published answer is the notebook's output — even if the question's filter list slightly differs from what the notebook actually applied. The benchmark's GT comes from the notebook's actual computation, not from re-applying the question's literal filter list. Trust the notebook's published number when it directly answers the question.
+
 ### RULE ONE: Use the bundled skill scripts for recurring analysis patterns
 
 Before writing your own analysis code, check these ready-made scripts in the plugin. They encode the correct conventions and save re-deriving them:
