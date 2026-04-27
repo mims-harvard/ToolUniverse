@@ -28,6 +28,7 @@ DESeq2 assumes that most genes are NOT differentially expressed — this is its 
 - Enriched pathways: run gseapy or equivalent on the actual DEG list; do not list expected pathways.
 - Design formula factors: inspect `metadata.columns` and `metadata[factor].unique()` from the actual data; do not assume metadata structure.
 - DEG thresholds: apply the values specified by the user (padj, log2FC, baseMean); do not substitute defaults without checking the question.
+- **Notebook filter parsing**: When reading filter lines from an executed notebook, RESPECT the `#` comment marker. A line like `sigs = res[(res.padj<0.05) & (abs(res.lfc)>0.5)]# & (res.baseMean>=10) # filter low expression` has the active filter ending at `>0.5)]` — the `& (res.baseMean>=10)` is COMMENTED OUT and must NOT be applied. Adding a filter the analyst commented out changes the answer. Read the EXACT live code, not best-practice instincts.
 
 ---
 
