@@ -57,20 +57,21 @@ claude plugin list
 # Expect: tooluniverse  (enabled)
 ```
 
-Inside Claude Code, try:
+Inside Claude Code, just ask naturally:
 ```
-/tooluniverse:research What are the top mutated genes in breast cancer?
+What are the top mutated genes in breast cancer?
+Research the drug metformin.
 ```
 
-Or just ask naturally: "Research the drug metformin" — the router auto-dispatches to the right skill.
+The router skill auto-dispatches to the right specialized skill — no command prefix needed.
 
 ## What you get
 
 | Component | What it does | How to invoke |
 |---|---|---|
 | **MCP server** | 1000+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
-| **`/tooluniverse:research`** | Routes a research question to the right skill + tools | Slash command |
-| **`/tooluniverse:find-tools`** | Keyword search over the tool catalog | Slash command |
+| **`/tooluniverse:find-tools`** | Multi-hop tool discovery for a research goal | Slash command |
+| **`/tooluniverse:run-tool`** | Run a tool with input validation + auto-correction | Slash command |
 | **`/tooluniverse:researcher`** | Autonomous multi-database research agent | Slash command |
 | **114 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 

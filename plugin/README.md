@@ -34,19 +34,19 @@ claude plugin install tooluniverse@tooluniverse
 ## Usage
 
 ```
-# Discover tools (MCP — good for exploration)
-/tooluniverse:find-tools protein structure prediction
+# Discover tools (multi-hop discovery — decomposes the goal into sub-questions)
+/tooluniverse:find-tools drug candidates for Alzheimer's
 
-# Run a single tool via CLI (one-off Bash query)
+# Run a single tool with input validation + auto-correction
+/tooluniverse:run-tool UniProt_search '{"query": "BRCA1", "organism": "human"}'
+
+# Or run via Bash directly (no validation, fastest)
 tu run UniProt_search '{"query": "BRCA1", "organism": "human"}'
-
-# Research a question (auto-plans tool calls, uses SDK for batches)
-/tooluniverse:research What are the top mutated genes in breast cancer?
 
 # Launch research agent for complex multi-database questions
 /tooluniverse:researcher What genes are associated with Alzheimer's disease?
 
-# Or just ask — the router skill auto-dispatches
+# Or just ask — the router skill auto-dispatches to the matching sub-skill
 "What do we know about drug resistance mutations in EGFR?"
 ```
 
