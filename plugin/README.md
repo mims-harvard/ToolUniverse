@@ -33,30 +33,57 @@ claude plugin install tooluniverse@tooluniverse
 
 ## Usage
 
+**Default: just ask.** The router skill auto-dispatches scientific questions to the matching sub-skill — no command prefix needed.
+
 ```
-# Discover tools (multi-hop discovery — decomposes the goal into sub-questions)
-/tooluniverse:find-tools drug candidates for Alzheimer's
-
-# Run a single tool with input validation + auto-correction
-/tooluniverse:run-tool UniProt_search '{"query": "BRCA1", "organism": "human"}'
-
-# Or run via Bash directly (no validation, fastest)
-tu run UniProt_search '{"query": "BRCA1", "organism": "human"}'
-
-# Launch research agent for complex multi-database questions
-/tooluniverse:researcher What genes are associated with Alzheimer's disease?
-
-# Or just ask — the router skill auto-dispatches to the matching sub-skill
-"What do we know about drug resistance mutations in EGFR?"
+What do we know about drug resistance mutations in EGFR?
+Compute differential expression for these RNA-seq counts.
+What's the prevalence of distal renal tubular acidosis?
 ```
 
-## Design Philosophy: CLI Default, SDK for Large Batches, MCP for Discovery
+For specific surfaces, use the right interaction below.
 
-- **CLI** (`tu run`): Default for most tool calls — simple, direct, output flows into conversation naturally
-- **Python SDK** (`from tooluniverse import ToolUniverse`): Use for large batches (5+ calls in a loop) — loads the registry once and avoids per-call startup overhead
-- **MCP tools** (`find_tools`, `get_tool_info`): Best for discovering which tools exist and checking parameters
+### Discover tools
 
-The plugin configures MCP for discovery and teaches the agent to use the CLI for most work, switching to the SDK only when looping over many items.
+| Use this | When |
+|---|---|
+| `find_tools("topic")` (MCP, agent-side) | One-shot keyword search, you already know the topic |
+| `tu find "topic"` (CLI) | Same, from the shell |
+| `/tooluniverse:find-tools <research goal>` | You want **multiple** tools for a goal — the command decomposes the goal into sub-questions, runs separate searches per sub-question, follows tool-to-tool links across descriptions, and returns a structured toolkit grouped by sub-question. Use when "what tools do I need to answer X" is itself the question. |
+
+### Run a tool
+
+| Use this | When |
+|---|---|
+| `tu run <name> '<json>'` (Bash) | You know the exact tool name and JSON args. Fastest. Good in scripts and when piping output. |
+| `execute_tool` (MCP, agent-side) | Same as above, from the agent. Equivalent to `tu run` for the agent. |
+| `/tooluniverse:run-tool <name> <json-or-natural-language>` | You're not sure of the exact name (fuzzy match works), or you want auto-correction of common alias/type mistakes (`gene` → `gene_symbol`, `"10"` → `10`), or you want the output parsed into a readable summary instead of raw JSON, or you want follow-up tool suggestions. Slower than `tu run` but more forgiving. |
+
+### Launch the research agent
+
+| Use this | When |
+|---|---|
+| `/tooluniverse:researcher <question>` | Complex multi-database research where you want a forked autonomous agent — useful when the question would otherwise pollute your main conversation context with many tool calls and intermediate data. |
+
+### Bulk tool calls (5+ in a loop)
+
+```python
+from tooluniverse import ToolUniverse
+tu = ToolUniverse()
+tu.load_tools()
+for gene in ["TP53", "BRCA1", "PIK3CA", "PTEN", "KRAS"]:
+    print(tu.run_one_function({"name": "ensembl_lookup_gene",
+                                "arguments": {"gene_id": gene, "species": "homo_sapiens"}}))
+```
+
+Use the SDK over `tu run` in a Bash loop — registry loads once, avoiding per-call startup overhead.
+
+## Design Philosophy
+
+- **The router skill is the front door.** Just ask scientific questions in natural language; the router auto-routes to the specialized skill. No slash command needed for normal research.
+- **`tu run` is the fastest tool surface** when you know what you want.
+- **The slash commands earn their weight** only when they add a process the bare tool call doesn't have: `/find-tools` adds multi-hop discovery, `/run-tool` adds input validation and output parsing.
+- **MCP** (`find_tools`, `get_tool_info`, `execute_tool`) is what the agent uses internally — exposed for direct use too, but `tu run` from Bash is usually simpler.
 
 ## API Keys (Optional)
 
