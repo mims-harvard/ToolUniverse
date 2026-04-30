@@ -10,36 +10,9 @@ A direct tool call answers a factoid; research needs categorization, planning,
 multi-source evidence, and synthesis. Run the steps below — but stop early
 when a step's output makes a later step unnecessary.
 
-## Step 0: Decide whether ToolUniverse tools/skills are even needed
-
-Not every question is a research question. Before any planning, decide:
-
-**USE tools/skills when the question needs:**
-- Specific data lookups (variant pathogenicity, drug approvals, GWAS hits,
-  mutation frequency, gene-disease association, clinical trials, etc.) —
-  training knowledge is stale or missing entity-level facts
-- Multi-source cross-validation (compound tools `gather_*`, `annotate_*`
-  return concordance across databases — much faster than calling each)
-- Local data analysis (RNA-seq, phylogenetics, statistics, imaging) — the
-  matching skill encodes dataset-specific conventions (filter rules,
-  library choice, aggregation level) that ad-hoc scripts get wrong
-- Domain-specific computation (DESeq2, PhyKIT, clusterProfiler, MAGeCK) —
-  wrapped tools match published-pipeline conventions, reimplementing gives
-  different numbers
-
-**DO NOT use tools when:**
-- The question is meta or general knowledge ("what is UniProt?", "should I
-  use Skill X for Y?", "how does DESeq2 normalize counts?") — answer from
-  knowledge, no tool calls
-- The answer is a definition, taxonomy, or workflow choice (no data lookup)
-- An API key error already returned once — don't retry, note the limit
-- `find_tools` returned no matches across 2-3 keyword variants — stop and
-  answer from knowledge with a low-confidence tag
-- Local file computation (raw pandas/scipy work) — use pandas/scipy
-  directly, MCP overhead is wasted
-
-If Step 0 says "no tools needed", state the answer from knowledge in 1-3
-paragraphs and stop. Don't run steps 1-6 just to look thorough.
+The user invoked `/research` because they want research done — assume that
+unless the question is obviously a single-tool factoid. Optimize for "right
+depth and breadth", not "skip the workflow".
 
 ## Step 1: Categorize and decide depth
 
@@ -47,7 +20,6 @@ Read the question and classify it before doing anything else:
 
 | Category | Example | What this command should do |
 |---|---|---|
-| **Meta / general knowledge** | "Should I use Skill X?", "What is UniProt?" | Stop at Step 0; answer from knowledge. |
 | **Factoid lookup** | "What's the UniProt ID for TP53 in human?" | Skip to step 4 with one tool call. |
 | **Profile / overview** | "Tell me about BRCA1" | Steps 2-6, 3-5 sources. |
 | **Hypothesis** | "Is X a good drug target for Y?" | Steps 2-6 with explicit cross-validation in step 5. |
