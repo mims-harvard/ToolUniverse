@@ -28,7 +28,14 @@ claude plugin install tooluniverse@tooluniverse
 
 - **MCP Server**: Auto-configured via `.mcp.json`. Provides `find_tools`, `list_tools`, `get_tool_info`, `execute_tool` — accessing 1000+ scientific APIs.
 - **114 Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
-- **Slash Commands**: `/tooluniverse:find-tools`, `/tooluniverse:run-tool`
+- **Slash Commands** (each encodes a workflow, not a wrapper):
+  - `/tooluniverse:find-tools` — multi-hop tool discovery for a research goal
+  - `/tooluniverse:run-tool` — tool execution with input validation + auto-correction + output parsing
+  - `/tooluniverse:translate-id` — resolve an ID across all relevant namespaces
+  - `/tooluniverse:cross-validate` — verify a claim across 3+ independent databases
+  - `/tooluniverse:compare` — N-way side-by-side comparison with domain-appropriate columns
+  - `/tooluniverse:audit-data` — pre-analysis sanity check on a local data file/folder
+  - `/tooluniverse:literature-sweep` — graded mini-review across PubMed + EuropePMC + Semantic Scholar
 - **Research Agent**: `/tooluniverse:researcher` — autonomous agent for complex multi-database research.
 
 ## Usage
@@ -58,6 +65,16 @@ For specific surfaces, use the right interaction below.
 | `tu run <name> '<json>'` (Bash) | You know the exact tool name and JSON args. Fastest. Good in scripts and when piping output. |
 | `execute_tool` (MCP, agent-side) | Same as above, from the agent. Equivalent to `tu run` for the agent. |
 | `/tooluniverse:run-tool <name> <json-or-natural-language>` | You're not sure of the exact name (fuzzy match works), or you want auto-correction of common alias/type mistakes (`gene` → `gene_symbol`, `"10"` → `10`), or you want the output parsed into a readable summary instead of raw JSON, or you want follow-up tool suggestions. Slower than `tu run` but more forgiving. |
+
+### Verify, compare, translate
+
+| Use this | When |
+|---|---|
+| `/tooluniverse:translate-id <id>` | You have an ID in one namespace and need it in others (HGNC ↔ Ensembl ↔ UniProt ↔ NCBI ↔ OMIM ↔ ChEMBL ↔ PubChem). Detects the input namespace, picks the right resolver, returns a complete cross-reference table. |
+| `/tooluniverse:cross-validate <claim>` | You have a specific testable claim and want to know how strongly it's supported. Forces 3+ independent databases, reports concordance per source. Use before publishing or acting on a fact. |
+| `/tooluniverse:compare <items>` | You want a side-by-side comparison of N items (drugs, targets, diseases, variants). Detects the domain, picks domain-appropriate columns, produces a tabular report. |
+| `/tooluniverse:audit-data <path>` | Before invoking an analysis skill, sanity-check the local data: file format, encoding, schema, ID hygiene, distribution sanity. Catches garbage-in problems that skills assume away. |
+| `/tooluniverse:literature-sweep <topic>` | Graded mini-review across PubMed + EuropePMC + Semantic Scholar with dedup, relevance scoring, and a recommended reading order. |
 
 ### Launch the research agent
 
