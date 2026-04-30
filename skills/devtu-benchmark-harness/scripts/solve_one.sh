@@ -27,6 +27,29 @@ IN="$OUT_DIR/$QID.in.json"
 RESULT="$OUT_DIR/$QID.result.json"
 STDOUT="$OUT_DIR/$QID.stdout.log"
 ATTEMPTS="$OUT_DIR/$QID.attempts.log"
+META="$OUT_DIR/$QID.meta.json"
+
+# Capture plugin version at run-time so traces can be tied to the exact
+# plugin/skill state that produced them. Without this, uncommitted edits
+# leave traces orphaned from any reproducible state.
+PLUGIN_DIR="$REPO_ROOT/dist/tooluniverse-plugin"
+ROUTER_HASH=$(shasum -a 256 "$PLUGIN_DIR/skills/tooluniverse/SKILL.md" 2>/dev/null | awk '{print $1}')
+PLUGIN_HASH=$(find "$PLUGIN_DIR" -type f \( -name "*.md" -o -name "*.json" \) -exec shasum -a 256 {} \; 2>/dev/null | awk '{print $1}' | sort | shasum -a 256 | awk '{print $1}')
+GIT_HEAD=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo "no-git")
+GIT_DIRTY=$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+RUN_TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+cat > "$META" <<EOF
+{
+  "qid": "$QID",
+  "run_timestamp_utc": "$RUN_TS",
+  "git_head": "$GIT_HEAD",
+  "git_dirty_files": $GIT_DIRTY,
+  "router_skill_sha256": "$ROUTER_HASH",
+  "plugin_aggregate_sha256": "$PLUGIN_HASH",
+  "plugin_dir": "$PLUGIN_DIR"
+}
+EOF
 
 # Build single-question input
 python3 -c "
