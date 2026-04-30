@@ -1,7 +1,8 @@
 {
   "name": "tooluniverse-local",
   "owner": {
-    "name": "MIMS Harvard"
+    "name": "Shanghua Gao",
+    "url": "https://shgao.site"
   },
   "metadata": {
     "description": "Local marketplace for the ToolUniverse plugin",
