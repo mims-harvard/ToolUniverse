@@ -35,12 +35,20 @@ Examples:
 
 Without --no-push, this script pushes commit + tag to origin and triggers the
 release workflow.
+
+Full reference (all 3 release paths, what gets bumped, safety mechanisms):
+  scripts/RELEASING.md
 EOF
     exit 1
 }
 
 LEVEL="${1:-}"
-[ -z "$LEVEL" ] && usage
+case "$LEVEL" in
+    -h|--help|help)
+        usage ;;
+    "")
+        usage ;;
+esac
 
 DRY_RUN=0
 NO_PUSH=0
