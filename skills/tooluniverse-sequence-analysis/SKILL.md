@@ -8,6 +8,36 @@ disable-model-invocation: true
 
 Retrieve, annotate, and compare biological sequences from NCBI, Ensembl, and UniProt. Covers nucleotide search, sequence fetching, gene summaries, ortholog discovery, and protein sequence extraction.
 
+## FASTQ QC, Trimmomatic, and read alignment (when raw reads are present)
+
+When the data folder has `*.fastq` files and the question involves Trimmomatic, BWA, samtools, FastQC, or coverage depth, this skill is the entry point — but the actual work is shell-level (no specific ToolUniverse data tool).
+
+### Trimmomatic PE — counting "completely discarded" reads
+
+Trimmomatic PE classifies each input pair as:
+- **Both Surviving** (B): R1 and R2 both pass → kept as paired
+- **Forward Only Surviving** (F): R1 passes, R2 dropped → R1 kept as singleton, R2 fully discarded
+- **Reverse Only Surviving** (R): R2 passes, R1 dropped → R2 kept as singleton, R1 fully discarded
+- **Dropped** (D): both fail → BOTH R1 and R2 fully discarded
+
+Counter selection — read the question carefully. **CRITICAL: "READS completely discarded" ≠ "PAIRS dropped".** The Trimmomatic Dropped count counts PAIRS (each = 2 individual reads). When the question asks about reads (not pairs), translate every counter to per-read terms:
+
+| Question phrasing | Formula (per-sample, then SUM across all samples) |
+|---|---|
+| "**reads completely discarded**", "reads thrown out", "reads not in any output" | `F + R + 2*D` (every individual R1 or R2 not in any output FASTQ) |
+| "**read pairs dropped**", "pairs where both mates failed" | `D` |
+| "individual R2 reads dropped" (R1 kept as singleton) | `F` |
+| "individual R1 reads dropped" (R2 kept as singleton) | `R` |
+| "reads passing QC" / "surviving reads" | `2*B + F + R` |
+
+Trimmomatic's stderr summary gives `Input Read Pairs: N Both Surviving: B (b%) Forward Only Surviving: F (f%) Reverse Only Surviving: R (r%) Dropped: D (d%)`. Always sum across ALL input sample pairs (e.g., SRR1 + SRR2 + ...).
+
+DO NOT report just `D` as "reads completely discarded" — that's pair count, not read count, and is off by ~100×. The "Forward Only" R2 mate IS discarded; the "Reverse Only" R1 mate IS discarded; "Dropped" pairs lose BOTH reads.
+
+### Coverage depth (samtools depth / mosdepth)
+
+For "average coverage depth", run `samtools depth -a alignment.bam | awk '{sum+=$3; n++} END {print sum/n}'` — the `-a` flag includes positions with zero coverage (otherwise the average is biased upward). For per-chromosome coverage, group by `$1`.
+
 ## When to Use
 
 - "Get the mRNA sequence for BRCA1"
