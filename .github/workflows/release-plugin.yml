@@ -1,4 +1,29 @@
 name: Release Claude Code Plugin
+#
+# RELEASE CHECKLIST (maintainers — do BEFORE pushing a tag):
+#
+#   1. Bump version in BOTH manifest files (must match):
+#        - plugin/.claude-plugin/plugin.json          ("version" field)
+#        - plugin/.claude-plugin/marketplace.json     ("metadata.version")
+#        - .claude-plugin/marketplace.json            ("metadata.version")
+#
+#      The first one is what auto-update reads on each Claude Code startup.
+#      Without bumping it, users with auto-update enabled WILL NOT receive
+#      the new version even if you tag and release.
+#
+#   2. Commit + push to main. At this point, auto-update users start
+#      receiving the new version on next Claude Code startup.
+#
+#   3. Tag the commit and push the tag:
+#        git tag -a v1.1.12 -m "v1.1.12"
+#        git push origin v1.1.12
+#
+#      The tag push triggers this workflow → builds the zip → creates a
+#      GitHub Release with the zip attached. The release is for offline-zip
+#      installs and version-pinned installs; auto-update does NOT need it.
+#
+#   4. Verify the release at https://github.com/mims-harvard/ToolUniverse/releases
+#
 
 on:
   push:

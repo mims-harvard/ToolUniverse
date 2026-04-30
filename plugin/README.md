@@ -114,9 +114,30 @@ Most tools work without API keys. For enhanced access:
 
 Set via environment variables or in the MCP server config.
 
-## Update
+## Updating
 
-The MCP server auto-updates via `uvx --refresh`. To update skills, re-install the plugin.
+**Recommended: enable auto-update** so new versions install on Claude Code restart.
+
+1. Run `/plugin` in Claude Code
+2. Go to the **Marketplaces** tab
+3. Find `tooluniverse` and toggle **Enable auto-update** ON
+
+Once enabled, Claude Code re-pulls this repo's `marketplace.json` on each startup, compares the plugin's `version` field, and silently downloads any newer release. You'll get a notification prompting `/reload-plugins` after the new version is staged.
+
+**To update manually:**
+
+```
+/plugin marketplace update tooluniverse
+/plugin uninstall tooluniverse@tooluniverse
+/plugin install tooluniverse@tooluniverse
+/reload-plugins
+```
+
+**What updates together with the plugin** — skills, slash commands, the research agent, hooks, and the MCP server. There's no separate update mechanism for any of them; they share the plugin's version lineage.
+
+**The MCP server's Python package** (`tooluniverse` on PyPI) is configured with `uvx --refresh` in the bundled `.mcp.json`, so it auto-pulls the latest PyPI release on every server launch — independent of plugin updates. So even an outdated plugin install gets the freshest tool definitions at MCP startup.
+
+**To opt out of auto-updates**: leave the marketplace's auto-update toggle OFF, or set `DISABLE_AUTOUPDATER=1` + `FORCE_AUTOUPDATE_PLUGINS=1` env vars to disable Claude Code auto-update while keeping plugin auto-update enabled (or vice versa).
 
 ## Links
 
