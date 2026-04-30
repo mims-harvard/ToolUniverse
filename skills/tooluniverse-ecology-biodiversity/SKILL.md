@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-ecology-biodiversity
-description: Ecology, biodiversity, and conservation biology research — species identification, invasive species assessment,.
+description: Ecology, biodiversity, and conservation biology research — species identification (GBIF, NCBI Taxonomy), invasive species impact, ecosystem dynamics, conservation status (IUCN), niche ecology. Use for biodiversity questions, species comparison, invasion biology, conservation prioritization, and ecology-related literature search.
 disable-model-invocation: true
 ---
 

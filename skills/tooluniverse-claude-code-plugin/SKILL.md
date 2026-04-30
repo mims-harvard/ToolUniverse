@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-claude-code-plugin
-description: Install the ToolUniverse Claude Code plugin — 1000+ scientific tools, 114 research skills, MCP server, and slash.
+description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 114 research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
 disable-model-invocation: true
 ---
 

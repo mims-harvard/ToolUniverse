@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gwas-trait-to-gene
-description: Discover genes associated with diseases and traits using GWAS data from the GWAS Catalog (500,000+ associations) and.
+description: Discover causal genes for diseases/traits from GWAS data using Open Targets L2G (locus-to-gene) scoring — integrates eQTL, chromatin interaction, and distance evidence. Use for trait-to-gene mapping, drug-target hypothesis generation from GWAS, and replacing the 'nearest gene' heuristic with multi-evidence L2G scores.
 disable-model-invocation: true
 ---
 

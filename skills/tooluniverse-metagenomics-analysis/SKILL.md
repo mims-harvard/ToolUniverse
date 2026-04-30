@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-metagenomics-analysis
-description: Analyze microbiome and metagenomics data using MGnify, GTDB, ENA, and literature tools.
+description: Microbiome and metagenomics analysis using MGnify, GTDB taxonomy, ENA sequencing data, and EuropePMC literature. Covers taxonomic classification, genome quality assessment, biome-clinical phenotype linkage, and pathway interpretation. Use for amplicon/shotgun metagenomics study analysis.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-population-genetics-1000genomes
-description: Population genetics research using the 1000 Genomes Project (IGSR) -- search populations by superpopulation ancestry.
+description: Population genetics using the 1000 Genomes Project (IGSR) — superpopulation/population search, sample metadata, variant frequencies across AFR/AMR/EAS/EUR/SAS, ancestry-specific analyses. Use for ancestry comparison, population-aware allele frequency lookups, and 1000-Genomes-cohort-specific analyses (distinct from gnomAD which has different sample composition).
 triggers:
   - keywords: [1000 Genomes, IGSR, population, superpopulation, AFR, AMR, EAS, EUR, SAS, YRI, GBR, CHB, population stratification, ancestry, admixture, allele frequency, population genetics]
   - patterns: ["population code", "population stratification", "ancestral population", "1000 Genomes sample", "continental ancestry", "superpopulation filter"]

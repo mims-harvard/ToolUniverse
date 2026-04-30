@@ -1,6 +1,6 @@
 ---
 name: Protein Interaction Network Analysis
-description: Analyze protein-protein interaction networks using STRING, BioGRID, and SASBDB databases.
+description: Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering). Distinguishes physical interactions (binding) from functional associations (co-expression, co-regulation). Use for interactome queries, complex partner identification, and pathway-level interaction analysis.
 disable-model-invocation: true
 ---
 

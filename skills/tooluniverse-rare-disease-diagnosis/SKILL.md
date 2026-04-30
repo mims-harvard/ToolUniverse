@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-rare-disease-diagnosis
-description: "Rare disease differential diagnosis from phenotypes: HPO matching, gene panels, variant interpretation."
+description: Rare disease differential diagnosis from patient phenotype — HPO term matching to candidate diseases (Orphanet, OMIM), gene panel prioritization, ACMG variant interpretation, and structure-based variant analysis. Use for diagnostic odyssey assistance, phenotype-to-disease ranking, and genetic-counseling differential generation.
 disable-model-invocation: true
 ---
 

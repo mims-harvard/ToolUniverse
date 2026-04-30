@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-phylogenetics
-description: "Phylogenetics: tree analysis, treeness, saturation, parsimony sites, PhyKIT, DVMC, alignment gaps, MAFFT."
+description: Phylogenetic analysis — tree analysis, treeness, saturation (PhyKIT), parsimony-informative sites, alignment gap analysis, MAFFT alignment, DVMC, long-branch detection, BUSCO orthologs. Uses PhyKIT, Biopython, DendroPy. Use for phylogenetic tree QC, multi-gene phylogenomics, evolutionary-rate analysis, and comparative-genomics studies.
 disable-model-invocation: true
 ---
 

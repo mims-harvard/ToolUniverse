@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-precision-medicine-stratification
-description: Comprehensive patient stratification for precision medicine by integrating genomic, clinical, and therapeutic data.
+description: Patient stratification for precision medicine — integrate genomic, clinical, and therapeutic data to split patients into responder/non-responder groups, risk tiers, or treatment-decision groups. Use for stratification-by-biomarker, treatment-selection logic, and personalized therapeutic strategy reports per patient subgroup.
 disable-model-invocation: true
 ---
 

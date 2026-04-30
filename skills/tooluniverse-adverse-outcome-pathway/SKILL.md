@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-adverse-outcome-pathway
-description: Map environmental/industrial chemicals to mechanistic adverse outcome pathways (AOPs) using AOPWiki, quantify.
+description: Map environmental and industrial chemicals to adverse outcome pathways (AOPs) — molecular initiating event to organ-level toxicity. Uses AOPWiki, GHS classification, IARC carcinogen status, and LD50 data. Use for environmental/industrial chemical risk assessment, regulatory-grade hazard characterization, and AOP stressor mapping. Distinct from drug-safety analysis (use tooluniverse-pharmacovigilance for drugs).
 disable-model-invocation: true
 ---
 

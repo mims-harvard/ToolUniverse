@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-drug-target-validation
-description: "Evaluate gene as drug target: druggability, selectivity, safety, ADMET, structural analysis."
+description: Quantitative drug-target validation pipeline. Scores druggability, selectivity, safety profile, ADMET feasibility, and structural tractability with a composite Target Validation Score (0-100) and GO/NO-GO recommendation. Use for go/no-go decisions on a target before commit-to-medchem, target prioritization across a list, and target-deselection rationale.
 disable-model-invocation: true
 ---
 

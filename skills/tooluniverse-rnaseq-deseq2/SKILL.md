@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-rnaseq-deseq2
-description: RNA-seq differential expression analysis with DESeq2. Use for DEG lists, fold changes, dispersion, count matrices.
+description: RNA-seq differential expression analysis with DESeq2 — DEG lists, fold changes, dispersion estimation, design formulas including covariates, multi-condition contrasts, and Venn-set operations across groups. Use when you have a count matrix + metadata, want to find DEGs, or need dispersion/PCA/clustering analysis. Includes RULE ZERO precedence (read executed.ipynb if present).
 disable-model-invocation: true
 ---
 

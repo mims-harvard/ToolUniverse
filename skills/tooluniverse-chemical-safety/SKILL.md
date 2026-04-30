@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-chemical-safety
-description: Comprehensive chemical safety and toxicology assessment integrating ADMET-AI predictions, CTD toxicogenomics, FDA label.
+description: Chemical safety and toxicology assessment integrating ADMET-AI predictions, CTD toxicogenomics, PubChemTox experimental data, GHS/IARC hazard classification, and exposure-context analysis. Use for chemical hazard identification, occupational/consumer-product toxicity, dose-response evaluation, and acute (LD50) vs chronic toxicity assessment. Distinguishes drug toxicity from environmental chemical toxicity.
 disable-model-invocation: true
 ---
 

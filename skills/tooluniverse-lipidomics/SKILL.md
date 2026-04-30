@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-lipidomics
-description: Analyze lipids, lipid metabolism, and lipid-disease associations using LIPID MAPS, HMDB, PubChem, KEGG, and CTD.
+description: Lipid analysis and lipid-disease associations using LIPID MAPS classification, HMDB metabolite data, KEGG/Reactome lipid pathways (sphingolipid, eicosanoid, steroid, fatty acid), and PubChem chemical info. Use for lipid identification, lipid metabolism pathway mapping, and lipid-associated disease analysis (cardiovascular, diabetes, NAFLD).
 disable-model-invocation: true
 ---
 

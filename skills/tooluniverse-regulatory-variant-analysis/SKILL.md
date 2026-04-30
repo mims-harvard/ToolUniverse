@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-regulatory-variant-analysis
-description: Regulatory variant interpretation -- GWAS association lookup, eQTL analysis, chromatin state annotation, regulatory.
+description: Non-coding/regulatory variant interpretation — GWAS association lookup, eQTL evidence (GTEx), chromatin state (ENCODE), regulatory variant scoring (RegulomeDB, CADD), and TF-binding disruption. Use for non-coding GWAS hit interpretation, eQTL-based gene assignment, and regulatory mechanism reasoning. Distinct from coding-variant tools.
 disable-model-invocation: true
 ---
 

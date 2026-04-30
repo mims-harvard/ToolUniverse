@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-drug-regulatory
-description: Drug regulatory and approval research -- FDA substance registry lookup, drug classification by ATC/EPC/MoA via RxClass,.
+description: Drug regulatory and approval research — FDA substance registry, ATC/EPC classification, EMA decisions, generic-drug status, FDA Orange Book exclusivity, NDA/BLA pathways. Use for jurisdiction-aware approval status (FDA vs EMA), generic vs brand availability, exclusivity expiry tracking, and regulatory pathway selection. Always specifies the market when reporting status.
 triggers:
   - keywords: [FDA, Orange Book, generic drug, UNII, RxClass, ATC code, drug class, NDA, ANDA, patent, exclusivity, DailyMed, drug label, adverse reactions, regulatory, approval]
   - patterns: ["FDA approved", "generic available", "patent expiration", "drug class", "ATC code", "Orange Book", "DailyMed", "drug labeling", "UNII"]

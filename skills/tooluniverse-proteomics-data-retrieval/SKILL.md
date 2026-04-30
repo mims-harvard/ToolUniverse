@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-proteomics-data-retrieval
-description: Find and retrieve proteomics datasets from public repositories including MassIVE and ProteomeXchange (which aggregates.
+description: Find and retrieve proteomics datasets from MassIVE and ProteomeXchange. Search by species, keyword, or accession; retrieve detailed metadata (instruments, publications, species, PTMs studied). Use for locating public proteomics datasets to reanalyze, comparing instrument/protocol coverage across studies, and pre-download dataset evaluation.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-sequence-retrieval
-description: Retrieves biological sequences (DNA, RNA, protein) from NCBI and ENA with gene disambiguation, accession type handling,.
+description: "Retrieve DNA/RNA/protein sequences from NCBI and ENA with disambiguation. Quality hierarchy: RefSeq (NM_/NP_) > RefSeq predicted (XM_/XP_) > GenBank submissions. Use for fetching specific sequences by accession, gene-symbol-to-sequence lookup, transcript-isoform retrieval, and curated-vs-raw-submission preference."
 disable-model-invocation: true
 ---
 

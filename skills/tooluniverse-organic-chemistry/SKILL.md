@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-organic-chemistry
-description: Teaches reasoning strategies for organic chemistry problems — reaction product prediction, spectroscopy interpretation,.
+description: Organic chemistry reasoning guide for reaction product prediction, mechanism analysis (electrophilic/nucleophilic substitution, addition, elimination, pericyclic, radical), and spectroscopy interpretation (1H/13C NMR, IR, MS). Reasons from first principles (electron flow, kinetic vs thermodynamic) rather than pattern-matching named reactions. Use for organic synthesis problems and mechanism explanations.
 disable-model-invocation: true
 ---
 

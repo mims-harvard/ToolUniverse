@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-image-analysis
-description: Production-ready microscopy image analysis and quantitative imaging data skill for colony morphometry, cell counting,.
+description: Microscopy and quantitative imaging analysis — colony morphometry, fluorescence intensity quantification, cell-count statistics, dose-response curves, and ANOVA/Dunnett on image-derived measurements. Uses pandas/numpy/scipy/scikit-image. Use for analyzing tabular outputs from CellProfiler/ImageJ, image-derived measurement statistics, and image-based assay quantification.
 disable-model-invocation: true
 ---
 

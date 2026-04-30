@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-stem-cell-organoid
-description: Research stem cells, iPSCs, organoids, and cell differentiation using ToolUniverse tools.
+description: Stem cell, iPSC, and organoid research — pluripotency markers, differentiation protocol pathways, lineage commitment factors, organoid model selection. Use for iPSC characterization, differentiation protocol design via developmental-pathway recapitulation, and organoid-model selection for disease modeling.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-analysis
-description: "VCF variant analysis: parsing, annotation, classification, VAF filtering, coding vs non-coding, multi-sample."
+description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison. Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), and per-sample mutation profiling.
 disable-model-invocation: true
 ---
 

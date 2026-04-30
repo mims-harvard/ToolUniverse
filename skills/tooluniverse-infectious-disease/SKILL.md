@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-infectious-disease
-description: Rapid pathogen characterization and drug repurposing analysis for infectious disease outbreaks.
+description: Rapid pathogen characterization and drug repurposing for outbreaks. Combines pathogen genomics (NCBI, BVBRC), host immune response (IEDB), drug-target databases (ChEMBL, DGIdb), and literature surveillance (PubMed/EuropePMC). Use for emerging-pathogen profiling, antiviral candidate identification, and outbreak intelligence reporting.
 disable-model-invocation: true
 ---
 

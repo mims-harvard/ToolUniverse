@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-systems-biology
-description: Comprehensive systems biology and pathway analysis using multiple pathway databases (Reactome, KEGG, WikiPathways,.
+description: Systems biology and pathway analysis integrating Reactome, KEGG, WikiPathways, BioCarta, NCI-Nature Pathway Interaction Database. Multi-database pathway enrichment, protein-pathway relationships, network reasoning. Use for pathway analysis on a gene list, multi-source pathway concordance, and systems-level interpretation across databases.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gene-disease-association
-description: Find and compare gene-disease associations across multiple databases (DisGeNET, OpenTargets, Monarch Initiative, OMIM,.
+description: Gene-disease association analysis across DisGeNET, OpenTargets, Monarch, OMIM, GenCC, Orphanet. Cross-references multiple sources for evidence-graded association reports with concordance scoring (5/5 sources agree → strong, 1/5 → weak). Use for 'which diseases is gene X associated with' or 'which genes cause disease Y' queries with quantitative confidence.
 disable-model-invocation: true
 ---
 

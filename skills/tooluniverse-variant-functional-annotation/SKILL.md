@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-functional-annotation
-description: Comprehensive functional annotation of protein variants — pathogenicity, population frequency, structural context, and.
+description: Functional annotation of protein variants — ProtVar structural/functional context, ClinVar clinical classifications, gnomAD population frequencies, CADD deleteriousness, ClinGen gene-disease validity. Use for variant annotation pipelines, missense effect prediction, and protein-level variant interpretation with functional context.
 disable-model-invocation: true
 ---
 

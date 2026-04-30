@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-metabolomics-analysis
-description: Analyze metabolomics data including metabolite identification, quantification, pathway analysis, and metabolic flux.
+description: Analyze metabolomics data end-to-end — metabolite identification, quantification (TIC normalization, batch correction), differential analysis, and pathway interpretation. Use for processing mass-spec metabolomics output, normalization choice, untargeted metabolomics workflows, and integrating with other omics layers.
 disable-model-invocation: true
 ---
 

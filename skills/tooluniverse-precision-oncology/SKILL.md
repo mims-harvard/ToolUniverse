@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-precision-oncology
-description: "Cancer treatment recommendations from molecular profile: mutations, therapies, resistance, clinical trials."
+description: Cancer treatment recommendations from molecular profile (mutations + cancer type + biomarkers) — FDA-approved + investigational therapies, resistance mechanisms, matching clinical trials, prognosis. Uses CIViC, ClinVar, OpenTargets, ClinicalTrials.gov. Use for tumor-board treatment recommendations, evidence-tiered actionability assessment, and FDA-precedent-driven therapy selection.
 disable-model-invocation: true
 ---
 

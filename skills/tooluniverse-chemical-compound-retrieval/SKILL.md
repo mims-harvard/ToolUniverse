@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-chemical-compound-retrieval
-description: Retrieves chemical compound information from PubChem and ChEMBL with disambiguation, cross-referencing, and quality.
+description: Retrieve chemical compound data from PubChem and ChEMBL with disambiguation, cross-referencing, and stereochemistry handling. Use for resolving compound names to SMILES/InChI/CID/ChEMBL IDs, fetching molecular properties, distinguishing isomers/stereo forms, and cross-validating identity across databases. Always use English compound names; flags ambiguous queries (e.g., Vitamin D has multiple forms).
 disable-model-invocation: true
 ---
 

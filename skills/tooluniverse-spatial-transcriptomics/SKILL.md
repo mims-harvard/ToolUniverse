@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-spatial-transcriptomics
-description: Analyze spatial transcriptomics data to map gene expression in tissue architecture.
+description: Spatial transcriptomics analysis — Visium, MERFISH, seqFISH, Slide-seq. Maps gene expression to tissue architecture, identifies spatially variable genes (SVGs), tissue-domain segmentation, and cell-cell interaction inference. Use for spatial gene-expression questions, tissue architecture analysis, and SVG identification.
 disable-model-invocation: true
 ---
 

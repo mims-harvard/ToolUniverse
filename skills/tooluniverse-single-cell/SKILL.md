@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-single-cell
-description: "Single-cell RNA-seq: scanpy, h5ad, UMAP, clustering, marker genes, cell-type annotation, pseudotime."
+description: Single-cell RNA-seq analysis with scanpy/anndata — h5ad data loading, QC (mitochondrial fraction, doublets), normalization, dimensionality reduction (PCA, UMAP, t-SNE), clustering (Leiden, Louvain), marker gene identification, cell-type annotation, pseudotime/trajectory analysis. Use for any scRNA-seq workflow.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-protein-structure-prediction
-description: Predict and analyze protein 3D structure from amino acid sequence using ESMFold and AlphaFold.
+description: Protein 3D structure prediction from sequence — ESMFold de novo prediction, AlphaFold database retrieval, experimental structures from RCSB, ProtVar variant impact assessment, ProtParam sequence properties. Use for structure prediction when no experimental structure exists, fold-confidence scoring, and structure-guided variant interpretation.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-chemical-sourcing
-description: Find commercial sources for chemical compounds using ZINC, Enamine, eMolecules, and Mcule.
+description: Find commercial sources for chemical compounds — PubChem/ChEMBL identity resolution then vendor catalog search across ZINC, Enamine, eMolecules, Mcule. Compares pricing, availability, and identifies purchasable analogs when an exact compound is not in stock. Use for chemical procurement, virtual library curation, and 'where can I buy X' questions for synthesis planning.
 disable-model-invocation: true
 ---
 

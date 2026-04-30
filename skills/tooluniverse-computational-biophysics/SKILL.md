@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-computational-biophysics
-description: Solve quantitative problems in biophysics, pharmacokinetics, epidemiology, toxicology, population genetics, and.
+description: Solve quantitative problems in biophysics — pharmacokinetics (PK volume of distribution, clearance, half-life), epidemiology (R0, attack rate), toxicology (LD50, NOAEL), population genetics (Hardy-Weinberg, Fst), enzyme kinetics (Michaelis-Menten), thermodynamics. Use for first-principles quantitative biology calculations, dose calculations, exposure assessment, and biophysical-property estimation.
 disable-model-invocation: true
 ---
 

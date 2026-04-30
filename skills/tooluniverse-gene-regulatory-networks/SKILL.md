@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gene-regulatory-networks
-description: Gene regulatory network analysis — TF-target inference, ChIP-seq binding, motif analysis, eQTL integration.
+description: Gene regulatory network analysis — TF-target inference (JASPAR motifs, ChIP-seq), motif scanning, eQTL integration, perturbation evidence (knockout/overexpression). Use for 'which TF regulates gene X', 'which genes does TF Y target', regulatory pathway reconstruction. Distinguishes direct (binding) vs indirect (co-expression) regulatory evidence.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-drug-repurposing
-description: Identify drug repurposing candidates using ToolUniverse for target-based, compound-based, and disease-driven strategies.
+description: Identify drug repurposing candidates via target-based, compound-based, and disease-based strategies. Combines drug-target-disease network reasoning with mechanism rationale, clinical-trial precedent, and patent/regulatory feasibility. Use for hypothesis-generating repurposing for orphan diseases, finding existing drugs for new indications, and prioritizing candidates by evidence and feasibility.
 disable-model-invocation: true
 ---
 

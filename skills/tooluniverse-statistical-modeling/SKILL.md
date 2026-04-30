@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-statistical-modeling
-description: "Statistical modeling: regression, ANOVA, chi-square, spline fits, odds ratios, clinical trial analysis."
+description: Statistical modeling — linear/logistic/ordinal/Poisson regression, ANOVA, Kruskal-Wallis, chi-square, Mann-Whitney, Cox survival, spline fits (R `ns()`), odds ratios, Cohen's d, F-statistic, p-value computation. Specializes in clinical-trial AE analysis (SDTM DM/AE), severity ordinal regression, and per-feature stat workflows.
 disable-model-invocation: true
 ---
 

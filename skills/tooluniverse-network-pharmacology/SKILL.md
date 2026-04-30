@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-network-pharmacology
-description: Construct and analyze compound-target-disease networks for drug repurposing, polypharmacology discovery, and systems.
+description: Compound-target-disease network construction and analysis for drug repurposing, polypharmacology discovery, and multi-target drug design. Uses STRING, BioGRID, ChEMBL, DGIdb, OMIM, OpenTargets. Use for off-target effect prediction, network-based drug repurposing, and identifying molecules with desired multi-target profile.
 disable-model-invocation: true
 ---
 
