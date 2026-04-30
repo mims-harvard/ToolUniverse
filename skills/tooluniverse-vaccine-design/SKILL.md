@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-vaccine-design
-description: Computational vaccine candidate design: peptide/subunit vaccines via MHC-I/MHC-II epitope prediction (IEDB), population HLA coverage optimization, B-cell epitope identification, and cross-strain conservation analysis. Use for vaccine epitope prediction, HLA allele coverage, multi-epitope construct design, and immunogenicity assessment. Combines predicted MHC binding with experimentally validated IEDB epitopes for higher-confidence designs.
+description: "Computational vaccine candidate design: peptide/subunit vaccines via MHC-I/MHC-II epitope prediction (IEDB), population HLA coverage optimization, B-cell epitope identification, and cross-strain conservation analysis. Use for vaccine epitope prediction, HLA allele coverage, multi-epitope construct design, and immunogenicity assessment. Combines predicted MHC binding with experimentally validated IEDB epitopes for higher-confidence designs."
 disable-model-invocation: true
 ---
 
