@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-acmg-variant-classification
-description: Systematic ACMG/AMP variant classification using ToolUniverse tools.
+description: Systematic ACMG/AMP germline variant classification with all 28 criteria (PVS1, PS1-4, PM1-6, PP1-5, BA1, BS1-4, BP1-7) for clinical significance. Produces 5-tier verdict (Pathogenic / Likely Pathogenic / VUS / Likely Benign / Benign) with cited evidence per criterion. Use for variant interpretation, VUS resolution, and pathogenicity assessment. Combines ClinVar, gnomAD, computational predictors, and gene-mechanism context.
 disable-model-invocation: true
 ---
 

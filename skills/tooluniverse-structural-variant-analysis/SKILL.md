@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-structural-variant-analysis
-description: Comprehensive structural variant (SV) analysis skill for clinical genomics.
+description: Structural variant (SV) clinical interpretation: deletions, duplications, inversions, translocations, complex rearrangements. Applies ACMG-adapted criteria with ClinGen HI/TS dosage scores, gnomAD frequencies, and ClinVar evidence. Produces 5-tier classification with explicit per-criterion evidence. Use for clinical genomics SV review, dosage-sensitivity assessment, breakpoint analysis, and CNV pathogenicity calls. Gene-dosage-driven reasoning.
 disable-model-invocation: true
 ---
 

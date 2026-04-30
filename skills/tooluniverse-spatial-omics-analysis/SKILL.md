@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-spatial-omics-analysis
-description: Computational analysis framework for spatial multi-omics data integration.
+description: Spatial multi-omics interpretation pipeline. Transforms spatially variable genes (SVGs), domain annotations, and tissue context into biological insights via domain-by-domain characterization, cell-type composition, spatial gene expression patterns, RNA+protein+metabolite integration. Use for Visium, MERFISH, seqFISH, Slide-seq, spatial proteomics, and spatial multi-omics interpretation. Goes beyond statistics to disease mechanisms and therapeutic opportunities.
 disable-model-invocation: true
 ---
 

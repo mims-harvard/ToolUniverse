@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-trial-design
-description: Strategic clinical trial design feasibility assessment using ToolUniverse.
+description: Strategic clinical trial design feasibility assessment. Analyzes 6 dimensions (endpoint, population, comparator, effect size, duration, regulatory pathway) using precedent trials and FDA guidance. Produces enrollment projections, endpoint recommendations, and approval-pathway analysis. Use for trial-protocol design, power/sample-size estimation, comparator selection, and FDA submission strategy. Driven by precedent-based reasoning rather than first-principles math.
 disable-model-invocation: true
 ---
 

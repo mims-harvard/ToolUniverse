@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-pathway-disease-genetics
-description: Connect GWAS variants to biological pathways for drug target discovery.
+description: Connect GWAS variants to biological pathways and druggable targets. Maps GWAS hits to causal genes (via fine-mapping/eQTL), then to pathways (Reactome, KEGG, WikiPathways), then to existing drugs hitting those pathways. Use for pathway-level disease mechanisms, druggable-pathway prioritization from GWAS, SNP-to-pathway-to-target tracing, and tissue-specific eQTL evidence for drug target hypotheses.
 disable-model-invocation: true
 ---
 
