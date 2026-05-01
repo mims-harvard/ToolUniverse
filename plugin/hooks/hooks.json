@@ -9,6 +9,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'If this question involves analyzing data files, scientific research, biology, chemistry, or medicine: (1) FIRST invoke Skill(skill=\"tooluniverse\") to load the routing table; (2) THEN immediately invoke the matching tooluniverse-* sub-skill from the routing table (e.g., Skill(skill=\"tooluniverse-rnaseq-deseq2\")); (3) ONLY AFTER both skills are loaded, run Bash/Read/Grep on the data. The sub-skill bodies contain domain conventions (which R function, which denominator, which column) that you will get wrong if you skip them.'"
+          }
+        ]
+      }
     ]
   }
 }
