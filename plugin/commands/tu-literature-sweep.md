@@ -1,5 +1,5 @@
 ---
-name: literature-sweep
+name: tu-literature-sweep
 description: Run a graded mini-review on a topic across multiple literature sources (PubMed, EuropePMC, bioRxiv, Semantic Scholar). Dedupes hits, scores relevance to the topic, returns a ranked table with citation, year, key claim, and relevance. Use when the user wants more than a raw search dump — they want a curated short-list ready to read.
 argument-hint: "[topic, e.g. 'KRAS G12C inhibitor resistance mechanisms', 'CRISPR base editing in Friedreich ataxia']"
 ---

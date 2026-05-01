@@ -1,5 +1,5 @@
 ---
-name: translate-id
+name: tu-translate-id
 description: Resolve an identifier across all relevant namespaces (HGNC symbol, Ensembl, UniProt, NCBI Gene ID, RefSeq, MGI, OMIM, ChEMBL, PubChem, etc.). Detects the input namespace automatically, picks the right resolver tool, and returns a complete cross-reference table. Use when you have an ID in one namespace and need it in others before downstream tool calls.
 argument-hint: "[identifier] [optional: target namespace, e.g. 'ensembl', 'uniprot', 'all']"
 ---

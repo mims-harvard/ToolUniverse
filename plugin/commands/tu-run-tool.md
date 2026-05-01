@@ -1,5 +1,5 @@
 ---
-name: run-tool
+name: tu-run-tool
 description: Execute a ToolUniverse tool with input validation, schema-aware retry, output parsing, and follow-up suggestions. Use instead of raw execute_tool when you want auto-correction of common parameter mistakes and a usable summary instead of raw API output.
 argument-hint: "[tool_name] [arguments as JSON, or natural-language request]"
 ---

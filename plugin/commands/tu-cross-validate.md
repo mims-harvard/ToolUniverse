@@ -1,5 +1,5 @@
 ---
-name: cross-validate
+name: tu-cross-validate
 description: Take a specific scientific claim and confirm or refute it across 3+ independent databases, then report concordance. Use before publishing, citing, or acting on a fact when you want to know how strongly it's supported. Forces multi-source verification that the agent doesn't naturally enforce.
 argument-hint: "[a specific testable claim, e.g. 'BRAF V600E is FDA-approved indication for vemurafenib in melanoma' or 'TP53 mutations occur in >50% of breast cancers']"
 ---

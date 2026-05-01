@@ -1,5 +1,5 @@
 ---
-name: audit-data
+name: tu-audit-data
 description: Pre-analysis sanity check on a local data file or folder. Reports file format, encoding, missing values, duplicates, suspicious distributions, schema mismatches, and ID-column collisions BEFORE invoking an analysis skill. Use when you're about to run a downstream analysis and want to catch garbage-in problems first.
 argument-hint: "[path to file or folder]"
 ---

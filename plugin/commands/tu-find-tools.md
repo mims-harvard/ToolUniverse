@@ -1,5 +1,5 @@
 ---
-name: find-tools
+name: tu-find-tools
 description: Multi-hop tool discovery for a research goal. Decomposes the goal into sub-questions, searches the catalog for each, follows tool-to-tool links, and returns a structured toolkit ready to use. Use when you need ALL the tools to answer a research question, not just a keyword match.
 argument-hint: "[research goal, e.g. 'drug candidates for Alzheimer's', 'BRAF V600E precision oncology pipeline']"
 ---

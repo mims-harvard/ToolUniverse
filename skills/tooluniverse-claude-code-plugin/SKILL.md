@@ -70,13 +70,13 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | Component | What it does | How to invoke |
 |---|---|---|
 | **MCP server** | 1000+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
-| **`/tooluniverse:find-tools`** | Multi-hop tool discovery for a research goal | Slash command |
-| **`/tooluniverse:run-tool`** | Run a tool with input validation + auto-correction | Slash command |
-| **`/tooluniverse:translate-id`** | Resolve an ID across all relevant namespaces | Slash command |
-| **`/tooluniverse:cross-validate`** | Verify a claim across 3+ independent databases | Slash command |
-| **`/tooluniverse:compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
-| **`/tooluniverse:audit-data`** | Pre-analysis sanity check on a local data file/folder | Slash command |
-| **`/tooluniverse:literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
+| **`/tooluniverse:tu-find-tools`** | Multi-hop tool discovery for a research goal | Slash command |
+| **`/tooluniverse:tu-run-tool`** | Run a tool with input validation + auto-correction | Slash command |
+| **`/tooluniverse:tu-translate-id`** | Resolve an ID across all relevant namespaces | Slash command |
+| **`/tooluniverse:tu-cross-validate`** | Verify a claim across 3+ independent databases | Slash command |
+| **`/tooluniverse:tu-compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
+| **`/tooluniverse:tu-audit-data`** | Pre-analysis sanity check on a local data file/folder | Slash command |
+| **`/tooluniverse:tu-literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
 | **`/tooluniverse:researcher`** | Autonomous multi-database research agent | Slash command |
 | **114 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 
