@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'If this question involves analyzing data files, scientific research, biology, chemistry, or medicine: (1) FIRST invoke Skill(skill=\"tooluniverse\") to load the routing table; (2) THEN immediately invoke the matching tooluniverse-* sub-skill from the routing table (e.g., Skill(skill=\"tooluniverse-rnaseq-deseq2\")); (3) ONLY AFTER both skills are loaded, run Bash/Read/Grep on the data. The sub-skill bodies contain domain conventions (which R function, which denominator, which column) that you will get wrong if you skip them.'"
+            "command": "echo 'For research / data-analysis / biology / chemistry / medicine questions, run BOTH of these tool calls before ANY Bash/Read/Grep on the data:\n\n  Skill(skill=\"tooluniverse\")                        # load routing table\n  Skill(skill=\"tooluniverse-<picked-from-routing-table>\")   # load sub-skill body\n\nWhy both: the sub-skill body contains RULE ZERO (read the executed notebook, do NOT reimplement), exact column names, R-vs-Python tool choices, and outlier-sample exclusions. Skipping the sub-skill = wrong answer. After Step 2 completes, then run data tools.'"
           }
         ]
       }
