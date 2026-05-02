@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'For research / data-analysis / biology / chemistry / medicine questions, run BOTH of these tool calls before ANY Bash/Read/Grep on the data:\n\n  Skill(skill=\"tooluniverse\")                        # load routing table\n  Skill(skill=\"tooluniverse-<picked-from-routing-table>\")   # load sub-skill body\n\nWhy both: the sub-skill body contains RULE ZERO (read the executed notebook, do NOT reimplement), exact column names, R-vs-Python tool choices, and outlier-sample exclusions. Skipping the sub-skill = wrong answer. After Step 2 completes, then run data tools.'"
+            "command": "bash \"$CLAUDE_PLUGIN_ROOT/hooks/route_advisor.sh\""
           }
         ]
       }
